@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.combat.CombatAIStates;
@@ -176,7 +176,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     /**
      * Raiders AI statemachine
      */
-    private ITickRateStateMachine<IState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e));
+    private ITickRateStateMachine<IAIState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e));
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -738,7 +738,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
      *
      * @return ai statemachine
      */
-    public ITickRateStateMachine<IState> getAI()
+    public ITickRateStateMachine<IAIState> getAI()
     {
         return ai;
     }

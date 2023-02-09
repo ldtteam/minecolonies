@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.ai.IStateAI;
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.combat.CombatAIStates;
@@ -36,7 +36,7 @@ public class RaiderWalkAI implements IStateAI
      */
     private long walkTimer = 0;
 
-    public RaiderWalkAI(final AbstractEntityMinecoloniesMob raider, final ITickRateStateMachine<IState> stateMachine)
+    public RaiderWalkAI(final AbstractEntityMinecoloniesMob raider, final ITickRateStateMachine<IAIState> stateMachine)
     {
         this.raider = raider;
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::walk, () -> null, 80));

@@ -91,7 +91,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateBarrels, TICKS_SECOND),
+          new AIEventTarget<>(AIBlockingEventType.AI_BLOCKING, this::accelerateBarrels, TICKS_SECOND),
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(GET_MATERIALS, this::getMaterials, TICKS_SECOND),
           new AITarget(START_WORKING, this::decideWhatToDo, 1),

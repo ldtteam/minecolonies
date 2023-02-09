@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -12,6 +13,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.CustomArrowEntity;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
@@ -49,7 +51,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     private final static VisibleCitizenStatus ARCHER_COMBAT =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_combat.png"), "com.minecolonies.gui.visiblestatus.archer_combat");
 
-    private final AbstractEntityAIGuard parentAI;
+    private final AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards> parentAI;
 
     /**
      * The value of the speed which the guard will move.
@@ -80,8 +82,8 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
     public RangerCombatAI(
       final EntityCitizen owner,
-      final ITickRateStateMachine stateMachine,
-      final AbstractEntityAIGuard parentAI)
+      final ITickRateStateMachine<IAIState> stateMachine,
+      final AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards> parentAI)
     {
         super(owner, stateMachine);
 

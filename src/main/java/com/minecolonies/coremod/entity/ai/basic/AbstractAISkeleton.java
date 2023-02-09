@@ -77,6 +77,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      *
      * @param targets a number of targets that need registration
      */
+    @SafeVarargs
     protected final void registerTargets(final TickingTransition<IAIState>... targets)
     {
         Arrays.asList(targets).forEach(this::registerTarget);

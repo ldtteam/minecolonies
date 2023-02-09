@@ -21,6 +21,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
@@ -179,42 +180,42 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
           /*
             Init safety checks and transition to IDLE
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::initSafetyChecks, 1),
+          new AIEventTarget<>(AIBlockingEventType.AI_BLOCKING, this::initSafetyChecks, 1),
           new AITarget(INIT, this::getState, 1),
           /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> true, this::updateVisualState, 20),
+          new AIEventTarget<IAIState>(AIBlockingEventType.AI_BLOCKING, () -> true, this::updateVisualState, 20),
           /*
             If waitingForSomething returns true
             stop execution to wait for it.
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
+          new AIEventTarget<IAIState>(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
 
           /*
             Dumps inventory as long as needs be.
             If inventory is dumped, execution continues
             to resolve state.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL, 100),
+          new AIEventTarget<>(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL, 100),
           new AITarget(INVENTORY_FULL, this::dumpInventory, 10),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
+          new AIEventTarget<>(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
                                                                      this.building.hasOpenSyncRequest(worker.getCitizenData()) || this.building
                                                                                                                                             .hasCitizenCompletedRequestsToPickup(
                                                                                                                                               worker.getCitizenData()),
             NEEDS_ITEM,
             20),
 
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> building.hasCitizenCompletedRequests(worker.getCitizenData()) && this.cleanAsync(), NEEDS_ITEM, 200),
+          new AIEventTarget<>(AIBlockingEventType.AI_BLOCKING, () -> building.hasCitizenCompletedRequests(worker.getCitizenData()) && this.cleanAsync(), NEEDS_ITEM, 200),
 
           new AITarget(NEEDS_ITEM, this::waitForRequests, 40),
           /*
@@ -225,7 +226,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::shouldRestart, this::restart, TICKS_SECOND),
+          new AIEventTarget<IAIState>(AIBlockingEventType.STATE_BLOCKING, this::shouldRestart, this::restart, TICKS_SECOND),
           /*
            * Reset if not paused.
            */
@@ -241,7 +242,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
           /*
            * Start paused with inventory dump
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
+          new AIEventTarget<>(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
     }
 

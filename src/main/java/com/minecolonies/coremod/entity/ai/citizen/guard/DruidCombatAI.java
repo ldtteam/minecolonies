@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
@@ -94,8 +95,8 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
     public DruidCombatAI(
       final EntityCitizen owner,
-      final ITickRateStateMachine stateMachine,
-      final AbstractEntityAIGuard parentAI)
+      final ITickRateStateMachine<IAIState> stateMachine,
+      final AbstractEntityAIGuard<JobDruid, AbstractBuildingGuards> parentAI)
     {
         super(owner, stateMachine);
 

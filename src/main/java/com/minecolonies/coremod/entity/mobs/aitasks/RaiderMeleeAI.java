@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
@@ -44,7 +44,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
 
     public RaiderMeleeAI(
       final T owner,
-      final ITickRateStateMachine<IState> stateMachine)
+      final ITickRateStateMachine<IAIState> stateMachine)
     {
         super(owner, stateMachine);
     }

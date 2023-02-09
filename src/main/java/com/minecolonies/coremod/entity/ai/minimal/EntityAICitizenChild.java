@@ -116,8 +116,8 @@ public class EntityAICitizenChild extends Goal
         this.child = citizen;
         super.setFlags(EnumSet.of(Goal.Flag.MOVE));
         stateMachine = new TickRateStateMachine<>(State.IDLE, this::handleAIException);
-        stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::updateTimers, stateMachine::getState, 1));
-        stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.EVENT, this::tryGrowUp, () -> State.IDLE, 500));
+        stateMachine.addTransition(new AIEventTarget<IAIState>(AIBlockingEventType.STATE_BLOCKING, this::updateTimers, stateMachine::getState, 1));
+        stateMachine.addTransition(new AIEventTarget<IAIState>(AIBlockingEventType.EVENT, this::tryGrowUp, () -> State.IDLE, 500));
 
         stateMachine.addTransition(new AITarget(State.IDLE, this::searchEntityToFollow, () -> State.FOLLOWING, 150));
         stateMachine.addTransition(new AITarget(State.IDLE, this::isReadyForActivity, () -> State.VISITING, 300));

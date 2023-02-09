@@ -15,7 +15,9 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -61,8 +63,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * Knockback chance
      */
-    private static final int                   KNOCKBACK_CHANCE = 5;
-    private final        AbstractEntityAIGuard parentAI;
+    private static final int KNOCKBACK_CHANCE = 5;
+
+    private final AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards> parentAI;
 
     /**
      * Last used time of the aoe ability
@@ -86,8 +89,8 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
     public KnightCombatAI(
       final EntityCitizen owner,
-      final ITickRateStateMachine stateMachine,
-      final AbstractEntityAIGuard parentAI)
+      final ITickRateStateMachine<IAIState> stateMachine,
+      final AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards> parentAI)
     {
         super(owner, stateMachine);
 

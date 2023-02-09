@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.combat;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.combat.CombatAIStates;
@@ -38,7 +38,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
 
     private int pathAttempts = 0;
 
-    public AttackMoveAI(final T owner, final ITickRateStateMachine stateMachine)
+    public AttackMoveAI(final T owner, final ITickRateStateMachine<IAIState> stateMachine)
     {
         super(owner, 80, stateMachine);
 
@@ -51,7 +51,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return true if no more targets
      */
-    private IState move()
+    private IAIState move()
     {
         if (!checkForTarget())
         {
@@ -129,7 +129,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return
      */
-    protected IState tryAttack()
+    protected IAIState tryAttack()
     {
         if (!checkForTarget() || !canAttack())
         {

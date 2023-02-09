@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.combat;
 
 import com.minecolonies.api.entity.ai.IStateAI;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.combat.CombatAIStates;
@@ -38,7 +39,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @param user The creature which is using the AI
      */
-    public TargetAI(final T user, final int targetFrequency, final ITickRateStateMachine stateMachine)
+    public TargetAI(final T user, final int targetFrequency, final ITickRateStateMachine<IAIState> stateMachine)
     {
         this.user = user;
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::checkForTarget, () -> CombatAIStates.ATTACKING, 5));

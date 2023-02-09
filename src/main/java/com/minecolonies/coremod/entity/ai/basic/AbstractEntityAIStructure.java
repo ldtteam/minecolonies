@@ -150,7 +150,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Check if tasks should be executed.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE, 1),
+          new AIEventTarget<>(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE, 1),
           /*
            * Select the appropriate State to do next.
            */
