@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.guardtype;
 
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 
@@ -22,11 +21,6 @@ public class GuardType
     private final String jobTranslationKey;
 
     /**
-     * Button translation key.
-     */
-    private final String buttonTranslationKey;
-
-    /**
      * Primary skill.
      */
     private final Skill primarySkill;
@@ -35,16 +29,6 @@ public class GuardType
      * Secondary skill.
      */
     private final Skill secondarySkill;
-
-    /**
-     * Worker sound name.
-     */
-    private final String workerSoundName;
-
-    /**
-     * The class of the job.
-     */
-    private final Class<IJob<?>> clazz;
 
     /**
      * Constructor to create the type.
@@ -60,20 +44,14 @@ public class GuardType
     public GuardType(
       final Supplier<JobEntry> jobEntry,
       final String jobTranslationKey,
-      final String buttonTranslationKey,
       final Skill primarySkill,
-      final Skill secondarySkill,
-      final String workerSoundName,
-      final Class<IJob<?>> clazz)
+      final Skill secondarySkill)
     {
         super();
         this.jobEntry = jobEntry;
         this.jobTranslationKey = jobTranslationKey;
-        this.buttonTranslationKey = buttonTranslationKey;
         this.primarySkill = primarySkill;
         this.secondarySkill = secondarySkill;
-        this.workerSoundName = workerSoundName;
-        this.clazz = clazz;
     }
 
     /**
@@ -97,16 +75,6 @@ public class GuardType
     }
 
     /**
-     * Getter for the button translation key.
-     *
-     * @return the key.
-     */
-    public String getButtonTranslationKey()
-    {
-        return buttonTranslationKey;
-    }
-
-    /**
      * Getter for the primary key.
      *
      * @return the skill.
@@ -127,37 +95,14 @@ public class GuardType
     }
 
     /**
-     * Getter for the worker sound name.
-     *
-     * @return the sound name.
-     */
-    public String getWorkerSoundName()
-    {
-        return workerSoundName;
-    }
-
-    /**
-     * Check if the job is of this type.
-     * @param job the job to check.
-     * @return true if so.
-     */
-    public boolean isInstance(final IJob<?> job)
-    {
-        return this.clazz.isInstance(job);
-    }
-
-    /**
      * The builder.
      */
     public static class Builder
     {
         private Supplier<JobEntry> jobEntry;
         private String             jobTranslationKey;
-        private String             buttonTranslationKey;
         private Skill              primarySkill;
         private Skill              secondarySkill;
-        private String             workerSoundName;
-        private Class<IJob<?>>     clazz;
 
         public Builder setJobEntry(final Supplier<JobEntry> jobEntry)
         {
@@ -168,12 +113,6 @@ public class GuardType
         public Builder setJobTranslationKey(final String jobTranslationKey)
         {
             this.jobTranslationKey = jobTranslationKey;
-            return this;
-        }
-
-        public Builder setButtonTranslationKey(final String buttonTranslationKey)
-        {
-            this.buttonTranslationKey = buttonTranslationKey;
             return this;
         }
 
@@ -189,21 +128,9 @@ public class GuardType
             return this;
         }
 
-        public Builder setWorkerSoundName(final String workerSoundName)
-        {
-            this.workerSoundName = workerSoundName;
-            return this;
-        }
-
-        public Builder setClazz(final Class clazz)
-        {
-            this.clazz = clazz;
-            return this;
-        }
-
         public GuardType createGuardType()
         {
-            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz);
+            return new GuardType(jobEntry, jobTranslationKey, primarySkill, secondarySkill);
         }
     }
 }

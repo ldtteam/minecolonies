@@ -5,9 +5,6 @@ import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -26,32 +23,23 @@ public final class ModGuardTypesInitializer
     {
         ModGuardTypes.knight = DEFERRED_REGISTER.register(ModGuardTypes.KNIGHT_ID.getPath(), () -> new GuardType.Builder()
                                  .setJobTranslationKey(JOB_KNIGHT)
-                                 .setButtonTranslationKey(JOB_KNIGHT_BUTTON)
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
-                                 .setWorkerSoundName("archer")
                                  .setJobEntry(() -> ModJobs.knight.get())
-                                 .setClazz(JobKnight.class)
                                  .createGuardType());
 
         ModGuardTypes.ranger = DEFERRED_REGISTER.register(ModGuardTypes.RANGER_ID.getPath(), () -> new GuardType.Builder()
                                  .setJobTranslationKey(JOB_RANGER)
-                                 .setButtonTranslationKey(JOB_RANGER_BUTTON)
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
-                                 .setWorkerSoundName("archer")
                                  .setJobEntry(() -> ModJobs.ranger.get())
-                                 .setClazz(JobRanger.class)
                                  .createGuardType());
 
         ModGuardTypes.druid = DEFERRED_REGISTER.register(ModGuardTypes.DRUID_ID.getPath(), () -> new GuardType.Builder()
           .setJobTranslationKey(JOB_DRUID)
-          .setButtonTranslationKey(JOB_DRUID_BUTTON)
           .setPrimarySkill(Skill.Mana)
           .setSecondarySkill(Skill.Focus)
-          .setWorkerSoundName("druid")
           .setJobEntry(() -> ModJobs.druid.get())
-          .setClazz(JobDruid.class)
           .createGuardType());
     }
 }
