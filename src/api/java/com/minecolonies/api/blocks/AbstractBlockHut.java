@@ -348,13 +348,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public B registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(getRegistryName(), this);
-        return (B) this;
-    }
-
-    @Override
     public boolean isVisible(@Nullable final CompoundTag beData)
     {
         final Map<BlockPos, List<String>> data = readTagPosMapFrom(beData.getCompound(TAG_BLUEPRINTDATA));

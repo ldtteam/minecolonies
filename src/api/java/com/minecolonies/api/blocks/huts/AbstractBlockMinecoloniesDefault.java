@@ -3,7 +3,6 @@ package com.minecolonies.api.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -46,13 +45,6 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
     public AbstractBlockMinecoloniesDefault(final Properties properties)
     {
         super(properties);
-    }
-
-    @Override
-    public B registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(getRegistryName(), this);
-        return (B) this;
     }
 
     @Override

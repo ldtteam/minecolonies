@@ -20,6 +20,7 @@ public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolon
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public B registerBlock(final IForgeRegistry<Block> registry)
     {
         registry.register(getRegistryName(), this);

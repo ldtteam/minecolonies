@@ -21,6 +21,7 @@ public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMi
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public B registerBlock(final IForgeRegistry<Block> registry)
     {
         registry.register(getRegistryName(), this);
