@@ -21,12 +21,10 @@ public final class ModRecipeTypesInitializer
     {
         ModRecipeTypes.Classic = DEFERRED_REGISTER.register(ModRecipeTypes.CLASSIC_ID.getPath(), () -> new RecipeTypeEntry.Builder()
                                 .setRecipeTypeProducer(ClassicRecipe::new)
-                                .setRegistryName(ModRecipeTypes.CLASSIC_ID)
                                 .createRecipeTypeEntry());
 
         ModRecipeTypes.MultiOutput = DEFERRED_REGISTER.register(ModRecipeTypes.MULTI_OUTPUT_ID.getPath(), () -> new RecipeTypeEntry.Builder()
                                 .setRecipeTypeProducer(MultiOutputRecipe::new)
-                                .setRegistryName(ModRecipeTypes.MULTI_OUTPUT_ID)
                                 .createRecipeTypeEntry());
     }
 }

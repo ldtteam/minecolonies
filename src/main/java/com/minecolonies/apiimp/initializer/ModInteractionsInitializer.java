@@ -23,27 +23,22 @@ public final class ModInteractionsInitializer
     {
         ModInteractionResponseHandlers.standard = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.STANDARD.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
                                                     .setResponseHandlerProducer(StandardInteraction::new)
-                                                    .setRegistryName(ModInteractionResponseHandlers.STANDARD)
                                                     .createEntry());
 
         ModInteractionResponseHandlers.simpleNotification = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.SIMPLE_NOTIFICATION.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
                                                               .setResponseHandlerProducer(StandardInteraction::new)
-                                                              .setRegistryName(ModInteractionResponseHandlers.SIMPLE_NOTIFICATION)
                                                               .createEntry());
 
         ModInteractionResponseHandlers.pos = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.POS.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
                                                .setResponseHandlerProducer(PosBasedInteraction::new)
-                                               .setRegistryName(ModInteractionResponseHandlers.POS)
                                                .createEntry());
 
         ModInteractionResponseHandlers.request = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.REQUEST.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
                                                    .setResponseHandlerProducer(RequestBasedInteraction::new)
-                                                   .setRegistryName(ModInteractionResponseHandlers.REQUEST)
                                                    .createEntry());
 
         ModInteractionResponseHandlers.recruitment = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.RECRUITMENT.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
                                                        .setResponseHandlerProducer(RecruitmentInteraction::new)
-                                                       .setRegistryName(ModInteractionResponseHandlers.RECRUITMENT)
                                                        .createEntry());
     }
 }

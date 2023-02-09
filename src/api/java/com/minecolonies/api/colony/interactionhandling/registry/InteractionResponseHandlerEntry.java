@@ -3,7 +3,6 @@ package com.minecolonies.api.colony.interactionhandling.registry;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
-import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Function;
@@ -15,7 +14,6 @@ import java.util.function.Function;
 public final class InteractionResponseHandlerEntry
 {
     private final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-    private ResourceLocation                                registryName;
 
     /**
      * Builder for a {@link InteractionResponseHandlerEntry}.
@@ -23,7 +21,6 @@ public final class InteractionResponseHandlerEntry
     public static final class Builder
     {
         private Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-        private ResourceLocation                                registryName;
 
         /**
          * Setter the for the producer.
@@ -38,18 +35,6 @@ public final class InteractionResponseHandlerEntry
         }
 
         /**
-         * Setter for the registry name.
-         *
-         * @param registryName The registry name.
-         * @return The builder.
-         */
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
-            this.registryName = registryName;
-            return this;
-        }
-
-        /**
          * Creates a new {@link InteractionResponseHandlerEntry} builder.
          *
          * @return The created {@link InteractionResponseHandlerEntry}.
@@ -58,9 +43,8 @@ public final class InteractionResponseHandlerEntry
         public InteractionResponseHandlerEntry createEntry()
         {
             Validate.notNull(responseHandlerProducer);
-            Validate.notNull(registryName);
 
-            return new InteractionResponseHandlerEntry(responseHandlerProducer, registryName);
+            return new InteractionResponseHandlerEntry(responseHandlerProducer);
         }
     }
 
@@ -74,10 +58,9 @@ public final class InteractionResponseHandlerEntry
         return responseHandlerProducer;
     }
 
-    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer, final ResourceLocation registryName)
+    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer)
     {
         super();
         this.responseHandlerProducer = producer;
-        this.registryName = registryName;
     }
 }

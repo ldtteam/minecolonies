@@ -3,7 +3,6 @@ package com.minecolonies.api.colony.guardtype;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
@@ -48,11 +47,6 @@ public class GuardType
     private final Class<IJob<?>> clazz;
 
     /**
-     * Unique registry name.
-     */
-    private final ResourceLocation registryName;
-
-    /**
      * Constructor to create the type.
      *
      * @param jobEntry             the job entry..
@@ -70,8 +64,7 @@ public class GuardType
       final Skill primarySkill,
       final Skill secondarySkill,
       final String workerSoundName,
-      final Class<IJob<?>> clazz,
-      final ResourceLocation registryName)
+      final Class<IJob<?>> clazz)
     {
         super();
         this.jobEntry = jobEntry;
@@ -81,7 +74,6 @@ public class GuardType
         this.secondarySkill = secondarySkill;
         this.workerSoundName = workerSoundName;
         this.clazz = clazz;
-        this.registryName = registryName;
     }
 
     /**
@@ -161,12 +153,11 @@ public class GuardType
     {
         private Supplier<JobEntry> jobEntry;
         private String             jobTranslationKey;
-        private String                          buttonTranslationKey;
-        private Skill                           primarySkill;
-        private Skill                           secondarySkill;
-        private String                          workerSoundName;
-        private ResourceLocation                registryName;
-        private Class<IJob<?>>                  clazz;
+        private String             buttonTranslationKey;
+        private Skill              primarySkill;
+        private Skill              secondarySkill;
+        private String             workerSoundName;
+        private Class<IJob<?>>     clazz;
 
         public Builder setJobEntry(final Supplier<JobEntry> jobEntry)
         {
@@ -204,12 +195,6 @@ public class GuardType
             return this;
         }
 
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
-            this.registryName = registryName;
-            return this;
-        }
-
         public Builder setClazz(final Class clazz)
         {
             this.clazz = clazz;
@@ -218,7 +203,7 @@ public class GuardType
 
         public GuardType createGuardType()
         {
-            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz, registryName);
+            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz);
         }
     }
 }

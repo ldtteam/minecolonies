@@ -31,7 +31,6 @@ public final class ModGuardTypesInitializer
                                  .setSecondarySkill(Skill.Stamina)
                                  .setWorkerSoundName("archer")
                                  .setJobEntry(() -> ModJobs.knight.get())
-                                 .setRegistryName(ModGuardTypes.KNIGHT_ID)
                                  .setClazz(JobKnight.class)
                                  .createGuardType());
 
@@ -42,7 +41,6 @@ public final class ModGuardTypesInitializer
                                  .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
                                  .setJobEntry(() -> ModJobs.ranger.get())
-                                 .setRegistryName(ModGuardTypes.RANGER_ID)
                                  .setClazz(JobRanger.class)
                                  .createGuardType());
 
@@ -53,7 +51,6 @@ public final class ModGuardTypesInitializer
           .setSecondarySkill(Skill.Focus)
           .setWorkerSoundName("druid")
           .setJobEntry(() -> ModJobs.druid.get())
-          .setRegistryName(ModGuardTypes.DRUID_ID)
           .setClazz(JobDruid.class)
           .createGuardType());
     }
