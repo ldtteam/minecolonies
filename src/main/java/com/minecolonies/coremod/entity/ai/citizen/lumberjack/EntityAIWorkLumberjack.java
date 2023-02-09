@@ -166,7 +166,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * The current path to the tree
      */
-    private PathResult<?> pathToTree;
+    private PathResult pathToTree;
 
     @Override
     protected int getActionRewardForCraftingSuccess()

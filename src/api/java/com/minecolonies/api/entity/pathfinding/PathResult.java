@@ -1,10 +1,10 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 /**
  * Creates a pathResult of a certain path.
  */
-public class PathResult<T extends Callable<Path>>
+public class PathResult
 {
     /**
      * The pathfinding status
@@ -37,7 +37,7 @@ public class PathResult<T extends Callable<Path>>
     /**
      * The job to execute for this result
      */
-    private T job = null;
+    private AbstractPathJob job = null;
 
     /**
      * Whether the pathing calc is done and processed
@@ -143,7 +143,7 @@ public class PathResult<T extends Callable<Path>>
      *
      * @return
      */
-    public T getJob()
+    public AbstractPathJob getJob()
     {
         return job;
     }
@@ -153,7 +153,7 @@ public class PathResult<T extends Callable<Path>>
      *
      * @param job
      */
-    public void setJob(final T job)
+    public void setJob(final AbstractPathJob job)
     {
         this.job = job;
     }

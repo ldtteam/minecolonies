@@ -149,7 +149,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public AbstractPathJob(final Level world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntity entity)
     {
-        this(world, start, end, range, new PathResult<AbstractPathJob>(), entity);
+        this(world, start, end, range, new PathResult(), entity);
     }
 
     /**

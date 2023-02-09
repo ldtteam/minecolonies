@@ -46,7 +46,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public static final  double MIN_SPEED_ALLOWED        = 0.1;
 
     @Nullable
-    private PathResult<AbstractPathJob> pathResult;
+    private PathResult pathResult;
 
     /**
      * Spawn pos of minecart.
