@@ -11,22 +11,17 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
 
-import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
@@ -131,7 +126,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                 matrixStack.pushPose();
                 matrixStack.translate(0, y, 0);
                 matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-                matrixStack.mulPose(Vector3f.ZP.rotationDegrees(90));
+                //matrixStack.mulPose(Vector3f.ZP.rotationDegrees(90));
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
