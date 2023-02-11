@@ -8,6 +8,7 @@ public final class NbtTagConstants
     public static final String TAG_ID                 = "id";
     public static final String TAG_NAME               = "name";
     public static final String TAG_SUFFIX             = "suffix";
+    public static final String TAG_SOUND_PROFILE      = "soundProfile";
     public static final String TAG_DIMENSION          = "dimension";
     public static final String TAG_CENTER             = "center";
     public static final String TAG_BUILDINGS          = "buildings";

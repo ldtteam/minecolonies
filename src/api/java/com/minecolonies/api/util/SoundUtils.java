@@ -2,6 +2,8 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICivilianData;
+import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.sounds.EventType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -16,7 +18,6 @@ import net.minecraftforge.event.level.NoteBlockEvent.Note;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENTS;
@@ -224,58 +225,34 @@ public final class SoundUtils
       @NotNull final Level worldIn,
       @NotNull final BlockPos position,
       @Nullable final EventType type,
-      @Nullable final ICitizenData citizenData)
+      @Nullable final ICivilianData citizenData)
     {
         if (citizenData == null)
         {
             return;
         }
 
-        final Map<EventType, Tuple<SoundEvent, SoundEvent>> map;
-        if (citizenData.getJob() != null)
+        // Always call job specific, we put all sounds into job specific. So, call here visitor, job, or if no job general
+        final String jobDesc;
+        if (citizenData instanceof IVisitorData)
         {
-            map = CITIZEN_SOUND_EVENTS.get(citizenData.getJob().getJobRegistryEntry().getKey().getPath());
+            jobDesc = "visitor";
+        }
+        else if (citizenData.isChild())
+        {
+            jobDesc = "child";
+        }
+        else if (citizenData instanceof ICitizenData)
+        {
+            final IJob<?> job = ((ICitizenData) citizenData).getJob();
+            jobDesc = job == null ? "unemployed" : job.getJobRegistryEntry().getKey().getPath();
         }
         else
         {
-            map = CITIZEN_SOUND_EVENTS.get(citizenData.isChild() ? "child" : "citizen");
+            jobDesc = "unemployed";
         }
 
-        final SoundEvent event = citizenData.isFemale() ? map.get(type).getB() : map.get(type).getA();
-
-        if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
-        {
-            worldIn.playSound(null,
-              position,
-              event,
-              SoundSource.NEUTRAL,
-              (float) VOLUME,
-              (float) PITCH);
-        }
-    }
-
-    /**
-     * Plays a sound with a certain chance at a certain position.
-     *
-     * @param worldIn      the world to play the sound in.
-     * @param position     position to play the sound at.
-     * @param type         sound to play.
-     * @param civilianData the citizen.
-     */
-    public static void playSoundAtCivilian(
-      @NotNull final Level worldIn,
-      @NotNull final BlockPos position,
-      @Nullable final EventType type,
-      @Nullable final ICivilianData civilianData)
-    {
-        if (civilianData == null)
-        {
-            return;
-        }
-
-        final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = CITIZEN_SOUND_EVENTS.get(civilianData.isChild() ? "child" : "citizen");
-        final SoundEvent event = civilianData.isFemale() ? map.get(type).getB() : map.get(type).getA();
-
+        final SoundEvent event = citizenData.isFemale() ? CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getSoundProfile()).getB() : CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getSoundProfile()).getA();
         if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
         {
             worldIn.playSound(null,

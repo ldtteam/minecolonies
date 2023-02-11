@@ -273,6 +273,11 @@ public class CitizenData implements ICitizenData
     private int inactivityTimer = DISABLED;
 
     /**
+     * The sound profile index.
+     */
+    private int soundProfile;
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -309,6 +314,12 @@ public class CitizenData implements ICitizenData
     {
         final AbstractEntityCitizen citizen = entity.get();
         return Optional.ofNullable(citizen);
+    }
+
+    @Override
+    public int getSoundProfile()
+    {
+        return soundProfile;
     }
 
     @Override
@@ -403,6 +414,7 @@ public class CitizenData implements ICitizenData
         //Assign the gender before name
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
+        soundProfile = random.nextInt(4);
         paused = false;
         name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
@@ -1142,6 +1154,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_ID, id);
         nbtTagCompound.putString(TAG_NAME, name);
         nbtTagCompound.putString(TAG_SUFFIX, textureSuffix);
+        nbtTagCompound.putInt(TAG_SOUND_PROFILE, soundProfile);
 
         nbtTagCompound.putBoolean(TAG_FEMALE, female);
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
@@ -1216,13 +1229,22 @@ public class CitizenData implements ICitizenData
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
 
-        if (nbtTagCompound.getAllKeys().contains(TAG_SUFFIX))
+        if (nbtTagCompound.contains(TAG_SUFFIX))
         {
             textureSuffix = nbtTagCompound.getString(TAG_SUFFIX);
         }
         else
         {
             textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
+        }
+
+        if (nbtTagCompound.contains(TAG_SOUND_PROFILE))
+        {
+            soundProfile = nbtTagCompound.getInt(TAG_SOUND_PROFILE);
+        }
+        else
+        {
+            soundProfile = random.nextInt(4);
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
