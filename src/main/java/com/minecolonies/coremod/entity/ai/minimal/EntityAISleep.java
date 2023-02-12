@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -20,6 +21,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -240,7 +242,7 @@ public class EntityAISleep extends Goal
                               && !state.getValue(BedBlock.OCCUPIED)
                               && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                               && !isBedOccupied(hut, pos)
-                              && (above.is(BlockTags.BEDS) || !above.getMaterial().isSolid()))
+                              && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.getMaterial().isSolid()))
                         {
                             usedBed = pos;
                             setBedOccupied(true);

@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
+import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -436,8 +437,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private IAIState chopTree()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.chopping"));
-
         final boolean shouldBreakLeaves = building.shouldDefoliate() || job.getTree().isNetherTree();
+
+        if (building.shouldRestrict() && !BlockPosUtil.isInArea(building.getStartRestriction(), building.getEndRestriction(), job.getTree().getLocation()))
+        {
+            job.setTree(null);
+            return START_WORKING;
+        }
 
         if (job.getTree().hasLogs() || (shouldBreakLeaves && job.getTree().hasLeaves()) || checkedInHut)
         {

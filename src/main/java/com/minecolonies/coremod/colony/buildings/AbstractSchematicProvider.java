@@ -77,8 +77,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Corners of the building.
      */
-    private BlockPos lowerCorner  = null;
-    private BlockPos higherCorner = null;
+    private BlockPos lowerCorner  = BlockPos.ZERO;
+    private BlockPos higherCorner = BlockPos.ZERO;
 
     /**
      * Cached rotation.

@@ -9,19 +9,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum RackType implements StringRepresentable
 {
-    DEFAULT("blockrackemptysingle", "emptysingle"),
-    FULL( "blockrackfullsingle", "fullsingle"),
-    DEFAULTDOUBLE( "blockrackempty", "empty"),
-    FULLDOUBLE( "blockrackfull", "full"),
-    EMPTYAIR( "blockrackair", "dontrender");
+    DEFAULT("blockrackemptysingle", "emptysingle", false),
+    FULL( "blockrackfullsingle", "fullsingle", false),
+    DEFAULTDOUBLE( "blockrackempty", "empty", true),
+    FULLDOUBLE( "blockrackfull", "full", true),
+    EMPTYAIR( "blockrackair", "dontrender", true);
 
     private final String name;
     private final String unlocalizedName;
 
-    RackType(final String name, final String unlocalizedName)
+    private boolean doubleVariant = false;
+
+    RackType(final String name, final String unlocalizedName, final boolean doubleVariant)
     {
         this.name = name;
         this.unlocalizedName = unlocalizedName;
+        this.doubleVariant = doubleVariant;
     }
 
     @Override
@@ -38,6 +41,30 @@ public enum RackType implements StringRepresentable
     public String getTranslationKey()
     {
         return this.unlocalizedName;
+    }
+
+    public boolean isDoubleVariant()
+    {
+        return doubleVariant;
+    }
+
+    public RackType getInvBasedVariant(final boolean empty)
+    {
+        switch (this)
+        {
+            case FULL, DEFAULT ->
+            {
+                return empty ? DEFAULT : FULL;
+            }
+            case DEFAULTDOUBLE, FULLDOUBLE ->
+            {
+                return empty ? DEFAULTDOUBLE : FULLDOUBLE;
+            }
+            default ->
+            {
+                return EMPTYAIR;
+            }
+        }
     }
 
     @NotNull
