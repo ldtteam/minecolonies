@@ -83,6 +83,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -184,58 +185,41 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         return false;
     }
+    
+    private <T extends IBuildingModule> Stream<T> createModuleStream(final Class<T> clazz)
+    {
+        return modules.stream()
+          .filter(clazz::isInstance)
+          .map(clazz::cast);
+    }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getFirstModuleOccurance(final Class<T> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return (T) module;
-            }
-        }
-
-        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!");
+        return getFirstOptionalModuleOccurance(clazz)
+            .orElseThrow(() -> new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!"));
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return Optional.of((T) module);
-            }
-        }
-        return Optional.empty();
+        return createModuleStream(clazz).findFirst();
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module) && modulePredicate.test((T) module))
-            {
-                return (T) module;
-            }
-        }
-        throw new IllegalArgumentException("no matching module");
+        return createModuleStream(clazz).filter(modulePredicate).findFirst().orElseThrow();
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> List<T> getModules(final Class<T> clazz)
     {
-        return this.modules.stream()
-          .filter(clazz::isInstance)
-          .map(c -> (T) c)
-          .collect(Collectors.toList());
+        return createModuleStream(clazz).toList();
     }
 
     @Override
@@ -1127,7 +1111,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return stack.getItem().getFoodProperties().getNutrition() >= getBuildingLevel();
+        return stack.getFoodProperties(null).getNutrition() >= getBuildingLevel();
     }
 
     @Override
