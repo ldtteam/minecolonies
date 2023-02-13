@@ -8,7 +8,7 @@ import com.minecolonies.coremod.items.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SpawnEggItem;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -188,63 +188,63 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "magicpotion"), ModItems.magicpotion);
         registry.register(new ResourceLocation(Constants.MOD_ID, "build_goggles"), ModItems.buildGoggles);
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new SpawnEggItem(ModEntities.BARBARIAN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new ForgeSpawnEggItem(() -> ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
           SECONDARY_COLOR_BARBARIAN,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new SpawnEggItem(ModEntities.ARCHERBARBARIAN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERBARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
           SECONDARY_COLOR_BARBARIAN,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new SpawnEggItem(ModEntities.CHIEFBARBARIAN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CHIEFBARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
           SECONDARY_COLOR_BARBARIAN,
           (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new SpawnEggItem(ModEntities.PIRATE,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new ForgeSpawnEggItem(() -> ModEntities.PIRATE,
           PRIMARY_COLOR_PIRATE,
           SECONDARY_COLOR_PIRATE,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new SpawnEggItem(ModEntities.ARCHERPIRATE,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERPIRATE,
           PRIMARY_COLOR_PIRATE,
           SECONDARY_COLOR_PIRATE,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new SpawnEggItem(ModEntities.CHIEFPIRATE,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CHIEFPIRATE,
           PRIMARY_COLOR_PIRATE,
           SECONDARY_COLOR_PIRATE,
           (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new SpawnEggItem(ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new SpawnEggItem(ModEntities.ARCHERMUMMY,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new ForgeSpawnEggItem(() -> ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERMUMMY,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new SpawnEggItem(ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new ForgeSpawnEggItem(() -> ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new SpawnEggItem(ModEntities.SHIELDMAIDEN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new ForgeSpawnEggItem(() -> ModEntities.SHIELDMAIDEN,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new SpawnEggItem(ModEntities.NORSEMEN_ARCHER,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.NORSEMEN_ARCHER,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
           (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new SpawnEggItem(ModEntities.NORSEMEN_CHIEF,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.NORSEMEN_CHIEF,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
           (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new SpawnEggItem(ModEntities.AMAZONSPEARMAN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZONSPEARMAN,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
           new Item.Properties()));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new SpawnEggItem(ModEntities.AMAZONCHIEF,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZONCHIEF,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
           (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mercegg"), new SpawnEggItem(ModEntities.MERCENARY,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mercegg"), new ForgeSpawnEggItem(() -> ModEntities.MERCENARY,
           PRIMARY_COLOR_MERC,
           SECONDARY_COLOR_MERC,
           (new Item.Properties())));
