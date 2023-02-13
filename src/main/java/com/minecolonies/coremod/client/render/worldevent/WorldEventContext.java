@@ -41,6 +41,7 @@ public class WorldEventContext
      */
     int clientRenderDist;
 
+    @SuppressWarnings("resource")
     public void renderWorldLastEvent(final RenderLevelStageEvent event)
     {
         bufferSource = WorldRenderMacros.getBufferSource();

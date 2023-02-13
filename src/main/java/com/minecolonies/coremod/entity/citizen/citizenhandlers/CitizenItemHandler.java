@@ -20,7 +20,9 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.PacketDistributor;
@@ -186,45 +188,46 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
         citizen.swing(citizen.getUsedItemHand());
 
-        final BlockState blockState = CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos);
-        final Block block = blockState.getBlock();
+        final Level world = CompatibilityUtils.getWorldFromCitizen(citizen);
+        final BlockState blockState = world.getBlockState(blockPos);
+        final SoundType blockSoundType = blockState.getBlock().getSoundType(blockState, world, blockPos, citizen);
         if (breakBlock)
         {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
+            if (!world.isClientSide)
             {
                 Network.getNetwork().sendToPosition(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
+                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
                   new PacketDistributor.TargetPoint(
                     blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.level.dimension()));
             }
-            CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
+            world.playSound(null,
               blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
+              blockSoundType.getBreakSound(),
               SoundSource.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
-            WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
+              blockSoundType.getVolume(),
+              blockSoundType.getPitch());
+            WorldUtil.removeBlock(world, blockPos, false);
 
             damageItemInHand(citizen.getUsedItemHand(), 1);
         }
         else
         {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
+            if (!world.isClientSide)
             {
                 final BlockPos vector = blockPos.subtract(citizen.blockPosition());
                 final Direction facing = Direction.getNearest(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 Network.getNetwork().sendToPosition(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
+                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), facing.ordinal()),
                   new PacketDistributor.TargetPoint(blockPos.getX(),
                     blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.level.dimension()));
             }
-            CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
+            world.playSound(null,
               blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
+              blockSoundType.getBreakSound(),
               SoundSource.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
+              blockSoundType.getVolume(),
+              blockSoundType.getPitch());
         }
     }
 

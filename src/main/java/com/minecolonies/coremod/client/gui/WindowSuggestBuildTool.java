@@ -10,6 +10,7 @@ import com.minecolonies.coremod.network.messages.server.DirectPlaceMessage;
 import com.minecolonies.coremod.network.messages.server.SwitchBuildingWithToolMessage;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -74,13 +75,14 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     private void buildToolClicked()
     {
-        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
+        final LocalPlayer player = Minecraft.getInstance().player;
+        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), ModItems.buildTool.get()) != -1)
         {
             Network.getNetwork().sendToServer(new SwitchBuildingWithToolMessage(stack));
             new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
             return;
         }
-        MessageUtils.format(WARNING_MISSING_BUILD_TOOL).sendTo(Minecraft.getInstance().player);
+        MessageUtils.format(WARNING_MISSING_BUILD_TOOL).sendTo(player);
         close();
     }
 

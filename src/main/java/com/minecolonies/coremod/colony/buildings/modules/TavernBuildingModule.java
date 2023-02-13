@@ -18,6 +18,7 @@ import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -178,7 +179,8 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.setBedPos(building.getPosition());
         newCitizen.setHomeBuilding(building);
 
-        int recruitLevel = building.getColony().getWorld().random.nextInt(10 * building.getBuildingLevel()) + 15;
+        final RandomSource levelRandom = building.getColony().getWorld().random;
+        int recruitLevel = levelRandom.nextInt(10 * building.getBuildingLevel()) + 15;
         List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
         if (newCitizen.getName().contains("Ray"))
@@ -194,7 +196,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             spawnPos = building.getPosition();
         }
 
-        Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
+        Tuple<Item, Integer> cost = recruitCosts.get(levelRandom.nextInt(recruitCosts.size()));
 
         ItemStack boots = ItemStack.EMPTY;
         if (recruitLevel > LEATHER_SKILL_LEVEL)
@@ -211,7 +213,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         {
             if (cost.getB() <= 2)
             {
-                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
+                cost = recruitCosts.get(levelRandom.nextInt(recruitCosts.size()));
             }
             // Iron
             boots = new ItemStack(Items.IRON_BOOTS);
@@ -220,7 +222,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         {
             if (cost.getB() <= 3)
             {
-                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
+                cost = recruitCosts.get(levelRandom.nextInt(recruitCosts.size()));
             }
             // Diamond
             boots = new ItemStack(Items.DIAMOND_BOOTS);
@@ -231,7 +233,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
         {
             newCitizen.triggerInteraction(new RecruitmentInteraction(Component.translatable(
-              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
+              "com.minecolonies.coremod.gui.chat.recruitstory" + (levelRandom.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
               ChatPriority.IMPORTANT));
         }
 

@@ -88,7 +88,7 @@ public final class BackUpHelper
               new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (final ResourceKey<Level> dimensionType : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().levels.keySet())
+            for (final ResourceKey<Level> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
             {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
@@ -229,7 +229,7 @@ public final class BackUpHelper
     private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
@@ -336,7 +336,7 @@ public final class BackUpHelper
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundTag colonyCompound = new CompoundTag();
@@ -354,7 +354,7 @@ public final class BackUpHelper
     public static void markColonyDeleted(final int colonyID, final ResourceKey<Level> dimensionID)
     {
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY, colonyID));
         if (toDelete.exists())
         {
@@ -370,7 +370,7 @@ public final class BackUpHelper
     public static void loadAllBackups()
     {
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
         ServerLifecycleHooks.getCurrentServer().levels.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
@@ -429,7 +429,7 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final Level colonyWorld = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+            final Level colonyWorld = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             final Colony loadedColony = Colony.loadColony(compound, colonyWorld);
             if (loadedColony == null || colonyWorld == null)
             {
@@ -478,7 +478,7 @@ public final class BackUpHelper
      */
     public static String exportColony(final IColony colony)
     {
-        final MinecraftServer server = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
+        final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         final File topworldDir = server.getWorldPath(LevelResource.ROOT).toFile();
         final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
 

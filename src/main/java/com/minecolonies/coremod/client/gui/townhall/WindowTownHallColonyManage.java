@@ -161,8 +161,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         final Component colonyName = Component.translatable(DEFAULT_COLONY_NAME, player.getName());
 
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
-        Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
-          SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
+        Minecraft.getInstance().level.playSound(player, player.blockPosition(), SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
         final boolean reactivate;
         final BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(pos);
         if (entity instanceof final TileEntityColonyBuilding hut)
@@ -179,9 +178,9 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(),"", ((TileEntityColonyBuilding) entity).getBlueprintPath()));
             close();
         }
-        else if (entity instanceof TileEntityColonyBuilding && !((TileEntityColonyBuilding) entity).getPackName().isEmpty())
+        else if (entity instanceof final TileEntityColonyBuilding building && !building.getPackName().isEmpty())
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, false, colonyName.getString(), StructurePacks.selectedPack.getName(), ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, false, colonyName.getString(), StructurePacks.selectedPack.getName(), building.getBlueprintPath()));
             close();
         }
     }

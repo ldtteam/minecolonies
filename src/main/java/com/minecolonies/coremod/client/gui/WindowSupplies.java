@@ -18,6 +18,8 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.placementhandlers.main.SuppliesHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
@@ -135,11 +137,13 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         }
 
         final List<PlacementError> placementErrorList = new ArrayList<>();
+        final ClientLevel level = Minecraft.getInstance().level;
+        final LocalPlayer player = Minecraft.getInstance().player;
         if (type.equals("supplycamp"))
         {
-            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
+            if (ItemSupplyCampDeployer.canCampBePlaced(level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
               placementErrorList,
-              Minecraft.getInstance().player))
+              player))
             {
                 Network.getNetwork()
                   .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
@@ -154,10 +158,10 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         }
         else
         {
-            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
+            if (ItemSupplyChestDeployer.canShipBePlaced(level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
               previewData.getBlueprint(),
               placementErrorList,
-              Minecraft.getInstance().player))
+              player))
             {
                 Network.getNetwork()
                   .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
@@ -174,13 +178,13 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
-            MessageUtils.format(WARNING_SUPPLY_BUILDING_BAD_BLOCKS).sendTo(Minecraft.getInstance().player);
+            MessageUtils.format(WARNING_SUPPLY_BUILDING_BAD_BLOCKS).sendTo(player);
 
             for (final PlacementError error : placementErrorList)
             {
                 HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
                   .setPos(error.getPos())
-                  .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
+                  .setRemovalTimePoint(level.getGameTime() + 120 * 20 * 60)
                   .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0xFF0000));
             }

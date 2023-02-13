@@ -102,7 +102,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.building = building;
-        playerPos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), 0, Minecraft.getInstance().player.blockPosition().getZ());
+        playerPos = Minecraft.getInstance().player.blockPosition().atY(0);
         final ZoomDragView parent = findPaneOfTypeByID("dragView", ZoomDragView.class);
         dragView = new ZoomDragMap();
         dragView.setSize(parent.getWidth(), parent.getHeight());

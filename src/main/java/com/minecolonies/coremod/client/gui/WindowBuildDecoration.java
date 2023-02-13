@@ -152,8 +152,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      */
     private void updateBuilders()
     {
-        IColonyView colony = (IColonyView) IColonyManager.getInstance()
-                .getIColony(Minecraft.getInstance().level, structurePos);
+        IColonyView colony = (IColonyView) IColonyManager.getInstance().getIColony(Minecraft.getInstance().level, structurePos);
 
         if (colony == null)
         {
@@ -227,7 +226,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               blueprintFuture.get(),
               new PlacementSettings(),
               true);
-            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, Minecraft.getInstance().level);
+            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, world);
 
             StructurePlacer placer = new StructurePlacer(structure);
             StructurePhasePlacementResult result;

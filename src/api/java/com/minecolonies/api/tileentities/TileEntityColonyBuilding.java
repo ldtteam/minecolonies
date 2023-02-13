@@ -446,7 +446,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             combinedInv.invalidate();
             combinedInv = null;
         }
-        if (!getLevel().isClientSide && colonyId == 0)
+        if (!level.isClientSide && colonyId == 0)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getPosition());
             if (tempColony != null)
@@ -455,7 +455,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             }
         }
 
-        if (!getLevel().isClientSide && colonyId != 0 && colony == null)
+        if (!level.isClientSide && colonyId != 0 && colony == null)
         {
             updateColonyReferences();
         }

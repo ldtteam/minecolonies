@@ -3,7 +3,6 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
@@ -68,10 +67,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final CompoundTag compound = checkForCompound(scroll);
         BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof TileEntityColonyBuilding)
+        if (entity instanceof final TileEntityColonyBuilding buildingEntity)
         {
-            final AbstractTileEntityColonyBuilding buildingEntity = (AbstractTileEntityColonyBuilding) entity;
-
             if (buildingEntity.getBuilding() instanceof BuildingBuilder)
             {
                 compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
