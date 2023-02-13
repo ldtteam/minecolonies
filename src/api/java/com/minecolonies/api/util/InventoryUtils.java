@@ -23,7 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
-
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +118,13 @@ public class InventoryUtils
      */
     public static Item getItemFromBlock(final Block block)
     {
-        return Item.byBlock(block);
+        //TODO: mby use structurize version? BlockUtils.getItemStackFromBlockState(block.defaultBlockState());
+        final Item result = Item.BY_BLOCK.get(block);
+        if (result == null)
+        {
+            throw new RuntimeException("Block without matching item: " + ForgeRegistries.BLOCKS.getKey(block));
+        }
+        return result;
     }
 
     /**
