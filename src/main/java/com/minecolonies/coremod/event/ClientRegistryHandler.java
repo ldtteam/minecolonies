@@ -250,6 +250,7 @@ public class ClientRegistryHandler
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
+    @SuppressWarnings("removal")
     public static void doClientStuff(final EntityRenderersEvent.RegisterRenderers event)
     {
         event.registerEntityRenderer(ModEntities.CITIZEN, RenderBipedCitizen::new);
@@ -290,6 +291,7 @@ public class ClientRegistryHandler
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG.get(), TileEntityColonyFlagRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE.get(), TileEntityNamedGraveRenderer::new);
 
+        // TODO: move to JSON (and remove suppressWarnings annotation)
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());

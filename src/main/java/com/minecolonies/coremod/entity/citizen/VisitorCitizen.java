@@ -590,7 +590,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                // Position needs to be centered on citizen, Eat AI wrong too?
+                // TODO: Position needs to be centered on citizen, Eat AI wrong too?
                 Network.getNetwork()
                   .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
                     getX(),
