@@ -106,7 +106,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
             for (final Direction dir : HORIZONTAL_DIRS)
             {
                 final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
-                if (world.getBlockState(currentNode.pos.relative(dir)).getMaterial().isSolid() && Blocks.LADDER.canSurvive(toPlace, world, currentNode.pos))
+                if (world.getBlockState(currentNode.pos.relative(dir)).getMaterial().isSolid() && toPlace.canSurvive(world, currentNode.pos))
                 {
                     return true;
                 }

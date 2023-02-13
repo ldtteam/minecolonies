@@ -2,7 +2,6 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.particles.SleepingParticle;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -48,7 +47,7 @@ public class ModParticleTypesInitializer
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event)
         {
-            Minecraft.getInstance().particleEngine.register(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
+            event.register(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
         }
     }
 }

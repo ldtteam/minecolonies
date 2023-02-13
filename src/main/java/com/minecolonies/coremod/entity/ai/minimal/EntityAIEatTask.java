@@ -283,10 +283,10 @@ public class EntityAIEatTask extends Goal
 
         final FoodProperties itemFood = stack.getFoodProperties(citizen);
 
-        Item containerItem = stack.getItem().getCraftingRemainingItem();
+        ItemStack containerItem = stack.getCraftingRemainingItem();
         if (containerItem == null && stack.getItem() instanceof BowlFoodItem)
         {
-            containerItem = Items.BOWL;
+            containerItem = Items.BOWL.getDefaultInstance();
         }
 
         final double satIncrease =
@@ -295,21 +295,15 @@ public class EntityAIEatTask extends Goal
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
-        if (containerItem != null && !(containerItem instanceof AirItem))
+        if (containerItem != null && !(containerItem.getItem() instanceof AirItem))
         {
             if (citizenData.getInventory().isFull())
             {
-                InventoryUtils.spawnItemStack(
-                  citizen.level,
-                  citizen.getX(),
-                  citizen.getY(),
-                  citizen.getZ(),
-                  new ItemStack(containerItem, 1)
-                );
+                InventoryUtils.spawnItemStack(citizen.level, citizen.getX(), citizen.getY(), citizen.getZ(), containerItem);
             }
             else
             {
-                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(containerItem, 1));
+                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), containerItem);
             }
         }
 

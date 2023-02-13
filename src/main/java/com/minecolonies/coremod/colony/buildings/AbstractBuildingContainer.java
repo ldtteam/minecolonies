@@ -84,6 +84,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         {
             this.unscaledPickUpPriority = compound.getInt(TAG_PRIO);
         }
+        // TODO: TAG_PRIO_STATE is deprecated
         if (compound.getAllKeys().contains(TAG_PRIO_STATE))
         {
             // This was the old int representation of Pickup:Never

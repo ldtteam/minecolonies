@@ -21,7 +21,7 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.Log;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
@@ -221,7 +221,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean removeWhenFarAway(final double distanceToClosestPlayer)
     {
-        return shouldDespawn() || (level != null && level.isAreaLoaded(this.blockPosition(), 3) && getColony() == null);
+        return shouldDespawn() || (getColony() == null && level != null && WorldUtil.isEntireAreaLoaded(level, blockPosition(), 3));
     }
 
     /**
@@ -548,14 +548,14 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             }
 
             final Entity source = damageSource.getEntity();
-            if (source instanceof Player)
+            if (source instanceof final Player player)
             {
                 if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
                 {
                     source.hurt(DamageSource.thorns(this), damage * 0.5f);
                 }
 
-                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage.get(), ((Player) source).getMainHandItem());
+                final float raiderDamageEnchantLevel = player.getMainHandItem().getEnchantmentLevel(ModEnchants.raiderDamage.get());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);

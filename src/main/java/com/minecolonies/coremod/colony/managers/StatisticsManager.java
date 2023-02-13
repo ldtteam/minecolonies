@@ -110,7 +110,7 @@ public class StatisticsManager implements IStatisticsManager
             statCompound.putString(TAG_ID, stat.getKey());
 
             final ListTag statNBT = new ListTag();
-            for (final Map.Entry<Integer, Integer> dailyStats : stat.getValue().entrySet())
+            for (final Map.Entry<Integer, Integer> dailyStats : stat.getValue().int2IntEntrySet())
             {
                 final CompoundTag timeStampTag = new CompoundTag();
 

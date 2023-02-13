@@ -3,6 +3,7 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.FluidState;
@@ -60,9 +61,10 @@ public class WorldUtil
      */
     public static boolean isChunkLoaded(final LevelAccessor world, final int x, final int z)
     {
-        if (world.getChunkSource() instanceof ServerChunkCache)
+        final ChunkSource chunkSource = world.getChunkSource();
+        if (chunkSource instanceof final ServerChunkCache chunkCache)
         {
-            final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.visibleChunkMap.get(ChunkPos.asLong(x, z));
+            final ChunkHolder holder = chunkCache.chunkMap.visibleChunkMap.get(ChunkPos.asLong(x, z));
             if (holder != null)
             {
                 return holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().isPresent();
@@ -70,7 +72,58 @@ public class WorldUtil
 
             return false;
         }
-        return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
+        return chunkSource.hasChunk(x, z);
+    }
+
+    /**
+     * Returns whether an area is fully loaded
+     *
+     * @param level      world to check on
+     * @param center     center of search
+     * @param blockRange how many blocks from center should check
+     * @return true if loaded
+     */
+    public static boolean isEntireAreaLoaded(final LevelAccessor level, final BlockPos center, final int blockRange)
+    {
+        final BlockPos start = center.offset(blockRange, blockRange, blockRange), end = center.offset(-blockRange, -blockRange, -blockRange);
+        final int endX = SectionPos.blockToSectionCoord(end.getX()), endZ = SectionPos.blockToSectionCoord(end.getZ());
+        final ChunkSource chunkSource = level.getChunkSource();
+
+        if (chunkSource instanceof final ServerChunkCache chunkCache)
+        {
+            final var visibleChunkMap = chunkCache.chunkMap.visibleChunkMap;
+            
+            for (int x = SectionPos.blockToSectionCoord(start.getX()); x < endX; x++)
+            {
+                for (int z = SectionPos.blockToSectionCoord(start.getZ()); z < endZ; z++)
+                {
+                    final ChunkHolder holder = visibleChunkMap.get(ChunkPos.asLong(x, z));
+                    if (holder != null)
+                    {
+                        return holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().isPresent();
+                    }
+
+                    if (!chunkSource.hasChunk(x, z))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int x = SectionPos.blockToSectionCoord(start.getX()); x < endX; x++)
+            {
+                for (int z = SectionPos.blockToSectionCoord(start.getZ()); z < endZ; z++)
+                {
+                    if (!chunkSource.hasChunk(x, z))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -135,9 +188,9 @@ public class WorldUtil
      */
     public static boolean isEntityChunkLoaded(final LevelAccessor world, final ChunkPos pos)
     {
-        if (world instanceof ServerLevel)
+        if (world instanceof final ServerLevel serverLevel)
         {
-            return isChunkLoaded(world, pos) && ((ServerLevel) world).isPositionEntityTicking(pos.getWorldPosition());
+            return isChunkLoaded(world, pos) && serverLevel.isPositionEntityTicking(pos.getWorldPosition());
         }
         return isChunkLoaded(world, pos);
     }

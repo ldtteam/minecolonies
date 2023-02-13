@@ -522,7 +522,7 @@ public class PathingStuckHandler implements IStuckHandler
             for (final Direction dir : HORIZONTAL_DIRS)
             {
                 final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
-                if (world.getBlockState(pos.relative(dir)).getMaterial().isSolid() && Blocks.LADDER.canSurvive(toPlace, world, pos))
+                if (world.getBlockState(pos.relative(dir)).getMaterial().isSolid() && toPlace.canSurvive(world, pos))
                 {
                     world.setBlockAndUpdate(pos, toPlace);
                     break;
