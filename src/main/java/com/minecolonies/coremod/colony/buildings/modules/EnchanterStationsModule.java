@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
@@ -23,7 +22,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The enchanters station selection module.
  */
-public class EnchanterStationsModule extends AbstractBuildingModule implements IBuildingModule, IPersistentModule, IBuildingEventsModule
+public class EnchanterStationsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule
 {
     /**
      * List of buildings the enchanter gathers experience from.

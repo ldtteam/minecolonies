@@ -2,8 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -18,7 +16,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_AD
 /**
  * Assignment module for foresters.
  */
-public class LumberjackAssignmentModule extends CraftingWorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class LumberjackAssignmentModule extends CraftingWorkerBuildingModule
 {
     public LumberjackAssignmentModule(final JobEntry entry,
       final Skill primary,

@@ -2,8 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -16,7 +14,7 @@ import java.util.function.Function;
 /**
  * The worker module for citizen where they are assigned to if they work at it.
  */
-public class NoPrivateCrafterWorkerModule extends WorkerBuildingModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class NoPrivateCrafterWorkerModule extends WorkerBuildingModule
 {
     public NoPrivateCrafterWorkerModule(
       final JobEntry entry,

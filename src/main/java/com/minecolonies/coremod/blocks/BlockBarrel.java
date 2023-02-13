@@ -7,7 +7,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +32,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 
-public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements EntityBlock
+public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 {
     /**
      * The hardness this block has.

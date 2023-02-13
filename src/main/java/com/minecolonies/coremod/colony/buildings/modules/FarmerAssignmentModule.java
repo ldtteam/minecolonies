@@ -2,8 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -16,7 +14,7 @@ import java.util.function.Function;
 /**
  * Assignment module for couriers
  */
-public class FarmerAssignmentModule extends CraftingWorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class FarmerAssignmentModule extends CraftingWorkerBuildingModule
 {
     public FarmerAssignmentModule(final JobEntry entry,
       final Skill primary,

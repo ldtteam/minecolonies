@@ -4,11 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
-import com.minecolonies.api.colony.buildings.modules.ICreatesResolversModule;
-import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -29,7 +24,7 @@ import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.H
 /**
  * Assignment module for guards.
  */
-public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class GuardBuildingModule extends WorkAtHomeBuildingModule
 {
     /**
      * Random obj.

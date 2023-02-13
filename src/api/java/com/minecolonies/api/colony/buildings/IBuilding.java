@@ -35,7 +35,7 @@ import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
-public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester, ISchematicProvider
+public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)

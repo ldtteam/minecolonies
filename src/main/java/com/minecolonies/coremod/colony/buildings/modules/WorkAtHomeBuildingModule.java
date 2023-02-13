@@ -2,8 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -15,7 +13,7 @@ import java.util.function.Function;
 /**
  * Assignment module for jobs that have to live at the work place mandatorily.
  */
-public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class WorkAtHomeBuildingModule extends WorkerBuildingModule
 {
     public WorkAtHomeBuildingModule(final JobEntry entry,
       final Skill primary,

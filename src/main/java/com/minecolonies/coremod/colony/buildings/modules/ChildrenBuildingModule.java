@@ -4,8 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -17,7 +15,7 @@ import java.util.function.Function;
 /**
  * Assignment module for pupils.
  */
-public class ChildrenBuildingModule extends WorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class ChildrenBuildingModule extends WorkerBuildingModule
 {
     public ChildrenBuildingModule(final JobEntry entry,
       final Skill primary,

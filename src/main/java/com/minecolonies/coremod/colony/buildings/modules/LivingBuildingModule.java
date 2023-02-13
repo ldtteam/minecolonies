@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The living module for citizen to call their home.
  */
-public class LivingBuildingModule extends AbstractAssignedCitizenModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
+public class LivingBuildingModule extends AbstractAssignedCitizenModule implements IBuildingEventsModule, ITickingModule
 {
     @Override
     public void deserializeNBT(final CompoundTag compound)

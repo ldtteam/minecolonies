@@ -2,7 +2,6 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IGraveData;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Abstract class for minecolonies graves.
  */
-public abstract class AbstractTileEntityGrave extends TileEntityRack implements MenuProvider
+public abstract class AbstractTileEntityGrave extends TileEntityRack
 {
     /**
      * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)

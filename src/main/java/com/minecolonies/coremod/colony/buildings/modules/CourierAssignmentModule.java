@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The Courier module for the warehouse.
  */
-public class CourierAssignmentModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule
+public class CourierAssignmentModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule
 {
     @Override
     public void onColonyTick(@NotNull final IColony colony)

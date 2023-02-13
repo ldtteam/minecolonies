@@ -4,7 +4,6 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -36,7 +35,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Class containing the container action of the buildings.
  */
-public abstract class AbstractBuildingContainer extends AbstractSchematicProvider implements IBuildingContainer
+public abstract class AbstractBuildingContainer extends AbstractSchematicProvider
 {
     /**
      * A list which contains the position of all containers which belong to the worker building.

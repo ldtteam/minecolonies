@@ -8,7 +8,6 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
@@ -34,7 +33,7 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_INVALID_BUILDING;
 
-public abstract class AbstractSchematicProvider implements ISchematicProvider, IBuilding
+public abstract class AbstractSchematicProvider implements IBuilding
 {
     /**
      * The Colony for this schematic Provider

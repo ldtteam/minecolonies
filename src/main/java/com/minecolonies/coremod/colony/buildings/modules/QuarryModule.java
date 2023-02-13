@@ -27,7 +27,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The main data module for the quarry.
  */
-public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, ICreatesResolversModule, IAltersBuildingFootprint
+public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, ICreatesResolversModule, IAltersBuildingFootprint
 {
     /**
      * If the quarry was finished.

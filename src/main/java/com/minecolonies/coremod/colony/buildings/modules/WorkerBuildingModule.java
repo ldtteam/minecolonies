@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The worker module for citizen where they are assigned to if they work at it.
  */
-public class WorkerBuildingModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class WorkerBuildingModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
      * Module specific skills.

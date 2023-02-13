@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
@@ -23,7 +22,7 @@ import java.util.*;
 /**
  * Abstract class for all buildings which require a filterable list of allowed/blocked items.
  */
-public class FarmerFieldModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, IBuildingModule
+public class FarmerFieldModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule
 {
     /**
      * NBTTag to store the fields.
