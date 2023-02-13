@@ -60,6 +60,9 @@ public class WorkOrderBuilding extends AbstractWorkOrder
             case REMOVE:
                 targetLevel = 0;
                 break;
+            case REPAIR:
+                // targetLevel stays the same
+                break;
         }
 
         final int targetSchematicLevel = type == WorkOrderType.REMOVE ? building.getBuildingLevel() : targetLevel;

@@ -40,6 +40,7 @@ public class JourneymapPlugin implements IClientPlugin
     }
 
     @Override
+    @SuppressWarnings("incomplete-switch")
     public void onEvent(@NotNull final ClientEvent event)
     {
         switch (event.type)

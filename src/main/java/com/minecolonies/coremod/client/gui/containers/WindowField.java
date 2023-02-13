@@ -263,6 +263,9 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                     return axis == Direction.Axis.X ? 0 : -2;
                 case WEST:
                     return axis == Direction.Axis.X ? +2 : 0;
+                case UP:
+                case DOWN:
+                    throw new IllegalStateException(direction.getName());
             }
             return 0;
         }

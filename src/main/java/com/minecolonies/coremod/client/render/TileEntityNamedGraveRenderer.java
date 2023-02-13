@@ -84,6 +84,9 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
                         matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                         break;
+                    case UP:
+                    case DOWN:
+                        throw new IllegalStateException(facing.getName());
                 }
 
                 if (tileEntity.getTextLines().isEmpty())

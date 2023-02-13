@@ -42,6 +42,9 @@ public class WorkOrderDecoration extends AbstractWorkOrder
             case REMOVE:
                 targetLevel = 0;
                 break;
+            case REPAIR:
+                // targetLevel stays the same
+                break;
         }
 
         return new WorkOrderDecoration(

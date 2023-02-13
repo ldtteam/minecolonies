@@ -216,6 +216,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 return !neighbor.getValue(SOUTH) && neighbor.getValue(EAST) && neighbor.getValue(WEST);
             case WEST:
                 return !neighbor.getValue(WEST) && neighbor.getValue(NORTH) && neighbor.getValue(SOUTH);
+            case UP:
+            case DOWN:
+                throw new IllegalArgumentException(face.getName());
         }
         return false;
     }
