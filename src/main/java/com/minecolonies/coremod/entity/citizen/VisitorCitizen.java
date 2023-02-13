@@ -587,7 +587,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
             if (!level.isClientSide())
             {
-                getCitizenData().increaseSaturation(usedStack.getItem().getFoodProperties().getNutrition());
+                getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 // Position needs to be centered on citizen, Eat AI wrong too?

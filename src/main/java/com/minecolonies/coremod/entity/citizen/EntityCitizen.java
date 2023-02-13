@@ -575,10 +575,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
-                  .getResearchManager()
-                  .getResearchEffects()
-                  .getEffectStrength(SATURATION));
+                final double satIncrease = usedStack.getFoodProperties(this).getNutrition() * (1.0 +
+                    getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
                 citizenData.increaseSaturation(satIncrease / 2.0);
 
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
@@ -623,10 +621,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide())
         {
-            final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
-              .getResearchManager()
-              .getResearchEffects()
-              .getEffectStrength(SATURATION));
+            final double satIncrease = usedStack.getFoodProperties(this).getNutrition() *
+                (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
             citizenData.increaseSaturation(satIncrease / 2.0);
 
 

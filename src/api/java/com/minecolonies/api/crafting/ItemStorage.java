@@ -2,11 +2,13 @@ package com.minecolonies.api.crafting;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
-
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -313,5 +315,18 @@ public class ItemStorage
     public ImmutableItemStorage toImmutable()
     {
         return new ImmutableItemStorage(this);
+    }
+
+    /**
+     * Simple test for checking whether content is food and has at least (greater or equal) given nutrition level
+     * 
+     * @param minNutritionLevel minimal nutrition level
+     * @param entity nullable entity, who might/will eat content of this storage
+     * @return true if content is food and has sufficient nutrition level
+     */
+    public boolean hasSufficientNutrition(final int minNutritionLevel, @Nullable final LivingEntity entity)
+    {
+        final FoodProperties food;
+        return !isEmpty() && stack.isEdible() && (food = stack.getFoodProperties(entity)) != null && food.getNutrition() >= minNutritionLevel;
     }
 }
