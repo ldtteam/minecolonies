@@ -1558,7 +1558,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (attackerColony != null && citizenColonyHandler.getColony() != null)
             {
                 final IPermissions permission = attackerColony.getPermissions();
-                citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(permission.HOSTILE_RANK_ID));
+                citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(IPermissions.HOSTILE_RANK_ID));
             }
         }
 

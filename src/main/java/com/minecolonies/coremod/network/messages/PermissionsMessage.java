@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
@@ -256,7 +257,7 @@ public class PermissionsMessage
 
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID), colony.getWorld());
+                colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRank(IPermissions.NEUTRAL_RANK_ID), colony.getWorld());
             }
             else
             {
@@ -402,7 +403,7 @@ public class PermissionsMessage
 
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID));
+                colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(IPermissions.NEUTRAL_RANK_ID));
                 Optional.ofNullable(colony.getBuildingManager().getTownHall()).ifPresent(th -> th.removePermissionEvents(id));
                 SoundUtils.playSuccessSound(ctxIn.getSender(), ctxIn.getSender().blockPosition());
             }

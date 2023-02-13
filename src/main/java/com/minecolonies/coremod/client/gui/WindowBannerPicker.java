@@ -288,7 +288,7 @@ public class WindowBannerPicker extends Screen
 
 
         // Render the instructions
-        this.drawCenteredString(stack,
+        drawCenteredString(stack,
                 this.font,
                 Component.translatable("com.minecolonies.coremod.gui.flag.choose").getString(),
                 this.width /2,

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
@@ -59,7 +60,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
             return 0;
         }
-        colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
+        colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(IPermissions.OFFICER_RANK_ID));
 
         context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_OFFICER_ADD_SUCCESS, profile.getName(), colony.getName()), true);
         return 1;

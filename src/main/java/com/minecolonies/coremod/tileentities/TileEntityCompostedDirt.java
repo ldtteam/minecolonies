@@ -101,15 +101,15 @@ public class TileEntityCompostedDirt extends BlockEntity implements ITickable
             final BlockPos position = worldPosition.above();
             if (worldIn.getBlockState(position).getBlock() instanceof AirBlock)
             {
-                if (flower.getItem() instanceof BlockItem)
+                if (flower.getItem() instanceof final BlockItem flowerItem)
                 {
-                    if (((BlockItem) flower.getItem()).getBlock() instanceof DoublePlantBlock)
+                    if (flowerItem.getBlock() instanceof final DoublePlantBlock doublePlantBlock)
                     {
-                        ((DoublePlantBlock) ((BlockItem) flower.getItem()).getBlock()).placeAt(worldIn, ((BlockItem) flower.getItem()).getBlock().defaultBlockState(), position, UPDATE_FLAG);
+                        DoublePlantBlock.placeAt(worldIn, doublePlantBlock.defaultBlockState(), position, UPDATE_FLAG);
                     }
                     else
                     {
-                        worldIn.setBlockAndUpdate(position, ((BlockItem) flower.getItem()).getBlock().defaultBlockState());
+                        worldIn.setBlockAndUpdate(position, flowerItem.getBlock().defaultBlockState());
                     }
                 }
                 else

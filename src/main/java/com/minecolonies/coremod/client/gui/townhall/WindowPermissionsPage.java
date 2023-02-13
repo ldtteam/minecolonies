@@ -524,7 +524,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 Rank rank = player.getRank();
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(player.getName()));
                 DropDownList dropdown = rowPane.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
-                if (rank.getId() == building.getColony().getPermissions().OWNER_RANK_ID)
+                if (rank.getId() == IPermissions.OWNER_RANK_ID)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE_PLAYER, Button.class).setEnabled(false);
                     rowPane.findPaneOfTypeByID("rank", Text.class).setText(Component.literal(rank.getName()));
