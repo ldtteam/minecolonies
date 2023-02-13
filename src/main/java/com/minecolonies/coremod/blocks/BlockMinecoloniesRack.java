@@ -154,6 +154,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
     @Override
     @NotNull
+    @SuppressWarnings("deprecation")
     public BlockState updateShape(
       @NotNull final BlockState state,
       @NotNull final Direction dir,
@@ -188,6 +189,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void spawnAfterBreak(final BlockState state, final ServerLevel worldIn, final BlockPos pos, final ItemStack stack, final boolean p_222953_)
     {
         final BlockEntity tileentity = worldIn.getBlockEntity(pos);
@@ -248,6 +250,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving)
     {
         if (state.getBlock() != newState.getBlock())

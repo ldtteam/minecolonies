@@ -54,6 +54,7 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos)
     {
         return facing == stateIn.getValue(HORIZONTAL_FACING).getOpposite() && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
@@ -94,6 +95,7 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState mirror(BlockState state, Mirror mirrorIn)
     {
         return state.rotate(mirrorIn.getRotation(state.getValue(HORIZONTAL_FACING)));

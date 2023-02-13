@@ -84,6 +84,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public FluidState getFluidState(final BlockState state)
     {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);

@@ -151,6 +151,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onPlace(final BlockState state, final Level worldIn, final BlockPos pos, final BlockState oldState, final boolean isMoving)
     {
         super.onPlace(state, worldIn, pos, oldState, isMoving);

@@ -56,6 +56,7 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos)
     {
         return facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos)
