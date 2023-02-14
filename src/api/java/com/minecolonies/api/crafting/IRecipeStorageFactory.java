@@ -24,6 +24,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
 {
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     default RecipeStorage getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final IToken<?> token, @NotNull final Object... context)
     {
         if (context.length < MIN_PARAMS_IRECIPESTORAGE || context.length > MAX_PARAMS_IRECIPESTORAGE)

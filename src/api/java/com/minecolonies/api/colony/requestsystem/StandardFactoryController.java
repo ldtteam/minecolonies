@@ -157,6 +157,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <INPUT> IFactory<INPUT, ?> getFactoryForInput(@NotNull final TypeToken<? extends INPUT> inputClass) throws IllegalArgumentException
     {
         final ITypeOverrideHandler<?> inputOverrideHandler = getMatchingOverrideHandler(inputClass);
@@ -197,6 +198,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <OUTPUT> IFactory<?, OUTPUT> getFactoryForOutput(@NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
     {
         final ITypeOverrideHandler<?> outputOverrideHandler = getMatchingOverrideHandler(outputClass);
@@ -218,6 +220,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <OUTPUT> IFactory<?, OUTPUT> getFactoryForSerializationId(final short id) throws IllegalArgumentException
     {
         return (IFactory<?, OUTPUT>) serializationMappings.get(id);
@@ -316,6 +319,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <OUTPUT> void serialize(@NotNull final FriendlyByteBuf buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
@@ -350,6 +354,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <INPUT, OUTPUT> OUTPUT getNewInstance(@NotNull final TypeToken<? extends OUTPUT> requestedType, @NotNull final INPUT input, @NotNull final Object... context)
       throws IllegalArgumentException, ClassCastException
     {

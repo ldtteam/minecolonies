@@ -163,6 +163,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      *
      * @param job the job class
      */
+    @SuppressWarnings("unchecked")
     protected AbstractEntityAIBasic(@NotNull final J job)
     {
         super(job);

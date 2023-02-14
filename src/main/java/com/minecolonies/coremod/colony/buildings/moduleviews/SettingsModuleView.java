@@ -88,6 +88,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends ISetting> T getSetting(final ISettingKey<T> key)
     {
         return (T) settings.getOrDefault(key, null);

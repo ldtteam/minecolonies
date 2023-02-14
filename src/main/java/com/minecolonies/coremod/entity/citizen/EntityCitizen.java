@@ -1897,6 +1897,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
         if (capability == ForgeCapabilities.ITEM_HANDLER)

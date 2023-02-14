@@ -210,6 +210,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     public void addRequest(@NotNull final IToken<?> token, final int insertionIndex)
     {
         final IRequestManager requestManager = getColony().getRequestManager();
+        @SuppressWarnings("unchecked")
         IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
 
         LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
@@ -218,7 +219,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         for (int i = insertionIndex; i < taskQueue.size(); i++)
         {
             final IToken<?> theToken = taskQueue.get(i);
+            @SuppressWarnings("unchecked")
             final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
+
             if (request == null || request.getState() == RequestState.COMPLETED)
             {
                 taskQueue.remove(theToken);
@@ -265,6 +268,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
         else if (request.getRequest() instanceof Delivery)
         {
+            @SuppressWarnings("unchecked")
             final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
             if (ongoingDeliveries != 0)
             {
@@ -429,6 +433,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param request the first request.
      * @return a list.
      */
+    @SuppressWarnings("unchecked")
     public List<IRequest<? extends Delivery>> getTaskListWithSameDestination(final IRequest<? extends Delivery> request)
     {
         final List<IRequest<? extends Delivery>> deliveryList = new ArrayList<>();

@@ -368,6 +368,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
                 for (final IToken<?> taskToken : assignedTasks)
                 {
+                    @SuppressWarnings("unchecked")
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) building.getColony().getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
                     if (holdsRecipe(request.getRequest().getRecipeID()) && recipeStorage != null)

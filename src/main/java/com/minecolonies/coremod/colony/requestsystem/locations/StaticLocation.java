@@ -176,6 +176,7 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
+        @SuppressWarnings("unchecked")
         public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos blockPos, @NotNull final Object... context)
         {
             if (context.length != NUMBER_OR_CONTEXTS)

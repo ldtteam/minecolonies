@@ -43,6 +43,7 @@ public class StandardDataStoreManager implements IDataStoreManager
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends IDataStore> T get(final IToken<?> id, final Supplier<T> factory)
     {
         if (!storeMap.containsKey(id))

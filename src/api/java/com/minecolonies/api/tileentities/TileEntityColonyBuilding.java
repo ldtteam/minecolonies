@@ -573,6 +573,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
         if (!remove && capability == ForgeCapabilities.ITEM_HANDLER && getBuilding() != null)

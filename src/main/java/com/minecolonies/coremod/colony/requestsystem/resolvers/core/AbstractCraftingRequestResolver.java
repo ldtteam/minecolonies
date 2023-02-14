@@ -303,6 +303,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
         final ItemStack requestStack = recipeRequest.getPrimaryOutput();
         final List<ItemStack> secondaryStacks = recipeRequest.getCraftingToolsAndSecondaryOutputs();
+        @SuppressWarnings("unchecked")
         final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(CITIZEN_INV_SLOTS, AbstractResearchEffect.class);
         final int extraSlots = researchEffect != null ? researchEffect.getEffect().intValue() : 0;         
         final int maxSlots = (27 + extraSlots) - (27 + extraSlots) % 8;  // retaining 1 slot per row for 'overhead'

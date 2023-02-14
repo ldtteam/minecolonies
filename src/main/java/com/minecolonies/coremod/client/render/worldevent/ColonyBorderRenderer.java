@@ -89,6 +89,7 @@ public class ColonyBorderRenderer
             bufferbuilder.unsetDefaultColor();
         }
 
+        @SuppressWarnings("resource")
         final VertexBuffer p = Screen.hasControlDown() ? chunktickets : colonies;
         if (p == null)
         {

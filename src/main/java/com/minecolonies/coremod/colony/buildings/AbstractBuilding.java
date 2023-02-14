@@ -1660,6 +1660,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             final IStandardRequestManager requestManager = (IStandardRequestManager) colony.getRequestManager();
 
+            @SuppressWarnings("unchecked")
             final List<IRequest<? extends IDeliverable>> deliverableRequests =
               requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
                 .stream()

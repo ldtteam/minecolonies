@@ -33,6 +33,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public CustomRecipe getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, final Object... context)
       throws IllegalArgumentException
     {

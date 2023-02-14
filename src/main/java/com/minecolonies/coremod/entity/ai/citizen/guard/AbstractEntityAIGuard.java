@@ -771,6 +771,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Class<B> getExpectedBuildingClass()
     {
         return (Class<B>) AbstractBuildingGuards.class;

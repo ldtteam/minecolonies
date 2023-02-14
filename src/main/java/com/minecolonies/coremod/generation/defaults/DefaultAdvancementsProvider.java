@@ -71,6 +71,7 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
         super(output, registries, existingFileHelper, List.of(generator));
     }
 
+    @SuppressWarnings("unused")
     private static void addStandardAdvancements(@NotNull final Consumer<Advancement> consumer,
                                          @NotNull final ExistingFileHelper fileHelper)
     {
@@ -239,6 +240,7 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "undertaker_totem"), fileHelper);
     }
 
+    @SuppressWarnings("unused")
     private static void addProductionAdvancements(@NotNull final Consumer<Advancement> consumer,
                                            @NotNull final ExistingFileHelper fileHelper)
     {
@@ -436,6 +438,7 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_all_herders"), fileHelper);
     }
 
+    @SuppressWarnings("unused")
     private static void addMilitaryAdvancements(@NotNull final Consumer<Advancement> consumer,
                                          @NotNull final ExistingFileHelper fileHelper)
     {

@@ -31,6 +31,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     final Map<ISettingKey<?>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends ISetting> T getSetting(final ISettingKey<T> key)
     {
         return (T) settings.getOrDefault(key, null);

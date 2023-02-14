@@ -20,6 +20,7 @@ import java.util.UUID;
 /**
  * Class holds type constants to reduce the formatting errors.
  */
+@SuppressWarnings("unchecked")
 public class TypeConstants
 {
     /////Java types
