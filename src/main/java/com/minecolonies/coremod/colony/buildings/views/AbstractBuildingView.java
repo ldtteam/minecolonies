@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
@@ -616,42 +617,32 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         return isDeconstructed;
     }
+    
+    private <T extends IBuildingModuleView> Stream<T> createModuleStream(final Class<T> clazz)
+    {
+        return moduleViews.stream()
+            .filter(clazz::isInstance)
+            .map(clazz::cast);
+    }
 
     @NotNull
     @Override
     public <T extends IBuildingModuleView> T getModuleView(final Class<T> clazz)
     {
-        for (final IBuildingModuleView view : moduleViews)
-        {
-            if (clazz.isInstance(view))
-            {
-                return (T) view;
-            }
-        }
-        return null;
+        return createModuleStream(clazz).findFirst().orElse(null);
     }
 
     @Override
     public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        for (final IBuildingModuleView module : moduleViews)
-        {
-            if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module)))
-            {
-                return (T) module;
-            }
-        }
-        return null;
+        return createModuleStream(clazz).filter(modulePredicate).findFirst().orElse(null);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModuleView> List<T> getModuleViews(final Class<T> clazz)
     {
-        return this.moduleViews.stream()
-                 .filter(clazz::isInstance)
-                 .map(c -> (T) c)
-                 .collect(Collectors.toList());
+        return createModuleStream(clazz).toList();
     }
 
     @Override

@@ -67,6 +67,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     /**
      * Get all modules with a particular class or interface.
+     * TODO: change to stream
      * @param clazz the module's interface (or class, but prefer getModule in that case)
      * @return the list of modules or empty if none match.
      */

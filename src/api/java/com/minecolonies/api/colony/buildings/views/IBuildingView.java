@@ -241,6 +241,7 @@ public interface IBuildingView extends IRequester
 
     /**
      * Get a list of all modules matching a specific class.
+     * TODO: change to stream
      * @param clazz the class to match.
      * @param <T> the type of module.
      * @return the list or empty if doesn't exist.
