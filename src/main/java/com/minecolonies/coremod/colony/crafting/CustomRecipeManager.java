@@ -4,7 +4,6 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
@@ -154,51 +153,6 @@ public class CustomRecipeManager
             return recipeOutputMap.get(item);
         }
         return Collections.emptyList();
-    }
-
-    /**
-     * Gets the custom recipes for an ItemStack, including comparing count and tags, or an empty list if no matching recipe exists.
-     * @param itemStack An ItemStack to search for recipes.
-     * @return  A list of custom recipes with that output.
-     */
-    public List<CustomRecipe> getRecipeByOutput(final ItemStack itemStack)
-    {
-        List<CustomRecipe> returnList = new ArrayList<>();
-        for (CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
-        {
-            // ItemStacks don't override equals, so have to use the static methods.
-            if (ItemStack.matches(recipe.getPrimaryOutput(), itemStack))
-            {
-                returnList.add(recipe);
-            }
-            for (ItemStack output : recipe.getAltOutputs())
-            {
-                if (ItemStack.matches(output, itemStack))
-                {
-                    returnList.add(recipe);
-                }
-            }
-        }
-        return returnList;
-    }
-
-    /**
-     * Gets the custom recipes for an ItemStorage, optionally including comparing count, damage, and NBT, or an empty list if no matching recipe exists.
-     * @param itemStorage An ItemStorage to search for recipes.
-     * @return  A list of custom recipes with that output.
-     */
-    public List<CustomRecipe> getRecipeByOutput(final ItemStorage itemStorage)
-    {
-        List<CustomRecipe> returnList = new ArrayList<>();
-        for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
-        {
-            // ItemStorage#equals does the actual comparison work for us, here.
-            if (recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
-            {
-                returnList.add(recipe);
-            }
-        }
-        return returnList;
     }
 
     /**
