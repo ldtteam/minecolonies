@@ -144,14 +144,6 @@ public interface IRequest<R extends IRequestable>
      * Method to add multiple children in a single call.
      *
      * @param <T>      generic token.
-     * @param children An array of children to add.
-     */
-    <T extends IToken<?>> void addChildren(@NotNull T... children);
-
-    /**
-     * Method to add multiple children in a single call.
-     *
-     * @param <T>      generic token.
      * @param children A collection of children to add.
      */
     <T extends IToken<?>> void addChildren(@NotNull Collection<T> children);
@@ -163,14 +155,6 @@ public interface IRequest<R extends IRequestable>
      * @param child The new child request to remove.
      */
     <T extends IToken<?>> void removeChild(@NotNull T child);
-
-    /**
-     * Method to remove multiple children in a single call.
-     *
-     * @param <T>      generic token.
-     * @param children An array of children to remove.
-     */
-    <T extends IToken<?>> void removeChildren(@NotNull T... children);
 
     /**
      * Method to remove multiple children in a single call.

@@ -250,29 +250,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     /**
      * Method to add multiple children in a single call.
      *
-     * @param children An array of children to add.
-     */
-    @Override
-    public <T extends IToken<?>> void addChildren(@NotNull final T... children)
-    {
-        for (final IToken<?> theToken : children)
-        {
-            addChild(theToken);
-        }
-    }
-
-    /**
-     * Method to add multiple children in a single call.
-     *
      * @param children A collection of children to add.
      */
     @Override
     public <T extends IToken<?>> void addChildren(@NotNull final Collection<T> children)
     {
-        for (final IToken<?> theToken : children)
-        {
-            addChild(theToken);
-        }
+        this.children.addAll(children);
     }
 
     /**
@@ -289,35 +272,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     /**
      * Method to remove multiple children in a single call.
      *
-     * @param children An array of children to remove.
-     */
-    @Override
-    public <T extends IToken<?>> void removeChildren(@NotNull final T... children)
-    {
-        for (final IToken<?> theToken : children)
-        {
-            if (this.children.contains(theToken))
-            {
-                this.removeChild(theToken);
-            }
-        }
-    }
-
-    /**
-     * Method to remove multiple children in a single call.
-     *
      * @param children A collection of children to remove.
      */
     @Override
     public <T extends IToken<?>> void removeChildren(@NotNull final Collection<T> children)
     {
-        for (final IToken<?> theToken : children)
-        {
-            if (this.children.contains(theToken))
-            {
-                this.removeChild(theToken);
-            }
-        }
+        this.children.removeAll(children);
     }
 
     /**
