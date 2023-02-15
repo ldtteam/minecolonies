@@ -1,7 +1,6 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +36,7 @@ public class PathResult
     /**
      * The job to execute for this result
      */
-    private AbstractPathJob job = null;
+    private IAbstractPathJob job = null;
 
     /**
      * Whether the pathing calc is done and processed
@@ -143,7 +142,7 @@ public class PathResult
      *
      * @return
      */
-    public AbstractPathJob getJob()
+    public IAbstractPathJob getJob()
     {
         return job;
     }
@@ -153,7 +152,7 @@ public class PathResult
      *
      * @param job
      */
-    public void setJob(final AbstractPathJob job)
+    public void setJob(final IAbstractPathJob job)
     {
         this.job = job;
     }

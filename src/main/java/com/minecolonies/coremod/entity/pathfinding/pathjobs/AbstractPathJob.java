@@ -5,6 +5,7 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.IAbstractPathJob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
@@ -44,14 +45,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
 
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
-public abstract class AbstractPathJob implements Callable<Path>
+public abstract class AbstractPathJob implements IAbstractPathJob
 {
     /**
      * Start position to path from.
@@ -279,11 +279,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.entity = new WeakReference<>(entity);
     }
 
-    /**
-     * Sync the path of a given mob to the client.
-     *
-     * @param mob the tracked mob.
-     */
+    @Override
     public void synchToClient(final LivingEntity mob)
     {
         for (final Iterator<Map.Entry<Player, UUID>> iter = trackingMap.entrySet().iterator(); iter.hasNext(); )
