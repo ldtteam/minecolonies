@@ -150,6 +150,12 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
         final List<ItemStack> displayStacks = request.getDisplayStacks();
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
 
+        if (colony == null)
+        {
+            Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
+            return;
+        }
+
         if (!displayStacks.isEmpty())
         {
             exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
@@ -163,12 +169,6 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
 
         findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
         findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(Component.literal(request.getRequester().getLocation().toString()));
-
-        if (colony == null)
-        {
-            Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
-            return;
-        }
 
         try
         {
@@ -191,13 +191,13 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
 
         //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if ((this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
+        if ((this.prevWindow instanceof final RequestWindowCitizen requestWindow && !requestWindow.fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
         {
             fulfillButton.hide();
         }
         //Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if (this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).cancellable(request))
+        if (this.prevWindow instanceof final RequestWindowCitizen requestWindow && !requestWindow.cancellable(request))
         {
             cancelButton.hide();
         }
@@ -213,9 +213,9 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     {
         if (button.getID().equals(REQUEST_FULLFIL))
         {
-            if (this.prevWindow instanceof RequestWindowCitizen)
+            if (this.prevWindow instanceof final RequestWindowCitizen requestWindow)
             {
-                ((RequestWindowCitizen) this.prevWindow).fulfill(request);
+                requestWindow.fulfill(request);
                 // because this isn't an AbstractWindowSkeleton, and we want to trigger an advancement...
                 Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
             }
@@ -223,9 +223,9 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
         }
         else if (button.getID().equals(REQUEST_CANCEL))
         {
-            if (this.prevWindow instanceof RequestWindowCitizen)
+            if (this.prevWindow instanceof final RequestWindowCitizen requestWindow)
             {
-                ((RequestWindowCitizen) this.prevWindow).cancel(request);
+                requestWindow.cancel(request);
             }
             this.window.close();
         }

@@ -76,14 +76,14 @@ public class Pickup extends AbstractDeliverymanRequestable
     @Override
     public boolean equals(final Object o)
     {
+        if (this == o)
+        {
+            return true;
+        }
         // Note that the super class will compare the priority.
         if (!super.equals(o))
         {
             return false;
-        }
-        if (this == o)
-        {
-            return true;
         }
         return o instanceof Pickup;
     }
