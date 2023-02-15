@@ -20,7 +20,6 @@ public class ItemBuildGoggles extends ArmorItem
     /**
      * Constructor
      *
-     * @param name            the name.
      * @param properties      the item properties.
      */
     public ItemBuildGoggles(final Item.Properties properties)

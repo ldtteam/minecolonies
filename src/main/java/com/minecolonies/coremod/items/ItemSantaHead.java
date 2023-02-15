@@ -19,7 +19,6 @@ public class ItemSantaHead extends ArmorItem
     /**
      * Constructor method for the Chief Sword Item
      *
-     * @param name            the name.
      * @param materialIn      the material.
      * @param equipmentSlotIn the equipment slot.
      * @param properties      the item properties.

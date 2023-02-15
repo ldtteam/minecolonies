@@ -40,7 +40,6 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
     /**
      * Sets the name, creative tab, and registers the item.
      *
-     * @param name       The name of this item
      * @param properties the properties.
      */
     public AbstractItemScroll(final Properties properties)

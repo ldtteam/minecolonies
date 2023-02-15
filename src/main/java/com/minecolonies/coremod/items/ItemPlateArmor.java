@@ -22,8 +22,6 @@ public class ItemPlateArmor extends ArmorItem
      * @param properties      the item properties.
      * @param equipmentSlotIn the equipment slot of it.
      * @param materialIn      the material of the armour.
-     * @param name            the name.
-     * @param tab             the item group tab.
      */
     public ItemPlateArmor(
       @NotNull final ArmorMaterial materialIn,

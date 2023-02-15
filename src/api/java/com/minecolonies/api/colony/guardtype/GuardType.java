@@ -35,11 +35,8 @@ public class GuardType
      *
      * @param jobEntry             the job entry..
      * @param jobTranslationKey    job translation key.
-     * @param buttonTranslationKey button translation ky.
      * @param primarySkill         primary skill.
      * @param secondarySkill       secondary skill.
-     * @param workerSoundName      worker sound name.
-     * @param clazz                  the class of the job.
      */
     public GuardType(
       final Supplier<JobEntry> jobEntry,
