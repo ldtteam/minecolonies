@@ -48,19 +48,19 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         add(new TimeBasedHappinessModifier(HOMELESSNESS,
           4.0,
           () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5,
-          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
+          new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)));
         add(new TimeBasedHappinessModifier(UNEMPLOYMENT,
           2.0,
           () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0),
-          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
+          new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)));
         add(new TimeBasedHappinessModifier(HEALTH,
           2.0,
           () -> data.getEntity().isPresent() ? (data.getEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0,
-          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
+          new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)));
         add(new TimeBasedHappinessModifier(IDLEATJOB,
           1.0,
           () -> data.isIdleAtJob() ? 0.5 : 1.0,
-          new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
+          new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
         add(new StaticHappinessModifier(SCHOOL, 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
         add(new StaticHappinessModifier(SECURITY, 4.0, () -> getGuardFactor(data.getColony())));

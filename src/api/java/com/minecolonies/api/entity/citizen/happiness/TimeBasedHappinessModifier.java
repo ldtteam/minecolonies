@@ -3,6 +3,8 @@ package com.minecolonies.api.entity.citizen.happiness;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.nbt.CompoundTag;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAY;
@@ -15,7 +17,7 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
     /**
      * The time based factors.
      */
-    private final Tuple<Integer, Double>[] timeBasedFactor;
+    private final List<Tuple<Integer, Double>> timeBasedFactor;
 
     /**
      * The number of passed days.
@@ -30,10 +32,11 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
      * @param supplier        the supplier to get the factor.
      * @param timeBasedFactor tuples about the boost/buff factor over time.
      */
-    public TimeBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final Tuple<Integer, Double>[] timeBasedFactor)
+    @SafeVarargs
+    public TimeBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final Tuple<Integer, Double>... timeBasedFactor)
     {
         super(id, weight, supplier);
-        this.timeBasedFactor = timeBasedFactor;
+        this.timeBasedFactor = Arrays.asList(timeBasedFactor);
     }
 
     @Override
