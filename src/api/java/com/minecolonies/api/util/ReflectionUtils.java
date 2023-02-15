@@ -58,4 +58,14 @@ public final class ReflectionUtils
         levelField.setAccessible(true);
         levelField.set(control, Integer.MAX_VALUE);
     }
+
+    /**
+     * Typing helper for getting correctly typed class.
+     * @see Class#forName(String)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> genericClassForName(final String className) throws Exception
+    {
+        return (Class<T>) Class.forName(className);
+    }
 }

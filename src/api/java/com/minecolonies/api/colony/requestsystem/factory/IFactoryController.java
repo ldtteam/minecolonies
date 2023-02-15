@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.util.ReflectionUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IFactoryController
 {
-
     /**
      * Method used to get a factory for a given input class name.
      *
@@ -26,7 +26,7 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            return getFactoryForInput((TypeToken<? extends Input>) TypeToken.of(Class.forName(className)));
+            return getFactoryForInput(TypeToken.of(ReflectionUtils.genericClassForName(className)));
         }
         catch (final IllegalArgumentException ex)
         {
@@ -75,7 +75,7 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            return getFactoryForOutput((TypeToken<? extends Output>) TypeToken.of(Class.forName(className)));
+            return getFactoryForOutput(TypeToken.of(ReflectionUtils.genericClassForName(className)));
         }
         catch (final IllegalArgumentException ex)
         {
