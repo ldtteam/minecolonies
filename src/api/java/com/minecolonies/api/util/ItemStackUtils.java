@@ -223,7 +223,7 @@ public final class ItemStackUtils
             }
 
             /*
-            todo: deactivated until forge fixes this problem.
+            TODO: deactivated until forge fixes this problem.
             else if (!(entity instanceof MobEntity))
             {
                 request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));

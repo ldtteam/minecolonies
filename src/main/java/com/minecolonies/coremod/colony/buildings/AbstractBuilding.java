@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -1792,7 +1791,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return null;
         }
 
-        List<IToken<?>> validRequesterTokens = Lists.newArrayList();
+        List<IToken<?>> validRequesterTokens = new ArrayList<>();
         validRequesterTokens.add(this.getId());
         this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getId()));
 

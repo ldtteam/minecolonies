@@ -72,7 +72,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
                  || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), buildingView.getColony()))
             {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
             else
             {

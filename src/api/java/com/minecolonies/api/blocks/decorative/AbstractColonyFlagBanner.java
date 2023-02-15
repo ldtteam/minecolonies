@@ -74,6 +74,7 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
         BlockEntity tileentity = worldIn.getBlockEntity(pos);
         if (tileentity instanceof final TileEntityColonyFlag flag)
         {
+            // TODO: reevalute - different item for client/server?!
             if (worldIn instanceof ClientLevel)
             {
                 return flag.getItemClient();
