@@ -332,9 +332,9 @@ public final class WorkerUtil
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityCompostedDirt)
+                if (entity instanceof final TileEntityCompostedDirt compostedDirt)
                 {
-                    if (((TileEntityCompostedDirt) entity).isComposted())
+                    if (compostedDirt.isComposted())
                     {
                         return true;
                     }

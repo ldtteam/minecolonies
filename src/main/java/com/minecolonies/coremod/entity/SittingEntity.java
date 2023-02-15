@@ -134,9 +134,9 @@ public class SittingEntity extends Entity
             return;
         }
 
-        if (passenger instanceof LivingEntity)
+        if (passenger instanceof final LivingEntity entity)
         {
-            passenger.dimensions = ((LivingEntity) passenger).isBaby() ? passenger.getType().getDimensions().scale(0.5f) : passenger.getType().getDimensions();
+            passenger.dimensions = entity.isBaby() ? passenger.getType().getDimensions().scale(0.5f) : passenger.getType().getDimensions();
         }
     }
 

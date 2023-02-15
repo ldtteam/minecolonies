@@ -249,7 +249,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             {
                 boolean afterEmpty = content.isEmpty();
                 @Nullable final BlockEntity potentialNeighbor = getOtherChest();
-                if (potentialNeighbor instanceof TileEntityRack && !((TileEntityRack) potentialNeighbor).isEmpty())
+                if (potentialNeighbor instanceof final TileEntityRack rack && !rack.isEmpty())
                 {
                     afterEmpty = false;
                 }
@@ -316,9 +316,9 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
 
         final BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(AbstractBlockMinecoloniesRack.FACING)));
-        if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
+        if (tileEntity instanceof final TileEntityRack rack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
         {
-            return (AbstractTileEntityRack) tileEntity;
+            return rack;
         }
 
         return null;

@@ -894,14 +894,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               && !(colony.getWorld().getBlockState(getPosition()).getBlock() instanceof AirBlock)
               && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
         {
-            final BlockEntity te = colony.getWorld().getBlockEntity(getPosition());
-            if (te instanceof TileEntityColonyBuilding)
+            if (colony.getWorld().getBlockEntity(getPosition()) instanceof final TileEntityColonyBuilding buildingTe)
             {
-                tileEntity = (TileEntityColonyBuilding) te;
-                if (tileEntity.getBuilding() == null)
+                if (buildingTe.getBuilding() == null)
                 {
-                    tileEntity.setColony(colony);
-                    tileEntity.setBuilding(this);
+                    buildingTe.setColony(colony);
+                    buildingTe.setBuilding(this);
                 }
             }
             else
@@ -1071,26 +1069,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final Collection<IRequestResolver<?>> resolvers = getResolvers();
         for (final IRequestResolver<?> resolver : resolvers)
         {
-            final IStandardRequestManager requestManager = (IStandardRequestManager) colony.getRequestManager();
-            final List<IRequest<? extends IDeliverable>> deliverableRequests =
-              requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
+            ((IStandardRequestManager) colony.getRequestManager()).getRequestHandler().getRequestsMadeByRequester(resolver)
                 .stream()
                 .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
-                .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
-                .collect(Collectors.toList());
-            for (IRequest<? extends IDeliverable> request : deliverableRequests)
-            {
-                for (ItemStack item : request.getDeliveries())
-                {
-                    final ItemStorage output = new ItemStorage(item);
+                .flatMap(request -> request.getDeliveries().stream())
+                .map(ItemStorage::new)
+                .forEach(output -> {
                     int amount = output.getAmount();
                     if (requiredItems.containsKey(output))
                     {
                         amount += requiredItems.get(output).getA();
                     }
                     requiredItems.put(output, new Tuple<>(amount, false));
-                }
-            }
+                });
         }
         toKeep.putAll(requiredItems.entrySet().stream()
           .collect(Collectors.toMap(key -> (stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, key.getKey().getItemStack())), Map.Entry::getValue)));
@@ -1758,18 +1749,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
                 if (!crafterJob.getAssignedTasks().isEmpty())
                 {
-                    final List<IToken<?>> assignedTasks = crafterJob.getAssignedTasks();
-                    final IRequest<? extends IDeliverable> deliverableChildRequest = assignedTasks
+                    final IRequest<?> deliverableChildRequest = crafterJob.getAssignedTasks()
                       .stream()
+                      .flatMap(token -> colony.getRequestManager().getRequestForToken(token).getChildren().stream())
                       .map(colony.getRequestManager()::getRequestForToken)
-                      .map(IRequest::getChildren)
-                      .flatMap(Collection::stream)
-                      .map(colony.getRequestManager()::getRequestForToken)
-                      .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
-                      .filter(iRequest -> ((IRequest<? extends IDeliverable>) iRequest).getRequest()
-                        .matches(stack))
+                      .filter(iRequest -> iRequest.getRequest() instanceof final IDeliverable delivery && delivery.matches(stack))
                       .findFirst()
-                      .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
                       .orElse(null);
 
                     if (deliverableChildRequest != null)

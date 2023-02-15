@@ -357,9 +357,9 @@ public interface IColonyTagCapability
           @NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
           @Nullable final Direction side, @NotNull final Tag nbt)
         {
-            if (nbt instanceof CompoundTag && ((CompoundTag) nbt).contains(TAG_ID))
+            if (nbt instanceof final CompoundTag tag && tag.contains(TAG_ID))
             {
-                instance.readFromNBT((CompoundTag) nbt);
+                instance.readFromNBT(tag);
             }
         }
 

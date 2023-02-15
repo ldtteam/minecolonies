@@ -857,11 +857,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         int storageXOffset = ICON_WIDTH;
 
-        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        for (final IResearchRequirement req : research.getResearchRequirement())
         {
-            if (requirement instanceof AlternateBuildingResearchRequirement)
+            if (req instanceof final AlternateBuildingResearchRequirement requirement)
             {
-                for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
+                for (Map.Entry<String, Integer> building : requirement.getBuildings().entrySet())
                 {
                     final Item item;
                     if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
@@ -907,23 +907,23 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             storageXOffset += ICON_X_OFFSET;
         }
 
-        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        for (final IResearchRequirement req : research.getResearchRequirement())
         {
-            if (requirement instanceof BuildingResearchRequirement)
+            if (req instanceof final BuildingResearchRequirement requirement)
             {
                 final Item item;
                 if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                  new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                  new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())))
                 {
                     item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                      new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+                      new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())).getBuildingBlock().asItem();
                 }
                 else
                 {
                     item = Items.AIR.asItem();
                 }
                 final ItemStack stack = new ItemStack(item);
-                stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+                stack.setCount(requirement.getBuildingLevel());
                 final ItemIcon icon = new ItemIcon();
                 icon.setItem(stack);
                 icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);

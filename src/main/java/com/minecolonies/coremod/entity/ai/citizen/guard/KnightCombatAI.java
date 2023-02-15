@@ -171,12 +171,12 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         target.hurt(source, (float) damageToBeDealt);
         target.setLastHurtByMob(user);
 
-        if (target instanceof Mob && user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
+        if (target instanceof final Mob mob && user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
         {
-            ((Mob) target).setTarget(user);
-            if (target instanceof IThreatTableEntity)
+            mob.setTarget(user);
+            if (target instanceof final IThreatTableEntity entity)
             {
-                ((IThreatTableEntity) target).getThreatTable().addThreat(user, 5);
+                entity.getThreatTable().addThreat(user, 5);
             }
         }
 
@@ -221,9 +221,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
             double d0 = (double) (-Mth.sin(user.getYRot() * ((float) Math.PI / 180)));
             double d1 = (double) Mth.cos(user.getYRot() * ((float) Math.PI / 180));
-            if (user.level instanceof ServerLevel)
+            if (user.level instanceof final ServerLevel level)
             {
-                ((ServerLevel) user.level).sendParticles(ParticleTypes.SWEEP_ATTACK,
+                level.sendParticles(ParticleTypes.SWEEP_ATTACK,
                   user.getX() + d0,
                   user.getY(0.5D),
                   user.getZ() + d1,
@@ -251,9 +251,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
         {
-            if (heldItem.getItem() instanceof SwordItem)
+            if (heldItem.getItem() instanceof final SwordItem sword)
             {
-                addDmg += ((SwordItem) heldItem.getItem()).getDamage() + BASE_PHYSICAL_DAMAGE;
+                addDmg += sword.getDamage() + BASE_PHYSICAL_DAMAGE;
             }
             else
             {
@@ -321,10 +321,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected boolean skipSearch(final LivingEntity entity)
     {
         // Found a sleeping guard nearby
-        if (entity instanceof EntityCitizen)
+        if (entity instanceof final EntityCitizen citizen)
         {
-            final EntityCitizen citizen = (EntityCitizen) entity;
-            if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
+            if (citizen.getCitizenJobHandler().getColonyJob() instanceof final AbstractJobGuard<?> job && job.isAsleep()
                   && user.getSensing().hasLineOfSight(citizen))
             {
                 parentAI.setWakeCitizen(citizen);

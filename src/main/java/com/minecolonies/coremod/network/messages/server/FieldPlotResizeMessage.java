@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.server;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
@@ -67,10 +66,9 @@ public class FieldPlotResizeMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        final BlockEntity te = ctxIn.getSender().getCommandSenderWorld().getBlockEntity(this.pos);
-        if (te instanceof AbstractScarecrowTileEntity)
+        if (ctxIn.getSender().getCommandSenderWorld().getBlockEntity(this.pos) instanceof final AbstractScarecrowTileEntity scarecrow)
         {
-            ((AbstractScarecrowTileEntity) te).setRadius(this.direction, this.size);
+            scarecrow.setRadius(this.direction, this.size);
         }
     }
 }

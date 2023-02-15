@@ -229,12 +229,10 @@ public class Food implements IDeliverable
         {
             return true;
         }
-        if (!(o instanceof Food))
+        if (!(o instanceof final Food food))
         {
             return false;
         }
-
-        final Food food = (Food) o;
 
         if (getCount() != food.getCount())
         {

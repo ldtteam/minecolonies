@@ -5,7 +5,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -518,9 +517,9 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof LivingEntity && !(damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob))
+        if (damageSource.getEntity() instanceof final LivingEntity entity && !(damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob))
         {
-            threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
+            threatTable.addThreat(entity, (int) damage);
         }
 
         if (damageSource.getDirectEntity() == null)
@@ -541,10 +540,9 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
         }
         else if (!level.isClientSide())
         {
-            final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
-            if (event instanceof IColonyCampFireRaidEvent)
+            if (colony.getEventManager().getEventByID(eventID) instanceof final IColonyCampFireRaidEvent event)
             {
-                ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
+                event.setCampFireTime(0);
             }
 
             final Entity source = damageSource.getEntity();

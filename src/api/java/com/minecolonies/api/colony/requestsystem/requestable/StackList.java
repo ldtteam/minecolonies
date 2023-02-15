@@ -362,12 +362,10 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         {
             return true;
         }
-        if (!(o instanceof StackList))
+        if (!(o instanceof final StackList stack1))
         {
             return false;
         }
-
-        final StackList stack1 = (StackList) o;
 
         if (matchMeta != stack1.matchMeta)
         {

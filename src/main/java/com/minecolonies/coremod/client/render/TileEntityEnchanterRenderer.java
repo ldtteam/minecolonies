@@ -54,9 +54,8 @@ public class TileEntityEnchanterRenderer implements BlockEntityRenderer<TileEnti
       final int lightA,
       final int lightB)
     {
-        if (ent instanceof TileEntityEnchanter)
+        if (ent instanceof final TileEntityEnchanter entity)
         {
-            final TileEntityEnchanter entity = (TileEntityEnchanter) ent;
             matrixStack.pushPose();
             matrixStack.translate(0.5D, 0.75D, 0.5D);
             float tick = (float) entity.tickCount + partialTicks;

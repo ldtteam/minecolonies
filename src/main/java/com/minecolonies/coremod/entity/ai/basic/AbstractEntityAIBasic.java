@@ -773,7 +773,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         for (final BlockPos pos : building.getContainers())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
+            if (entity instanceof final TileEntityRack rack && rack.hasItemStack(is, 1, false))
             {
                 entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                       .ifPresent((handler) ->  InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler, (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack), getInventory()));
@@ -953,7 +953,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private boolean hasOpenToolRequest(final IToolType key)
     {
         return building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-          iRequest -> iRequest.getRequest() instanceof Tool && ((Tool) iRequest.getRequest()).getToolClass() == key);
+          iRequest -> iRequest.getRequest() instanceof final Tool tool && tool.getToolClass() == key);
     }
 
     /**
@@ -993,14 +993,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             for (final BlockPos pos : building.getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof final TileEntityRack rack)
                 {
                     if (ToolType.NONE.equals(toolType))
                     {
                         return false;
                     }
 
-                    if (((TileEntityRack) entity).hasItemStack(toolPredicate))
+                    if (rack.hasItemStack(toolPredicate))
                     {
                         if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), toolPredicate, worker.getInventoryCitizen()))
                         {

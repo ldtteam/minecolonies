@@ -146,7 +146,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityDecorationController && ((TileEntityDecorationController) tileEntity).getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(LEISURE))
+        if (tileEntity instanceof final TileEntityDecorationController deco && deco.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(LEISURE))
         {
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)

@@ -339,12 +339,10 @@ public class Tool implements IDeliverable
         {
             return true;
         }
-        if (!(o instanceof Tool))
+        if (!(o instanceof final Tool tool))
         {
             return false;
         }
-
-        final Tool tool = (Tool) o;
 
         if (!getToolClass().equals(tool.getToolClass()))
         {

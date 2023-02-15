@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -103,23 +102,21 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) throws RuntimeException
     {
-        final IColony colony = manager.getColony();
-        if (colony instanceof Colony)
+        if (manager.getColony() instanceof Colony)
         {
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().creativeResolve.get() &&
-                  request.getRequest() instanceof IDeliverable &&
-                  request.getRequester() instanceof BuildingBasedRequester &&
-                  ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).isPresent() &&
-                  ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get() instanceof AbstractBuilding)
+                  request.getRequest() instanceof final IDeliverable delivery &&
+                  request.getRequester() instanceof final BuildingBasedRequester requester &&
+                  requester.getBuilding(manager, request.getId()).isPresent() &&
+                  requester.getBuilding(manager, request.getId()).get() instanceof final AbstractBuilding building)
             {
-                final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get();
                 final Optional<ICitizenData> citizenDataOptional = building.getCitizenForRequest(request.getId());
 
                 final List<ItemStack> resolvablestacks = request.getDisplayStacks();
                 if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
                 {
                     final ItemStack resolveStack = resolvablestacks.get(0);
-                    resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
+                    resolveStack.setCount(Math.min(delivery.getCount(), resolveStack.getMaxStackSize()));
                     final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
                       citizenDataOptional.get().getInventory(),
                       resolveStack);

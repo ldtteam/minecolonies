@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -213,7 +212,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !((BlockHutTownHall)event.getState().getBlock()).getValidBreak() && !event.getPlayer().isCreative())
+            if (event.getState().getBlock() instanceof final BlockHutTownHall townhall && !townhall.getValidBreak() && !event.getPlayer().isCreative())
             {
                 cancelEvent(event, event.getPlayer(), colony, Action.BREAK_HUTS, event.getPos());
                 return;
@@ -509,13 +508,13 @@ public class ColonyPermissionEventHandler
     public void on(final FillBucketEvent event)
     {
         @Nullable BlockPos targetBlockPos = null;
-        if (event.getTarget() instanceof BlockHitResult)
+        if (event.getTarget() instanceof final BlockHitResult blockHit)
         {
-            targetBlockPos = ((BlockHitResult) event.getTarget()).getBlockPos();
+            targetBlockPos = blockHit.getBlockPos();
         }
-        else if (event.getTarget() instanceof EntityHitResult)
+        else if (event.getTarget() instanceof final EntityHitResult entityHit)
         {
-            targetBlockPos = new BlockPos(((EntityHitResult) event.getTarget()).getEntity().position());
+            targetBlockPos = new BlockPos(entityHit.getEntity().position());
         }
         checkEventCancelation(Action.FILL_BUCKET, event.getEntity(), event.getEntity().getCommandSenderWorld(), event, targetBlockPos);
     }
@@ -544,12 +543,12 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final LivingHurtEvent event)
     {
-        if (event.getEntity() instanceof ServerPlayer
+        if (event.getEntity() instanceof final ServerPlayer player
               && event.getSource() instanceof EntityDamageSource
-              && event.getSource().getEntity() instanceof EntityCitizen
-              && ((EntityCitizen) event.getSource().getEntity()).getCitizenColonyHandler().getColonyId() == colony.getID()
+              && event.getSource().getEntity() instanceof final EntityCitizen citizen
+              && citizen.getCitizenColonyHandler().getColonyId() == colony.getID()
               && colony.getRaiderManager().isRaided()
-              && !colony.getPermissions().hasPermission((Player) event.getEntity(), Action.GUARDS_ATTACK))
+              && !colony.getPermissions().hasPermission(player, Action.GUARDS_ATTACK))
         {
             event.setCanceled(true);
         }
@@ -576,9 +575,8 @@ public class ColonyPermissionEventHandler
               && colony.isCoordInColony(player.getCommandSenderWorld(), new BlockPos(player.position())))
         {
             final Permissions perms = colony.getPermissions();
-            if (event.getTarget() instanceof EntityCitizen)
+            if (event.getTarget() instanceof final EntityCitizen citizen)
             {
-                final AbstractEntityCitizen citizen = (AbstractEntityCitizen) event.getTarget();
                 if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntity(), Action.GUARDS_ATTACK))
                 {
                     return;

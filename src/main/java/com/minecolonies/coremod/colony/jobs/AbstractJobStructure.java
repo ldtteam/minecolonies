@@ -4,7 +4,6 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
@@ -145,7 +144,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                         {
                             final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProviderBE)
+                            if (te instanceof final IBlueprintDataProviderBE blueprintProvider)
                             {
                                 final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
                                 final String schematicPath = tagData.getString(TAG_NAME);
@@ -156,7 +155,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
 
                                 try
                                 {
-                                    ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
+                                    blueprintProvider.readSchematicDataFromNBT(compoundNBT);
                                 }
                                 catch (final Exception e)
                                 {
@@ -191,10 +190,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      */
     private void resetNeededItems()
     {
-        final IBuilding workerBuilding = this.getCitizen().getWorkBuilding();
-        if (workerBuilding instanceof AbstractBuildingStructureBuilder)
+        if (this.getCitizen().getWorkBuilding() instanceof final AbstractBuildingStructureBuilder workerBuilding)
         {
-            ((AbstractBuildingStructureBuilder) workerBuilding).resetNeededResources();
+            workerBuilding.resetNeededResources();
         }
     }
 

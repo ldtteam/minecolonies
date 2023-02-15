@@ -373,12 +373,10 @@ public class RecipeStorage implements IRecipeStorage
         {
             return true;
         }
-        if (!(o instanceof RecipeStorage))
+        if (!(o instanceof final RecipeStorage that))
         {
             return false;
         }
-
-        final RecipeStorage that = (RecipeStorage) o;
 
         if (gridSize != that.gridSize
               || cleanedInput.size() != that.cleanedInput.size()

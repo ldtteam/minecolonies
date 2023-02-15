@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
@@ -124,10 +123,9 @@ public class DirectPlaceMessage implements IMessage
             }
 
             player.getCommandSenderWorld().setBlockAndUpdate(pos, state);
-            final BlockEntity tileEntity = world.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityColonyBuilding)
+            if (world.getBlockEntity(pos) instanceof final TileEntityColonyBuilding buildingTE)
             {
-                ((TileEntityColonyBuilding) tileEntity).setStructurePack(StructurePacks.selectedPack);
+                buildingTE.setStructurePack(StructurePacks.selectedPack);
 
                 ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.findBlueprintFuture(StructurePacks.selectedPack.getName(), blueprint -> blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() == state.getBlock()), world, (blueprint -> {
                     if (blueprint == null)
@@ -136,7 +134,7 @@ public class DirectPlaceMessage implements IMessage
                     }
                     String fullPath = blueprint.getFilePath().toString();
                     fullPath = fullPath.replace(StructurePacks.selectedPack.getPath().toString() + "/", "");
-                    ((TileEntityColonyBuilding) tileEntity).setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
+                    buildingTE.setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
                     state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
                     if (compound != null && compound.contains(TAG_OTHER_LEVEL))

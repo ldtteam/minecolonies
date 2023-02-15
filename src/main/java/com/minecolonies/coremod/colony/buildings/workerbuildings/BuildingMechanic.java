@@ -91,7 +91,7 @@ public class BuildingMechanic extends AbstractBuilding
 
             final Item item = recipe.getPrimaryOutput().getItem();
             return item instanceof MinecartItem
-                     || (item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof HopperBlock);
+                     || (item instanceof final BlockItem blockItem && blockItem.getBlock() instanceof HopperBlock);
         }
 
         @Override

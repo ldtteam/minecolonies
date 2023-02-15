@@ -109,10 +109,10 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule
     void onAssignment(final ICitizenData citizen)
     {
         super.onAssignment(citizen);
-        if (building instanceof AbstractBuildingGuards)
+        if (building instanceof final AbstractBuildingGuards buildingGuards)
         {
             // Start timeout to not be stuck with an old patrol target
-            ((AbstractBuildingGuards) building).setPatrolTimer(5);
+            buildingGuards.setPatrolTimer(5);
         }
     }
 }

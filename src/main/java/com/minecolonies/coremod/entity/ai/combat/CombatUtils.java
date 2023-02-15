@@ -99,10 +99,9 @@ public class CombatUtils
         {
             for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
             {
-                if (entry.getValue() instanceof AbstractBuildingGuards &&
+                if (entry.getValue() instanceof final AbstractBuildingGuards building &&
                       user.blockPosition().distSqr(entry.getKey()) < callRange)
                 {
-                    final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
                     building.setTempNextPatrolPoint(target.blockPosition());
                 }
             }

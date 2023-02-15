@@ -111,9 +111,9 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
 
             final BlockEntity entity = world.getBlockEntity(currentGrave);
-            if (entity instanceof TileEntityGrave)
+            if (entity instanceof final TileEntityGrave grave)
             {
-                building.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
+                building.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData((GraveData) grave.getGraveData());
                 return EMPTY_GRAVE;
             }
             building.ClearCurrentGrave();
@@ -173,10 +173,9 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return getState();
         }
 
-        final BlockEntity entity = world.getBlockEntity(gravePos);
-        if (entity instanceof TileEntityGrave)
+        if (world.getBlockEntity(gravePos) instanceof final TileEntityGrave graveTe)
         {
-            if (((TileEntityGrave) entity).isEmpty())
+            if (graveTe.isEmpty())
             {
                 return TRY_RESURRECT;
             }
@@ -195,7 +194,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             effortCounter = 0;
 
             //at position - try to take all item
-            if (InventoryUtils.transferAllItemHandler(((TileEntityGrave) entity).getInventory(), worker.getInventoryCitizen()))
+            if (InventoryUtils.transferAllItemHandler(graveTe.getInventory(), worker.getInventoryCitizen()))
             {
                 return TRY_RESURRECT;
             }

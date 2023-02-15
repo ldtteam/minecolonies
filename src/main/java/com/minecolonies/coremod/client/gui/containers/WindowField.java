@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.*;
@@ -126,9 +125,9 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
 
         for (Renderable widget : this.renderables)
         {
-            if (widget instanceof DirectionalButton)
+            if (widget instanceof final DirectionalButton button)
             {
-                if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
+                if (button.isMouseOver(mouseX, mouseY))
                 {
                     // Don't render while they are dragging a stack around
                     if (!menu.getCarried().isEmpty())
@@ -136,8 +135,8 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                         return;
                     }
                     List<FormattedText> lines = Lists.newArrayList(
-                      Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + ((DirectionalButton) widget).direction.getSerializedName()),
-                      Component.translatable(((DirectionalButton) widget).getDirectionalTranslationKey())
+                      Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + button.direction.getSerializedName()),
+                      Component.translatable(button.getDirectionalTranslationKey())
                         .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
                     );
 

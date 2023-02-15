@@ -53,10 +53,8 @@ public class ItemPharaoScepter extends BowItem
     @Override
     public void releaseUsing(@NotNull final ItemStack stack, @NotNull final Level worldIn, LivingEntity entityLiving, int timeLeft)
     {
-        if (entityLiving instanceof Player)
+        if (entityLiving instanceof final Player playerentity)
         {
-            Player playerentity = (Player) entityLiving;
-
             int useDuration = this.getUseDuration(stack) - timeLeft;
             useDuration = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
             if (useDuration < 0)

@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.StringUtils;
@@ -101,8 +100,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), grave))
             {
-                final BlockEntity tileEntity = colony.getWorld().getBlockEntity(grave);
-                if (tileEntity instanceof TileEntityGrave)
+                if (colony.getWorld().getBlockEntity(grave) instanceof TileEntityGrave)
                 {
                     cleanList.add(grave);
                 }
@@ -175,8 +173,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
             }
             colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(), ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
 
-            BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
-            if (tileEntity instanceof TileEntityNamedGrave)
+            if (colony.getWorld().getBlockEntity(positionAndDirection.getA()) instanceof final TileEntityNamedGrave grave)
             {
                 final String firstName = StringUtils.split(lastGraveData.getCitizenName())[0];
                 final String lastName = lastGraveData.getCitizenName().replaceFirst(firstName,"");
@@ -188,7 +185,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
                 {
                     lines.add(lastGraveData.getCitizenJobName());
                 }
-                ((TileEntityNamedGrave) tileEntity).setTextLines(lines);
+                grave.setTextLines(lines);
             }
 
             restingCitizen.add(lastGraveData.getCitizenName());

@@ -19,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -84,10 +83,9 @@ public class BuildingFarmer extends AbstractBuilding
         {
             for (final BlockPos field : module.getFarmerFields())
             {
-                final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
-                if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
+                if (getColony().getWorld().getBlockEntity(field) instanceof final ScarecrowTileEntity scarecrow && !ItemStackUtils.isEmpty(scarecrow.getSeed()))
                 {
-                    final ItemStack seedStack = ((ScarecrowTileEntity) scareCrow).getSeed();
+                    final ItemStack seedStack = scarecrow.getSeed();
                     toKeep.put(seedStack::sameItem, new Tuple<>(64, true));
                 }
             }
@@ -123,10 +121,9 @@ public class BuildingFarmer extends AbstractBuilding
         {
             for (final BlockPos field : module.getFarmerFields())
             {
-                final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
-                if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
+                if (getColony().getWorld().getBlockEntity(field) instanceof final ScarecrowTileEntity scareCrow && !ItemStackUtils.isEmpty(scareCrow.getSeed()))
                 {
-                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(((ScarecrowTileEntity) scareCrow).getSeed(), stack))
+                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(scareCrow.getSeed(), stack))
                     {
                         return false;
                     }

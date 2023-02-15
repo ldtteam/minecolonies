@@ -240,7 +240,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected boolean isAttackableTarget(final LivingEntity entity)
     {
         return (AbstractEntityAIGuard.isAttackableTarget(user, entity)
-                  || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null )
+                  || (entity instanceof final IThreatTableEntity threatTable && threatTable.getThreatTable().getTarget() != null )
                   || (entity instanceof Player && entity.getLastHurtByMobTimestamp() != 0 && entity.tickCount > entity.getLastHurtByMobTimestamp() && entity.tickCount - entity.getLastHurtByMobTimestamp() < 20 * 30))
                  && !wasAffectedByDruid(entity);
     }
@@ -311,10 +311,9 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected boolean skipSearch(final LivingEntity entity)
     {
         // Found a sleeping guard nearby
-        if (entity instanceof EntityCitizen && user.getRandom().nextInt(10) < 1)
+        if (entity instanceof final EntityCitizen citizen && user.getRandom().nextInt(10) < 1)
         {
-            final EntityCitizen citizen = (EntityCitizen) entity;
-            if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
+            if (citizen.getCitizenJobHandler().getColonyJob() instanceof final AbstractJobGuard<?> job && job.isAsleep()
                   && user.getSensing().hasLineOfSight(citizen))
             {
                 parentAI.setWakeCitizen(citizen);

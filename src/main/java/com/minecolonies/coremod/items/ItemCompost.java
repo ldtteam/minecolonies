@@ -53,9 +53,8 @@ public class ItemCompost extends AbstractItemMinecolonies
         }
         else
         {
-            if (BlockState.getBlock() instanceof BonemealableBlock)
+            if (BlockState.getBlock() instanceof final BonemealableBlock igrowable)
             {
-                final BonemealableBlock igrowable = (BonemealableBlock) BlockState.getBlock();
                 if (igrowable.isValidBonemealTarget(worldIn, target, BlockState, worldIn.isClientSide))
                 {
                     if (!worldIn.isClientSide)

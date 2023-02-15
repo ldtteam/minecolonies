@@ -4,7 +4,6 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.common.ForgeHooks;
@@ -26,8 +25,7 @@ public class CommandHelp implements IMCCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
+        if (!(context.getSource().getEntity() instanceof Player))
         {
             return 0;
         }

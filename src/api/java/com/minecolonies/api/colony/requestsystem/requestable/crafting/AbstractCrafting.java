@@ -107,11 +107,10 @@ public abstract class AbstractCrafting implements IRequestable
         {
             return true;
         }
-        if (!(o instanceof AbstractCrafting))
+        if (!(o instanceof final AbstractCrafting that))
         {
             return false;
         }
-        final AbstractCrafting that = (AbstractCrafting) o;
         return getCount() == that.getCount() && getMinCount() == that.getMinCount() && theStack.equals(that.theStack);
     }
 

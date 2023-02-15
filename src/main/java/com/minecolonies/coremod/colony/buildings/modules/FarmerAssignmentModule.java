@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -35,10 +34,9 @@ public class FarmerAssignmentModule extends CraftingWorkerBuildingModule
             {
                 for (@NotNull final BlockPos field : module.getFarmerFields())
                 {
-                    final BlockEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
-                    if (scareCrow instanceof ScarecrowTileEntity)
+                    if (building.getColony().getWorld().getBlockEntity(field) instanceof final ScarecrowTileEntity scarecrow)
                     {
-                        ((ScarecrowTileEntity) scareCrow).setOwner(citizen.getId());
+                        scarecrow.setOwner(citizen.getId());
                     }
                 }
             }

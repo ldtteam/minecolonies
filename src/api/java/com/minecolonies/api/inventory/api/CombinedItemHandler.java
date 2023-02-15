@@ -81,9 +81,8 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         final ListTag indexList = new ListTag();
         for (final IItemHandlerModifiable handlerModifiable : handlers)
         {
-            if (handlerModifiable instanceof INBTSerializable)
+            if (handlerModifiable instanceof final INBTSerializable<?> serializable)
             {
-                final INBTSerializable<?> serializable = (INBTSerializable<?>) handlerModifiable;
                 handlerList.add(serializable.serializeNBT());
                 indexList.add(IntTag.valueOf(index));
             }

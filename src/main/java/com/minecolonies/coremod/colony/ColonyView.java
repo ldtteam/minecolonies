@@ -1073,9 +1073,9 @@ public final class ColonyView implements IColonyView
             {
                 buildings.put(building.getID(), building);
 
-                if (building instanceof BuildingTownHall.View)
+                if (building instanceof final BuildingTownHall.View townhall)
                 {
-                    townHall = (ITownHallView) building;
+                    townHall = townhall;
                 }
             }
         }

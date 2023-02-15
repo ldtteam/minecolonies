@@ -67,9 +67,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             if (getColony().getWorld() != null)
             {
                 final BlockEntity entity = getColony().getWorld().getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof final TileEntityRack rack)
                 {
-                    ((AbstractTileEntityRack) entity).setInWarehouse(true);
+                    rack.setInWarehouse(true);
                 }
             }
         }
@@ -98,8 +98,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public AbstractTileEntityWareHouse getTileEntity()
     {
-        final AbstractTileEntityColonyBuilding entity = super.getTileEntity();
-        return !(entity instanceof TileEntityWareHouse) ? null : (AbstractTileEntityWareHouse) entity;
+        return super.getTileEntity() instanceof final TileEntityWareHouse warehouse ? warehouse : null;
     }
 
     @Override
@@ -119,13 +118,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (block instanceof BlockMinecoloniesRack)
         {
-            final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack)
+            if (world.getBlockEntity(pos) instanceof final TileEntityRack rack)
             {
-                ((AbstractTileEntityRack) entity).setInWarehouse(true);
-                while (((TileEntityRack) entity).getUpgradeSize() < getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade())
+                rack.setInWarehouse(true);
+                while (rack.getUpgradeSize() < getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade())
                 {
-                    ((TileEntityRack) entity).upgradeRackSize();
+                    rack.upgradeRackSize();
                 }
             }
         }
@@ -166,9 +164,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             for (final BlockPos pos : getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
+                if (entity instanceof final TileEntityRack rack && !(entity instanceof TileEntityColonyBuilding))
                 {
-                    ((AbstractTileEntityRack) entity).upgradeRackSize();
+                    rack.upgradeRackSize();
                 }
             }
             getFirstModuleOccurance(WarehouseModule.class).incrementStorageUpgrade();

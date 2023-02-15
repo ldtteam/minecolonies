@@ -73,20 +73,19 @@ public class CommandRTP implements IMCCommand
     @Override
     public boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
-        final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
+        if (!(context.getSource().getEntity() instanceof final Player sender))
         {
             return false;
         }
 
         if (!MineColonies.getConfig().getServer().canPlayerUseRTPCommand.get())
         {
-            MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_NOT_ALLOWED).sendTo((Player) sender);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_NOT_ALLOWED).sendTo(sender);
             return false;
         }
         else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getLevel().dimension() != Level.OVERWORLD)
         {
-            MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_WRONG_DIMENSION).sendTo((Player) sender);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_WRONG_DIMENSION).sendTo(sender);
             return false;
         }
         return true;

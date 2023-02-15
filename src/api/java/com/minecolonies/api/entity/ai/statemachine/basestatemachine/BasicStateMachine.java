@@ -79,9 +79,9 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
         {
             transitionMap.computeIfAbsent(transition.getState(), k -> new ArrayList<>()).add(transition);
         }
-        if (transition instanceof IStateMachineEvent)
+        if (transition instanceof final IStateMachineEvent<?> event)
         {
-            eventTransitionMap.computeIfAbsent(((IStateMachineEvent<?>) transition).getEventType(), k -> new ArrayList<>()).add(transition);
+            eventTransitionMap.computeIfAbsent(event.getEventType(), k -> new ArrayList<>()).add(transition);
         }
     }
 
@@ -90,9 +90,9 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      */
     public void removeTransition(final T transition)
     {
-        if (transition instanceof IStateMachineEvent)
+        if (transition instanceof final IStateMachineEvent<?> event)
         {
-            eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()).removeIf(t -> t == transition);
+            eventTransitionMap.get(event.getEventType()).removeIf(t -> t == transition);
         }
         else
         {
@@ -171,7 +171,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
 
         if (newState != null)
         {
-            if (transition instanceof IStateMachineOneTimeEvent && ((IStateMachineOneTimeEvent<?>) transition).shouldRemove())
+            if (transition instanceof final IStateMachineOneTimeEvent<?> event && event.shouldRemove())
             {
                 removeTransition(transition);
             }

@@ -113,9 +113,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityBarrel)
+                if (entity instanceof final TileEntityBarrel barrel)
                 {
-                    final TileEntityBarrel barrel = (TileEntityBarrel) entity;
                     for(int i = 0; i < accelerationTicks; i++)
                     {
                         if (barrel.checkIfWorking() && !barrel.isDone())
@@ -209,12 +208,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         for (final BlockPos barrel : building.getBarrels())
         {
-            final BlockEntity te = world.getBlockEntity(barrel);
-            if (te instanceof TileEntityBarrel)
+            if (world.getBlockEntity(barrel) instanceof final TileEntityBarrel te)
             {
 
                 this.currentTarget = barrel;
-                if (((TileEntityBarrel) te).isDone())
+                if (te.isDone())
                 {
                     setDelay(DECIDE_DELAY);
                     worker.getCitizenData().setVisibleStatus(COMPOST);
@@ -225,8 +223,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         for (final BlockPos barrel : building.getBarrels())
         {
-            final BlockEntity te = world.getBlockEntity(barrel);
-            if (te instanceof TileEntityBarrel && !((TileEntityBarrel) te).checkIfWorking())
+            if (world.getBlockEntity(barrel) instanceof final TileEntityBarrel te && !te.checkIfWorking())
             {
                 this.currentTarget = barrel;
                 setDelay(DECIDE_DELAY);
@@ -268,11 +265,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        if (world.getBlockEntity(currentTarget) instanceof TileEntityBarrel)
+        if (world.getBlockEntity(currentTarget) instanceof final TileEntityBarrel barrel)
         {
-
-            final TileEntityBarrel barrel = (TileEntityBarrel) world.getBlockEntity(currentTarget);
-
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
             barrel.addItem(worker.getItemInHand(InteractionHand.MAIN_HAND));
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
@@ -300,11 +294,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        if (world.getBlockEntity(currentTarget) instanceof TileEntityBarrel)
+        if (world.getBlockEntity(currentTarget) instanceof final TileEntityBarrel te)
         {
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
 
-            final TileEntityBarrel te = (TileEntityBarrel) world.getBlockEntity(currentTarget);
             final ItemStack compost = te.retrieveCompost(getLootMultiplier(worker.getRandom()));
 
             if (building.getSetting(BuildingComposter.PRODUCE_DIRT).getValue())

@@ -103,13 +103,12 @@ public class EventManager implements IEventManager
     @Override
     public void registerEntity(@NotNull final Entity entity, final int eventID)
     {
-        final IColonyEvent event = events.get(eventID);
-        if (!(event instanceof IColonyEntitySpawnEvent))
+        if (!(events.get(eventID) instanceof final IColonyEntitySpawnEvent event))
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
-        ((IColonyEntitySpawnEvent) event).registerEntity(entity);
+        event.registerEntity(entity);
     }
 
     /**
@@ -121,10 +120,9 @@ public class EventManager implements IEventManager
     @Override
     public void unregisterEntity(@NotNull final Entity entity, final int eventID)
     {
-        final IColonyEvent event = events.get(eventID);
-        if (event instanceof IColonyEntitySpawnEvent)
+        if (events.get(eventID) instanceof final IColonyEntitySpawnEvent event)
         {
-            ((IColonyEntitySpawnEvent) event).unregisterEntity(entity);
+            event.unregisterEntity(entity);
         }
     }
 
@@ -137,10 +135,9 @@ public class EventManager implements IEventManager
     @Override
     public void onEntityDeath(final LivingEntity entity, final int eventID)
     {
-        final IColonyEvent event = events.get(eventID);
-        if (event instanceof IColonyEntitySpawnEvent)
+        if (events.get(eventID) instanceof final IColonyEntitySpawnEvent event)
         {
-            ((IColonyEntitySpawnEvent) event).onEntityDeath(entity);
+            event.onEntityDeath(entity);
         }
     }
 

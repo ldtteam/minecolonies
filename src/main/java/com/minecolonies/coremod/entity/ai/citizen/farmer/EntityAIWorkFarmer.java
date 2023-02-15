@@ -272,22 +272,22 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         @Nullable final BlockPos currentField = module.getCurrentField();
         final BlockEntity entity = world.getBlockEntity(currentField);
-        if (entity instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) entity).needsWork())
+        if (entity instanceof final ScarecrowTileEntity scarecrow && scarecrow.needsWork())
         {
-            if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, pos -> this.findHarvestableSurface(pos) != null))
+            if (scarecrow.getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, pos -> this.findHarvestableSurface(pos) != null))
             {
                 return FARMER_HARVEST;
             }
-            else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.HOED)
+            else if (scarecrow.getFieldStage() == ScarecrowFieldStage.HOED)
             {
                 return canGoPlanting((ScarecrowTileEntity) entity, building);
             }
-            else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.EMPTY && checkIfShouldExecute((ScarecrowTileEntity) entity,
+            else if (scarecrow.getFieldStage() == ScarecrowFieldStage.EMPTY && checkIfShouldExecute((ScarecrowTileEntity) entity,
               pos -> this.findHoeableSurface(pos, (ScarecrowTileEntity) entity) != null))
             {
                 return FARMER_HOE;
             }
-            ((ScarecrowTileEntity) entity).nextState();
+            scarecrow.nextState();
         }
         else
         {
@@ -556,10 +556,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         worker.getCitizenData().setVisibleStatus(FARMING_ICON);
         @Nullable final BlockPos field = module.getCurrentField();
-        final BlockEntity entity = world.getBlockEntity(field);
-        if (entity instanceof ScarecrowTileEntity)
+        if (world.getBlockEntity(field) instanceof final ScarecrowTileEntity scarecrow)
         {
-            final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) entity;
             if (workingOffset != null)
             {
                 if (scarecrow.getOwnerId() != worker.getCivilianID())
@@ -759,7 +757,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return false;
         }
 
-        if (item.getItem() instanceof BlockItem && (((BlockItem) item.getItem()).getBlock() instanceof CropBlock || ((BlockItem) item.getItem()).getBlock() instanceof StemBlock))
+        if (item.getItem() instanceof final BlockItem bi && (bi.getBlock() instanceof CropBlock || bi.getBlock() instanceof StemBlock))
         {
             @NotNull final Item seed = item.getItem();
             if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))
@@ -767,7 +765,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return true;
             }
 
-            world.setBlockAndUpdate(position.above(), ((BlockItem) item.getItem()).getBlock().defaultBlockState());
+            world.setBlockAndUpdate(position.above(), bi.getBlock().defaultBlockState());
             worker.decreaseSaturationForContinuousAction();
             getInventory().extractItem(slot, 1, false);
         }
@@ -893,9 +891,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), drop);
         }
 
-        if (state.getBlock() instanceof CropBlock)
+        if (state.getBlock() instanceof final CropBlock crops)
         {
-            final CropBlock crops = (CropBlock) state.getBlock();
             world.setBlockAndUpdate(pos, crops.getStateForAge(0));
         }
 

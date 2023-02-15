@@ -224,9 +224,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 if (WorldUtil.isBlockLoaded(level, pos))
                 {
                     final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    if (entity instanceof AbstractTileEntityRack)
+                    if (entity instanceof final AbstractTileEntityRack rack)
                     {
-                        if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                        if (rack.hasItemStack(notEmptyPredicate))
                         {
                             return pos;
                         }
@@ -592,10 +592,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             final BlockEntity te = world.getBlockEntity(pos);
                             if (te != null)
                             {
-                                if (te instanceof AbstractTileEntityRack)
+                                if (te instanceof final AbstractTileEntityRack rack)
                                 {
-                                    handlers.add(((AbstractTileEntityRack) te).getInventory());
-                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getBlockPos());
+                                    handlers.add(rack.getInventory());
+                                    rack.setBuildingPos(this.getBlockPos());
                                 }
                                 else
                                 {

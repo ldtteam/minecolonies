@@ -143,10 +143,8 @@ public interface IColonyManagerCapability
         {
             // Notify that we did load the cap for this world
             IColonyManager.getInstance().setCapLoaded();
-            if (nbt instanceof CompoundTag)
+            if (nbt instanceof final CompoundTag compound)
             {
-                final CompoundTag compound = (CompoundTag) nbt;
-
                 if (!compound.contains(TAG_COLONIES) || !compound.contains(TAG_COLONY_MANAGER))
                 {
                     BackUpHelper.loadMissingColonies();

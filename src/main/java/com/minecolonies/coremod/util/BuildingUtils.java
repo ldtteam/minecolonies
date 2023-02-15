@@ -29,7 +29,7 @@ public final class BuildingUtils
     public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
     {
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ForgeRegistries.BLOCKS.getKey(((BlockItem) item.getItem()).getBlock())
+          item -> item.getItem() instanceof final BlockItem blockItem && blockItem.getBlock() instanceof AbstractBlockHut && ForgeRegistries.BLOCKS.getKey(blockItem.getBlock())
                   .getPath()
                   .endsWith(hut));
 

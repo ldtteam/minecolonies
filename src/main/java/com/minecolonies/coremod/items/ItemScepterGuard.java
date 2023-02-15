@@ -3,7 +3,6 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -96,11 +95,10 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
         final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
-        if (!(hut instanceof AbstractBuildingGuards))
+        if (!(hut instanceof final AbstractBuildingGuards tower))
         {
             return InteractionResult.FAIL;
         }
-        final IGuardBuilding tower = (IGuardBuilding) hut;
 
         if (BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {

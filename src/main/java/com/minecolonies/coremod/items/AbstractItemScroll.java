@@ -3,7 +3,6 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
@@ -64,12 +63,10 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
     @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level world, LivingEntity entityLiving)
     {
-        if (!(entityLiving instanceof ServerPlayer) || world.isClientSide)
+        if (!(entityLiving instanceof final ServerPlayer player) || world.isClientSide)
         {
             return itemStack;
         }
-
-        final ServerPlayer player = (ServerPlayer) entityLiving;
 
         if (!needsColony())
         {
@@ -125,12 +122,12 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
         final BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
         final CompoundTag compound = checkForCompound(scroll);
-        if (te instanceof TileEntityColonyBuilding)
+        if (te instanceof final TileEntityColonyBuilding building)
         {
-            compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) te).getColonyId());
-            compound.putString(TAG_COLONY_DIM, ((AbstractTileEntityColonyBuilding) te).getColony().getWorld().dimension().location().toString());
+            compound.putInt(TAG_COLONY_ID, building.getColonyId());
+            compound.putString(TAG_COLONY_DIM, building.getColony().getWorld().dimension().location().toString());
             BlockPosUtil.write(compound, TAG_BUILDING_POS, ctx.getClickedPos());
-            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
+            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, building.getColony().getName()).sendTo(ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;

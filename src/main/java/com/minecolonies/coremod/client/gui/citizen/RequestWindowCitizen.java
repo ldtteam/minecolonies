@@ -109,15 +109,13 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     @Override
     public void fulfill(@NotNull final IRequest<?> tRequest)
     {
-        if (!(tRequest.getRequest() instanceof IDeliverable))
+        if (!(tRequest.getRequest() instanceof final IDeliverable delivery))
         {
             return;
         }
 
-        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-
-        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-        final int amount = request.getRequest().getCount();
+        final Predicate<ItemStack> requestPredicate = stack -> delivery.matches(stack);
+        final int amount = delivery.getCount();
 
         final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
 
@@ -131,7 +129,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         @NotNull final ItemStack itemStack;
         if (isCreative)
         {
-            itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+            itemStack = tRequest.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
         }
         else
         {
@@ -169,6 +167,6 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
 
         final ItemStack copy = itemStack.copy();
         copy.setCount(isCreative ? amount : Math.min(amount, count));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, tRequest.getId(), RequestState.OVERRULED, copy));
     }
 }

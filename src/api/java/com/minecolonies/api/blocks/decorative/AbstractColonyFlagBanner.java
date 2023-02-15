@@ -53,17 +53,16 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     {
         if (worldIn.isClientSide) return;
 
-        BlockEntity te = worldIn.getBlockEntity(pos);
-        if (te instanceof TileEntityColonyFlag && ((TileEntityColonyFlag) te).colonyId == -1 )
+        if (worldIn.getBlockEntity(pos) instanceof final TileEntityColonyFlag te && te.colonyId == -1 )
         {
             IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
 
             // Allow the player to place their own beyond the colony
-            if (colony == null && placer instanceof Player)
-                colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (Player) placer);
+            if (colony == null && placer instanceof final Player player)
+                colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, player);
 
             if (colony != null)
-                ((TileEntityColonyFlag) te).colonyId = colony.getID();
+                te.colonyId = colony.getID();
         }
 
     }
@@ -73,15 +72,15 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     public ItemStack getCloneItemStack(final BlockGetter worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
     {
         BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityColonyFlag)
+        if (tileentity instanceof final TileEntityColonyFlag flag)
         {
             if (worldIn instanceof ClientLevel)
             {
-                ((TileEntityColonyFlag)tileentity).getItemClient();
+                return flag.getItemClient();
             }
             else
             {
-                ((TileEntityColonyFlag)tileentity).getItemServer();
+                return flag.getItemServer();
             }
         }
         return super.getCloneItemStack(worldIn, pos, state);

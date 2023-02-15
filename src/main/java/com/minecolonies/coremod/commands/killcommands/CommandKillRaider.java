@@ -26,9 +26,8 @@ public class CommandKillRaider implements IMCOPCommand
 
         context.getSource().getLevel().getEntities().getAll().forEach(entity ->
         {
-            if (entity instanceof AbstractEntityMinecoloniesMob)
+            if (entity instanceof final AbstractEntityMinecoloniesMob mob)
             {
-                final AbstractEntityMinecoloniesMob mob = (AbstractEntityMinecoloniesMob) entity;
                 mob.die(new DamageSource("despawn"));
                 mob.remove(Entity.RemovalReason.DISCARDED);
 

@@ -129,12 +129,11 @@ public final class ColonyManager implements IColonyManager
      */
     private void deleteColony(@Nullable final IColony iColony, final boolean canDestroy)
     {
-        if (!(iColony instanceof Colony))
+        if (!(iColony instanceof final Colony colony))
         {
             return;
         }
 
-        final Colony colony = (Colony) iColony;
         final int id = colony.getID();
         final Level world = colony.getWorld();
 

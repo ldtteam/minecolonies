@@ -86,10 +86,8 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final Player player = ctxIn.getSender();
-        if (player.containerMenu instanceof ContainerCrafting)
+        if (player.containerMenu instanceof final ContainerCrafting container)
         {
-            final ContainerCrafting container = (ContainerCrafting) player.containerMenu;
-
             if (complete)
             {
                 container.handleSlotClick(container.getSlot(1), itemStacks.getOrDefault(0, ItemStackUtils.EMPTY));
@@ -112,16 +110,12 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
 
             container.broadcastChanges();
         }
-        else if (player.containerMenu instanceof ContainerCraftingFurnace)
+        else if (player.containerMenu instanceof final ContainerCraftingFurnace container)
         {
-            final ContainerCraftingFurnace container = (ContainerCraftingFurnace) player.containerMenu;
-
             container.setFurnaceInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
         }
-        else if (player.containerMenu instanceof ContainerCraftingBrewingstand)
+        else if (player.containerMenu instanceof final ContainerCraftingBrewingstand container)
         {
-            final ContainerCraftingBrewingstand container = (ContainerCraftingBrewingstand) player.containerMenu;
-
             container.setInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
             container.setContainer(itemStacks.getOrDefault(1, ItemStack.EMPTY));
         }

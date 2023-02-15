@@ -139,12 +139,10 @@ public class Delivery extends AbstractDeliverymanRequestable
         {
             return true;
         }
-        if (!(o instanceof Delivery))
+        if (!(o instanceof final Delivery delivery))
         {
             return false;
         }
-
-        final Delivery delivery = (Delivery) o;
 
         if (!getStart().equals(delivery.getStart()))
         {

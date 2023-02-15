@@ -6,11 +6,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 
 /**
@@ -26,15 +23,14 @@ public class CommandUnloadForcedChunks implements IMCCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        final Entity sender = context.getSource().getEntity();
-        if (sender instanceof Player)
+        if (context.getSource().getEntity() instanceof final Player sender)
         {
-            final Level world = sender.level;
-            for (long chunk : ((ServerChunkCache) sender.level.getChunkSource()).chunkMap.visibleChunkMap.keySet())
+            final ServerLevel world = (ServerLevel) sender.level;
+            for (long chunk : world.getChunkSource().chunkMap.visibleChunkMap.keySet())
             {
-                ((ServerLevel) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
+                world.setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
-            MessageUtils.format(Component.literal("Successfully removed forceload flag!")).sendTo((Player) sender);
+            MessageUtils.format(Component.literal("Successfully removed forceload flag!")).sendTo(sender);
             return 1;
         }
         return 0;
@@ -43,8 +39,7 @@ public class CommandUnloadForcedChunks implements IMCCommand
     @Override
     public boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
-        final Entity sender = context.getSource().getEntity();
-        return sender instanceof Player && ((Player) sender).isCreative();
+        return context.getSource().getEntity() instanceof final Player sender && sender.isCreative();
     }
 
     /**

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -52,12 +51,12 @@ public class ItemClipboard extends AbstractItemMinecolonies
         final CompoundTag compound = checkForCompound(clipboard);
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof TileEntityColonyBuilding)
+        if (entity instanceof final TileEntityColonyBuilding building)
         {
-            compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
+            compound.putInt(TAG_COLONY, building.getColonyId());
             if (!ctx.getLevel().isClientSide)
             {
-                MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColony().getName()).sendTo(ctx.getPlayer());
+                MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, building.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)

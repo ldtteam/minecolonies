@@ -17,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,8 +103,7 @@ public class BuildingGraveyard extends AbstractBuilding
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
-                final BlockEntity tileEntity = getColony().getWorld().getBlockEntity(currentGrave);
-                if (tileEntity instanceof TileEntityGrave)
+                if (getColony().getWorld().getBlockEntity(currentGrave) instanceof TileEntityGrave)
                 {
                     return currentGrave;
                 }

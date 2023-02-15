@@ -360,9 +360,9 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
           (entity) -> !entity.isSpectator() && (entity.isPickable() || entity instanceof ItemEntity) && (entity != this.angler || this.ticksInAir >= 5));
         if (raytraceresult.getType() != HitResult.Type.MISS)
         {
-            if (raytraceresult.getType() == HitResult.Type.ENTITY)
+            if (raytraceresult instanceof final EntityHitResult entityHit)
             {
-                this.caughtEntity = ((EntityHitResult) raytraceresult).getEntity();
+                this.caughtEntity = entityHit.getEntity();
                 this.setHookedEntity();
             }
             else

@@ -51,11 +51,11 @@ public class MutableChunkPos extends ChunkPos
         {
             return true;
         }
-        else if (obj instanceof MutableChunkPos mcp)
+        else if (obj instanceof final MutableChunkPos mcp)
         {
             return this.mutableX == mcp.mutableX && this.mutableZ == mcp.mutableZ;
         }
-        else if (obj instanceof ChunkPos cp)
+        else if (obj instanceof final ChunkPos cp)
         {
             return this.mutableX == cp.x && this.mutableZ == cp.z;
         }

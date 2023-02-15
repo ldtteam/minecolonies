@@ -6,7 +6,6 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 
@@ -23,8 +22,7 @@ public class CommandWhoAmI implements IMCCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
+        if (!(context.getSource().getEntity() instanceof final Player sender))
         {
             return 0;
         }
@@ -33,7 +31,7 @@ public class CommandWhoAmI implements IMCCommand
 
         if (colony == null)
         {
-            MessageUtils.format(COMMAND_WHO_AM_I_NO_COLONY).sendTo((Player) sender);
+            MessageUtils.format(COMMAND_WHO_AM_I_NO_COLONY).sendTo(sender);
             return 0;
         }
 
@@ -41,7 +39,7 @@ public class CommandWhoAmI implements IMCCommand
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getString();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        MessageUtils.format(COMMAND_WHO_AM_I_HAS_COLONY, playerName, colonyName, colony.getID(), posString).sendTo((Player) sender);
+        MessageUtils.format(COMMAND_WHO_AM_I_HAS_COLONY, playerName, colonyName, colony.getID(), posString).sendTo(sender);
         return 1;
     }
 

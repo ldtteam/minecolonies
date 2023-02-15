@@ -56,7 +56,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
-                if (data.getJob() instanceof JobQuarrier && !hasAssignedCitizen(data) && ((JobQuarrier) data.getJob()).findQuarry() == null)
+                if (data.getJob() instanceof final JobQuarrier quarrier && !hasAssignedCitizen(data) && quarrier.findQuarry() == null)
                 {
                     assignCitizen(data);
                 }
@@ -124,9 +124,9 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     private void resetProgress(final ICitizenData citizen)
     {
         final @Nullable IBuilding building = citizen.getWorkBuilding();
-        if (building instanceof BuildingMiner)
+        if (building instanceof final BuildingMiner miner)
         {
-            ((BuildingMiner) building).setProgressPos(null, null);
+            miner.setProgressPos(null, null);
         }
     }
 

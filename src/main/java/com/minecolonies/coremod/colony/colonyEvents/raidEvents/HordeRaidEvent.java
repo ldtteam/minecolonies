@@ -461,9 +461,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         for (IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            if (event instanceof HordeRaidEvent)
+            if (event instanceof final HordeRaidEvent raidEvent)
             {
-                total += ((HordeRaidEvent) event).horde.hordeSize;
+                total += raidEvent.horde.hordeSize;
             }
         }
         raidBar.setProgress((float) horde.hordeSize / horde.initialSize);

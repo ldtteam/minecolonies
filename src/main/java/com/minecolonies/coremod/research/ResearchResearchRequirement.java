@@ -97,7 +97,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     {
         CompoundTag nbt = new CompoundTag();
         nbt.putString(TAG_ID, this.researchId.toString());
-        nbt.putString(TAG_NAME, this.researchName.getContents() instanceof TranslatableContents ? ((TranslatableContents) this.researchName.getContents()).getKey() : "");
+        nbt.putString(TAG_NAME, this.researchName.getContents() instanceof final TranslatableContents contents ? contents.getKey() : "");
         return nbt;
     }
 }

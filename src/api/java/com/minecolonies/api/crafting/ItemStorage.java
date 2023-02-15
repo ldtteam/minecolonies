@@ -236,12 +236,11 @@ public class ItemStorage
         {
             return true;
         }
-        if (!(o instanceof ItemStorage))
+        if (!(o instanceof final ItemStorage that))
         {
             return false;
         }
 
-        final ItemStorage that = (ItemStorage) o;
         return ItemStackUtils.compareItemStacksIgnoreStackSize(that.getItemStack(), this.getItemStack(), !(this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue), !(this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue));
     }
 

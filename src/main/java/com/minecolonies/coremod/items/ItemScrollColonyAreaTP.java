@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -104,9 +103,8 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     @Override
     public void onUseTick(Level worldIn, LivingEntity entity, ItemStack stack, int count)
     {
-        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof Player)
+        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof final ServerPlayer sPlayer)
         {
-            final ServerPlayer sPlayer = (ServerPlayer) entity;
             for (final Entity player : getAffectedPlayers(sPlayer))
             {
                 Network.getNetwork()

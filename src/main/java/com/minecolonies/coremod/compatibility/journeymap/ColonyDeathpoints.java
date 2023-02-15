@@ -173,9 +173,9 @@ public class ColonyDeathpoints
         if (!jmap.getApi().playerAccepts(MOD_ID, DisplayType.Waypoint)) return null;
 
         final BlockEntity blockEntity = chunk.getBlockEntity(pos);
-        if (blockEntity instanceof AbstractTileEntityGrave)
+        if (blockEntity instanceof final AbstractTileEntityGrave graveTe)
         {
-            final IGraveData grave = ((AbstractTileEntityGrave) blockEntity).getGraveData();
+            final IGraveData grave = graveTe.getGraveData();
             if (grave != null)
             {
                 final Component text = grave.getCitizenJobName() == null

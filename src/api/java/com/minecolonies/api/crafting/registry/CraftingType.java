@@ -35,9 +35,9 @@ public abstract class CraftingType
     @Override
     public boolean equals(Object obj)
     {
-        if (obj instanceof CraftingType)
+        if (obj instanceof final CraftingType that)
         {
-            return Objects.equals(registryName, ((CraftingType) obj).registryName);
+            return Objects.equals(registryName, that.registryName);
         }
         return false;
     }

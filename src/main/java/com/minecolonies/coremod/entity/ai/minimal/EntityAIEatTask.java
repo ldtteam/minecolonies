@@ -337,8 +337,7 @@ public class EntityAIEatTask extends Goal
         }
 
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
-        final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
-        if (cookBuilding instanceof BuildingCook)
+        if (colony.getBuildingManager().getBuilding(restaurantPos) instanceof final BuildingCook cookBuilding)
         {
             if (!citizen.isWorkerAtSiteWithMove(cookBuilding.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
             {
@@ -409,10 +408,9 @@ public class EntityAIEatTask extends Goal
     {
         if (restaurantPos != null)
         {
-            final IBuilding restaurant = citizen.getCitizenData().getColony().getBuildingManager().getBuilding(restaurantPos);
-            if (restaurant instanceof BuildingCook)
+            if (citizen.getCitizenData().getColony().getBuildingManager().getBuilding(restaurantPos) instanceof final BuildingCook restaurant)
             {
-                return ((BuildingCook) restaurant).getNextSittingPosition();
+                return restaurant.getNextSittingPosition();
             }
         }
 

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -66,21 +67,20 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     public BlockPos getSpecializedProxy(final BlockPos target, final double distanceToPath)
     {
         final IBuilding building = citizen.getCitizenColonyHandler().getWorkBuilding();
-        if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null && job instanceof JobMiner && building instanceof final BuildingMiner miner)
         {
-            return getMinerProxy(target, distanceToPath, (BuildingMiner) building);
+            return getMinerProxy(target, distanceToPath, miner);
         }
-        else if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        else if (job != null && job instanceof AbstractJobGuard)
         {
-            if (building instanceof AbstractBuildingGuards)
+            if (building instanceof final AbstractBuildingGuards guardbuilding)
             {
-                AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) building;
                 if (guardbuilding.getTask().equals(GuardTaskSetting.PATROL_MINE) && guardbuilding.getMinePos() != null)
                 {
-                    final IBuilding miner = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(guardbuilding.getMinePos());
-                    if (miner instanceof BuildingMiner)
+                    if (citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(guardbuilding.getMinePos()) instanceof final BuildingMiner miner)
                     {
-                        return getMinerProxy(target, distanceToPath, (BuildingMiner) miner);
+                        return getMinerProxy(target, distanceToPath, miner);
                     }
                 }
             }

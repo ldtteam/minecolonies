@@ -64,11 +64,9 @@ public class EventListener
     {
         if (!event.getLevel().isClientSide()) return;
 
-        if (event.getLevel() instanceof Level)
+        if (event.getLevel() instanceof final Level level)
         {
-            final ResourceKey<Level> dimension = ((Level) event.getLevel()).dimension();
-
-            ColonyDeathpoints.updateChunk(this.jmap, dimension, event.getChunk());
+            ColonyDeathpoints.updateChunk(this.jmap, level.dimension(), event.getChunk());
         }
     }
 

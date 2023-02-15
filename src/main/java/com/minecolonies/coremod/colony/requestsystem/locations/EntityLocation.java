@@ -126,7 +126,7 @@ public class EntityLocation implements ILocation
     {
         checkEntity();
         final Entity entityRef = entity.get();
-        return entityRef instanceof Player ? (Player) entityRef : null;
+        return entityRef instanceof final Player player ? player : null;
     }
 
     @SuppressWarnings("squid:S2972")

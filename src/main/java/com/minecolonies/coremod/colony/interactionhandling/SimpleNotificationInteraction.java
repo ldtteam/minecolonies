@@ -51,10 +51,9 @@ public class SimpleNotificationInteraction extends StandardInteraction
      */
     private void onResponse(final Component response)
     {
-        if (response.getContents() instanceof TranslatableContents)
+        if (response.getContents() instanceof final TranslatableContents contents)
         {
-            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY)
-                  || ((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
+            if (contents.getKey().equals(INTERACTION_R_OKAY) || contents.getKey().equals(INTERACTION_R_IGNORE))
             {
                 active = false;
             }

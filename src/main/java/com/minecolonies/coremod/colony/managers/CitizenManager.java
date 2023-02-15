@@ -346,9 +346,9 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void removeCivilian(@NotNull final ICivilianData citizen)
+    public void removeCivilian(@NotNull final ICivilianData civilian)
     {
-        if (!(citizen instanceof ICitizenData))
+        if (!(civilian instanceof final ICitizenData citizen))
         {
             return;
         }
@@ -360,11 +360,11 @@ public class CitizenManager implements ICitizenManager
         {
             for (final AbstractAssignedCitizenModule assignedCitizenModule : building.getModules(AbstractAssignedCitizenModule.class))
             {
-                assignedCitizenModule.removeCitizen((ICitizenData) citizen);
+                assignedCitizenModule.removeCitizen(citizen);
             }
         }
 
-        colony.getWorkManager().clearWorkForCitizen((ICitizenData) citizen);
+        colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
         for (final ServerPlayer player : colony.getPackageManager().getCloseSubscribers())

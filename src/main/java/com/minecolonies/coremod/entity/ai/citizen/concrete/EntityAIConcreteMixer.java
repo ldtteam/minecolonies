@@ -32,8 +32,8 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      */
     private static final Predicate<ItemStack> CONCRETE =
       stack -> !stack.isEmpty() 
-            && stack.getItem() instanceof BlockItem 
-            && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
+            && stack.getItem() instanceof final BlockItem item 
+            && item.getBlock() instanceof ConcretePowderBlock;
 
     /**
      * Constructor for the Concrete mason. Defines the tasks the Concrete mason executes.
@@ -204,7 +204,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         }
 
         final ItemStack concrete = currentRecipeStorage.getPrimaryOutput();
-        if (concrete.getItem() instanceof BlockItem && ((BlockItem) concrete.getItem()).getBlock() instanceof ConcretePowderBlock)
+        if (concrete.getItem() instanceof final BlockItem item && item.getBlock() instanceof ConcretePowderBlock)
         {
             return super.craft();
         }

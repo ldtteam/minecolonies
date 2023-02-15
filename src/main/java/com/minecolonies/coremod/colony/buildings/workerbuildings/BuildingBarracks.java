@@ -117,11 +117,10 @@ public class BuildingBarracks extends AbstractBuilding
         super.registerBlockPosition(block, pos, world);
         if (block.getBlock() == ModBlocks.blockHutBarracksTower)
         {
-            final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
-            if (building instanceof BuildingBarracksTower)
+            if (getColony().getBuildingManager().getBuilding(pos) instanceof final BuildingBarracksTower barracks)
             {
-                building.setStructurePack(this.getStructurePack());
-                ((BuildingBarracksTower) building).addBarracks(getPosition());
+                barracks.setStructurePack(this.getStructurePack());
+                barracks.addBarracks(getPosition());
                 if (!towers.contains(pos))
                 {
                     towers.add(pos);

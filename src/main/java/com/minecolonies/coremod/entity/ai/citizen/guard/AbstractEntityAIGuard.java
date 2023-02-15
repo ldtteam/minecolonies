@@ -803,14 +803,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Players
-        if (entity instanceof Player && (colony.getPermissions().hasPermission((Player) entity, Action.GUARDS_ATTACK)
-                                           || colony.isValidAttackingPlayer((Player) entity)))
+        if (entity instanceof final Player player && (colony.getPermissions().hasPermission(player, Action.GUARDS_ATTACK)
+                                           || colony.isValidAttackingPlayer(player)))
         {
             return true;
         }
 
         // Other colonies guard citizen attacking the colony
-        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
+        if (entity instanceof final EntityCitizen citizen && colony.isValidAttackingGuard(citizen))
         {
             return true;
         }

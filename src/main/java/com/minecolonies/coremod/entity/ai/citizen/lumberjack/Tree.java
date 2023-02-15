@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -985,13 +984,12 @@ public class Tree
      */
     public static boolean checkIfInColony(final BlockPos pos, final IColony colony, final LevelReader world, final boolean allowInsideBuilding)
     {
-        final ChunkAccess chunk = world.getChunk(pos);
-        if (!(chunk instanceof LevelChunk))
+        if (!(world.getChunk(pos) instanceof final LevelChunk chunk))
         {
             return false;
         }
 
-        final IColonyTagCapability cap = ((LevelChunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (cap != null && cap.getOwningColony() != colony.getID())
         {
             return false;

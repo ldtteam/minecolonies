@@ -401,9 +401,9 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
     @Override
     public boolean hurt(final DamageSource source, final float damage)
     {
-        if (source.getEntity() instanceof LivingEntity)
+        if (source.getEntity() instanceof final LivingEntity entity)
         {
-            this.setTarget((LivingEntity) source.getEntity());
+            this.setTarget(entity);
         }
         return super.hurt(source, damage);
     }
@@ -418,10 +418,10 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
             this.swing(InteractionHand.OFF_HAND);
         }
 
-        if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null && ((EntityCitizen) entityIn).isActive())
+        if (slapTimer == 0 && entityIn instanceof final EntityCitizen citizen && colony != null && citizen.isActive())
         {
             slapTimer = SLAP_INTERVAL;
-            final IItemHandler handler = ((EntityCitizen) entityIn).getItemHandlerCitizen();
+            final IItemHandler handler = citizen.getItemHandlerCitizen();
             final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
             if (!ItemStackUtils.isEmpty(stack))
             {

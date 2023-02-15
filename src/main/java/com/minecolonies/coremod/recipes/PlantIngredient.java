@@ -32,9 +32,9 @@ public class PlantIngredient extends Ingredient
 
     private static final Lazy<PlantIngredient> INSTANCE
             = Lazy.of(() -> new PlantIngredient(ForgeRegistries.ITEMS.getValues().stream()
-                    .filter(item -> item instanceof BlockItem &&
-                        (((BlockItem) item).getBlock() instanceof CropBlock ||
-                         ((BlockItem) item).getBlock() instanceof StemBlock))
+                    .filter(item -> item instanceof final BlockItem blockItem &&
+                        (blockItem.getBlock() instanceof CropBlock ||
+                         blockItem.getBlock() instanceof StemBlock))
                     .map(item -> new ItemValue(new ItemStack(item)))));
 
     protected PlantIngredient(final Stream<? extends Value> itemLists)

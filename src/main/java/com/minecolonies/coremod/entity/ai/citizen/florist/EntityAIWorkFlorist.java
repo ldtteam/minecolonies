@@ -210,14 +210,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         }
 
         final BlockEntity entity = world.getBlockEntity(compostPosition);
-        if (entity instanceof TileEntityCompostedDirt)
+        if (entity instanceof final TileEntityCompostedDirt compostedDirt)
         {
             @Nullable final ItemStack stack = building.getFlowerToGrow();
             if (stack != null)
             {
                 if (worker.getRandom().nextInt(200 - getPrimarySkillLevel()) < 0 || InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
                 {
-                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH - (building.getBuildingLevel() * 0.01), building.getFlowerToGrow());
+                    compostedDirt.compost(PERCENT_CHANGE_FOR_GROWTH - (building.getBuildingLevel() * 0.01), building.getFlowerToGrow());
                 }
             }
             else
@@ -314,9 +314,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             if (WorldUtil.isEntityBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityCompostedDirt)
+                if (entity instanceof final TileEntityCompostedDirt compostedDirt)
                 {
-                    if (!((TileEntityCompostedDirt) entity).isComposted())
+                    if (!compostedDirt.isComposted())
                     {
                         return pos;
                     }

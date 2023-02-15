@@ -330,12 +330,10 @@ public class Stack implements IConcreteDeliverable
         {
             return true;
         }
-        if (!(o instanceof Stack))
+        if (!(o instanceof final Stack stack1))
         {
             return false;
         }
-
-        final Stack stack1 = (Stack) o;
 
         if (matchDamage != stack1.matchDamage)
         {

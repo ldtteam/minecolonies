@@ -50,11 +50,11 @@ public class RenderFishHook extends EntityRenderer<Entity>
     @Override
     public void render(@NotNull Entity entity, float p_114706_, float p_114707_, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int partialTicks)
     {
-        if (!(entity instanceof NewBobberEntity))
+        if (!(entity instanceof final NewBobberEntity bobber))
         {
             return;
         }
-        EntityCitizen citizen = ((NewBobberEntity) entity).getAngler();
+        EntityCitizen citizen = bobber.getAngler();
         if (citizen != null)
         {
             poseStack.pushPose();

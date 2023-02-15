@@ -133,8 +133,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
                     if (inWarehouse)
                     {
-                        colony.getRequestManager().onColonyUpdate(request ->
-                                                                    request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
+                        colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && delivery.matches(stack));
                     }
                     else
                     {

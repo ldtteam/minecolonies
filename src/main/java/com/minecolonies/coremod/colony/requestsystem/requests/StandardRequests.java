@@ -713,17 +713,17 @@ public final class StandardRequests
                 final ICitizenDataView citizen = colony.getCitizen(worker);
                 if (citizen != null)
                 {
-                    if (citizen.getJobView() instanceof CrafterJobView)
+                    if (citizen.getJobView() instanceof final CrafterJobView crafter)
                     {
-                        int index = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        int index = crafter.getDataStore().getQueue().indexOf(id);
                         if (index >= 0)
                         {
                             return index;
                         }
                     }
-                    else if (citizen.getJobView() instanceof DmanJobView)
+                    else if (citizen.getJobView() instanceof final DmanJobView deliveryman)
                     {
-                        int index = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        int index = deliveryman.getDataStore().getQueue().indexOf(id);
                         if (index >= 0)
                         {
                             return index;

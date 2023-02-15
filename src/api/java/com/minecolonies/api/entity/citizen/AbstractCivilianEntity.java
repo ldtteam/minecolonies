@@ -119,9 +119,9 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     @Override
     public void push(@NotNull final Entity entityIn)
     {
-        if (entityIn instanceof ServerPlayer)
+        if (entityIn instanceof final ServerPlayer player)
         {
-            onPlayerCollide((Player) entityIn);
+            onPlayerCollide(player);
         }
         super.push(entityIn);
     }

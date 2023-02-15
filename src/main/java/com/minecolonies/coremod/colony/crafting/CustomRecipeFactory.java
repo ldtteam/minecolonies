@@ -222,9 +222,9 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final List<ItemStorage> inputs = new ArrayList<>();
         for(Tag input : inputList)
         {
-            if(input instanceof CompoundTag)
+            if(input instanceof final CompoundTag compound)
             {
-                inputs.add(controller.deserialize((CompoundTag)input));
+                inputs.add(controller.deserialize(compound));
             }
         }
         final ItemStack primaryOutput = ItemStack.of(nbt.getCompound(RECIPE_RESULT_PROP));
@@ -233,9 +233,9 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final List<ItemStack> secondaryOutput = new ArrayList<>();
         for(Tag secondary : secondaryList)
         {
-            if(secondary instanceof CompoundTag)
+            if(secondary instanceof final CompoundTag compound)
             {
-                secondaryOutput.add(ItemStack.of((CompoundTag)secondary));
+                secondaryOutput.add(ItemStack.of(compound));
             }
         }
 
@@ -243,9 +243,9 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final List<ItemStack> altOutputs = new ArrayList<>();
         for(Tag alt : altList)
         {
-            if(alt instanceof CompoundTag)
+            if(alt instanceof final CompoundTag compound)
             {
-                secondaryOutput.add(ItemStack.of((CompoundTag)alt));
+                secondaryOutput.add(ItemStack.of(compound));
             }
         }
 

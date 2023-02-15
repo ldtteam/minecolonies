@@ -202,9 +202,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             for (final IRequestable requestable : reqs)
             {
                 if (requestable.equals(request.getRequest())
-                      && request.getRequest() instanceof IDeliverable
-                      && requestable instanceof IDeliverable
-                      && ((IDeliverable) request.getRequest()).getCount() <= ((IDeliverable) requestable).getCount())
+                      && request.getRequest() instanceof final IDeliverable delivery
+                      && requestable instanceof final IDeliverable deliveryRequestable
+                      && delivery.getCount() <= deliveryRequestable.getCount())
                 {
                     return true;
                 }
@@ -219,7 +219,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
         if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
         {
-            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() <= target.getRequest().getCount() && !request.hasChildren())
+            if (request.getRequest() instanceof final IDeliverable delivery && delivery.getCount() <= target.getRequest().getCount() && !request.hasChildren())
             {
                 return true;
             }

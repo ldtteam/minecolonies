@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -70,11 +69,10 @@ public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends Ab
     {
         super.initEntityValues(citizen);
 
-        final IBuilding workBuilding = citizen.getCitizenData().getWorkBuilding();
-        if (workBuilding instanceof AbstractBuildingGuards)
+        if (citizen.getCitizenData().getWorkBuilding() instanceof final AbstractBuildingGuards workBuilding)
         {
             AttributeModifierUtils.addHealthModifier(citizen,
-              new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, ((AbstractBuildingGuards) workBuilding).getBonusHealth(), AttributeModifier.Operation.ADDITION));
+              new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, workBuilding.getBonusHealth(), AttributeModifier.Operation.ADDITION));
             AttributeModifierUtils.addHealthModifier(citizen,
               new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
                 MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,

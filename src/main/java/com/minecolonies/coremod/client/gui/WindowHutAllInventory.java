@@ -18,7 +18,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -124,10 +123,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (BlockPos blockPos : containerList)
         {
-            final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
-            if (rack instanceof TileEntityRack)
+            if (Minecraft.getInstance().level.getBlockEntity(blockPos) instanceof final TileEntityRack rack)
             {
-                int count = ((TileEntityRack) rack).getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
+                int count = rack.getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
                 if (count > 0)
                 {
                     // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
@@ -201,10 +199,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (final BlockPos blockPos : containerList)
         {
-            final BlockEntity rack = world.getBlockEntity(blockPos);
-            if (rack instanceof TileEntityRack)
+            if (world.getBlockEntity(blockPos) instanceof final TileEntityRack rack)
             {
-                final Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
+                final Map<ItemStorage, Integer> rackStorage = rack.getAllContent();
 
                 for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet())
                 {

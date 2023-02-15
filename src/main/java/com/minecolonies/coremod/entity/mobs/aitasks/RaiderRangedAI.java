@@ -101,9 +101,9 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IRangedMob
         AbstractArrow arrowEntity = CombatUtils.createArrowForShooter(user);
 
         arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue());
-        if (flightCounter > 5 && arrowEntity instanceof CustomArrowEntity)
+        if (flightCounter > 5 && arrowEntity instanceof final CustomArrowEntity customArrowEntity)
         {
-            ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
+            customArrowEntity.setPlayerArmorPierce();
             arrowEntity.setSecondsOnFire(200);
             arrowEntity.setBaseDamage(10);
         }
@@ -119,9 +119,9 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IRangedMob
         // Visuals
         user.swing(InteractionHand.MAIN_HAND);
         SoundEvent attackSound = SoundEvents.SKELETON_SHOOT;
-        if (arrowEntity instanceof ICustomAttackSound)
+        if (arrowEntity instanceof final ICustomAttackSound customSound)
         {
-            attackSound = ((ICustomAttackSound) arrowEntity).getAttackSound();
+            attackSound = customSound.getAttackSound();
         }
         user.playSound(attackSound, (float) 1.0D, (float) getRandomPitch());
     }
@@ -163,7 +163,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IRangedMob
     @Override
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
+        return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof final Player player && !player.isCreative() && !target.isSpectator());
     }
 
     @Override

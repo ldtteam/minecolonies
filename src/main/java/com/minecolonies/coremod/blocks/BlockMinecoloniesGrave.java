@@ -5,7 +5,6 @@ import com.minecolonies.api.blocks.types.GraveType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -29,7 +28,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import org.jetbrains.annotations.Nullable;
@@ -147,11 +145,9 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     @SuppressWarnings("deprecation")
     public void spawnAfterBreak(final BlockState state, final ServerLevel worldIn, final BlockPos pos, final ItemStack stack, final boolean p_222953_)
     {
-        final BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityGrave)
+        if (worldIn.getBlockEntity(pos) instanceof final TileEntityGrave grave)
         {
-            final IItemHandler handler = ((AbstractTileEntityGrave) tileentity).getInventory();
-            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            InventoryUtils.dropItemHandler(grave.getInventory(), worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
         super.spawnAfterBreak(state, worldIn, pos, stack, p_222953_);
     }
@@ -166,17 +162,13 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
       final BlockHitResult ray)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-        final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
 
         if ((colony == null || colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-              && tileEntity instanceof TileEntityGrave)
+              && worldIn.getBlockEntity(pos) instanceof final TileEntityGrave grave)
         {
-            final TileEntityGrave grave = (TileEntityGrave) tileEntity;
             if (!worldIn.isClientSide)
             {
-                NetworkHooks.openScreen((ServerPlayer) player,
-                  grave,
-                  buf -> buf.writeBlockPos(grave.getBlockPos()));
+                NetworkHooks.openScreen((ServerPlayer) player, grave, buf -> buf.writeBlockPos(grave.getBlockPos()));
             }
             return InteractionResult.SUCCESS;
         }
@@ -215,15 +207,13 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     {
         if (state.getBlock() != newState.getBlock())
         {
-            BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityGrave)
+            if (worldIn.getBlockEntity(pos) instanceof final TileEntityGrave grave)
             {
-                TileEntityGrave tileEntityGrave = (TileEntityGrave) tileEntity;
-                InventoryUtils.dropItemHandler(tileEntityGrave.getInventory(),
+                InventoryUtils.dropItemHandler(grave.getInventory(),
                   worldIn,
-                  tileEntityGrave.getBlockPos().getX(),
-                  tileEntityGrave.getBlockPos().getY(),
-                  tileEntityGrave.getBlockPos().getZ());
+                  grave.getBlockPos().getX(),
+                  grave.getBlockPos().getY(),
+                  grave.getBlockPos().getZ());
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 

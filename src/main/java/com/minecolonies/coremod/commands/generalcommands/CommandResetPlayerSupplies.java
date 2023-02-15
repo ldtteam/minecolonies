@@ -30,10 +30,10 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
         final Player player = context.getSource().getServer().getPlayerList().getPlayerByName(username);
         if (player == null)
         {
-            if (context.getSource().getEntity() instanceof Player)
+            if (context.getSource().getEntity() instanceof final Player sender)
             {
                 // could not find player with given name.
-                MessageUtils.format(COMMAND_PLAYER_NOT_FOUND, username).sendTo((Player) context.getSource().getEntity());
+                MessageUtils.format(COMMAND_PLAYER_NOT_FOUND, username).sendTo(sender);
             }
             else
             {

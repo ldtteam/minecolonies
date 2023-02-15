@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.GraveyardManagement
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,16 +96,13 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final BlockPos grave = moduleView.getGraves().get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, buildingView.getPosition())));
-                final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
-                final BlockEntity entity = world.getBlockEntity(grave);
-                if (entity instanceof TileEntityGrave)
+                final BlockPos gravePos = moduleView.getGraves().get(index);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(gravePos, buildingView.getPosition())));
+                final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), gravePos);
+                if (world.getBlockEntity(gravePos) instanceof final TileEntityGrave grave)
                 {
                     rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText(Component.literal("Grave of " +
-                            ((((TileEntityGrave) entity).getGraveData() != null) ?
-                             ((TileEntityGrave) entity).getGraveData().getCitizenName() :
-                             "Unknown Citizen")));
+                            (grave.getGraveData() != null ? grave.getGraveData().getCitizenName() : "Unknown Citizen")));
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.literal(distance + "m"));
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }

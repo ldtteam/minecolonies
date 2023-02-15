@@ -403,7 +403,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && delivery.matches(recipeStorage.getPrimaryOutput()));
             }
             return true;
         }
@@ -484,14 +484,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 if(duplicateFound == null)
                 {
                     addRecipeToList(recipeToken, true);
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && delivery.matches(recipeStorage.getPrimaryOutput()));
                     markDirty();
                 }
                 else if((forceReplace || newRecipe.getMustExist()) && !(duplicateFound.equals(recipeToken)))
                 {
                     //We found the base recipe for a multi-recipe, replace it with the multi-recipe
                     replaceRecipe(duplicateFound, recipeToken);
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && delivery.matches(recipeStorage.getPrimaryOutput()));
 
                     //Clean up old 'classic' recipes that the new multi-recipe replaces
                     final List<ItemStack> alternates = recipeStorage.getAlternateOutputs();
@@ -503,7 +503,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                             removeRecipe(token);
                         }
                     }
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> delivery.matches(i)));
                     markDirty();
                 }
             }
@@ -773,7 +773,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && delivery.matches(recipeStorage.getPrimaryOutput()));
             }
         }
     }
@@ -855,7 +855,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(key);
             if (recipeStorage != null)
             {
-                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof final IDeliverable delivery && delivery.matches(recipeStorage.getPrimaryOutput()));
             }
         }
         else

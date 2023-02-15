@@ -240,9 +240,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             citizenToServe.get(0).getCitizenData().setJustAte(true);
         }
 
-        if (citizenToServe.isEmpty() && living instanceof Player)
+        if (citizenToServe.isEmpty() && living instanceof final Player player)
         {
-            MessageUtils.format(MESSAGE_INFO_CITIZEN_COOK_SERVE_PLAYER, worker.getName().getString()).sendTo((Player) living);
+            MessageUtils.format(MESSAGE_INFO_CITIZEN_COOK_SERVE_PLAYER, worker.getName().getString()).sendTo(player);
         }
         removeFromQueue();
 

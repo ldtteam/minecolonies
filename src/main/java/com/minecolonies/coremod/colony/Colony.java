@@ -41,7 +41,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -505,10 +504,10 @@ public class Colony implements IColony
                     {
                         final int chunkX = ChunkPos.getX(chunkPos);
                         final int chunkZ = ChunkPos.getZ(chunkPos);
-                        if (world instanceof ServerLevel)
+                        if (world instanceof final ServerLevel serverLevel)
                         {
                             final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                            ((ServerChunkCache) world.getChunkSource()).removeRegionTicket(KEEP_LOADED_TYPE, pos, 2, pos);
+                            serverLevel.getChunkSource().removeRegionTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                             pendingToUnloadChunks.add(chunkPos);
                         }
                     }
@@ -526,13 +525,13 @@ public class Colony implements IColony
      */
     private void checkChunkAndRegisterTicket(final long chunkPos, final LevelChunk chunk)
     {
-        if (forceLoadTimer > 0 && world instanceof ServerLevel)
+        if (forceLoadTimer > 0 && world instanceof final ServerLevel serverLevel)
         {
             if (!ticketedChunks.contains(chunkPos) && buildingManager.isWithinBuildingZone(chunk))
             {
                 ticketedChunks.add(chunkPos);
                 ticketedChunksDirty = true;
-                ((ServerChunkCache) world.getChunkSource()).addRegionTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos());
+                serverLevel.getChunkSource().addRegionTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos());
             }
         }
     }

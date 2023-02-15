@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands.commandTypes;
 import com.minecolonies.api.util.MessageUtils;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_REQUIRES_OP;
@@ -24,15 +23,14 @@ public interface IMCOPCommand extends IMCCommand
             return true;
         }
 
-        final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
+        if (!(context.getSource().getEntity() instanceof final Player sender))
         {
             return false;
         }
 
-        if (!IMCCommand.isPlayerOped((Player) sender))
+        if (!IMCCommand.isPlayerOped(sender))
         {
-            MessageUtils.format(COMMAND_REQUIRES_OP).sendTo((Player) sender);
+            MessageUtils.format(COMMAND_REQUIRES_OP).sendTo(sender);
             return false;
         }
         return true;

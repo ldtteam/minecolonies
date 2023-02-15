@@ -122,17 +122,17 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
         final int row = fieldList.getListElementIndexByPane(button);
         final BlockPos field = fields.get(row);
         final BlockEntity entity = world.getBlockEntity(field);
-        if (entity instanceof ScarecrowTileEntity)
+        if (entity instanceof final ScarecrowTileEntity scarecrow)
         {
             if (button.getTextAsString().equals(RED_X))
             {
                 button.setText(Component.literal(APPROVE));
-                moduleView.changeFields(field, false, (ScarecrowTileEntity) entity);
+                moduleView.changeFields(field, false, scarecrow);
             }
             else
             {
                 button.setText(Component.literal(RED_X));
-                moduleView.changeFields(field, true, (ScarecrowTileEntity) entity);
+                moduleView.changeFields(field, true, scarecrow);
             }
 
             pullLevelsFromHut();
@@ -155,7 +155,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
      */
     private void assignmentModeClicked(@NotNull final Button button)
     {
-        String buttonText = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        String buttonText = button.getText().getContents() instanceof final TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         if (buttonText.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
         {
@@ -200,14 +200,13 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, buildingView.getPosition())));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field);
                 final BlockEntity entity = world.getBlockEntity(field);
-                if (entity instanceof ScarecrowTileEntity)
+                if (entity instanceof final ScarecrowTileEntity scarecrow)
                 {
-                    final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) entity;
-                    @NotNull final Component owner = scarecrowTileEntity.getOwner().isEmpty()
+                    @NotNull final Component owner = scarecrow.getOwner().isEmpty()
                                                             ? Component.literal("<")
                                                                 .append(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED))
                                                                 .append(">")
-                                                            : Component.literal(scarecrowTileEntity.getOwner());
+                                                            : Component.literal(scarecrow.getOwner());
 
                     rowPane.findPaneOfTypeByID(TAG_WORKER, Text.class).setText(owner);
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.literal(distance + "m"));
@@ -218,7 +217,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 
                     assignButton.setEnabled(moduleView.assignFieldManually());
 
-                    if (((ScarecrowTileEntity) entity).isTaken())
+                    if (scarecrow.isTaken())
                     {
                         assignButton.setText(Component.literal(RED_X));
                     }
@@ -231,9 +230,9 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
                         }
                     }
 
-                    if (((ScarecrowTileEntity) entity).getSeed() != null)
+                    if (scarecrow.getSeed() != null)
                     {
-                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(((ScarecrowTileEntity) entity).getSeed());
+                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(scarecrow.getSeed());
                     }
                 }
             }

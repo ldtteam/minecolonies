@@ -242,21 +242,20 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
                     Collections.reverse(colonyEvents);
                     final IColonyEventDescription event = colonyEvents.get(index);
-                    if (event instanceof CitizenDiedEvent)
+                    if (event instanceof final CitizenDiedEvent deathEvent)
                     {
-                        actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
+                        actionLabel.setText(Component.literal(deathEvent.getDeathCause()));
                     }
                     else
                     {
                         actionLabel.setText(Component.literal(event.getName()));
                     }
-                    if (event instanceof ICitizenEventDescription)
+                    if (event instanceof final ICitizenEventDescription citizenEvent)
                     {
-                        nameLabel.setText(Component.literal(((ICitizenEventDescription) event).getCitizenName()));
+                        nameLabel.setText(Component.literal(citizenEvent.getCitizenName()));
                     }
-                    else if (event instanceof IBuildingEventDescription)
+                    else if (event instanceof final IBuildingEventDescription buildEvent)
                     {
-                        IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
                         nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(" " + buildEvent.getLevel()).create());
                     }
                     rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));

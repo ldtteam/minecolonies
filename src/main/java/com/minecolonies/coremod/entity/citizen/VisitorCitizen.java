@@ -181,7 +181,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     {
         if ( !( damageSource.getEntity() instanceof EntityCitizen ) && super.hurt(damageSource, damage))
         {
-            if (damageSource.getEntity() instanceof LivingEntity && damage > 1.01f)
+            if (damageSource.getEntity() instanceof final LivingEntity sourceEntity && damage > 1.01f)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
                 if (home.hasModule(TavernBuildingModule.class))
@@ -192,22 +192,21 @@ public class VisitorCitizen extends AbstractEntityCitizen
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
                         if (data != null && data.getEntity().isPresent() && data.getEntity().get().getLastHurtByMob() == null)
                         {
-                            data.getEntity().get().setLastHurtByMob((LivingEntity) damageSource.getEntity());
+                            data.getEntity().get().setLastHurtByMob(sourceEntity);
                         }
                     }
                 }
 
-                final Entity sourceEntity = damageSource.getEntity();
-                if (sourceEntity instanceof Player)
+                if (sourceEntity instanceof final Player player)
                 {
                     if (sourceEntity instanceof ServerPlayer)
                     {
-                        return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
+                        return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.HURT_VISITOR);
                     }
                     else
                     {
                         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
-                        return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
+                        return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission(player, Action.HURT_VISITOR);
                     }
                 }
             }
@@ -249,9 +248,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void setCivilianData(@Nullable final ICivilianData data)
     {
-        if (data != null && data instanceof IVisitorData)
+        if (data != null && data instanceof final IVisitorData visitorData)
         {
-            this.citizenData = (IVisitorData) data;
+            this.citizenData = visitorData;
             data.initEntityValues();
         }
     }
@@ -713,9 +712,8 @@ public class VisitorCitizen extends AbstractEntityCitizen
             if (colony != null && getCitizenData() != null)
             {
                 colony.getVisitorManager().removeCivilian(getCitizenData());
-                if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
+                if (getCitizenData().getHomeBuilding() instanceof final TavernBuildingModule tavern)
                 {
-                    TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
                     tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
                 }
 

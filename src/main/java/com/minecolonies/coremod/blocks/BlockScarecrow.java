@@ -101,13 +101,11 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         {
             // Get the entity of the bottom half
             DoubleBlockHalf half = state.getValue(HALF);
-            final BlockEntity entity = worldIn.getBlockEntity(
-              half == DoubleBlockHalf.UPPER ? pos.below() : pos
-            );
+            final BlockEntity entity = worldIn.getBlockEntity(half == DoubleBlockHalf.UPPER ? pos.below() : pos);
 
-            if (entity instanceof ScarecrowTileEntity)
+            if (entity instanceof final ScarecrowTileEntity scarecrow)
             {
-                NetworkHooks.openScreen((ServerPlayer) player, (ScarecrowTileEntity) entity, pos);
+                NetworkHooks.openScreen((ServerPlayer) player, scarecrow, pos);
             }
             else
             {

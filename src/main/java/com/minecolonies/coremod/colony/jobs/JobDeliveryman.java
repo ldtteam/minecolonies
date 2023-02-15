@@ -387,9 +387,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         for (final IToken<?> requestToken : getTaskQueue())
         {
             final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
-            if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
+            if (compareRequest != null && compareRequest.getRequest() instanceof final Delivery current)
             {
-                final Delivery current = (Delivery) compareRequest.getRequest();
                 final Delivery newDev = request.getRequest();
                 if (haveTasksSameSourceAndDest(current, newDev))
                 {
@@ -443,14 +442,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             if (!requestToken.equals(request.getId()))
             {
                 final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
-                if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
+
+                if (compareRequest != null && compareRequest.getRequest() instanceof final Delivery current &&
+                    haveTasksSameSourceAndDest(current, request.getRequest()))
                 {
-                    final Delivery current = (Delivery) compareRequest.getRequest();
-                    final Delivery newDev = request.getRequest();
-                    if (haveTasksSameSourceAndDest(current, newDev))
-                    {
-                        deliveryList.add((IRequest<? extends Delivery>) compareRequest);
-                    }
+                    deliveryList.add((IRequest<? extends Delivery>) compareRequest);
                 }
             }
         }
@@ -517,8 +513,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      */
     public double getScoreOfRequestComparedTo(final IRequest<?> source, final IRequest<?> comparing, final int comparingIndex)
     {
-        if (!(comparing != null && comparing.getRequest() instanceof AbstractDeliverymanRequestable && source != null
-                && source.getRequest() instanceof AbstractDeliverymanRequestable))
+        if (!(comparing != null && comparing.getRequest() instanceof final AbstractDeliverymanRequestable comparingReq && source != null
+                && source.getRequest() instanceof final AbstractDeliverymanRequestable sourceReq))
         {
             return 100;
         }
@@ -526,7 +522,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         // Closeness compared to the existing request
         double score = getClosenessFactorTo(getSource(source), getTarget(source), getSource(comparing), getTarget(comparing));
         // Priority of the existing request in diff to priority of the newly incomming one
-        score += (((AbstractDeliverymanRequestable) comparing.getRequest()).getPriority() - ((AbstractDeliverymanRequestable) source.getRequest()).getPriority()) * 0.5;
+        score += (comparingReq.getPriority() - sourceReq.getPriority()) * 0.5;
 
         // Additional score for alternating between pickup and delivery
         score += getPickUpRequestScore(source, comparing);
@@ -605,9 +601,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      */
     private BlockPos getSource(final IRequest<?> request)
     {
-        if (request.getRequest() instanceof Delivery)
+        if (request.getRequest() instanceof final Delivery delivery)
         {
-            return ((Delivery) request.getRequest()).getStart().getInDimensionLocation();
+            return delivery.getStart().getInDimensionLocation();
         }
 
         if (request.getRequest() instanceof Pickup)
@@ -630,9 +626,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      */
     private BlockPos getTarget(final IRequest<?> request)
     {
-        if (request.getRequest() instanceof Delivery)
+        if (request.getRequest() instanceof final Delivery delivery)
         {
-            return ((Delivery) request.getRequest()).getTarget().getInDimensionLocation();
+            return delivery.getTarget().getInDimensionLocation();
         }
 
         if (request.getRequest() instanceof Pickup)

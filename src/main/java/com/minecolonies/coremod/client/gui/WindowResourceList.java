@@ -32,7 +32,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,9 +121,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(buildingPos);
-            if (buildingView instanceof BuildingBuilder.View)
+            if (buildingView instanceof final BuildingBuilder.View builderView)
             {
-                this.builder = (BuildingBuilder.View) buildingView;
+                this.builder = builderView;
                 return;
             }
         }
@@ -157,10 +156,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 List<BlockPos> containers = builder.getColony().getBuilding(warehousePos).getContainerList();
                 for (BlockPos container : containers)
                 {
-                    final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(container);
-                    if (rack instanceof TileEntityRack)
+                    if (Minecraft.getInstance().level.getBlockEntity(container) instanceof final TileEntityRack rack)
                     {
-                        ((TileEntityRack) rack).getAllContent()
+                        rack.getAllContent()
                           .forEach((item, amount) -> {
                               final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
                               final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
@@ -256,9 +254,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
             final IRequest<?> request = builder.getColony().getRequestManager().getRequestForToken(token);
             if (request != null)
             {
-                if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID()))
+                if (request.getRequest() instanceof final Delivery delivery && delivery.getTarget().getInDimensionLocation().equals(builder.getID()))
                 {
-                    requestList.add((Delivery) request.getRequest());
+                    requestList.add(delivery);
                 }
 
                 if (request.hasChildren())

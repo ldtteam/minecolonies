@@ -104,11 +104,11 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
         {
             return true;
         }
-        if (!(o instanceof AbstractDeliverymanRequestable))
+        if (!(o instanceof final AbstractDeliverymanRequestable that))
         {
             return false;
         }
-        return getPriority() == ((AbstractDeliverymanRequestable) o).getPriority();
+        return getPriority() == that.getPriority();
     }
 
     @Override

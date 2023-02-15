@@ -149,9 +149,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(builderPos);
-            if (buildingView instanceof BuildingBuilder.View)
+            if (buildingView instanceof final BuildingBuilder.View builderView)
             {
-                String name = ((BuildingBuilder.View) buildingView).getWorkerName();
+                String name = builderView.getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
                               ? Component.literal(ChatFormatting.DARK_PURPLE + name)
                               : Component.translatable(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));

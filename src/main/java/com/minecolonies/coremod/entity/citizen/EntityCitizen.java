@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
@@ -437,14 +436,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         final ItemStack usedStack = player.getItemInHand(hand);
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get() &&
-              usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
+              usedStack.getItem() instanceof final BlockItem usedItem && usedItem.getBlock() instanceof final AbstractBlockHut<?> hut)
         {
-            final BuildingEntry entry = ((AbstractBlockHut<?>) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
-            for (final Supplier<IBuildingModule> module : entry.getModuleProducers())
+            for (final Supplier<IBuildingModule> module : hut.getBuildingEntry().getModuleProducers())
             {
-                if (module.get() instanceof WorkerBuildingModule)
+                if (module.get() instanceof final WorkerBuildingModule workerModule)
                 {
-                    getCitizenJobHandler().setModelDependingOnJob(((WorkerBuildingModule) module.get()).getJobEntry().produceJob(null));
+                    getCitizenJobHandler().setModelDependingOnJob(workerModule.getJobEntry().produceJob(null));
                     return InteractionResult.SUCCESS;
                 }
             }
@@ -1508,7 +1506,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return false;
         }
 
-        final Entity sourceEntity = damageSource.getEntity();
         if (!checkIfValidDamageSource(damageSource, damage))
         {
             return false;
@@ -1520,7 +1517,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
 
         // Maxdmg cap so citizens need a certain amount of hits to die, so we get more gameplay value and less scaling issues.
-        return handleDamagePerformed(damageSource, damage, sourceEntity);
+        return handleDamagePerformed(damageSource, damage);
     }
 
     ///////// -------------------- The Handlers -------------------- /////////
@@ -1547,14 +1544,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private boolean checkIfValidDamageSource(final DamageSource source, final float damage)
     {
         final Entity sourceEntity = source.getEntity();
-        if (sourceEntity instanceof EntityCitizen)
+        if (sourceEntity instanceof final EntityCitizen citizen)
         {
-            if (((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
+            if (citizen.citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
             {
                 return false;
             }
 
-            final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony();
+            final IColony attackerColony = citizen.citizenColonyHandler.getColony();
             if (attackerColony != null && citizenColonyHandler.getColony() != null)
             {
                 final IPermissions permission = attackerColony.getPermissions();
@@ -1562,7 +1559,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        if (sourceEntity instanceof Player)
+        if (sourceEntity instanceof final Player player)
         {
             if (sourceEntity instanceof ServerPlayer)
             {
@@ -1571,20 +1568,20 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                     return false;
                 }
 
-                if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_CITIZEN))
+                if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission(player, Action.HURT_CITIZEN))
                 {
                     return false;
                 }
 
                 if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
                 {
-                    return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (Player) sourceEntity);
+                    return IGuardBuilding.checkIfGuardShouldTakeDamage(this, player);
                 }
             }
             else
             {
                 final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
-                return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((Player) sourceEntity, Action.HURT_CITIZEN);
+                return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission(player, Action.HURT_CITIZEN);
             }
         }
         return true;
@@ -1614,7 +1611,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         return (float) Math.min(MAX_SPEED_FACTOR, super.getSpeed());
     }
 
-    private boolean handleDamagePerformed(@NotNull final DamageSource damageSource, final float damage, final Entity sourceEntity)
+    private boolean handleDamagePerformed(@NotNull final DamageSource damageSource, final float damage)
     {
         float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
 
@@ -1626,7 +1623,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide && !this.isInvisible())
         {
-            performMoveAway(sourceEntity);
+            performMoveAway(damageSource.getEntity());
         }
         setLastHurtMob(damageSource.getEntity());
 
@@ -1645,7 +1642,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                     }
                 }
 
-                if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
+                if (citizenData.getWorkBuilding() instanceof final AbstractBuildingGuards guardBuilding && guardBuilding.shallRetrieveOnLowHealth()
                       && getHealth() < ((int) getMaxHealth() * 0.2D))
                 {
                     damageInc *= 1 - citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_DAMAGE);
@@ -1655,9 +1652,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         final boolean result = super.hurt(damageSource, damageInc);
 
-        if (result && damageSource.getEntity() instanceof LivingEntity)
+        if (result && damageSource.getEntity() instanceof final LivingEntity sourceEntity)
         {
-            threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damageInc);
+            threatTable.addThreat(sourceEntity, (int) damageInc);
         }
 
         if (damageSource.isMagic() || damageSource.isFire())
@@ -1716,9 +1713,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void callForHelp(final Entity attacker, final int guardHelpRange)
+    public void callForHelp(final Entity attackerIn, final int guardHelpRange)
     {
-        if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getServer().citizenCallForHelp.get() || callForHelpCooldown != 0)
+        if (!(attackerIn instanceof final LivingEntity attacker) || !MineColonies.getConfig().getServer().citizenCallForHelp.get() || callForHelpCooldown != 0)
         {
             return;
         }
@@ -1735,17 +1732,17 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
-            if (entry.getEntity().isPresent())
+            if (entry.getEntity().isPresent() && entry.getEntity().get() instanceof final EntityCitizen citizen)
             {
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId()
-                      && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), blockPosition()) < guardHelpRange && entry.getJob().getWorkerAI() != null)
+                if (entry.getJob() instanceof final AbstractJobGuard<?> guardJob && entry.getId() != citizenData.getId()
+                      && BlockPosUtil.getDistanceSquared(citizen.blockPosition(), blockPosition()) < guardHelpRange && guardJob.getWorkerAI() != null)
                 {
-                    final ThreatTable table = ((EntityCitizen) entry.getEntity().get()).getThreatTable();
-                    table.addThreat((LivingEntity) attacker, 0);
-                    if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
+                    final ThreatTable table = citizen.getThreatTable();
+                    table.addThreat(attacker, 0);
+                    if (guardJob.getWorkerAI().canHelp())
                     {
-                        possibleGuards.add(entry.getEntity().get());
+                        possibleGuards.add(citizen);
                     }
                 }
             }
@@ -1767,9 +1764,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             super.doPush(entity);
         }
 
-        if (!level.isClientSide && entity instanceof AbstractEntityCitizen)
+        if (!level.isClientSide && entity instanceof final AbstractEntityCitizen citizen)
         {
-            getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
+            getCitizenDiseaseHandler().onCollission(citizen);
         }
     }
 
@@ -1918,9 +1915,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public boolean equals(final Object obj)
     {
-        if (obj instanceof EntityCitizen)
+        if (obj instanceof final EntityCitizen citizen)
         {
-            final EntityCitizen citizen = (EntityCitizen) obj;
             return citizen.citizenColonyHandler.getColonyId() == this.citizenColonyHandler.getColonyId() && citizen.citizenId == this.citizenId;
         }
         return false;

@@ -56,13 +56,13 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                 ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
                 if (citizen != null)
                 {
-                    if (citizen.getJobView() instanceof CrafterJobView)
+                    if (citizen.getJobView() instanceof final CrafterJobView crafter)
                     {
-                        tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
+                        tasks.addAll(crafter.getDataStore().getQueue());
                     }
-                    else if (citizen.getJobView() instanceof DmanJobView)
+                    else if (citizen.getJobView() instanceof final DmanJobView deliveryman)
                     {
-                        tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                        tasks.addAll(deliveryman.getDataStore().getQueue());
                     }
                 }
             }
@@ -101,10 +101,10 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
 
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")));
 
-                if (request.getRequest() instanceof IDeliverymanRequestable)
+                if (request.getRequest() instanceof final IDeliverymanRequestable delivery)
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
-                                                                                       .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
+                                                                                       .append(String.valueOf(delivery.getPriority())));
                 }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);

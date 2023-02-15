@@ -90,10 +90,10 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         final Box group = window.findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
 
 
-        if (recruitButton != null && dataView instanceof IVisitorViewData)
+        if (recruitButton != null && dataView instanceof final IVisitorViewData visitorView)
         {
-            final ItemStack recruitCost = ((IVisitorViewData) dataView).getRecruitCost();
-            final IColonyView colony = ((IVisitorViewData) dataView).getColonyView();
+            final ItemStack recruitCost = visitorView.getRecruitCost();
+            final IColonyView colony = visitorView.getColonyView();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
                 .append(Component.literal(dataView.getName() + ": "))
@@ -112,7 +112,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             icon.setID(RECRUITMENT_ICON);
             icon.setSize(15, 15);
             group.addChild(icon);
-            icon.setItem(((IVisitorViewData) dataView).getRecruitCost());
+            icon.setItem(visitorView.getRecruitCost());
             icon.setPosition(iconPosX, iconPosY);
             icon.setVisible(true);
         }
@@ -120,13 +120,13 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView dataIn, final BOWindow window)
     {
         // Validate recruitment before returning true
-        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)
+        if (response.equals(recruitAnswer.getA()) && dataIn instanceof final IVisitorViewData data)
         {
-            if (player.isCreative() || InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), ((IVisitorViewData) data).getRecruitCost().getItem())
-                  >= ((IVisitorViewData) data).getRecruitCost().getCount())
+            if (player.isCreative() || InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), data.getRecruitCost().getItem())
+                  >= data.getRecruitCost().getCount())
             {
                 return super.onClientResponseTriggered(response, player, data, window);
             }
@@ -139,16 +139,16 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
+    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData dataIn)
     {
-        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData)
+        if (response.equals(recruitAnswer.getA()) && dataIn instanceof final IVisitorData data)
         {
             IColony colony = data.getColony();
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
             {
                 if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()),
-                  ((IVisitorData) data).getRecruitCost(),
-                  ((IVisitorData) data).getRecruitCost().getCount(), true, true))
+                  data.getRecruitCost(),
+                  data.getRecruitCost().getCount(), true, true))
                 {
                     // Recruits visitor as new citizen and respawns entity
                     colony.getVisitorManager().removeCivilian(data);

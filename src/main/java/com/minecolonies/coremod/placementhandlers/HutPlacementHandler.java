@@ -65,35 +65,36 @@ public class HutPlacementHandler implements IPlacementHandler
                 final BlockEntity be = world.getBlockEntity(pos);
                 if (be != null)
                 {
+                    final IBlueprintDataProviderBE blueprintProvider = ((IBlueprintDataProviderBE) be);
                     if (pos.equals(centerPos))
                     {
                         final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
-                        ((IBlueprintDataProviderBE) be).setBlueprintPath(location);
+                        blueprintProvider.setBlueprintPath(location);
                     }
-                    else if(!((IBlueprintDataProviderBE) be).getPositionedTags().getOrDefault(BlockPos.ZERO, Collections.emptyList()).contains("invisible"))
+                    else if(!blueprintProvider.getPositionedTags().getOrDefault(BlockPos.ZERO, Collections.emptyList()).contains("invisible"))
                     {
                         final String partialPath;
-                        if (((IBlueprintDataProviderBE) be).getSchematicName().isEmpty())
+                        if (blueprintProvider.getSchematicName().isEmpty())
                         {
-                            final String[] elements = Utils.splitPath(((IBlueprintDataProviderBE) be).getBlueprintPath());
+                            final String[] elements = Utils.splitPath(blueprintProvider.getBlueprintPath());
                             partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(elements[elements.length - 1].replace(".blueprint", "")));
                         }
                         else
                         {
-                            partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), ((IBlueprintDataProviderBE) be).getSchematicName()));
+                            partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), blueprintProvider.getSchematicName()));
                         }
 
-                        if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
+                        if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof final TileEntityColonyBuilding building)
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "1.blueprint");
-                            ((TileEntityColonyBuilding) be).setSchematicName("");
+                            building.setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "1.blueprint");
+                            building.setSchematicName("");
                         }
                         else
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath + ".blueprint");
+                            blueprintProvider.setBlueprintPath(partialPath + ".blueprint");
                         }
                     }
-                    ((IBlueprintDataProviderBE) be).setPackName(blueprint.getPackName());
+                    blueprintProvider.setPackName(blueprint.getPackName());
 
                     if (!complete)
                     {

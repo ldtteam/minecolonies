@@ -127,7 +127,7 @@ public final class GenericRecipeUtils
         final ItemStack output = recipe.getPrimaryOutput();
         if (output.isEmpty()) return false;
 
-        if (output.getItem() instanceof BlockItem blockItem)
+        if (output.getItem() instanceof final BlockItem blockItem)
         {
             return blockItem.getBlock() instanceof IMateriallyTexturedBlock;
         }

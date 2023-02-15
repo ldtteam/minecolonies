@@ -233,7 +233,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                          .filter(build -> build instanceof final AbstractBuildingBuilderView builder && !builder.getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
                           .sorted(Comparator.comparing(item -> item.getB().distSqr(building.getPosition())))

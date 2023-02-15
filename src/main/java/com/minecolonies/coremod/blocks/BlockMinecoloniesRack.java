@@ -6,7 +6,6 @@ import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -31,7 +30,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -172,17 +170,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         }
 
         // Is this a double chest and our connection is being removed.
-        if (bEntity1 instanceof TileEntityRack)
+        if (bEntity1 instanceof final TileEntityRack rack1)
         {
             if (bEntity2 == null && state.getValue(VARIANT).isDoubleVariant() && pos1.relative(state.getValue(FACING)).equals(pos2))
             {
                 // Reset to single
-                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
+                return state.setValue(VARIANT, rack1.isEmpty() ? RackType.DEFAULT : RackType.FULL);
             }
             // If its not a double variant and the new neighbor is neither, then connect.
             else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(Direction.fromNormal(pos2.subtract(pos1)).getOpposite()))
             {
-                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, Direction.fromNormal(pos2.subtract(pos1)));
+                return state.setValue(VARIANT, rack1.isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, Direction.fromNormal(pos2.subtract(pos1)));
             }
         }
         return super.updateShape(state, dir, state2, level, pos1, pos2);
@@ -193,10 +191,9 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     public void spawnAfterBreak(final BlockState state, final ServerLevel worldIn, final BlockPos pos, final ItemStack stack, final boolean p_222953_)
     {
         final BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityRack)
+        if (tileentity instanceof final TileEntityRack rack)
         {
-            final IItemHandler handler = ((AbstractTileEntityRack) tileentity).getInventory();
-            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            InventoryUtils.dropItemHandler(rack.getInventory(), worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
         super.spawnAfterBreak(state, worldIn, pos, stack, p_222953_);
     }
@@ -211,12 +208,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
       final BlockHitResult ray)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-        final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
 
         if ((colony == null || colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-              && tileEntity instanceof TileEntityRack)
+              && worldIn.getBlockEntity(pos) instanceof final TileEntityRack rack)
         {
-            final TileEntityRack rack = (TileEntityRack) tileEntity;
             if (!worldIn.isClientSide)
             {
                 NetworkHooks.openScreen((ServerPlayer) player,
@@ -255,15 +250,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     {
         if (state.getBlock() != newState.getBlock())
         {
-            BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityRack)
+            if (worldIn.getBlockEntity(pos) instanceof final TileEntityRack rack)
             {
-                TileEntityRack tileEntityRack = (TileEntityRack) tileEntity;
-                InventoryUtils.dropItemHandler(tileEntityRack.getInventory(),
+                InventoryUtils.dropItemHandler(rack.getInventory(),
                   worldIn,
-                  tileEntityRack.getBlockPos().getX(),
-                  tileEntityRack.getBlockPos().getY(),
-                  tileEntityRack.getBlockPos().getZ());
+                  rack.getBlockPos().getX(),
+                  rack.getBlockPos().getY(),
+                  rack.getBlockPos().getZ());
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 

@@ -205,9 +205,9 @@ public final class ItemStackUtils
         if (entity != null)
         {
             final List<ItemStorage> request = new ArrayList<>();
-            if (entity instanceof ItemFrame)
+            if (entity instanceof final ItemFrame frame)
             {
-                final ItemStack stack = ((ItemFrame) entity).getItem();
+                final ItemStack stack = frame.getItem();
                 if (!ItemStackUtils.isEmpty(stack))
                 {
                     ItemStackUtils.setSize(stack, 1);
@@ -307,18 +307,16 @@ public final class ItemStackUtils
 
         if (ToolType.HOE.equals(toolType))
         {
-            if (stack.getItem() instanceof HoeItem)
+            if (stack.getItem() instanceof final HoeItem hoe)
             {
-                final HoeItem hoeItem = (HoeItem) stack.getItem();
-                return hoeItem.getTier().getLevel();
+                return hoe.getTier().getLevel();
             }
         }
         else if (ToolType.SWORD.equals(toolType))
         {
-            if (stack.getItem() instanceof SwordItem)
+            if (stack.getItem() instanceof final SwordItem sword)
             {
-                final SwordItem SwordItem = (SwordItem) stack.getItem();
-                return SwordItem.getTier().getLevel();
+                return sword.getTier().getLevel();
             }
 
         }
@@ -327,10 +325,9 @@ public final class ItemStackUtils
                    || ToolType.CHESTPLATE.equals(toolType)
                    || ToolType.LEGGINGS.equals(toolType))
         {
-            if (stack.getItem() instanceof ArmorItem)
+            if (stack.getItem() instanceof final ArmorItem armor)
             {
-                final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
-                return getArmorLevel(ArmorItem.getMaterial());
+                return getArmorLevel(armor.getMaterial());
             }
         }
         else if (stack.getItem() instanceof FishingRodItem)
@@ -346,9 +343,9 @@ public final class ItemStackUtils
             //We need a hut level 1 minimum
             return 1;
         }
-        else if (stack.getItem() instanceof TieredItem)
+        else if (stack.getItem() instanceof final TieredItem tieredItem)
         {
-            return ((TieredItem) stack.getItem()).getTier().getLevel();
+            return tieredItem.getTier().getLevel();
         }
         return -1;
     }

@@ -23,11 +23,11 @@ public interface IGuardBuilding extends IBuilding
     static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final Player player)
     {
         final IBuilding buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
-        if (!(buildingWorker instanceof IGuardBuilding))
+        if (!(buildingWorker instanceof final IGuardBuilding guardBuilding))
         {
             return true;
         }
-        if (player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally()))
+        if (player.equals(guardBuilding.getPlayerToFollowOrRally()))
         {
             return false;
         }

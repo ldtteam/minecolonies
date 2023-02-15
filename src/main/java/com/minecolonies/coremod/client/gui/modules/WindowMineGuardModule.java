@@ -152,10 +152,9 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
                 if (citizen != null)
                 {
                     final IBuildingView building = buildingView.getColony().getBuilding(citizen.getWorkBuilding());
-                    if (building instanceof AbstractBuildingGuards.View)
+                    if (building instanceof final AbstractBuildingGuards.View guardbuilding)
                     {
                         pane.findPaneOfTypeByID("guardName", Text.class).setText(Component.literal(citizen.getName()));
-                        final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
                         final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
                         if (guardbuilding.getMinePos() == null)
                         {

@@ -77,9 +77,9 @@ public class LecternPlacementHandler implements IPlacementHandler
         if (tileEntityData != null)
         {
             final BlockEntity tileEntity = BlockEntity.loadStatic(pos, blockState, tileEntityData);
-            if (tileEntity instanceof LecternBlockEntity)
+            if (tileEntity instanceof final LecternBlockEntity lectern)
             {
-                return (LecternBlockEntity) tileEntity;
+                return lectern;
             }
         }
         return null;

@@ -387,7 +387,7 @@ public class WorkManager implements IWorkManager
     {
         return getOrderedList(type::isInstance, builder)
           .stream()
-          .map(m -> (W) m)
+          .map(type::cast)
           .collect(Collectors.toList());
     }
 

@@ -439,13 +439,12 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void trigger(@NotNull final Button button)
     {
-        final int index = actionsList.getListElementIndexByPane(button);
-        final Action action = actions.get(index);
+        final Action action = actions.get(actionsList.getListElementIndexByPane(button));
 
         final IPermissions permissions = building.getColony().getPermissions();
         final Player playerEntity = Minecraft.getInstance().player;
         
-        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        final String key = button.getText().getContents() instanceof final TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         final boolean enable = !COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON.equals(key);
         button.disable();

@@ -106,9 +106,9 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     {
         final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
                                               .stream()
-                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter && (
-                                                ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().contains(completedRequest.getId())
-                                                  || ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().contains(completedRequest.getId())))
+                                              .filter(c -> c.getJob() instanceof final AbstractJobCrafter<?, ?> job && (
+                                                job.getTaskQueue().contains(completedRequest.getId())
+                                                  || job.getAssignedTasks().contains(completedRequest.getId())))
                                               .findFirst()
                                               .orElse(null);
 
@@ -136,14 +136,12 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingView)
+        if (requester instanceof final IBuildingView bwv)
         {
-            final IBuildingView bwv = (IBuildingView) requester;
             return Component.translatable(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
-        if (requester instanceof IBuilding)
+        if (requester instanceof final IBuilding building)
         {
-            final IBuilding building = (IBuilding) requester;
             return Component.translatable(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
@@ -204,7 +202,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                                            .stream()
-                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks()
+                                           .filter(c -> c.getJob() instanceof final AbstractJobCrafter<?, ?> job && job.getAssignedTasks()
                                                                                                       .contains(request.getId()))
                                            .findFirst()
                                            .orElse(null);

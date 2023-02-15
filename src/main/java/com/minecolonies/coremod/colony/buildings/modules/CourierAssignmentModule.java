@@ -26,7 +26,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
-                if (data.getJob() instanceof JobDeliveryman && !hasAssignedCitizen(data) && ((JobDeliveryman) data.getJob()).findWareHouse() == null)
+                if (data.getJob() instanceof final JobDeliveryman deliveryman && !hasAssignedCitizen(data) && deliveryman.findWareHouse() == null)
                 {
                     assignCitizen(data);
                 }

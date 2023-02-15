@@ -98,9 +98,9 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     {
         Entity targetEntity = result.getEntity();
         float damageAmount = BASE_DAMAGE;
-        if (targetEntity instanceof LivingEntity)
+        if (targetEntity instanceof final LivingEntity target)
         {
-            damageAmount += EnchantmentHelper.getDamageBonus(this.weapon, ((LivingEntity) targetEntity).getMobType());
+            damageAmount += EnchantmentHelper.getDamageBonus(this.weapon, target.getMobType());
         }
 
         Entity ownerEntity = this.getOwner();
@@ -113,16 +113,15 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
                 return;
             }
 
-            if (targetEntity instanceof LivingEntity)
+            if (targetEntity instanceof final LivingEntity target)
             {
-                LivingEntity livingEntity = (LivingEntity) targetEntity;
-                if (ownerEntity instanceof LivingEntity)
+                if (ownerEntity instanceof final LivingEntity owner)
                 {
-                    EnchantmentHelper.doPostHurtEffects(livingEntity, ownerEntity);
-                    EnchantmentHelper.doPostDamageEffects((LivingEntity) ownerEntity, livingEntity);
+                    EnchantmentHelper.doPostHurtEffects(target, owner);
+                    EnchantmentHelper.doPostDamageEffects(owner, target);
                 }
 
-                this.doPostHurtEffects(livingEntity);
+                this.doPostHurtEffects(target);
             }
         }
 

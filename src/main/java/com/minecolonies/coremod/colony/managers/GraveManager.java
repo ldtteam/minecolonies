@@ -115,14 +115,14 @@ public class GraveManager implements IGraveManager
             }
 
             final BlockEntity graveEntity = colony.getWorld().getBlockEntity(pos);
-            if (!(graveEntity instanceof TileEntityGrave))
+            if (!(graveEntity instanceof final TileEntityGrave grave))
             {
                 iterator.remove();
                 colony.markDirty();
                 continue;
             }
 
-            if (!((TileEntityGrave) graveEntity).onColonyTick(MAX_TICKRATE))
+            if (!grave.onColonyTick(MAX_TICKRATE))
             {
                 iterator.remove();
                 colony.markDirty();

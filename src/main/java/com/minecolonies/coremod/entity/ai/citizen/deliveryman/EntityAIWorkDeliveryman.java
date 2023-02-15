@@ -12,7 +12,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
@@ -324,9 +323,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState deliver()
     {
-        final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
+        final IRequest<? extends IDeliverymanRequestable> currentTask2 = job.getCurrentTask();
 
-        if (!(currentTask instanceof DeliveryRequest))
+        if (!(currentTask2 instanceof final DeliveryRequest currentTask))
         {
             // The current task has changed since the Decision-state.
             // Since prepareDelivery() was called earlier, go dumping first and then restart.
@@ -349,16 +348,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DELIVERY;
         }
 
-        final BlockEntity tileEntity = world.getBlockEntity(targetBuildingLocation.getInDimensionLocation());
-
-        if (!(tileEntity instanceof TileEntityColonyBuilding))
+        if (!(world.getBlockEntity(targetBuildingLocation.getInDimensionLocation()) instanceof final TileEntityColonyBuilding buildingTe))
         {
             // TODO: Non-Colony deliveries are unsupported yet. Fix that at some point in time.
             job.finishRequest(true);
             return START_WORKING;
         }
 
-        final IBuilding targetBuilding = ((AbstractTileEntityColonyBuilding) tileEntity).getBuilding();
+        final IBuilding targetBuilding = buildingTe.getBuilding();
 
         boolean success = true;
         boolean extracted = false;
@@ -388,10 +385,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final ItemStack insertionResultStack;
 
             // TODO: Please only push items into the target that were actually requested.
-            if (targetBuilding instanceof AbstractBuilding)
+            if (targetBuilding instanceof final AbstractBuilding building)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
+                  targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), stack, building::isItemStackInRequest);
             }
             else
             {
@@ -465,15 +462,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState prepareDelivery()
     {
-        final IRequest<? extends IRequestable> currentTask = job.getCurrentTask();
-        if (!(currentTask instanceof DeliveryRequest))
+        final IRequest<? extends IRequestable> currentTask2 = job.getCurrentTask();
+        if (!(currentTask2 instanceof final DeliveryRequest currentTask))
         {
             // The current task has changed since the Decision-state.
             // Restart.
             return START_WORKING;
         }
 
-        final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask);
+        final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination(currentTask);
         final List<ItemStack> alreadyInInv = new ArrayList<>();
         IRequest<? extends Delivery> nextPickUp = null;
 
@@ -559,8 +556,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
-              (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
+        if ((entity instanceof final TileEntityColonyBuilding building && InventoryUtils.hasBuildingEnoughElseCount(building.getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
+              (entity instanceof final TileEntityRack rack && rack.getCount(new ItemStorage(is)) >= is.getCount()))
         {
             final IItemHandler handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
             if (handler != null)

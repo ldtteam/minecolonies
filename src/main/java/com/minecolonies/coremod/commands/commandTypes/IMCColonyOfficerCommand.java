@@ -6,7 +6,6 @@ import com.minecolonies.api.util.MessageUtils;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
@@ -29,8 +28,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         }
 
 
-        final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
+        if (!(context.getSource().getEntity() instanceof final Player sender))
         {
             return false;
         }
@@ -40,11 +38,11 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((Player) sender);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo(sender);
             return false;
         }
 
         // Check colony permissions
-        return IMCCommand.isPlayerOped((Player) sender) || colony.getPermissions().getRank((Player) sender).isColonyManager();
+        return IMCCommand.isPlayerOped(sender) || colony.getPermissions().getRank(sender).isColonyManager();
     }
 }

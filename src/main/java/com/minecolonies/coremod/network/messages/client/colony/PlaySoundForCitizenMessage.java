@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -185,10 +184,9 @@ public class PlaySoundForCitizenMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final Entity entity = Minecraft.getInstance().level.getEntity(this.entityid);
-        if (entity instanceof AbstractCivilianEntity)
+        if (Minecraft.getInstance().level.getEntity(this.entityid) instanceof final AbstractCivilianEntity civilian)
         {
-            ((AbstractCivilianEntity) entity).getSoundManager().addToQueue(this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
+            civilian.getSoundManager().addToQueue(this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
         }
     }
 }

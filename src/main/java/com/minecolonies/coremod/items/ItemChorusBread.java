@@ -51,9 +51,9 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entityLiving)
     {
-        if (!worldIn.isClientSide && entityLiving instanceof ServerPlayer && WorldUtil.isOverworldType(worldIn))
+        if (!worldIn.isClientSide && entityLiving instanceof final ServerPlayer player && WorldUtil.isOverworldType(worldIn))
         {
-            TeleportHelper.surfaceTeleport((ServerPlayer)entityLiving);
+            TeleportHelper.surfaceTeleport(player);
         }
 
         return super.finishUsingItem(stack, worldIn, entityLiving);

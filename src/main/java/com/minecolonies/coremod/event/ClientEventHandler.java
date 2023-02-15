@@ -130,12 +130,11 @@ public class ClientEventHandler
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
         }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
-        if(event.getItemStack().getItem() instanceof BlockItem)
+        if(event.getItemStack().getItem() instanceof final BlockItem blockItem)
         {
-            final BlockItem blockItem = (BlockItem) event.getItemStack().getItem();
-            if(blockItem.getBlock() instanceof AbstractBlockHut)
+            if(blockItem.getBlock() instanceof final AbstractBlockHut<?> hut)
             {
-                handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
+                handleHutBlockResearchUnlocks(colony, event.getToolTip(), hut);
             }
         }
     }
@@ -331,7 +330,7 @@ public class ClientEventHandler
             return;
         }
 
-        if (event.getHand() == InteractionHand.MAIN_HAND && event.getItemStack().getItem() instanceof BlockItem blockItem)
+        if (event.getHand() == InteractionHand.MAIN_HAND && event.getItemStack().getItem() instanceof final BlockItem blockItem)
         {
             // due to a Forge bug, this event still triggers on right-clicking a block (and there are no properties on
             // the event itself to distinguish the two cases, even though there are likely-sounding ones), so we need
@@ -343,7 +342,7 @@ public class ClientEventHandler
 
             final Block block = blockItem.getBlock();
 
-            if (block instanceof IBuildingBrowsableBlock browsable && browsable.shouldBrowseBuildings(event))
+            if (block instanceof final IBuildingBrowsableBlock browsable && browsable.shouldBrowseBuildings(event))
             {
                 MinecoloniesAPIProxy.getInstance().getBuildingDataManager().openBuildingBrowser(block);
 

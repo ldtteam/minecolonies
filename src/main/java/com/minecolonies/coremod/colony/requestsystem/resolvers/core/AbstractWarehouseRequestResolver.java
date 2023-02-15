@@ -71,9 +71,8 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if (requestToCheck.getRequester() instanceof BuildingBasedRequester)
+        if (requestToCheck.getRequester() instanceof final BuildingBasedRequester requester)
         {
-            final BuildingBasedRequester requester = ((BuildingBasedRequester) requestToCheck.getRequester());
             final Optional<IRequester> building = requester.getBuilding(manager, requestToCheck.getRequester().getId());
             if (building.isPresent() && building.get() instanceof BuildingWareHouse)
             {
@@ -88,11 +87,9 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 return false;
             }
 
-            final Colony colony = (Colony) manager.getColony();
-
             try
             {
-                return internalCanResolve(getWareHousesInColony(colony, requestToCheck.getRequester().getLocation().getInDimensionLocation()), requestToCheck);
+                return internalCanResolve(getWareHousesInColony((Colony) manager.getColony(), requestToCheck.getRequester().getLocation().getInDimensionLocation()), requestToCheck);
             }
             catch (Exception e)
             {
@@ -144,20 +141,18 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             return Lists.newArrayList();
         }
 
-        if (!(manager.getColony() instanceof Colony))
+        if (!(manager.getColony() instanceof final Colony colony))
         {
             return Lists.newArrayList();
         }
-
-        final Colony colony = (Colony) manager.getColony();
 
         final List<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony, request.getRequester().getLocation().getInDimensionLocation());
 
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = 0;
-        if (request.getRequest() instanceof INonExhaustiveDeliverable)
+        if (request.getRequest() instanceof final INonExhaustiveDeliverable deli)
         {
-            totalAvailable -= ((INonExhaustiveDeliverable) request.getRequest()).getLeftOver();
+            totalAvailable -= deli.getLeftOver();
         }
         for (final TileEntityWareHouse tile : wareHouses)
         {
@@ -209,7 +204,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         final Map<ItemStorage, Integer> storages = new HashMap<>();
 
-        final int keep = completedRequest.getRequest() instanceof INonExhaustiveDeliverable ? ((INonExhaustiveDeliverable) completedRequest.getRequest()).getLeftOver() : 0;
+        final int keep = completedRequest.getRequest() instanceof final INonExhaustiveDeliverable deli ? deli.getLeftOver() : 0;
 
         tileentities:
         for (final TileEntityWareHouse wareHouse : wareHouses)

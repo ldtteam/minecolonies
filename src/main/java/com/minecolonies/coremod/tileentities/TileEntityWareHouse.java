@@ -62,9 +62,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             if (WorldUtil.isBlockLoaded(level, pos))
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
+                if (entity instanceof final TileEntityRack rack && !rack.isEmpty())
                 {
-                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, ignoreDamage, ignoreNBT);
+                    totalCountFound += rack.getCount(itemStack, ignoreDamage, ignoreNBT);
                     if (totalCountFound >= count)
                     {
                         return true;
@@ -92,9 +92,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             for (@NotNull final BlockPos pos : getBuilding().getContainers())
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
+                if (entity instanceof final TileEntityRack rack && !rack.isEmpty() && rack.getItemCount(itemStackSelectionPredicate) > 0)
                 {
-                    final TileEntityRack rack = (TileEntityRack) entity;
                     for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
                     {
                         found.add(new Tuple<>(stack, pos));
@@ -187,9 +186,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             if (WorldUtil.isBlockLoaded(level, pos))
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof AbstractTileEntityRack)
+                if (entity instanceof final AbstractTileEntityRack rack)
                 {
-                    if (((AbstractTileEntityRack) entity).getFreeSlots() > 0 && ((AbstractTileEntityRack) entity).hasItemStack(stack, 1, true))
+                    if (rack.getFreeSlots() > 0 && rack.hasItemStack(stack, 1, true))
                     {
                         return entity;
                     }
@@ -214,9 +213,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             if (WorldUtil.isBlockLoaded(level, pos))
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof AbstractTileEntityRack)
+                if (entity instanceof final AbstractTileEntityRack rack)
                 {
-                    if (((AbstractTileEntityRack) entity).getFreeSlots() > 0 && ((AbstractTileEntityRack) entity).hasSimilarStack(stack))
+                    if (rack.getFreeSlots() > 0 && rack.hasSimilarStack(stack))
                     {
                         return entity;
                     }
@@ -239,14 +238,14 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             final BlockEntity entity = getLevel().getBlockEntity(pos);
-            if (entity instanceof TileEntityRack)
+            if (entity instanceof final TileEntityRack rack)
             {
-                if (((AbstractTileEntityRack) entity).isEmpty())
+                if (rack.isEmpty())
                 {
                     return entity;
                 }
 
-                final int tempFreeSlots = ((AbstractTileEntityRack) entity).getFreeSlots();
+                final int tempFreeSlots = rack.getFreeSlots();
                 if (tempFreeSlots > freeSlots)
                 {
                     freeSlots = tempFreeSlots;

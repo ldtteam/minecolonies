@@ -39,9 +39,8 @@ public class ResearchUnlocked implements LootItemCondition
     public boolean test(@NotNull final LootContext lootContext)
     {
         final Entity entity = lootContext.getParamOrNull(LootContextParams.KILLER_ENTITY);
-        if (entity instanceof AbstractEntityCitizen)
+        if (entity instanceof final AbstractEntityCitizen citizen)
         {
-            final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
             final IColony colony = citizen.getCitizenColonyHandler().getColony();
             if (colony != null)
             {

@@ -53,9 +53,9 @@ public class GravePlacementHandler implements IPlacementHandler
         }
 
         BlockEntity entity = world.getBlockEntity(pos);
-        if (entity instanceof TileEntityGrave)
+        if (entity instanceof final TileEntityGrave grave)
         {
-            ((TileEntityGrave) entity).updateBlockState();
+            grave.updateBlockState();
         }
 
         return ActionProcessingResult.SUCCESS;

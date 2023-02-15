@@ -281,9 +281,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityColonyBuilding)
+        if (tileEntity instanceof final TileEntityColonyBuilding hut)
         {
-            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
             if (hut.getBuildingName() != getBuildingEntry().getRegistryName())
             {
                 hut.registryName = getBuildingEntry().getRegistryName();
@@ -328,11 +327,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final String blueprintPath)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof AbstractTileEntityColonyBuilding)
+        if (tileEntity instanceof final AbstractTileEntityColonyBuilding building)
         {
-            ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setPackName(style);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setBlueprintPath(blueprintPath);
+            building.setMirror(mirror);
+            building.setPackName(style);
+            building.setBlueprintPath(blueprintPath);
         }
 
         setPlacedBy(worldIn, pos, state, placer, stack);
@@ -449,7 +448,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final String path)
     {
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (!(anchor.getBlock() instanceof AbstractBlockHut<?>) || (!fancyPlacement && player.isCreative()))
+        if (!(anchor.getBlock() instanceof final AbstractBlockHut<?> hut) || (!fancyPlacement && player.isCreative()))
         {
             return true;
         }
@@ -460,7 +459,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
         world.destroyBlock(pos, true);
         world.setBlockAndUpdate(pos, anchor);
-        ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
+        hut.onBlockPlacedByBuildTool(world,
           pos,
           anchor,
           player,

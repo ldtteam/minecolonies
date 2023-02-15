@@ -80,13 +80,13 @@ public class MinecoloniesMinecart extends Minecart
         boolean isPowered = false;
         boolean flag = false;
         BaseRailBlock abstractrailblock = (BaseRailBlock) state.getBlock();
-        if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivatorRail())
+        if (abstractrailblock instanceof final PoweredRailBlock poweredBlock && !poweredBlock.isActivatorRail())
         {
             isPowered = state.getValue(PoweredRailBlock.POWERED);
             flag = !isPowered;
         }
 
-        RailShape railshape = ((BaseRailBlock) state.getBlock()).getRailDirection(state, this.level, pos, this);
+        RailShape railshape = abstractrailblock.getRailDirection(state, this.level, pos, this);
         switch (railshape)
         {
             case ASCENDING_EAST:
@@ -355,7 +355,7 @@ public class MinecoloniesMinecart extends Minecart
             if (canUseRail() && BaseRailBlock.isRail(blockstate))
             {
                 this.moveAlongTrack(blockpos, blockstate);
-                if (blockstate.getBlock() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.getBlock()).isActivatorRail())
+                if (blockstate.getBlock() instanceof final PoweredRailBlock poweredBlock && poweredBlock.isActivatorRail())
                 {
                     this.activateMinecart(k, i, j, blockstate.getValue(PoweredRailBlock.POWERED));
                 }

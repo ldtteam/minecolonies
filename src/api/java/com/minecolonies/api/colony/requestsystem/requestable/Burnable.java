@@ -154,12 +154,10 @@ public class Burnable implements IDeliverable
         {
             return true;
         }
-        if (!(o instanceof Burnable))
+        if (!(o instanceof final Burnable burnable))
         {
             return false;
         }
-
-        final Burnable burnable = (Burnable) o;
 
         if (getCount() != burnable.getCount())
         {

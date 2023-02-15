@@ -136,10 +136,10 @@ public class StringSetting implements IStringSetting
     @Override
     public void updateSetting(final ISetting iSetting)
     {
-        if (iSetting instanceof StringSetting)
+        if (iSetting instanceof final StringSetting stringSetting)
         {
             this.settings.clear();
-            this.settings.addAll(((StringSetting) iSetting).settings);
+            this.settings.addAll(stringSetting.settings);
             if (currentIndex >= this.settings.size())
             {
                 currentIndex = this.settings.size() - 1;

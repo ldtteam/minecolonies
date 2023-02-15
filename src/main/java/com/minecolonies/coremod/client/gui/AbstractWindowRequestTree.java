@@ -195,9 +195,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         {
             for (final Object o : request.getChildren())
             {
-                if (o instanceof IToken<?>)
+                if (o instanceof final IToken<?> iToken)
                 {
-                    final IToken<?> iToken = (IToken<?>) o;
                     final IRequest<?> childRequest = manager.getRequestForToken(iToken);
 
                     if (childRequest != null)
@@ -399,9 +398,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         {
             if (wrapper.getDepth() > 0)
             {
-                if (!(tRequest.getRequester() instanceof IBuildingBasedRequester)
-                      || !((IBuildingBasedRequester) tRequest.getRequester())
-                            .getBuilding(colony.getRequestManager(),
+                if (!(tRequest.getRequester() instanceof final IBuildingBasedRequester requester)
+                      || !requester.getBuilding(colony.getRequestManager(),
                               tRequest.getId()).map(
                     iRequester -> iRequester.getLocation()
                                     .equals(building.getLocation())).isPresent())
@@ -424,7 +422,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
             }
 
-            if (this instanceof MainWindowCitizen && !((MainWindowCitizen) this).getCitizen().getInventory().hasSpace())
+            if (this instanceof final MainWindowCitizen window && !window.getCitizen().getInventory().hasSpace())
             {
                 return false;
             }

@@ -384,8 +384,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 textBuilder.append(Component.literal(""));
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
-                final Skill primary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
-                final Skill secondary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getSecondarySkill() : null;
+                final Skill primary = selectedModule instanceof final WorkerBuildingModuleView worker ? worker.getPrimarySkill() : null;
+                final Skill secondary = selectedModule instanceof final WorkerBuildingModuleView worker ? worker.getSecondarySkill() : null;
 
                 for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
                 {

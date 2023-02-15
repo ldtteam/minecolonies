@@ -141,7 +141,7 @@ public class PathingStuckHandler implements IStuckHandler
             return;
         }
 
-        if (navigator.getOurEntity() instanceof IStuckHandlerEntity && !((IStuckHandlerEntity) navigator.getOurEntity()).canBeStuck())
+        if (navigator.getOurEntity() instanceof final IStuckHandlerEntity entity && !entity.canBeStuck())
         {
             resetGlobalStuckTimers();
             return;

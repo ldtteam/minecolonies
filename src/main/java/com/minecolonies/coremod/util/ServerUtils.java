@@ -64,9 +64,8 @@ public final class ServerUtils
 
         for (final Object o : world.players())
         {
-            if (o instanceof Player)
+            if (o instanceof final Player player)
             {
-                @NotNull final Player player = (Player) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);

@@ -55,12 +55,10 @@ public class StandardToken implements IToken<UUID>
         {
             return true;
         }
-        if (!(o instanceof IToken))
+        if (!(o instanceof final IToken<?> that))
         {
             return false;
         }
-
-        final IToken<?> that = (IToken<?>) o;
 
         return id.equals(that.getIdentifier());
     }

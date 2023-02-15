@@ -183,7 +183,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
     private void requestPaper()
     {
         if (!building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-          q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
+          q -> q.getRequest() instanceof final Stack stack && stack.getStack().getItem() == Items.PAPER))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(Items.PAPER, PAPER_TO_REQUEST)));
         }

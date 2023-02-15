@@ -53,9 +53,9 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
         for (int i = 0; i < woSize; i++)
         {
             final IWorkOrderView woView = AbstractWorkOrder.createWorkOrderView(buf);
-            if (woView instanceof WorkOrderMinerView)
+            if (woView instanceof final WorkOrderMinerView orderWiew)
             {
-                workOrders.add((WorkOrderMinerView) woView);
+                workOrders.add(orderWiew);
             }
         }
     }

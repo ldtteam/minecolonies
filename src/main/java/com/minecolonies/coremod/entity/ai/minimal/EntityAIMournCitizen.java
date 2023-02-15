@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -172,8 +170,7 @@ public class EntityAIMournCitizen extends Goal
             return MourningState.IDLE;
         }
 
-        final IBuilding graveyardBuilding = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(graveyard);
-        if (!(graveyardBuilding instanceof BuildingGraveyard))
+        if (!(citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(graveyard) instanceof final BuildingGraveyard graveyardBuilding))
         {
             graveyard = null;
             return MourningState.DECIDE;
@@ -192,13 +189,11 @@ public class EntityAIMournCitizen extends Goal
         }
 
         // Try find the grave of one of the diseased.
-        final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyardBuilding).getGravePositions();
-        for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
+        for (final Tuple<BlockPos, Direction> gravePos : graveyardBuilding.getGravePositions())
         {
             if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))
             {
-                final BlockEntity blockEntity = citizen.level.getBlockEntity(gravePos.getA());
-                if (blockEntity instanceof TileEntityNamedGrave)
+                if (citizen.level.getBlockEntity(gravePos.getA()) instanceof final TileEntityNamedGrave namedGrave)
                 {
                     final Iterator<String> iterator = citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator();
                     if (!iterator.hasNext())
@@ -209,7 +204,7 @@ public class EntityAIMournCitizen extends Goal
                     final String firstName = StringUtils.split(deathBud)[0];
                     final String lastName = deathBud.replaceFirst(firstName,"");
 
-                    final List<String> graveNameList = ((TileEntityNamedGrave) blockEntity).getTextLines();
+                    final List<String> graveNameList = namedGrave.getTextLines();
                     if (!graveNameList.isEmpty() && graveNameList.contains(firstName) && graveNameList.contains(lastName))
                     {
                         this.gravePos = gravePos.getA();

@@ -121,7 +121,7 @@ public abstract class AbstractSchematicProvider implements IBuilding
     @Override
     public boolean equals(final Object o)
     {
-        return o instanceof AbstractBuilding && ((IBuilding) o).getID().equals(this.getID());
+        return o instanceof final AbstractBuilding building && building.getID().equals(this.getID());
     }
 
     @Override
@@ -572,9 +572,8 @@ public abstract class AbstractSchematicProvider implements IBuilding
     public void upgradeBuildingLevelToSchematicData()
     {
         final BlockEntity tileEntity = colony.getWorld().getBlockEntity(getID());
-        if (tileEntity instanceof IBlueprintDataProviderBE)
+        if (tileEntity instanceof final IBlueprintDataProviderBE blueprintDataProvider)
         {
-            final IBlueprintDataProviderBE blueprintDataProvider = (IBlueprintDataProviderBE) tileEntity;
             if (blueprintDataProvider.getSchematicName().isEmpty())
             {
                 return;

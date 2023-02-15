@@ -84,10 +84,10 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     {
         final ItemStack itemstack = player.getInventory().getSelected();
         final BlockEntity te = worldIn.getBlockEntity(pos);
-        if (te instanceof TileEntityBarrel && !worldIn.isClientSide)
+        if (te instanceof final TileEntityBarrel barrel && !worldIn.isClientSide)
         {
-            ((TileEntityBarrel) te).useBarrel(player, itemstack, ray.getDirection());
-            ((TileEntityBarrel) te).updateBlock(worldIn);
+            barrel.useBarrel(player, itemstack, ray.getDirection());
+            barrel.updateBlock(worldIn);
         }
 
         return InteractionResult.SUCCESS;

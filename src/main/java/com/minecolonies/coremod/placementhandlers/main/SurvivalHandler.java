@@ -94,7 +94,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     {
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (anchor.getBlock() instanceof AbstractBlockHut<?>)
+        if (anchor.getBlock() instanceof final AbstractBlockHut<?> anchorBlock)
         {
             if (clientPack || !StructurePacks.hasPack(packName))
             {
@@ -103,10 +103,10 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 return;
             }
 
-            final ItemStack stack = new ItemStack(anchor.getBlock());
-            if (anchor.getBlock() != null && EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
+            final ItemStack stack = new ItemStack(anchorBlock);
+            if (anchorBlock != null && EventHandler.onBlockHutPlaced(world, player, anchorBlock, blockPos))
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchorBlock);
                 if (slot == -1 && !player.isCreative())
                 {
                     SoundUtils.playErrorSound(player, player.blockPosition());
@@ -116,7 +116,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
                 if (tempColony != null
                       && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                            && !(anchor.getBlock() instanceof BlockHutTownHall
+                            && !(anchorBlock instanceof BlockHutTownHall
                                    && IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))))
                 {
                     SoundUtils.playErrorSound(player, player.blockPosition());
@@ -134,16 +134,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 if (tempColony != null)
                 {
-                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
+                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, anchorBlock.getBlueprintName()));
                 }
                 else
                 {
-                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName());
+                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, anchorBlock.getBlueprintName());
                 }
 
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
-                ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
+                anchorBlock.onBlockPlacedByBuildTool(world,
                   blockPos,
                   anchor,
                   player,
@@ -176,7 +176,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, blockPos);
                 if (building == null)
                 {
-                    if (!(anchor.getBlock() instanceof BlockHutTownHall))
+                    if (!(anchorBlock instanceof BlockHutTownHall))
                     {
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         Log.getLogger().error("BuildTool: building is null!", new Exception());

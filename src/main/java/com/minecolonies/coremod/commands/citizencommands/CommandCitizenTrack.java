@@ -16,7 +16,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -40,8 +39,7 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
+        if (!(context.getSource().getEntity() instanceof final Player sender))
         {
             return 1;
         }
@@ -72,16 +70,16 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
         }
         final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
-        if (AbstractPathJob.trackingMap.getOrDefault((Player) sender, UUID.randomUUID()).equals(entityCitizen.getUUID()))
+        if (AbstractPathJob.trackingMap.getOrDefault(sender, UUID.randomUUID()).equals(entityCitizen.getUUID()))
         {
             context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
-            AbstractPathJob.trackingMap.remove((Player) sender);
+            AbstractPathJob.trackingMap.remove(sender);
             Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
         }
         else
         {
             context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
-            AbstractPathJob.trackingMap.put((Player) sender, entityCitizen.getUUID());
+            AbstractPathJob.trackingMap.put(sender, entityCitizen.getUUID());
         }
 
 

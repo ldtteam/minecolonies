@@ -265,10 +265,10 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      */
     public void repairLevel(final int level)
     {
-        if (building instanceof BuildingMiner)
+        if (building instanceof final BuildingMiner miner)
         {
-            final BlockPos ladderPos = ((BuildingMiner) building).getLadderLocation();
-            final BlockPos vector = ladderPos.subtract(((BuildingMiner) building).getCobbleLocation());
+            final BlockPos ladderPos = miner.getLadderLocation();
+            final BlockPos vector = ladderPos.subtract(miner.getCobbleLocation());
             final int xOffset = SHAFT_RADIUS * vector.getX();
             final int zOffset = SHAFT_RADIUS * vector.getZ();
 

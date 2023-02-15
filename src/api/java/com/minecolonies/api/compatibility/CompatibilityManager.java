@@ -671,9 +671,9 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (stack.is(Tags.Items.ORES) || stack.is(ModTags.breakable_ore) || stack.is(ModTags.raw_ore))
         {
-            if (stack.getItem() instanceof BlockItem)
+            if (stack.getItem() instanceof final BlockItem item)
             {
-                oreBlocks.add(((BlockItem) stack.getItem()).getBlock());
+                oreBlocks.add(item.getBlock());
             }
             if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty())
             {

@@ -128,13 +128,13 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @Override
     public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
-        if (response.getContents() instanceof TranslatableContents)
+        if (response.getContents() instanceof final TranslatableContents contents)
         {
-            if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (contents.getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (contents.getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
             }

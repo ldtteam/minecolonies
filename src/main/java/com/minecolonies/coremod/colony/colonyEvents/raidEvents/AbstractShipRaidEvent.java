@@ -301,9 +301,9 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         {
             for (final Entity entity : getEntities())
             {
-                if (entity instanceof LivingEntity)
+                if (entity instanceof final LivingEntity livingEntity)
                 {
-                    ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.GLOWING, 550));
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 550));
                 }
             }
         }

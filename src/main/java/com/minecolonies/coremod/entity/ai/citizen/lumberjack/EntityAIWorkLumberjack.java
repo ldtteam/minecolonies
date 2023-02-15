@@ -251,7 +251,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().defaultBlockState().is(BlockTags.LOGS);
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof final BlockItem item && item.getBlock().defaultBlockState().is(BlockTags.LOGS);
     }
 
     /**
@@ -865,7 +865,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 }
             }
 
-            if (!(block instanceof IPlantable && block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, (IPlantable) block))
+            if (!(block instanceof final IPlantable plantable && block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, plantable))
                   || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
             {
                 job.getTree().removeStump(pos);

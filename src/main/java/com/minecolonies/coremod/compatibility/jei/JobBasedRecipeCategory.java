@@ -261,7 +261,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
             String tip = null;
-            if (line.getContents() instanceof TranslatableContents contents)
+            if (line.getContents() instanceof final TranslatableContents contents)
             {
                 final String key = contents.getKey() + ".tip";
                 if (I18n.exists(key))

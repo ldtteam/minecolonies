@@ -42,9 +42,8 @@ public class ItemSpear extends TridentItem
     @Override
     public void releaseUsing(@NotNull ItemStack stack, @NotNull Level worldIn, @NotNull LivingEntity entityLiving, int timeLeft)
     {
-        if (entityLiving instanceof Player)
+        if (entityLiving instanceof final Player playerEntity)
         {
-            Player playerEntity = (Player) entityLiving;
             int usedForDuration = this.getUseDuration(stack) - timeLeft;
             if (usedForDuration >= 10)
             {

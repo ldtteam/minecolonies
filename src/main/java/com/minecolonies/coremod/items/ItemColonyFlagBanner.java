@@ -52,10 +52,9 @@ public class ItemColonyFlagBanner extends BannerItem
         if (te instanceof BannerBlockEntity || te instanceof TileEntityColonyFlag)
         {
             CompoundTag source;
-            if (te instanceof BannerBlockEntity)
+            if (te instanceof final BannerBlockEntity banner)
             {
-                source = ((BannerBlockEntity) te).getItem()
-                           .getTag().getCompound("BlockEntityTag");
+                source = banner.getItem().getTag().getCompound("BlockEntityTag");
             }
             else
             {

@@ -207,13 +207,13 @@ public class BuildingConcreteMixer extends AbstractBuilding
     public int outputBlockCountInWorld(final ItemStack primaryOutput)
     {
         int count = 0;
-        if (primaryOutput.getItem() instanceof BlockItem)
+        if (primaryOutput.getItem() instanceof final BlockItem outputItem)
         {
             for (int i = 1; i <= minWaterLevel; i++)
             {
                 for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
                 {
-                    if (((BlockItem) primaryOutput.getItem()).getBlock() == colony.getWorld().getBlockState(pos).getBlock())
+                    if (outputItem.getBlock() == colony.getWorld().getBlockState(pos).getBlock())
                     {
                         count++;
                     }

@@ -52,7 +52,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
         }
 
         final BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
-        if (te instanceof TileEntityColonyBuilding)
+        if (te instanceof final TileEntityColonyBuilding building)
         {
             ctx.getItemInHand().shrink(1);
 
@@ -67,7 +67,6 @@ public class ItemScrollHighlight extends AbstractItemScroll
                 return InteractionResult.SUCCESS;
             }
 
-            final TileEntityColonyBuilding building = (TileEntityColonyBuilding) te;
             final Set<ICitizenData> citizens = building.getColony().getBuildingManager().getBuilding(ctx.getClickedPos()).getAllAssignedCitizen();
 
             for (final ICitizenData citizenData : citizens)

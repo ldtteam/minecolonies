@@ -83,9 +83,9 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
-                if (entity instanceof IBlueprintDataProviderBE)
+                if (entity instanceof final IBlueprintDataProviderBE blueprintProvider)
                 {
-                    this.map = ((IBlueprintDataProviderBE) entity).getWorldTagPosMap();
+                    this.map = blueprintProvider.getWorldTagPosMap();
                 }
             }
         }
@@ -127,9 +127,9 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
-                if (entity instanceof IBlueprintDataProviderBE)
+                if (entity instanceof final IBlueprintDataProviderBE blueprintProvider)
                 {
-                    this.map = ((IBlueprintDataProviderBE) entity).getWorldTagPosMap();
+                    this.map = blueprintProvider.getWorldTagPosMap();
                 }
             }
         }

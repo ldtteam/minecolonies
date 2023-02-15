@@ -402,17 +402,15 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Override
     public List<ItemStack> getDisplayStacks()
     {
-        if (!(getRequest() instanceof IDeliverable))
+        if (!(getRequest() instanceof final IDeliverable delivery))
         {
             return Lists.newArrayList();
         }
 
-        final IDeliverable deliverable = (IDeliverable) getRequest();
-
         if (itemExamples == null)
         {
             itemExamples =
-              ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(deliverable::matches).collect(Collectors.toList()));
+              ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(delivery::matches).collect(Collectors.toList()));
         }
 
         return itemExamples;
@@ -438,12 +436,10 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         {
             return true;
         }
-        if (!(o instanceof AbstractRequest))
+        if (!(o instanceof final AbstractRequest<?> that))
         {
             return false;
         }
-
-        final AbstractRequest<?> that = (AbstractRequest<?>) o;
 
         if (!getId().equals(that.getId()))
         {

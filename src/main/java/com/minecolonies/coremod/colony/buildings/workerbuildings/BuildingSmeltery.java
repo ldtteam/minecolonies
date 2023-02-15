@@ -255,10 +255,9 @@ public class BuildingSmeltery extends AbstractBuilding
 
         protected ResourceLocation getLootTable(Item item)
         {
-            if (item instanceof BlockItem)
+            if (item instanceof final BlockItem blockItem)
             {
-                Block itemBlock = Block.byItem(item);
-                return itemBlock.getLootTable();
+                return blockItem.getBlock().getLootTable();
             }
             return null;
         }

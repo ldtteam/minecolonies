@@ -81,17 +81,17 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingView)
+        if (requester instanceof final IBuildingView buildingView)
         {
-            final WorkerBuildingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry());
+            final WorkerBuildingModuleView moduleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry());
             if (moduleView != null)
             {
                 return Component.translatable(moduleView.getJobEntry().getTranslationKey());
             }
         }
-        if (requester instanceof IBuilding)
+        if (requester instanceof final IBuilding building)
         {
-            final WorkerBuildingModule module = ((IBuilding) requester).getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
+            final WorkerBuildingModule module = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
             return Component.translatable(module.getJobEntry().getTranslationKey());
         }
         return super.getRequesterDisplayName(manager, request);

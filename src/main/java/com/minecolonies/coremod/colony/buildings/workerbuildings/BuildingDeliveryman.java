@@ -59,8 +59,7 @@ public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDe
             {
                 return super.canEat(stack);
             }
-            final IRequestable request = currentTask.getRequest();
-            if (request instanceof Delivery && ((Delivery) request).getStack().sameItem(stack))
+            if (currentTask.getRequest() instanceof final Delivery delivery && delivery.getStack().sameItem(stack))
             {
                 return false;
             }

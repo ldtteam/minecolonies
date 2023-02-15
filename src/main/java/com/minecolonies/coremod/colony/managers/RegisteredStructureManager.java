@@ -42,7 +42,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.NotNull;
@@ -556,10 +555,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         for (@NotNull final BlockPos pos : fields)
         {
-            final BlockEntity field = world.getBlockEntity(pos);
-            if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
+            if (world.getBlockEntity(pos) instanceof final ScarecrowTileEntity field && !field.isTaken())
             {
-                return (ScarecrowTileEntity) field;
+                return field;
             }
         }
         return null;
@@ -819,18 +817,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         building.markDirty();
 
         //  Limit 1 town hall
-        if (building instanceof BuildingTownHall && townHall == null)
+        if (building instanceof final BuildingTownHall th && townHall == null)
         {
-            townHall = (ITownHall) building;
+            townHall = th;
         }
 
-        if (building instanceof BuildingWareHouse)
+        if (building instanceof final BuildingWareHouse warehouse)
         {
-            wareHouses.add((IWareHouse) building);
+            wareHouses.add(warehouse);
         }
-        else if (building instanceof BuildingMysticalSite)
+        else if (building instanceof final BuildingMysticalSite mysticalSite)
         {
-            mysticalSites.add((IMysticalSite) building);
+            mysticalSites.add(mysticalSite);
         }
     }
 

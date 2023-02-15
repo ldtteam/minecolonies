@@ -89,9 +89,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
         final Set<ICitizenData> set = building.getAllAssignedCitizen();
         final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
-        if (data != null && data.getJob() instanceof AbstractJobStructure)
+        if (data != null && data.getJob() instanceof final AbstractJobStructure<?, ?> structureBuilderJob)
         {
-            final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
             final IWorkOrder workOrder = structureBuilderJob.getWorkOrder();
             if (workOrder != null)
             {
@@ -147,9 +146,9 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                if (data.getJob() instanceof IJobWithExternalWorkStations)
+                if (data.getJob() instanceof final IJobWithExternalWorkStations job)
                 {
-                    for (final IBuilding station : ((IJobWithExternalWorkStations) data.getJob()).getWorkStations())
+                    for (final IBuilding station : job.getWorkStations())
                     {
                         resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
                           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));

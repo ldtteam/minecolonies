@@ -473,9 +473,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             final ItemStack sword = worker.getItemBySlot(EquipmentSlot.MAINHAND);
                             if (!sword.isEmpty())
                             {
-                                if (sword.getItem() instanceof SwordItem)
+                                if (sword.getItem() instanceof final SwordItem swordItem)
                                 {
-                                    damageToDo += ((SwordItem) sword.getItem()).getDamage();
+                                    damageToDo += swordItem.getDamage();
                                 }
                                 else
                                 {
@@ -563,7 +563,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             else if (!currStack.isEmpty())
             {
                 int itemDelay = 0;
-                if (currStack.getItem() instanceof BlockItem bi)
+                if (currStack.getItem() instanceof final BlockItem bi)
                 {
                     final Block block = bi.getBlock();
 

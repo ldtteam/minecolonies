@@ -129,9 +129,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         for (final BlockPos pos : building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof FurnaceBlockEntity)
+            if (entity instanceof final FurnaceBlockEntity furnace)
             {
-                final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
                 final int countInResultSlot = ItemStackUtils.isEmpty(furnace.getItem(RESULT_SLOT)) ? 0 : furnace.getItem(RESULT_SLOT).getCount();
                 final int countInInputSlot = ItemStackUtils.isEmpty(furnace.getItem(SMELTABLE_SLOT)) ? 0 : furnace.getItem(SMELTABLE_SLOT).getCount();
 
@@ -158,10 +157,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         for (final BlockPos pos : building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof FurnaceBlockEntity)
+            if (entity instanceof final FurnaceBlockEntity furnace)
             {
-                final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
-
                 if (!furnace.getItem(FUEL_SLOT).isEmpty() && !module.isItemInList(new ItemStorage(furnace.getItem(FUEL_SLOT))))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
@@ -293,9 +290,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof FurnaceBlockEntity)
+                if (entity instanceof final FurnaceBlockEntity furnace)
                 {
-                    final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
                     for(int i = 0; i < accelerationTicks; i++)
                     {
                         if (furnace.isLit()) 
@@ -328,9 +324,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         {
             final BlockEntity entity = world.getBlockEntity(pos);
 
-            if (entity instanceof FurnaceBlockEntity)
+            if (entity instanceof final FurnaceBlockEntity furnace)
             {
-                final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
                 if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
                       || (amountOfSmeltable > 0 && hasFuelInFurnaceAndNoSmeltable(furnace))
                       || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
@@ -405,8 +400,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         }
 
         final BlockEntity entity = world.getBlockEntity(walkTo);
-        if (!(entity instanceof FurnaceBlockEntity)
-              || (ItemStackUtils.isEmpty(((FurnaceBlockEntity) entity).getItem(RESULT_SLOT))))
+        if (!(entity instanceof final FurnaceBlockEntity furnace) || ItemStackUtils.isEmpty(furnace.getItem(RESULT_SLOT)))
         {
             walkTo = null;
             return START_WORKING;
@@ -440,8 +434,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         }
 
         final BlockEntity entity = world.getBlockEntity(walkTo);
-        if (!(entity instanceof FurnaceBlockEntity)
-                || (ItemStackUtils.isEmpty(((FurnaceBlockEntity) entity).getItem(FUEL_SLOT))))
+        if (!(entity instanceof final FurnaceBlockEntity furnace) || ItemStackUtils.isEmpty(furnace.getItem(FUEL_SLOT)))
         {
             walkTo = null;
             return START_WORKING;
@@ -482,10 +475,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         }
 
         final BlockEntity entity = world.getBlockEntity(walkTo);
-        if (entity instanceof FurnaceBlockEntity)
+        if (entity instanceof final FurnaceBlockEntity furnace)
         {
-            final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
-
             if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), this::isSmeltable)
                   && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {

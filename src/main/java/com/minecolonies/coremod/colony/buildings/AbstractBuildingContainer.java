@@ -19,7 +19,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -154,11 +153,10 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     {
         if (block instanceof AbstractBlockHut)
         {
-            final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityColonyBuilding)
+            if (world.getBlockEntity(pos) instanceof final TileEntityColonyBuilding buildingTe)
             {
-                ((TileEntityColonyBuilding) entity).setStructurePack(StructurePacks.getStructurePack(this.getStructurePack()));
-                ((TileEntityColonyBuilding) entity).setMirror(isMirrored());
+                buildingTe.setStructurePack(StructurePacks.getStructurePack(this.getStructurePack()));
+                buildingTe.setMirror(isMirrored());
                 final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
@@ -171,10 +169,9 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         else if (block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
-            final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack)
+            if (world.getBlockEntity(pos) instanceof final TileEntityRack rack)
             {
-                ((TileEntityRack) entity).setBuildingPos(this.getID());
+                rack.setBuildingPos(this.getID());
             }
         }
     }

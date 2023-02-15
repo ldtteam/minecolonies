@@ -224,18 +224,17 @@ public class EntityAISickTask extends Goal
 
         final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
-        final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
 
-        if (hospital instanceof BuildingHospital)
+        if (colony.getBuildingManager().getBuilding(hospitalPos) instanceof final BuildingHospital hospital)
         {
-            if (usedBed != null && !((BuildingHospital) hospital).getBedList().contains(usedBed))
+            if (usedBed != null && !hospital.getBedList().contains(usedBed))
             {
                 usedBed = null;
             }
 
             if (usedBed == null)
             {
-                for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
+                for (final BlockPos pos : hospital.getBedList())
                 {
                     final Level world = citizen.level;
                     BlockState state = world.getBlockState(pos);
@@ -245,7 +244,7 @@ public class EntityAISickTask extends Goal
                           && world.isEmptyBlock(pos.above()))
                     {
                         usedBed = pos;
-                        ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCivilianID());
+                        hospital.registerPatient(usedBed, citizen.getCivilianID());
                         return FIND_EMPTY_BED;
                     }
                 }
@@ -261,7 +260,7 @@ public class EntityAISickTask extends Goal
                 waitingTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
                 {
-                    ((BuildingHospital) hospital).registerPatient(usedBed, 0);
+                    hospital.registerPatient(usedBed, 0);
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
                     usedBed = null;
                 }
@@ -380,11 +379,11 @@ public class EntityAISickTask extends Goal
 
         if (citizen.getCitizenSleepHandler().isAsleep())
         {
-            final BlockPos hospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
-            if (hospital != null)
+            final BlockPos hospitalPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+            if (hospitalPos != null)
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(hospital);
-                if (building instanceof BuildingHospital && !((BuildingHospital) building).getBedList().contains(citizen.getCitizenSleepHandler().getBedLocation()))
+                final IBuilding building = colony.getBuildingManager().getBuilding(hospitalPos);
+                if (building instanceof final BuildingHospital hospital && !hospital.getBedList().contains(citizen.getCitizenSleepHandler().getBedLocation()))
                 {
                     citizen.getCitizenSleepHandler().onWakeUp();
                 }

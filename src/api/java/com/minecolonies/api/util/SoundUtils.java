@@ -180,9 +180,9 @@ public final class SoundUtils
      */
     public static void playSuccessSound(@NotNull final Player player, @NotNull final BlockPos position)
     {
-        if (player instanceof ServerPlayer)
+        if (player instanceof final ServerPlayer serverPlayer)
         {
-            ((ServerPlayer) player).connection.send(new ClientboundSoundPacket(SoundEvents.NOTE_BLOCK_BELL,
+            serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.NOTE_BLOCK_BELL,
               SoundSource.NEUTRAL,
               position.getX(),
               position.getY(),
@@ -200,9 +200,9 @@ public final class SoundUtils
      */
     public static void playErrorSound(@NotNull final Player player, @NotNull final BlockPos position)
     {
-        if (player instanceof ServerPlayer)
+        if (player instanceof final ServerPlayer serverPlayer)
         {
-            ((ServerPlayer) player).connection.send(new ClientboundSoundPacket(SoundEvents.NOTE_BLOCK_DIDGERIDOO,
+            serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.NOTE_BLOCK_DIDGERIDOO,
               SoundSource.NEUTRAL,
               position.getX(),
               position.getY(),

@@ -121,10 +121,10 @@ public class EntityAICitizenWander extends Goal
             return READ_A_BOOK;
         }
 
-        final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
-        if (blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary)
+        if (citizen.level.getBlockEntity(leisureSite) instanceof final TileEntityColonyBuilding building
+            && building.getBuilding() instanceof final BuildingLibrary library)
         {
-            walkTo = ((BuildingLibrary) ((TileEntityColonyBuilding) blockEntity).getBuilding()).getRandomBookShelf();
+            walkTo = library.getRandomBookShelf();
         }
 
         return READ_A_BOOK;
@@ -166,13 +166,13 @@ public class EntityAICitizenWander extends Goal
         }
 
         final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
-        if (blockEntity instanceof IBlueprintDataProviderBE)
+        if (blockEntity instanceof final IBlueprintDataProviderBE blueprintProvider)
         {
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
-                citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, blueprintProvider.getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
             }
-            if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary && citizen.getRandom().nextInt(100) < 5)
+            if (walkTo == null && blockEntity instanceof final TileEntityColonyBuilding building && building.getBuilding() instanceof BuildingLibrary && citizen.getRandom().nextInt(100) < 5)
             {
                 return READ_A_BOOK;
             }
@@ -180,7 +180,7 @@ public class EntityAICitizenWander extends Goal
             {
                 if (walkTo == null)
                 {
-                    final Map<String, Set<BlockPos>> map = ((IBlueprintDataProviderBE) blockEntity).getWorldTagNamePosMap();
+                    final Map<String, Set<BlockPos>> map = blueprintProvider.getWorldTagNamePosMap();
                     final List<BlockPos> sittingPos = new ArrayList<>(map.getOrDefault(TAG_SITTING, Collections.emptySet()));
                     if (!sittingPos.isEmpty())
                     {

@@ -162,7 +162,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             final Colony colony = (Colony) manager.getColony();
             final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                                    .stream()
-                                                   .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getId()))
+                                                   .filter(c -> c.getJob() instanceof final JobDeliveryman job && job.getTaskQueue().contains(request.getId()))
                                                    .findFirst()
                                                    .orElse(null);
 

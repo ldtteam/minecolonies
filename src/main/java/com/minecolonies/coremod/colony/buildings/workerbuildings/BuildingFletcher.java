@@ -82,8 +82,7 @@ public class BuildingFletcher extends AbstractBuilding
 
             final Item output = recipe.getPrimaryOutput().getItem();
             return output instanceof ArrowItem ||
-                    (output instanceof DyeableArmorItem &&
-                    ((DyeableArmorItem) output).getMaterial() == ArmorMaterials.LEATHER);
+                    (output instanceof final DyeableArmorItem armor && armor.getMaterial() == ArmorMaterials.LEATHER);
         }
     }
 

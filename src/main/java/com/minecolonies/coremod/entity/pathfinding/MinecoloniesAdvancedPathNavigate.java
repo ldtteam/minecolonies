@@ -142,8 +142,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public PathResult moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
     {
         if (pathResult != null
-              && pathResult.getJob() instanceof PathJobRandomPos
-              && ((((PathJobRandomPos) pathResult.getJob()).posAndRangeMatch(range, pos))))
+              && pathResult.getJob() instanceof final PathJobRandomPos randomPosJob
+              && randomPosJob.posAndRangeMatch(range, pos))
         {
             return pathResult;
         }
@@ -513,13 +513,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             for (int i = 0; i < pathLength; ++i)
             {
                 final Node point = path.getNode(i);
-                if (!(point instanceof PathPointExtended))
+                if (!(point instanceof final PathPointExtended pointExt))
                 {
                     newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
                 }
                 else
                 {
-                    newPoints[i] = (PathPointExtended) point;
+                    newPoints[i] = pointExt;
                 }
             }
 
@@ -643,8 +643,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             if (!spawnedPos.equals(blockPos))
             {
                 final BlockState blockstate = level.getBlockState(blockPos);
-                RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock
-                                        ? ((BaseRailBlock) blockstate.getBlock()).getRailDirection(blockstate, level, blockPos, null)
+                RailShape railshape = blockstate.getBlock() instanceof final BaseRailBlock railBlock
+                                        ? railBlock.getRailDirection(blockstate, level, blockPos, null)
                                         : RailShape.NORTH_SOUTH;
                 double yOffset = 0.0D;
                 if (railshape.isAscending())
@@ -652,9 +652,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     yOffset = 0.5D;
                 }
 
-                if (mob.vehicle instanceof MinecoloniesMinecart)
+                if (mob.vehicle instanceof final MinecoloniesMinecart minecart)
                 {
-                    ((MinecoloniesMinecart) mob.vehicle).setHurtDir(1);
+                    minecart.setHurtDir(1);
                 }
                 else
                 {

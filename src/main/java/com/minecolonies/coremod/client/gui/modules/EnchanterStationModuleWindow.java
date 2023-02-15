@@ -125,7 +125,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
     private void switchClicked(@NotNull final Button button)
     {
         final int row = workerList.getListElementIndexByPane(button);
-        String buttonText = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        String buttonText = button.getText().getContents() instanceof final TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         if (buttonText.equals(OFF))
         {

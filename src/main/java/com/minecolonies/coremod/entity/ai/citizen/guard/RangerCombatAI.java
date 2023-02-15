@@ -322,10 +322,9 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     protected boolean skipSearch(final LivingEntity entity)
     {
         // Found a sleeping guard nearby
-        if (entity instanceof EntityCitizen)
+        if (entity instanceof final EntityCitizen citizen)
         {
-            final EntityCitizen citizen = (EntityCitizen) entity;
-            if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
+            if (citizen.getCitizenJobHandler().getColonyJob() instanceof final AbstractJobGuard<?> job && job.isAsleep()
                   && user.getSensing().hasLineOfSight(citizen))
             {
                 parentAI.setWakeCitizen(citizen);

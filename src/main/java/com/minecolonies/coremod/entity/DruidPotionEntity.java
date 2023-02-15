@@ -127,10 +127,9 @@ public class DruidPotionEntity extends ThrownPotion
     @Override
     public AbstractEntityCitizen getOwner()
     {
-        final Entity owner = super.getOwner();
-        if (owner instanceof AbstractEntityCitizen)
+        if (super.getOwner() instanceof final AbstractEntityCitizen owner)
         {
-            return (AbstractEntityCitizen)owner;
+            return owner;
         }
         return null;
     }

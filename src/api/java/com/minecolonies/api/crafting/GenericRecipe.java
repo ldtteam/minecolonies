@@ -257,10 +257,10 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @NotNull
-    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final Recipe<?> recipe,
+    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final Recipe<?> recipeIn,
                                                              @Nullable final Level world)
     {
-        if (recipe instanceof CraftingRecipe)
+        if (recipeIn instanceof final CraftingRecipe recipe)
         {
             final List<Ingredient> inputs = recipe.getIngredients();
             final CraftingContainer inv = new CraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
@@ -286,9 +286,9 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setItem(slot, stacks[0]);
                 }
             }
-            if (((CraftingRecipe) recipe).matches(inv, world))
+            if (recipe.matches(inv, world))
             {
-                return ((CraftingRecipe) recipe).getRemainingItems(inv).stream()
+                return recipe.getRemainingItems(inv).stream()
                         .filter(ItemStackUtils::isNotEmpty)
                         .filter(stack -> stack.getItem() != buildTool.get())  // this is filtered out of the inputs too
                         .collect(Collectors.toList());

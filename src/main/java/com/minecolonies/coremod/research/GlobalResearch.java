@@ -881,9 +881,9 @@ public class GlobalResearch implements IGlobalResearch
         }
         for(IResearchRequirement requirement : requirements)
         {
-            if(requirement instanceof AlternateBuildingResearchRequirement)
+            if(requirement instanceof final AlternateBuildingResearchRequirement buildingRequirement)
             {
-                ((AlternateBuildingResearchRequirement)requirement).add(requirementJson.get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsString(), level);
+                buildingRequirement.add(requirementJson.get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsString(), level);
                 return;
             }
         }

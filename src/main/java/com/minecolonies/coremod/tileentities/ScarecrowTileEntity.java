@@ -111,7 +111,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack)
             {
-                return stack.is(Tags.Items.SEEDS) || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropBlock);
+                return stack.is(Tags.Items.SEEDS) || (stack.getItem() instanceof final BlockItem blockItem && blockItem.getBlock() instanceof CropBlock);
             }
         };
     }

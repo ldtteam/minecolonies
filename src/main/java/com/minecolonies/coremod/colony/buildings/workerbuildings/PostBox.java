@@ -71,9 +71,9 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         super.onRequestedRequestCancelled(manager, request);
-        if (request.getState() == RequestState.FAILED && request.getRequest() instanceof Stack)
+        if (request.getState() == RequestState.FAILED && request.getRequest() instanceof final Stack stack)
         {
-            final IDeliverable req = ((Stack) request.getRequest()).copyWithCount(((Stack) request.getRequest()).getCount());
+            final IDeliverable req = stack.copyWithCount(stack.getCount());
             createRequest(req, false);
         }
     }

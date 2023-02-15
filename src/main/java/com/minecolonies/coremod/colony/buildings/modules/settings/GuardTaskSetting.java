@@ -79,12 +79,12 @@ public class GuardTaskSetting extends StringSettingWithDesc
         final String setting = getSettings().get(getCurrentIndex());
         final ButtonImage targetButton = pane.findPaneOfTypeByID("setTarget", ButtonImage.class);
         final Text mineLabel = pane.findPaneOfTypeByID("minePos", Text.class);
-        if (setting.equals(PATROL_MINE) && building instanceof AbstractBuildingGuards.View )
+        if (setting.equals(PATROL_MINE) && building instanceof final AbstractBuildingGuards.View buildingGuards)
         {
             mineLabel.setVisible(true);
-            if (((AbstractBuildingGuards.View) building).getMinePos() != null)
+            if (buildingGuards.getMinePos() != null)
             {
-                mineLabel.setText(Component.translatable("com.minecolonies.coremod.gui.worherhuts.patrollingmine", ((AbstractBuildingGuards.View) building).getMinePos().toShortString()));
+                mineLabel.setText(Component.translatable("com.minecolonies.coremod.gui.worherhuts.patrollingmine", buildingGuards.getMinePos().toShortString()));
             }
             else
             {
@@ -125,9 +125,9 @@ public class GuardTaskSetting extends StringSettingWithDesc
     @Override
     public void onUpdate(final IBuilding building, final ServerPlayer sender)
     {
-        if (building instanceof AbstractBuildingGuards && getValue().equals(FOLLOW))
+        if (building instanceof final AbstractBuildingGuards buildingGuards && getValue().equals(FOLLOW))
         {
-            ((AbstractBuildingGuards) building).setPlayerToFollow(sender);
+            buildingGuards.setPlayerToFollow(sender);
         }
     }
 }

@@ -111,13 +111,12 @@ public class CreateColonyMessage implements IMessage
         String pack = packName;
         final BlockEntity tileEntity = world.getBlockEntity(townHall);
 
-        if (!(tileEntity instanceof TileEntityColonyBuilding))
+        if (!(tileEntity instanceof final TileEntityColonyBuilding hut))
         {
             MessageUtils.format(WARNING_TOWN_HALL_NO_TILE_ENTITY).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
             return;
         }
 
-        final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
         if (hut.getStructurePack() != null && claim)
         {
             pack = hut.getStructurePack().getName();

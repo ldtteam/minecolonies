@@ -96,9 +96,9 @@ public class ClientProxy extends CommonProxy
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final Player player)
     {
-        if (player instanceof LocalPlayer)
+        if (player instanceof final LocalPlayer localPlayer)
         {
-            return ((LocalPlayer) player).getRecipeBook();
+            return localPlayer.getRecipeBook();
         }
 
         return super.getRecipeBookFromPlayer(player);

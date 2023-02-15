@@ -105,17 +105,17 @@ public class BuildingNetherWorker extends AbstractBuilding
         keepX.put(itemStack -> itemStack.getItem() instanceof FlintAndSteelItem, new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof final ArmorItem armor
+                && armor.getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof final ArmorItem armor
+                && armor.getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof final ArmorItem armor
+                && armor.getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof final ArmorItem armor
+                && armor.getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
     }
 
     @NotNull

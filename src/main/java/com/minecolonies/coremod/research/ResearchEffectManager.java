@@ -24,7 +24,7 @@ public class ResearchEffectManager implements IResearchEffectManager
         final IResearchEffect<?> effect = effectMap.get(id);
         if (type.isInstance(effect))
         {
-            return (W) effect;
+            return type.cast(effect);
         }
         return null;
     }
@@ -34,9 +34,9 @@ public class ResearchEffectManager implements IResearchEffectManager
     {
         if(effectMap.containsKey(id))
         {
-            if(effectMap.get(id) instanceof GlobalResearchEffect)
+            if (effectMap.get(id) instanceof final GlobalResearchEffect effect)
             {
-                return ((GlobalResearchEffect)effectMap.get(id)).getEffect();
+                return effect.getEffect();
             }
         }
         return 0;

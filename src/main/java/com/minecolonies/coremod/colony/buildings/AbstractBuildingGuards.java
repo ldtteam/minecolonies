@@ -21,7 +21,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
@@ -162,17 +161,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof final ArmorItem armor
+                                 && armor.getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof final ArmorItem armor
+                                 && armor.getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof final ArmorItem armor
+                                 && armor.getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof final ArmorItem armor
+                                 && armor.getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
 
         keepX.put(itemStack -> {
             if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
@@ -305,7 +304,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Nullable
     public Player getPlayerToFollowOrRally()
     {
-        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
+        return rallyLocation != null && rallyLocation instanceof final EntityLocation entityLocation ? entityLocation.getPlayerEntity() : getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
     }
 
     /**
@@ -384,9 +383,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             if (curguard.getEntity().isPresent())
             {
-                if (curguard.getEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                if (curguard.getEntity().get().getCitizenJobHandler().getColonyJob() instanceof final AbstractJobGuard<?> guard)
                 {
-                    ((AbstractEntityAIGuard<?, ?>) curguard.getEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                    guard.getWorkerAI().setNextPatrolTarget(lastPatrolPoint);
                 }
             }
         }
@@ -572,9 +571,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
         }
 
-        if (rallyLocation instanceof EntityLocation)
+        if (rallyLocation instanceof final EntityLocation entityLocation)
         {
-            final Player player = ((EntityLocation) rallyLocation).getPlayerEntity();
+            final Player player = entityLocation.getPlayerEntity();
             if (player == null)
             {
                 setRallyLocation(null);
@@ -592,9 +591,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             for (int i = 0; i < size; i++)
             {
                 final ItemStack stack = player.getInventory().getItem(i);
-                if (stack.getItem() instanceof ItemBannerRallyGuards)
+                if (stack.getItem() instanceof final ItemBannerRallyGuards rallyBanner)
                 {
-                    if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this))
+                    if (rallyBanner.isActiveForGuardTower(stack, this))
                     {
                         return rallyLocation;
                     }

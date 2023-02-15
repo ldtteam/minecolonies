@@ -68,8 +68,7 @@ public class CustomArrowEntity extends Arrow
 
         if (armorPiercePlayer)
         {
-            final Entity player = traceResult.getEntity();
-            if (player instanceof Player)
+            if (traceResult.getEntity() instanceof final Player player)
             {
                 Entity shooter = this.getOwner();
                 DamageSource source;

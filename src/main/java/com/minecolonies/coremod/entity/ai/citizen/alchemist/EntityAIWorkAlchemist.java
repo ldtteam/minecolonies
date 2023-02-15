@@ -340,10 +340,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 if (WorldUtil.isBlockLoaded(world, pos))
                 {
                     final BlockEntity entity = world.getBlockEntity(pos);
-                    if (entity instanceof BrewingStandBlockEntity)
+                    if (entity instanceof final BrewingStandBlockEntity brewingStand)
                     {
-                        final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
-
                         for (int slot = 0; slot < 4; slot++)
                         {
                             final ItemStack stackInSlot = brewingStand.getItem(slot);
@@ -392,9 +390,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             for (final BlockPos pos : building.getAllBrewingStandPositions())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof BrewingStandBlockEntity)
+                if (entity instanceof final BrewingStandBlockEntity brewingStand)
                 {
-                    final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                     if (brewingStand.brewTime > 0 || !isEmpty(brewingStand.getItem(INGREDIENT_SLOT)))
                     {
                         return CRAFT;
@@ -422,9 +419,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof BrewingStandBlockEntity)
+                if (entity instanceof final BrewingStandBlockEntity brewingStand)
                 {
-                    final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                     if (brewingStand.brewTime > 0)
                     {
                         count += 1;
@@ -451,9 +447,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof BrewingStandBlockEntity)
+                if (entity instanceof final BrewingStandBlockEntity brewingStand)
                 {
-                    final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                     for(int i = 0; i < accelerationTicks; i++)
                     {
                         if (brewingStand.brewTime > 0)
@@ -482,12 +477,11 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if(!(entity instanceof BrewingStandBlockEntity))
+                if(!(entity instanceof final BrewingStandBlockEntity brewingStand))
                 {
                     building.removeBrewingStand(pos);
                     continue;
                 }
-                final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                 if (brewingStand.brewTime <= 0 && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
                 {
                     //We only want to return true if we're not already gathering materials.
@@ -523,9 +517,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof BrewingStandBlockEntity)
+                if (entity instanceof final BrewingStandBlockEntity brewingStand)
                 {
-                    final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                     if (brewingStand.brewTime <= 0 && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
                     {
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BLAZE_POWDER))
@@ -584,9 +577,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         if (WorldUtil.isBlockLoaded(world, fuelPos))
         {
             final BlockEntity entity = world.getBlockEntity(fuelPos);
-            if (entity instanceof BrewingStandBlockEntity)
+            if (entity instanceof final BrewingStandBlockEntity brewingStand)
             {
-                final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                 //Stoke the brewing stands
                 if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BLAZE_POWDER)
                         && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
@@ -634,9 +626,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         for (final BlockPos pos : building.getAllBrewingStandPositions())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof BrewingStandBlockEntity)
+            if (entity instanceof final BrewingStandBlockEntity brewingStand)
             {
-                final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                 int countInResultSlot = 0;
 
                 for (int slot = 0; slot < 3; slot++)
@@ -712,7 +703,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         }
 
         final BlockEntity entity = world.getBlockEntity(walkTo);
-        if (!(entity instanceof BrewingStandBlockEntity))
+        if (!(entity instanceof final BrewingStandBlockEntity brewingStand))
         {
             walkTo = null;
             return START_WORKING;
@@ -729,7 +720,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
         for (int slot = 0; slot < 3; slot++)
         {
-            if (!isEmpty(((BrewingStandBlockEntity) entity).getItem(slot)))
+            if (!isEmpty(brewingStand.getItem(slot)))
             {
                 extractFromBrewingStandSlot((BrewingStandBlockEntity) entity, slot);
             }
@@ -788,7 +779,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         }
 
         final BlockEntity entity = world.getBlockEntity(walkTo);
-        if (!(entity instanceof BrewingStandBlockEntity) || (ItemStackUtils.isEmpty(((BrewingStandBlockEntity) entity).getItem(BREWING_FUEL_SLOT))))
+        if (!(entity instanceof final BrewingStandBlockEntity brewingStand) || (ItemStackUtils.isEmpty(brewingStand.getItem(BREWING_FUEL_SLOT))))
         {
             walkTo = null;
             return START_WORKING;
@@ -833,9 +824,9 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         {
             final BlockEntity entity = world.getBlockEntity(pos);
 
-            if (entity instanceof BrewingStandBlockEntity)
+            if (entity instanceof final BrewingStandBlockEntity brewingStand)
             {
-                if (isEmpty(((BrewingStandBlockEntity) entity).getItem(INGREDIENT_SLOT)))
+                if (isEmpty(brewingStand.getItem(INGREDIENT_SLOT)))
                 {
                     walkTo = pos;
                     return START_USING_BREWINGSTAND;
@@ -881,14 +872,13 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
         final int burningCount = countOfBubblingBrewingStands();
         final BlockEntity entity = world.getBlockEntity(walkTo);
-        if (entity instanceof BrewingStandBlockEntity && currentRecipeStorage != null)
+        if (entity instanceof final BrewingStandBlockEntity brewingStand && currentRecipeStorage != null)
         {
-            final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
             final int maxBrewingStands = getMaxUsableBrewingStands();
             final int resultInBrewingStand = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
             final int resultInCitizenInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
 
-            if (isEmpty(((BrewingStandBlockEntity) entity).getItem(0)) || isEmpty(((BrewingStandBlockEntity) entity).getItem(1)) || isEmpty(((BrewingStandBlockEntity) entity).getItem(2)))
+            if (isEmpty(brewingStand.getItem(0)) || isEmpty(brewingStand.getItem(1)) || isEmpty(brewingStand.getItem(2)))
             {
                 final ItemStack potionStack = currentRecipeStorage.getCleanedInput().get(1).getItemStack();
 
@@ -914,7 +904,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                     {
                         for (int slot = 0; slot < 3; slot++)
                         {
-                            if (!isEmpty(((BrewingStandBlockEntity) entity).getItem(slot)))
+                            if (!isEmpty(brewingStand.getItem(slot)))
                             {
                                 continue;
                             }
@@ -955,7 +945,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                     return IDLE;
                 }
             }
-            else if (isEmpty(((BrewingStandBlockEntity) entity).getItem(INGREDIENT_SLOT)))
+            else if (isEmpty(brewingStand.getItem(INGREDIENT_SLOT)))
             {
                 final ItemStack ingredientStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
                 final Predicate<ItemStack> ingredient = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(ingredientStack, stack);

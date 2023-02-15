@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
@@ -122,13 +121,12 @@ public class BlockSetting implements ISetting
           window,
           building,
           (stack) -> {
-              final Item item = stack.getItem();
-              if (!( item instanceof BlockItem ))
+              if (!(stack.getItem() instanceof final BlockItem item))
               {
                   return false;
               }
 
-              final Block block = ((BlockItem) item).getBlock();
+              final Block block = item.getBlock();
               final BlockState state = block.defaultBlockState();
               if (block instanceof EntityBlock || block instanceof FallingBlock || state.is(BlockTags.LEAVES))
               {

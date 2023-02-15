@@ -10,14 +10,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
@@ -93,18 +91,18 @@ public class InteractionValidatorInitializer
           });
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
           cit -> {
-              if (cit.getJob() instanceof JobDeliveryman && cit.getWorkBuilding() != null)
+              if (cit.getJob() instanceof final JobDeliveryman deliveryman && cit.getWorkBuilding() != null)
               {
-                  return ((JobDeliveryman) cit.getJob()).findWareHouse() == null;
+                  return deliveryman.findWareHouse() == null;
               }
               return false;
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_FREE_FIELDS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).getFirstModuleOccurance(FarmerFieldModule.class).hasNoFields());
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingFarmer farmer && farmer.getFirstModuleOccurance(FarmerFieldModule.class).hasNoFields());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(INVALID_MINESHAFT),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingMiner miner && citizen.getJob() instanceof JobMiner && (miner.getCobbleLocation() == null || miner.getLadderLocation() == null));
 
         InteractionValidatorRegistry.registerPosBasedPredicate(Component.translatable(NO_SEED_SET),
           (citizen, pos) ->
@@ -117,10 +115,9 @@ public class InteractionValidatorInitializer
                       final Level world = colony.getWorld();
                       if (world != null)
                       {
-                          final BlockEntity tileEntity = world.getBlockEntity(pos);
-                          if (tileEntity instanceof ScarecrowTileEntity)
+                          if (world.getBlockEntity(pos) instanceof final ScarecrowTileEntity scarecrow)
                           {
-                              return ((ScarecrowTileEntity) tileEntity).getSeed() == null;
+                              return scarecrow.getSeed() == null;
                           }
                       }
                   }
@@ -161,9 +158,9 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(FURNACE_USER_NO_ORE),
           citizen -> {
-            if (citizen.getWorkBuilding() instanceof BuildingSmeltery)
+            if (citizen.getWorkBuilding() instanceof final BuildingSmeltery smeltery)
             {
-                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
+                final List<ItemStorage> oreList = smeltery.getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
                 for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres())
                 {
                     if (!oreList.contains(storage))
@@ -181,22 +178,22 @@ public class InteractionValidatorInitializer
                        && InventoryUtils.isItemHandlerFull(citizen.getEntity().get().getInventoryCitizen()));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(PUPIL_NO_CARPET),
-          citizen -> citizen.getEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
-                       && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
+          citizen -> citizen.getEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof final BuildingSchool school
+                       && school.getRandomPlaceToSit() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(WATER_TOO_FAR),
-          citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
+          citizen -> citizen.getJob() instanceof final JobFisherman fisherman && fisherman.getPonds().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(FurnaceUserModule.class) && citizen.getWorkBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(FURNACE_USER_NO_FOOD),
           citizen -> {
-            if (!(citizen.getWorkBuilding() instanceof BuildingCook))
+            if (!(citizen.getWorkBuilding() instanceof final BuildingCook cook))
             {
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+            final ImmutableList<ItemStorage> exclusionList = cook.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles(citizen.getWorkBuilding().getBuildingLevel() - 1))
             {
                 if (!exclusionList.contains(storage))
@@ -220,27 +217,26 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && citizen.getWorkBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_HIVES),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && ((BuildingBeekeeper) citizen.getWorkBuilding()).getHives().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingBeekeeper beekeeper && beekeeper.getHives().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_BEES),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && citizen.getJob(JobBeekeeper.class).checkForBeeInteraction());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_WORKERS_TO_DRAIN_SET),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getFirstModuleOccurance(EnchanterStationsModule.class).getBuildingsToGatherFrom().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingEnchanter enchanter && enchanter.getFirstModuleOccurance(EnchanterStationsModule.class).getBuildingsToGatherFrom().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_PLANT_GROUND_FLORIST),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingFlorist florist && florist.getPlantGround().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_FLOWERS_IN_CONFIG),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ItemStackUtils.isEmpty(((BuildingFlorist) citizen.getWorkBuilding()).getFlowerToGrow()));
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingFlorist florist && ItemStackUtils.isEmpty(florist.getFlowerToGrow()));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_COMPOST),
           citizen ->
           {
-              final IBuilding buildingFlorist = citizen.getWorkBuilding();
-              if (buildingFlorist instanceof BuildingFlorist && buildingFlorist.getColony().getWorld() != null)
+              if (citizen.getWorkBuilding() instanceof final BuildingFlorist florist && florist.getColony().getWorld() != null)
               {
-                  return InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand((BuildingFlorist) buildingFlorist,
-                    buildingFlorist.getColony().getWorld());
+                  return InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand(florist,
+                    florist.getColony().getWorld());
               }
               return false;
           });
@@ -248,11 +244,10 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NEEDS_BETTER_HUT),
           citizen -> {
 
-              final AbstractBuilding buildingMiner = (AbstractBuilding) citizen.getWorkBuilding();
-              if (buildingMiner instanceof BuildingMiner && citizen.getColony() != null && citizen.getColony().getWorld() != null && citizen.getJob() instanceof JobMiner)
+              if (citizen.getWorkBuilding() instanceof final BuildingMiner miner && citizen.getColony() != null && citizen.getColony().getWorld() != null && citizen.getJob() instanceof JobMiner)
               {
-                  return getLastLadder(((BuildingMiner) buildingMiner).getLadderLocation(), citizen.getColony().getWorld()) < ((BuildingMiner) buildingMiner).getDepthLimit(citizen.getColony().getWorld())
-                           && ((BuildingMiner) buildingMiner).getFirstModuleOccurance(MinerLevelManagementModule.class).getNumberOfLevels() == 0;
+                  return getLastLadder(miner.getLadderLocation(), citizen.getColony().getWorld()) < miner.getDepthLimit(citizen.getColony().getWorld())
+                           && miner.getFirstModuleOccurance(MinerLevelManagementModule.class).getNumberOfLevels() == 0;
               }
               return false;
           });
@@ -283,8 +278,8 @@ public class InteractionValidatorInitializer
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT).getDays() <= 0);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper
-                       && ((BuildingBeekeeper) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof final BuildingBeekeeper beekeeper
+                       && beekeeper.getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING),
           citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCommandSenderWorld().isRaining()
@@ -308,9 +303,9 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getHomeBuilding() != null && !citizen.getHomeBuilding().isGuardBuildingNear());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(QUARRY_MINER_NO_QUARRY),
-          citizen -> citizen.getJob() instanceof JobQuarrier &&  ((JobQuarrier) citizen.getJob()).findQuarry() == null);
+          citizen -> citizen.getJob() instanceof final JobQuarrier quarrier && quarrier.findQuarry() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(QUARRY_MINER_FINISHED_QUARRY),
-          citizen -> citizen.getJob() instanceof JobQuarrier &&  ((JobQuarrier) citizen.getJob()).findQuarry() != null && ((JobQuarrier) citizen.getJob()).findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished());
+          citizen -> citizen.getJob() instanceof final JobQuarrier quarrier && quarrier.findQuarry() != null && quarrier.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished());
     }
 }
