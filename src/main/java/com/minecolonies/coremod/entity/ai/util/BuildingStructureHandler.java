@@ -295,6 +295,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     }
 
     @Override
+    @SuppressWarnings("removal") // TODO: remove in structurize
     public BlockState getSolidBlockForPos(final BlockPos blockPos)
     {
         return structureAI.getSolidSubstitution(blockPos);
