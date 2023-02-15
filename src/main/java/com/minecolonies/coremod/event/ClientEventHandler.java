@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.client.gui.WindowBuildingBrowser;
@@ -248,8 +249,7 @@ public class ClientEventHandler
         {
             building.getModuleProducers().stream()
                     .map(Supplier::get)
-                    .filter(m -> m instanceof ICraftingBuildingModule)
-                    .map(m -> (ICraftingBuildingModule) m)
+                    .mapMulti(Utils.castStream(ICraftingBuildingModule.class))
                     .filter(m -> m.getCraftingJob() != null)
                     .forEach(crafting ->
                     {

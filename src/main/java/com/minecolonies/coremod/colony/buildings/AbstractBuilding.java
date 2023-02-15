@@ -732,8 +732,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         this.markDirty();
 
         this.colony.getWorkManager().getWorkOrders().values().stream()
-          .filter(f -> f instanceof WorkOrderBuilding)
-          .map(m -> (WorkOrderBuilding) m)
+          .mapMulti(Utils.castStream(WorkOrderBuilding.class))
           .filter(f -> f.getLocation().equals(this.getID()) || this.getChildren().contains(f.getLocation()))
           .forEach(f -> {
               IBuilding building = this.colony.getBuildingManager().getBuilding(f.getLocation());

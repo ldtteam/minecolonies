@@ -10,6 +10,8 @@ import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -215,5 +217,22 @@ public final class Utils
         }
 
         return -1;
+    }
+
+    /**
+     * Use with {@link java.util.stream.Stream#mapMulti(BiConsumer)} to perform cast filtering
+     * 
+     * @param clazz desired class
+     * @return casting function for stream
+     */
+    public static <T, U> BiConsumer<T, Consumer<U>> castStream(final Class<U> clazz)
+    {
+        return (obj, sink) -> {
+            final U casted = ReflectionUtils.orNullCast(clazz, obj);
+            if (casted != null)
+            {
+                sink.accept(casted);
+            }
+        };
     }
 }

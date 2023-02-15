@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
 import org.apache.logging.log4j.core.config.AppenderControl;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -67,5 +68,15 @@ public final class ReflectionUtils
     public static <T> Class<T> genericClassForName(final String className) throws Exception
     {
         return (Class<T>) Class.forName(className);
+    }
+
+    /**
+     * Nullable version of {@link Class#cast(Object)} using {@link Class#isAssignableFrom(Class)}
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T> T orNullCast(final Class<T> clazz, final Object obj)
+    {
+        return clazz.isAssignableFrom(obj.getClass()) ? (T) obj : null;
     }
 }

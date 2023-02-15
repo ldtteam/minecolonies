@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
@@ -393,8 +394,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         {
             final List<Entity> bees = ((BeehiveBlockEntity) world.getBlockEntity(hive)).releaseAllOccupants(world.getBlockState(hive), BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY);
             bees.stream()
-              .filter(entity -> entity instanceof Bee)
-              .map(entity -> (Bee) entity)
+              .mapMulti(Utils.castStream(Bee.class))
               .filter(bee -> worker.position().distanceToSqr(bee.position()) <= 16.0D)
               .forEach(bee -> {
                   bee.setRemainingPersistentAngerTime(400 + worker.getRandom().nextInt(400));
