@@ -173,7 +173,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             {
                 final BlockPos relPos = getBedLocation().relative(bedState.getValue(BedBlock.FACING).getOpposite());
                 final BlockState lowerState = citizen.level.getBlockState(relPos);
-                if (lowerState.getValue(BedBlock.PART) == BedPart.FOOT)
+                if (lowerState.is(BlockTags.BEDS) && lowerState.getValue(BedBlock.PART) == BedPart.FOOT)
                 {
                     spawn = EntityUtils.getSpawnPoint(citizen.level, relPos);
                 }
