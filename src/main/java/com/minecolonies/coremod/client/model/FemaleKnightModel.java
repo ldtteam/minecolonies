@@ -74,7 +74,7 @@ public class FemaleKnightModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("FancyHat").visible = !entity.hasItemInSlot(EquipmentSlot.HEAD);
+        head.getChild("FancyHat").visible = displayHat(entity);
         body.getChild("breast").visible = !entity.hasItemInSlot(EquipmentSlot.CHEST);
     }
 }

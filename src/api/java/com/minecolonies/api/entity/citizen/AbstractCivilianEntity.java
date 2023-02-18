@@ -87,6 +87,12 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public abstract void setCitizenId(int id);
 
     @Override
+    public boolean canBeLeashed(Player player)
+    {
+        return false;
+    }
+
+    @Override
     public boolean canBeStuck()
     {
         return canBeStuck;
@@ -146,6 +152,18 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public SoundManager getSoundManager()
     {
         return soundManager;
+    }
+
+    @Override
+    protected void removeFrost()
+    {
+
+    }
+
+    @Override
+    protected void tryAddFrost()
+    {
+
     }
 
     /**

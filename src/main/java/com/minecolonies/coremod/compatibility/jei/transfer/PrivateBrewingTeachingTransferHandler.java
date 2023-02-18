@@ -3,9 +3,10 @@ package com.minecolonies.coremod.compatibility.jei.transfer;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.ingredient.IGuiIngredient;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.ingredient.IRecipeSlotView;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
@@ -46,27 +47,24 @@ public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHan
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(
-            @NotNull final ContainerCraftingBrewingstand craftingGUIBuilding,
-            @NotNull final JeiBrewingRecipe recipe,
-            @NotNull final IRecipeLayout recipeLayout,
-            @NotNull final Player player,
-            final boolean maxTransfer,
-            final boolean doTransfer)
+    public IRecipeTransferError transferRecipe(@NotNull final ContainerCraftingBrewingstand craftingGUIBuilding,
+                                               @NotNull final JeiBrewingRecipe recipe,
+                                               @NotNull final IRecipeSlotsView recipeSlots,
+                                               @NotNull final Player player,
+                                               final boolean maxTransfer,
+                                               final boolean doTransfer)
     {
-        final IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-
-        final IGuiIngredient<ItemStack> container = itemStackGroup.getGuiIngredients().get(0);
-        final IGuiIngredient<ItemStack> ingredient = itemStackGroup.getGuiIngredients().get(3);
+        final IRecipeSlotView potionSlot = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).get(0);
+        final IRecipeSlotView inputSlot = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).get(3);
 
         final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
-        guiIngredients.put(0, ingredient.getDisplayedIngredient());
-        guiIngredients.put(1, container.getDisplayedIngredient());
+        guiIngredients.put(0, inputSlot.getDisplayedIngredient(VanillaTypes.ITEM).orElse(ItemStack.EMPTY));
+        guiIngredients.put(1, potionSlot.getDisplayedIngredient(VanillaTypes.ITEM).orElse(ItemStack.EMPTY));
 
         if (doTransfer)
         {
-            craftingGUIBuilding.setInput(ingredient.getDisplayedIngredient());
-            craftingGUIBuilding.setContainer(container.getDisplayedIngredient());
+            craftingGUIBuilding.setInput(guiIngredients.get(0));
+            craftingGUIBuilding.setContainer(guiIngredients.get(1));
 
             final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, false);
             Network.getNetwork().sendToServer(message);

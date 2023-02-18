@@ -90,7 +90,7 @@ public class FemaleBlacksmithModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        final boolean working = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        final boolean working = isWorking(entity);
         body.getChild("apronBody").visible = working;
         leftLeg.getChild("apronLeftLeg").visible = working;
         rightLeg.getChild("apronRightLeg").visible = working;

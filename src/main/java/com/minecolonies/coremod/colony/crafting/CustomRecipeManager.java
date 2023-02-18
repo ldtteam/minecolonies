@@ -38,12 +38,12 @@ public class CustomRecipeManager
     /**
      * The map of loaded recipes by crafter.
      */
-    private final HashMap<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
+    private final Map<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
 
     /**
      * The map of all loaded recipes by output.
      */
-    private final HashMap<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
+    private final Map<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
 
     /**
      * The recipes that are marked for removal after loading all resource packs
@@ -294,8 +294,6 @@ public class CustomRecipeManager
      */
     public void sendCustomRecipeManagerPackets(final ServerPlayer player)
     {
-        if (player.getServer() == null || player.getServer().isSingleplayer()) return;   // no need to sync in SP
-
         final FriendlyByteBuf recipeMgrFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(recipeMgrFriendlyByteBuf);
         Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf), player);

@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -783,7 +782,7 @@ public class InventoryUtils
 
                 if (totalCount > count)
                 {
-                    return Integer.MAX_VALUE;
+                    return totalCount;
                 }
             }
         }
@@ -2966,7 +2965,7 @@ public class InventoryUtils
      * @param foodPredicate      food choosing predicate
      * @return true if any food was transferred
      */
-    public static boolean transferFoodUpToSaturation(
+    public static int transferFoodUpToSaturation(
       final ICapabilityProvider source,
       final IItemHandler target,
       final int requiredSaturation,
@@ -2975,7 +2974,7 @@ public class InventoryUtils
         Set<IItemHandler> handlers = getItemHandlersFromProvider(source);
 
         int foundSaturation = 0;
-
+        int transferedItems = 0;
         for (final IItemHandler handler : handlers)
         {
             for (int i = 0; i < handler.getSlots(); i++)
@@ -2997,7 +2996,7 @@ public class InventoryUtils
                     if (amount > stack.getCount())
                     {
                         // Not enough yet
-                        foundSaturation += stack.getCount() * itemFood.getSaturationModifier();
+                        foundSaturation += stack.getCount() * itemFood.getNutrition();
                         extractedFood = handler.extractItem(i, stack.getCount(), false);
                     }
                     else
@@ -3007,6 +3006,7 @@ public class InventoryUtils
                         foundSaturation = requiredSaturation;
                     }
 
+                    transferedItems += extractedFood.getCount();
                     if (!ItemStackUtils.isEmpty(extractedFood))
                     {
                         if (!addItemStackToItemHandler(target, extractedFood))
@@ -3024,13 +3024,13 @@ public class InventoryUtils
 
                     if (foundSaturation >= requiredSaturation)
                     {
-                        return true;
+                        return transferedItems;
                     }
                 }
             }
         }
 
-        return foundSaturation > 0;
+        return transferedItems;
     }
 
     /**
@@ -3170,5 +3170,26 @@ public class InventoryUtils
         }
 
         return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
+    }
+
+    public static List<ItemStack> getBuildingInventory(final IBuilding building)
+    {
+        final Level world = building.getColony().getWorld();
+        final List<ItemStack> allInInv = new ArrayList<>();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final ItemStorage storage : ((TileEntityRack) entity).getAllContent().keySet())
+                    {
+                        allInInv.add(storage.getItemStack());
+                    }
+                }
+            }
+        }
+        return allInInv;
     }
 }

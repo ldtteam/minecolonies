@@ -1,0 +1,42 @@
+{
+  "parts": 2,
+  "order": "WESTERN",
+  "male_firstname": [
+    "Aidemal", "Alejjam", "Alexabr", "Alexjus", "Anderic", "Angesofi", "Annshak", "Aritrav", "Arjushea", "Baitri", "Bencha", "Bernig", "Berxan",
+    "Braicale", "Braxjae", "Bretoby", "Brojohn", "Bryakes", "Cadelin", "Camjays", "Colbrai", "Conjef", "Cribre", "Cridand", "Crijam", "Crisjoaq",
+    "Davaldo", "Decllan", "Demchr", "Dillcon", "Dondarn", "Eddjos", "Edgahad", "Elisjaro", "Eliwade", "Fellan", "Hunluc", "Isaisam", "Ismty", "Jacnico",
+    "Jaggbrod", "Jahgav", "Jamajesu", "Jamkyre", "Jaqpre", "Jargeo", "Jorgbar", "Julijoha", "Kadalla", "Kasgra", "Keanbila", "Keltre", "Kenjes", "Kodydam",
+    "Lanmilt", "Lucarod", "Lukesamu", "Madabr", "Mekhbre", "Michamya", "Mitcjaxo", "Mitcthom", "Natcort", "Natisab", "Neikev", "Nicgle", "Nickkole", "Osbagra",
+    "Oscajam", "Paykobe", "Philayn", "Portys", "Quijami", "Raejaqu", "Rafajac", "Ralpnico", "Rashcol", "Richjaro", "Rocleon", "Ryladami", "Sanimm", "Sawyjam",
+    "Scodar", "Seacame", "Silagon", "Skyljoa", "Skylmel", "Skysalv", "Spelog", "Steayd", "Stepaver", "Terdarr", "Terrbea", "Ulielli", "Vaujova", "Vaunat", "Wesjose",
+    "Yadjuli", "Zacktris", "Zakader"
+
+  ],
+  "female_firstname": [
+    "Ajaelys", "Alaalex", "Alenlea", "Alimar", "Alismar", "Aliyess", "Alysang", "Amarmeag", "Angdeli", "Angejuli", "Antabri", "Aritara", "Arynoe", "Asiacel",
+    "Aubriyan", "Beattat", "Braale", "Briaubr", "Brilyr", "Carmcke", "Carocynt", "Caromina", "Cascie", "Celijace", "Chaamb", "Chaauro", "Claiasi", "Dejjad",
+    "Delasav", "Diaelea", "Donemil", "Emiesp", "Emilala", "Emilsus", "Fabjord", "Felidest", "Gabrcar", "Genchlo", "Gisehall", "Gracsim", "Haijus", "Hairia",
+    "Halechan", "Halenata", "Halton", "Hannsand", "Haylace", "Heatlet", "Iyakate", "Jaclcai", "Jaimar", "Jaimmau", "Janjoha", "Janlond", "Jasmrach", "Jaylkat",
+    "Jazlex", "Jazmtali", "Jenmeli", "Judelea", "Kaiaash", "Kaibre", "Kamryes", "Kayjaid", "Kaykenn", "Kaymad", "Kierdian", "Laneleil", "Larshe", "Laugill",
+    "Leanval", "Leiivy", "Leslace", "Letkali", "Lexsav", "Libegwen", "Lilclar", "Lindeliz", "Mackadr", "Magsha", "Mallkiya", "Manste", "Marali", "Mckesand",
+    "Melalayl", "Mikkei", "Patmon", "Rachmere", "Regmagd", "Reinlib", "Reynmady", "Rilcha", "Ritaali", "Riyaele", "Sabrcar", "Salmamin", "Selala", "Shaeliz",
+    "Shyalia", "Stacvir", "Stepalay", "Sydnjade", "Sylsav", "Tankiar", "Tatysav", "Tiasydn", "Valdoro", "Vivimaia", "Yulicri", "Zoeykeni"
+  ],
+  "surnames": [
+    "Amosris", "Arncor", "Balmatt", "Baneal", "Barelam", "Barluc", "Basksam", "Bassnot", "Becatw", "Bennkeye", "Bickbour", "Bicthu", "Bincro", "Blacbase",
+    "Blaklut", "Bonbri", "Boomel", "Bowepres", "Boytoot", "Bribra", "Broospi", "Burlun", "Burwith", "Butduts", "Buttcoe", "Cabhed", "Cadpass", "Catobic", "Chagra",
+    "Clagrin", "Clamon", "Clepen", "Clocox", "Coligiva", "Collban", "Connbraz", "Contrig", "Copbeal", "Cowwall", "Cranbay", "Croolaf", "Culrezi", "Dabyhoop",
+    "Dartgoud", "Derharn", "Devhowi", "Dobsea", "Doutis", "Dwelarkw", "Dyesgalf", "Eakbig", "Eastmast", "Ekindov", "Ereeas", "Estwadd", "Eusbull", "Fainbel",
+    "Fairstr", "Farnlind", "Farraxt", "Fartcou", "Fayetils", "Fladash", "Fleross", "Forrstur", "Fosmud", "Friabbe", "Gangchit", "Garmon", "Genbab", "Gernbra",
+    "Gistoph", "Golpgre", "Gracam", "Gralee", "Groslan", "Hailferr", "Hamebro", "Hammrome", "Hancode", "Harhack", "Harrgold", "Hartall", "Hayeng", "Hayhol",
+    "Heabla", "Hemboss", "Herdea", "Hineengl", "Hodglis", "Hopelatt", "Hosepri", "Hovlew", "Hubbfosd", "Hurlgal", "Hutbraz", "Irelcaro", "Jansema", "Jardpot",
+    "Jeanwadk", "Johcas", "Joycbagg", "Jusras", "Keamidy", "Kellsha", "Kelstok", "Kenwar", "Keytlea", "Knialba", "Knosne", "Knotnew", "Kyebol", "Ladyreev",
+    "Leepres", "Leggcon", "Legggla", "Lifeman", "Limeslo", "Limowen", "Lisbroo", "Lorysle", "Louimill", "Lovipars", "Lowmwomb", "Malmal", "Mauljuk", "Meeciley",
+    "Meeyul", "Meihin", "Mellburk", "Mericau", "Merrmorl", "Mitcrain", "Moslan", "Moypatt", "Mussholl", "Neagar", "Newblit", "Offecro", "Offetha", "Outhast",
+    "Oveabb", "Pendvin", "Penngri", "Petidick", "Pewred", "Piedang", "Pindou", "Pitnrob", "Rabbhudd", "Rafcha", "Rakknot", "Ravras", "Relfgabl", "Rigghare",
+    "Rinjagg", "Ripsta", "Roaman", "Rocknose", "Rollcran", "Rooanna", "Roucona", "Salegar", "Sautoo", "Savbroo", "Sayeric", "Scacla", "Sevilon", "Sevinorf",
+    "Shiwil", "Shoraw", "Sikemap", "Sirlam", "Sislkea", "Skekitc", "Sommmon", "Souyoe", "Sprsmit", "Steadic", "Storshi", "Stufai", "Sumpsha", "Swipan", "Tansalda",
+    "Tardel", "Tarthay", "Telfsco", "Tobnore", "Tonggodm", "Traric", "Trumfou", "Tumbrac", "Tusholw", "Upscop", "Uransalt", "Waldurd", "Waymayo", "Weatcas", "Weedlam",
+    "Wheedux", "Whelbay", "Whobea", "Wilhay", "Winrwhit", "Winyel", "Wiscol", "Withkin", "Worradc", "Wyrleni", "Yarstar"
+  ]
+}

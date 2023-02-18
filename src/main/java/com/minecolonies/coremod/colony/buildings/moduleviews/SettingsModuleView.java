@@ -32,14 +32,31 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
-        settings.clear();
-
+        final Map<ISettingKey<?>, ISetting> tempSettings = new LinkedHashMap<>();
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
             final ResourceLocation key = buf.readResourceLocation();
             final ISetting setting = StandardFactoryController.getInstance().deserialize(buf);
-            settings.put(new SettingKey<>(setting.getClass(), key), setting);
+            final SettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
+            tempSettings.put(settingsKey, setting);
+            if (!settings.containsKey(settingsKey))
+            {
+                settings.put(settingsKey, setting);
+            }
+        }
+
+        for (final Map.Entry<ISettingKey<?>, ISetting> entry : new ArrayList<>(settings.entrySet()))
+        {
+            final ISetting syncSetting = tempSettings.get(entry.getKey());
+            if (syncSetting == null)
+            {
+                settings.remove(entry.getKey());
+            }
+            else if (entry.getValue() != syncSetting)
+            {
+                entry.getValue().updateSetting(syncSetting);
+            }
         }
     }
 

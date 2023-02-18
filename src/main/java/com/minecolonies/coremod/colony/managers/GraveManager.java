@@ -269,7 +269,10 @@ public class GraveManager implements IGraveManager
             {
                 if (world.getBlockState(pos.above(i)).getBlock() instanceof AirBlock)
                 {
-                    firstValidPosition = searchShore(world, pos.above(i));
+                    firstValidPosition = BlockPosUtil.findAround(world, pos, 16, 1,
+                      (blockAccess, current) ->
+                        blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
+                          blockAccess.getBlockState(current.below()).getMaterial().isSolid());
                     break;
                 }
             }
@@ -291,7 +294,7 @@ public class GraveManager implements IGraveManager
         if (firstValidPosition != null)
         {
             world.setBlockAndUpdate(firstValidPosition,
-              BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), new TileEntityGrave(pos, ModBlocks.blockGrave.defaultBlockState()), firstValidPosition));
+              BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), firstValidPosition));
             final TileEntityGrave graveEntity = (TileEntityGrave) world.getBlockEntity(firstValidPosition);
             if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
             {
@@ -317,27 +320,5 @@ public class GraveManager implements IGraveManager
         {
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
         }
-    }
-
-    /**
-     * Search a nearby shore into each direction, up to 10 blocks.
-     * @param world the world to search in.
-     * @param pos the starting position.
-     * @return shore.
-     */
-    private BlockPos searchShore(final Level world, final BlockPos pos)
-    {
-        for (int xz = 1; xz <= 10; xz++)
-        {
-            for (final Direction direction : Direction.Plane.HORIZONTAL)
-            {
-                final BlockPos relativePos = pos.relative(direction, xz);
-                if (!world.isWaterAt(relativePos))
-                {
-                    return relativePos;
-                }
-            }
-        }
-        return null;
     }
 }

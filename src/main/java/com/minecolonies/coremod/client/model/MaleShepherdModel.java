@@ -87,10 +87,10 @@ public class MaleShepherdModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        final boolean showPole = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING) && entity.getMainHandItem().isEmpty();
+        final boolean showPole = entity.getPose() != Pose.SLEEPING && isWorking(entity) && entity.getMainHandItem().isEmpty();
         body.getChild("FoldedRightArm").visible = showPole;
         rightArm.visible = !showPole;
         head.getChild("straw").visible = entity.getPose() != Pose.SLEEPING;
-        head.getChild("Cap").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("Cap").visible = displayHat(entity);
     }
 }

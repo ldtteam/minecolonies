@@ -64,7 +64,7 @@ public class PathJobRandomPos extends AbstractPathJob
     {
         super(world, start, start, range, new PathResult<PathJobRandomPos>(), entity);
         this.minDistFromStart = minDistFromStart;
-        this.maxDistToDest = range;
+        this.maxDistToDest = -1;
 
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
         this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
@@ -114,8 +114,9 @@ public class PathJobRandomPos extends AbstractPathJob
       final AbstractAdvancedPathNavigate.RestrictionType restrictionType)
     {
         super(world, start, startRestriction, endRestriction, range, false, new PathResult<PathJobRandomPos>(), entity, restrictionType);
+
         this.minDistFromStart = minDistFromStart;
-        this.maxDistToDest = range;
+        this.maxDistToDest = -1;
 
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
         this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
@@ -143,9 +144,12 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        if (random.nextInt(10) == 0 && isInRestrictedArea(n.pos) && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
+        if (random.nextInt(10) == 0
+              && isInRestrictedArea(n.pos)
+              && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
               && SurfaceType.getSurfaceType(world, world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
-              && destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
+              && (maxDistToDest == -1 || destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
+              && !SurfaceType.isWater(world, n.pos.below()))
         {
             return true;
         }
@@ -155,8 +159,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double getNodeResultScore(@NotNull final MNode n)
     {
-        //  For Result Score lower is better
-        return destination.distSqr(n.pos);
+        return 0;
     }
 
     /**

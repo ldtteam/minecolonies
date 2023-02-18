@@ -1,26 +1,30 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.DO_REALLY_WANNA_TP;
 import static com.minecolonies.api.util.constant.TranslationConstants.TH_TOO_LOW;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
-import net.minecraft.ChatFormatting;
 
 /**
  * BOWindow for the town hall.
@@ -31,6 +35,11 @@ public class WindowMainPage extends AbstractWindowTownHall
      * The ScrollingList of all allies.
      */
     private final ScrollingList alliesList;
+
+    /**
+     * Label for the colony name.
+     */
+    private final Text title;
 
     /**
      * The ScrollingList of all feuds.
@@ -49,9 +58,12 @@ public class WindowMainPage extends AbstractWindowTownHall
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
 
+        title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
+
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
+        registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
 
         registerButton(BUTTON_TP, this::teleportToColony);
     }
@@ -84,8 +96,9 @@ public class WindowMainPage extends AbstractWindowTownHall
         super.onOpened();
         fillAlliesAndFeudsList();
 
-        if (building.getColony().getMercenaryUseTime() != 0
-              && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+        title.setText(new TextComponent(building.getColony().getName()));
+
+        if (building.getColony().getMercenaryUseTime() != 0 && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -158,6 +171,15 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void mercenaryClicked()
     {
         @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
+        window.open();
+    }
+
+    /**
+     * Opens the map on button clicked
+     */
+    private void mapButtonClicked()
+    {
+        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
         window.open();
     }
 

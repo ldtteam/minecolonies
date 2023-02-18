@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
@@ -15,9 +16,9 @@ public class RenderTypes
      * @param resLoc texture location
      * @return render type
      */
-    public static RenderType getPrimitiveTex(final ResourceLocation resLoc)
+    public static RenderType getEntityCutoutFront(final ResourceLocation resLoc)
     {
-        return InnerRenderTypes.PRIMITIVE_TEX.apply(resLoc);
+        return InnerRenderTypes.ENTITY_CUTOUT_FRONT.apply(resLoc);
     }
 
     private static final class InnerRenderTypes extends RenderType
@@ -35,26 +36,16 @@ public class RenderTypes
             throw new IllegalStateException();
         }
 
-        private static final Function<ResourceLocation, RenderType> PRIMITIVE_TEX = Util.memoize((resLoc) -> {
-            return create("minecolonies_primitive_tex",
-                DefaultVertexFormat.POSITION_TEX,
-                VertexFormat.Mode.TRIANGLE_FAN,
-                1 << 10,
-                true,
-                false,
-                RenderType.CompositeState.builder()
-                    .setTextureState(new TextureStateShard(resLoc, false, false))
-                    .setShaderState(POSITION_TEX_SHADER)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setDepthTestState(NO_DEPTH_TEST)
-                    .setCullState(CULL)
-                    .setLightmapState(NO_LIGHTMAP)
-                    .setOverlayState(NO_OVERLAY)
-                    .setLayeringState(NO_LAYERING)
-                    .setOutputState(MAIN_TARGET)
-                    .setTexturingState(DEFAULT_TEXTURING)
-                    .setWriteMaskState(COLOR_DEPTH_WRITE)
-                    .createCompositeState(false));
+        private static final Function<ResourceLocation, RenderType> ENTITY_CUTOUT_FRONT = Util.memoize((p_173202_) -> {
+            RenderType.CompositeState rendertype$compositestate = RenderType.CompositeState.builder()
+              .setShaderState(RENDERTYPE_ENTITY_CUTOUT_SHADER)
+              .setTextureState(new RenderStateShard.TextureStateShard(p_173202_, false, false))
+              .setTransparencyState(NO_TRANSPARENCY)
+              .setLightmapState(LIGHTMAP)
+              .setOverlayState(OVERLAY)
+              .setDepthTestState(NO_DEPTH_TEST)
+              .createCompositeState(true);
+            return create("entity_cutout", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, rendertype$compositestate);
         });
     }
 }

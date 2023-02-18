@@ -13,9 +13,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.research.util.ResearchConstants.MASKS;
+import static com.minecolonies.api.research.util.ResearchConstants.VACCINES;
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_IMMUNITY;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_HEALED;
 
 /**
  * Handler taking care of citizens getting stuck.
@@ -36,6 +39,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Number of seconds after recovering a citizen is immune against any illness.
      */
     private static final int IMMUNITY_TIME = 60 * 10 * 7;
+
+    /**
+     * Additional immunity time through vaccines.
+     */
+    private static final int VACCINE_MODIFIER = 10;
 
     /**
      * The citizen assigned to this manager.
@@ -114,7 +122,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
               && canBecomeSick()
               && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
         {
-            this.disease = citizen.getCitizenDiseaseHandler().getDisease();
+            if (citizen.getCitizenColonyHandler().getColony() != null
+                  && (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean()))
+            {
+                this.disease = citizen.getCitizenDiseaseHandler().getDisease();
+            }
         }
     }
 
@@ -162,7 +174,17 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             {
                 hospital.onWakeUp();
             }
-            immunityTicks = IMMUNITY_TIME;
+
+            if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
+            {
+                immunityTicks = IMMUNITY_TIME * VACCINE_MODIFIER;
+            }
+            else
+            {
+                immunityTicks = IMMUNITY_TIME;
+            }
+
+            citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED);
         }
     }
 }

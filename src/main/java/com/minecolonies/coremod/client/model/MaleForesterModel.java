@@ -102,6 +102,6 @@ public class MaleForesterModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         body.getChild("LogPack").getChild("Logs").visible = entity.getRenderMetadata().contains(RENDER_META_LOGS);
-        head.getChild("WoodsmanHat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("WoodsmanHat").visible = displayHat(entity);
     }
 }

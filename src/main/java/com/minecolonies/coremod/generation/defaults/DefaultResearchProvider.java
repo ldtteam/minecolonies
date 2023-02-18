@@ -124,6 +124,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(BUILDER_MODE).setTranslatedName("Add the option to select different build-modes for your builders"));
         effects.add(new ResearchEffect(SOFT_SHOES).setTranslatedName("Farmers will no longer trample crops"));
         effects.add(new ResearchEffect(FISH_TREASURE).setTranslatedName("Fishers can find treasure outside the ocean"));
+        effects.add(new ResearchEffect(NETHER_LOG).setTranslatedName("Adds expedition log to Nether Mine"));
+        effects.add(new ResearchEffect(MASKS).setTranslatedName("Reduce disease transmission"));
+        effects.add(new ResearchEffect(VACCINES).setTranslatedName("Citizens are immune for longer after treatment"));
+        effects.add(new ResearchEffect(TELESCOPE).setTranslatedName("Farther rallying banner range"));
+        effects.add(new ResearchEffect(STANDARD).setTranslatedName("Place Rallying Banner at location"));
+        effects.add(new ResearchEffect(MORE_AIR).setTranslatedName("Citizens can stay longer underwater"));
+        effects.add(new ResearchEffect(MIN_ORDER).setTranslatedName("Buildings wait a bit longer before placing orders"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -377,6 +384,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                  .addItemCost(Items.VINE, 64)
                                  .addEffect(VINES, 1)
                                  .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/moq"), CIVIL).setParentResearch(rails)
+                .setTranslatedName("Minimum Order Quantity")
+                .setTranslatedSubtitle("Work smarter, not harder.")
+                .setSortOrder(10)
+                .setIcon(ModItems.clipboard)
+                .addBuildingRequirement(ModBuildings.DELIVERYMAN_ID, 9)
+                .addItemCost(ModItems.clipboard, 1)
+                .addItemCost(Items.BOOK, 16)
+                .addEffect(MIN_ORDER, 1)
+                .addToList(r);
         final Research agile = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/agile"), CIVIL).setParentResearch(nimble)
                                  .setTranslatedName("Agile")
                                  .setTranslatedSubtitle("So this is how it feels to be young again...")
@@ -444,6 +461,24 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp6.png"))
           .addItemCost(Items.HAY_BLOCK, 256)
           .addEffect(HEALTH_BOOST, 6)
+          .addToList(r);
+
+        final Research masks = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/masks"), CIVIL).setParentResearch(firstAid2)
+          .setTranslatedName("Masks")
+          .setTranslatedSubtitle("Solidarity")
+          .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp4.png"))
+          .addBuildingRequirement(ModBuildings.LIBRARY_ID, 3)
+          .addItemCost(Items.WHITE_WOOL, 32)
+          .addEffect(MASKS, 3)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/vaccines"), CIVIL).setParentResearch(masks)
+          .setTranslatedName("Vaccines")
+          .setTranslatedSubtitle("Obvious Measures")
+          .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp5.png"))
+          .addBuildingRequirement(ModBuildings.HOSPITAL_ID, 3)
+          .addItemCost(Items.EGG, 64)
+          .addEffect(VACCINES, 3)
           .addToList(r);
 
         final Research circus = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/circus"), CIVIL).setParentResearch(firstAid)
@@ -633,11 +668,19 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addToList(r);
 
         // Primary Research #5
-        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/ambition"), CIVIL).setTranslatedName("Ambition")
+        final Research ambition = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/ambition"), CIVIL).setTranslatedName("Ambition")
           .setSortOrder(5)
           .setIcon(ModBlocks.blockHutMysticalSite.asItem())
           .addItemCost(Items.DIAMOND, 1)
           .addEffect(ModBuildings.mysticalSite.getBuildingBlock(), 1)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/air"), CIVIL).setTranslatedName("Scuba")
+          .setParentResearch(ambition)
+          .setSortOrder(1)
+          .setIcon(Items.POTION)
+          .addItemCost(Items.HEART_OF_THE_SEA, 1)
+          .addEffect(MORE_AIR, 1)
           .addToList(r);
 
         // Primary Research #6
@@ -1025,6 +1068,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(ARMOR_DURABILITY, 6)
           .addToList(r);
 
+        final Research telescope = new Research(new ResourceLocation(Constants.MOD_ID, "combat/telescope"), COMBAT).setParentResearch(ironSkin)
+          .setTranslatedName("Telescope")
+          .setIcon(ModItems.bannerRallyGuards)
+          .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
+          .addItemCost(Items.EMERALD, 16)
+          .addEffect(TELESCOPE, 3)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/standard"), COMBAT).setParentResearch(telescope)
+          .setTranslatedName("Standard")
+          .setIcon(ModItems.bannerRallyGuards)
+          .addBuildingRequirement(ModBuildings.BARRACKS_ID, 4)
+          .addItemCost(Items.EMERALD, 32)
+          .addEffect(STANDARD, 3)
+          .addToList(r);
+
         final Research regeneration = new Research(new ResourceLocation(Constants.MOD_ID, "combat/regeneration"), COMBAT).setParentResearch(improvedLeather)
                                         .setTranslatedName("Regeneration")
                                         .setSortOrder(2)
@@ -1277,6 +1336,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         final Research netherminer = new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
                                     .setTranslatedName("Open the Nether")
                                     .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
+                                    .setSortOrder(1)
                                     .setIcon(ModBlocks.blockHutNetherWorker.asItem())
                                     .addItemCost(Items.GILDED_BLACKSTONE, 3)
                                     .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
@@ -1290,9 +1350,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(ModBuildings.alchemist.getBuildingBlock(), 1)
           .addToList(r);
 
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/netherlog"), TECH).setParentResearch(netherminer)
+                .setTranslatedName("Gaze into the Pits")
+                .setTranslatedSubtitle("Always use proper lenses to avoid eye damage")
+                .setSortOrder(4)
+                .setIcon(Items.ENDER_EYE)
+                .addItemCost(Items.ENDER_EYE, 16)
+                .addItemCost(ModItems.ancientTome, 1)
+                .addBuildingRequirement(ModBuildings.NETHERWORKER_ID, 1)
+                .addEffect(NETHER_LOG, 1)
+                .addToList(r);
+
+        // this is intended to be a side branch (since it has a very high cost) -- there's still room for a "main line" level 4 research!
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/oceanheart"), TECH).setParentResearch(alchemist)
                 .setTranslatedName("Ocean's Heart")
                 .setTranslatedSubtitle("With great mystic power comes great mystic loot!")
+                .setSortOrder(4)
                 .setIcon(Items.FISHING_ROD)
                 .addBuildingRequirement(ModBuildings.FISHERMAN_ID, 4)
                 .addItemCost(Items.HEART_OF_THE_SEA, 1)

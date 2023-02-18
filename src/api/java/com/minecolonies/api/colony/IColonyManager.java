@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +34,10 @@ public interface IColonyManager
      * @param player     the player that creates the colony - owner.
      * @param colonyName the initial colony name.
      * @param style      the default style of the colony.
+     * @return the created colony instance.
      */
-    void createColony(@NotNull Level w, BlockPos pos, @NotNull Player player, @NotNull String colonyName, @NotNull String style);
+    @Nullable
+    IColony createColony(@NotNull Level w, BlockPos pos, @NotNull Player player, @NotNull String colonyName, @NotNull String style);
 
     /**
      * Delete the colony in a world.
@@ -436,6 +438,7 @@ public interface IColonyManager
 
     /**
      * Open the new reactivation window.
+     *
      * @param pos the pos to open it at.
      */
     void openReactivationWindow(final BlockPos pos);

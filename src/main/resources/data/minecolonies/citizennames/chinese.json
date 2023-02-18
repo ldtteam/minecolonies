@@ -1,0 +1,22 @@
+{
+  "parts": 2,
+  "order": "EASTERN",
+  "male_firstname": [
+    "Tienchen", "Chilin", "Tzuwei", "Yichen", "Yuxuan", "Haoyu", "Yichen", "Yuchen", "Zimo",
+    "Yuhang", "Haoran", "Zihao", "Yichen", "Mingtao", "Haoran", "Junjie", "Zihan", "Huifen", "Jiali",
+    "Jiahao", "Zirui", "Bowen", "Yiming", "Junde", "Haoyu", "Haoyang", "Yongle", "Yuze", "Jiawei", "Xiaodan",
+    "Weiguo", "Mingyu", "Zixin", "Shilei", "Zhipeng", "Ruoxuan", "Muyang", "Leyang", "Bocheng", "Jianyu", "Tiankuo",
+    "Dongyang", "Yaoyao", "Peipei", "Sicheng", "Jiani", "Jiaxin", "Yuxuan", "Yilin", "Xiaoli"
+  ],
+  "female_firstname": [
+    "Yinuo", "Xinyi", "Zihan", "Yutong", "Xinyan", "Kexin", "Yuxi", "Yutong", "Mengyao", "Chanjuan",
+    "Chunhua", "Dongmei", "Huiying", "Huifen", "Jiali", "Jiayi", "Jiahui", "Lanfen", "Lihua", "Limei",
+    "Lina", "Meilian", "Mingxia", "Mingzhu", "Qiaohui", "Xiaodan", "Xiaohui", "Yuming", "Shiyun", "Meiqi",
+    "Yitong", "Ruoxuan", "Xinyue", "Yanya", "Leqi", "Siyu", "Qingyi", "Yiran", "Tzuying", "Tzuwei", "Yingwen",
+    "Wenxin", "Yuchin", "Peizhen", "Yingyue", "Zhiruo", "Wangshu", "Mochou", "Yuhan", "Xiaoqi"
+  ],
+  "surnames": [
+    "Li", "Wang", "Zhang", "Liu", "Chen", "Yang", "Zhao", "Huang", "Zhou", "Wu", "Tsai", "Tai",
+    "Cheng", "Lin", "Lu", "Xia", "Xie", "Tian", "Su", "Liao", "Chou", "Zheng", "Xu", "Ma", "Tao", "Long", "Chang", "Huang"
+  ]
+}

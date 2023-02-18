@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BIRTH;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NEW_CHILD_BORN;
 import static com.minecolonies.coremod.colony.CitizenData.SUFFIXES;
 
@@ -168,7 +169,7 @@ public class ReproductionManager implements IReproductionManager
             }
 
             newCitizen.setParents(firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
-            newCitizen.generateName(random, firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
+            newCitizen.generateName(random, firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName(), colony.getCitizenNameFile());
 
             module.assignCitizen(newCitizen);
 
@@ -200,6 +201,7 @@ public class ReproductionManager implements IReproductionManager
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));
+            colony.getStatisticsManager().increment(BIRTH);
         }
     }
 

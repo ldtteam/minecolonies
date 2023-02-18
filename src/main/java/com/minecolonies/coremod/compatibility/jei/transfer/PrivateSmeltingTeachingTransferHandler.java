@@ -3,8 +3,9 @@ package com.minecolonies.coremod.compatibility.jei.transfer;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.ingredient.IGuiIngredient;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
@@ -36,6 +37,7 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
         return ContainerCraftingFurnace.class;
     }
 
+    @NotNull
     @Override
     public Class<SmeltingRecipe> getRecipeClass()
     {
@@ -44,18 +46,16 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(
-            @NotNull final ContainerCraftingFurnace craftingGUIBuilding,
-            @NotNull final SmeltingRecipe recipe,
-            @NotNull final IRecipeLayout recipeLayout,
-            @NotNull final Player player,
-            final boolean maxTransfer,
-            final boolean doTransfer)
+    public IRecipeTransferError transferRecipe(@NotNull final ContainerCraftingFurnace craftingGUIBuilding,
+                                               @NotNull final SmeltingRecipe recipe,
+                                               @NotNull final IRecipeSlotsView recipeSlots,
+                                               @NotNull final Player player,
+                                               final boolean maxTransfer,
+                                               final boolean doTransfer)
     {
         // we only care about the first input ingredient for furnace recipes
-        final ItemStack input = recipeLayout.getItemStacks().getGuiIngredients().values().stream()
-                .filter(ingredient -> ingredient.isInput() && !ingredient.getAllIngredients().isEmpty())
-                .map(IGuiIngredient::getDisplayedIngredient)
+        final ItemStack input = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).stream()
+                .flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM).stream())
                 .findFirst()
                 .orElse(ItemStack.EMPTY);
 

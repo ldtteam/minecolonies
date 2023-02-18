@@ -67,7 +67,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (!isFull() && (!building.getColony().isManualHousing() || getHiringMode() == HiringMode.AUTO))
+        if (!isFull() && ((this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHousing()) || getHiringMode() == HiringMode.AUTO))
         {
             // 'Capture' as many citizens into this house as possible
             for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())

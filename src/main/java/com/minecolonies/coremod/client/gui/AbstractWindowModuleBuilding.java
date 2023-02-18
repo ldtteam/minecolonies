@@ -2,21 +2,20 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -183,19 +182,9 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         super.onOpened();
         setPage(false, 0);
 
-        final MutableComponent component =
-          building.getCustomName().isEmpty() ? new TranslatableComponent(getBuildingName()) : new TextComponent(building.getCustomName());
-        if (switchView != null && switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
+        if (title != null)
         {
-            // Town hall does not need level in colony name
-            title.setText(component);
-
-            final Component levelComponent = new TranslatableComponent(CMC_GUI_TOWNHALL_BUILDING_LEVEL)
-                                                    .append(": " + buildingView.getBuildingLevel());
-            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(levelComponent);
-        }
-        else if (title != null)
-        {
+            final MutableComponent component = building.getCustomName().isEmpty() ? new TranslatableComponent(getBuildingName()) : new TextComponent(building.getCustomName());
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);
         }

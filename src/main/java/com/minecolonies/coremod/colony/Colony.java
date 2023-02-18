@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.ColonyState;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
@@ -32,6 +29,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
+import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import net.minecraft.ChatFormatting;
@@ -173,6 +171,11 @@ public class Colony implements IColony
      * The progress manager of the colony.
      */
     private final IProgressManager progressManager = new ProgressManager(this);
+
+    /**
+     * Event manager of the colony.
+     */
+    private final IStatisticsManager statisticManager = new StatisticsManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -319,6 +322,16 @@ public class Colony implements IColony
     private String textureStyle = "default";
 
     /**
+     * The colony name style.
+     */
+    private String nameStyle = "default";
+
+    /**
+     * Current day of the colony.
+     */
+    private int day = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -357,10 +370,7 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> {
-            this.getCitizenManager().tickCitizenData();
-            return null;
-        }, TICKS_SECOND));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, citizenManager::tickCitizenData, () -> ACTIVE, TICKS_SECOND * 3));
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
@@ -574,6 +584,7 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
+            day++;
             citizenManager.onWakeUp();
         }
         return false;
@@ -727,6 +738,8 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
+        statisticManager.readFromNBT(compound);
+
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.getAllKeys().contains(TAG_RESEARCH))
@@ -815,6 +828,11 @@ public class Colony implements IColony
         {
             this.textureStyle = compound.getString(TAG_COL_TEXT);
         }
+        if (compound.contains(TAG_COL_NAME_STYLE))
+        {
+            this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
+        }
+        this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
     }
 
@@ -872,6 +890,8 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        statisticManager.writeToNBT(compound);
+
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
@@ -918,6 +938,9 @@ public class Colony implements IColony
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
+        compound.putString(TAG_COL_NAME_STYLE, nameStyle);
+        compound.putInt(COLONY_DAY, day);
+
         this.colonyTag = compound;
 
         isActive = false;
@@ -1076,7 +1099,7 @@ public class Colony implements IColony
      * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
      * run.
      *
-     * @param event {@link TickEvent.WorldTickEvent}
+     * @param event {@link TickEvent.LevelTickEvent}
      */
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
@@ -1542,6 +1565,12 @@ public class Colony implements IColony
     }
 
     @Override
+    public IStatisticsManager getStatisticsManager()
+    {
+        return statisticManager;
+    }
+
+    @Override
     public IReproductionManager getReproductionManager()
     {
         return reproductionManager;
@@ -1866,13 +1895,38 @@ public class Colony implements IColony
         return this.textureStyle;
     }
 
+    @Override
+    public void setNameStyle(final String style)
+    {
+        this.nameStyle = style;
+        this.markDirty();
+    }
+
+    @Override
+    public String getNameStyle()
+    {
+        return this.nameStyle;
+    }
+
+    @Override
+    public CitizenNameFile getCitizenNameFile()
+    {
+        return CitizenNameListener.nameFileMap.getOrDefault(nameStyle, CitizenNameListener.nameFileMap.get("default"));
+    }
+
     /**
      * Check if we need to update the view's chunk ticket info
      *
-     * @return
+     * @return true if dirty.
      */
     public boolean isTicketedChunksDirty()
     {
         return ticketedChunksDirty;
+    }
+
+    @Override
+    public int getDay()
+    {
+        return day;
     }
 }

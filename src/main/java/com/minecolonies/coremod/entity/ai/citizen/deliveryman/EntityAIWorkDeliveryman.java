@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_DELIVERED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
@@ -66,9 +67,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DECISION_DELAY = TICKS_SECOND * 5;
 
     /**
-     * Wait 5 seconds for the worker to decide what to do.
+     * Wait a few ticks for the worker to decide what to pick up.
      */
-    private static final int PICKUP_DELAY = 2;
+    private static final int PICKUP_DELAY = 5;
 
     /**
      * The inventory's slot which is held in hand.
@@ -225,11 +226,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        final ItemStack stack = handler.getStackInSlot(currentSlot);
+        ItemStack stack = handler.getStackInSlot(currentSlot);
 
-        if (stack.isEmpty())
+        while(stack.isEmpty())
         {
-            return false;
+            currentSlot++;
+            if (currentSlot >= handler.getSlots())
+            {
+                return true;
+            }
+            stack = handler.getStackInSlot(currentSlot);            
         }
 
         final int amount = workerRequiresItem(building, stack, alreadyKept);
@@ -374,7 +380,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
 
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
-
+            final int count = stack.getCount();
             if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
@@ -432,6 +438,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Insert the result back into the inventory so we do not lose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
+            worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount());
         }
 
         if (!extracted)
@@ -450,7 +457,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.decreaseSaturationForContinuousAction();
         worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
-
         return success ? START_WORKING : DUMPING;
     }
 

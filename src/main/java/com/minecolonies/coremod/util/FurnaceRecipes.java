@@ -82,20 +82,6 @@ public class FurnaceRecipes implements IFurnaceRecipes
     }
 
     /**
-     * Set the map. This is called from the client side message.
-     *
-     * @param map the map to set.
-     */
-    public void setMap(final Map<ItemStorage, RecipeStorage> map)
-    {
-        this.recipes = map;
-        if (ItemStackUtils.ISFOOD == null)
-        {
-            loadUtilityPredicates();
-        }
-    }
-
-    /**
      * Get the smelting result for a certain itemStack.
      *
      * @param itemStack the itemStack to test.
@@ -138,15 +124,5 @@ public class FurnaceRecipes implements IFurnaceRecipes
             instance = new FurnaceRecipes();
         }
         return instance;
-    }
-
-    /**
-     * Method to check if the furnace recipes are loaded already.
-     *
-     * @return true if so.
-     */
-    public boolean loaded()
-    {
-        return !recipes.isEmpty();
     }
 }

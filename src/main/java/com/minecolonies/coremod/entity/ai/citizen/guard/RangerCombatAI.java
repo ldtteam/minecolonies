@@ -22,7 +22,6 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,6 +34,7 @@ import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.MOBS_KILLED;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
 
@@ -356,5 +356,6 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     {
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+        user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED);
     }
 }

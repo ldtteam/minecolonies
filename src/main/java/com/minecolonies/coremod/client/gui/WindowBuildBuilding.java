@@ -148,7 +148,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
-        else if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
+        else if (!canBeUpgraded())
         {
             buttonBuild.hide();
         }
@@ -162,6 +162,16 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
+    }
+
+    /**
+     * Check if this one can be upgraded.
+     * @return true if so.
+     */
+    public boolean canBeUpgraded()
+    {
+        final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
+        return building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel() || parentBuilding.getBuildingLevel() >= parentBuilding.getBuildingMaxLevel());
     }
 
     /**
@@ -303,10 +313,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         final Level world = Minecraft.getInstance().level;
         resources.clear();
-
         final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
         int nextLevel = building.getBuildingLevel();
-        if (building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel()))
+        if (canBeUpgraded())
         {
             nextLevel = building.getBuildingLevel() + 1;
         }

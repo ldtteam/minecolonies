@@ -295,13 +295,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 Vec3 vector3d2 = this.path.getNextEntityPos(this.mob);
                 BlockPos blockpos = new BlockPos(vector3d2);
-                if (WorldUtil.isEntityBlockLoaded(this.level, blockpos))
+                if (WorldUtil.isEntityBlockLoaded(level, blockpos))
                 {
-                    this.mob.getMoveControl()
+                    mob.getMoveControl()
                       .setWantedPosition(vector3d2.x,
-                        this.level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos),
+                        level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos),
                         vector3d2.z,
-                        this.speedModifier);
+                        speedModifier);
                 }
             }
         }
@@ -662,7 +662,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else
                 {
-                    MinecoloniesMinecart minecart = (MinecoloniesMinecart) ModEntities.MINECART.create(level);
+                    MinecoloniesMinecart minecart = ModEntities.MINECART.create(level);
                     final double x = pEx.x + 0.5D;
                     final double y = pEx.y + 0.625D + yOffset;
                     final double z = pEx.z + 0.5D;

@@ -520,10 +520,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
         currentlyFleeing = fleeing;
     }
 
-    @javax.annotation.Nullable
+    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(
-      final int id, final Inventory playerInventory, final Player playerEntity)
+    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player playerEntity)
     {
         return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
     }
@@ -641,9 +640,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         entityData.define(DATA_CITIZEN_ID, citizenId);
     }
 
-    /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons. use this to react to sunlight and start to burn.
-     */
     @Override
     public void aiStep()
     {
@@ -670,6 +666,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
         else
         {
             citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            if (tickCount % 500 == 0)
+            {
+                this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
+            }
         }
     }
 
@@ -737,28 +737,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
                 citizenItemHandler.entityDropItem(itemstack);
-            }
-        }
-    }
-
-    // TODO:REMOVE DEBUG
-    @Override
-    public void setPos(final double x, final double y, final double z)
-    {
-        super.setPos(x, y, z);
-        if (level.isClientSide)
-        {
-            return;
-        }
-
-        if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
-        {
-            Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
-            remove(RemovalReason.DISCARDED);
-
-            if (getCitizenData() != null && citizenColonyHandler.getColony() != null)
-            {
-                citizenColonyHandler.getColony().getVisitorManager().removeCivilian(getCitizenData());
             }
         }
     }

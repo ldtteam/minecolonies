@@ -52,7 +52,7 @@ public final class WindowConstants
     /**
      * Id of the button displaying the Happiness in the GUI
      */
-    public static final String BUTTON_HAPPINESS = "happiness";
+    public static final String BUTTON_STATS = "happiness";
 
     /**
      * Id of the recall button in the GUI.
@@ -73,6 +73,11 @@ public final class WindowConstants
      * Id of the mercenary button in the GUI.
      */
     public static final String BUTTON_MERCENARY = "mercenaries";
+
+    /**
+     * Id of the mercenary button in the GUI.
+     */
+    public static final String BUTTON_TOWNHALLMAP = "map";
 
     /**
      * Id of the add player button in the GUI.
@@ -350,6 +355,11 @@ public final class WindowConstants
     public static final String BUTTON_PREVIOUS_COLOR_ID = "previousColor";
 
     /**
+     * This drop down list is used to choose an interval.
+     */
+    public static final String DROPDOWN_INTERVAL_ID = "intervals";
+
+    /**
      * This drop down list is used to choose which Color should be used.
      */
     public static final String DROPDOWN_COLOR_ID = "colorPicker";
@@ -358,6 +368,11 @@ public final class WindowConstants
      * This drop down list is used to choose which text should be used.
      */
     public static final String DROPDOWN_TEXT_ID = "textureStylePicker";
+
+    /**
+     * This drop down list is used to choose which name style should be used.
+     */
+    public static final String DROPDOWN_NAME_ID = "nameStylePicker";
 
     /**
      * This button is used to set the texture.

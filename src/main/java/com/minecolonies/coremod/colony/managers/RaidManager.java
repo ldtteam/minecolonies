@@ -688,13 +688,7 @@ public class RaidManager implements IRaiderManager
      */
     private void determineRaidForNextDay()
     {
-        final boolean raid =
-          canRaid()
-            &&
-            (
-              raidThisNight(colony.getWorld(), colony)
-                || colony.getWorld().getBiome(colony.getCenter()).value().getBiomeCategory().getName().contains("desert") && colony.getWorld().isRaining()
-            );
+        final boolean raid = canRaid() && raidThisNight(colony.getWorld(), colony);
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {

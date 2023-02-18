@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
+import com.minecolonies.api.compatibility.dynmap.DynmapCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
@@ -18,13 +20,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -38,6 +40,8 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -172,8 +176,7 @@ public class CompatibilityManager implements ICompatibilityManager
          */
     }
 
-    @Override
-    public void discover(@NotNull final RecipeManager recipeManager)
+    private void clear()
     {
         saplings.clear();
         oreBlocks.clear();
@@ -191,7 +194,16 @@ public class CompatibilityManager implements ICompatibilityManager
         freeBlocks.clear();
         freePositions.clear();
         monsters = ImmutableSet.of();
+    }
 
+    /**
+     * Called server-side *only* to calculate the various lists of items from the registry, recipes, and tags.
+     * @param recipeManager The vanilla recipe manager.
+     */
+    @Override
+    public void discover(@NotNull final RecipeManager recipeManager)
+    {
+        clear();
         discoverAllItems();
 
         discoverSaplings();
@@ -210,6 +222,126 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
+     * Transfer server-discovered item lists to client, to avoid double-handling (and
+     * potentially getting different answers).
+     *
+     * @param buf serialization buffer
+     */
+    public void serialize(@NotNull final FriendlyByteBuf buf)
+    {
+        serializeItemStorageList(buf, saplings);
+        serializeBlockList(buf, oreBlocks);
+        serializeItemStorageList(buf, smeltableOres);
+        serializeItemStorageList(buf, plantables);
+        serializeItemStorageList(buf, food);
+        serializeItemStorageList(buf, edibles);
+        serializeItemStorageList(buf, fuel);
+        serializeRegistryIds(buf, ForgeRegistries.ENTITIES, monsters);
+
+        serializeCompostRecipes(buf, compostRecipes);
+    }
+
+    /**
+     * Receive and update lists based on incoming server discovery data.
+     *
+     * Note: anything based purely on the registries and configs can be safely recalculated here.
+     *       But anything based on tags or recipes must be updated purely via the packet,
+     *       because this can be called before the client has the latest tags/recipes.
+     *
+     * @param buf deserialization buffer
+     */
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    {
+        clear();
+        discoverAllItems();
+
+        saplings.addAll(deserializeItemStorageList(buf));
+        oreBlocks.addAll(deserializeBlockList(buf));
+        smeltableOres.addAll(deserializeItemStorageList(buf));
+        plantables.addAll(deserializeItemStorageList(buf));
+        food.addAll(deserializeItemStorageList(buf));
+        edibles.addAll(deserializeItemStorageList(buf));
+        fuel.addAll(deserializeItemStorageList(buf));
+        monsters = ImmutableSet.copyOf(deserializeRegistryIds(buf, ForgeRegistries.ENTITIES));
+
+        Log.getLogger().info("Synchronized {} saplings", saplings.size());
+        Log.getLogger().info("Synchronized {} ore blocks with {} smeltable ores", oreBlocks.size(), smeltableOres.size());
+        Log.getLogger().info("Synchronized {} plantables", plantables.size());
+        Log.getLogger().info("Synchronized {} food types with {} edible", food.size(), edibles.size());
+        Log.getLogger().info("Synchronized {} fuel types", fuel.size());
+        Log.getLogger().info("Synchronized {} monsters", monsters.size());
+
+        discoverCompostRecipes(deserializeCompostRecipes(buf));
+
+        // the below are loaded from config files, which have been synched already by this point
+        discoverLuckyOres();
+        discoverRecruitCosts();
+        discoverDiseases();
+        discoverFreeBlocksAndPos();
+        discoverModCompat();
+    }
+
+    private static void serializeItemStorageList(@NotNull final FriendlyByteBuf buf,
+                                                 @NotNull final Collection<ItemStorage> list)
+    {
+        buf.writeCollection(list, StandardFactoryController.getInstance()::serialize);
+    }
+
+    @NotNull
+    private static List<ItemStorage> deserializeItemStorageList(@NotNull final FriendlyByteBuf buf)
+    {
+        return buf.readList(StandardFactoryController.getInstance()::deserialize);
+    }
+
+    private static void serializeBlockList(@NotNull final FriendlyByteBuf buf,
+                                           @NotNull final Collection<Block> list)
+    {
+        buf.writeCollection(list.stream().map(ItemStack::new).toList(), FriendlyByteBuf::writeItem);
+    }
+
+    @NotNull
+    private static List<Block> deserializeBlockList(@NotNull final FriendlyByteBuf buf)
+    {
+        final List<ItemStack> stacks = buf.readList(FriendlyByteBuf::readItem);
+        return stacks.stream()
+                .flatMap(stack -> stack.getItem() instanceof BlockItem blockItem
+                        ? Stream.of(blockItem.getBlock()) : Stream.empty())
+                .toList();
+    }
+
+    private static void serializeRegistryIds(@NotNull final FriendlyByteBuf buf,
+                                             @NotNull final IForgeRegistry<?> registry,
+                                             @NotNull final Collection<ResourceLocation> ids)
+    {
+        buf.writeCollection(ids, (b, id) -> b.writeRegistryIdUnsafe(registry, id));
+    }
+
+    @NotNull
+    private static <T extends IForgeRegistryEntry<T>> List<ResourceLocation>
+            deserializeRegistryIds(@NotNull final FriendlyByteBuf buf,
+                                   @NotNull final IForgeRegistry<T> registry)
+    {
+        return buf.readList(b -> b.readRegistryIdUnsafe(registry)).stream()
+                .flatMap(item -> Stream.ofNullable(registry.getKey(item)))
+                .toList();
+    }
+
+    private static void serializeCompostRecipes(@NotNull final FriendlyByteBuf buf,
+                                                @NotNull final Map<Item, CompostRecipe> compostRecipes)
+    {
+        final List<CompostRecipe> recipes = compostRecipes.values().stream().distinct().toList();
+        buf.writeCollection(recipes, CompostRecipe.Serializer.getInstance()::toNetwork);
+    }
+
+    @NotNull
+    private static List<CompostRecipe> deserializeCompostRecipes(@NotNull final FriendlyByteBuf buf)
+    {
+        final CompostRecipe.Serializer serializer = CompostRecipe.Serializer.getInstance();
+        final ResourceLocation empty = new ResourceLocation("");
+        return buf.readList(b -> serializer.fromNetwork(empty, b));
+    }
+
+    /**
      * Getter for the list.
      *
      * @return the list of itemStacks.
@@ -217,12 +349,14 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public List<ItemStack> getListOfAllItems()
     {
+        if (allItems.isEmpty()) Log.getLogger().error("getListOfAllItems when empty");
         return allItems;
     }
 
     @Override
     public Set<ItemStorage> getSetOfAllItems()
     {
+        if (allItemsSet.isEmpty()) Log.getLogger().error("getSetOfAllItems when empty");
         return allItemsSet;
     }
 
@@ -253,24 +387,28 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getCopyOfSaplings()
     {
+        if (saplings.isEmpty()) Log.getLogger().error("getCopyOfSaplings when empty");
         return new HashSet<>(saplings);
     }
 
     @Override
     public Set<ItemStorage> getFuel()
     {
+        if (fuel.isEmpty()) Log.getLogger().error("getFuel when empty");
         return fuel;
     }
 
     @Override
     public Set<ItemStorage> getFood()
     {
+        if (food.isEmpty()) Log.getLogger().error("getFood when empty");
         return food;
     }
 
     @Override
     public Set<ItemStorage> getEdibles(final int minNutrition)
     {
+        if (edibles.isEmpty()) Log.getLogger().error("getEdibles when empty");
         final Set<ItemStorage> filteredEdibles = new HashSet<>();
         for (final ItemStorage storage : edibles)
         {
@@ -285,18 +423,21 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getSmeltableOres()
     {
+        if (smeltableOres.isEmpty()) Log.getLogger().error("getSmeltableOres when empty");
         return smeltableOres;
     }
 
     @Override
     public Map<Item, CompostRecipe> getCopyOfCompostRecipes()
     {
+        if (compostRecipes.isEmpty()) Log.getLogger().error("getCopyOfCompostRecipes when empty");
         return ImmutableMap.copyOf(compostRecipes);
     }
 
     @Override
     public Set<ItemStorage> getCompostInputs()
     {
+        if (compostRecipes.isEmpty()) Log.getLogger().error("getCompostInputs when empty");
         return compostRecipes.keySet().stream()
                 .map(item -> new ItemStorage(new ItemStack(item)))
                 .collect(Collectors.toSet());
@@ -305,6 +446,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getCopyOfPlantables()
     {
+        if (plantables.isEmpty()) Log.getLogger().error("getCopyOfPlantables when empty");
         return new HashSet<>(plantables);
     }
 
@@ -335,6 +477,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(final BlockState block)
     {
+        if (oreBlocks.isEmpty()) Log.getLogger().error("isOre when empty");
+
         if (block.getBlock() instanceof OreBlock || block.getBlock() instanceof RedStoneOreBlock)
         {
             return true;
@@ -417,6 +561,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public ImmutableSet<ResourceLocation> getAllMonsters()
     {
+        if (monsters.isEmpty()) Log.getLogger().error("getAllMonsters when empty");
         return monsters;
     }
 
@@ -520,24 +665,28 @@ public class CompatibilityManager implements ICompatibilityManager
 
     /**
      * Create complete list of compost recipes.
-     * @param recipeManager
+     * @param recipeManager recipe manager
      */
-    @SuppressWarnings("ConditionalExpression")
     private void discoverCompostRecipes(@NotNull final RecipeManager recipeManager)
     {
         if (compostRecipes.isEmpty())
         {
-            for (final Recipe<?> r : recipeManager.byType(CompostRecipe.TYPE).values())
-            {
-                final CompostRecipe recipe = (CompostRecipe) r;
-                for (final ItemStack stack : recipe.getInput().getItems())
-                {
-                    // there can be duplicates due to overlapping tags.  weakest one wins.
-                    compostRecipes.merge(stack.getItem(), recipe,
-                            (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
-                }
-            }
+            discoverCompostRecipes(recipeManager.byType(CompostRecipe.TYPE).values().stream()
+                    .map(r -> (CompostRecipe) r).toList());
             Log.getLogger().info("Finished discovering compostables " + compostRecipes.size());
+        }
+    }
+
+    private void discoverCompostRecipes(@NotNull final List<CompostRecipe> recipes)
+    {
+        for (final CompostRecipe recipe : recipes)
+        {
+            for (final ItemStack stack : recipe.getInput().getItems())
+            {
+                // there can be duplicates due to overlapping tags.  weakest one wins.
+                compostRecipes.merge(stack.getItem(), recipe,
+                        (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
+            }
         }
     }
 
@@ -788,6 +937,11 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ModList.get().isLoaded("dynamictrees"))
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
+        }
+        if (ModList.get().isLoaded("dynmap"))
+        {
+            Compatibility.dynmapCompat = new DynmapCompat();
+            Compatibility.dynmapCompat.registerIntegration();
         }
     }
 

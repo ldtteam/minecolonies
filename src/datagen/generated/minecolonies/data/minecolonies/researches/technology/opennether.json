@@ -3,6 +3,7 @@
   "parentResearch": "minecolonies:technology/morescrolls",
   "researchLevel": 2,
   "subtitle": "com.minecolonies.research.technology.opennether.subtitle",
+  "sortOrder": 1,
   "icon": "minecolonies:blockhutnetherworker",
   "requirements": [
     {
