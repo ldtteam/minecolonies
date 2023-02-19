@@ -3,13 +3,12 @@
 	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"5": "minecolonies:blocks/books/booktexture_red",
-		"6": "block/stripped_oak_log",
-		"7": "block/bookshelf",
-		"bottom": "block/oak_planks",
-		"base": "block/lectern_base",
-		"top": "block/lectern_top",
-		"particle": "minecolonies:blocks/books/booktexture_red"
+		"6": "stripped_oak_log",
+		"7": "bookshelf",
+		"8": "booktexture_red",
+		"bottom": "oak_planks",
+		"base": "lectern_base",
+		"top": "lectern_top"
 	},
 	"elements": [
 		{
@@ -72,6 +71,7 @@
 			"name": "lecternBase",
 			"from": [0, 0, 0],
 			"to": [16, 2, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [0, 6, 16, 8], "texture": "#base", "cullface": "south"},
 				"east": {"uv": [0, 0, 2, 16], "rotation": 90, "texture": "#base", "cullface": "west"},
@@ -85,6 +85,7 @@
 			"name": "bookshelf",
 			"from": [3, 2, 4],
 			"to": [13, 15, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
 			"faces": {
 				"north": {"uv": [3, 3, 13, 16], "texture": "#6"},
 				"east": {"uv": [2, 8, 15, 16], "rotation": 90, "texture": "#6"},
@@ -129,7 +130,7 @@
 			"rotation": {"angle": 0, "axis": "y", "origin": [16, 11, 19.5]},
 			"faces": {
 				"north": {"uv": [0, 0, 1, 5], "texture": "#7"},
-				"east": {"uv": [6, 9, 7, 15], "texture": "#7"},
+				"east": {"uv": [7, 9, 8, 15], "texture": "#7"},
 				"south": {"uv": [6, 9, 8, 15], "texture": "#7"},
 				"west": {"uv": [6, 9, 7, 15], "texture": "#7"},
 				"up": {"uv": [1, 11, 2, 12], "texture": "#7"},
@@ -151,16 +152,17 @@
 			}
 		},
 		{
+			"name": "book",
 			"from": [4.25, 16, 3.5],
 			"to": [12.25, 18, 15.5],
 			"rotation": {"angle": 22.5, "axis": "x", "origin": [8.25, 17, 10.5]},
 			"faces": {
-				"north": {"uv": [0, 0, 8, 2], "rotation": 180, "texture": "#5"},
-				"east": {"uv": [1, 0, 8, 2], "texture": "#5"},
-				"south": {"uv": [0, 0, 8, 2], "texture": "#5"},
-				"west": {"uv": [0, 2, 16, 4], "texture": "#5"},
-				"up": {"uv": [8, 4, 16, 16], "texture": "#5"},
-				"down": {"uv": [8, 4, 16, 16], "texture": "#5"}
+				"north": {"uv": [0, 0, 8, 2], "rotation": 180, "texture": "#8"},
+				"east": {"uv": [6, 4, 8, 16], "rotation": 90, "texture": "#8"},
+				"south": {"uv": [0, 2, 8, 0], "texture": "#8"},
+				"west": {"uv": [0, 2, 12, 4], "texture": "#8"},
+				"up": {"uv": [8, 4, 16, 16], "texture": "#8"},
+				"down": {"uv": [8, 4, 16, 16], "texture": "#8"}
 			}
 		}
 	],
@@ -170,10 +172,23 @@
 			"scale": [0.4, 0.4, 0.4]
 		}
 	},
-	"groups": [0, 1, 2, 3, 4, 5,
+	"groups": [
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
 		{
 			"name": "lectern",
 			"origin": [8, 8, 8],
+			"color": 0,
 			"children": []
-		}, 6, 7, 8, 9, 10]
+		},
+		6,
+		7,
+		8,
+		9,
+		10
+	]
 }
