@@ -1,0 +1,18 @@
+{
+  "type": "recipe",
+  "count": 2,
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "loot-table": "minecolonies:recipes/glass_bottle",
+  "min-building-level": 3,
+  "result": "minecolonies:bread_dough",
+  "show-tooltip": true
+}

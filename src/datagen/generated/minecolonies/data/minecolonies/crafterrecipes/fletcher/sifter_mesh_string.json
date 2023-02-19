@@ -1,0 +1,13 @@
+{
+  "type": "recipe",
+  "crafter": "fletcher_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:string"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/sifterstringunlock",
+  "result": "minecolonies:sifter_mesh_string",
+  "show-tooltip": true
+}
