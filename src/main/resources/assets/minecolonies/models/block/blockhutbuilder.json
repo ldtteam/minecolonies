@@ -3,18 +3,18 @@
 	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"3": "spruce_planks",
-		"7": "stripped_oak_log_top",
-		"8": "oak_planks",
-		"9": "stripped_spruce_log_top",
-		"10": "cauldron_side",
-		"11": "minecolonies:sketchbook_1",
-		"12": "minecolonies:miniature",
-		"14": "stone_bricks",
-		"15": "polished_granite",
-		"16": "cobblestone",
-		"17": "booktexture_brown",
-		"particle": "cauldron_side"
+		"3": "block/spruce_planks",
+		"7": "block/stripped_oak_log_top",
+		"8": "block/oak_planks",
+		"9": "block/stripped_spruce_log_top",
+		"10": "block/cauldron_side",
+		"11": "minecolonies:blocks/books/sketchbook_1",
+		"12": "minecolonies:blocks/miniature",
+		"13": "minecolonies:blocks/books/booktexture_brown",
+		"14": "block/stone_bricks",
+		"15": "block/polished_granite",
+		"16": "block/cobblestone",
+		"particle": "block/oak_planks"
 	},
 	"elements": [
 		{
@@ -407,16 +407,16 @@
 		},
 		{
 			"name": "book",
-			"from": [2, 15.5, 9],
-			"to": [6, 16.5, 15],
+			"from": [2, 15.75, 9],
+			"to": [6, 16.75, 15],
 			"rotation": {"angle": 22.5, "axis": "y", "origin": [4, 16.25, 12]},
 			"faces": {
-				"north": {"uv": [0, 0, 8, 2], "rotation": 180, "texture": "#17"},
-				"east": {"uv": [6, 4, 8, 16], "rotation": 90, "texture": "#17"},
-				"south": {"uv": [0, 2, 8, 0], "texture": "#17"},
-				"west": {"uv": [0, 2, 12, 4], "texture": "#17"},
-				"up": {"uv": [8, 4, 16, 16], "texture": "#17"},
-				"down": {"uv": [8, 4, 16, 16], "texture": "#17"}
+				"north": {"uv": [0, 0, 8, 2], "rotation": 180, "texture": "#13"},
+				"east": {"uv": [1.5, 0, 8, 2], "texture": "#13"},
+				"south": {"uv": [0, 0, 8, 2], "texture": "#13"},
+				"west": {"uv": [0, 2, 16, 4], "texture": "#13"},
+				"up": {"uv": [8, 4, 16, 16], "texture": "#13"},
+				"down": {"uv": [0, 0, 4, 6], "texture": "#13"}
 			}
 		},
 		{
@@ -494,7 +494,6 @@
 		{
 			"name": "group",
 			"origin": [8, 8, 8],
-			"color": 0,
 			"children": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
 		}
 	]
