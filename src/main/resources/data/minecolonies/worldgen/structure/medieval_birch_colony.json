@@ -2,7 +2,7 @@
   "type": "minecolonies:empty_colony",
 
   "start_pool": "minecolonies:medieval_birch_pool",
-  "size": 8,
+  "size": 5,
   "max_distance_from_center": 80,
   "step": "surface_structures",
 

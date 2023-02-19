@@ -2,9 +2,11 @@
   "replace": false,
   "values": [
     "minecraft:plains",
+    "#forge:is_plains",
     "minecraft:sunflower_plains",
     "minecraft:snowy_plains",
     "minecraft:forest",
+    "#minecraft:is_forest",
     "minecraft:flower_forest",
     "minecraft:birch_forest",
     "minecraft:old_growth_birch_forest",
@@ -16,9 +18,11 @@
     "minecraft:frozen_peaks",
     "minecraft:jagged_peaks",
     "minecraft:stony_peaks",
+    "#forge:is_peak",
     "minecraft:river",
     "minecraft:frozen_river",
     "minecraft:beach",
+    "#minecraft:is_beach",
     "minecraft:snowy_beach",
     "minecraft:stony_shore",
     "minecraft:mushroom_fields"
