@@ -284,8 +284,8 @@ public class Colony implements IColony
      * The colony flag, as a list of patterns.
      */
     private ListTag colonyFlag = new BannerPattern.Builder()
-                                   .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-                                   .toListTag();
+      .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+      .toListTag();
 
     /**
      * The last time the mercenaries were used.
@@ -366,7 +366,9 @@ public class Colony implements IColony
         }
         this.permissions = new Permissions(this);
         researchManager = new ResearchManager(this);
-        colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
+        colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
+        {
+        });
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
@@ -482,7 +484,7 @@ public class Colony implements IColony
             {
                 if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
                 {
-                    this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
+                    this.forceLoadTimer = getConfig().getServer().loadtime.get() * 20 * 60;
                     pendingChunks.addAll(pendingToUnloadChunks);
                     for (final long pending : pendingChunks)
                     {
@@ -1773,7 +1775,10 @@ public class Colony implements IColony
      * @return the list of pattern-color pairs
      */
     @Override
-    public ListTag getColonyFlag() { return colonyFlag; }
+    public ListTag getColonyFlag()
+    {
+        return colonyFlag;
+    }
 
     /**
      * Set the colony to be active.

@@ -40,6 +40,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
+    public final ForgeConfigSpec.IntValue     loadtime;
     public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
     public final ForgeConfigSpec.IntValue     maxTreeSize;
@@ -176,6 +177,7 @@ public class ServerConfiguration extends AbstractConfiguration
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
+        loadtime = defineInteger(builder, "loadtime", 10,1,1440);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
