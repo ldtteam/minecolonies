@@ -49,6 +49,9 @@
   "minecolonies.config.forceloadcolony": "Chunk Load Colony",
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.)",
 
+  "minecolonies.config.loadtime": "Colony chunk loading duration",
+  "minecolonies.config.loadtime.comment": "Set how long chunks stay loaded after player leaves, does not persist through restarts. Default: 10min",
+
   "minecolonies.config.colonyloadstrictness": "Colony Chunk Loading Strictness",
   "minecolonies.config.colonyloadstrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the fewer chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
 
