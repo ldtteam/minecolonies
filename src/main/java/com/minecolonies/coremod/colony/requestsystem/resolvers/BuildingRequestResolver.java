@@ -95,22 +95,8 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
       @NotNull final IRequest<? extends IDeliverable> request,
       @NotNull final AbstractBuilding building)
     {
-        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
-
         final int totalRequested = request.getRequest().getCount();
-        int totalAvailable = 0;
-        for (final ICapabilityProvider tile : tileEntities)
-        {
-            final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
-            for (final ItemStack stack : inv)
-            {
-                if (!stack.isEmpty())
-                {
-                    totalAvailable += stack.getCount();
-                }
-            }
-        }
-
+        int totalAvailable = InventoryUtils.getCountFromBuilding(building, itemStack -> request.getRequest().matches(itemStack));
         for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacksExcluding(request).entrySet())
         {
             if (request.getRequest().matches(reserved.getKey().getItemStack()))
@@ -120,9 +106,9 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             }
         }
 
-        if (totalAvailable == 0)
+        if (totalAvailable <= 0)
         {
-            //Error exit, something went wrong, we can't resolve, exit.
+            //Most likely the reserved amount consumed everything. Backtrack.
             return null;
         }
 
