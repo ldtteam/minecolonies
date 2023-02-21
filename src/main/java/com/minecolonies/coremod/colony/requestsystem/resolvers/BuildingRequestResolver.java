@@ -120,6 +120,12 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             }
         }
 
+        if (totalAvailable == 0)
+        {
+            //Error exit, something went wrong, we can't resolve, exit.
+            return null;
+        }
+
         if (totalAvailable >= totalRequested)
         {
             return Lists.newArrayList();
