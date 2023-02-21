@@ -139,6 +139,13 @@ public class EventStructureManager implements IEventStructureManager
 
 
                 ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), colony.getWorld(), (blueprint -> {
+
+                    if (blueprint == null)
+                    {
+                        Log.getLogger().info("Minor issue: Failed to restore backup" + backupPath.toString());
+                        return;
+                    }
+
                     final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
                     Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), null));
 
