@@ -197,7 +197,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!");
+        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null! Building:"+getBuildingType().getTranslationKey()+" pos:"+getID());
     }
 
     @NotNull
@@ -225,7 +225,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 return (T) module;
             }
         }
-        throw new IllegalArgumentException("no matching module");
+        throw new IllegalArgumentException("no matching module for Building:"+getBuildingType().getTranslationKey()+" pos:"+getID());
     }
 
     @NotNull
@@ -922,7 +922,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!", new Exception());
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be! Building:"+getBuildingType().getTranslationKey()+" pos:"+getID(), new Exception());
                 Log.getLogger().error("Trying to restore order!");
 
                 final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING.get(), getPosition(), colony.getWorld().getBlockState(this.getPosition()));
@@ -1806,7 +1806,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         catch (final Exception ex)
         {
-            Log.getLogger().error("Error during overruling", ex);
+            Log.getLogger().error("Error during overruling at Building:"+getBuildingType().getTranslationKey()+" pos:"+getID(), ex);
             Log.getLogger().error(target.getId().toString() + " " + target.getState().name() + " " + target.getShortDisplayString().toString());
             return false;
         }
