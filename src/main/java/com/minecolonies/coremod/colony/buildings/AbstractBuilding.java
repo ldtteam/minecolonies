@@ -74,6 +74,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -92,7 +93,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -2013,12 +2013,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Map<ItemStorage, Integer> reservedStacks()
+    public Map<ItemStorage, Integer> reservedStacksExcluding(@NotNull final IRequest<? extends IDeliverable> excluded)
     {
         final Map<ItemStorage, Integer> map = new HashMap<>();
         for (final IHasRequiredItemsModule module : getModules(IHasRequiredItemsModule.class))
         {
-            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacks().entrySet())
+            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacksExcluding(excluded).entrySet())
             {
                 final int current = map.getOrDefault(content.getKey(), 0);
                 map.put(content.getKey(), current + content.getValue());
