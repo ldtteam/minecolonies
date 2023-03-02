@@ -92,6 +92,13 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
+        if (blueprint == null)
+        {
+            // This can happen if the file didnt finish synching with the server from the client, or something went wrong when synching (package dropped, etc).
+            MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)

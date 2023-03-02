@@ -741,6 +741,7 @@ public final class TranslationConstants
     @NonNls
     public static final String NO_CUSTOM_BUILDINGS = "com.minecolonies.coremod.structures.nocustomhuts";
     public static final String NO_CUSTOM_CAMPS = "com.minecolonies.coremod.structures.nocustomcamps";
+    public static final String BUILDING_MISSING = "com.minecolonies.coremod.structures.buildingmissing";
 
     //</editor-fold>
 

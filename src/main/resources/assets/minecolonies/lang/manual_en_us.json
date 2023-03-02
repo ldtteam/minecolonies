@@ -2349,6 +2349,8 @@
   "com.minecolonies.building.quarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
+  "com.minecolonies.coremod.structures.buildingmissing": "The builder had a problem locating this blueprint, please try again.",
+
   "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
   "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s",
   "com.minecolonies.command.gui.browsebuilding.loading": "searching ...",
