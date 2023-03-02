@@ -102,7 +102,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return false;
         }
 
-        citizen.updatePose(Pose.SLEEPING);
+        citizen.setPose(Pose.SLEEPING);
         citizen.getNavigation().stop();
         citizen.setPos(((float) bedLocation.getX() + HALF_BLOCK),
           (float) bedLocation.getY() + 0.8F,
@@ -139,13 +139,14 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         notifyCitizenHandlersOfWakeUp();
 
         //Only do this if he really sleeps
-        if (!isAsleep())
+        if (isAsleep())
         {
-            return;
+            spawnCitizenFromBed();
         }
-        citizen.updatePose(Pose.STANDING);
+
+        citizen.setPose(Pose.STANDING);
         citizen.clearSleepingPos();
-        spawnCitizenFromBed();
+        setIsAsleep(false);
     }
 
     private void notifyCitizenHandlersOfWakeUp()
