@@ -37,8 +37,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_CUSTOM_BUILDINGS;
-import static com.minecolonies.api.util.constant.TranslationConstants.WRONG_COLONY;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Minecolonies survival blueprint handler.
@@ -105,7 +104,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         {
             if (clientPack || !StructurePacks.hasPack(packName))
             {
-                MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+                MessageUtils.format(BUILDING_MISSING).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
