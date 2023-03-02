@@ -33,6 +33,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
@@ -308,8 +309,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         final ItemStack itemstack = this.angler.getMainHandItem();
         final ItemStack itemstack1 = this.angler.getOffhandItem();
-        final boolean flag = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
-        final boolean flag1 = itemstack1.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
+        final boolean flag = itemstack.canPerformAction(ToolActions.FISHING_ROD_CAST);
+        final boolean flag1 = itemstack1.canPerformAction(ToolActions.FISHING_ROD_CAST);
         if (!this.angler.isRemoved() && this.angler.isAlive() && (flag || flag1) && !(this.distanceToSqr(this.angler) > 1024.0D))
         {
             return false;

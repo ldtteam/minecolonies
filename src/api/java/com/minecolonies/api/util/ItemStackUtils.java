@@ -308,15 +308,14 @@ public final class ItemStackUtils
                 || ToolType.CHESTPLATE.equals(toolType)
                 || ToolType.LEGGINGS.equals(toolType))
         {
-            if (stack.getItem() instanceof ArmorItem)
+            if (stack.getItem() instanceof final ArmorItem armorItem)
             {
-                final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
-                return getArmorLevel(ArmorItem.getMaterial());
+                return getArmorLevel(armorItem.getMaterial());
             }
         }
-        else if (stack.getItem() instanceof TieredItem)  // most tools
+        else if (stack.getItem() instanceof final TieredItem tieredItem)  // most tools
         {
-            return ((TieredItem) stack.getItem()).getTier().getLevel();
+            return tieredItem.getTier().getLevel();
         }
         else if (toolType.equals(ToolType.FISHINGROD))
         {
