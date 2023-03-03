@@ -294,6 +294,11 @@ public class EntityAISleep extends Goal
      */
     private SleepState sleep()
     {
+        if (usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
+        {
+            return WALKING_HOME;
+        }
+
         Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()), citizen);
         //TODO make sleeping noises here.
         return null;
