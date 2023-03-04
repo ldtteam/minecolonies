@@ -250,9 +250,8 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 final Delivery delivery =
                   new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), matchingStack, getDefaultDeliveryPriority(true));
 
-                final IToken<?> requestToken =
-                  manager.createRequest(manager.getFactoryController()
-                                          .getNewInstance(TypeToken.of(this.getClass()), completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
+
+                final IToken<?> requestToken = manager.createRequest(this, delivery);
                 deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= count;
 

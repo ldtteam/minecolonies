@@ -4,13 +4,14 @@
            label="$(com.minecolonies.coremod.gui.workerhuts.crafter.tasks)"/>
 
     <list id="tasks" size="164 185" pos="13 29">
-        <box size="100% 43" linewidth="1">
+        <box size="100% 34" linewidth="1">
             <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3"/>
 
             <label id="shortDetail" size="130 9" pos="20 2" color="black"/>
-            <label id="requester" size="130 9" pos="20 12" color="black"/>
-            <label id="parent" size="130 9" pos="20 22" color="black"/>
-            <label id="priority" size="130 9" pos="20 32" color="black"/>
+            <itemicon id="detailIcon" size="9 9" pos="80 1" color="black" visible="false"/>
+            <label id="priority" size="130 9" pos="20 12" color="black"/>
+
+            <label id="requester" size="130 9" pos="2 22" color="black"/>
         </box>
     </list>
 </window>
