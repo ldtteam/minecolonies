@@ -227,7 +227,7 @@ public final class StandardRequests
     /**
      * Generic delivery request.
      */
-    public static class DeliveryRequest extends AbstractRequest<Delivery>
+    public static class DeliveryRequest extends AbstractRequest<Delivery> implements IStackBasedTask
     {
         public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
@@ -247,10 +247,10 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = Component.literal("");
-            result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY).append(Component.literal(
-              getRequest().getStack().getCount() + " ")).append(getRequest().getStack().getDisplayName()));
-            return result;
+            return Component.literal("")
+                     .append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY)
+                               .append(Component.literal(getRequest().getStack().getCount() + " "))
+                               .append(getRequest().getStack().getDisplayName()));
         }
 
         @NotNull
@@ -258,6 +258,24 @@ public final class StandardRequests
         public List<ItemStack> getDisplayStacks()
         {
             return ImmutableList.of();
+        }
+
+        @Override
+        public MutableComponent getDisplayPrefix()
+        {
+            return Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY);
+        }
+
+        @Override
+        public int getDisplayCount()
+        {
+            return getRequest().getStack().getCount();
+        }
+
+        @Override
+        public ItemStack getTaskStack()
+        {
+            return getRequest().getStack();
         }
 
         @Override
@@ -343,7 +361,7 @@ public final class StandardRequests
     /**
      * An abstract implementation for crafting requests
      */
-    public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
+    public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C> implements IStackBasedTask
     {
 
         protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final C requested)
@@ -365,6 +383,24 @@ public final class StandardRequests
         public final Component getShortDisplayString()
         {
             return Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, Component.literal(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getDisplayName());
+        }
+
+        @Override
+        public MutableComponent getDisplayPrefix()
+        {
+            return Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, Component.literal(String.valueOf(getRequest().getMinCount())));
+        }
+
+        @Override
+        public int getDisplayCount()
+        {
+            return getRequest().getCount();
+        }
+
+        @Override
+        public ItemStack getTaskStack()
+        {
+            return getRequest().getStack();
         }
 
         protected abstract String getTranslationKey();
