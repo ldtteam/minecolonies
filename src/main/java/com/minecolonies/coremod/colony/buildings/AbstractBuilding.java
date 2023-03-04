@@ -2002,12 +2002,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Map<ItemStorage, Integer> reservedStacks()
+    public Map<ItemStorage, Integer> reservedStacksExcluding(@NotNull final IRequest<? extends IDeliverable> excluded)
     {
         final Map<ItemStorage, Integer> map = new HashMap<>();
         for (final IHasRequiredItemsModule module : getModules(IHasRequiredItemsModule.class))
         {
-            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacks().entrySet())
+            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacksExcluding(excluded).entrySet())
             {
                 final int current = map.getOrDefault(content.getKey(), 0);
                 map.put(content.getKey(), current + content.getValue());
