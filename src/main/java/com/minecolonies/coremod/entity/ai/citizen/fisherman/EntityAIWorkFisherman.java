@@ -27,7 +27,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
@@ -252,9 +251,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem() instanceof FishingRodItem)
+        return InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), ToolType.FISHINGROD, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())
                 && worker.getMainHandItem() != null
-                && !(worker.getMainHandItem().getItem() instanceof FishingRodItem);
+                && !ItemStackUtils.isTool(worker.getMainHandItem(), ToolType.FISHINGROD);
     }
 
     /**

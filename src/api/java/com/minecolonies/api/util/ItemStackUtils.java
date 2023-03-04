@@ -303,50 +303,32 @@ public final class ItemStackUtils
             return Compatibility.getToolLevel(stack);
         }
 
-        if (ToolType.HOE.equals(toolType))
+        if (ToolType.HELMET.equals(toolType)
+                || ToolType.BOOTS.equals(toolType)
+                || ToolType.CHESTPLATE.equals(toolType)
+                || ToolType.LEGGINGS.equals(toolType))
         {
-            if (stack.getItem() instanceof HoeItem)
+            if (stack.getItem() instanceof final ArmorItem armorItem)
             {
-                final HoeItem hoeItem = (HoeItem) stack.getItem();
-                return hoeItem.getTier().getLevel();
+                return getArmorLevel(armorItem.getMaterial());
             }
         }
-        else if (ToolType.SWORD.equals(toolType))
+        else if (stack.getItem() instanceof final TieredItem tieredItem)  // most tools
         {
-            if (stack.getItem() instanceof SwordItem)
-            {
-                final SwordItem SwordItem = (SwordItem) stack.getItem();
-                return SwordItem.getTier().getLevel();
-            }
-
+            return tieredItem.getTier().getLevel();
         }
-        else if (ToolType.HELMET.equals(toolType)
-                   || ToolType.BOOTS.equals(toolType)
-                   || ToolType.CHESTPLATE.equals(toolType)
-                   || ToolType.LEGGINGS.equals(toolType))
-        {
-            if (stack.getItem() instanceof ArmorItem)
-            {
-                final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
-                return getArmorLevel(ArmorItem.getMaterial());
-            }
-        }
-        else if (stack.getItem() instanceof FishingRodItem)
+        else if (toolType.equals(ToolType.FISHINGROD))
         {
             return getFishingRodLevel(stack);
         }
         else if (toolType.equals(ToolType.SHEARS))
         {
-            return stack.getItem() instanceof ShearsItem ? 0 : -1;
+            return 0;
         }
         else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
             return 1;
-        }
-        else if (stack.getItem() instanceof TieredItem)
-        {
-            return ((TieredItem) stack.getItem()).getTier().getLevel();
         }
         return -1;
     }
@@ -418,33 +400,33 @@ public final class ItemStackUtils
         {
             return itemStack.canPerformAction(ToolActions.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack);
         }
-        if (ToolType.FISHINGROD.equals(toolType))
+        if (ToolType.FISHINGROD.equals(toolType) && itemStack.canPerformAction(ToolActions.FISHING_ROD_CAST))
         {
-            return itemStack.getItem() instanceof FishingRodItem;
+            return true;
         }
-        if (ToolType.SHEARS.equals(toolType))
+        if (ToolType.SHEARS.equals(toolType) && itemStack.canPerformAction(ToolActions.SHEARS_DIG) && itemStack.canPerformAction(ToolActions.SHEARS_HARVEST))
         {
-            return itemStack.getItem() instanceof ShearsItem;
+            return true;
         }
         if (ToolType.HELMET.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getSlot());
         }
         if (ToolType.LEGGINGS.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getSlot());
         }
         if (ToolType.CHESTPLATE.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getSlot());
         }
         if (ToolType.BOOTS.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getSlot());
         }
         if (ToolType.SHIELD.equals(toolType))
         {
-            return itemStack.getItem() instanceof ShieldItem;
+            return itemStack.getItem() instanceof ShieldItem;   //canPerformAction(ToolActions.SHIELD_BLOCK) ?
         }
         if (ToolType.FLINT_N_STEEL.equals(toolType))
         {
