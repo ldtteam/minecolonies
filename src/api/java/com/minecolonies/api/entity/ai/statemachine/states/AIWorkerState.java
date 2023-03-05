@@ -151,17 +151,17 @@ public enum AIWorkerState implements IAIState
     /**
      * Hoe the field.
      */
-    FARMER_HOE(false),
+    FARMER_HOE(true),
 
     /**
      * Plant the seeds.
      */
-    FARMER_PLANT(false),
+    FARMER_PLANT(true),
 
     /**
      * Harvest the crops.
      */
-    FARMER_HARVEST(false),
+    FARMER_HARVEST(true),
 
       /*
 ###Undertaker###
