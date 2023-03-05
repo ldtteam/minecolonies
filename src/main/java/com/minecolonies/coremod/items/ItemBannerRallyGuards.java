@@ -131,6 +131,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                     MessageUtils.format(TOOL_RALLY_BANNER_NEEDS_RESEARCH).sendTo(context.getPlayer());
                     return InteractionResult.FAIL;
                 }
+                compound.putBoolean(TAG_IS_ACTIVE, true);
 
                 final int numGuards =
                   broadcastPlayerToRally(banner, context.getPlayer().getCommandSenderWorld(), new StaticLocation(context.getClickedPos(), context.getLevel().dimension()));
