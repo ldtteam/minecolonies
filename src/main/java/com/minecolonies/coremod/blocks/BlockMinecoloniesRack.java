@@ -177,7 +177,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
                 return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
             }
             // If its not a double variant and the new neighbor is neither, then connect.
-            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(Direction.fromNormal(pos2.subtract(pos1)).getOpposite()))
+            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.hasProperty(VARIANT) && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(Direction.fromNormal(pos2.subtract(pos1)).getOpposite()))
             {
                 return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, Direction.fromNormal(pos2.subtract(pos1)));
             }

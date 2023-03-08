@@ -262,7 +262,7 @@ public class GenericRecipe implements IGenericRecipe
                 final ItemStack[] stacks = inputs.get(slot).getItems();
                 if (stacks.length > 0)
                 {
-                    inv.setItem(slot, stacks[0]);
+                    inv.setItem(slot, stacks[0].copy());
                 }
             }
             if (((CraftingRecipe) recipe).matches(inv, world))
