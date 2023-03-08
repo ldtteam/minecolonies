@@ -1,0 +1,30 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
+           label="$(block.minecolonies.blockhutplantationfield)"/>
+
+    <buttonimage id="repair" size="130 17" pos="30 30" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.repair)"/>
+
+    <label size="130 11" pos="30 60" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.plants)"/>
+
+    <list id="plants" size="138 141" pos="30 75">
+        <box size="130 32" linewidth="0">
+            <box size="24 24" pos="4 4">
+                <itemicon id="icon1" size="16 16" pos="4 4"/>
+            </box>
+            <box size="24 24" pos="36 4">
+                <itemicon id="icon2" size="16 16" pos="4 4"/>
+            </box>
+            <box size="24 24" pos="68 4">
+                <itemicon id="icon3" size="16 16" pos="4 4"/>
+            </box>
+            <box size="24 24" pos="100 4">
+                <itemicon id="icon4" size="16 16" pos="4 4"/>
+            </box>
+        </box>
+    </list>
+</window>

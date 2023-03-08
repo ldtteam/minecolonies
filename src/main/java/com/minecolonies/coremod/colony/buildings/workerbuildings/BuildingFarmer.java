@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -184,9 +183,9 @@ public class BuildingFarmer extends AbstractBuilding
     public static class FarmerFieldsModuleView extends FieldsModuleView
     {
         @Override
-        public Class<? extends IFieldView> getExpectedFieldType()
+        public FieldType getExpectedFieldType()
         {
-            return FarmField.View.class;
+            return FieldType.FARMER_FIELDS;
         }
     }
 

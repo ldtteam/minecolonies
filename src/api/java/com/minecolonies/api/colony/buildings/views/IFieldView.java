@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
@@ -89,4 +90,12 @@ public interface IFieldView
      * @return true if so.
      */
     boolean matches(FieldRecord matcher);
+
+    /**
+     * Get the type for this field view.
+     *
+     * @return the field type.
+     */
+    @NotNull
+    FieldType getType();
 }

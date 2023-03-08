@@ -4,6 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.FieldsModuleWindow;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
@@ -167,7 +168,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @return the class type.
      */
-    public abstract Class<? extends IFieldView> getExpectedFieldType();
+    public abstract FieldType getExpectedFieldType();
 
     /**
      * Getter of all fields that are either free, or taken by the current building.

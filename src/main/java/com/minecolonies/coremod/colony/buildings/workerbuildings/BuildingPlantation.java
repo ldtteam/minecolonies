@@ -199,9 +199,9 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public Class<? extends IFieldView> getExpectedFieldType()
+        public FieldType getExpectedFieldType()
         {
-            return PlantationField.View.class;
+            return FieldType.PLANTATION_FIELDS;
         }
 
         @Override

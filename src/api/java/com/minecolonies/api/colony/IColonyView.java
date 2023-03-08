@@ -3,6 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -384,19 +385,19 @@ public interface IColonyView extends IColony
     /**
      * Get all fields.
      *
-     * @param fieldClass the type of the field to fetch.
+     * @param type the field type.
      * @return a collection of fields.
      */
-    @NotNull <T extends IFieldView> Collection<T> getFields(Class<T> fieldClass);
+    @NotNull Collection<IFieldView> getFields(FieldType type);
 
     /**
      * Get a field at a given position.
      *
-     * @param fieldClass the type of the field to fetch.
-     * @param position   the position where the field is supposed to be.
+     * @param type    the field type.
+     * @param matcher the field matcher record.
      * @return the field view class if it exists.
      */
-    @Nullable <T extends IFieldView> T getField(Class<T> fieldClass, BlockPos position);
+    @Nullable IFieldView getField(FieldType type, FieldRecord matcher);
 
     /**
      * Add a new free to interact block.

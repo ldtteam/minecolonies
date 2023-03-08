@@ -260,6 +260,12 @@ public class FarmField extends AbstractField
             fieldStage = fieldData.readEnum(Stage.class);
         }
 
+        @Override
+        public @NotNull FieldType getType()
+        {
+            return FieldType.FARMER_FIELDS;
+        }
+
         /**
          * Get the radius for a given direction.
          *

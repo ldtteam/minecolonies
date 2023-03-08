@@ -7,12 +7,15 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
+import com.minecolonies.coremod.client.gui.WindowPlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import com.minecolonies.coremod.tileentities.TileEntityPlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -40,6 +44,11 @@ import java.util.List;
  */
 public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IAnchorBlock, EntityBlock
 {
+    /**
+     * If the block is mirrored.
+     */
+    public static final BooleanProperty MIRROR = BooleanProperty.create("mirror");
+
     /**
      * The hardness this block has.
      */
@@ -54,11 +63,6 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      * The resistance this block has.
      */
     private static final float RESISTANCE = 1F;
-
-    /**
-     * If the block is mirrored.
-     */
-    private static final BooleanProperty MIRROR = BooleanProperty.create("mirror");
 
     /**
      * Default constructor.
@@ -88,6 +92,52 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     public BlockState mirror(BlockState state, Mirror mirrorIn)
     {
         return state.setValue(MIRROR, mirrorIn != Mirror.NONE);
+    }
+
+    @Override
+    public InteractionResult use(
+      final BlockState state,
+      final Level worldIn,
+      final BlockPos pos,
+      final Player player,
+      final InteractionHand hand,
+      final BlockHitResult ray)
+    {
+        // If this is the client side, open the plantation field GUI
+        if (worldIn.isClientSide)
+        {
+            if (hand == InteractionHand.OFF_HAND)
+            {
+                return InteractionResult.FAIL;
+            }
+
+            final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
+            if (tileEntity instanceof TileEntityPlantationField plantationField && plantationField.canOpenMenu(player))
+            {
+                new WindowPlantationField(plantationField).open();
+                return InteractionResult.SUCCESS;
+            }
+
+            return InteractionResult.FAIL;
+        }
+
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    {
+        // Force the different halves to share the same collision space,
+        // the user will think it is one big block
+        Direction dir = state.getValue(FACING);
+        return Shapes.box(
+          0D + (dir.getStepX() > 0 ? 0.5 : 0),
+          0D,
+          0D + (dir.getStepZ() > 0 ? 0.5 : 0),
+          1D - (dir.getStepX() < 0 ? 0.5 : 0),
+          0.625D,
+          1D - (dir.getStepZ() < 0 ? 0.5 : 0)
+        );
     }
 
     @Override
@@ -166,22 +216,6 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, matcher);
             }
         }
-    }
-
-    @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
-    {
-        // Force the different halves to share the same collision space,
-        // the user will think it is one big block
-        Direction dir = state.getValue(FACING);
-        return Shapes.box(
-          0D + (dir.getStepX() > 0 ? 0.5 : 0),
-          0D,
-          0D + (dir.getStepZ() > 0 ? 0.5 : 0),
-          1D - (dir.getStepX() < 0 ? 0.5 : 0),
-          0.625D,
-          1D - (dir.getStepZ() < 0 ? 0.5 : 0)
-        );
     }
 }
 

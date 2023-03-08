@@ -200,6 +200,7 @@ public class NetworkChannel
         registerMessage(++idx, SwitchBuildingWithToolMessage.class, SwitchBuildingWithToolMessage::new);
         registerMessage(++idx, ColonyTextureStyleMessage.class, ColonyTextureStyleMessage::new);
         registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
+        registerMessage(++idx, PlantationFieldRepairMessage.class, PlantationFieldRepairMessage::new);
         registerMessage(++idx, ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);

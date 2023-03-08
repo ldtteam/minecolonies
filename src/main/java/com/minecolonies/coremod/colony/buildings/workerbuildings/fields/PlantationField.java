@@ -176,6 +176,12 @@ public class PlantationField extends AbstractField
             }
         }
 
+        @Override
+        public @NotNull FieldType getType()
+        {
+            return FieldType.PLANTATION_FIELDS;
+        }
+
         /**
          * Get the plantation field type of this field.
          *

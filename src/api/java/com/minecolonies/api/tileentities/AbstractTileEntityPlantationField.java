@@ -2,9 +2,14 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -40,4 +45,27 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity
      * @return a list of working positions.
      */
     public abstract List<BlockPos> getWorkingPositions(String tag);
+
+    /**
+     * Check condition whether the field UI can be opened or not.
+     *
+     * @param player the player attempting to open the menu.
+     * @return whether the player is authorized to open this menu.
+     */
+    public abstract boolean canOpenMenu(@NotNull Player player);
+
+    /**
+     * Gets the schematic name, required to be saved
+     *
+     * @return schematic name
+     */
+    public abstract String getSchematicName();
+
+    /**
+     * Get the dimension this plantation field is placed in.
+     *
+     * @return the dimension key.
+     */
+    @Nullable
+    public abstract ResourceKey<Level> getDimension();
 }

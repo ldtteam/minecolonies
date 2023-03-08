@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
@@ -1157,23 +1158,22 @@ public final class ColonyView implements IColonyView
         return this.nameFileIds;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends IFieldView> @NotNull Collection<T> getFields(Class<T> fieldClass)
+    @Override
+    public @NotNull Collection<IFieldView> getFields(FieldType type)
     {
         return fields.stream()
-                 .filter(f -> f.getClass().equals(fieldClass))
-                 .map(f -> (T) f)
+                 .filter(f -> f.getType().equals(type))
                  .toList();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends IFieldView> T getField(Class<T> fieldClass, final BlockPos position)
+    public IFieldView getField(FieldType type, final FieldRecord matcher)
     {
-        return (T) fields.stream()
-                     .filter(f -> f.getPosition().equals(position))
-                     .filter(f -> f.getClass().equals(fieldClass))
-                     .findFirst().orElse(null);
+        return fields.stream()
+                 .filter(f -> f.getType().equals(type))
+                 .filter(f -> f.getMatcher().equals(matcher))
+                 .findFirst()
+                 .orElse(null);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
@@ -92,7 +93,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(tileEntity.getLevel(), tileEntity.getBlockPos());
         if (colony != null)
         {
-            this.farmField = colony.getField(FarmField.View.class, tileEntity.getBlockPos());
+            this.farmField = (FarmField.View) colony.getField(FieldType.FARMER_FIELDS, new FieldRecord(tileEntity.getBlockPos(), tileEntity.getPlant()));
         }
 
         if (farmField == null)

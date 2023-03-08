@@ -124,7 +124,10 @@ public class ContainerField extends AbstractContainerMenu
      *
      * @return the plant, if any.
      */
-    public Item getPlant() {return inventory.getStackInSlot(0).getItem();}
+    public Item getPlant()
+    {
+        return inventory.getStackInSlot(0).getItem();
+    }
 
     @NotNull
     @Override

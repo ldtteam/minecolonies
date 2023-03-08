@@ -128,10 +128,11 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     @Override
     public boolean canOpenMenu(@NotNull Player player)
     {
-        if (getCurrentColony() != null)
+        IColony colony = getCurrentColony();
+        if (colony != null)
         {
-            return getCurrentColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS) &&
-                     getCurrentColony().getBuildingManager().getField(FieldType.FARMER_FIELDS, new FieldRecord(worldPosition, inventory.plant)) != null;
+            return colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS) &&
+                     colony.getBuildingManager().getField(FieldType.FARMER_FIELDS, new FieldRecord(worldPosition, inventory.plant)) != null;
         }
         return false;
     }
