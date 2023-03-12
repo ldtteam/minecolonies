@@ -221,6 +221,7 @@ public class NetworkChannel
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
         registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
         registerMessage(++idx, OpenDecoWindowMessage.class, OpenDecoWindowMessage::new);
+        registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);
