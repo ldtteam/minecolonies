@@ -7,6 +7,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -184,7 +185,8 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            final int index = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(entry.getKey()).column();
+            final CreativeModeTab tab = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(entry.getKey());
+            final int index = tab == null ? 0 : tab.column();
             creativeTabs.put(index, creativeTabs.getOrDefault(index, 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 
