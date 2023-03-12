@@ -85,6 +85,11 @@ public final class Constants
     public static final String CRITERION_UNDERTAKER_TOTEM       = "undertaker_totem";
 
     /**
+     * Default creative tab key.
+     */
+    public static final int DEFAULT_TAB_KEY = 0;
+
+    /**
      * Placement key for item nbt
      */
     public static String PLACEMENT_NBT = "Placement";

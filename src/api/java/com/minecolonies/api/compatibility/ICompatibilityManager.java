@@ -256,6 +256,13 @@ public interface ICompatibilityManager
     CreativeModeTab getCreativeTab(ItemStorage checkItem);
 
     /**
+     * Get the creative tab key as int associated.
+     * @param checkItem the item to check.
+     * @return the number or default.
+     */
+    int getCreativeTabKey(ItemStorage checkItem);
+
+    /**
      * Get all the beekeeper flowers.
      * @return set of all flowers.
      */

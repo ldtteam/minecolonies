@@ -95,7 +95,7 @@ public final class SortingUtils
       final AtomicInteger requiredSlots,
       final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
     {
-        final int creativeTabId = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(entry.getKey()).column();
+        final int creativeTabId = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(entry.getKey());
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
@@ -143,8 +143,8 @@ public final class SortingUtils
      */
     private static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
     {
-        final int creativeTabId1 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(t1.getKey()).column();
-        final int creativeTabId2 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(t2.getKey()).column();
+        final int creativeTabId1 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(t1.getKey());
+        final int creativeTabId2 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(t2.getKey());
 
         if (creativeTabId1 != creativeTabId2)
         {
@@ -185,8 +185,7 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            final CreativeModeTab tab = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(entry.getKey());
-            final int index = tab == null ? 0 : tab.column();
+            final int index = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(entry.getKey());
             creativeTabs.put(index, creativeTabs.getOrDefault(index, 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 
