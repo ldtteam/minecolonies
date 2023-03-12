@@ -9,7 +9,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -71,7 +71,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
 
             try
             {
-                BlockStateParser.BlockResult stateParser = BlockStateParser.parseForBlock(Registry.BLOCK, stateString, false);
+                BlockStateParser.BlockResult stateParser = BlockStateParser.parseForBlock(world.holderLookup(Registries.BLOCK), stateString, false);
                 BlockState resultState = stateParser.blockState();
                 if (resultState != null)
                 {
@@ -109,7 +109,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
 
         try
         {
-            BlockStateParser.BlockResult stateParser = BlockStateParser.parseForBlock(Registry.BLOCK, stateString, true);
+            BlockStateParser.BlockResult stateParser = BlockStateParser.parseForBlock(world.holderLookup(Registries.BLOCK), stateString, true);
             BlockState resultState = stateParser.blockState();
             if (resultState != null)
             {
