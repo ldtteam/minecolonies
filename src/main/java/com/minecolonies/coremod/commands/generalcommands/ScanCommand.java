@@ -26,7 +26,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
@@ -37,7 +37,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.JigsawBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -46,9 +45,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -223,19 +219,19 @@ public class ScanCommand extends AbstractCommand
                     }
                     if (isHut)
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/roads")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies:" + style+ "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:building_entrance"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:building_entrance"));
                     }
                     else if (jigsawBlockEntity.getPool().location().getPath().contains("building"))
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/buildings")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies:" + style+ "/buildings")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:building_entrance"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:building_entrance"));
                     }
                     else
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/roads")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies:" + style+ "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:street"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:street"));
                     }
