@@ -217,7 +217,10 @@ public class ScanCommand extends AbstractCommand
                 JigsawBlockEntity jigsawBlockEntity = (JigsawBlockEntity) world.getBlockEntity(mutablePos);
                 if (jigsawBlockEntity.getName().getPath().isEmpty() || jigsawBlockEntity.getName().getPath().equals("empty"))
                 {
-                    jigsawBlockEntity.setFinalState("minecraft:structure_void");
+                    if (jigsawBlockEntity.getFinalState().equals("minecraft:air"))
+                    {
+                        jigsawBlockEntity.setFinalState("minecraft:structure_void");
+                    }
                     if (isHut)
                     {
                         jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/roads")));
