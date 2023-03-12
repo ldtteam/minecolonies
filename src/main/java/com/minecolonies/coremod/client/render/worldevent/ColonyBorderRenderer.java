@@ -62,6 +62,7 @@ public class ColonyBorderRenderer
                 for (int chunkZ = -range; chunkZ <= range; chunkZ++)
                 {
                     final LevelChunk chunk = ctx.clientLevel.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
+                    if (chunk.isEmpty()) { continue; }
                     final ChunkPos chunkPos = chunk.getPos();
 
                     chunk.getCapability(CLOSE_COLONY_CAP, null).ifPresent(cap -> coloniesMap.put(chunkPos, cap.getOwningColony()));
