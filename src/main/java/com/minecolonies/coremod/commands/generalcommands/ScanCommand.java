@@ -232,7 +232,7 @@ public class ScanCommand extends AbstractCommand
                     }
                     else
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:asian/roads")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:street"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:street"));
                     }
