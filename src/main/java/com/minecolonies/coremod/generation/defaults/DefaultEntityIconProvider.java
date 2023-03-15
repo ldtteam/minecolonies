@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.generation.defaults;
 
 import com.google.common.hash.Hashing;
+import com.google.common.hash.HashingOutputStream;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
@@ -13,6 +14,10 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.resource.ResourcePackLoader;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -94,7 +99,20 @@ public class DefaultEntityIconProvider implements DataProvider
                                  @NotNull final NativeImage icon,
                                  @NotNull final CachedOutput cache) throws IOException
     {
-        final byte[] data = icon.asByteArray();
-        cache.writeIfNeeded(outputProvider.file(id, "png"), data, Hashing.sha1().hashBytes(data));
+        final BufferedImage image;
+        try (final ByteArrayInputStream stream = new ByteArrayInputStream(icon.asByteArray()))
+        {
+            image = ImageIO.read(stream);
+        }
+
+        // convert to 24-bit, to reduce file size a bit
+        final BufferedImage optimized = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        optimized.getGraphics().drawImage(image, 0, 0, null);
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final HashingOutputStream hashStream = new HashingOutputStream(Hashing.sha1(), outputStream);
+        ImageIO.write(optimized, "PNG", hashStream);
+
+        cache.writeIfNeeded(outputProvider.file(id, "png"), outputStream.toByteArray(), hashStream.hash());
     }
 }
