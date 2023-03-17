@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -193,7 +194,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             {
                 worker.swing(InteractionHand.MAIN_HAND);
                 worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                trainingPartner.hurt(new NamedDamageSource("death.attack.entity.minecolonies.training", worker), 0.0F);
+                trainingPartner.hurt(world.damageSources().source(DamageSourceKeys.TRAINING, worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
             }
             worker.getNavigation().moveAwayFromXYZ(trainingPartner.blockPosition(), 4.0, 1.0, true);

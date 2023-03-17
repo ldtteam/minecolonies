@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.VisitorData;
@@ -132,7 +133,7 @@ public class EntityAIVisitor extends Goal
         if (citizen.isWorkerAtSiteWithMove(target.blockPosition(), 2) && citizen.hasLineOfSight(target))
         {
             citizen.swing(InteractionHand.MAIN_HAND);
-            target.hurt(new NamedDamageSource("death.attack.entity.minecolonies.visitor", citizen), 10.0f);
+            target.hurt(target.level.damageSources().source(DamageSourceKeys.VISITOR), 10.0f);
         }
 
         return false;

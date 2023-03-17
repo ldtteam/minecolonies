@@ -283,7 +283,6 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             RenderSystem.defaultBlendFunc();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             this.blit(stack, this.getX(), this.getY(), getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
-            this.renderBg(stack, minecraft, mouseX, mouseY);
             int j = getFGColor();
             drawCenteredString(stack,
               fontrenderer, this.getMessage(),
@@ -291,6 +290,26 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               this.getY() + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
               j | Mth.ceil(this.alpha * 255.0F) << 24
             );
+        }
+
+        /**
+         * Copy older from old system.
+         * @param isHovered if hovered.
+         * @return get the y img.
+         */
+        protected int getYImage(boolean isHovered)
+        {
+            int i = 1;
+            if (!this.active)
+            {
+                i = 0;
+            }
+            else if (isHovered)
+            {
+                i = 2;
+            }
+
+            return i;
         }
 
         /**

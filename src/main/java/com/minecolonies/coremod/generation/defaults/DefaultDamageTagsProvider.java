@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.generation.defaults;
 
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.DamageSourceKeys;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -24,9 +23,7 @@ public class DefaultDamageTagsProvider extends DamageTypeTagsProvider
     @Override
     protected void addTags(final HolderLookup.Provider p_256380_)
     {
-        ModTags.init();     // apparently runData doesn't run work queued in common setup
-
-        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSourceKeys.WAKEY);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSourceKeys.WAKEY, DamageSourceKeys.GUARD_PVP);
         tag(DamageTypeTags.IS_PROJECTILE).add(DamageSourceKeys.SPEAR);
     }
 }

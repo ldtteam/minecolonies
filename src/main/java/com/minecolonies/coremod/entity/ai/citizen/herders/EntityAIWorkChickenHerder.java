@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -95,7 +96,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
 
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getSecondarySkillLevel()) / 5) <= 1)
             {
-                animal.hurt(new NamedDamageSource(worker.getName().getString(), worker), (float) getButcheringAttackDamage());
+                animal.hurt(world.damageSources().source(DamageSourceKeys.DEFAULT, worker), (float) getButcheringAttackDamage());
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
             }
         }

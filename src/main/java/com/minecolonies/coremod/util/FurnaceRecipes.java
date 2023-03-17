@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
      *
      * @param recipeManager  The recipe manager to parse.
      */
-    public void loadRecipes(final RecipeManager recipeManager)
+    public void loadRecipes(final RecipeManager recipeManager, final Level level)
     {
         recipes.clear();
         reverseRecipes.clear();
@@ -55,13 +56,13 @@ public class FurnaceRecipes implements IFurnaceRecipes
                           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
                           ImmutableList.of(new ItemStorage(smeltable)),
                           1,
-                          recipe.getResultItem(),
+                          recipe.getResultItem(level.registryAccess()),
                           Blocks.FURNACE,
                           recipe.getId());
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 
-                        final ItemStack output = recipe.getResultItem().copy();
+                        final ItemStack output = recipe.getResultItem(level.registryAccess()).copy();
                         output.setCount(1);
                         reverseRecipes.put(new ItemStorage(output), storage);
                     }

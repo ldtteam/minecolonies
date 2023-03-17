@@ -616,7 +616,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return;
         }
 
-        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlagSet.of(FeatureFlags.UPDATE_1_20), true, level.registryAccess());
+        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), true, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
         final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();

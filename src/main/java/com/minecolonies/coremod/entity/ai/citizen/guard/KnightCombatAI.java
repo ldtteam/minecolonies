@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -19,6 +20,9 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.LivingEntity;
@@ -147,10 +151,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(user.getRandom()));
 
         final double damageToBeDealt = getAttackDamage();
-        final DamageSource source = new NamedDamageSource(user.getName().getString(), user);
+        DamageSource source = target.level.damageSources().source(DamageSourceKeys.GUARD, user);
         if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof Player)
         {
-            source.bypassArmor();
+            source = target.level.damageSources().source(DamageSourceKeys.GUARD_PVP, user);
         }
 
         final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(InteractionHand.MAIN_HAND));

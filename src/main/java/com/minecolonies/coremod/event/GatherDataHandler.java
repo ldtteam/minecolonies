@@ -33,6 +33,7 @@ public class GatherDataHandler
         generator.addProvider(true, new DefaultEntityTypeTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(true, new DefaultResearchProvider(generator.getPackOutput()));
         generator.addProvider(true, new DefaultRecipeProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultDamageTagsProvider(generator.getPackOutput(), event.getLookupProvider()));
 
         // workers
         generator.addProvider(true, new DefaultRecipeLootProvider(generator.getPackOutput()));

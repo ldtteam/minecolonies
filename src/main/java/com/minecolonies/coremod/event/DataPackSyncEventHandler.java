@@ -47,8 +47,8 @@ public class DataPackSyncEventHandler
          */
         private static void loadRecipes(@NotNull final MinecraftServer server)
         {
-            FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.getAllLevels().iterator().next());
+            FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
         }
 
@@ -139,7 +139,7 @@ public class DataPackSyncEventHandler
                 return;
             }
 
-            FurnaceRecipes.getInstance().loadRecipes(event.getRecipeManager());
+            FurnaceRecipes.getInstance().loadRecipes(event.getRecipeManager(), Minecraft.getInstance().level);
         }
     }
 }

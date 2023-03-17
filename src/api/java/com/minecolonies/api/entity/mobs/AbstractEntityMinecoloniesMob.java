@@ -528,7 +528,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }
 
-        if (damageSource.typeHolder().is(DamageTypes.THORNS))
+        if (damageSource.typeHolder().is(DamageTypes.OUT_OF_WORLD))
         {
             return super.hurt(damageSource, damage);
         }
