@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
@@ -304,9 +305,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return damageType
      */
     @Override
-    public String getDynamicTreeDamage()
+    public ResourceKey<DamageType> getDynamicTreeDamage()
     {
-        return DYNAMIC_TREE_DAMAGE;
+        return null;
     }
 
     /**

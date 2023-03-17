@@ -11,7 +11,6 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -474,7 +473,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (animal != null)
         {
             worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
-            return walkToBlock(new BlockPos(animal.position()));
+            return walkToBlock(animal.blockPosition());
         }
         else
         {
@@ -602,7 +601,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             worker.swing(InteractionHand.MAIN_HAND);
             final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) worker.getCommandSenderWorld());
-            final DamageSource ds = DamageSource.playerAttack(fp);
+            final DamageSource ds = animal.level.damageSources().playerAttack(fp);
             animal.hurt(ds, (float) getButcheringAttackDamage());
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
         }

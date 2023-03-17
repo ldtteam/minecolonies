@@ -93,7 +93,7 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getPrimarySkillLevel()) / 5) <= 1)
             {
                 final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) worker.getCommandSenderWorld());
-                final DamageSource ds = DamageSource.playerAttack(fp);
+                final DamageSource ds = animal.level.damageSources().playerAttack(fp);
                 animal.hurt(ds, (float) getButcheringAttackDamage());
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
             }

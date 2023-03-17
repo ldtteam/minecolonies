@@ -129,7 +129,7 @@ public class EntityAISleep extends Goal
         if (homeBuilding == null)
         {
             @Nullable final BlockPos homePosition = citizen.getRestrictCenter();
-            if (homePosition.distSqr(new Vec3i(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()))) <= RANGE_TO_BE_HOME)
+            if (homePosition.distSqr(BlockPos.containing(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()))) <= RANGE_TO_BE_HOME)
             {
                 return FIND_BED;
             }

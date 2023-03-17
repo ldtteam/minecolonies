@@ -511,15 +511,15 @@ public class RaidManager implements IRaiderManager
         int validChunkCount = 0;
         for (int i = 0; i < 10; i++)
         {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), BlockPos.containing(tempPos)))
             {
                 tempPos = tempPos.add(16 * xzRatio.x, 0, 16 * xzRatio.z);
 
-                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), BlockPos.containing(tempPos)))
                 {
-                    if (isValidSpawnPoint(buildings, new BlockPos(tempPos)))
+                    if (isValidSpawnPoint(buildings, BlockPos.containing(tempPos)))
                     {
-                        spawnPos = new BlockPos(tempPos);
+                        spawnPos = BlockPos.containing(tempPos);
                         validChunkCount++;
                         if (validChunkCount > 5)
                         {

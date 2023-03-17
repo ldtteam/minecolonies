@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
-import com.ldtteam.blockui.MatrixUtils;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.IMinecoloniesAPI;
@@ -9,6 +8,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.ChatFormatting;
@@ -96,13 +96,29 @@ public class ColonyBorderRenderer
             return;
         }
 
-        MatrixUtils.pushShaderMVstack(ctx.poseStack);
+        pushShaderMVstack(ctx.poseStack);
         WorldRenderMacros.LINES.setupRenderState();
         p.bind();
         p.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
         VertexBuffer.unbind();
         WorldRenderMacros.LINES.clearRenderState();
-        MatrixUtils.popShaderMVstack();
+        popShaderMVstack();
+    }
+
+
+    private static void pushShaderMVstack(final PoseStack pushWith)
+    {
+        final PoseStack ps = RenderSystem.getModelViewStack();
+        ps.pushPose();
+        ps.last().pose().mul(pushWith.last().pose());
+        ps.last().normal().mul(pushWith.last().normal());
+        RenderSystem.applyModelViewMatrix();
+    }
+
+    private static void popShaderMVstack()
+    {
+        RenderSystem.getModelViewStack().popPose();
+        RenderSystem.applyModelViewMatrix();
     }
 
     private static VertexBuffer draw(final BufferBuilder bufferbuilder,

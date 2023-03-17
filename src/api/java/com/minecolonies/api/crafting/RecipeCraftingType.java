@@ -59,7 +59,7 @@ public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extend
                                                @NotNull final Recipe<?> recipe,
                                                @Nullable final Level world)
     {
-        if (recipe.isSpecial() || recipe.getResultItem().isEmpty()) return;     // invalid or special recipes
+        if (recipe.isSpecial() || recipe.getResultItem(world.registryAccess()).isEmpty()) return;     // invalid or special recipes
         try
         {
             final IGenericRecipe genericRecipe = GenericRecipe.of(recipe, world);

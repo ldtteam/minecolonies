@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,6 +48,6 @@ public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlant
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        return damageSource == DamageSource.CACTUS;
+        return damageSource.typeHolder().is(DamageTypes.CACTUS);
     }
 }

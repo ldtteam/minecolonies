@@ -10,6 +10,7 @@ import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -154,7 +155,7 @@ public final class ColonyManager implements IColonyManager
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.die(CONSOLE_DAMAGE_SOURCE));
+                citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.die(world.damageSources().source(DamageSourceKeys.CONSOLE)));
             }
 
             Log.getLogger().info("Removing buildings for " + id);

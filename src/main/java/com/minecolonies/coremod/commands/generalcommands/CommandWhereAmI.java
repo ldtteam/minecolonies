@@ -24,7 +24,7 @@ public class CommandWhereAmI implements IMCCommand
     {
         final Entity sender = context.getSource().getEntity();
 
-        final BlockPos playerPos = new BlockPos(sender.position());
+        final BlockPos playerPos = sender.blockPosition();
         final IColony colony = IColonyManager.getInstance().getClosestColony(sender.getCommandSenderWorld(), playerPos);
 
         if (colony == null)

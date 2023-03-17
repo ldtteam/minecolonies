@@ -14,10 +14,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.ExpeditionLogModule;
@@ -443,7 +440,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         equipArmor(true);
                         worker.setItemSlot(EquipmentSlot.MAINHAND, findTool(ToolType.SWORD));
 
-                        DamageSource source = new DamageSource("nether");
+                        DamageSource source = world.damageSources().source(DamageSourceKeys.NETHER);
 
                         //Set up the mob to do battle with
                         EntityType<?> mobType = EntityType.ZOMBIE;

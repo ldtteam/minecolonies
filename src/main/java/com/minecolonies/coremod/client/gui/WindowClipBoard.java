@@ -115,7 +115,7 @@ public class WindowClipBoard extends AbstractWindowRequestTree
             requests.removeIf(req -> asyncRequest.contains(req.getId()));
         }
 
-        final BlockPos playerPos = new BlockPos(Minecraft.getInstance().player.position());
+        final BlockPos playerPos = Minecraft.getInstance().player.blockPosition();
         requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
                                                                       .distSqr(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
                         .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));

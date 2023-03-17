@@ -27,7 +27,7 @@ public class ItemBuildGoggles extends ArmorItem
             @NotNull final String name,
             final Item.Properties properties)
     {
-        super(GOGGLES, EquipmentSlot.HEAD, properties.setNoRepair().rarity(Rarity.UNCOMMON));
+        super(GOGGLES, Type.HELMET, properties.setNoRepair().rarity(Rarity.UNCOMMON));
     }
 
     @Override

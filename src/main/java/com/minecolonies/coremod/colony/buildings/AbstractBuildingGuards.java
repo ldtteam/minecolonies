@@ -164,16 +164,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
 
         keepX.put(itemStack -> {
             if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
@@ -548,7 +548,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         Player followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
         if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level.dimension() == this.colony.getDimension())
         {
-            return new BlockPos(followPlayer.position());
+            return followPlayer.blockPosition();
         }
 
         return this.getPosition();

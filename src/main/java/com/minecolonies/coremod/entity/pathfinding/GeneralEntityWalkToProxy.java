@@ -31,7 +31,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
     public Set<BlockPos> getWayPoints()
     {
         final LivingEntity living = getEntity();
-        final BlockPos pos = new BlockPos(living.position());
+        final BlockPos pos = living.blockPosition();
         final IColony colony = IColonyManager.getInstance().getClosestColony(living.getCommandSenderWorld(), pos);
 
         if (colony == null || !colony.isCoordInColony(living.getCommandSenderWorld(), pos))

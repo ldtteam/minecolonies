@@ -63,10 +63,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -767,7 +769,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             EventHandler.onEnteringChunkEntity(this, currentChunk);
         }
 
-        if (!this.getEyeInFluidType().isAir() && !this.level.getBlockState(new BlockPos(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN))
+        if (!this.getEyeInFluidType().isAir() && !this.level.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN))
         {
             this.moveTo(this.position().add(random.nextBoolean() ? 1 : 0, 0, random.nextBoolean() ? 1 : 0));
         }
@@ -1532,14 +1534,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
     private boolean handleInWallDamage(@NotNull final DamageSource damageSource)
     {
-        if (damageSource.getMsgId().equals(DamageSource.IN_WALL.getMsgId()))
+        if (damageSource.typeHolder().is(DamageTypes.IN_WALL))
         {
             TeleportHelper.teleportCitizen(this, level, blockPosition().offset(0, 1, 0));
             return true;
         }
 
-        return damageSource.getMsgId().equals(DamageSource.IN_WALL.getMsgId()) && citizenSleepHandler.isAsleep()
-                 || Compatibility.isDynTreePresent() && damageSource.msgId.equals(Compatibility.getDynamicTreeDamage()) || this.isInvulnerable();
+        return damageSource.typeHolder().is(DamageTypes.IN_WALL) && citizenSleepHandler.isAsleep()
+                 || Compatibility.isDynTreePresent() && damageSource.typeHolder().is(Compatibility.getDynamicTreeDamage()) || this.isInvulnerable();
     }
 
     /**
@@ -1624,7 +1626,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
 
         //If we are in simulation, don't cap damage
-        if (citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.msgId == "nether")
+        if (citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.typeHolder().is(DamageSourceKeys.NETHER))
         {
             damageInc = damage;
         }
@@ -1665,7 +1667,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damageInc);
         }
 
-        if (damageSource.isMagic() || damageSource.isFire())
+        if (damageSource.is(DamageTypeTags.IS_FIRE) || damageSource.is(DamageTypeTags.IS_LIGHTNING))
         {
             return result;
         }

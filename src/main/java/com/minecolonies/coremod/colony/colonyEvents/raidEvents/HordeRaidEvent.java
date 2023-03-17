@@ -210,7 +210,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         normal.remove(entity);
 
         // Respawn as a new entity in a loaded chunk, if not too close.
-        respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
+        respawns.add(new Tuple<>(entity.getType(), entity.blockPosition()));
     }
 
     /**
@@ -438,10 +438,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         for (final Entity entity : getEntities())
         {
-            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(entity.position())))
+            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), entity.blockPosition()))
             {
                 entity.remove(Entity.RemovalReason.DISCARDED);
-                respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
+                respawns.add(new Tuple<>(entity.getType(), entity.blockPosition()));
                 continue;
             }
 

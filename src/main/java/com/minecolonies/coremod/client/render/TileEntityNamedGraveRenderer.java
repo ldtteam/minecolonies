@@ -43,8 +43,6 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
      */
     private static final int ROTATE_WEST = 3;
 
-    private final int textColor = NativeImage.combine(0, 220, 220, 220);
-
     public TileEntityNamedGraveRenderer(final BlockEntityRendererProvider.Context context)
     {
         super();
@@ -120,7 +118,7 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
 
             float x = (float) (-fontRenderer.width(iReorderingProcessor) / 2); //render width of text divided by 2
             fontRenderer.drawInBatch(iReorderingProcessor, x, line * 10f,
-                    textColor, false, matrixStack.last().pose(), buffer, false, 0, combinedLight);
+              0xdcdcdc00, false, matrixStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, combinedLight);
         }
     }
 

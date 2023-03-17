@@ -159,7 +159,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
         for (final ArchitectsCutterRecipe recipe : list)
         {
-            final ItemStack result = recipe.assemble(inputInventory).copy();
+            final ItemStack result = recipe.assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null)
             {
@@ -190,7 +190,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ItemStack> additionalOutput = new ArrayList<>();
         for (int i = 1; i < inputIndizes.size(); i++)
         {
-            additionalOutput.add(list.get(inputIndizes.get(i)).assemble(inputInventory).copy());
+            additionalOutput.add(list.get(inputIndizes.get(i)).assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy());
         }
 
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
@@ -198,7 +198,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
           input,
           3,
-          list.get(inputIndizes.get(0)).assemble(inputInventory).copy(),
+          list.get(inputIndizes.get(0)).assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy(),
           Blocks.AIR,
           null,
           com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
@@ -272,7 +272,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ArchitectsCutterRecipe> filteredList = new ArrayList<>();
         for (final ArchitectsCutterRecipe recipe : list)
         {
-            final ItemStack result = recipe.assemble(inputInventory).copy();
+            final ItemStack result = recipe.assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null && doBlock.getComponents().size() == inputCount)
             {
@@ -301,7 +301,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack resource = filteredList.get(index).assemble(inputInventory).copy();
+                final ItemStack resource = filteredList.get(index).assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(Component.literal(String.valueOf(resource.getCount())));

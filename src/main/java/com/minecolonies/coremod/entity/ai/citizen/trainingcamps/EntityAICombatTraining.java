@@ -9,7 +9,6 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
-import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionHand;

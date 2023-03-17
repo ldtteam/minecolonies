@@ -359,7 +359,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 ParticleTypes.HAPPY_VILLAGER,
                 progressTicks), worker);
 
-            WorkerUtil.faceBlock(new BlockPos(goal), worker);
+            WorkerUtil.faceBlock(BlockPos.containing(goal), worker);
 
             if (worker.getRandom().nextBoolean())
             {

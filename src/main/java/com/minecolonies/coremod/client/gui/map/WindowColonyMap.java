@@ -403,7 +403,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private BlockPos worldPosToUIPos(final BlockPos worldPos)
     {
-        return new BlockPos(
+        return BlockPos.containing(
           dragView.getWidth() / 2.0 - ((playerPos.getX() - worldPos.getX()) * 4 / Math.max(1, Math.log(Math.abs(playerPos.getX() - worldPos.getX()) / 1000f))) * currentScale,
           0,
           dragView.getHeight() / 2.0 - ((playerPos.getZ() - worldPos.getZ()) * 4 / Math.max(1, Math.log(Math.abs(playerPos.getZ() - worldPos.getZ()) / 1000f))) * currentScale);

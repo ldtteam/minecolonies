@@ -9,7 +9,6 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;

@@ -343,7 +343,7 @@ public class EventHandler
             return;
         }
 
-        final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
+        final BlockPos pos = BlockPos.containing(event.getX(), event.getY(), event.getZ());
         if (event.isSpawner() || event.getLevel().isClientSide() || !WorldUtil.isEntityBlockLoaded(event.getLevel(), pos))
         {
             return;

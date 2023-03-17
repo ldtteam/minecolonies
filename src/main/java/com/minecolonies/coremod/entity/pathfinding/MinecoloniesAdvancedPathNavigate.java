@@ -298,7 +298,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             if (!this.isDone())
             {
                 Vec3 vector3d2 = path.getNextEntityPos(mob);
-                BlockPos blockpos = new BlockPos(vector3d2);
+                BlockPos blockpos = BlockPos.containing(vector3d2);
 
                 if (WorldUtil.isEntityBlockLoaded(level, blockpos))
                 {
@@ -440,7 +440,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected boolean canMoveDirectly(final Vec3 start, final Vec3 end)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
-        return !WorkerUtil.isPathBlock(level.getBlockState(new BlockPos(start.x, start.y - 1, start.z)).getBlock())
+        return !WorkerUtil.isPathBlock(level.getBlockState(BlockPos.containing(start.x, start.y - 1, start.z)).getBlock())
                  && super.canMoveDirectly(start, end);
     }
 
@@ -727,7 +727,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private boolean handlePathPointOnLadder(final PathPointExtended pEx)
     {
         Vec3 vec3 = this.getPath().getNextEntityPos(this.ourEntity);
-        final BlockPos entityPos = new BlockPos(this.ourEntity.position());
+        final BlockPos entityPos = BlockPos.containing(this.ourEntity.position());
         if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < 0.6 && Math.abs(vec3.y - entityPos.getY()) <= 2.0)
         {
             //This way he is less nervous and gets up the ladder
@@ -907,7 +907,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else if (isTracking)
                 {
-                    reached.add(new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z));
+                    reached.add(BlockPos.containing(tempoPos.x, tempoPos.y, tempoPos.z));
                 }
                 currentIndex--;
             }
@@ -1022,7 +1022,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
-        return moveAwayFromXYZ(new BlockPos(e.position()), distance, speed, true);
+        return moveAwayFromXYZ(e.blockPosition(), distance, speed, true);
     }
 
     @Override

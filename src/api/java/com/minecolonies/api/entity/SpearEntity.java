@@ -7,7 +7,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +22,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.DamageSourceKeys.SPEAR;
 
 /**
  * Custom arrow entity used for spear throwing, acts similar to the trident without any of the special effects.
@@ -104,7 +105,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         }
 
         Entity ownerEntity = this.getOwner();
-        DamageSource damageSource = new IndirectEntityDamageSource("spear", this, ownerEntity == null ? this : ownerEntity).setProjectile();
+        DamageSource damageSource = this.level.damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
         this.dealtDamage = true;
         if (targetEntity.hurt(damageSource, damageAmount))
         {

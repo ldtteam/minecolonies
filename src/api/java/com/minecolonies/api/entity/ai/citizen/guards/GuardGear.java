@@ -151,7 +151,7 @@ public class GuardGear implements Predicate<ItemStack>
     {
         return
           (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
-             && ((ArmorItem) stack.getItem()).getSlot() == getType())
+             && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
             || (stack.getItem() instanceof SwordItem && getType() == EquipmentSlot.MAINHAND)
             || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlot.OFFHAND);
     }

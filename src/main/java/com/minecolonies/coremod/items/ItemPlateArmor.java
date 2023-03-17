@@ -1,17 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Items;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Plate Armor.
@@ -28,12 +23,11 @@ public class ItemPlateArmor extends ArmorItem
      * @param equipmentSlotIn the equipment slot of it.
      * @param materialIn      the material of the armour.
      * @param name            the name.
-     * @param tab             the item group tab.
      */
     public ItemPlateArmor(
       @NotNull final String name,
       @NotNull final ArmorMaterial materialIn,
-      @NotNull final EquipmentSlot equipmentSlotIn,
+      @NotNull final ArmorItem.Type equipmentSlotIn,
       final Properties properties)
     {
         super(materialIn, equipmentSlotIn, properties);

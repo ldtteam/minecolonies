@@ -122,7 +122,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = new ResourceLocation(nbt.getString(TAG_PARENT));
         final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
         final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
-        final TranslatableContents desc = new TranslatableContents(nbt.getString(TAG_NAME));
+        final TranslatableContents desc = new TranslatableContents(nbt.getString(TAG_NAME), null, TranslatableContents.NO_ARGS);
         final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int sortOrder =  nbt.getInt(TAG_RESEARCH_SORT);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
@@ -130,7 +130,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final String[] iconStackParts =  nbt.getString(TAG_ICON_ITEM_STACK).split(":");
         final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
         iconStack.setCount(Integer.parseInt(iconStackParts[2]));
-        final TranslatableContents subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE_NAME));
+        final TranslatableContents subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE_NAME), null, TranslatableContents.NO_ARGS);
         final boolean instant = nbt.getBoolean(TAG_INSTANT);
         final boolean autostart = nbt.getBoolean(TAG_AUTOSTART);
         final boolean immutable = nbt.getBoolean(TAG_IMMUTABLE);
@@ -213,13 +213,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = buffer.readResourceLocation();
         final ResourceLocation id = buffer.readResourceLocation();
         final ResourceLocation branch = buffer.readResourceLocation();
-        final TranslatableContents desc = new TranslatableContents(buffer.readUtf());
+        final TranslatableContents desc = new TranslatableContents(buffer.readUtf(), null, TranslatableContents.NO_ARGS);
         final int depth = buffer.readVarInt();
         final int sortOrder = buffer.readVarInt();
         final boolean hasOnlyChild = buffer.readBoolean();
         final ItemStack iconStack = buffer.readItem();
         final ResourceLocation iconTexture = buffer.readResourceLocation();
-        final TranslatableContents subtitle = new TranslatableContents(buffer.readUtf());
+        final TranslatableContents subtitle = new TranslatableContents(buffer.readUtf(), null, TranslatableContents.NO_ARGS);
         final boolean instant = buffer.readBoolean();
         final boolean autostart = buffer.readBoolean();
         final boolean immutable = buffer.readBoolean();

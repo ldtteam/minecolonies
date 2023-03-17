@@ -103,13 +103,13 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         if(id.getPath().isEmpty())
         {
             // yes, technically "/.json" is a valid file name and "" is a valid resource location.
-            this.name = new TranslatableContents("");
+            this.name = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         }
         else
         {
-            this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
+            this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1), null, TranslatableContents.NO_ARGS);
         }
-        this.subtitle = new TranslatableContents("");
+        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         this.baseTime = 1.0;
         this.type = ResearchBranchType.DEFAULT;
         this.hidden = false;
@@ -128,28 +128,28 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) && researchJson.get(RESEARCH_BRANCH_NAME_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().isString())
         {
-            this.name = new TranslatableContents(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString());
+            this.name = new TranslatableContents(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString(), null, TranslatableContents.NO_ARGS);
         }
         else
         {
             if(id.getPath().isEmpty())
             {
                 // yes, technically "/.json" is a valid file name.
-                this.name = new TranslatableContents("");
+                this.name = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
             }
             else
             {
-                this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
+                this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1), null, TranslatableContents.NO_ARGS);
             }
         }
         if (researchJson.has(RESEARCH_SUBTITLE_PROP) && researchJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
         {
-            this.subtitle = new TranslatableContents(researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().getAsString());
+            this.subtitle = new TranslatableContents(researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().getAsString(), null, TranslatableContents.NO_ARGS);
         }
         else
         {
-            this.subtitle = new TranslatableContents("");
+            this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         }
         if (researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
@@ -196,8 +196,8 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
      */
     public GlobalResearchBranch(final CompoundTag nbt)
     {
-        this.name = new TranslatableContents(nbt.getString(RESEARCH_BRANCH_NAME_PROP));
-        this.subtitle = new TranslatableContents(nbt.getString(RESEARCH_SUBTITLE_PROP));
+        this.name = new TranslatableContents(nbt.getString(RESEARCH_BRANCH_NAME_PROP), null, TranslatableContents.NO_ARGS);
+        this.subtitle = new TranslatableContents(nbt.getString(RESEARCH_SUBTITLE_PROP), null, TranslatableContents.NO_ARGS);
         this.type = ResearchBranchType.valueOfTag(nbt.getString(RESEARCH_BRANCH_TYPE_PROP));
         this.baseTime = nbt.getDouble(RESEARCH_BASE_TIME_PROP);
         this.sortOrder = nbt.getInt(RESEARCH_SORT_PROP);

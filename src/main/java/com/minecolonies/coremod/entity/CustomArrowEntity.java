@@ -77,13 +77,13 @@ public class CustomArrowEntity extends Arrow
                 DamageSource source;
                 if (shooter == null)
                 {
-                    source = DamageSource.arrow(this, this);
+                    source = level.damageSources().arrow(this, this);
                 }
                 else
                 {
-                    source = DamageSource.arrow(this, shooter);
+                    source = level.damageSources().arrow(this, shooter);
                 }
-                source.bypassArmor();
+                setPlayerArmorPierce();
                 player.hurt(source, (float) getBaseDamage());
                 setBaseDamage(0);
             }

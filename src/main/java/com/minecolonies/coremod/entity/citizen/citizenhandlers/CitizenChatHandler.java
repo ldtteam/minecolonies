@@ -55,7 +55,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   Math.round(citizen.getX()),
                   Math.round(citizen.getY()),
                   Math.round(citizen.getZ()),
-                  Component.translatable(damageSource.msgId));
+                  Component.translatable(damageSource.getMsgId()));
             }
             else
             {
@@ -65,7 +65,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   Math.round(citizen.getX()),
                   Math.round(citizen.getY()),
                   Math.round(citizen.getZ()),
-                  Component.translatable(damageSource.msgId));
+                  Component.translatable(damageSource.getMsgId()));
             }
 
             MessageUtils.format(contentComponent)

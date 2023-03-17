@@ -562,7 +562,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         if(playerDamageSource == null)
         {
             FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) this.world);
-            playerDamageSource = DamageSource.playerAttack(fp);
+            playerDamageSource = world.damageSources().playerAttack(fp);
         }
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) this.world))

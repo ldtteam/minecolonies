@@ -250,8 +250,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = new ResourceLocation(id);
         this.effects.add(effect);
-        this.name = new TranslatableContents(name);
-        this.subtitle = new TranslatableContents("");
+        this.name = new TranslatableContents(name, null, TranslatableContents.NO_ARGS);
+        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         this.depth = universityLevel;
         this.sortOrder = 1;
         this.branch = new ResourceLocation(branch);
@@ -282,9 +282,9 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = id;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = new TranslatableContents(autogenKey + ".name");
+        this.name = new TranslatableContents(autogenKey + ".name", null, TranslatableContents.NO_ARGS);
         this.parent = new ResourceLocation("");
-        this.subtitle = new TranslatableContents("");
+        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         this.effects.addAll(effects);
         this.depth = universityLevel;
         this.sortOrder = 1;
@@ -565,8 +565,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = resourceLocation;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = new TranslatableContents(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"));
-        this.subtitle = new TranslatableContents(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""));
+        this.name = new TranslatableContents(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"), null, TranslatableContents.NO_ARGS);
+        this.subtitle = new TranslatableContents(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""), null, TranslatableContents.NO_ARGS);
         this.branch = new ResourceLocation(getBranch(researchJson, resourceLocation));
         this.depth = getUniversityLevel(researchJson);
         this.sortOrder = getSortOrder(researchJson);

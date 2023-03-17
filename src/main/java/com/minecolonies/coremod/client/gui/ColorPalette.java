@@ -89,7 +89,7 @@ public class ColorPalette
         }
 
         @Override
-        public void renderButton(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        public void renderWidget(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
         {
             int color = this.color.getTextColor();
             boolean pressed = selected == this.color;

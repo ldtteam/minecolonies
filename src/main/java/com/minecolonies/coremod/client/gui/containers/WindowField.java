@@ -269,7 +269,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         }
 
         @Override
-        public void renderButton(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        public void renderWidget(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
         {
             Minecraft minecraft = Minecraft.getInstance();
             Font fontrenderer = minecraft.font;

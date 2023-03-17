@@ -296,7 +296,7 @@ public class ClientEventHandler
         {
             final ClientLevel world = mc.level;
             final LocalPlayer player = mc.player;
-            final BlockPos pos = new BlockPos(player.position());
+            final BlockPos pos = player.blockPosition();
             IColony colony = IColonyManager.getInstance().getIColony(world, pos);
             if (colony == null)
             {

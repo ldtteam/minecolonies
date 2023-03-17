@@ -7,7 +7,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
-import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.ItemStack;

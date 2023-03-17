@@ -48,7 +48,7 @@ public class DataPackSyncEventHandler
         private static void loadRecipes(@NotNull final MinecraftServer server)
         {
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.getAllLevels().iterator().next());
             CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
         }
 

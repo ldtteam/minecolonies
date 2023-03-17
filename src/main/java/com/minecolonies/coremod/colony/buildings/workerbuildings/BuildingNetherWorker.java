@@ -106,16 +106,16 @@ public class BuildingNetherWorker extends AbstractBuilding
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                 && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                 && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                 && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                 && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
     }
 
     @NotNull

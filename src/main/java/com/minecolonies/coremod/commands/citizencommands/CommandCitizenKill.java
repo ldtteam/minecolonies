@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
@@ -26,12 +27,6 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
  */
 public class CommandCitizenKill implements IMCColonyOfficerCommand
 {
-
-    /**
-     * The damage source used to kill citizens.
-     */
-    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
-
     /**
      * What happens when the command is executed after preConditions are successful.
      *
@@ -77,7 +72,7 @@ public class CommandCitizenKill implements IMCColonyOfficerCommand
         context.getSource()
           .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_KILL_SUCCESS, position.getX(), position.getY(), position.getZ()), true);
 
-        optionalEntityCitizen.get().die(CONSOLE_DAMAGE_SOURCE);
+        optionalEntityCitizen.get().die(context.getSource().getLevel().damageSources().source(DamageSourceKeys.CONSOLE));
 
         return 1;
     }

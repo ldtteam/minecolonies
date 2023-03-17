@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  *  An instance of a Research Effect at a specific strength, to be applied to a specific colony.
  */
@@ -77,9 +79,9 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
         this.id = id;
         this.effect = effect;
         this.displayEffect = displayEffect;
-        this.desc = new TranslatableContents("com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /:]", ".") + ".description",
-          displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
-        this.subtitle = new TranslatableContents("");
+        this.desc = new TranslatableContents("com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /:]", ".") + ".description", (String) null,
+          List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
+        this.subtitle = new TranslatableContents("", (String) null, TranslatableContents.NO_ARGS);
     }
 
     /**
@@ -99,12 +101,12 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
         final String key = desc.getKey();
         if (key.isEmpty())
         {
-            this.desc = new TranslatableContents("com." + this.id.getPath() + ".research." + this.id.getNamespace().replaceAll("[ /:]", ".") + ".description",
-              displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+            this.desc = new TranslatableContents("com." + this.id.getPath() + ".research." + this.id.getNamespace().replaceAll("[ /:]", ".") + ".description", null,
+              List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
         }
         else
         {
-            this.desc = new TranslatableContents(key, displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+            this.desc = new TranslatableContents(key, null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
         }
         this.subtitle = subtitle;
     }
@@ -119,8 +121,8 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
         this.id = new ResourceLocation(nbt.getString(TAG_ID));
         this.effect = nbt.getDouble(TAG_EFFECT);
         this.displayEffect = nbt.getDouble(TAG_DISPLAY_EFFECT);
-        this.desc = new TranslatableContents(nbt.getString(TAG_DESC), displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
-        this.subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE));
+        this.desc = new TranslatableContents(nbt.getString(TAG_DESC),null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
+        this.subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE), null, TranslatableContents.NO_ARGS);
     }
 
     @Override

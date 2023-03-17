@@ -35,7 +35,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
         if (!worldIn.isClientSide)
         {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, new BlockPos(entityIn.position()));
+            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.blockPosition());
             final CompoundTag tag = new CompoundTag();
 
             if (colony != null)

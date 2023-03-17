@@ -92,7 +92,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         }
         else
         {
-            subtitle = new TranslatableContents("");
+            subtitle = new TranslatableContents("", (String) null, TranslatableContents.NO_ARGS);
         }
         final boolean onlyChild;
         final boolean hidden;

@@ -26,9 +26,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -212,10 +214,10 @@ public class CompatibilityManager implements ICompatibilityManager
      * @param recipeManager The vanilla recipe manager.
      */
     @Override
-    public void discover(@NotNull final RecipeManager recipeManager)
+    public void discover(@NotNull final RecipeManager recipeManager, final Level level)
     {
         clear();
-        discoverAllItems();
+        discoverAllItems(level);
 
         discoverLuckyOres();
         discoverRecruitCosts();
@@ -256,10 +258,10 @@ public class CompatibilityManager implements ICompatibilityManager
      *
      * @param buf deserialization buffer
      */
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf, final Level level)
     {
         clear();
-        discoverAllItems();
+        discoverAllItems(level);
 
         saplings.addAll(deserializeItemStorageList(buf));
         oreBlocks.addAll(deserializeBlockList(buf));
@@ -607,12 +609,14 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of all existing items, client side only.
      */
-    private void discoverAllItems()
+    private void discoverAllItems(final Level level)
     {
         if (!food.isEmpty())
         {
             return;
         }
+
+        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlagSet.of(FeatureFlags.UPDATE_1_20), true, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
         final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();
@@ -625,9 +629,9 @@ public class CompatibilityManager implements ICompatibilityManager
                 if (tab.getDisplayItems().isEmpty())
                 {
                     stacks = new HashSet<>();
-                    tab.displayItemsGenerator.accept(FeatureFlags.DEFAULT_FLAGS, (stack, vis) -> {
+                    tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
                         stacks.add(stack);
-                    }, true);
+                    });
                 }
                 else
                 {

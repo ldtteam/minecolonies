@@ -20,7 +20,10 @@ import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -422,7 +425,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
 
             if (shouldDespawn())
             {
-                this.die(new DamageSource("despawn"));
+                this.die(level.damageSources().source(DamageSourceKeys.DESPAWN));
                 this.remove(RemovalReason.DISCARDED);
                 return;
             }
@@ -525,7 +528,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }
 
-        if (damageSource == DamageSource.OUT_OF_WORLD)
+        if (damageSource.typeHolder().is(DamageTypes.THORNS))
         {
             return super.hurt(damageSource, damage);
         }
@@ -559,7 +562,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             {
                 if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
                 {
-                    source.hurt(DamageSource.thorns(this), damage * 0.5f);
+                    source.hurt(level.damageSources().thorns(this), damage * 0.5f);
                 }
 
                 final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage.get(), ((Player) source).getMainHandItem());

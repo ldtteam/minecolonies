@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
-import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -18,6 +17,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
@@ -32,7 +32,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
-import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -252,7 +251,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         else
         {
             worker.swing(InteractionHand.OFF_HAND);
-            sleepingGuard.get().hurt(new NamedDamageSource("wakeywakey", worker).bypassArmor(), 1);
+            sleepingGuard.get().hurt(world.damageSources().source(DamageSourceKeys.WAKEY, this.worker), 1);
             sleepingGuard.get().setLastHurtByMob(worker);
             return CombatAIStates.NO_TARGET;
         }

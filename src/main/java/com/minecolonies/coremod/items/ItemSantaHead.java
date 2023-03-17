@@ -27,7 +27,7 @@ public class ItemSantaHead extends ArmorItem
     public ItemSantaHead(
       @NotNull final String name,
       @NotNull final ArmorMaterial materialIn,
-      @NotNull final EquipmentSlot equipmentSlotIn,
+      @NotNull final Type equipmentSlotIn,
       final Item.Properties properties)
     {
         super(materialIn, equipmentSlotIn, properties);

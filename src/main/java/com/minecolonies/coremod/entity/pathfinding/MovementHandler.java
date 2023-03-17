@@ -89,7 +89,7 @@ public class MovementHandler extends MoveControl
             final float range = (float) (Mth.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
             this.mob.setYRot(this.rotlerp(this.mob.getYRot(), range, 90.0F));
             this.mob.setSpeed((float) (this.speedModifier * speedAtr.getValue()));
-            final BlockPos blockpos = new BlockPos(this.mob.position());
+            final BlockPos blockpos = this.mob.blockPosition();
             final BlockState blockstate = this.mob.level.getBlockState(blockpos);
             final Block block = blockstate.getBlock();
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
@@ -107,7 +107,7 @@ public class MovementHandler extends MoveControl
             this.mob.setSpeed((float) (this.speedModifier * speedAtr.getValue()));
 
             // Avoid beeing stuck in jumping while in liquids
-            final BlockPos blockpos = new BlockPos(this.mob.position());
+            final BlockPos blockpos = this.mob.blockPosition();
             final BlockState blockstate = this.mob.level.getBlockState(blockpos);
             if (this.mob.isOnGround() || blockstate.getMaterial().isLiquid())
             {

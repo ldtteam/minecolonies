@@ -10,7 +10,6 @@ import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.*;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -231,14 +230,14 @@ public class EntityMercenaryAI extends Goal
             entity.getLookControl().setLookAt(entity.getTarget(), 180f, 180f);
         }
 
-        final int distance = BlockPosUtil.getMaxDistance2D(entity.blockPosition(), new BlockPos(entity.getTarget().position()));
+        final int distance = BlockPosUtil.getMaxDistance2D(entity.blockPosition(), entity.getTarget().blockPosition());
 
         // Check if we can attack
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)
         {
             entity.swing(InteractionHand.MAIN_HAND);
             entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
-            entity.getTarget().hurt(new EntityDamageSource(entity.getType().getDescriptionId(), entity), 15);
+            entity.getTarget().hurt(entity.level.damageSources().mobAttack(entity), 15);
             entity.getTarget().setSecondsOnFire(3);
             attacktimer = ATTACK_DELAY;
         }

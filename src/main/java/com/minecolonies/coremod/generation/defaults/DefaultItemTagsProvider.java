@@ -36,7 +36,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
       @NotNull final BlockTagsProvider blockTagsProvider,
       @Nullable final ExistingFileHelper existingFileHelper)
     {
-        super(output, lookupProvider, blockTagsProvider, MOD_ID, existingFileHelper);
+        super(output, lookupProvider, blockTagsProvider.contentsGetter(), MOD_ID, existingFileHelper);
     }
 
     @Override

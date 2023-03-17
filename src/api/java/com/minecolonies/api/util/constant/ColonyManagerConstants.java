@@ -1,7 +1,5 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.world.damagesource.DamageSource;
-
 /**
  * All colony manager related constants.
  */
@@ -46,11 +44,6 @@ public final class ColonyManagerConstants
      * Colony filename deleted.
      */
     public static final String FILENAME_COLONY_DELETED = "colony%d.dat.deleted";
-
-    /**
-     * The damage source used to kill citizens.
-     */
-    public static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
     /**
      * Log message for missing world cap.

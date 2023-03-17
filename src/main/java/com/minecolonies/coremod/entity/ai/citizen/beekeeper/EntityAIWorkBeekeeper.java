@@ -417,7 +417,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         if (animal != null)
         {
             worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
-            return walkToBlock(new BlockPos(animal.position()));
+            return walkToBlock(animal.blockPosition());
         }
         else
         {

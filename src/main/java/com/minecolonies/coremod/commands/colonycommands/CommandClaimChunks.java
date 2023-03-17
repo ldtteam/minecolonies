@@ -66,7 +66,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        ChunkDataHelper.staticClaimInRange(colonyID, add, new BlockPos(sender.position()), range, sender.level, true);
+        ChunkDataHelper.staticClaimInRange(colonyID, add, sender.blockPosition(), range, sender.level, true);
         if (add)
         {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);

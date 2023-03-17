@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands.killcommands;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -29,7 +30,7 @@ public class CommandKillRaider implements IMCOPCommand
             if (entity instanceof AbstractEntityMinecoloniesMob)
             {
                 final AbstractEntityMinecoloniesMob mob = (AbstractEntityMinecoloniesMob) entity;
-                mob.die(new DamageSource("despawn"));
+                mob.die(context.getSource().getLevel().damageSources().source(DamageSourceKeys.CONSOLE));
                 mob.remove(Entity.RemovalReason.DISCARDED);
 
                 final IColonyEvent event = mob.getColony().getEventManager().getEventByID(mob.getEventID());

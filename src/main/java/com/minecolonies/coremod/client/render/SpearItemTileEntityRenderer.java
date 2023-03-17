@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,7 +40,7 @@ public class SpearItemTileEntityRenderer extends BlockEntityWithoutLevelRenderer
     @Override
     public void renderByItem(
       final ItemStack stack,
-      final ItemTransforms.TransformType transformType,
+      final ItemDisplayContext displayContext,
       final PoseStack matrixStack,
       final MultiBufferSource buffer,
       final int combinedLight,

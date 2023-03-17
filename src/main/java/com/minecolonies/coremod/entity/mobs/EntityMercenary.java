@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.MercenarySounds;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
@@ -57,14 +58,12 @@ import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleA
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.npc.Npc;
 
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony
@@ -269,15 +268,6 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
     }
 
     /**
-     * Get the blockpos pos.
-     * @return a blockpos.
-     */
-    public BlockPos blockPosition()
-    {
-        return new BlockPos(this.position());
-    }
-
-    /**
      * Toggles the spawn event on after initializing
      */
     public void setDoSpawnEvent()
@@ -416,7 +406,7 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
         if (slapTimer == 0 && entityIn instanceof Player)
         {
             slapTimer = SLAP_INTERVAL;
-            entityIn.hurt(new EntityDamageSource("slap", this), 1.0f);
+            entityIn.hurt(entityIn.level.damageSources().source(DamageSourceKeys.SLAP, this), 1.0f);
             this.swing(InteractionHand.OFF_HAND);
         }
 
@@ -534,7 +524,7 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
     {
         final Tuple<BlockPos, BlockPos> buildingArea = colony.getBuildingManager().getTownHall().getCorners();
         BlockPos spawn = new BlockPos((buildingArea.getB().getX() + buildingArea.getA().getX()) / 2, 0, buildingArea.getA().getZ());
-        double height = colony.getWorld().getHeight(Heightmap.Types.WORLD_SURFACE, spawn.getX(), spawn.getZ());
+        int height = colony.getWorld().getHeight(Heightmap.Types.WORLD_SURFACE, spawn.getX(), spawn.getZ());
         if (height > buildingArea.getB().getY())
         {
             height = buildingArea.getA().getY() + 1;

@@ -162,7 +162,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         final Component colonyName = Component.translatable(DEFAULT_COLONY_NAME, player.getName());
 
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
-        Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
+        Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player.blockPosition(),
           SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
         final boolean reactivate;
         final BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(pos);

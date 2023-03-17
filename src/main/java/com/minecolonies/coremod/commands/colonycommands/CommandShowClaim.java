@@ -36,7 +36,7 @@ public class CommandShowClaim implements IMCOPCommand
         final ServerLevel level = context.getSource().getLevel();
 
         // Colony
-        BlockPos pos = new BlockPos(context.getSource().getPosition());
+        BlockPos pos = context.getSource().getEntity().blockPosition();
         try
         {
             pos = BlockPosArgument.getLoadedBlockPos(context, POS_ARG);

@@ -59,13 +59,13 @@ public class ResearchEffectCategory
         this.effectId = new ResourceLocation(effectId);
         if(effectName != null)
         {
-            this.effectName = new TranslatableContents(effectName);
+            this.effectName = new TranslatableContents(effectName, null, TranslatableContents.NO_ARGS);
         }
         else
         {
-            this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]", ".") + ".description");
+            this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]", ".") + ".description", null, TranslatableContents.NO_ARGS);
         }
-        this.subtitle = new TranslatableContents(subtitle);
+        this.subtitle = new TranslatableContents(subtitle, null, TranslatableContents.NO_ARGS);
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
     }
@@ -77,8 +77,8 @@ public class ResearchEffectCategory
     public ResearchEffectCategory(final String effectId, final String effectName)
     {
         this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslatableContents(effectName);
-        this.subtitle = new TranslatableContents("");
+        this.effectName = new TranslatableContents(effectName, null, TranslatableContents.NO_ARGS);
+        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
     }
@@ -90,8 +90,8 @@ public class ResearchEffectCategory
     public ResearchEffectCategory(final String effectId)
     {
         this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description");
-        this.subtitle = new TranslatableContents("");
+        this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description", null, TranslatableContents.NO_ARGS);
+        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
     }

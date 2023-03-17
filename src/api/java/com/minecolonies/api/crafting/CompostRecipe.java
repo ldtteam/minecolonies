@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -84,7 +85,7 @@ public class CompostRecipe implements Recipe<Container>
 
     @NotNull
     @Override
-    public ItemStack assemble(final Container inv)
+    public ItemStack assemble(final Container inv, final RegistryAccess access)
     {
         return this.output.copy();
     }
@@ -97,7 +98,7 @@ public class CompostRecipe implements Recipe<Container>
 
     @NotNull
     @Override
-    public ItemStack getResultItem()
+    public ItemStack getResultItem(final RegistryAccess access)
     {
         return this.output;
     }

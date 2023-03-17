@@ -290,7 +290,7 @@ public final class EntityUtils
     public static boolean isEntityAtPosition(final Entity entity, final Level world, final Entity placer)
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
-        final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
+        final BlockPos pos = BlockPos.containing(entity.getX(), entity.getY(), entity.getZ());
         return world.getEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
                  .stream()
                  .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
@@ -319,7 +319,7 @@ public final class EntityUtils
      */
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
-        final BlockPos pos = new BlockPos(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
+        final BlockPos pos = BlockPos.containing(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
         return pos.distSqr(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
 

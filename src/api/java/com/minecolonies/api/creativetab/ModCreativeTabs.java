@@ -30,7 +30,7 @@ public final class ModCreativeTabs
     @SubscribeEvent
     public static void CreativeTabEvent(final CreativeModeTabEvent.Register event)
     {
-        event.registerCreativeModeTab(CREATIVE_TAB, (cf) -> cf.icon(() -> new ItemStack(ModBlocks.blockHutTownHall)).withSearchBar().title(Component.literal("Minecolonies")).displayItems((flagSet, output, ifSth) -> {
+        event.registerCreativeModeTab(CREATIVE_TAB, (cf) -> cf.icon(() -> new ItemStack(ModBlocks.blockHutTownHall)).withSearchBar().title(Component.literal("Minecolonies")).displayItems((flagSet, output) -> {
 
             for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
             {

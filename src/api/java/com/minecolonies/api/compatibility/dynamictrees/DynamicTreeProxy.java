@@ -1,5 +1,7 @@
 package com.minecolonies.api.compatibility.dynamictrees;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.Item;
@@ -29,9 +31,9 @@ public class DynamicTreeProxy
      *
      * @return damageType
      */
-    public String getDynamicTreeDamage()
+    public ResourceKey<DamageType> getDynamicTreeDamage()
     {
-        return "";
+        return null;
     }
 
     /**

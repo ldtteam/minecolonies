@@ -13,6 +13,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public interface ICompatibilityManager
      *
      * @param recipeManager The vanilla recipe manager.
      */
-    void discover(@NotNull final RecipeManager recipeManager);
+    void discover(@NotNull final RecipeManager recipeManager, final Level level);
 
     /**
      * Transfer server-discovered item lists to client, to avoid double-handling (and
@@ -50,7 +51,7 @@ public interface ICompatibilityManager
      *
      * @param buf deserialization buffer
      */
-    void deserialize(@NotNull final FriendlyByteBuf buf);
+    void deserialize(@NotNull final FriendlyByteBuf buf, final Level level);
 
     /**
      * Gets the sapling matching a leave.

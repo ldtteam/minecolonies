@@ -8,8 +8,8 @@ import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTableEntry;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.util.DamageSourceKeys;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 
@@ -180,7 +180,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      */
     protected void doAttack(final LivingEntity target)
     {
-        target.hurt(new EntityDamageSource("Default", user), 5);
+        target.hurt(target.level.damageSources().source(DamageSourceKeys.DEFAULT, user), 5);
         user.swing(InteractionHand.MAIN_HAND);
     }
 

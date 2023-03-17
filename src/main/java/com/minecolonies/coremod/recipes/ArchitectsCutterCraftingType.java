@@ -55,7 +55,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
                 inputs.add(blocks.stream().map(ItemStack::new).collect(Collectors.toList()));
             }
 
-            final ItemStack output = recipe.getResultItem().copy();
+            final ItemStack output = recipe.getResultItem(world.registryAccess()).copy();
             output.setCount(Math.max(recipe.getCount(), inputs.size()));
 
             // resultItem usually doesn't have textureData, but we need it to properly match the creative tab

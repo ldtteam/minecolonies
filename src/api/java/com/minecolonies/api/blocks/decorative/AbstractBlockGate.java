@@ -11,6 +11,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
@@ -79,7 +80,7 @@ public abstract class AbstractBlockGate extends DoorBlock
 
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
-        super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion(), SoundEvents.IRON_DOOR_CLOSE, SoundEvents.IRON_DOOR_OPEN);
+        super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion(), BlockSetType.IRON);
         registerDefaultState(defaultBlockState());
         this.name = name;
         this.maxWidth = maxWidth;

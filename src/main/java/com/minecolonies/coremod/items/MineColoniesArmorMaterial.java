@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.sounds.SoundEvent;
@@ -43,15 +44,15 @@ public class MineColoniesArmorMaterial implements ArmorMaterial
     }
 
     @Override
-    public int getDurabilityForSlot(@NotNull final EquipmentSlot equipmentSlotType)
+    public int getDurabilityForType(final ArmorItem.Type equipmentSlotType)
     {
-        return MAX_DAMAGE_ARRAY[equipmentSlotType.getIndex()] * this.maxDamageFactor;
+        return MAX_DAMAGE_ARRAY[equipmentSlotType.ordinal()] * this.maxDamageFactor;
     }
 
     @Override
-    public int getDefenseForSlot(@NotNull final EquipmentSlot equipmentSlotType)
+    public int getDefenseForType(final ArmorItem.Type p_267168_)
     {
-        return this.damageReductionAmountArray[equipmentSlotType.getIndex()];
+        return this.damageReductionAmountArray[p_267168_.ordinal()];
     }
 
     @Override

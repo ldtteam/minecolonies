@@ -160,7 +160,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @NotNull
     public BlockPos blockPosition()
     {
-        return new BlockPos(getX(), getY(), getZ());
+        return BlockPos.containing(getX(), getY(), getZ());
     }
 
     /**

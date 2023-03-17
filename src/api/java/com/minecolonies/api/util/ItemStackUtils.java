@@ -410,19 +410,19 @@ public final class ItemStackUtils
         }
         if (ToolType.HELMET.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getSlot());
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot());
         }
         if (ToolType.LEGGINGS.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getSlot());
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot());
         }
         if (ToolType.CHESTPLATE.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getSlot());
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot());
         }
         if (ToolType.BOOTS.equals(toolType))
         {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getSlot());
+            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot());
         }
         if (ToolType.SHIELD.equals(toolType))
         {
@@ -500,24 +500,24 @@ public final class ItemStackUtils
      */
     private static int getArmorLevel(final ArmorMaterial material)
     {
-        final int damageReductionAmount = material.getDefenseForSlot(EquipmentSlot.CHEST);
-        if (damageReductionAmount <= ArmorMaterials.LEATHER.getDefenseForSlot(EquipmentSlot.CHEST))
+        final int damageReductionAmount = material.getDefenseForType(ArmorItem.Type.CHESTPLATE);
+        if (damageReductionAmount <= ArmorMaterials.LEATHER.getDefenseForType(ArmorItem.Type.CHESTPLATE))
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterials.GOLD.getDefenseForSlot(EquipmentSlot.CHEST) && material != ArmorMaterials.CHAIN)
+        else if (damageReductionAmount <= ArmorMaterials.GOLD.getDefenseForType(ArmorItem.Type.CHESTPLATE) && material != ArmorMaterials.CHAIN)
         {
             return 1;
         }
-        else if (damageReductionAmount <= ArmorMaterials.CHAIN.getDefenseForSlot(EquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterials.CHAIN.getDefenseForType(ArmorItem.Type.CHESTPLATE))
         {
             return 2;
         }
-        else if (damageReductionAmount <= ArmorMaterials.IRON.getDefenseForSlot(EquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterials.IRON.getDefenseForType(ArmorItem.Type.CHESTPLATE))
         {
             return 3;
         }
-        else if (damageReductionAmount <= ArmorMaterials.DIAMOND.getDefenseForSlot(EquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterials.DIAMOND.getDefenseForType(ArmorItem.Type.CHESTPLATE))
         {
             return 4;
         }

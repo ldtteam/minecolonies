@@ -206,7 +206,7 @@ public class ContainerCrafting extends AbstractContainerMenu
                                           || player.getRecipeBook().contains(iRecipe.get())
                                           || player.isCreative()))
             {
-                stack = iRecipe.get().assemble(this.craftMatrix);
+                stack = iRecipe.get().assemble(this.craftMatrix, this.world.registryAccess());
                 this.craftResultSlot.set(stack);
                 player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, stack));
             }

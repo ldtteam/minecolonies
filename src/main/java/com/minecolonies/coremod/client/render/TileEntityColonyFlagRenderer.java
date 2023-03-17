@@ -11,6 +11,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Holder;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,6 +31,7 @@ import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 import net.minecraft.world.level.GameType;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -95,7 +97,7 @@ public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEnt
 
                 transform.translate(0.0D, 0.5D, 0.0D);
                 transform.scale(0.75F, 0.75F, 0.75F);
-                Minecraft.getInstance().getItemRenderer().renderStatic(placeholder, ItemTransforms.TransformType.FIXED, combinedLightIn, combinedOverlayIn, transform, bufferIn, OverlayTexture.NO_OVERLAY);
+                Minecraft.getInstance().getItemRenderer().renderStatic(placeholder, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn, transform, bufferIn, mc.level, OverlayTexture.NO_OVERLAY);
                 transform.popPose();
             }
         }

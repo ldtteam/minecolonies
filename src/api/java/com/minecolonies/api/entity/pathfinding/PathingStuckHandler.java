@@ -1,11 +1,13 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.DamageSourceKeys;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -249,18 +251,18 @@ public class PathingStuckHandler implements IStuckHandler
         }
         if (takeDamageOnCompleteStuck)
         {
-            entity.hurt(new EntityDamageSource("Stuck-damage", entity), entity.getMaxHealth() * damagePct);
+            entity.hurt(world.damageSources().source(DamageSourceKeys.STUCK_DAMAGE), entity.getMaxHealth() * damagePct);
         }
 
         if (completeStuckBlockBreakRange > 0)
         {
-            final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
+            final Direction facing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getDesiredPos());
 
             for (int i = 1; i <= completeStuckBlockBreakRange; i++)
             {
-                if (!world.isEmptyBlock(new BlockPos(entity.position()).relative(facing, i)) || !world.isEmptyBlock(new BlockPos(entity.position()).relative(facing, i).above()))
+                if (!world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i)) || !world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i).above()))
                 {
-                    breakBlocksAhead(world, new BlockPos(entity.position()).relative(facing, i - 1), facing);
+                    breakBlocksAhead(world, BlockPos.containing(entity.position()).relative(facing, i - 1), facing);
                     break;
                 }
             }
@@ -437,7 +439,7 @@ public class PathingStuckHandler implements IStuckHandler
         final Level world = navigator.getOurEntity().level;
         final Mob entity = navigator.getOurEntity();
 
-        BlockPos entityPos = new BlockPos(entity.position());
+        BlockPos entityPos = BlockPos.containing(entity.position());
 
         while (world.getBlockState(entityPos).getBlock() == Blocks.LADDER)
         {
@@ -459,7 +461,7 @@ public class PathingStuckHandler implements IStuckHandler
         final Level world = navigator.getOurEntity().level;
         final Mob entity = navigator.getOurEntity();
 
-        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos()).getOpposite();
+        final Direction badFacing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getDesiredPos()).getOpposite();
 
         for (final Direction dir : HORIZONTAL_DIRS)
         {
@@ -470,7 +472,7 @@ public class PathingStuckHandler implements IStuckHandler
 
             for (int i = 1; i <= (dir == badFacing.getOpposite() ? 3 : 1); i++)
             {
-                if (!tryPlaceLeaveOnPos(world, new BlockPos(entity.position()).below().relative(dir, i)))
+                if (!tryPlaceLeaveOnPos(world, BlockPos.containing(entity.position()).below().relative(dir, i)))
                 {
                     break;
                 }
@@ -505,9 +507,9 @@ public class PathingStuckHandler implements IStuckHandler
         final Level world = navigator.getOurEntity().level;
         final Mob entity = navigator.getOurEntity();
 
-        final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
+        final Direction facing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getDesiredPos());
 
-        breakBlocksAhead(world, new BlockPos(entity.position()), facing);
+        breakBlocksAhead(world, BlockPos.containing(entity.position()), facing);
     }
 
     /**

@@ -219,7 +219,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             }
 
             float f = 0.0F;
-            final BlockPos blockpos = new BlockPos(this.position());
+            final BlockPos blockpos = this.blockPosition();
             final FluidState ifluidstate = this.level.getFluidState(blockpos);
             if (ifluidstate.is(FluidTags.WATER))
             {
@@ -485,7 +485,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 final double d4 = this.getX() + (double) (Mth.sin(f6) * f7 * 0.1F);
                 final double d5 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 final double d6 = this.getZ() + (double) (Mth.cos(f6) * f7 * 0.1F);
-                if (serverworld.getBlockState(new BlockPos(d4, d5 - 1.0D, d6)).getMaterial() == net.minecraft.world.level.material.Material.WATER)
+                if (serverworld.getBlockState(BlockPos.containing(d4, d5 - 1.0D, d6)).getMaterial() == net.minecraft.world.level.material.Material.WATER)
                 {
                     serverworld.sendParticles(ParticleTypes.SPLASH, d4, d5, d6, 2 + this.random.nextInt(2), (double) 0.1F, 0.0D, (double) 0.1F, 0.0D);
                 }

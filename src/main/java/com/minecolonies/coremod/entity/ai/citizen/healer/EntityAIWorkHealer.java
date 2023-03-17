@@ -444,7 +444,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        if (walkToBlock(new BlockPos(playerToHeal.position())))
+        if (walkToBlock(playerToHeal.blockPosition()))
         {
             return getState();
         }

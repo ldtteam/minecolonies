@@ -53,7 +53,7 @@ public class GenericRecipe implements IGenericRecipe
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe, world), inputs,
+        return new GenericRecipe(recipe.getId(), recipe.getResultItem(world.registryAccess()), calculateSecondaryOutputs(recipe, world), inputs,
                 size, intermediate, null, ToolType.NONE, new ArrayList<>(), -1);
     }
 

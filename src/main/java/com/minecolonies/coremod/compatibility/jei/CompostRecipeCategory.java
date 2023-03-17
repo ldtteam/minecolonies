@@ -94,7 +94,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 62, 0)
                 .setBackground(this.slot, -1, -1)
-                .addItemStack(recipe.getResultItem());
+                .addItemStack(recipe.getResultItem(null));
     }
 
     @Override

@@ -522,7 +522,7 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void renderButton(final PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
+        public void renderWidget(final PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
         {
             if (this.visible)
             {
