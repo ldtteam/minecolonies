@@ -46,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -170,7 +171,7 @@ public class ScanCommand extends AbstractCommand
             }
         }
 
-        Network.getNetwork().sendToPlayer(new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName), (ServerPlayer) player);
+        Network.getNetwork().sendToPlayer(new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName.toLowerCase(Locale.US)), (ServerPlayer) player);
         if (style.isEmpty())
         {
             return;
@@ -198,7 +199,8 @@ public class ScanCommand extends AbstractCommand
             isHut = true;
             final AbstractTileEntityColonyBuilding building = (AbstractTileEntityColonyBuilding) world.getBlockEntity(zero.offset(bp.getPrimaryBlockOffset()));
             building.addTag(new BlockPos(0, 0, 0), "deactivated");
-            building.addTag(new BlockPos(0, 0, 0), style);
+            building.setPackName(style);
+            building.setBlueprintPath(fileName.replace( style + "/", ""));
         }
         else
         {
@@ -246,11 +248,10 @@ public class ScanCommand extends AbstractCommand
         StructureTemplate structuretemplate;
         try
         {
-            final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", ""));
+            final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", "").toLowerCase(Locale.US));
             structuretemplate = structuretemplatemanager.getOrCreate(location);
             structuretemplate.fillFromWorld(world, zero, new BlockPos(box.getXSpan(), box.getYSpan(), box.getZSpan()), false, Blocks.STRUCTURE_VOID);
-
-            com.minecolonies.coremod.Network.getNetwork().sendToPlayer(new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt")), (ServerPlayer) player);
+            com.minecolonies.coremod.Network.getNetwork().sendToPlayer(new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt").toLowerCase(Locale.US)), (ServerPlayer) player);
         }
         catch (final ResourceLocationException resLocEx)
         {
@@ -261,7 +262,6 @@ public class ScanCommand extends AbstractCommand
         {
             final AbstractTileEntityColonyBuilding building = (AbstractTileEntityColonyBuilding) world.getBlockEntity(zero.offset(bp.getPrimaryBlockOffset()));
             building.removeTag(new BlockPos(0, 0, 0), "deactivated");
-            building.removeTag(new BlockPos(0, 0, 0), style);
         }
     }
 
