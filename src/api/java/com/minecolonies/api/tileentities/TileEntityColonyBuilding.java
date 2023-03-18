@@ -383,7 +383,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             final List<String> tags = new ArrayList<>(getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()));
             if (!tags.isEmpty())
             {
-                tags.remove("deactivated");
+                tags.remove(DEACTIVATED);
                 if (!tags.isEmpty())
                 {
                     packName = BlueprintMapping.getStyleMapping(tags.get(0));
@@ -625,7 +625,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         tags.remove(DEACTIVATED);
         if (tags.isEmpty())
         {
-            Log.getLogger().error("Couldn't reactivate building because it's missing the essential tag data.");
+            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path);
             return;
         }
 
@@ -633,17 +633,23 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         String tagName = tags.get(0);
         final String blueprintPath;
         final String packName;
-        if (tagName.contains(":"))
+        if (tagName.contains("/"))
         {
-            final String[] split = tagName.split(":");
+            final String[] split = tagName.split("/");
             packName = split[0];
-            blueprintPath = split[1];
+            blueprintPath = tagName.replace(packName, "");
         }
         else
         {
             final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
             packName = BlueprintMapping.getStyleMapping(tagName);
             blueprintPath = BlueprintMapping.getPathMapping(tagName, this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
+        }
+
+        if (!StructurePacks.hasPack(packName))
+        {
+            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path);
+            return;
         }
 
         this.setStructurePack(StructurePacks.getStructurePack(packName));
