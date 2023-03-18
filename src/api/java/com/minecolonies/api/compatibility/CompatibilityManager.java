@@ -14,6 +14,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -38,6 +39,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -229,12 +232,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverMobs();
     }
 
-    /**
-     * Transfer server-discovered item lists to client, to avoid double-handling (and
-     * potentially getting different answers).
-     *
-     * @param buf serialization buffer
-     */
+    @Override
     public void serialize(@NotNull final FriendlyByteBuf buf)
     {
         serializeItemStorageList(buf, saplings);
@@ -249,16 +247,9 @@ public class CompatibilityManager implements ICompatibilityManager
         serializeCompostRecipes(buf, compostRecipes);
     }
 
-    /**
-     * Receive and update lists based on incoming server discovery data.
-     *
-     * Note: anything based purely on the registries and configs can be safely recalculated here.
-     *       But anything based on tags or recipes must be updated purely via the packet,
-     *       because this can be called before the client has the latest tags/recipes.
-     *
-     * @param buf deserialization buffer
-     */
-    public void deserialize(@NotNull final FriendlyByteBuf buf, final Level level)
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void deserialize(@NotNull final FriendlyByteBuf buf, final ClientLevel level)
     {
         clear();
         discoverAllItems(level);

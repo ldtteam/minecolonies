@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,7 +52,7 @@ public interface ICompatibilityManager
      *
      * @param buf deserialization buffer
      */
-    void deserialize(@NotNull final FriendlyByteBuf buf, final Level level);
+    void deserialize(@NotNull final FriendlyByteBuf buf, final ClientLevel level);
 
     /**
      * Gets the sapling matching a leave.
