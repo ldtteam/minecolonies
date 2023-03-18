@@ -95,7 +95,7 @@ public class ResearchUnlocked implements LootItemCondition
     private Optional<Boolean> test(@NotNull final LootContext lootContext, @Nullable Vec3 origin)
     {
         return Optional.ofNullable(origin)
-                .map(BlockPos::new)
+                .map(BlockPos::containing)
                 .flatMap(pos -> test(lootContext, IColonyManager.getInstance().getIColony(lootContext.getLevel(), pos)));
     }
 
