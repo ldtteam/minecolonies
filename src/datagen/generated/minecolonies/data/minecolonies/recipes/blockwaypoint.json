@@ -17,5 +17,6 @@
   "result": {
     "count": 16,
     "item": "minecolonies:blockwaypoint"
-  }
+  },
+  "show_notification": true
 }

@@ -13,5 +13,6 @@
   ],
   "result": {
     "item": "minecolonies:supplychestdeployer"
-  }
+  },
+  "show_notification": true
 }

@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutenchanter"
-  }
+  },
+  "show_notification": true
 }

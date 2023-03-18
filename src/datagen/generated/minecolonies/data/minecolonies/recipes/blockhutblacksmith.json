@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutblacksmith"
-  }
+  },
+  "show_notification": true
 }

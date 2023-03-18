@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutcowboy"
-  }
+  },
+  "show_notification": true
 }

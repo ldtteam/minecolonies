@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutgraveyard"
-  }
+  },
+  "show_notification": true
 }

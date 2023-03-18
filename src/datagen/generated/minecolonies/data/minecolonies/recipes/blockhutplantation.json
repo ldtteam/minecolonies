@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutplantation"
-  }
+  },
+  "show_notification": true
 }

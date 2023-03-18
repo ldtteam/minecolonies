@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutmysticalsite"
-  }
+  },
+  "show_notification": true
 }

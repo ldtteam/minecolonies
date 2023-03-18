@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockpostbox"
-  }
+  },
+  "show_notification": true
 }

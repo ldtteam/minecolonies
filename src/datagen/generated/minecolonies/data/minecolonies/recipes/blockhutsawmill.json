@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutsawmill"
-  }
+  },
+  "show_notification": true
 }

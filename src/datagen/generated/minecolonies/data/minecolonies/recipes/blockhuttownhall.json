@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhuttownhall"
-  }
+  },
+  "show_notification": true
 }

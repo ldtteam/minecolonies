@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:chainmail_leggings"
-  }
+  },
+  "show_notification": true
 }

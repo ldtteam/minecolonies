@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutsifter"
-  }
+  },
+  "show_notification": true
 }

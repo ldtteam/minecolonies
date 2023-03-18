@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutflorist"
-  }
+  },
+  "show_notification": true
 }

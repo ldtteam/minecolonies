@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutsmeltery"
-  }
+  },
+  "show_notification": true
 }

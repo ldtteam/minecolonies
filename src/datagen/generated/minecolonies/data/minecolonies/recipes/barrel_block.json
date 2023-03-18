@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "minecolonies:barrel_block"
-  }
+  },
+  "show_notification": true
 }

@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutbuilder"
-  }
+  },
+  "show_notification": true
 }

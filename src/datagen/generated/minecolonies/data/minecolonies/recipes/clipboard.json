@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:clipboard"
-  }
+  },
+  "show_notification": true
 }

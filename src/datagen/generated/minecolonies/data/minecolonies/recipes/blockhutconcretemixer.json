@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutconcretemixer"
-  }
+  },
+  "show_notification": true
 }

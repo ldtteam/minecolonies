@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutswineherder"
-  }
+  },
+  "show_notification": true
 }

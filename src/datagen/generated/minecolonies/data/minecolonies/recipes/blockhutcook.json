@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutcook"
-  }
+  },
+  "show_notification": true
 }

@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutmechanic"
-  }
+  },
+  "show_notification": true
 }

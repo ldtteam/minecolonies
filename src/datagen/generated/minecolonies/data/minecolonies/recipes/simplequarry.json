@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "minecolonies:simplequarry"
-  }
+  },
+  "show_notification": true
 }

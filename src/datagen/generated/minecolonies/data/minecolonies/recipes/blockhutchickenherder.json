@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecolonies:blockhutchickenherder"
-  }
+  },
+  "show_notification": true
 }

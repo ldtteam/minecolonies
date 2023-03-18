@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecolonies:colony_banner"
-  }
+  },
+  "show_notification": true
 }

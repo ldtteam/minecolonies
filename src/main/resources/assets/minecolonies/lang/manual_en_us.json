@@ -1009,7 +1009,7 @@
   "death.attack.entity.minecolonies.chiefpirate": "%s was macerated by a Pirate Captain!",
   "death.attack.entity.minecolonies.archerpirate": "%s was ravaged by an Archer Pirate!",
   "death.attack.entity.minecolonies.mercenary": "%s was eaten alive by a Mercenary!",
-  "death.attack.slap": "%s was slapped to death by a Mercenary!",
+  "death.attack.entity.minecolonies.slap": "%s was slapped to death by a Mercenary!",
 
   "item.minecolonies.pirate_hat": "Pirate Hat",
   "item.minecolonies.pirate_top": "Pirate Top",

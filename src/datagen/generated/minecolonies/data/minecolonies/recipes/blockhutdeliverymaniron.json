@@ -20,5 +20,6 @@
   "result": {
     "count": 2,
     "item": "minecolonies:blockhutdeliveryman"
-  }
+  },
+  "show_notification": true
 }
