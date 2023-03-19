@@ -179,7 +179,7 @@
   "minecolonies.config.maxbarbariansize": "Max Raider Size",
   "minecolonies.config.maxbarbariansize.comment": "The max size of a raider horde.",
   "minecolonies.config.dobarbariansbreakthroughwalls": "Do Raiders Cross Obstacles",
-  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break, scale, and bridge obstacles.",
+  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break through obstacles",
   "minecolonies.config.shouldraiderbreakdoors": "Do Raiders Break Doors",
   "minecolonies.config.shouldraiderbreakdoors.comment": "Whether or not raiders can break through doors.",
   "minecolonies.config.averagenumberofnightsbetweenraids": "Average Number of Nights Between Raids",
@@ -2378,5 +2378,6 @@
   "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
   "com.minecolonies.coremod.gui.townHall.map": "Town Map",
   "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map.",
-  "com.minecolonies.gui.edit": "Edit"
+  "com.minecolonies.gui.edit": "Edit",
+  "com.minecolonies.gui.details": "More Details..."
 }
