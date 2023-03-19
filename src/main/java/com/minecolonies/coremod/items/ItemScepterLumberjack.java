@@ -7,21 +7,19 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
@@ -81,8 +79,8 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
     private void storeRestrictedArea(final Player player, final CompoundTag compound, final Level worldIn)
     {
-        final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS);
-        final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS);
+        final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS).atY(worldIn.getMinBuildHeight());
+        final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS).atY(worldIn.getMaxBuildHeight());
 
         // Check restricted area isn't too large
         final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
