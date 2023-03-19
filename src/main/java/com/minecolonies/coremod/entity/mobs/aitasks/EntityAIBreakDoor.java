@@ -82,6 +82,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         if (mob.getCommandSenderWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getServer().shouldRaidersBreakDoors.get())
         {
             breakTime = 0;
+            return;
         }
 
         // Only advances breaking time in relation to hardness
