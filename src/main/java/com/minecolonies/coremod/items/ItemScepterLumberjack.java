@@ -79,28 +79,31 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
     private void storeRestrictedArea(final Player player, final CompoundTag compound, final Level worldIn)
     {
-        final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS).atY(worldIn.getMinBuildHeight());
-        final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS).atY(worldIn.getMaxBuildHeight());
+        final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS);
+        final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS);
 
         // Check restricted area isn't too large
         final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
+        final int minY = Math.min(startRestriction.getY(), endRestriction.getY());
         final int minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
         final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
+        final int maxY = Math.max(startRestriction.getY(), endRestriction.getY());
         final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
 
         final int distX = maxX - minX;
+        final int distY = maxY - minY;
         final int distZ = maxZ - minZ;
 
-        final int area = distX * distZ;
-        final int maxArea = (int) Math.floor(2 * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 2));
+        final int volume = distX * distY * distZ;
+        final int maxVolume = (int) Math.floor(2 * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 3));
 
-        if (area > maxArea)
+        if (volume > maxVolume)
         {
-            MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_TOO_BIG, area, maxArea).sendTo(player);
+            MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_TOO_BIG, volume, maxVolume).sendTo(player);
             return;
         }
 
-        MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_SET, minX, maxX, minZ, maxZ, area, maxArea).sendTo(player);
+        MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_SET, minX, maxX, minY, maxY, minZ, maxZ, volume, maxVolume).sendTo(player);
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
         final BuildingLumberjack hut = colony.getBuildingManager().getBuilding(hutPos, BuildingLumberjack.class);

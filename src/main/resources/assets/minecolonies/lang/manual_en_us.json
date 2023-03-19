@@ -73,8 +73,8 @@
   "item.minecolonies.scepterlumberjack": "Forest Tool",
   "item.minecolonies.scepterlumberjack.usedend": "Position A set. Select Position B with a right-click or left-click the same position to finish.",
   "item.minecolonies.scepterlumberjack.usedstart": "Position B set. Select Position A with a left-click or right-click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
-  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An volume of %d blocks is too large. The maximum restricted volume for the Forester is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted volume set (x: %d to %d, y: %d to %d, z: %d to %d, volume: %d blocks). The max size is %d blocks.",
 
   "minecolonies.config.maxtreesize": "Max Tree Size",
   "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
@@ -1399,7 +1399,7 @@
   "com.minecolonies.coremod.info.miner.4": "As all workers do, Miners level up while working.\n At higher levels, the Miner's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling until you provide them with better housing.",
 
   "com.minecolonies.coremod.info.lumberjack.0.name": "Introduction",
-  "com.minecolonies.coremod.info.lumberjack.0": "The Forester is one of the production workers for your colony. Give them an axe and they'll cut down any trees around them. They'll also replant a sapling where the tree was if he has any.\n If you wish to apply restrictions on what trees they can or can't cut, take a look at the second page.\n Even cooler is the third page. Here you can tell the Forester to not replant saplings and tell them to be restricted to a certain area (selected with the tool given by the third button on the page).",
+  "com.minecolonies.coremod.info.lumberjack.0": "The Forester is one of the production workers for your colony. Give them an axe and they'll cut down any trees around them. They'll also replant a sapling where the tree was if he has any.\n If you wish to apply restrictions on what trees they can or can't cut, take a look at the second page.\n Even cooler is the third page. Here you can tell the Forester to not replant saplings and tell them to be restricted to a certain volume (selected with the tool given by the third button on the page).",
   "com.minecolonies.coremod.info.lumberjack.1.name": "Restrictions",
   "com.minecolonies.coremod.info.lumberjack.1": "Now let's cover restrictions:\n\n 1. Foresters unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 3. Diamond Tools\n   lvl 4-5. Enchanted Tools\n\n 2. Foresters are able to search for trees within 150 blocks of them (not their hut). While searching, they start with a 50 block range and then increase that range by 5 if they do not find a tree.",
   "com.minecolonies.coremod.info.lumberjack.2.name": "Tree Detection",
@@ -2000,7 +2000,7 @@
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.setting.minecolonies:defoliate": "Break Leaves:",
-  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by right-clicking one corner and left-clicking the opposite corner with the tool.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working volume by right-clicking one corner and left-clicking the opposite corner with the tool (allowing for height if needed).",
   "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Right click positions to mark as guard or patrol points. Right-click the same position to close and discard.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
