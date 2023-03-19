@@ -178,6 +178,11 @@ public class Colony implements IColony
     private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
+     * Event manager of the colony.
+     */
+    private final IStatisticsManager statisticManager = new StatisticsManager(this);
+
+    /**
      * Quest manager for this colony
      */
     private IQuestManager questManager;
@@ -288,8 +293,8 @@ public class Colony implements IColony
      * The colony flag, as a list of patterns.
      */
     private ListTag colonyFlag = new BannerPattern.Builder()
-                                   .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-                                   .toListTag();
+      .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+      .toListTag();
 
     /**
      * The last time the mercenaries were used.
@@ -337,6 +342,11 @@ public class Colony implements IColony
     private final EventBus colonyBus = new EventBus(MOD_ID);
 
     /**
+     * Current day of the colony.
+     */
+    private int day = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -372,15 +382,14 @@ public class Colony implements IColony
         }
         this.permissions = new Permissions(this);
         researchManager = new ResearchManager(this);
-        colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
+        colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
+        {
+        });
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> {
-            this.getCitizenManager().tickCitizenData();
-            return null;
-        }, TICKS_SECOND));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, citizenManager::tickCitizenData, () -> ACTIVE, TICKS_SECOND * 3));
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
@@ -515,7 +524,7 @@ public class Colony implements IColony
             {
                 if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
                 {
-                    this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
+                    this.forceLoadTimer = getConfig().getServer().loadtime.get() * 20 * 60;
                     pendingChunks.addAll(pendingToUnloadChunks);
                     for (final long pending : pendingChunks)
                     {
@@ -618,6 +627,7 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
+            day++;
             citizenManager.onWakeUp();
         }
         return false;
@@ -771,6 +781,8 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
+        statisticManager.readFromNBT(compound);
+
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.getAllKeys().contains(TAG_RESEARCH))
@@ -867,6 +879,7 @@ public class Colony implements IColony
         {
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
+        this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
     }
 
@@ -924,6 +937,8 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        statisticManager.writeToNBT(compound);
+
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
@@ -971,6 +986,7 @@ public class Colony implements IColony
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
         compound.putString(TAG_COL_NAME_STYLE, nameStyle);
+        compound.putInt(COLONY_DAY, day);
 
         this.colonyTag = compound;
 
@@ -1596,6 +1612,12 @@ public class Colony implements IColony
     }
 
     @Override
+    public IStatisticsManager getStatisticsManager()
+    {
+        return statisticManager;
+    }
+
+    @Override
     public IReproductionManager getReproductionManager()
     {
         return reproductionManager;
@@ -1793,7 +1815,10 @@ public class Colony implements IColony
      * @return the list of pattern-color pairs
      */
     @Override
-    public ListTag getColonyFlag() { return colonyFlag; }
+    public ListTag getColonyFlag()
+    {
+        return colonyFlag;
+    }
 
     /**
      * Set the colony to be dirty.
@@ -1942,7 +1967,7 @@ public class Colony implements IColony
     /**
      * Check if we need to update the view's chunk ticket info
      *
-     * @return
+     * @return true if dirty.
      */
     public boolean isTicketedChunksDirty()
     {
@@ -1953,5 +1978,11 @@ public class Colony implements IColony
     public EventBus getColonyBus()
     {
         return colonyBus;
+    }
+
+    @Override
+    public int getDay()
+    {
+        return day;
     }
 }

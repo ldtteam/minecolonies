@@ -15,8 +15,10 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -34,8 +36,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -185,6 +187,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             building = colony.getBuildingManager().getBuilding(getPosition());
             if (building != null && (getLevel() == null || !getLevel().isClientSide))
             {
+                registryName = building.getBuildingType().getRegistryName();
                 building.setTileEntity(this);
             }
         }
@@ -264,7 +267,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return  ClientboundBlockEntityDataPacket.create(this);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
@@ -380,7 +383,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             final List<String> tags = new ArrayList<>(getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()));
             if (!tags.isEmpty())
             {
-                tags.remove("deactivated");
+                tags.remove(DEACTIVATED);
                 if (!tags.isEmpty())
                 {
                     packName = BlueprintMapping.getStyleMapping(tags.get(0));
@@ -401,12 +404,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
         }
 
+        if (!path.endsWith(".blueprint"))
+        {
+            path += ".blueprint";
+        }
+
         this.packMeta = packName;
         this.path = path;
 
-        registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        if (compound.contains(TAG_BUILDING_TYPE))
+        {
+            registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        }
         buildingPos = worldPosition;
-        single = true;
     }
 
     @Override
@@ -417,7 +427,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
         compound.putString(TAG_PATH, path == null ? "" : path);
-        compound.putString(TAG_BUILDING_TYPE, registryName.toString());
+        if (registryName != null)
+        {
+            compound.putString(TAG_BUILDING_TYPE, registryName.toString());
+        }
     }
 
     @Override
@@ -548,28 +561,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public boolean isMain()
-    {
-        return true;
-    }
-
-    @Override
     public void updateBlockState()
     {
         // Do nothing
-    }
-
-    @Override
-    public void setSingle(final boolean single)
-    {
-        // Do nothing, these are always single!
     }
 
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
-        if (!remove && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
+        if (!remove && capability == ForgeCapabilities.ITEM_HANDLER && getBuilding() != null)
         {
             if (combinedInv == null)
             {
@@ -624,7 +625,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         tags.remove(DEACTIVATED);
         if (tags.isEmpty())
         {
-            Log.getLogger().error("Couldn't reactivate building because it's missing the essential tag data.");
+            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path);
             return;
         }
 
@@ -632,11 +633,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         String tagName = tags.get(0);
         final String blueprintPath;
         final String packName;
-        if (tagName.contains(":"))
+        if (tagName.contains("/"))
         {
-            final String[] split = tagName.split(":");
+            final String[] split = tagName.split("/");
             packName = split[0];
-            blueprintPath = split[1];
+            blueprintPath = tagName.replace(packName, "");
         }
         else
         {
@@ -645,12 +646,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             blueprintPath = BlueprintMapping.getPathMapping(tagName, this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
         }
 
+        if (!StructurePacks.hasPack(packName))
+        {
+            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path);
+            return;
+        }
+
         this.setStructurePack(StructurePacks.getStructurePack(packName));
         this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
     }
 
     /**
      * Process the blueprint to read relevant data.
+     *
      * @param blueprint the queried blueprint.
      */
     private void processBlueprint(final Blueprint blueprint)

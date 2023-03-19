@@ -25,7 +25,7 @@
             <button id="down" size="15 15" label="↧" pos="0 15"/>
             <button id="remove" size="45 15" pos="105 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
             <button id="toggle" size="45 15" pos="105 18" label="$(com.minecolonies.coremod.gui.recipe.disable)"/>
-            <label id="intermediate" size="45 15" pos="105 22" textalign="MIDDLE" color="black" />
+            <label id="intermediate" size="45 15" pos="105 33" textalign="MIDDLE" color="black" />
         </view>
     </list>
 

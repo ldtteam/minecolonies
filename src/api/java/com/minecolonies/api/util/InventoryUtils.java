@@ -28,14 +28,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Utility methods for the inventories.
@@ -517,9 +516,9 @@ public class InventoryUtils
         final Set<IItemHandler> handlerList = new HashSet<>();
         for (final Direction side : Direction.values())
         {
-            provider.getCapability(ITEM_HANDLER_CAPABILITY, side).ifPresent(handlerList::add);
+            provider.getCapability(ForgeCapabilities.ITEM_HANDLER, side).ifPresent(handlerList::add);
         }
-        provider.getCapability(ITEM_HANDLER_CAPABILITY, null).ifPresent(handlerList::add);
+        provider.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handlerList::add);
         return handlerList;
     }
 
@@ -783,7 +782,7 @@ public class InventoryUtils
 
                 if (totalCount > count)
                 {
-                    return Integer.MAX_VALUE;
+                    return totalCount;
                 }
             }
         }
@@ -1264,7 +1263,7 @@ public class InventoryUtils
     @NotNull
     public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> true);
+        return filterItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), (ItemStack stack) -> true);
     }
 
     /**
@@ -1282,7 +1281,7 @@ public class InventoryUtils
       @Nullable final Direction facing,
       @NotNull final Block block)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
+        return filterItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
 
     /**
@@ -1301,7 +1300,7 @@ public class InventoryUtils
       @NotNull final Item targetItem,
       final int itemDamage)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem));
+        return filterItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -1318,12 +1317,12 @@ public class InventoryUtils
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+        if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
         {
             return Collections.emptyList();
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate);
+        return filterItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate);
     }
 
     /**
@@ -1373,14 +1372,14 @@ public class InventoryUtils
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+        if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
         {
             return -1;
             //TODO: Later harden contract to remove compare on slot := -1
             //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
         }
 
-        return findFirstSlotInItemHandlerWith(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate);
+        return findFirstSlotInItemHandlerWith(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate);
     }
 
     /**
@@ -1428,12 +1427,12 @@ public class InventoryUtils
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+        if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
         {
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate).stream()
+        return filterItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate).stream()
                  .mapToInt(ItemStackUtils::getSize)
                  .sum();
     }
@@ -1480,12 +1479,12 @@ public class InventoryUtils
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+        if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
         {
             return false;
         }
 
-        return findFirstSlotInItemHandlerNotEmptyWith(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate) > -1;
+        return findFirstSlotInItemHandlerNotEmptyWith(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate) > -1;
     }
 
     /**
@@ -1509,12 +1508,12 @@ public class InventoryUtils
      */
     public static int getFirstOpenSlotFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+        if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
         {
             return -1;
         }
 
-        return getFirstOpenSlotFromItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null));
+        return getFirstOpenSlotFromItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null));
     }
 
     /**
@@ -1531,12 +1530,12 @@ public class InventoryUtils
       @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
       final int minimalLevel, final int maximumLevel)
     {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+        if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
         {
             return false;
         }
 
-        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), toolType, minimalLevel, maximumLevel);
+        return isToolInItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), toolType, minimalLevel, maximumLevel);
     }
 
     /**
@@ -2966,7 +2965,7 @@ public class InventoryUtils
      * @param foodPredicate      food choosing predicate
      * @return true if any food was transferred
      */
-    public static boolean transferFoodUpToSaturation(
+    public static int transferFoodUpToSaturation(
       final ICapabilityProvider source,
       final IItemHandler target,
       final int requiredSaturation,
@@ -2975,7 +2974,7 @@ public class InventoryUtils
         Set<IItemHandler> handlers = getItemHandlersFromProvider(source);
 
         int foundSaturation = 0;
-
+        int transferedItems = 0;
         for (final IItemHandler handler : handlers)
         {
             for (int i = 0; i < handler.getSlots(); i++)
@@ -3007,6 +3006,7 @@ public class InventoryUtils
                         foundSaturation = requiredSaturation;
                     }
 
+                    transferedItems += extractedFood.getCount();
                     if (!ItemStackUtils.isEmpty(extractedFood))
                     {
                         if (!addItemStackToItemHandler(target, extractedFood))
@@ -3024,13 +3024,13 @@ public class InventoryUtils
 
                     if (foundSaturation >= requiredSaturation)
                     {
-                        return true;
+                        return transferedItems;
                     }
                 }
             }
         }
 
-        return foundSaturation > 0;
+        return transferedItems;
     }
 
     /**
@@ -3170,5 +3170,26 @@ public class InventoryUtils
         }
 
         return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
+    }
+
+    public static List<ItemStack> getBuildingInventory(final IBuilding building)
+    {
+        final Level world = building.getColony().getWorld();
+        final List<ItemStack> allInInv = new ArrayList<>();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final ItemStorage storage : ((TileEntityRack) entity).getAllContent().keySet())
+                    {
+                        allInInv.add(storage.getItemStack());
+                    }
+                }
+            }
+        }
+        return allInInv;
     }
 }

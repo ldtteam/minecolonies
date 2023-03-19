@@ -39,6 +39,8 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_MINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_MINED;
 import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
@@ -869,11 +871,19 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             else
             {
                 final MinerLevel currentLevel = module.getCurrentLevel();
+                if (currentLevel == null)
+                {
+                    Log.getLogger().error("The mine state of the mine at: " + building.getID().toShortString() + " got corrupted. Trying to recover from this somehow....");
 
-                currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
-                module.setActiveNode(null);
-                module.setOldNode(workingNode);
-                WorkerUtil.updateLevelSign(world, currentLevel, module.getLevelId(currentLevel));
+                    // This can only happen if something with the state got broken. Safest option is not handling the node closing and just doing the normal complete actions, it will potentially recover.
+                }
+                else
+                {
+                    currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
+                    module.setActiveNode(null);
+                    module.setOldNode(workingNode);
+                    WorkerUtil.updateLevelSign(world, currentLevel, module.getLevelId(currentLevel));
+                }
             }
         }
         super.executeSpecificCompleteActions();
@@ -948,6 +958,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance),
               worker.getInventoryCitizen());
         }
+
+        if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))
+        {
+            building.getColony().getStatisticsManager().increment(ORES_MINED);
+        }
+        building.getColony().getStatisticsManager().increment(BLOCKS_MINED);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -30,10 +31,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -257,6 +255,24 @@ public class BuildingPlantation extends AbstractBuilding
             }
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_PLANTATION);
             return isRecipeAllowed.orElse(false);
+        }
+
+        @Override
+        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+
+            // indicate which plants we can grow
+            for (final Map.Entry<Item, PlantationItem> entry : COMBINATIONS.entrySet())
+            {
+                recipes.add(new GenericRecipe(null,
+                        new ItemStack(entry.getKey(), entry.getValue().getMinimumLength() + 1),
+                        Collections.emptyList(),
+                        Collections.singletonList(Collections.singletonList(new ItemStack(entry.getKey()))),
+                        1, Blocks.AIR, null, ToolType.NONE, Collections.emptyList(), -1));
+            }
+
+            return recipes;
         }
     }
 

@@ -49,6 +49,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.PROGRESS_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_MINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_MINED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.RECALC;
@@ -701,5 +703,16 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     public BlockState getSolidSubstitution(final BlockPos ignored)
     {
         return getMainFillBlock().defaultBlockState();
+    }
+
+    @Override
+    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    {
+        super.triggerMinedBlock(blockToMine);
+        if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))
+        {
+            building.getColony().getStatisticsManager().increment(ORES_MINED);
+        }
+        building.getColony().getStatisticsManager().increment(BLOCKS_MINED);
     }
 }

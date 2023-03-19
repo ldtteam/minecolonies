@@ -1,5 +1,10 @@
 {
   "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/knowledgeofthedepthsunlock": 1
+    }
+  ],
   "icon": "minecraft:cobbled_deepslate",
   "parentResearch": "minecolonies:technology/rockingroll",
   "requirements": [

@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "fletcher_crafting",
+  "inputs": [
+    {
+      "count": 3,
+      "item": "minecraft:gravel"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "minecraft:flint"
+}

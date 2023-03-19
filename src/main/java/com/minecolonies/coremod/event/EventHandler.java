@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.event;
 
-import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
@@ -133,7 +132,7 @@ public class EventHandler
               .getType()
               .is(ModTags.mobAttackBlacklist)))
             {
-                ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
+                ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true, citizen -> !citizen.isInvisible()));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
             }
         }
@@ -389,6 +388,8 @@ public class EventHandler
                       || colony.getPermissions().hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
                     colony.getPackageManager().addImportantColonyPlayer(player);
+                    colony.getPackageManager().sendColonyViewPackets();
+                    colony.getPackageManager().sendPermissionsPackets();
                 }
             }
 
@@ -677,7 +678,7 @@ public class EventHandler
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
         {
-            RenderBipedCitizen.isItGhostTime = true;
+            RenderBipedCitizen.isItGhostTime = false;
         }
     }
 

@@ -10,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -175,6 +176,8 @@ public class CreateColonyMessage implements IMessage
             return;
         }
 
+        ownedColony.getPackageManager().sendColonyViewPackets();
+        ownedColony.getPackageManager().sendPermissionsPackets();
         MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
     }
 }

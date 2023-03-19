@@ -2,7 +2,7 @@
   "branch": "minecolonies:combat",
   "effects": [
     {
-      "minecolonies:effects/telescope": 3
+      "minecolonies:effects/telescope": 1
     }
   ],
   "icon": "minecolonies:banner_rally_guards",

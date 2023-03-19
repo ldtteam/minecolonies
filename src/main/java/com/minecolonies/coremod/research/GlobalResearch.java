@@ -12,16 +12,13 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -305,10 +302,6 @@ public class GlobalResearch implements IGlobalResearch
             this.textureIcon = iconTexture;
         }
         this.itemIcon = iconItemStack;
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
-        {
-            Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
-        }
     }
 
     /**
@@ -802,8 +795,8 @@ public class GlobalResearch implements IGlobalResearch
                 if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP) &&
                      reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
                 {
-                    final ItemStack itemStack = idToItemStack(reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString());
-                    final ItemStorage itemStorage = new ItemStorage(itemStack, false, !itemStack.hasTag());
+                    final ItemStack itemStack = ItemStackUtils.idToItemStack(reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString());
+                    final ItemStorage itemStorage = new ItemStorage(itemStack, false, !ItemStackUtils.hasTag(itemStack));
                     if(reqArrayElement.getAsJsonObject().has(RESEARCH_QUANTITY_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).isJsonPrimitive()
                          && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
                     {
@@ -868,51 +861,6 @@ public class GlobalResearch implements IGlobalResearch
                 }
             }
         }
-    }
-
-    /**
-     * Convert an Item string with NBT to an ItemStack
-     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
-     * @return stack with any defined NBT
-     */
-    private static ItemStack idToItemStack(final String itemData)
-    {
-        String itemId = itemData;
-        final int tagIndex = itemId.indexOf("{");
-        final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
-        itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
-        String[] split = itemId.split(":");
-        if(split.length != 2)
-        {
-            if(split.length == 1)
-            {
-                final String[] tempArray ={"minecraft", split[0]};
-                split = tempArray;
-            }
-            else
-            {
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
-        }
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
-        final ItemStack stack = new ItemStack(item);
-        if (tag != null)
-        {
-            try
-            {
-                stack.setTag(TagParser.parseTag(tag));
-            }
-            catch (CommandSyntaxException e1)
-            {
-                //Unable to parse tags, drop them.
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
-        }
-        if (stack.isEmpty())
-        {
-            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
-        }
-        return stack;
     }
 
     /**

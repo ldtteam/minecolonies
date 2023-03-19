@@ -10,10 +10,7 @@ import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -533,9 +530,10 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void tickCitizenData()
+    public boolean tickCitizenData()
     {
         this.getCitizens().forEach(ICitizenData::tick);
+        return false;
     }
 
     /**
@@ -611,6 +609,7 @@ public class CitizenManager implements ICitizenManager
             {
                 citizen.getCitizenMournHandler().removeDeceasedCitizen(data.getName());
             }
+            citizen.onDeath(data.getId());
         }
     }
 

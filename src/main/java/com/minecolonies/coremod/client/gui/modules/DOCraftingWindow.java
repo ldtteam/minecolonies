@@ -5,32 +5,40 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.block.MateriallyTexturedBlockManager;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
-import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.DOCraftingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
+import com.minecolonies.coremod.util.DomumOrnamentumUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -43,6 +51,8 @@ public class DOCraftingWindow extends AbstractModuleWindow
      * The resource string.
      */
     private static final String RESOURCE_STRING = ":gui/layouthuts/layoutdocrafting.xml";
+
+    private static final String[] BLOCKICONS = new String[] { BLOCK1, BLOCK2, BLOCK3 };
 
     /**
      * Resource scrolling list.
@@ -57,24 +67,84 @@ public class DOCraftingWindow extends AbstractModuleWindow
     /**
      * The module view.
      */
-    private final CraftingModuleView craftingModuleView;
+    private final DOCraftingModuleView craftingModuleView;
+
+    /**
+     * The ingredient validator.
+     */
+    private final OptionalPredicate<ItemStack> validator;
 
     /**
      * Constructor for the minimum stock window view.
      *
      * @param building class extending
      */
-    public DOCraftingWindow(final IBuildingView building, final CraftingModuleView view)
+    public DOCraftingWindow(final IBuildingView building, final DOCraftingModuleView view)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.craftingModuleView = view;
 
+        validator = craftingModuleView.getIngredientValidator();
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
         registerButton(BLOCK1_ADD, this::addBlock1);
         registerButton(BLOCK2_ADD, this::addBlock2);
         registerButton(BLOCK3_ADD, this::addBlock3);
         registerButton(ADD, this::addRecipe);
+        registerButton(BUTTON_REQUEST, this::showRequests);
+    }
+
+    private void showRequests()
+    {
+        new WindowSelectRequest(this.buildingView, this::matchingRequest, this::reopenWithRequest).open();
+    }
+
+    private boolean matchingRequest(@NotNull final IRequest<?> request)
+    {
+        final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
+        if (stack.isEmpty()) return false;
+
+        final MaterialTextureData textureData = DomumOrnamentumUtils.getTextureData(stack);
+        if (textureData.isEmpty()) return false;
+
+        for (final Block block : textureData.getTexturedComponents().values())
+        {
+            if (validator.test(new ItemStack(block)).orElse(false))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void reopenWithRequest(@Nullable final IRequest<?> request)
+    {
+        if (request != null)
+        {
+            final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
+            final IMateriallyTexturedBlock block = DomumOrnamentumUtils.getBlock(stack);
+            final MaterialTextureData textureData = DomumOrnamentumUtils.getTextureData(stack);
+            if (block != null && !textureData.isEmpty())     // should always be true due to predicate, but hey you never know...
+            {
+                int slot = 0;
+                for (final IMateriallyTexturedBlockComponent component : block.getComponents())
+                {
+                    final ItemStack componentBlock = new ItemStack(textureData.getTexturedComponents().getOrDefault(component.getId(), Blocks.AIR));
+                    inputInventory.setItem(slot, componentBlock);
+                    findPaneOfTypeByID(BLOCKICONS[slot], ItemIcon.class).setItem(componentBlock);
+                    ++slot;
+                }
+                for (; slot < 3; ++slot)
+                {
+                    inputInventory.setItem(slot, ItemStack.EMPTY);
+                    findPaneOfTypeByID(BLOCKICONS[slot], ItemIcon.class).setItem(ItemStack.EMPTY);
+                }
+                updateStockList();
+            }
+        }
+
+        open();
     }
 
     private void addRecipe()
@@ -90,16 +160,13 @@ public class DOCraftingWindow extends AbstractModuleWindow
         for (final ArchitectsCutterRecipe recipe : list)
         {
             final ItemStack result = recipe.assemble(inputInventory).copy();
-            if (result.getItem() instanceof BlockItem)
+            final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
+            if (doBlock != null)
             {
-                final Block block = ((BlockItem) result.getItem()).getBlock();
-                if (block instanceof IMateriallyTexturedBlock)
-                {
-                    final int components = ((IMateriallyTexturedBlock) block).getComponents().size();
-                    final List<Integer> inputList = map.getOrDefault(components, new ArrayList<>());
-                    inputList.add(list.indexOf(recipe));
-                    map.put(components, inputList);
-                }
+                final int components = doBlock.getComponents().size();
+                final List<Integer> inputList = map.getOrDefault(components, new ArrayList<>());
+                inputList.add(list.indexOf(recipe));
+                map.put(components, inputList);
             }
         }
 
@@ -206,16 +273,10 @@ public class DOCraftingWindow extends AbstractModuleWindow
         for (final ArchitectsCutterRecipe recipe : list)
         {
             final ItemStack result = recipe.assemble(inputInventory).copy();
-            if (result.getItem() instanceof BlockItem)
+            final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
+            if (doBlock != null && doBlock.getComponents().size() == inputCount)
             {
-                final Block block = ((BlockItem) result.getItem()).getBlock();
-                if (block instanceof IMateriallyTexturedBlock)
-                {
-                    if (((IMateriallyTexturedBlock) block).getComponents().size() == inputCount)
-                    {
-                        filteredList.add(recipe);
-                    }
-                }
+                filteredList.add(recipe);
             }
         }
 

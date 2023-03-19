@@ -583,7 +583,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of all existing items, client side only.
+     * Create complete list of all existing items.
      */
     private void discoverAllItems()
     {
@@ -593,7 +593,15 @@ public class CompatibilityManager implements ICompatibilityManager
         for (final Item item : ForgeRegistries.ITEMS.getValues())
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            try
+            {
+                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().warn("Error populating items for " + ForgeRegistries.ITEMS.getKey(item) + "; using fallback", e);
+                list.add(new ItemStack(item));
+            }
             listBuilder.addAll(list);
 
             for (final ItemStack stack : list)

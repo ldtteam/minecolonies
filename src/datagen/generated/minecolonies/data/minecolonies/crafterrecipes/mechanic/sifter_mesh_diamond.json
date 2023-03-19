@@ -1,0 +1,13 @@
+{
+  "type": "recipe",
+  "crafter": "mechanic_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:diamond"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/sifterdiamondunlock",
+  "result": "minecolonies:sifter_mesh_diamond",
+  "show-tooltip": true
+}

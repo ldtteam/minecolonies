@@ -10,10 +10,12 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
@@ -100,7 +102,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return false;
         }
 
-        citizen.updatePose(Pose.SLEEPING);
+        citizen.setPose(Pose.SLEEPING);
         citizen.getNavigation().stop();
         citizen.setPos(((float) bedLocation.getX() + HALF_BLOCK),
           (float) bedLocation.getY() + 0.8F,
@@ -137,13 +139,14 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         notifyCitizenHandlersOfWakeUp();
 
         //Only do this if he really sleeps
-        if (!isAsleep())
+        if (isAsleep())
         {
-            return;
+            spawnCitizenFromBed();
         }
-        citizen.updatePose(Pose.STANDING);
+
+        citizen.setPose(Pose.STANDING);
         citizen.clearSleepingPos();
-        spawnCitizenFromBed();
+        setIsAsleep(false);
     }
 
     private void notifyCitizenHandlersOfWakeUp()
@@ -168,9 +171,26 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     private void spawnCitizenFromBed()
     {
         final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.level.getBlockState(getBedLocation()).is(BlockTags.BEDS))
+        final BlockState bedState = citizen.level.getBlockState(getBedLocation());
+        if (!getBedLocation().equals(BlockPos.ZERO) && bedState.is(BlockTags.BEDS))
         {
-            spawn = EntityUtils.getSpawnPoint(citizen.level, getBedLocation());
+            if (bedState.getValue(BedBlock.PART) == BedPart.HEAD)
+            {
+                final BlockPos relPos = getBedLocation().relative(bedState.getValue(BedBlock.FACING).getOpposite());
+                final BlockState lowerState = citizen.level.getBlockState(relPos);
+                if (lowerState.is(BlockTags.BEDS) && lowerState.getValue(BedBlock.PART) == BedPart.FOOT)
+                {
+                    spawn = EntityUtils.getSpawnPoint(citizen.level, relPos);
+                }
+                else
+                {
+                    spawn = EntityUtils.getSpawnPoint(citizen.level, getBedLocation());
+                }
+            }
+            else
+            {
+                spawn = EntityUtils.getSpawnPoint(citizen.level, getBedLocation());
+            }
         }
         else
         {
@@ -179,7 +199,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         if (spawn != null && !spawn.equals(BlockPos.ZERO))
         {
-            citizen.setPos(spawn.getX() + HALF_BLOCK, spawn.getY() + HALF_BLOCK, spawn.getZ() + HALF_BLOCK);
+            citizen.setPos(spawn.getX() + HALF_BLOCK, spawn.getY(), spawn.getZ() + HALF_BLOCK);
         }
 
         setIsAsleep(false);

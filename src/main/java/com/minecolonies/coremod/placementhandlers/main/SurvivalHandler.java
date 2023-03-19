@@ -37,8 +37,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_CUSTOM_BUILDINGS;
-import static com.minecolonies.api.util.constant.TranslationConstants.WRONG_COLONY;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Minecolonies survival blueprint handler.
@@ -92,13 +91,20 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
+        if (blueprint == null)
+        {
+            // This can happen if the file didnt finish synching with the server from the client, or something went wrong when synching (package dropped, etc).
+            MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
             if (clientPack || !StructurePacks.hasPack(packName))
             {
-                MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+                MessageUtils.format(BUILDING_MISSING).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
@@ -134,11 +140,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 if (tempColony != null)
                 {
-                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getHutName()));
+                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
                 }
                 else
                 {
-                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, ((AbstractBlockHut<?>) anchor.getBlock()).getHutName());
+                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName());
                 }
 
                 world.destroyBlock(blockPos, true);

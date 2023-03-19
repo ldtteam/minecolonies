@@ -129,7 +129,7 @@ public class FemaleAristocratModel extends CitizenModel<AbstractEntityCitizen>
         body.getChild("SkirtMiddle").visible = entity.getPose() != Pose.SLEEPING;
         body.getChild("SkirtBottom").visible = entity.getPose() != Pose.SLEEPING;
         body.getChild("SkirtTop").visible = entity.getPose() != Pose.SLEEPING;
-        head.getChild("FancyHat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("FancyHat").visible = entity.getPose() != Pose.SLEEPING && displayHat(entity);
         umbrellaArm.visible = entity.getPose() != Pose.SLEEPING;
     }
 

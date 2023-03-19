@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.FOOD_SERVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FOOD;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_COOK_SERVE_PLAYER;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
@@ -212,6 +213,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                     {
                         citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFoodProperties().getNutrition() / 2.0);
                     }
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FOOD_SERVED);
                 }
             }
 
@@ -224,11 +226,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        if (!InventoryUtils.transferFoodUpToSaturation(worker, handler, building.getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack, citizenToServe.isEmpty() ? null : citizenToServe.get(0))))
+        final int count = InventoryUtils.transferFoodUpToSaturation(worker, handler, building.getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack, citizenToServe.isEmpty() ? null : citizenToServe.get(0)));
+        if (count <= 0)
         {
             removeFromQueue();
             return getState();
         }
+        worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(FOOD_SERVED, count);
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -332,7 +336,20 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             }
         }
 
-        if (!citizenToServe.isEmpty())
+        if (!playerToServe.isEmpty())
+        {
+            final Predicate<ItemStack> foodPredicate = stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack);
+            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
+            {
+                if (InventoryUtils.hasItemInProvider(building, foodPredicate))
+                {
+                    needsCurrently = new Tuple<>(foodPredicate, STACKSIZE);
+                    return GATHERING_REQUIRED_MATERIALS;
+                }
+            }
+        }
+
+        if (!citizenToServe.isEmpty() || !playerToServe.isEmpty())
         {
             return COOK_SERVE_FOOD_TO_CITIZEN;
         }

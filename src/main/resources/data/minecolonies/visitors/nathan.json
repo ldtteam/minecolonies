@@ -1,0 +1,10 @@
+{
+  "texture": "66c89b02-dc5f-4bd5-b3f3-eca5803f8218",
+  "citizensuffix": "_b",
+  "name": "Nathan Reeves",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.nathan",
+  "recruitcost": "minecraft:iron_ingot",
+  "recruitcostcount": 16,
+  "gender": "male"
+}

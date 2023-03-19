@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
+import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -48,6 +49,7 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.TREE_CUT;
 
 /**
  * The lumberjack AI class.
@@ -427,12 +429,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private IAIState chopTree()
     {
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.chopping"));
-
         final boolean shouldBreakLeaves = building.shouldDefoliate() || job.getTree().isNetherTree();
+
+        if (building.shouldRestrict() && !BlockPosUtil.isInArea(building.getStartRestriction(), building.getEndRestriction(), job.getTree().getLocation()))
+        {
+            job.setTree(null);
+            return START_WORKING;
+        }
 
         if (job.getTree().hasLogs() || (shouldBreakLeaves && job.getTree().hasLeaves()) || checkedInHut)
         {
-            if (!walkToTree(job.getTree().getStumpLocations().get(0)))
+            if (!walkToTree(job.getTree().getStumpLocations().isEmpty() ? job.getTree().getLocation() : job.getTree().getStumpLocations().get(0)))
             {
                 if (checkIfStuck())
                 {
@@ -459,6 +466,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 checkedInHut = false;
             }
 
+            building.getColony().getStatisticsManager().increment(TREE_CUT);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_TREE);
             incrementActionsDoneAndDecSaturation();
             workFrom = null;

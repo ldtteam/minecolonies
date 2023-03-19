@@ -1,0 +1,14 @@
+{
+  "type": "recipe",
+  "crafter": "stonemason_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:stone_bricks"
+    },
+    {
+      "item": "minecraft:prismarine_shard"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "minecraft:prismarine_bricks"
+}

@@ -163,7 +163,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
     @Override
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return target instanceof EntityCitizen || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
+        return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override

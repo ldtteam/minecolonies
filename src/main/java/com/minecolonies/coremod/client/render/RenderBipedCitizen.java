@@ -11,25 +11,21 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
 
-import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Renderer for the citizens.
@@ -92,7 +88,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        final @Nullable IModelType modelType = IModelTypeRegistry.getInstance().getModelType(citizen.getModelType());
+        final IModelType modelType = IModelTypeRegistry.getInstance().getModelType(citizen.getModelType());
         model = citizen.isFemale() ? modelType.getFemaleModel() : modelType.getMaleModel();
         if (model == null)
         {
@@ -125,30 +121,23 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                double yOffset = model.young ? -0.3 : 0;
-                boolean isSneaking = entityIn.isShiftKeyDown();
-                double height = entityIn.getBbHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
-                double y = height + 0.3 + yOffset;
-
-                final ResourceLocation texture = entityIn.getCitizenDataView().getInteractionIcon();
+                double y = entityIn.getBbHeight() + (model.young ? 0.5f : 0.8f);
 
                 matrixStack.pushPose();
                 matrixStack.translate(0, y, 0);
                 matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-                matrixStack.mulPose(Vector3f.ZP.rotationDegrees(90));
+                //matrixStack.mulPose(Vector3f.ZP.rotationDegrees(90));
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                VertexConsumer r = buffer.getBuffer(RenderTypes.getEntityCutoutFront(texture));
-
                 final Matrix4f pose = matrixStack.last().pose();
-                final Matrix3f norm = matrixStack.last().normal();
-                
-                r.vertex(pose, 0, 0, 0).color(255, 255, 255, 255).uv(0, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                r.vertex(pose, 0, 10, 0).color(255, 255, 255, 255).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                r.vertex(pose, 10, 10, 0).color(255, 255, 255, 255).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                r.vertex(pose, 10, 0, 0).color(255, 255, 255, 255).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                
+
+                VertexConsumer r = buffer.getBuffer(RenderTypes.worldEntityIcon(entityIn.getCitizenDataView().getInteractionIcon()));
+                r.vertex(pose, -5, 0, 0).uv(0, 0).endVertex();
+                r.vertex(pose, -5, 10, 0).uv(0, 1).endVertex();
+                r.vertex(pose, 5, 10, 0).uv(1, 1).endVertex();
+                r.vertex(pose, 5, 0, 0).uv(1, 0).endVertex();
+
                 matrixStack.popPose();
             }
         }

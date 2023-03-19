@@ -47,7 +47,11 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
                         BlockPosUtil.getString(oldHome.getID()))
                       .sendTo(oldHome.getColony()).forAllPlayers();
                 }
-                oldHome.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
+
+                if (oldHome.hasModule(LivingBuildingModule.class))
+                {
+                    oldHome.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
+                }
             }
             citizen.setHomeBuilding(building);
             return true;

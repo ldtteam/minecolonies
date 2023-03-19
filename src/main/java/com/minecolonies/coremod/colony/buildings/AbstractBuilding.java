@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
@@ -64,8 +63,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -76,6 +75,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -94,7 +94,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -199,7 +198,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!");
+        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null! Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString());
     }
 
     @NotNull
@@ -227,7 +226,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 return (T) module;
             }
         }
-        throw new IllegalArgumentException("no matching module");
+        throw new IllegalArgumentException("no matching module for Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString());
     }
 
     @NotNull
@@ -334,7 +333,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onPlacement()
     {
-        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
     }
 
     /**
@@ -426,7 +425,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
-        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
         getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
@@ -924,7 +923,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!", new Exception());
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be! Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString(), new Exception());
                 Log.getLogger().error("Trying to restore order!");
 
                 final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING.get(), getPosition(), colony.getWorld().getBlockState(this.getPosition()));
@@ -940,7 +939,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onUpgradeComplete(final int newLevel)
     {
         cachedRotation = -1;
-        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
@@ -985,7 +984,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         try
         {
-            final WorkOrderBuilding workOrder = WorkOrderBuilding.create(WorkOrderType.BUILD, this);
             final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
             if (blueprint == null)
             {
@@ -996,9 +994,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               = ColonyUtils.calculateCorners(this.getPosition(),
               colony.getWorld(),
               blueprint,
-              workOrder.getRotation(),
-              workOrder.isMirrored());
+              getRotation(),
+              isMirrored());
             this.setCorners(corners.getA(), corners.getB());
+
+            if (te != null)
+            {
+                this.getTileEntity().setSchematicCorners(corners.getA().subtract(getPosition()), corners.getB().subtract(getPosition()));
+            }
         }
         catch (final Exception ex)
         {
@@ -1152,7 +1155,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final BlockEntity entity = colony.getWorld().getBlockEntity(getID());
         if (entity != null)
         {
-            final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            final LazyOptional<IItemHandler> handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
             handler.ifPresent(handlers::add);
         }
 
@@ -1805,7 +1808,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         catch (final Exception ex)
         {
-            Log.getLogger().error("Error during overruling", ex);
+            Log.getLogger().error("Error during overruling at Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString(), ex);
             Log.getLogger().error(target.getId().toString() + " " + target.getState().name() + " " + target.getShortDisplayString().toString());
             return false;
         }
@@ -2012,12 +2015,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Map<ItemStorage, Integer> reservedStacks()
+    public Map<ItemStorage, Integer> reservedStacksExcluding(@NotNull final IRequest<? extends IDeliverable> excluded)
     {
         final Map<ItemStorage, Integer> map = new HashMap<>();
         for (final IHasRequiredItemsModule module : getModules(IHasRequiredItemsModule.class))
         {
-            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacks().entrySet())
+            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacksExcluding(excluded).entrySet())
             {
                 final int current = map.getOrDefault(content.getKey(), 0);
                 map.put(content.getKey(), current + content.getValue());

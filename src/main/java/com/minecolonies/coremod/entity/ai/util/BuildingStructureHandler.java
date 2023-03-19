@@ -38,6 +38,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_PLACED;
 
 /**
  * Represents a build task for the StructureIterator AI.
@@ -213,6 +214,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             for (final ItemStack stack : list)
             {
                 structureAI.reduceNeededResources(stack);
+                structureAI.getWorker().getCitizenColonyHandler().getColony().getStatisticsManager().increment(BLOCKS_PLACED);
             }
         }
 

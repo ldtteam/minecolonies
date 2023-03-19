@@ -13,7 +13,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
@@ -23,15 +26,13 @@ import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessa
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.network.PacketDistributor;
@@ -42,9 +43,10 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_PARTICLE_RANGE;
+import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
-import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -138,7 +140,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 if (building.isInBuilding(worker.blockPosition()))
                 {
-                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                    worker.getNavigation().moveToRandomPos(100, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
                 }
                 else
                 {
@@ -214,6 +216,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             job.finishRequest(false);
             incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
+        }
+        if (currentRecipeStorage.getRequiredTool() != ToolType.NONE)
+        {
+            if (checkForToolOrWeapon(currentRecipeStorage.getRequiredTool()))
+            {
+                currentRecipeStorage = null;
+                job.finishRequest(false);
+                incrementActionsDone(getActionRewardForCraftingSuccess());
+                return START_WORKING;
+            }
         }
 
         currentRequest = currentTask;
@@ -364,9 +376,22 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
         job.setProgress(job.getProgress() + 1);
 
-        worker.setItemInHand(InteractionHand.MAIN_HAND,
-          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
-        worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
+        int toolSlot = -1;
+        if (currentRecipeStorage.getRequiredTool() != ToolType.NONE)
+        {
+            toolSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> ItemStackUtils.isTool(stack, currentRecipeStorage.getRequiredTool()));
+        }
+        if (toolSlot >= 0)
+        {
+            worker.getInventoryCitizen().setHeldItem(InteractionHand.MAIN_HAND, toolSlot);
+            worker.setItemInHand(InteractionHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(toolSlot));
+            worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+        }
+        else
+        {
+            worker.setItemInHand(InteractionHand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+            worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
+        }
         hitBlockWithToolInHand(building.getPosition());
         Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(worker.getMainHandItem(), building.getPosition().above()), worker);
 
@@ -396,6 +421,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 job.setCraftCounter(job.getCraftCounter() + 1);
+                if (toolSlot != -1)
+                {
+                    worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                }
 
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
@@ -414,6 +443,15 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                         worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
                     }
                     return INVENTORY_FULL;
+                }
+                else if (toolSlot >= 0 && worker.getInventoryCitizen().getHeldItem(InteractionHand.MAIN_HAND).isEmpty())
+                {
+                    // tool broke, abort crafting
+                    currentRequest = null;
+                    job.finishRequest(false);
+                    incrementActionsDoneAndDecSaturation();
+                    resetValues();
+                    return START_WORKING;
                 }
                 else
                 {
@@ -471,6 +509,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             // Fallback security blanket. Normally, the craft() method should have dealt with the request.
             if (currentRequest.getState() == RequestState.IN_PROGRESS)
             {
+                worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }

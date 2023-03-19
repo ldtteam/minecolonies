@@ -84,8 +84,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Corners of the building.
      */
-    private BlockPos lowerCorner  = null;
-    private BlockPos higherCorner = null;
+    private BlockPos lowerCorner  = BlockPos.ZERO;
+    private BlockPos higherCorner = BlockPos.ZERO;
 
     /**
      * Cached rotation.
@@ -263,10 +263,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         this.lowerCorner = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
         this.higherCorner = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
-        if (this.getTileEntity() != null && !lowerCorner.equals(higherCorner))
-        {
-            this.getTileEntity().setSchematicCorners(lowerCorner.subtract(getPosition()), higherCorner.subtract(getPosition()));
-        }
     }
 
     @Override
@@ -369,7 +365,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         try
         {
-            final Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
+            Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
+            if (blueprint == null && this.path.endsWith("0.blueprint"))
+            {
+                blueprint = StructurePacks.getBlueprint(this.structurePack, this.path.replace("0.blueprint", "1.blueprint"), true);
+            }
             if (blueprint != null)
             {
                 final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();

@@ -30,6 +30,9 @@
   "minecolonies.config.neighborbuildingrange": "Neighbor Building Range",
   "minecolonies.config.neighborbuildingrange.comment": "How close a building needs to be to another to be considered a neighbor, in blocks. -1 = intersecting, 0 = touching",
 
+  "minecolonies.config.buildgogglerange": "Build Goggles Range",
+  "minecolonies.config.buildgogglerange.comment": "How close (in blocks) you need to be to see work orders while wearing the Build Goggles.",
+
   "minecolonies.config.colonyteamborders": "Show Colony Borders in Team Colors",
   "minecolonies.config.colonyteamborders.comment": "When true, the colony borders shown when holding the build tool will be in the colony's team color. When false, the colony you're inside will be white and any other colony will be red.",
 
@@ -45,6 +48,9 @@
 
   "minecolonies.config.forceloadcolony": "Chunk Load Colony",
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.)",
+
+  "minecolonies.config.loadtime": "Colony chunk loading duration",
+  "minecolonies.config.loadtime.comment": "Set how long chunks stay loaded after player leaves, does not persist through restarts. Default: 10min",
 
   "minecolonies.config.colonyloadstrictness": "Colony Chunk Loading Strictness",
   "minecolonies.config.colonyloadstrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the fewer chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
@@ -173,7 +179,7 @@
   "minecolonies.config.maxbarbariansize": "Max Raider Size",
   "minecolonies.config.maxbarbariansize.comment": "The max size of a raider horde.",
   "minecolonies.config.dobarbariansbreakthroughwalls": "Do Raiders Cross Obstacles",
-  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break, scale, and bridge obstacles.",
+  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break through obstacles",
   "minecolonies.config.shouldraiderbreakdoors": "Do Raiders Break Doors",
   "minecolonies.config.shouldraiderbreakdoors.comment": "Whether or not raiders can break through doors.",
   "minecolonies.config.averagenumberofnightsbetweenraids": "Average Number of Nights Between Raids",
@@ -596,6 +602,7 @@
   "com.minecolonies.coremod.gui.debugscreen.noclosecolony": "No close colony!",
   "com.minecolonies.coremod.gui.debugscreen.nextcolony": "Next colony is %d blocks away (too close to found a new one)!",
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
+  "com.minecolonies.coremod.debug.citizenloadfailure": "Worker %s has been unassigned from their job, a problem was found during load.",
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
 
@@ -702,6 +709,7 @@
   "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your Supply Camp or Ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "Supply Ship",
   "item.minecolonies.supplycampdeployer": "Supply Camp",
+  "item.minecolonies.supply.free": "%s - free",
   "com.minecolonies.coremod.job.guard.toolclickguardtoofar": "Too far away from Guard Tower, please upgrade your Guard Tower to set this spot!",
 
   "item.minecolonies.scepterbeekeeper": "Hive Tool",
@@ -1030,6 +1038,8 @@
   "com.minecolonies.coremod.cook.serve.player": "%s: Here Governor, take this food!",
 
   "item.minecolonies.santa_hat": "Santa Hat",
+  "item.minecolonies.build_goggles": "Builder's Goggles",
+  "item.minecolonies.build_goggles.lore": "They do nothing!",
 
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
@@ -1102,7 +1112,7 @@
   "com.minecolonies.coremod.gui.colony.delete.cancel": "§2Don't delete!",
   "com.minecolonies.coremod.gui.colony.create": "Create new colony",
   "com.minecolonies.coremod.gui.colony.create.notileentity": "Missing tile entity for the Town Hall block, try placing it down again!",
-  "com.minecolonies.coremod.gui.colony.create.failed": "Colony creation failed, try somewhere else!",
+  "com.minecolonies.coremod.gui.colony.create.failed": "Oopsy, just noticed you already got a colony. Please try again!",
   "com.minecolonies.coremod.gui.colony.denied.existing": "§l§4There is an existing colony you own, delete it before creating a new one.",
   "com.minecolonies.coremod.gui.colony.denied.existingandabandon": "§4There is an existing colony you own, delete or abandon it before creating a new one.",
   "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4 Colony %s is too close.",
@@ -1122,8 +1132,7 @@
 
   "com.minecolonies.coremod.job.enchanter": "Enchanter",
   "com.minecolonies.gui.workerhuts.enchanter.workers": "Gather Targets",
-  "com.minecolonies.gui.workerhuts.enchanter.daily": "Daily XP drain",
-  "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can drain experience from so I can work!",
+  "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can study so I can work!",
 
   "com.minecolonies.gui.workerhuts.expeditionlog": "Expedition Log",
   "com.minecolonies.gui.workerhuts.expedition.none": "No expedition",
@@ -1867,7 +1876,7 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+  "com.minecolonies.coremod.gui.townhalltab.stats": "Statistics",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
   "block.minecolonies.blockconstructiontape": "Construction Tape",
@@ -2060,6 +2069,7 @@
   "com.minecolonies.coremod.gui.chat.lindie": "Literally got lost, lol",
   "com.minecolonies.coremod.gui.chat.lion0101": "I will keep you healed!",
   "com.minecolonies.coremod.gui.chat.tobidoes": "I may look scary but I am more of a huggable Bear unless there are Jinchuriki or Spider-Men around but I am also a really good miner. Stick me anywhere, I am here to help Sempai",
+  "com.minecolonies.coremod.gui.chat.nathan": "I am Nathan, I have come here from the Nether to start a new life.",
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",
@@ -2336,9 +2346,38 @@
   "com.minecolonies.building.enchanter.desc": "Creates Enchantments and Scrolls out of Books. As Magical as Magnets!",
   "com.minecolonies.building.composter.desc": "Turns Organic Materials Into Something Useful. Really Stinks To Work Here.",
   "com.minecolonies.building.alchemist.desc": "Either Brews Potions Or Trouble. Witch is It?",
-  "com.minecolonies.building.quarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
+  "com.minecolonies.building.simplequarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
+  "com.minecolonies.building.mediumquarry.desc": "Does a Bigger Hole Mean Getting More or Less? Probably More.",
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
+  "com.minecolonies.coremod.structures.buildingmissing": "The builder had a problem locating this blueprint, please try again.",
+
   "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
-  "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s"
+  "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s",
+  "com.minecolonies.command.gui.browsebuilding.loading": "searching ...",
+
+  "com.minecolonies.coremod.gui.townhall.stats.trees_cut": "Cut Down Trees: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.death": "Citizen Deaths: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.birth": "Citizen Births: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.ores_mined": "Mined Ores: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.blocks_mined": "Mined Blocks: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.blocks_placed": "Placed Blocks: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.mobs_killed": "Killed Mobs: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.items_crafted": "Crafted Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.citizens_healed": "Citzens Healed: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.crops_harvested": "Crops Harvested: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.land_tilled": "Land Tilled: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.fish_caught": "Fish Caught: %d",
+  "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
+  "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
+  "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
+  "com.minecolonies.coremod.gui.interval.alltime": "All Time",
+  "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
+  "com.minecolonies.coremod.gui.townHall.map": "Town Map",
+  "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map.",
+  "com.minecolonies.gui.edit": "Edit",
+  "com.minecolonies.gui.details": "More Details..."
 }

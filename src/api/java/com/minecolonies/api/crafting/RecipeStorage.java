@@ -10,6 +10,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -100,6 +101,11 @@ public class RecipeStorage implements IRecipeStorage
     private final ResourceLocation lootTable;
 
     /**
+     * The tool required to craft this recipe (in addition to any in the recipe itself)
+     */
+    private final IToolType requiredTool;
+
+    /**
      * The hash cache
      */
     private int hash = 0;
@@ -134,8 +140,9 @@ public class RecipeStorage implements IRecipeStorage
      * @param altOutputs    List of alternate outputs for a multi-output recipe
      * @param secOutputs    List of secondary outputs for a recipe. this includes containers, etc. 
      * @param lootTable     Loot table to use for possible alternate outputs
+     * @param requiredTool  the tool needed to craft (in addition to anything in the recipe itself)
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceLocation lootTable)
+    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceLocation lootTable, final IToolType requiredTool)
     {
         this.input = Collections.unmodifiableList(input);
         this.cleanedInput = new ArrayList<>();
@@ -158,6 +165,7 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         this.lootTable = lootTable;
+        this.requiredTool = requiredTool;
         this.tools = new ArrayList<>();
         this.calculateTools();
     }
@@ -376,6 +384,7 @@ public class RecipeStorage implements IRecipeStorage
               || cleanedInput.size() != that.cleanedInput.size()
               || alternateOutputs.size() != that.alternateOutputs.size()
               || secondaryOutputs.size() != that.secondaryOutputs.size()
+              || requiredTool != that.requiredTool
               || tools.size() != that.tools.size()
               || !Objects.equals(this.recipeSource, that.recipeSource)
               || !Objects.equals(this.lootTable, that.lootTable)
@@ -436,6 +445,7 @@ public class RecipeStorage implements IRecipeStorage
             primaryOutput.getCount(),
             intermediate,
             gridSize,
+            requiredTool,
             hashableItemStackList(alternateOutputs),
             hashableItemStackList(secondaryOutputs),
             hashableItemStackList(tools));
@@ -660,7 +670,8 @@ public class RecipeStorage implements IRecipeStorage
             ModRecipeTypes.CLASSIC_ID,
             null,                   // alternate outputs
             this.secondaryOutputs,  // secondary output
-            this.lootTable          // loot table
+            this.lootTable,         // loot table
+            this.requiredTool
             );
 
     }
@@ -717,6 +728,13 @@ public class RecipeStorage implements IRecipeStorage
     public ResourceLocation getLootTable()
     {
         return lootTable;
+    }
+
+    @NotNull
+    @Override
+    public IToolType getRequiredTool()
+    {
+        return this.requiredTool;
     }
 
     @NotNull

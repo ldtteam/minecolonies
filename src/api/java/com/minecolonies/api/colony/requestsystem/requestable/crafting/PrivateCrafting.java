@@ -48,7 +48,8 @@ public class PrivateCrafting extends AbstractCrafting
         compound.put(NBT_STACK, input.getStack().serializeNBT());
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MIN_COUNT, input.getMinCount());
-        StandardFactoryController.getInstance().serialize(input.getRecipeID());
+        final CompoundTag tokenCompound = StandardFactoryController.getInstance().serialize(input.getRecipeID());
+        compound.put(NBT_TOKEN, tokenCompound);
 
         return compound;
     }
@@ -65,8 +66,15 @@ public class PrivateCrafting extends AbstractCrafting
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
         final int minCount = compound.getInt(NBT_MIN_COUNT);
-        final IToken<?> token = StandardFactoryController.getInstance().deserialize(compound);
-
+        IToken<?> token = null;
+        if (compound.contains(NBT_TOKEN))
+        {
+            token = StandardFactoryController.getInstance().deserialize(compound.getCompound(NBT_TOKEN));
+        }
+        else
+        {
+            throw new IllegalArgumentException("Old Data - Missing Token!");
+        }
         return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount, token);
     }
 

@@ -118,6 +118,7 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe1(consumer, ModBlocks.blockHutTavern, Items.BARREL);
         registerHutRecipe1(consumer, ModBlocks.blockHutTownHall, buildTool.get());
         registerHutRecipe1(consumer, ModBlocks.blockHutWareHouse, Tags.Items.CHESTS);
+        registerHutRecipe1(consumer, ModBlocks.blockHutNetherWorker, Items.OBSIDIAN);
         registerHutRecipe1(consumer, ModBlocks.blockHutAlchemist, Items.BREWING_STAND);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockHutCrusher)
@@ -240,6 +241,12 @@ public class DefaultRecipeProvider extends RecipeProvider
         return append(ForgeRegistries.ITEMS.getKey(item.asItem()), "", text);
     }
 
+    /**
+     * Standard hut block recipe pattern, using build tool and one unique item surrounded by planks.
+     * @param consumer the recipe consumer.
+     * @param output   the resulting hut block.
+     * @param input    the unique input item.
+     */
     private static void registerHutRecipe1(@NotNull final Consumer<FinishedRecipe> consumer,
                                            @NotNull final ItemLike output,
                                            @NotNull final ItemLike input)
@@ -255,6 +262,12 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer);
     }
 
+    /**
+     * Standard hut block recipe pattern, using build tool and one unique tag surrounded by planks.
+     * @param consumer the recipe consumer.
+     * @param output   the resulting hut block.
+     * @param input    the unique input tag.
+     */
     private static void registerHutRecipe1(@NotNull final Consumer<FinishedRecipe> consumer,
                                            @NotNull final ItemLike output,
                                            @NotNull final TagKey<Item> input)
@@ -272,6 +285,13 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer);
     }
 
+    /**
+     * Cheap hut block recipe pattern, using build tool and one unique item surrounded by planks.
+     * @param consumer the recipe consumer.
+     * @param output   the resulting hut block (produces 2).
+     * @param input    the unique input item.
+     * @param name     additional suffix for recipe name to avoid colliding with {@link #registerHutRecipe1}.
+     */
     private static void registerHutRecipe1x2(@NotNull final Consumer<FinishedRecipe> consumer,
                                              @NotNull final ItemLike output,
                                              @NotNull final ItemLike input,
@@ -288,6 +308,12 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer, append(output, name));
     }
 
+    /**
+     * Expensive hut block recipe pattern, using build tool and one unique item (thrice) surrounded by planks.
+     * @param consumer the recipe consumer.
+     * @param output   the resulting hut block.
+     * @param input    the unique input item (used three times).
+     */
     private static void registerHutRecipe3(@NotNull final Consumer<FinishedRecipe> consumer,
                                            @NotNull final ItemLike output,
                                            @NotNull final ItemLike input)
@@ -490,6 +516,18 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .pattern("XPX")
                 .define('X', Items.STICK)
                 .define('P', Items.LEATHER)
+                .define('T', buildTool.get())
+                .unlockedBy("has_build_tool", has(buildTool.get()))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.buildGoggles)
+                .pattern("NIN")
+                .pattern("GTG")
+                .pattern("L L")
+                .define('N', Items.GOLD_NUGGET)
+                .define('I', Items.IRON_INGOT)
+                .define('G', Items.GLASS_PANE)
+                .define('L', Items.LEATHER)
                 .define('T', buildTool.get())
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);

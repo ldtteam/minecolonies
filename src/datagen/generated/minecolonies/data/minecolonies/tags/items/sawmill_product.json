@@ -1,6 +1,7 @@
 {
   "values": [
     "minecolonies:barrel_block",
-    "minecolonies:blockhutcrusher"
+    "minecolonies:blockhutcrusher",
+    "#minecraft:chest_boats"
   ]
 }

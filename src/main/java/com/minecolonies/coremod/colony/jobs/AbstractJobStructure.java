@@ -6,6 +6,7 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -155,7 +156,14 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                                 tagData.putString(TAG_NAME, location);
                                 tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
 
-                                ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
+                                try
+                                {
+                                    ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
+                                }
+                                catch (final Exception e)
+                                {
+                                    Log.getLogger().warn("Broken deco-controller at: " + x + " " + y + " " + z);
+                                }
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();
                             }

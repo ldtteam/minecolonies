@@ -43,6 +43,7 @@ import java.util.List;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
+import static com.minecolonies.api.util.constant.StatisticsConstants.MOBS_KILLED;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
 
@@ -348,5 +349,6 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     {
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+        user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED);
     }
 }

@@ -2,6 +2,7 @@
   "values": [
     "#minecolonies:storage_blocks",
     "#minecraft:rails",
+    "#minecraft:buttons",
     "#minecraft:wooden_pressure_plates",
     "minecraft:heavy_weighted_pressure_plate",
     "minecraft:light_weighted_pressure_plate",

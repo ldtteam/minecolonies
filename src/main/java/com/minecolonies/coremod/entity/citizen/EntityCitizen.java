@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
@@ -61,7 +60,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -84,12 +82,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,11 +106,10 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.DEATH;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 /**
  * The Class used to represent the citizen entities.
@@ -235,6 +234,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private final ThreatTable threatTable         = new ThreatTable<>(this);
     private       int         interactionCooldown = 0;
+
+    /**
+     * Cache the entire team object.
+     */
+    private Team cachedTeam;
 
     /**
      * The entities states
@@ -762,7 +766,22 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             lastChunk = currentChunk;
             EventHandler.onEnteringChunkEntity(this, currentChunk);
         }
+
+        if (!this.getEyeInFluidType().isAir() && !this.level.getBlockState(new BlockPos(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN))
+        {
+            this.moveTo(this.position().add(random.nextBoolean() ? 1 : 0, 0, random.nextBoolean() ? 1 : 0));
+        }
         return false;
+    }
+
+    @Override
+    public int getMaxAirSupply()
+    {
+        if (getCitizenColonyHandler() != null && getCitizenColonyHandler().getColony() != null && getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
+        {
+            return super.getMaxAirSupply() * 2;
+        }
+        return super.getMaxAirSupply();
     }
 
     /**
@@ -774,9 +793,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         final ItemStack hat = getItemBySlot(EquipmentSlot.HEAD);
         if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
-              && MineColonies.getConfig().getServer().holidayFeatures.get()
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent)
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobNetherWorker))
+              && MineColonies.getConfig().getServer().holidayFeatures.get())
         {
             if (hat.isEmpty())
             {
@@ -1579,24 +1596,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void move(final MoverType typeIn, final Vec3 pos)
-    {
-        //todo someaddons: remove this on the minimum AI rework.
-        if (pos.x != 0 || pos.z != 0)
-        {
-            if (getCitizenData() != null && getCitizenData().isAsleep())
-            {
-                getCitizenSleepHandler().onWakeUp();
-            }
-            else if (getPose() == Pose.SLEEPING)
-            {
-                updatePose(Pose.STANDING);
-            }
-        }
-        super.move(typeIn, pos);
-    }
-
-    @Override
     public float getSpeed()
     {
         return (float) Math.min(MAX_SPEED_FACTOR, super.getSpeed());
@@ -1796,6 +1795,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
+            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH);
 
             if (!isInvisible())
             {
@@ -1886,7 +1886,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (capability == ForgeCapabilities.ITEM_HANDLER)
         {
             final ICitizenData data = getCitizenData();
             if (data == null)
@@ -1937,12 +1937,21 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return null;
         }
 
-        if (level.isClientSide)
+        if (cachedTeam != null)
         {
-            return level.getScoreboard().getPlayerTeam(this.cachedTeamName);
+            return cachedTeam;
         }
 
-        return level.getScoreboard().getPlayerTeam(getScoreboardName());
+        if (level.isClientSide)
+        {
+            cachedTeam = level.getScoreboard().getPlayerTeam(this.cachedTeamName);
+        }
+        else
+        {
+            cachedTeam = level.getScoreboard().getPlayerTeam(getScoreboardName());
+        }
+
+        return cachedTeam;
     }
 
     @Override
@@ -2064,16 +2073,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setTexture()
     {
         super.setTexture();
-    }
-
-    /**
-     * Setter for the citizen pose.
-     *
-     * @param pose the pose to set.
-     */
-    public void updatePose(final Pose pose)
-    {
-        setPose(pose);
     }
 
     @Override

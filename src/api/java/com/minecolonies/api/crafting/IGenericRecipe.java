@@ -1,6 +1,7 @@
 package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.OptionalPredicate;
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -117,6 +118,14 @@ public interface IGenericRecipe
      */
     @Nullable
     ResourceLocation getLootTable();
+
+    /**
+     * Gets the tool required for this craft, if any.
+     *
+     * @return The required tool.
+     */
+    @NotNull
+    IToolType getRequiredTool();
 
     /**
      * Gets some human-readable restrictions on when this recipe is valid.

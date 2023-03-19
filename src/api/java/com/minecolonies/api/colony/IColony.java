@@ -464,5 +464,18 @@ public interface IColony
      */
     CitizenNameFile getCitizenNameFile();
 
+    /**
+     * Get the statistics manager of the colony.
+     *
+     * @return the statistics manager.
+     */
+    IStatisticsManager getStatisticsManager();
+
+    /**
+     * Get the current day of the colony.
+     * @return the current day progress of the colony.
+     */
+    int getDay();
+
     EventBus getColonyBus();
 }

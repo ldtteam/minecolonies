@@ -1,0 +1,18 @@
+{
+  "type": "recipe",
+  "count": 4,
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "count": 8,
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 5,
+  "result": "minecolonies:golden_bread",
+  "show-tooltip": true
+}

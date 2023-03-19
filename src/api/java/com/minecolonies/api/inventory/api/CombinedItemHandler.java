@@ -108,7 +108,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     @Override
     public void deserializeNBT(final CompoundTag nbt)
     {
-        final ListTag handlerList = nbt.getList(NBT_KEY_NAME, Tag.TAG_COMPOUND);
+        final ListTag handlerList = nbt.getList(NBT_KEY_HANDLERS, Tag.TAG_COMPOUND);
         final ListTag indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Tag.TAG_INT);
 
         if (handlerList.size() == handlers.length)

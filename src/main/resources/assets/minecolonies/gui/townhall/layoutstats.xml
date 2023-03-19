@@ -1,0 +1,19 @@
+<window size="524 243" pause="false" lightbox="false">
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
+    <view size="200 243" pos="90 0">
+        <dropdown id="intervals"
+              size="129 17"
+              pos="20 65"
+              maxContentHeight="75"
+              dropDownSize="140 75"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+              textcolor="black">
+            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"
+                     label="$(com.minecolonies.coremod.gui.interval.yesterday)"/>
+        </dropdown>
+        <list id="stats" size="160 145" pos="20 80">
+           <label id="desc" size="160 13" pos="0 0" color="black"> </label>
+        </list>
+    </view>
+    <view size="200 243" id="happinesspage" pos="280 0"/>
+</window>

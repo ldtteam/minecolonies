@@ -30,22 +30,22 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessH
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenMournHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +61,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.DEBUG_WARNING_CITIZEN_LOAD_FAILURE;
 
 /**
  * Extra data for Citizens.
@@ -448,6 +449,35 @@ public class CitizenData implements ICitizenData
         citizen.getEntityData().set(DATA_BED_POS, getBedPos());
         citizen.getEntityData().set(DATA_JOB, getJob() == null ? "" : getJob().getJobRegistryEntry().getKey().toString());
         citizen.getEntityData().set(DATA_STYLE, colony.getTextureStyleId());
+
+        // Safety check that ensure the citizen its job matches the work building job
+        if (getJob() != null && workBuilding != null)
+        {
+            boolean hasCorrectJob = false;
+            for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
+            {
+                if (module.getJobEntry().equals(getJob().getJobRegistryEntry()))
+                {
+                    hasCorrectJob = true;
+                    break;
+                }
+            }
+
+            if (!hasCorrectJob)
+            {
+                MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony).forAllPlayers();
+                Log.getLogger().log(Level.ERROR, String.format("Worker %s has been unassigned from his job, a problem was found during load. Worker job: %s; Building: %s",
+                  citizen.getName().getString(),
+                  getJob().getJobRegistryEntry().getKey().toString(),
+                  workBuilding.getBuildingType().getRegistryName().toString()));
+
+                // Remove the citizen from the building to prevent failures in the future.
+                for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
+                {
+                    module.removeCitizen(this);
+                }
+            }
+        }
 
         citizen.getCitizenExperienceHandler().updateLevel();
 

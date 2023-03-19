@@ -54,6 +54,11 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
+        if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN))
+        {
+            return SurfaceType.WALKABLE;
+        }
+
         final VoxelShape shape = blockState.getShape(world, pos);
         if (shape.max(Direction.Axis.Y) > 1.0)
         {

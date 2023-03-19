@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -18,14 +19,16 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,8 +37,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISleep.SleepState.*;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI to send Entity to sleep.
@@ -97,10 +98,7 @@ public class EntityAISleep extends Goal
         this.citizen = citizen;
         // 100 blocks - 30 seconds - straight line
         stateMachine = new TickRateStateMachine<>(SleepState.AWAKE, e -> Log.getLogger().warn(e));
-        stateMachine.addTransition(new TickingTransition<>(AWAKE, this::wantSleep, () -> {
-            initAI();
-            return WALKING_HOME;
-        }, 20));
+        stateMachine.addTransition(new TickingTransition<>(AWAKE, () -> true, this::checkSleep, 20));
 
         stateMachine.addTransition(new TickingTransition<>(WALKING_HOME, () -> true, this::walkHome, 30));
         stateMachine.addTransition(new TickingTransition<>(FIND_BED, () -> !wantSleep(), () -> {
@@ -114,6 +112,31 @@ public class EntityAISleep extends Goal
             return AWAKE;
         }, 20));
         stateMachine.addTransition(new TickingTransition<>(SLEEPING, () -> true, this::sleep, TICK_INTERVAL));
+    }
+
+    /**
+     * Checks for sleep
+     * @return
+     */
+    private SleepState checkSleep()
+    {
+        if (wantSleep())
+        {
+            initAI();
+            return WALKING_HOME;
+        }
+
+        if (citizen.getCitizenSleepHandler().isAsleep())
+        {
+            citizen.getCitizenSleepHandler().onWakeUp();
+        }
+
+        if (citizen.getPose() == Pose.SLEEPING)
+        {
+            citizen.setPose(Pose.STANDING);
+        }
+
+        return AWAKE;
     }
 
     /**
@@ -240,7 +263,8 @@ public class EntityAISleep extends Goal
                               && !state.getValue(BedBlock.OCCUPIED)
                               && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                               && !isBedOccupied(hut, pos)
-                              && (above.is(BlockTags.BEDS) || !above.getMaterial().isSolid()))
+                              && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.getMaterial()
+                          .isSolid()))
                         {
                             usedBed = pos;
                             setBedOccupied(true);
@@ -270,6 +294,11 @@ public class EntityAISleep extends Goal
      */
     private SleepState sleep()
     {
+        if (usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
+        {
+            return WALKING_HOME;
+        }
+
         Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()), citizen);
         //TODO make sleeping noises here.
         return null;
@@ -281,7 +310,10 @@ public class EntityAISleep extends Goal
     private void goHome()
     {
         final BlockPos pos = citizen.getCitizenSleepHandler().findHomePos();
-        citizen.isWorkerAtSiteWithMove(pos, 2);
+        if (!citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getPose() == Pose.SLEEPING)
+        {
+            citizen.setPose(Pose.STANDING);
+        }
 
         final int chance = citizen.getRandom().nextInt(CHANCE);
         if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null)

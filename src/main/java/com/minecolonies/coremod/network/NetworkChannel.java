@@ -220,6 +220,7 @@ public class NetworkChannel
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
         registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
         registerMessage(++idx, OpenDecoWindowMessage.class, OpenDecoWindowMessage::new);
+        registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);
@@ -237,6 +238,8 @@ public class NetworkChannel
 
         // Crafter Recipe-related messages
         registerMessage(++idx, CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
+
+        registerMessage(++idx, ColonyListMessage.class, ColonyListMessage::new);
 
         // Resource scroll NBT share message
         registerMessage(++idx, ResourceScrollSaveWarehouseSnapshotMessage.class, ResourceScrollSaveWarehouseSnapshotMessage::new);

@@ -17,6 +17,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 
@@ -70,7 +71,7 @@ public class BuildingConcreteMixer extends AbstractBuilding
     @Override
     public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
     {
-        if (!blockState.getFluidState().isEmpty())
+        if (!blockState.getFluidState().isEmpty() && (blockState.isAir() || blockState.getBlock() == Blocks.WATER))
         {
             if (blockState.getFluidState().getType() == Fluids.FLOWING_WATER && blockState.getFluidState().getAmount() <= WATER_DEPTH_SUPPORT)
             {
