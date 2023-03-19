@@ -73,7 +73,7 @@
   "item.minecolonies.scepterlumberjack": "Forest Tool",
   "item.minecolonies.scepterlumberjack.usedend": "Position A set. Select Position B with a right-click or left-click the same position to finish.",
   "item.minecolonies.scepterlumberjack.usedstart": "Position B set. Select Position A with a left-click or right-click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An volume of %d blocks is too large. The maximum restricted volume for the Forester is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictiontoobig": "A volume of %d blocks is too large. The maximum restricted volume for the Forester is %d blocks.",
   "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted volume set (x: %d to %d, y: %d to %d, z: %d to %d, volume: %d blocks). The max size is %d blocks.",
 
   "minecolonies.config.maxtreesize": "Max Tree Size",
