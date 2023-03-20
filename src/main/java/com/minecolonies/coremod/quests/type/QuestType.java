@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.quests.IQuest;
 import com.minecolonies.coremod.quests.Quest;
-import com.minecolonies.coremod.quests.type.effects.IQuestEffect;
-import com.minecolonies.coremod.quests.type.effects.SetWorkerIdleEffect;
-import com.minecolonies.coremod.quests.type.effects.TrackTreeChoppingEffect;
+import com.minecolonies.coremod.quests.type.sideeffects.IQuestSideEffect;
+import com.minecolonies.coremod.quests.type.sideeffects.WorkerIdleSideEffect;
+import com.minecolonies.coremod.quests.type.objectives.MineBlockObjective;
 import com.minecolonies.coremod.quests.type.rewards.IQuestReward;
 import com.minecolonies.coremod.quests.type.rewards.ItemStackQuestReward;
 import com.minecolonies.coremod.quests.type.triggers.BuildingUpgradeTrigger;
@@ -34,8 +34,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class QuestType implements IQuestType
 {
     // Registry placeholders, move to forge registry
-    public static final Map<ResourceLocation, BiFunction<JsonObject, IQuest, IQuestEffect>> effectRegistry  = new HashMap<>();
-    public static final Map<ResourceLocation, Function<JsonObject, IQuestTrigger>>          triggerRegistry = new HashMap<>();
+    public static final Map<ResourceLocation, BiFunction<JsonObject, IQuest, IQuestSideEffect>> effectRegistry  = new HashMap<>();
+    public static final Map<ResourceLocation, Function<JsonObject, IQuestTrigger>>              triggerRegistry = new HashMap<>();
     public static final Map<ResourceLocation, Function<JsonObject, IQuestReward>>           rewardRegistry  = new HashMap<>();
 
     /**
@@ -65,8 +65,8 @@ public class QuestType implements IQuestType
     public QuestType(final ResourceLocation questID)
     {
         this.typeID = questID;
-        effectRegistry.put(SetWorkerIdleEffect.ID, (json, quest) -> new SetWorkerIdleEffect(quest));
-        effectRegistry.put(TrackTreeChoppingEffect.ID, (json, quest) -> new TrackTreeChoppingEffect(quest));
+        effectRegistry.put(WorkerIdleSideEffect.ID, (json, quest) -> new WorkerIdleSideEffect(quest));
+        effectRegistry.put(MineBlockObjective.ID, (json, quest) -> new MineBlockObjective(quest));
         triggerRegistry.put(BuildingUpgradeTrigger.ID, json -> new BuildingUpgradeTrigger(this));
         triggerRegistry.put(RandomAppearanceTrigger.ID, json -> new RandomAppearanceTrigger(this));
         rewardRegistry.put(ItemStackQuestReward.ID, json -> new ItemStackQuestReward(this));
@@ -79,11 +79,11 @@ public class QuestType implements IQuestType
     }
 
     @Override
-    public List<IQuestEffect> createEffectsFor(final Quest quest)
+    public List<IQuestSideEffect> createEffectsFor(final Quest quest)
     {
         // Generate new object from resloc
         //return effects;
-        List<IQuestEffect> effects = new ArrayList<>();
+        List<IQuestSideEffect> effects = new ArrayList<>();
         for (final Map.Entry<ResourceLocation, JsonObject> entry : effectData.entrySet())
         {
             effects.add(effectRegistry.get(entry.getKey()).apply(entry.getValue(), quest));

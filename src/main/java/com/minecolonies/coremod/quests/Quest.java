@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.quests;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IQuestGiver;
 import com.minecolonies.coremod.quests.type.IQuestType;
-import com.minecolonies.coremod.quests.type.effects.IQuestEffect;
+import com.minecolonies.coremod.quests.type.sideeffects.IQuestSideEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +24,7 @@ public class Quest implements IQuest
     /**
      * Current effects
      */
-    private final List<IQuestEffect> activeEffects = new ArrayList<>();
+    private final List<IQuestSideEffect> activeEffects = new ArrayList<>();
 
     /**
      * Colony reference
@@ -34,14 +34,17 @@ public class Quest implements IQuest
     /**
      * The giver of this quest
      */
-    private final IQuestGiver questGiver;
+    private final ICitizenData questGiver;
 
     /**
      * The id of this quest
      */
     private int questID;
 
-    protected Quest(final int questID, final IQuestType type, final IColony colony, final IQuestGiver questGiver)
+    // We want two different things. a) A global "quest holder" kind of thing that has all the fields that we read from the json (e.g. the necessary triggers, side effects, etc)
+    // and b) A local ColonyQuest that has the state like the quest giver + a reference to the global quest to query the other things.
+
+    protected Quest(final int questID, final IQuestType type, final IColony colony, final ICitizenData questGiver)
     {
         this.type = type;
         this.colony = colony;
@@ -50,9 +53,9 @@ public class Quest implements IQuest
     }
 
     @Override
-    public void onEffectComplete(final IQuestEffect effect)
+    public void onEffectComplete(final IQuestSideEffect effect)
     {
-
+        // do tracking and rewards last
     }
 
     @Override
@@ -62,7 +65,7 @@ public class Quest implements IQuest
     }
 
     @Override
-    public IQuestGiver getQuestGiver()
+    public ICitizenData getQuestGiver()
     {
         return questGiver;
     }
@@ -80,7 +83,7 @@ public class Quest implements IQuest
         compoundNBT.putInt("id", questID);
         compoundNBT.putString("type", type.getID().toString());
         final ListTag listNBT = new ListTag();
-        for (final IQuestEffect effect : activeEffects)
+        for (final IQuestSideEffect effect : activeEffects)
         {
             final CompoundTag compoundNBT1 = new CompoundTag();
             compoundNBT.putString("", effect.getID().toString());

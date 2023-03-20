@@ -476,6 +476,4 @@ public interface IColony
      * @return the current day progress of the colony.
      */
     int getDay();
-
-    EventBus getColonyBus();
 }

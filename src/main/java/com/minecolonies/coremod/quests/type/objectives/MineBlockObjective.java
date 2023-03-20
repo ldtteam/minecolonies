@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.quests.type.effects;
+package com.minecolonies.coremod.quests.type.objectives;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class TrackTreeChoppingEffect implements ITrackBlockBreakEffect
+public class MineBlockObjective implements IMineBlockObjective
 {
     /**
      * ID for this special blockbreak effect
@@ -46,7 +46,7 @@ public class TrackTreeChoppingEffect implements ITrackBlockBreakEffect
      */
     private BlockPos lastTreePos = BlockPos.ZERO;
 
-    public TrackTreeChoppingEffect(final IQuest quest)
+    public MineBlockObjective(final IQuest quest)
     {
         this.quest = quest;
     }
@@ -104,7 +104,7 @@ public class TrackTreeChoppingEffect implements ITrackBlockBreakEffect
      */
     public CompoundTag serializeNBT()
     {
-        final CompoundTag nbt = ITrackBlockBreakEffect.super.serializeNBT();
+        final CompoundTag nbt = IMineBlockObjective.super.serializeNBT();
         BlockPosUtil.write(nbt, "pos,", lastTreePos);
         return nbt;
     }
@@ -117,7 +117,7 @@ public class TrackTreeChoppingEffect implements ITrackBlockBreakEffect
     public void deserializeNBT(final CompoundTag nbt)
     {
         lastTreePos = BlockPosUtil.read(nbt, "pos");
-        ITrackBlockBreakEffect.super.deserializeNBT(nbt);
+        IMineBlockObjective.super.deserializeNBT(nbt);
     }
 
     /**

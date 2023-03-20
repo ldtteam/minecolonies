@@ -1,11 +1,11 @@
-package com.minecolonies.coremod.quests.type.effects;
+package com.minecolonies.coremod.quests.type.objectives;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
-public interface ITrackBlockBreakEffect extends IQuestObjective
+public interface IMineBlockObjective extends IQuestObjective
 {
     /**
      * Callback for blockbreak event

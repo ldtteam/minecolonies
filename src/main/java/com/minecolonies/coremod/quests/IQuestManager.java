@@ -4,17 +4,23 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * Manager of quest types, quest trigger and running instances
+ * Interface of the Quest manager of each colony.
  */
 public interface IQuestManager extends INBTSerializable<CompoundTag>
 {
-    boolean acceptQuest(final int questID, final Player player);
+    /**
+     * All quests that exist.
+     */
+   Map<UUID, IQuest> GLOBAL_SERVER_QUESTS = new HashMap<>();
 
-    List<IQuest> getQuestsForUUID(UUID userID);
-
+    /**
+     * On each colony tick.
+     */
     void onColonyTick();
 }

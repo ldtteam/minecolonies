@@ -1,23 +1,23 @@
-package com.minecolonies.coremod.quests.type.effects;
+package com.minecolonies.coremod.quests.type.sideeffects;
 
 import com.minecolonies.api.colony.ICitizenData;
 
 /**
  * Citizen related quest effect
  */
-public interface ICitizenQuestEffect extends IQuestEffect
+public interface ICitizenQuestSideEffect extends IQuestSideEffect
 {
     /**
      * Gets the citizen data
      *
-     * @return
+     * @return the affected citizen.
      */
     ICitizenData getCitizenData();
 
     /**
      * Applies the effect to the given citizen
      *
-     * @param data
+     * @param data the citizen to apply it to.
      */
     void applyToCitizen(final ICitizenData data);
 }

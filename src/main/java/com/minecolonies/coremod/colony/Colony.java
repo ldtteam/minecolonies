@@ -1,12 +1,9 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.busevents.ColonyStateEvent;
-import com.minecolonies.api.colony.busevents.ColonyTickEvent;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -337,11 +334,6 @@ public class Colony implements IColony
     private String nameStyle = "default";
 
     /**
-     * The colony's event bus
-     */
-    private final EventBus colonyBus = new EventBus(MOD_ID);
-
-    /**
      * Current day of the colony.
      */
     private int day = 0;
@@ -361,7 +353,7 @@ public class Colony implements IColony
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
         researchManager = new ResearchManager(this);
-        questManager = new QuestManager(this, colonyBus);
+        questManager = new QuestManager(this);
     }
 
     /**
@@ -372,7 +364,7 @@ public class Colony implements IColony
      */
     protected Colony(final int id, @Nullable final Level world)
     {
-        questManager = new QuestManager(this, colonyBus);
+        questManager = new QuestManager(this);
         this.id = id;
         if (world != null)
         {
@@ -405,27 +397,6 @@ public class Colony implements IColony
      * @return the new colony state.
      */
     private ColonyState updateState()
-    {
-        final ColonyState state = calculateColonyState();
-
-        if (getState() == ACTIVE && state != ACTIVE)
-        {
-            colonyBus.post(new ColonyStateEvent(this, false));
-        }
-        else if (getState() != ACTIVE && state == ACTIVE)
-        {
-            colonyBus.post(new ColonyStateEvent(this, true));
-        }
-
-        return state;
-    }
-
-    /**
-     * Calculates the state the colony is in
-     *
-     * @return state
-     */
-    private ColonyState calculateColonyState()
     {
         if (world == null)
         {
@@ -490,8 +461,6 @@ public class Colony implements IColony
         workManager.onColonyTick(this);
         reproductionManager.onColonyTick(this);
         questManager.onColonyTick();
-
-        getColonyBus().post(new ColonyTickEvent(this));
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)
@@ -1972,12 +1941,6 @@ public class Colony implements IColony
     public boolean isTicketedChunksDirty()
     {
         return ticketedChunksDirty;
-    }
-
-    @Override
-    public EventBus getColonyBus()
-    {
-        return colonyBus;
     }
 
     @Override

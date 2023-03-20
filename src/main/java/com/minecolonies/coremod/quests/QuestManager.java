@@ -1,157 +1,98 @@
 package com.minecolonies.coremod.quests;
 
-import com.google.common.eventbus.EventBus;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IQuestGiver;
-import com.minecolonies.api.colony.busevents.IColonyStateEvent;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.jobs.JobLumberjack;
-import com.minecolonies.coremod.quests.type.IQuestType;
-import com.minecolonies.coremod.quests.type.QuestType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.*;
 
+/**
+ * Quest manager of each colony.
+ */
 public class QuestManager implements IQuestManager
 {
     /**
-     * All accepted quests
+     * All quests that have been unlocked.
      */
-    private static final Map<UUID, List<IQuest>> globalRunningQuests = new HashMap<>();
+    private final Map<UUID, IQuest> availableQuests = new HashMap<>();
 
     /**
-     * All available quest types
+     * All quests that have been finished.
      */
-    private static final Map<ResourceLocation, IQuestType> questTypes = new HashMap<>();
+    private final List<UUID> finishedQuests = new ArrayList<>();
 
     /**
-     * Quests of this colony
+     * All quests in progress.
      */
-    private final List<IQuest> colonyQuests = new ArrayList<>();
+    private final Map<UUID, IQuest> inProgressQuests = new HashMap<>();
 
     /**
      * This manager's colony
      */
     private final IColony colony;
 
-    /**
-     * Quest id giver
-     */
-    private static int nextQuestID = 1;
-
-    public QuestManager(final IColony colony, final EventBus colonybus)
+    public QuestManager(final IColony colony)
     {
-        colonybus.register(this);
         this.colony = colony;
     }
 
-    @SubscribeEvent
-    public void onColonyStateChange(final IColonyStateEvent event)
-    {
-        if (event.isColonyActive())
-        {
-
-        }
-        else
-        {
-
-        }
-    }
-
     /**
-     * Registers a new quest type
-     *
-     * @param type type to add
+     * Have player attempt to accept a colony quest.
+     * @param questID the unique id of the quest.
+     * @param player the player trying to accept it.
+     * @return true if successful.
      */
-    public static void addAvailableQuestType(final IQuestType type)
+    public boolean attemptAcceptQuest(final UUID questID, final Player player)
     {
-        if (questTypes.containsKey(type.getID()))
-        {
-            Log.getLogger().error("Duplicated quest type id for " + type.getID());
-        }
-
-        questTypes.put(type.getID(), type);
-    }
-
-    /**
-     * Registers a new quest type
-     *
-     * @param type type to add
-     */
-    public static void removeAvailableQuestType(final IQuestType type)
-    {
-        if (questTypes.containsKey(type.getID()))
-        {
-            Log.getLogger().error("No quest type id for " + type.getID());
-            return;
-        }
-
-        questTypes.remove(type.getID());
-    }
-
-    /**
-     * Get a quest type by id
-     *
-     * @param id id to check
-     * @return quest type
-     */
-    public static IQuestType getTypeByID(final ResourceLocation id)
-    {
-        return questTypes.get(id);
-    }
-
-    @Override
-    public boolean acceptQuest(final int questID, final Player player)
-    {
-        final IQuest quest = colonyQuests.get(questID);
-        if (quest == null)
+        final IQuest quest = GLOBAL_SERVER_QUESTS.get(questID);
+        if (quest == null || !quest.isValid(colony))
         {
             return false;
         }
 
-        quest.onStart(player);
-
+        quest.onStart(player, colony);
         return true;
     }
 
-    @Override
-    public List<IQuest> getQuestsForUUID(final UUID userID)
+    /**
+     * Conclude a given quest. This is called FROM the quest, to the colony.
+     * @param questId the unique id of the quest.
+     */
+    public void concludeQuest(final UUID questId)
     {
-        return globalRunningQuests.get(userID);
+        if (inProgressQuests.containsKey(questId))
+        {
+            inProgressQuests.remove(questId);
+            finishedQuests.add(questId);
+        }
     }
 
     @Override
     public void onColonyTick()
     {
-        if (colonyQuests.isEmpty())
+        for (final Map.Entry<UUID, IQuest> quest : GLOBAL_SERVER_QUESTS.entrySet())
         {
-            for (final ICitizenData citizenData : colony.getCitizenManager().getCitizens())
+            if (quest.getValue().canStart(colony.getColonyTag()))
             {
-                if (citizenData.getJob() instanceof JobLumberjack)
-                {
-                    createNewQuest(null, citizenData);
-                    break;
-                }
+                availableQuests.put(quest.getKey(), quest.getValue());
             }
         }
-    }
 
-    /**
-     * Creates a new quest for the given type
-     *
-     * @param typeID
-     * @param questGiver
-     * @return
-     */
-    public IQuest createNewQuest(final ResourceLocation typeID, final IQuestGiver questGiver)
-    {
-        final IQuest quest = new Quest(nextQuestID++, new QuestType(null), colony, questGiver);
-        colonyQuests.add(quest);
-        return quest;
+        for (final Map.Entry<UUID, IQuest> quest : new ArrayList<>(availableQuests.entrySet()))
+        {
+            if (!quest.getValue().isValid(colony))
+            {
+                availableQuests.remove(quest.getKey());
+            }
+        }
+
+        for (final Map.Entry<UUID, IQuest> quest : new ArrayList<>(inProgressQuests.entrySet()))
+        {
+            if (!quest.getValue().isValid(colony))
+            {
+                availableQuests.remove(quest.getKey());
+            }
+        }
     }
 
     @Override

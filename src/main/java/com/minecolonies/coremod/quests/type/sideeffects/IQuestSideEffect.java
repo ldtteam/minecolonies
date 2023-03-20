@@ -1,10 +1,10 @@
-package com.minecolonies.coremod.quests.type.effects;
+package com.minecolonies.coremod.quests.type.sideeffects;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public interface IQuestEffect extends INBTSerializable<CompoundTag>
+public interface IQuestSideEffect extends INBTSerializable<CompoundTag>
 {
     /**
      * Gets the quest effects ID
@@ -29,15 +29,17 @@ public interface IQuestEffect extends INBTSerializable<CompoundTag>
     default void onCancel() {}
 
     /**
-     * @param nbt
+     * Deserialize the quest side effect.
+     * @param nbt the nbt to deserialize it from.
      */
     default void deserializeNBT(final CompoundTag nbt)
     {
-
+        // noop
     }
 
     /**
-     * @return
+     * Serialize the side effect to nbt.
+     * @return the nbt to serialize it to.
      */
     default CompoundTag serializeNBT()
     {

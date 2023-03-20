@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.type;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.coremod.quests.Quest;
-import com.minecolonies.coremod.quests.type.effects.IQuestEffect;
+import com.minecolonies.coremod.quests.type.sideeffects.IQuestSideEffect;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface IQuestType
 {
     ResourceLocation getID();
 
-    List<IQuestEffect> createEffectsFor(final Quest quest);
+    List<IQuestSideEffect> createEffectsFor(final Quest quest);
 
     /**
      * Reads data from the json, either on load or on reload

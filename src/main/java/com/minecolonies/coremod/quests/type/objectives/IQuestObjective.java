@@ -1,6 +1,8 @@
-package com.minecolonies.coremod.quests.type.effects;
+package com.minecolonies.coremod.quests.type.objectives;
 
-public interface IQuestObjective extends IQuestEffect
+import com.minecolonies.coremod.quests.type.sideeffects.IQuestSideEffect;
+
+public interface IQuestObjective
 {
     /**
      * Whether this objective is fulfilled
