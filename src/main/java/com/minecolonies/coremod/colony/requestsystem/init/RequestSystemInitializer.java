@@ -45,14 +45,14 @@ public class RequestSystemInitializer
         final Configuration config = ctx.getConfiguration();
         final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));
         loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL,
-          MineColonies.getConfig().getServer().enableDebugLogging.get() ? Level.DEBUG : Level.INFO,
+          MineColonies.getConfig().getCommon().rsEnableDebugLogging.get() ? Level.DEBUG : Level.INFO,
           Filter.Result.NEUTRAL,
           Filter.Result.DENY));
 
         ctx.updateLoggers();
 
         LogManager.getLogger(String.format("%s.requestsystem", Constants.MOD_ID)).warn(String.format("Updated logging config. RS Debug logging enabled: %s",
-          MineColonies.getConfig().getServer().enableDebugLogging.get()));
+          MineColonies.getConfig().getCommon().rsEnableDebugLogging.get()));
     }
 
     private static LoggerConfig getLoggerConfiguration(@NotNull final Configuration configuration, @NotNull final String loggerName)
