@@ -294,7 +294,7 @@ public class EntityAISleep extends Goal
      */
     private SleepState sleep()
     {
-        if (usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
+        if (usedBed != null && usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
         {
             return WALKING_HOME;
         }
