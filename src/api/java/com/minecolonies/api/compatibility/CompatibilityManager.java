@@ -620,9 +620,17 @@ public class CompatibilityManager implements ICompatibilityManager
                 if (tab.getDisplayItems().isEmpty())
                 {
                     stacks = new HashSet<>();
-                    tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
-                        stacks.add(stack);
-                    });
+                    try
+                    {
+                        tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
+                            stacks.add(stack);
+                        });
+                    }
+                    catch (final Exception ex)
+                    {
+                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString() + "; using fallback", ex);
+                    }
+
                 }
                 else
                 {
