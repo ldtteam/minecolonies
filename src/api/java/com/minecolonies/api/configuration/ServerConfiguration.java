@@ -139,7 +139,6 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue enableDebugLogging;
     public final ForgeConfigSpec.IntValue     maximalRetries;
     public final ForgeConfigSpec.IntValue     delayBetweenRetries;
     public final ForgeConfigSpec.BooleanValue creativeResolve;
@@ -305,7 +304,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "requestSystem");
 
-        enableDebugLogging = defineBoolean(builder, "enabledebuglogging", false);
         maximalRetries = defineInteger(builder, "maximalretries", 3, 1, 10);
         delayBetweenRetries = defineInteger(builder, "delaybetweenretries", 1200, 30, 10000);
         creativeResolve = defineBoolean(builder, "creativeresolve", false);
