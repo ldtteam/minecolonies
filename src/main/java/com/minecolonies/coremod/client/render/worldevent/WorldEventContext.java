@@ -70,6 +70,7 @@ public class WorldEventContext
         else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS)
         {
             ColonyBlueprintRenderer.renderBoxes(this);
+            ItemOverlayBoxesRenderer.render(this);
             HighlightManager.render(this);
 
             bufferSource.endBatch();
