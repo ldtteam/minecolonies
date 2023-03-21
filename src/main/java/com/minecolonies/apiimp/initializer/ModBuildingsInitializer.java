@@ -605,7 +605,7 @@ public final class ModBuildingsInitializer
         ModBuildings.beekeeper = DEFERRED_REGISTER.register(ModBuildings.BEEKEEPER_ID, () -> new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockHutBeekeeper)
                                    .setBuildingProducer(BuildingBeekeeper::new)
-                                   .setBuildingViewProducer(() -> EmptyView::new)
+                                   .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.beekeeper.get(), Skill.Dexterity, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
