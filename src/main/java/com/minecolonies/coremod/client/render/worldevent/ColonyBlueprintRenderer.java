@@ -75,7 +75,7 @@ public class ColonyBlueprintRenderer
      *
      * @param ctx rendering context
      */
-    static void render(final WorldEventContext ctx)
+    static void renderBlueprints(final WorldEventContext ctx)
     {
         if (!ctx.hasNearestColony())
         {
@@ -122,6 +122,20 @@ public class ColonyBlueprintRenderer
             {
                 StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
             }
+        }
+    }
+
+    /**
+     * Renders boxes into the client.  Must be called after {@link #renderBlueprints}.
+     *
+     * @param ctx rendering context
+     */
+    static void renderBoxes(final WorldEventContext ctx)
+    {
+        for (final Map.Entry<BlockPos, RenderData> entry : blueprintCache.entrySet())
+        {
+            final RenderData buildingData = entry.getValue();
+            if (buildingData == null) { continue; }
 
             if (buildingData.box().getPos1() != INVALID_POS)
             {
@@ -140,7 +154,7 @@ public class ColonyBlueprintRenderer
             {
                 if (ctx.clientPlayer.isShiftKeyDown())
                 {
-                    WorldRenderMacros.renderRedGlintLineBox(WorldRenderMacros.getBufferSource(), ctx.poseStack, pos, pos, 0.02f);
+                    WorldRenderMacros.renderRedGlintLineBox(ctx.bufferSource, ctx.poseStack, pos, pos, 0.02f);
                 }
             });
         }
