@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderStateShard.DepthTestStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
 import java.util.function.Function;
 
 public class RenderTypes
@@ -36,9 +35,7 @@ public class RenderTypes
 
     public static final class InnerRenderTypes extends RenderType
     {
-        private static final DepthTestStateShard ALWAYS_DEPTH_TEST = new AlwaysDepthTestStateShard();
-        private static final DepthTestStateShard LEQUAL_DEPTH_TEST = new DepthTestStateShard("depth_lequal", GL11.GL_LEQUAL);
-        private static final DepthTestStateShard GREATER_DEPTH_TEST = new DepthTestStateShard("depth_greater", GL11.GL_GREATER);
+        private static final DepthTestStateShard GREATER_DEPTH_TEST = new DepthTestStateShard(">", GL11.GL_GREATER);
 
         private InnerRenderTypes(final String nameIn,
             final VertexFormat formatIn,
@@ -64,7 +61,7 @@ public class RenderTypes
                     .setShaderState(POSITION_TEX_SHADER)
                     .setTextureState(new RenderStateShard.TextureStateShard(p_173202_, false, false))
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setDepthTestState(ALWAYS_DEPTH_TEST)
+                    .setDepthTestState(NO_DEPTH_TEST)
                     .createCompositeState(false));
         });
 
@@ -108,17 +105,5 @@ public class RenderTypes
                         .setWriteMaskState(COLOR_WRITE)
                         .createCompositeState(false));
 
-    }
-
-    private static class AlwaysDepthTestStateShard extends DepthTestStateShard
-    {
-        private AlwaysDepthTestStateShard()
-        {
-            super("true_always", -1);
-            setupState = () -> {
-                RenderSystem.enableDepthTest();
-                RenderSystem.depthFunc(GL11.GL_ALWAYS);
-            };
-        }
     }
 }

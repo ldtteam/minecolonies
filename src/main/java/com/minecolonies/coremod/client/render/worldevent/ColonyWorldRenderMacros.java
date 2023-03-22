@@ -44,16 +44,16 @@ public class ColonyWorldRenderMacros
         final int blue = FastColor.ARGB32.blue(color);
         final int alpha = FastColor.ARGB32.alpha(color);
 
-        renderLineBox(poseStack, bufferSource.getBuffer(RenderTypes.LINES_OUTSIDE_BLOCKS),
-                minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
-                red, green, blue, alpha);
-
         if (showThroughBlocks)
         {
             renderLineBox(poseStack, bufferSource.getBuffer(RenderTypes.LINES_INSIDE_BLOCKS),
                     minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
                     red / 2, green / 2, blue / 2, alpha / 2);
         }
+
+        renderLineBox(poseStack, bufferSource.getBuffer(RenderTypes.LINES_OUTSIDE_BLOCKS),
+                minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
+                red, green, blue, alpha);
     }
 
     /**

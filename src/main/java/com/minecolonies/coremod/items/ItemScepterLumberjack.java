@@ -32,7 +32,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
  */
 public class ItemScepterLumberjack extends AbstractItemMinecolonies implements IBlockOverlayItem
 {
-    private static final int GREEN_OVERLAY = 0xCC00FF00;
+    private static final int GREEN_OVERLAY = 0xFF00FF00;
     private static final String NBT_START_POS = Constants.MOD_ID + ":" + "start_pos";
     private static final String NBT_END_POS   = Constants.MOD_ID + ":" + "end_pos";
 
