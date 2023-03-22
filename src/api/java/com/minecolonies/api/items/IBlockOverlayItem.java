@@ -22,10 +22,10 @@ public interface IBlockOverlayItem
 
     /**
      * Details about the overlay box to draw.
-     * @param bounds  the bounds of the box.
-     * @param color   the line color.
-     * @param width   the line width.
-     * @param clipped false to display through blocks.
+     * @param bounds            the bounds of the box.
+     * @param color             the line color.
+     * @param width             the line width.
+     * @param showThroughBlocks true to display through blocks.
      */
-    record OverlayBox(AABB bounds, int color, float width, boolean clipped) { }
+    record OverlayBox(AABB bounds, int color, float width, boolean showThroughBlocks) { }
 }

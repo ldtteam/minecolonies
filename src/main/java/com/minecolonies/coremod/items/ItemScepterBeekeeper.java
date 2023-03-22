@@ -119,7 +119,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
 
             for (final BlockPos hive : hut.getHives())
             {
-                overlays.add(new OverlayBox(new AABB(hive), YELLOW_OVERLAY, 0.04f, false));
+                overlays.add(new OverlayBox(new AABB(hive), YELLOW_OVERLAY, 0.04f, true));
             }
 
             return overlays;

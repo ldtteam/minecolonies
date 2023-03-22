@@ -9,14 +9,14 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +26,6 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
@@ -159,7 +157,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
             final AABB bounds = new AABB(startRestriction, endRestriction.offset(1, 1, 1)).inflate(1);
             // inflate(1) is due to implementation of BlockPosUtil.isInArea
 
-            return Collections.singletonList(new OverlayBox(bounds, GREEN_OVERLAY, 0.02f, false));
+            return Collections.singletonList(new OverlayBox(bounds, GREEN_OVERLAY, 0.02f, true));
         }
 
         return Collections.emptyList();
