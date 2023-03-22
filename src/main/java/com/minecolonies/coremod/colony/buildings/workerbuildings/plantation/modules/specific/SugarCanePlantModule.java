@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -27,5 +28,11 @@ public class SugarCanePlantModule extends UpwardsGrowingPlantModule
     protected boolean isValidHarvestBlock(final BlockState blockState)
     {
         return blockState.getBlock() == Blocks.SUGAR_CANE;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.NONE;
     }
 }

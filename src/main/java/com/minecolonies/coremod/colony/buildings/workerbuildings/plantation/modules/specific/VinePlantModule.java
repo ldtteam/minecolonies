@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -51,5 +52,11 @@ public class VinePlantModule extends TreeSidePlantModule
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_JUNGLE;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.NONE;
     }
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -44,6 +45,12 @@ public class WarpedPlantsPlantModule extends BoneMealedPlantModule
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_NETHER;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.NONE;
     }
 
     @Override
