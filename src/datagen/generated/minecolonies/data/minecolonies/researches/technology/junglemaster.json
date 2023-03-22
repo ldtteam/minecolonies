@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/plantationjungle": 1
+    }
+  ],
+  "icon": "minecraft:vine",
+  "parentResearch": "minecolonies:technology/letitgrow",
+  "requirements": [
+    {
+      "building": "plantation",
+      "level": 2
+    },
+    {
+      "item": "minecraft:bamboo",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:cocoa_beans",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:vine",
+      "quantity": 16
+    }
+  ],
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.junglemaster.subtitle"
+}
