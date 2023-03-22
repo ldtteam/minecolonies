@@ -7,6 +7,7 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -61,7 +62,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @OnlyIn(Dist.CLIENT)
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
-        if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof BlockHutTownHall)
+        BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+        if (blockState.is(ModBlocks.blockHutTownHall))
         {
             return true;
         }
@@ -77,7 +79,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             return false;
         }
 
-        return colonyView.isCoordInColony(clientLevel, blockPos);
+        return colonyView.isCoordInColony(clientLevel, blockPos) &&
+                 (blockState.getBlock() instanceof AbstractBlockHut<?> || blockState.is(ModBlocks.blockDecorationPlaceholder));
     }
 
     @Override

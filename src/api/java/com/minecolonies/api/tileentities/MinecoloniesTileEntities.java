@@ -6,7 +6,9 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class MinecoloniesTileEntities
 {
-    public static RegistryObject<BlockEntityType<? extends AbstractScarecrowTileEntity>> SCARECROW;
+    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityScarecrow>> SCARECROW;
+
+    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityPlantationField>> PLANTATION_FIELD;
 
     public static RegistryObject<BlockEntityType<? extends AbstractTileEntityBarrel>> BARREL;
 

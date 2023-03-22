@@ -1,24 +1,28 @@
 package com.minecolonies.api.inventory.container;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.inventory.ModContainers;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
@@ -35,28 +39,14 @@ public class ContainerField extends AbstractContainerMenu
     private final IItemHandler inventory;
 
     /**
-     * The colony.
-     */
-    private final IColony colony;
-
-    /**
      * The tile entity.
      */
-    private final AbstractScarecrowTileEntity tileEntity;
+    private final AbstractTileEntityScarecrow tileEntity;
 
     /**
-     * Deserialize packet buffer to container instance.
-     *
-     * @param windowId     the id of the window.
-     * @param inv          the player inventory.
-     * @param packetBuffer network buffer
-     * @return new instance
+     * The field view class.
      */
-    public static ContainerField fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
-    {
-        final BlockPos tePos = packetBuffer.readBlockPos();
-        return new ContainerField(windowId, inv, tePos);
-    }
+    private final IFieldView fieldView;
 
     /**
      * Constructs the GUI with the player.
@@ -76,12 +66,22 @@ public class ContainerField extends AbstractContainerMenu
             pos = pos.below();
         }
 
-        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        this.tileEntity = ((AbstractScarecrowTileEntity) world.getBlockEntity(pos));
-        this.inventory = getTileEntity().getInventory();
+        this.tileEntity = ((AbstractTileEntityScarecrow) world.getBlockEntity(pos));
         final int extraOffset = 0;
 
-        addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
+        // Hide the inventory slots of the scarecrow whenever we're not inside a colony.
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, pos);
+        if (colony != null && this.tileEntity != null)
+        {
+            this.inventory = this.tileEntity.getInventory();
+            this.fieldView = colony.getField(FieldType.FARMER_FIELDS, new FieldRecord(this.tileEntity.getBlockPos(), this.tileEntity.getPlant()));
+            addSlot(new SlotItemHandler(this.inventory, 0, X_OFFSET, Y_OFFSET));
+        }
+        else
+        {
+            this.inventory = null;
+            this.fieldView = null;
+        }
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -110,6 +110,41 @@ public class ContainerField extends AbstractContainerMenu
         }
     }
 
+    /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerField fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    {
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        return new ContainerField(windowId, inv, tePos);
+    }
+
+    /**
+     * Get the field view.
+     *
+     * @return the tile.
+     */
+    @Nullable
+    public IFieldView getFieldView()
+    {
+        return fieldView;
+    }
+
+    /**
+     * Get the plant which is put in the inventory slot of the field container.
+     *
+     * @return the plant, if any.
+     */
+    public Item getPlant()
+    {
+        return inventory.getStackInSlot(0).getItem();
+    }
+
     @NotNull
     @Override
     public ItemStack quickMoveStack(@NotNull final Player playerIn, final int index)
@@ -117,7 +152,7 @@ public class ContainerField extends AbstractContainerMenu
         ItemStack transfer = ItemStackUtils.EMPTY;
         Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.hasItem())
+        if (!slot.hasItem())
         {
             return transfer;
         }
@@ -145,20 +180,6 @@ public class ContainerField extends AbstractContainerMenu
     @Override
     public boolean stillValid(@NotNull final Player playerIn)
     {
-        if (colony == null)
-        {
-            return false;
-        }
-        return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
-    }
-
-    /**
-     * Get the assigned tile entity.
-     *
-     * @return the tile.
-     */
-    public AbstractScarecrowTileEntity getTileEntity()
-    {
-        return tileEntity;
+        return tileEntity.canOpenMenu(playerIn);
     }
 }

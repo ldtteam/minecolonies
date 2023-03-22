@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
@@ -31,7 +32,6 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
      * The minimum height kelp can grow to.
      */
     private static final int MIN_HEIGHT = 2;
-
     /**
      * The maximum height kelp can grow to.
      */
@@ -91,5 +91,11 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_SEA;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.NONE;
     }
 }

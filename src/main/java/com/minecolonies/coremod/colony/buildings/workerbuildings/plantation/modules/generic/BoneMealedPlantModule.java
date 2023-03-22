@@ -158,6 +158,12 @@ public abstract class BoneMealedPlantModule extends PlantationModule
         return field.getWorkingPositions().get(idx);
     }
 
+    @Override
+    public List<ItemStack> getRequiredItemsForOperation()
+    {
+        return getValidBonemeal().stream().map(ItemStack::new).toList();
+    }
+
     /**
      * Get the chance in percentages of being able to perform work on this field when asked.
      * Defaults to {@link BoneMealedPlantModule#DEFAULT_PERCENTAGE_CHANCE}.

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -209,6 +211,13 @@ public class FarmField extends AbstractField
         fieldData.writeVarIntArray(radii);
         fieldData.writeInt(maxRadius);
         fieldData.writeEnum(fieldStage);
+    }
+
+    @Override
+    public boolean isValidPlacement()
+    {
+        BlockState blockState = colony.getWorld().getBlockState(position);
+        return blockState.is(ModBlocks.blockHutFarmer);
     }
 
     /**

@@ -370,32 +370,6 @@ public class SettingsFactories
     }
 
     /**
-     * Specific factory for the plantation setting.
-     */
-    public static class PlantationSettingsFactory extends AbstractStringSettingsFactory<PlantationSetting>
-    {
-        @NotNull
-        @Override
-        public TypeToken<PlantationSetting> getFactoryOutputType()
-        {
-            return TypeToken.of(PlantationSetting.class);
-        }
-
-        @NotNull
-        @Override
-        public PlantationSetting getNewInstance(final List<String> value, final int curr)
-        {
-            return new PlantationSetting(value, curr);
-        }
-
-        @Override
-        public short getSerializationId()
-        {
-            return SerializationIdentifierConstants.PLANTATION_SETTINGS_ID;
-        }
-    }
-
-    /**
      * Specific factory for the string setting with desc.
      */
     public static class StringWithDescSettingsFactory extends AbstractStringSettingsFactory<StringSettingWithDesc>

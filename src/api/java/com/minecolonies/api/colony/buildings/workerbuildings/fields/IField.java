@@ -114,4 +114,11 @@ public interface IField
      * @return true if so.
      */
     boolean matches(FieldRecord matcher);
+
+    /**
+     * Condition to check whether this field instance is currently properly placed down.
+     *
+     * @return true if the field is correctly placed at the current position.
+     */
+    boolean isValidPlacement();
 }

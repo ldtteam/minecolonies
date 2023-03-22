@@ -11,8 +11,8 @@ import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.BaseComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -180,7 +180,6 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         return getColony().getFields(getExpectedFieldType()).stream()
                  .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
-                 .map(m -> (IFieldView) m)
                  .distinct()
                  .sorted(new FieldsComparator(buildingView))
                  .toList();
@@ -212,15 +211,15 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return a text component that should be shown if there is a problem for the specific field, else null.
      */
     @Nullable
-    public BaseComponent getFieldWarningTooltip(IFieldView field)
+    public MutableComponent getFieldWarningTooltip(IFieldView field)
     {
         if (!FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount))
         {
-            return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
+            return Component.translatable(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
         else if (!FieldsModule.checkPlantCount(getWorkedPlants().size(), maxConcurrentPlants))
         {
-            return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
+            return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
         }
         return null;
     }

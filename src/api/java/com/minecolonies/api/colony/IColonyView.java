@@ -1,24 +1,31 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public interface IColonyView extends IColony
 {
@@ -265,6 +272,39 @@ public interface IColonyView extends IColony
      */
     @Nullable
     IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
+
+    /**
+     * Update a ColonyView's fields given a network data ColonyView update packet. This uses a full-replacement - fields do not get updated and are instead overwritten.
+     *
+     * @param type the type of the field.
+     * @param buf  buffer containing ColonyBuilding information.
+     */
+    void handleColonyFieldViewMessage(FieldType type, FriendlyByteBuf buf);
+
+    /**
+     * Update a ColonyView's fields given a network data ColonyView update packet. Removing the passed field instance.
+     *
+     * @param type the type of the field.
+     * @param buf  buffer containing ColonyBuilding information.
+     */
+    void handleColonyRemoveFieldViewMessage(FieldType type, FriendlyByteBuf buf);
+
+    /**
+     * Get all fields.
+     *
+     * @param type the field type.
+     * @return a collection of fields.
+     */
+    @NotNull Collection<IFieldView> getFields(FieldType type);
+
+    /**
+     * Get a field at a given position.
+     *
+     * @param type    the field type.
+     * @param matcher the field matcher record.
+     * @return the field view class if it exists.
+     */
+    @Nullable IFieldView getField(FieldType type, FieldRecord matcher);
 
     /**
      * Update a players permissions.

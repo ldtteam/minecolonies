@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
@@ -149,6 +150,20 @@ public abstract class PlantationModule
     public abstract BlockPos getNextWorkingPosition(PlantationField field);
 
     /**
+     * Returns a list of items that are mandatory for this module to function.
+     *
+     * @return a list of items.
+     */
+    public abstract List<ItemStack> getRequiredItemsForOperation();
+
+    /**
+     * Returns the requested tool type in order to work on this module.
+     *
+     * @return the tool to work on this module.
+     */
+    public abstract ToolType getRequiredTool();
+
+    /**
      * Get the appropriate harvesting result for a mine block result.
      *
      * @param result the mine block result.
@@ -277,44 +292,53 @@ public abstract class PlantationModule
         /**
          * Something is wrong in the planter AI module, request to reset the AI back to decision state.
          */
-        public static final PlanterAIModuleResult INVALID        = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, AIWorkerState.PREPARING, true, true);
+        public static final PlanterAIModuleResult INVALID = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, AIWorkerState.PREPARING, true, true);
+
         /**
          * The planter had to do nothing on this position.
          */
-        public static final PlanterAIModuleResult NONE           = new PlanterAIModuleResult(PlanterAIModuleState.NONE, AIWorkerState.PREPARING, true, true);
+        public static final PlanterAIModuleResult NONE = new PlanterAIModuleResult(PlanterAIModuleState.NONE, AIWorkerState.PREPARING, true, true);
+
         /**
          * The planter is moving to it's working position.
          */
-        public static final PlanterAIModuleResult MOVING         = new PlanterAIModuleResult(PlanterAIModuleState.MOVING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult MOVING = new PlanterAIModuleResult(PlanterAIModuleState.MOVING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+
         /**
          * The planter requires certain items in order to continue operating.
          */
         public static final PlanterAIModuleResult REQUIRES_ITEMS =
           new PlanterAIModuleResult(PlanterAIModuleState.REQUIRES_ITEMS, AIWorkerState.GATHERING_REQUIRED_MATERIALS, false, false);
+
         /**
          * The planter is harvesting a plant.
          */
-        public static final PlanterAIModuleResult HARVESTING     = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult HARVESTING = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+
         /**
          * The planter has harvested a plant.
          */
-        public static final PlanterAIModuleResult HARVESTED      = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult HARVESTED = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, AIWorkerState.PREPARING, true, false);
+
         /**
          * The planter is planting a plant.
          */
-        public static final PlanterAIModuleResult PLANTING       = new PlanterAIModuleResult(PlanterAIModuleState.PLANTING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult PLANTING = new PlanterAIModuleResult(PlanterAIModuleState.PLANTING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+
         /**
          * The planter has planted a plant.
          */
-        public static final PlanterAIModuleResult PLANTED        = new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult PLANTED = new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, AIWorkerState.PREPARING, true, false);
+
         /**
          * The planter is clearing a working position.
          */
-        public static final PlanterAIModuleResult CLEARING       = new PlanterAIModuleResult(PlanterAIModuleState.CLEARING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult CLEARING = new PlanterAIModuleResult(PlanterAIModuleState.CLEARING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+
         /**
          * The planter has cleared a block working position.
          */
-        public static final PlanterAIModuleResult CLEARED        = new PlanterAIModuleResult(PlanterAIModuleState.CLEARED, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult CLEARED = new PlanterAIModuleResult(PlanterAIModuleState.CLEARED, AIWorkerState.PREPARING, true, false);
 
         /**
          * The state to transition to.

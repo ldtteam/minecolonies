@@ -1,35 +1,38 @@
 package com.minecolonies.coremod.client.gui.containers;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizen;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.inventory.container.ContainerField;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.FieldPlotResizeMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FieldPlotResizeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.locale.Language;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -65,15 +68,10 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     private static final int BUTTON_SIDE_LENGTH = 24;
 
     /**
-     * Tile entity of the scarecrow.
+     * Tile farm field instance.
      */
-    private final AbstractScarecrowTileEntity tileEntity;
-
-    /**
-     * The values to render on each directional button, indicating the size of the field
-     * S, W, N, E.
-     */
-    private final int[] radii = new int[4];
+    @Nullable
+    private final FarmField.View farmField;
 
     /**
      * Create the field GUI.
@@ -85,7 +83,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     public WindowField(final ContainerField container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.tileEntity = container.getTileEntity();
+        this.farmField = container.getFieldView() instanceof FarmField.View ? (FarmField.View) container.getFieldView() : null;
     }
 
     @Override
@@ -93,44 +91,63 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         super.init();
 
-        final int centerX = this.leftPos + this.imageWidth / 2 + 1;
-        final int centerY = this.topPos + this.imageHeight / 2;
-        for (Direction dir : Direction.Plane.HORIZONTAL)
+        if (this.farmField != null)
         {
-            int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
-            int yFromPolar = (int) Math.cos(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
-            this.radii[dir.get2DDataValue()] = tileEntity.getRadius(dir);
+            final int centerX = this.leftPos + this.imageWidth / 2 + 1;
+            final int centerY = this.topPos + this.imageHeight / 2;
+            for (Direction dir : Direction.Plane.HORIZONTAL)
+            {
+                int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
+                int yFromPolar = (int) Math.cos(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
 
-            // Some magic numbering to get the offsets right
-            DirectionalButton db = new DirectionalButton(
-              centerX + xFromPolar - 12,
-              centerY - 40 + yFromPolar - 12,
-              BUTTON_SIDE_LENGTH,
-              BUTTON_SIDE_LENGTH,
-              Component.literal(String.valueOf(this.radii[dir.get2DDataValue()])),
-              dir
-            );
-            this.addRenderableWidget(db);
+                // Some magic numbering to get the offsets right
+                DirectionalButton db = new DirectionalButton(
+                  this.farmField,
+                  centerX + xFromPolar - 12,
+                  centerY - 40 + yFromPolar - 12,
+                  BUTTON_SIDE_LENGTH,
+                  BUTTON_SIDE_LENGTH,
+                  dir
+                );
+                this.addRenderableWidget(db);
+            }
         }
+    }
+
+    @Override
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    {
+        this.renderBackground(stack);
+        super.render(stack, x, y, z);
+        this.renderTooltip(stack, x, y);
     }
 
     @Override
     protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
-        if (!tileEntity.getOwner().isEmpty())
-        {
-            this.font.draw(stack, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
-        }
+        // this.font.draw(stack, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
-        this.font.draw(stack, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
-
-        for (Widget widget : this.renderables)
+        if (this.farmField != null)
         {
-            if (widget instanceof AbstractWidget)
+            if (this.farmField.isTaken())
             {
-                if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
+                final IBuildingView building = this.farmField.getColonyView().getBuilding(this.farmField.getBuildingId());
+                final Integer citizenId = building.getAllAssignedCitizens().stream().findFirst().orElse(null);
+                if (citizenId != null)
                 {
-                    ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
+                    ICitizen citizen = this.farmField.getColonyView().getCitizen(citizenId);
+                    if (citizen != null)
+                    {
+                        this.font.draw(stack, Component.translatable(WORKER_FIELD, citizenId), X_OFFSET, -Y_OFFSET * 2F, 16777215 /* WHITE */);
+                    }
+                }
+            }
+
+            for (Widget widget : this.renderables)
+            {
+                if (widget instanceof AbstractWidget abstractWidget && abstractWidget.isMouseOver(mouseX, mouseY))
+                {
+                    abstractWidget.renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
                     break;
                 }
             }
@@ -155,41 +172,40 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         blit(stack, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
     }
 
-    @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
-    {
-        this.renderBackground(stack);
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
-    }
-
     /**
      * Buttons with a direction. Textures are assigned based on direction specified.
      */
     protected class DirectionalButton extends Button
     {
-        public Direction direction;
-        public int       textureX = 176;
-        public int       textureY = 0;
+        private static final int TEXTURE_X = 176;
+        private static final int TEXTURE_Y = 0;
+        private static final int COLUMNS   = 2;
 
         /**
-         * The arrangement of the button's direction textures in the image.
+         * The direction this button is controlling.
          */
-        public int columns = 2;
+        public final Direction direction;
+
+        /**
+         * The field this button is controlling.
+         */
+        @NotNull
+        private final FarmField.View farmField;
 
         /**
          * Construct a directional button. Arguments based on a basic Button widget
          *
+         * @param farmField the field this button is controlling.
          * @param x         the x position from screen top left
          * @param y         the y position from screen top left
          * @param width     the width of the button in the gui
          * @param height    the height of the button in the gui
-         * @param text      the label on the button
          * @param direction the direction this button faces. Adjusts texture coordinates.
          */
-        public DirectionalButton(int x, int y, int width, int height, Component text, Direction direction)
+        public DirectionalButton(@NotNull FarmField.View farmField, int x, int y, int width, int height, Direction direction)
         {
-            super(x, y, width, height, text, button -> {});
+            super(x, y, width, height, Component.literal(String.valueOf(farmField.getRadius(direction))), button -> {});
+            this.farmField = farmField;
             this.direction = direction;
         }
 
@@ -198,62 +214,23 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         {
             if (this.clicked(mouseX, mouseY))
             {
-                int index = this.direction.get2DDataValue();
                 int delta = this.isValidClickButton(button) ? 1 : -1;
 
                 // Perform the cycle
-                radii[index] = (radii[index] + delta) % (ScarecrowTileEntity.getMaxRange() + 1);
-                if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
+                int newRadius = (this.farmField.getRadius(this.direction) + delta) % (this.farmField.getMaxRadius() + 1);
+                if (newRadius < 0)
+                {
+                    newRadius = this.farmField.getMaxRadius();
+                }
+                this.farmField.setRadius(this.direction, newRadius);
 
-                this.setMessage(Component.literal(String.valueOf(radii[index])));
-                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getBlockPos()));
+                this.setMessage(Component.literal(String.valueOf(newRadius)));
+                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(newRadius, this.direction, this.farmField.getMatcher()));
 
                 return true;
             }
 
             return false;
-        }
-
-        /**
-         * Retrieves the texture offset depending on the direction of the button
-         *
-         * @return the X offset for the image texture
-         */
-        public int getTextureXOffset()
-        {
-            return this.textureX + 24 * Math.floorDiv(this.direction.get2DDataValue(), this.columns);
-        }
-
-        /**
-         * Retrieves the texture offset depending on the direction of the button
-         *
-         * @return the Y offset for the image texture
-         */
-        public int getTextureYOffset()
-        {
-            return this.textureY + 72 * (this.direction.get2DDataValue() % this.columns);
-        }
-
-        /**
-         * Neatens the buttons by offsetting the text towards the main area of the texture
-         *
-         * @param axis the Axis of the direction that the button represents
-         * @return the render offset
-         */
-        public int getTextOffset(Direction.Axis axis)
-        {
-            switch (this.direction)
-            {
-                case NORTH:
-                    return axis == Direction.Axis.X ? 0 : +2;
-                case EAST:
-                    return axis == Direction.Axis.X ? -2 : 0;
-                case SOUTH:
-                    return axis == Direction.Axis.X ? 0 : -2;
-                case WEST:
-                    return axis == Direction.Axis.X ? +2 : 0;
-            }
-            return 0;
         }
 
         @Override
@@ -279,6 +256,44 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
               j | Mth.ceil(this.alpha * 255.0F) << 24
             );
+        }
+
+        /**
+         * Retrieves the texture offset depending on the direction of the button
+         *
+         * @return the X offset for the image texture
+         */
+        public int getTextureXOffset()
+        {
+            return TEXTURE_X + 24 * Math.floorDiv(this.direction.get2DDataValue(), COLUMNS);
+        }
+
+        /**
+         * Retrieves the texture offset depending on the direction of the button
+         *
+         * @return the Y offset for the image texture
+         */
+        public int getTextureYOffset()
+        {
+            return TEXTURE_Y + 72 * (this.direction.get2DDataValue() % COLUMNS);
+        }
+
+        /**
+         * Neatens the buttons by offsetting the text towards the main area of the texture
+         *
+         * @param axis the Axis of the direction that the button represents
+         * @return the render offset
+         */
+        public int getTextOffset(Direction.Axis axis)
+        {
+            return switch (this.direction)
+                     {
+                         case NORTH -> axis == Direction.Axis.X ? 0 : +2;
+                         case EAST -> axis == Direction.Axis.X ? -2 : 0;
+                         case SOUTH -> axis == Direction.Axis.X ? 0 : -2;
+                         case WEST -> axis == Direction.Axis.X ? +2 : 0;
+                         default -> 0;
+                     };
         }
 
         @Override
@@ -309,20 +324,13 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             Direction[] looks = Direction.orderedByNearest(Minecraft.getInstance().player);
             Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
 
-            switch (facing.getOpposite().get2DDataValue() - this.direction.get2DDataValue())
-            {
-                case 1:
-                case -3:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_RIGHT;
-                case 2:
-                case -2:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_OPPOSITE;
-                case 3:
-                case -1:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_LEFT;
-                default:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST;
-            }
+            return switch (facing.getOpposite().get2DDataValue() - this.direction.get2DDataValue())
+                     {
+                         case 1, -3 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_RIGHT;
+                         case 2, -2 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_OPPOSITE;
+                         case 3, -1 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_LEFT;
+                         default -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST;
+                     };
         }
     }
 }

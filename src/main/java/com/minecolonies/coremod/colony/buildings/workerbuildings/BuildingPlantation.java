@@ -1,45 +1,40 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
-import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
+import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_PLANTATION_RESEARCH_REQUIRED;
 
 /**
  * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
@@ -47,34 +42,9 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public class BuildingPlantation extends AbstractBuilding
 {
     /**
-     * Settings key for the building mode.
-     */
-    public static final ISettingKey<PlantationSetting> MODE =
-      new SettingKey<>(PlantationSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "mode"));
-
-    /**
-     * The combinations of items/blocks/tags.
-     */
-    public static final Map<Item, PlantationItem> COMBINATIONS = ImmutableMap.<Item, PlantationItem>builder()
-      .put(Items.SUGAR_CANE, new PlantationItem(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar", 3))
-      .put(Items.CACTUS, new PlantationItem(Items.CACTUS, Blocks.CACTUS, "cactus", 3))
-      .put(Items.BAMBOO, new PlantationItem(Items.BAMBOO, Blocks.BAMBOO, "bamboo", 3))
-      .build();
-
-    /**
      * Description string of the building.
      */
     private static final String PLANTATION = "plantation";
-
-    /**
-     * List of sand blocks to grow onto.
-     */
-    private final List<BlockPos> sand = new ArrayList<>();
-
-    /**
-     * Cached list of soil positions
-     */
-    private List<PlantationSoilPosition> soilPositions = null;
 
     /**
      * Instantiates a new plantation building.
@@ -88,11 +58,18 @@ public class BuildingPlantation extends AbstractBuilding
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
-    @NotNull
     @Override
-    public String getSchematicName()
+    public void onPlacement()
     {
-        return PLANTATION;
+        super.onPlacement();
+        updateFields();
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        updateFields();
     }
 
     @Override
@@ -101,130 +78,150 @@ public class BuildingPlantation extends AbstractBuilding
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
+    private void updateFields()
     {
-        super.registerBlockPosition(block, pos, world);
-        if (block == Blocks.SAND)
+        updateField(PlantationFieldType.SUGAR_CANE);
+        updateField(PlantationFieldType.CACTUS);
+        updateField(PlantationFieldType.BAMBOO);
+    }
+
+    /**
+     * TODO: 1.20
+     * Legacy code, can be removed when plantations will no longer have to support fields
+     * directly from the hut building.
+     */
+    private void updateField(PlantationFieldType type)
+    {
+        final PlantationModule module = PlantationModuleRegistry.getPlantationModule(type);
+        if (module != null)
         {
-            final Block down = world.getBlockState(pos.below()).getBlock();
-            if (down == Blocks.COBBLESTONE || down == Blocks.STONE_BRICKS)
+            final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
+            final PlantationField updatedField = new PlantationField(colony, getPosition(), type, module.getItem(), workingPositions);
+            updatedField.setBuilding(getID());
+            colony.getBuildingManager().addOrUpdateField(updatedField);
+        }
+    }
+
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return PLANTATION;
+    }
+
+    /**
+     * Field module implementation for the plantation.
+     */
+    public static class PlantationFieldsModule extends FieldsModule
+    {
+        @Override
+        protected @NotNull Set<? extends IField> getFields(final IColony colony)
+        {
+            return colony.getBuildingManager().getFields(FieldType.PLANTATION_FIELDS);
+        }
+
+        @Override
+        protected int getMaxConcurrentPlants()
+        {
+            return getMaxFieldCount();
+        }
+
+        @Override
+        protected int getMaxFieldCount()
+        {
+            boolean hasDoubleTrouble = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANTATION_LARGE) > 0;
+            int allowedPlants = switch (building.getBuildingLevel())
+                                  {
+                                      case 0 -> 0;
+                                      case 1, 2 -> 1;
+                                      case 3, 4 -> 2;
+                                      case 5 -> 3;
+                                      default -> throw new IllegalStateException("Unexpected value: " + building.getBuildingLevel());
+                                  };
+
+            return hasDoubleTrouble ? allowedPlants + 1 : allowedPlants;
+        }
+
+        @Override
+        public Class<?> getExpectedFieldType()
+        {
+            return PlantationField.class;
+        }
+
+        @Override
+        protected @Nullable IField getFreeField(final IColony colony)
+        {
+            return colony.getBuildingManager().getFreeField(FieldType.PLANTATION_FIELDS);
+        }
+
+        @Override
+        public boolean canAddField(IField field)
+        {
+            if (super.canAddField(field) && field instanceof PlantationField plantationField)
             {
-                sand.add(pos);
+                final PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
+                if (module != null && module.getRequiredResearchEffect() != null)
+                {
+                    return building.getColony().getResearchManager().getResearchEffects().getEffectStrength(module.getRequiredResearchEffect()) > 0;
+                }
+                return true;
             }
+            return false;
         }
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundTag compound)
-    {
-        super.deserializeNBT(compound);
-        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, Tag.TAG_COMPOUND);
-        for (int i = 0; i < sandPos.size(); ++i)
-        {
-            sand.add(NbtUtils.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
-        }
-    }
-
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        final CompoundTag compound = super.serializeNBT();
-        @NotNull final ListTag sandCompoundList = new ListTag();
-        for (@NotNull final BlockPos entry : sand)
-        {
-            @NotNull final CompoundTag sandCompound = new CompoundTag();
-            sandCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
-            sandCompoundList.add(sandCompound);
-        }
-        compound.put(TAG_PLANTGROUND, sandCompoundList);
-        return compound;
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-        soilPositions = null;
     }
 
     /**
-     * Get a list of all the available working positions.
-     *
-     * @return the list of positions.
+     * Field module view implementation for the plantation.
      */
-    public List<PlantationSoilPosition> getAllSoilPositions()
+    public static class PlantationFieldsModuleView extends FieldsModuleView
     {
-        if (soilPositions == null)
+        @Override
+        public boolean canAssignField(final IFieldView field)
         {
-            soilPositions = getSoilPositions((tag, item) -> true);
+            return super.canAssignField(field) && hasRequiredResearchForField(field);
         }
 
-        return soilPositions;
-    }
-
-    /**
-     * Get a list of all the available working positions.
-     *
-     * @param filter a predicate to filter against, contains the tag of a building.
-     * @return the list of positions.
-     */
-    private List<PlantationSoilPosition> getSoilPositions(BiPredicate<String, Item> filter)
-    {
-        final List<PlantationSoilPosition> filtered = new ArrayList<>();
-        if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
+        /**
+         * Checks if the passed field has the research required.
+         *
+         * @param field the field in question.
+         * @return true if the research is handled.
+         */
+        private boolean hasRequiredResearchForField(final IFieldView field)
         {
-            Map<String, Item> availableTags = COMBINATIONS.entrySet().stream().collect(Collectors.toMap(k -> k.getValue().getTag(), Map.Entry::getKey));
-
-            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
+            if (field instanceof PlantationField.View plantationField)
             {
-                final Optional<String> foundTag = entry.getValue().stream().filter(availableTags::containsKey).findFirst();
-                if (!foundTag.isPresent())
+                final PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
+                if (module != null && module.getRequiredResearchEffect() != null)
                 {
-                    continue;
+                    return getColony().getResearchManager().getResearchEffects().getEffectStrength(module.getRequiredResearchEffect()) > 0;
                 }
-
-                Item item = availableTags.get(foundTag.get());
-                if (filter.test(foundTag.get(), item))
-                {
-                    filtered.add(new PlantationSoilPosition(getPosition().offset(entry.getKey()), COMBINATIONS.get(item)));
-                }
+                return true;
             }
+            return false;
         }
 
-        return filtered;
-    }
-
-    /**
-     * Obtain the current list of available plants to use.
-     *
-     * @return a list of plants.
-     */
-    public List<Item> getAvailablePlants()
-    {
-        final String setting = getSetting(MODE).getValue();
-
-        List<Item> items = new ArrayList<>();
-        if (setting.contains(Items.SUGAR_CANE.getDescriptionId()))
+        @Override
+        public FieldType getExpectedFieldType()
         {
-            items.add(Items.SUGAR_CANE);
-        }
-        if (setting.contains(Items.CACTUS.getDescriptionId()))
-        {
-            items.add(Items.CACTUS);
-        }
-        if (setting.contains(Items.BAMBOO.getDescriptionId()))
-        {
-            items.add(Items.BAMBOO);
+            return FieldType.PLANTATION_FIELDS;
         }
 
-        // Add sugar cane as the default plant cycle as a fallback in case nothing exists in the settings
-        if (items.isEmpty())
+        @Override
+        public @Nullable MutableComponent getFieldWarningTooltip(final IFieldView field)
         {
-            items.add(Items.SUGAR_CANE);
-            Log.getLogger().warn("Plantation plant setting contains none of the preconfigured plants, please report this to the developers!");
+            MutableComponent result = super.getFieldWarningTooltip(field);
+            if (result != null)
+            {
+                return result;
+            }
+
+            if (!hasRequiredResearchForField(field))
+            {
+                return Component.translatable(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
+            }
+            return null;
         }
-        return items;
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
@@ -237,13 +234,6 @@ public class BuildingPlantation extends AbstractBuilding
         public CraftingModule(final JobEntry jobEntry)
         {
             super(jobEntry);
-        }
-
-        @NotNull
-        @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION).combine(super.getIngredientValidator());
         }
 
         @Override
@@ -262,141 +252,32 @@ public class BuildingPlantation extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
 
-            // indicate which plants we can grow
-            for (final Map.Entry<Item, PlantationItem> entry : COMBINATIONS.entrySet())
+            for (PlantationFieldType type : PlantationFieldType.values())
             {
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(entry.getKey(), entry.getValue().getMinimumLength() + 1),
-                        Collections.emptyList(),
-                        Collections.singletonList(Collections.singletonList(new ItemStack(entry.getKey()))),
-                        1, Blocks.AIR, null, ToolType.NONE, Collections.emptyList(), -1));
+                PlantationModule module = PlantationModuleRegistry.getPlantationModule(type);
+                if (module != null)
+                {
+                    recipes.add(new GenericRecipe(null,
+                      new ItemStack(module.getItem()),
+                      Collections.emptyList(),
+                      List.of(module.getRequiredItemsForOperation()),
+                      1,
+                      Blocks.AIR,
+                      null,
+                      module.getRequiredTool(),
+                      Collections.emptyList(),
+                      -1));
+                }
             }
 
             return recipes;
         }
-    }
 
-    public static class PlantationSoilPosition
-    {
-        /**
-         * The position.
-         */
-        private final BlockPos position;
-
-        /**
-         * The item combination data.
-         */
-        private final PlantationItem combination;
-
-        /**
-         * Default constructor.
-         *
-         * @param position    the position.
-         * @param combination the item combination data.
-         */
-        private PlantationSoilPosition(final BlockPos position, final PlantationItem combination)
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            this.position = position;
-            this.combination = combination;
-        }
-
-        /**
-         * Get the position.
-         *
-         * @return the position.
-         */
-        public BlockPos getPosition()
-        {
-            return position;
-        }
-
-        /**
-         * Get the plantation item.
-         *
-         * @return the plantation item.
-         */
-        public PlantationItem getCombination()
-        {
-            return combination;
-        }
-    }
-
-    public static class PlantationItem
-    {
-        /**
-         * The item of the combination.
-         */
-        private final Item item;
-
-        /**
-         * The block of the combination.
-         */
-        private final Block block;
-
-        /**
-         * The tag of the combination.
-         */
-        private final String tag;
-
-        /**
-         * The minimum length of this combination.
-         */
-        private final int minimumLength;
-
-        /**
-         * Default constructor.
-         *
-         * @param item          the item.
-         * @param block         the block.
-         * @param tag           the tag.
-         * @param minimumLength the minimum length.
-         */
-        private PlantationItem(Item item, Block block, String tag, int minimumLength)
-        {
-            this.item = item;
-            this.block = block;
-            this.tag = tag;
-            this.minimumLength = minimumLength;
-        }
-
-        /**
-         * Get the item of the combination.
-         *
-         * @return the item.
-         */
-        public Item getItem()
-        {
-            return item;
-        }
-
-        /**
-         * Get the block of the combination.
-         *
-         * @return the block.
-         */
-        public Block getBlock()
-        {
-            return block;
-        }
-
-        /**
-         * Get the tag of the combination.
-         *
-         * @return the tag.
-         */
-        public String getTag()
-        {
-            return tag;
-        }
-
-        /**
-         * Get the minimum length of the combination.
-         *
-         * @return the minimum length.
-         */
-        public int getMinimumLength()
-        {
-            return minimumLength;
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION).combine(super.getIngredientValidator());
         }
     }
 }

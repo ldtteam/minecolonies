@@ -5,7 +5,10 @@ import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -24,6 +27,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldRegistry;
 import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.coremod.colony.managers.StatisticsManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
@@ -72,19 +76,23 @@ public final class ColonyView implements IColonyView
     private static final int REQUEST_MANAGER_MAX_SIZE = 700000;
 
     //  General Attributes
-    private final int                            id;
-    private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
+    private final int                          id;
+    private final Map<Integer, IWorkOrderView> workOrders = new HashMap<>();
+
     //  Administration/permissions
     @NotNull
-    private final PermissionsView                permissions = new PermissionsView();
+    private final PermissionsView              permissions = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, IBuildingView>   buildings   = new HashMap<>();
+    private final Map<BlockPos, IBuildingView> buildings   = new HashMap<>();
+    @NotNull
+    private final Collection<IFieldView>       fields      = new HashSet<>();
+
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
-    private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
-    private       String                         name        = "Unknown";
-    private       ResourceKey<Level>                            dimensionId;
+    private final Map<Integer, ICitizenDataView> citizens = new HashMap<>();
+    private final Map<Integer, IVisitorViewData> visitors = new HashMap<>();
+    private       String                         name     = "Unknown";
+    private       ResourceKey<Level>             dimensionId;
 
     /**
      * Colony team color.
@@ -94,9 +102,9 @@ public final class ColonyView implements IColonyView
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListTag        colonyFlag      = new BannerPattern.Builder()
-        .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-        .toListTag();
+    private ListTag colonyFlag = new BannerPattern.Builder()
+                                   .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+                                   .toListTag();
 
     private BlockPos center = BlockPos.ZERO;
 
@@ -1081,6 +1089,41 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+    }
+
+    @Override
+    public void handleColonyFieldViewMessage(final FieldType type, @NotNull final FriendlyByteBuf buf)
+    {
+        final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
+        field.deserialize(buf);
+        fields.remove(field);
+        fields.add(field);
+    }
+
+    @Override
+    public void handleColonyRemoveFieldViewMessage(final FieldType type, @NotNull final FriendlyByteBuf buf)
+    {
+        final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
+        field.deserialize(buf);
+        fields.remove(field);
+    }
+
+    @Override
+    public @NotNull Collection<IFieldView> getFields(FieldType type)
+    {
+        return fields.stream()
+                 .filter(f -> f.getType().equals(type))
+                 .toList();
+    }
+
+    @Override
+    public IFieldView getField(FieldType type, final FieldRecord matcher)
+    {
+        return fields.stream()
+                 .filter(f -> f.getType().equals(type))
+                 .filter(f -> f.getMatcher().equals(matcher))
+                 .findFirst()
+                 .orElse(null);
     }
 
     /**

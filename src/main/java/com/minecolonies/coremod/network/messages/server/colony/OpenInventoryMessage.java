@@ -9,7 +9,7 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
@@ -168,7 +168,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doFieldInventory(final ServerPlayer player)
     {
-        @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), tePos);
+        @NotNull final TileEntityScarecrow scarecrowTileEntity = (TileEntityScarecrow) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), tePos);
         NetworkHooks.openScreen(player, scarecrowTileEntity);
     }
 

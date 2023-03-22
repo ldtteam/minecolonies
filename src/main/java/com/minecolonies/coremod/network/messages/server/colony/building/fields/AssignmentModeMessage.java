@@ -1,9 +1,9 @@
-package com.minecolonies.coremod.network.messages.server.colony.building.farmer;
+package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to change the assignmentMode of the fields of the farmer.
  */
-public class AssignmentModeMessage extends AbstractBuildingServerMessage<BuildingFarmer>
+public class AssignmentModeMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     private boolean assignmentMode;
 
@@ -37,13 +37,6 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
-    {
-
-        assignmentMode = buf.readBoolean();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
@@ -51,8 +44,15 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingFarmer building)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-        building.getFirstOptionalModuleOccurance(FarmerFieldModule.class).ifPresent(m -> m.setAssignManually(assignmentMode));
+
+        assignmentMode = buf.readBoolean();
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    {
+        building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.setAssignManually(assignmentMode));
     }
 }

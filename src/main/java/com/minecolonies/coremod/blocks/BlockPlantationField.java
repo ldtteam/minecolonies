@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.WindowPlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
@@ -14,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.Plan
 import com.minecolonies.coremod.tileentities.TileEntityPlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -42,7 +46,7 @@ import java.util.List;
 /**
  * Block class for the plantation field block.
  */
-public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IAnchorBlock, EntityBlock
+public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock
 {
     /**
      * If the block is mirrored.
@@ -71,7 +75,12 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     {
         super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false));
-        setRegistryName(BLOCK_NAME);
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override
@@ -82,14 +91,14 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
 
     @NotNull
     @Override
-    public BlockState rotate(BlockState state, Rotation rot)
+    public BlockState rotate(@NotNull BlockState state, Rotation rot)
     {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @NotNull
     @Override
-    public BlockState mirror(BlockState state, Mirror mirrorIn)
+    public BlockState mirror(@NotNull BlockState state, Mirror mirrorIn)
     {
         return state.setValue(MIRROR, mirrorIn != Mirror.NONE);
     }
@@ -141,6 +150,13 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     }
 
     @Override
+    public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
+    {
+        notifyColonyAboutDestruction(worldIn, pos);
+        super.wasExploded(worldIn, pos, explosionIn);
+    }
+
+    @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
         return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
@@ -179,18 +195,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     @Override
     public void playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
     {
-        final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-        if (blockEntity instanceof TileEntityPlantationField plantationField)
-        {
-            for (PlantationFieldType plantationFieldType : plantationField.getPlantationFieldTypes())
-            {
-                PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
-                if (module != null)
-                {
-                    notifyColonyAboutDestruction(worldIn, new FieldRecord(pos, module.getItem()));
-                }
-            }
-        }
+        notifyColonyAboutDestruction(worldIn, pos);
         super.playerWillDestroy(worldIn, pos, state, player);
     }
 
@@ -204,16 +209,27 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      * Notify the colony about the destruction of the field.
      *
      * @param worldIn the world.
-     * @param matcher the field record matcher.
+     * @param pos     the position of the block.
      */
-    private void notifyColonyAboutDestruction(final Level worldIn, final FieldRecord matcher)
+    private void notifyColonyAboutDestruction(final Level worldIn, final BlockPos pos)
     {
         if (!worldIn.isClientSide())
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, matcher.position());
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, matcher);
+                final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+                if (blockEntity instanceof TileEntityPlantationField plantationField)
+                {
+                    for (PlantationFieldType plantationFieldType : plantationField.getPlantationFieldTypes())
+                    {
+                        PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
+                        if (module != null)
+                        {
+                            colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, new FieldRecord(pos, module.getItem()));
+                        }
+                    }
+                }
             }
         }
     }

@@ -13,10 +13,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -145,11 +143,11 @@ public class FieldsModuleWindow extends AbstractModuleWindow
     private void updateUI()
     {
         findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class)
-          .setText(new TranslatableComponent(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+          .setText(Component.translatable(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
-          .setText(new TranslatableComponent(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
+          .setText(Component.translatable(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
         findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
-          .setText(new TranslatableComponent(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
+          .setText(Component.translatable(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
     }
 
     @Override
@@ -175,7 +173,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
 
                 final boolean canAddField = moduleView.canAssignField(field);
 
-                rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(new TextComponent(distance + "m"));
+                rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.translatable(distance + "m"));
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
 
                 final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
@@ -191,17 +189,17 @@ public class FieldsModuleWindow extends AbstractModuleWindow
                 {
                     if (field.isTaken())
                     {
-                        assignButton.setText(new TextComponent(RED_X).withStyle(ChatFormatting.RED));
+                        assignButton.setText(Component.translatable(RED_X).withStyle(ChatFormatting.RED));
                     }
                     else
                     {
-                        assignButton.setText(new TextComponent(APPROVE).withStyle(ChatFormatting.GREEN));
+                        assignButton.setText(Component.translatable(APPROVE).withStyle(ChatFormatting.GREEN));
 
                         if (!canAddField)
                         {
                             assignButton.disable();
 
-                            BaseComponent warningTooltip = moduleView.getFieldWarningTooltip(field);
+                            MutableComponent warningTooltip = moduleView.getFieldWarningTooltip(field);
                             if (warningTooltip != null && moduleView.assignFieldManually())
                             {
                                 PaneBuilders.tooltipBuilder()

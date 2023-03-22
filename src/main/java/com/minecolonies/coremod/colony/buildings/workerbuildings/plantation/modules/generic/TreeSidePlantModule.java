@@ -8,6 +8,7 @@ import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
@@ -184,6 +185,12 @@ public abstract class TreeSidePlantModule extends PlantationModule
         }
 
         return null;
+    }
+
+    @Override
+    public List<ItemStack> getRequiredItemsForOperation()
+    {
+        return List.of(new ItemStack(getItem()));
     }
 
     @Override

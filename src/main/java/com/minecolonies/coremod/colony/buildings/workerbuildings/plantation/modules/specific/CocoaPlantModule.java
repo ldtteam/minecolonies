@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
 import net.minecraft.core.BlockPos;
@@ -39,6 +40,12 @@ public class CocoaPlantModule extends TreeSidePlantModule
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_JUNGLE;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.AXE;
     }
 
     @Override

@@ -5,15 +5,17 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -167,33 +169,6 @@ public interface IRegisteredStructureManager
     <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
 
     /**
-     * Getter for a unmodifiable version of the farmerFields list.
-     *
-     * @return list of fields and their id.
-     */
-    @NotNull
-    List<BlockPos> getFields();
-
-    /**
-     * Creates a field from a tile entity and adds it to the colony.
-     *
-     * @param tileEntity the scarecrow which contains the inventory.
-     * @param pos        Position where the field has been placed.
-     * @param world      the world of the field.
-     */
-    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final Level world);
-
-    /**
-     * Returns a field which has not been taken yet.
-     *
-     * @param owner id of the owner of the field.
-     * @param world the world it is in.
-     * @return a field if there is one available, else null.
-     */
-    @Nullable
-    AbstractScarecrowTileEntity getFreeField(final int owner, final Level world);
-
-    /**
      * Remove a IBuilding from the Colony (when it is destroyed).
      *
      * @param subscribers the subscribers of the colony to message.
@@ -215,13 +190,6 @@ public interface IRegisteredStructureManager
      */
     @Nullable
     IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world);
-
-    /**
-     * Removes a field from the farmerFields list.
-     *
-     * @param pos the position-id.
-     */
-    void removeField(final BlockPos pos);
 
     /**
      * Calculate a good cook for a certain citizen.
@@ -335,4 +303,44 @@ public interface IRegisteredStructureManager
      * @return the position of it.
      */
     BlockPos getRandomLeisureSite();
+
+    /**
+     * Get all the fields
+     *
+     * @param type the field type.
+     * @return an unmodifiable collection of all fields.
+     */
+    @NotNull Set<IField> getFields(FieldType type);
+
+    /**
+     * Get a specific field on the given location.
+     *
+     * @param type    the field type.
+     * @param matcher the field matcher record.
+     * @return the field, if any.
+     */
+    @Nullable IField getField(FieldType type, FieldRecord matcher);
+
+    /**
+     * Gets any free field in the colony, if any, and return it.
+     *
+     * @param type the field type.
+     * @return the free field, if any.
+     */
+    @Nullable IField getFreeField(FieldType type);
+
+    /**
+     * Add a new field to the building manager.
+     *
+     * @param field the new field to add.
+     */
+    void addOrUpdateField(IField field);
+
+    /**
+     * Remove a field from the field collection.
+     *
+     * @param type    the field type.
+     * @param matcher the field matcher record.
+     */
+    void removeField(FieldType type, FieldRecord matcher);
 }

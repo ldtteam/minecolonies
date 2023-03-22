@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
@@ -12,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -138,6 +140,14 @@ public class PlantationField extends AbstractField
         {
             fieldData.writeBlockPos(workingPosition);
         }
+    }
+
+    @Override
+    public boolean isValidPlacement()
+    {
+        BlockState blockState = colony.getWorld().getBlockState(position);
+        // TODO: 1.20, remove `blockHutPlantation` from valid blocks
+        return blockState.is(ModBlocks.blockHutPlantation) || blockState.is(ModBlocks.blockPlantationField);
     }
 
     /**

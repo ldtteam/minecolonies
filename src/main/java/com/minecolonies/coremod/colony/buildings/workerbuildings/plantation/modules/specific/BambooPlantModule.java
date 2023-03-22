@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -47,5 +48,11 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_JUNGLE;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.AXE;
     }
 }
