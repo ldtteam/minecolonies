@@ -56,7 +56,7 @@ public final class TranslationConstants
     @NonNls
     public static final String BAKER_HAS_NO_FURNACES_MESSAGE                                        = "com.minecolonies.coremod.bakery.nofurnace";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                             = "com.minecolonies.coremod.job.deliveryman";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                             = "com.minecolonies.job.deliveryman";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                              = "com.minecolonies.coremod.gui.hiring.off";
     @NonNls
@@ -738,8 +738,12 @@ public final class TranslationConstants
 
     @NonNls
     public static final String NO_CUSTOM_BUILDINGS = "com.minecolonies.coremod.structures.nocustomhuts";
+    @NonNls
     public static final String NO_CUSTOM_CAMPS = "com.minecolonies.coremod.structures.nocustomcamps";
+    @NonNls
     public static final String BUILDING_MISSING = "com.minecolonies.coremod.structures.buildingmissing";
+    @NonNls
+    public static final String DETAILS = "com.minecolonies.gui.details";
 
     //</editor-fold>
 

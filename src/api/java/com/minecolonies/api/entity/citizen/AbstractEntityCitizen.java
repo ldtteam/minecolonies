@@ -734,16 +734,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public abstract void setFleeingState(final boolean fleeing);
 
-    /**
-     * Setter for the citizen pose.
-     *
-     * @param pose the pose to set.
-     */
-    public void updatePose(final Pose pose)
-    {
-        setPose(pose);
-    }
-
     @Override
     public void detectEquipmentUpdates()
     {

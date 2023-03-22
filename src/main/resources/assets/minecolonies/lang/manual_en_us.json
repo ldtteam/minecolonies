@@ -179,7 +179,7 @@
   "minecolonies.config.maxbarbariansize": "Max Raider Size",
   "minecolonies.config.maxbarbariansize.comment": "The max size of a raider horde.",
   "minecolonies.config.dobarbariansbreakthroughwalls": "Do Raiders Cross Obstacles",
-  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break, scale, and bridge obstacles.",
+  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break through obstacles",
   "minecolonies.config.shouldraiderbreakdoors": "Do Raiders Break Doors",
   "minecolonies.config.shouldraiderbreakdoors.comment": "Whether or not raiders can break through doors.",
   "minecolonies.config.averagenumberofnightsbetweenraids": "Average Number of Nights Between Raids",
@@ -2353,7 +2353,8 @@
   "com.minecolonies.building.enchanter.desc": "Creates Enchantments and Scrolls out of Books. As Magical as Magnets!",
   "com.minecolonies.building.composter.desc": "Turns Organic Materials Into Something Useful. Really Stinks To Work Here.",
   "com.minecolonies.building.alchemist.desc": "Either Brews Potions Or Trouble. Witch is It?",
-  "com.minecolonies.building.quarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
+  "com.minecolonies.building.simplequarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
+  "com.minecolonies.building.mediumquarry.desc": "Does a Bigger Hole Mean Getting More or Less? Probably More.",
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
   "com.minecolonies.coremod.structures.buildingmissing": "The builder had a problem locating this blueprint, please try again.",
@@ -2384,5 +2385,6 @@
   "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
   "com.minecolonies.coremod.gui.townHall.map": "Town Map",
   "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map.",
-  "com.minecolonies.gui.edit": "Edit"
+  "com.minecolonies.gui.edit": "Edit",
+  "com.minecolonies.gui.details": "More Details..."
 }

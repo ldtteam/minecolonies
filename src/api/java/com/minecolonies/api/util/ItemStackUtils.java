@@ -387,7 +387,7 @@ public final class ItemStackUtils
             {
                 if (!itemStack.canPerformAction(action))
                 {
-                    break;
+                    return false;
                 }
             }
             return true;

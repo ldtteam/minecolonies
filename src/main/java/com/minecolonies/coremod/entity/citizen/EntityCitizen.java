@@ -1596,24 +1596,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void move(final MoverType typeIn, final Vec3 pos)
-    {
-        //todo someaddons: remove this on the minimum AI rework.
-        if (pos.x != 0 || pos.z != 0)
-        {
-            if (getCitizenData() != null && getCitizenData().isAsleep())
-            {
-                getCitizenSleepHandler().onWakeUp();
-            }
-            else if (getPose() == Pose.SLEEPING)
-            {
-                updatePose(Pose.STANDING);
-            }
-        }
-        super.move(typeIn, pos);
-    }
-
-    @Override
     public float getSpeed()
     {
         return (float) Math.min(MAX_SPEED_FACTOR, super.getSpeed());
@@ -2091,16 +2073,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setTexture()
     {
         super.setTexture();
-    }
-
-    /**
-     * Setter for the citizen pose.
-     *
-     * @param pose the pose to set.
-     */
-    public void updatePose(final Pose pose)
-    {
-        setPose(pose);
     }
 
     @Override
