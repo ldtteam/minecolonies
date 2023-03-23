@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.CompatibilityManager;
@@ -11,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BeekeeperCollectionSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +25,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -119,6 +119,12 @@ public class BuildingBeekeeper extends AbstractBuilding
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
+
+        buf.writeVarInt(hives.size());
+        for (final BlockPos hive : hives)
+        {
+            buf.writeBlockPos(hive);
+        }
     }
 
     /**
@@ -169,6 +175,43 @@ public class BuildingBeekeeper extends AbstractBuilding
     public int getMaximumHives()
     {
         return (int) Math.pow(2, getBuildingLevel() - 1);
+    }
+
+    /**
+     * The client side representation of the building.
+     */
+    public static class View extends AbstractBuildingView
+    {
+        private Set<BlockPos> hives;
+
+        /**
+         * Instantiates the view of the building.
+         *
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
+        public View(final IColonyView c, final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @Override
+        public void deserialize(@NotNull FriendlyByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            final int hiveCount = buf.readVarInt();
+            this.hives = new HashSet<>();
+            for (int i = 0; i < hiveCount; ++i)
+            {
+                this.hives.add(buf.readBlockPos());
+            }
+        }
+
+        public Set<BlockPos> getHives()
+        {
+            return Collections.unmodifiableSet(new HashSet<>(hives));
+        }
     }
 
     /**

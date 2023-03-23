@@ -7,7 +7,6 @@ import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -75,7 +74,7 @@ public class ColonyBlueprintRenderer
      *
      * @param ctx rendering context
      */
-    static void render(final WorldEventContext ctx)
+    static void renderBlueprints(final WorldEventContext ctx)
     {
         if (!ctx.hasNearestColony())
         {
@@ -122,28 +121,39 @@ public class ColonyBlueprintRenderer
             {
                 StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
             }
+        }
+    }
+
+    /**
+     * Renders boxes into the client.  Must be called after {@link #renderBlueprints}.
+     *
+     * @param ctx rendering context
+     */
+    static void renderBoxes(final WorldEventContext ctx)
+    {
+        for (final Map.Entry<BlockPos, RenderData> entry : blueprintCache.entrySet())
+        {
+            final RenderData buildingData = entry.getValue();
+            if (buildingData == null) { continue; }
 
             if (buildingData.box().getPos1() != INVALID_POS)
             {
-                WorldRenderMacros.renderLineBox(ctx.bufferSource.getBuffer(WorldRenderMacros.LINES_WITH_WIDTH),
-                        ctx.poseStack,
-                        buildingData.box().getPos1(),
-                        buildingData.box().getPos2(),
-                        0,
-                        0,
-                        255,
-                        255,
-                        0.08f);
+                ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
+                        new AABB(buildingData.box().getPos1(), buildingData.box().getPos2().offset(1, 1, 1)),
+                        0.08f, 0xFF0000FF, false);
             }
 
             buildingData.box().getAnchor().ifPresent(pos ->
             {
                 if (ctx.clientPlayer.isShiftKeyDown())
                 {
-                    WorldRenderMacros.renderRedGlintLineBox(WorldRenderMacros.getBufferSource(), ctx.poseStack, pos, pos, 0.02f);
+                    ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
+                            new AABB(pos), 0.02f, 0xFFFF0000, true);
                 }
             });
         }
+
+        ColonyWorldRenderMacros.endRenderLineBox(ctx.bufferSource);
     }
 
     private static void rebuildCache(final WorldEventContext ctx, final List<IRenderBlueprintRule> rules)
