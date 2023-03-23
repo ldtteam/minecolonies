@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class CommonConfiguration extends AbstractConfiguration
 {
     public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
+    public final ForgeConfigSpec.BooleanValue rsEnableDebugLogging;
 
     /**
      * Builds client configuration.
@@ -15,6 +16,10 @@ public class CommonConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
+        finishCategory(builder);
+
+        createCategory(builder, "requestsystem");
+        rsEnableDebugLogging = defineBoolean(builder, "enabledebuglogging", false);
         finishCategory(builder);
     }
 }
