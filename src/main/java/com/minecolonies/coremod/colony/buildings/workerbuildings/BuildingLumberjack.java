@@ -351,8 +351,16 @@ public class BuildingLumberjack extends AbstractBuilding
         super.serializeToView(buf);
 
         buf.writeBoolean(shouldRestrict());
-        buf.writeBlockPos(getStartRestriction());
-        buf.writeBlockPos(getEndRestriction());
+        if (startRestriction != null && endRestriction != null)
+        {
+            buf.writeBlockPos(startRestriction);
+            buf.writeBlockPos(endRestriction);
+        }
+        else
+        {
+            buf.writeBlockPos(BlockPos.ZERO);
+            buf.writeBlockPos(BlockPos.ZERO);
+        }
     }
 
     /**
