@@ -68,7 +68,7 @@ import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -336,7 +336,7 @@ public class EventHandler
      * @param event the join world event.
      */
     @SubscribeEvent
-    public static void on(final LivingSpawnEvent.CheckSpawn event)
+    public static void on(final MobSpawnEvent.FinalizeSpawn event)
     {
         if (!(event.getEntity() instanceof Enemy) || !(event.getLevel() instanceof Level))
         {
@@ -344,7 +344,7 @@ public class EventHandler
         }
 
         final BlockPos pos = BlockPos.containing(event.getX(), event.getY(), event.getZ());
-        if (event.isSpawner() || event.getLevel().isClientSide() || !WorldUtil.isEntityBlockLoaded(event.getLevel(), pos))
+        if (event.getSpawnType() == MobSpawnType.SPAWNER || event.getLevel().isClientSide() || !WorldUtil.isEntityBlockLoaded(event.getLevel(), pos))
         {
             return;
         }
