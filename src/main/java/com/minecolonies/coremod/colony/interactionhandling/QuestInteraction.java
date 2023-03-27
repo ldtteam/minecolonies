@@ -95,10 +95,21 @@ public class QuestInteraction extends StandardInteraction
                 Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), response));
                 return false;
             }
+            Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), response));
         }
-        //todo quest: Remove old buttons
-        //todo quest: handle bigger answer text better (smaller text?)
-        //todo quest: When we advance objective, remove interaction. When we dont advance, reset interaction if we cancel/close UI.
+        //todo quest: Advancing objective needs to disable this directly and potentially add a new interaction for the next objective to the next citizen.
+        // Generally objectives should have an "on reach" which does the interaction assignment.
+
+        //todo quest: we want to replace placerholders like $0 with the respective citizen with the right index from the quest $0 = giver, $1 is first element in participant
+        //todo quest: On cancel action or on ui close (needs new event) we want to restore this here. We can detect the return one
+
+        //todo quest: Delivery objective. Its a dialogue objective with "Did you bring x?". On "yes here you here you are", we try deducting,
+        // if unsuccessful, we open other interaction with he?
+
+
+        //todo quest: make all objectives dialogue objectives where the citizen will ask for the task completeness. Like "did you do this already??".
+        // And when finished they advance anyway to the correct one =D
+
         return true;
     }
 

@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Alignment;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.Tooltip;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
@@ -78,6 +79,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
+        group.getChildren().clear();
         int y = 0;
         int x = 0;
         final Text chatText = findPaneOfTypeByID(CHAT_LABEL_ID, Text.class);
@@ -97,6 +99,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             button.setTextAlignment(Alignment.MIDDLE);
             button.setText(component);
             group.addChild(button);
+            button.setTextScale(Math.min(1, 20.0 / component.getString().length()));
 
             y += button.getHeight();
             if (y + button.getHeight() >= group.getHeight())
