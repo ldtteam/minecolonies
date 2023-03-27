@@ -1,9 +1,8 @@
-package com.minecolonies.coremod.quests.type.rewards;
+package com.minecolonies.coremod.quests.rewards;
 
+import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.quests.IQuest;
-import com.minecolonies.coremod.quests.type.IQuestType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,14 +23,12 @@ public class ItemStackQuestReward implements IQuestReward
      */
     public static final ResourceLocation ID = new ResourceLocation(MOD_ID, "itemreward");
 
-    private final IQuestType questType;
-
     /**
      * Itemstack rewards
      */
     private final List<ItemStack> rewardStacks = new ArrayList<>();
 
-    public ItemStackQuestReward(final IQuestType questType) {this.questType = questType;}
+    public ItemStackQuestReward() {}
 
     @Override
     public ResourceLocation getID()
@@ -40,7 +37,7 @@ public class ItemStackQuestReward implements IQuestReward
     }
 
     @Override
-    public void applyReward(final IQuest quest, final Player playerEntity)
+    public void applyReward(final IColonyQuest quest, final Player playerEntity)
     {
         for (final ItemStack stack : rewardStacks)
         {

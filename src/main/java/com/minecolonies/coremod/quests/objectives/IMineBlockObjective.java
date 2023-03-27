@@ -1,5 +1,6 @@
-package com.minecolonies.coremod.quests.type.objectives;
+package com.minecolonies.coremod.quests.objectives;
 
+import com.minecolonies.api.quests.IQuestObjective;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +20,6 @@ public interface IMineBlockObjective extends IQuestObjective
     /**
      * Save data
      */
-    @Override
     default CompoundTag serializeNBT()
     {
         final CompoundTag nbt = new CompoundTag();
@@ -39,7 +39,6 @@ public interface IMineBlockObjective extends IQuestObjective
      *
      * @param nbt compound to read from
      */
-    @Override
     default void deserializeNBT(final CompoundTag nbt)
     {
         setBreakCounter(nbt.getInt("count"));

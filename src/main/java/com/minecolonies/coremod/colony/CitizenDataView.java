@@ -147,6 +147,16 @@ public class CitizenDataView implements ICitizenDataView
     private Integer partner;
 
     /**
+     * The list of available quests the citizen can give out.
+     */
+    private final List<ResourceLocation> availableQuests = new ArrayList<>();
+
+    /**
+     * The list of participating quests the citizen can give out.
+     */
+    private final List<ResourceLocation> participatingQuests = new ArrayList<>();
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -351,6 +361,21 @@ public class CitizenDataView implements ICitizenDataView
         final String parentA = buf.readUtf();
         final String parentB = buf.readUtf();
         parents = new Tuple<>(parentA, parentB);
+
+        availableQuests.clear();
+        participatingQuests.clear();
+
+        final int avSize = buf.readInt();
+        for (int i = 0; i < avSize; i++)
+        {
+            availableQuests.add(buf.readResourceLocation());
+        }
+
+        final int partSize = buf.readInt();
+        for (int i = 0; i < partSize; i++)
+        {
+            participatingQuests.add(buf.readResourceLocation());
+        }
     }
 
     @Override
@@ -386,10 +411,12 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
-        if (interaction != null)
+        for (final IInteractionResponseHandler interaction : sortedInteractions)
         {
-            return interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority();
+            if (interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority())
+            {
+                return true;
+            }
         }
 
         return false;
@@ -403,12 +430,13 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
-        if (interaction != null)
+        for (final IInteractionResponseHandler interaction : sortedInteractions)
         {
-            return interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority();
+            if (interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority())
+            {
+                return true;
+            }
         }
-
         return false;
     }
 
@@ -420,10 +448,12 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
-        if (interaction != null)
+        for (final IInteractionResponseHandler interaction : sortedInteractions)
         {
-            return interaction.isPrimary();
+            if (interaction.isPrimary())
+            {
+                return true;
+            }
         }
 
         return false;

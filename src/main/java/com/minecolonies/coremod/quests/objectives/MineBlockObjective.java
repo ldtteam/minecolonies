@@ -1,8 +1,8 @@
-package com.minecolonies.coremod.quests.type.objectives;
+package com.minecolonies.coremod.quests.objectives;
 
+import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.quests.IQuest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -39,43 +39,38 @@ public class MineBlockObjective implements IMineBlockObjective
     /**
      * Quest reference
      */
-    private final IQuest quest;
+    private final IColonyQuest quest;
 
     /**
      * Last chopped position
      */
     private BlockPos lastTreePos = BlockPos.ZERO;
 
-    public MineBlockObjective(final IQuest quest)
+    public MineBlockObjective(final IColonyQuest quest)
     {
         this.quest = quest;
     }
 
-    @Override
     public ResourceLocation getID()
     {
         return ID;
     }
 
-    @Override
     public void onStart()
     {
 
     }
 
-    @Override
     public void onFinish()
     {
 
     }
 
-    @Override
     public void onCancel()
     {
 
     }
 
-    @Override
     public boolean isFulfilled()
     {
         return treesToChop <= 0;
@@ -94,7 +89,7 @@ public class MineBlockObjective implements IMineBlockObjective
             treesToChop--;
             if (isFulfilled())
             {
-                quest.onEffectComplete(this);
+                //quest.onEffectComplete(this);
             }
         }
     }
@@ -151,13 +146,11 @@ public class MineBlockObjective implements IMineBlockObjective
         treesToChop = count;
     }
 
-    @Override
     public int getMaxObjectiveCount()
     {
         return 5;
     }
 
-    @Override
     public int getCurrentObjectiveCount()
     {
         return treesToChop;

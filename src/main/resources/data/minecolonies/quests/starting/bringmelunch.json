@@ -1,0 +1,120 @@
+{
+  "triggers": [
+    {
+      "type": "random",
+      "rarity": 1
+    },
+    {
+      "type": "state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:townhall",
+          "level": 3
+        }
+      }
+    },
+    {
+      "type": "state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:guardtower",
+          "level": 3
+        },
+        "count": 3
+      }
+    },
+    {
+      "type": "citizen",
+      "state": {
+        "match": {
+          "female": true,
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ],
+  "max-occurrences": 10,
+  "triggerOrder": "(1 && 4) || (2 && 4) || (3 && 4)",
+  "objectives": [
+    {
+      "type": "dialogue",
+      "target": 0,
+      "dialogue":
+        {
+          "text": "Hi, how are you?",
+          "options": [
+            {
+              "answer": "Im alright, and you?",
+              "result": {
+                "type": "dialogue",
+                "text": "Could you bring me an Apple? I'm really hungry!",
+                "options": [
+                  {
+                    "answer": "Sure!",
+                    "result": {
+                      "type": "advanceObjective",
+                      "go-to": 1
+                    }
+                  },
+                  {
+                    "answer": "Sorry, I don't have time right now!",
+                    "result": {
+                      "type": "return"
+                    }
+                  },
+                  {
+                    "answer": "We don't have any apples right now!",
+                    "result": {
+                      "type": "cancel"
+                    }
+                  },
+                  {
+                    "answer": "Could I bring you a baked potato?",
+                    "result": {
+                      "type": "dialogue",
+                      "text": "Sure sounds good!",
+                      "options": [
+                        {
+                          "answer": "Be right back then!",
+                          "result": {
+                            "type": "advanceObjective",
+                            "go-to": 2
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "answer": "I don't have time right now!",
+              "result": {
+                "type": "return"
+              }
+            }
+          ]
+        }
+    },
+    {
+      "type": "delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:apple",
+        "qty": 1
+      }
+    },
+    {
+      "type": "delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:baked_potato",
+        "qty": 1
+      }
+    }
+  ]
+}

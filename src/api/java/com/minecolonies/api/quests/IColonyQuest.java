@@ -1,16 +1,15 @@
-package com.minecolonies.coremod.quests;
+package com.minecolonies.api.quests;
 
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.quests.type.sideeffects.IQuestSideEffect;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Quest instance
  */
-public interface IQuest extends INBTSerializable<CompoundTag>
+public interface IColonyQuest extends INBTSerializable<CompoundTag>
 {
     /**
      * Triggered when the quest is accepted
@@ -24,7 +23,7 @@ public interface IQuest extends INBTSerializable<CompoundTag>
      *
      * @return the id of the quest giver.
      */
-    int getQuestGiver();
+    IQuestGiver getQuestGiver();
 
     /**
      * Check if the expiration date relative to the colony day count was reached.
@@ -34,9 +33,25 @@ public interface IQuest extends INBTSerializable<CompoundTag>
     boolean isValid(IColony colony);
 
     /**
-     * This is where we actually check if the nbt of the colony fulfills the quest requirements.
-     * @param colonyTag the colony tag to check.
-     * @return true if so.
+     * Get the quest id of the quest.
+     * @return the id.
      */
-    boolean canStart(CompoundTag colonyTag);
+    ResourceLocation getId();
+
+    /**
+     * On deletion of the quest.
+     */
+    void onDeletion();
+
+    /**
+     * Advance the quest objective to this id.
+     * @param nextObjective the id to advance it to.
+     */
+    void advanceObjective(int nextObjective);
+
+    /**
+     * Get the current objective index.
+     * @return the index number.
+     */
+    int getIndex();
 }

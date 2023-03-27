@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.quests.type.sideeffects;
+package com.minecolonies.coremod.quests.sideeffects;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

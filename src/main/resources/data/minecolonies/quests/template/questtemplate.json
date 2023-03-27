@@ -1,31 +1,43 @@
 {
-  "questid": "Apples",
   "triggers": [
     {
-      "id": "minecolonies:buildingupgrade",
-      "level": 2,
-      "name": "Sawmill",
-      "conditions": [
-        {},
-        {}
-      ]
+      "type": "random",
+      "rarity": 100
     },
     {
-      "id": "random",
-      "chance": 20,
-      "conditions": [
-        {},
-        {}
-      ]
-    }
-
-  ],
-  "tasks": [
+      "type": "state",
+      "state": {
+        "path": "buildingManager/building",
+        "match": {
+          "type": "minecolonies:townhall",
+          "level": "3"
+        }
+      }
+    },
     {
-      "id": "bringItem",
-      "item": "10xWheat",
-      "count": 10
+      "type": "state",
+      "state": {
+        "path": "buildingManager/building",
+        "match": {
+          "type": "minecolonies:guardtower",
+          "level": "3",
+          "count": 3
+        }
+      }
+    },
+    {
+      "type": "citizen",
+      "state": {
+        "match": {
+          "female": true,
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
     }
+  ],
+  "objectives": [
   ],
   "rewards": []
 }

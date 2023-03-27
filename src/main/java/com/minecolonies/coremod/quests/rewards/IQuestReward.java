@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.quests.type.rewards;
+package com.minecolonies.coremod.quests.rewards;
 
-import com.minecolonies.coremod.quests.IQuest;
+import com.minecolonies.api.quests.IColonyQuest;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +24,7 @@ public interface IQuestReward extends INBTSerializable<CompoundTag>
      * @param quest
      * @param playerEntity
      */
-    void applyReward(final IQuest quest, final Player playerEntity);
+    void applyReward(final IColonyQuest quest, final Player playerEntity);
 
     /**
      * @param nbt

@@ -1,7 +1,6 @@
-package com.minecolonies.coremod.quests.type.location;
+package com.minecolonies.coremod.quests.location;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IQuestGiver;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
@@ -14,7 +13,7 @@ public class QuestLocation implements IQuestLocation
 {
     BlockPos buildingPos = BlockPos.ZERO;
 
-    @Override
+    /*@Override
     public IQuestGiver getQuestGiverForColony(final IColony colony)
     {
         if (buildingPos != BlockPos.ZERO)
@@ -28,7 +27,7 @@ public class QuestLocation implements IQuestLocation
         }
 
         return null;
-    }
+    }*/
 
     @Override
     public void setBuildingLocation(final BlockPos pos)

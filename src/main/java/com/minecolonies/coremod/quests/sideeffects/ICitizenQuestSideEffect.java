@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.quests.type.sideeffects;
+package com.minecolonies.coremod.quests.sideeffects;
 
 import com.minecolonies.api.colony.ICitizenData;
 

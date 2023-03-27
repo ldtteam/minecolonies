@@ -131,6 +131,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
                         setupInteraction();
                         return;
                     }
+                    setupInteraction();
                 }
             }
         }

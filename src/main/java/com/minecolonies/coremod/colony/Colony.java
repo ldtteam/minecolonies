@@ -33,7 +33,7 @@ import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import com.minecolonies.coremod.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -752,6 +752,7 @@ public class Colony implements IColony
         eventManager.readFromNBT(compound);
         statisticManager.readFromNBT(compound);
 
+        questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.getAllKeys().contains(TAG_RESEARCH))
@@ -908,6 +909,7 @@ public class Colony implements IColony
         eventManager.writeToNBT(compound);
         statisticManager.writeToNBT(compound);
 
+        compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT());
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
@@ -1947,5 +1949,11 @@ public class Colony implements IColony
     public int getDay()
     {
         return day;
+    }
+
+    @Override
+    public IQuestManager getQuestManager()
+    {
+        return questManager;
     }
 }

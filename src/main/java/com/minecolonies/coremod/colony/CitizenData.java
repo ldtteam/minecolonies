@@ -17,11 +17,13 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.coremod.colony.interactionhandling.QuestInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -31,12 +33,10 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenMournHandl
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -59,6 +59,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.DEBUG_WARNING_CITIZEN_LOAD_FAILURE;
@@ -271,6 +272,16 @@ public class CitizenData implements ICitizenData
      * The inactivity timer in seconds.
      */
     private int inactivityTimer = DISABLED;
+
+    /**
+     * The list of available quests the citizen can give out.
+     */
+    private final List<ResourceLocation> availableQuests = new ArrayList<>();
+
+    /**
+     * The list of participating quests the citizen can give out.
+     */
+    private final List<ResourceLocation> participatingQuests = new ArrayList<>();
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -988,6 +999,18 @@ public class CitizenData implements ICitizenData
         }
         buf.writeUtf(parents.getA());
         buf.writeUtf(parents.getB());
+
+        buf.writeInt(availableQuests.size());
+        for (final ResourceLocation av : availableQuests)
+        {
+            buf.writeResourceLocation(av);
+        }
+
+        buf.writeInt(participatingQuests.size());
+        for (final ResourceLocation av : participatingQuests)
+        {
+            buf.writeResourceLocation(av);
+        }
     }
 
     @Override
@@ -1204,6 +1227,22 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_PARTNER, partner);
         nbtTagCompound.putBoolean(TAG_ACTIVE, this.isWorking);
 
+
+        @NotNull final ListTag avQuestNBT = new ListTag();
+        for (final ResourceLocation quest : availableQuests)
+        {
+            avQuestNBT.add(StringTag.valueOf(quest.toString()));
+        }
+        nbtTagCompound.put(TAG_AV_QUESTS, avQuestNBT);
+
+        @NotNull final ListTag partQuestNBT = new ListTag();
+        for (final ResourceLocation quest : participatingQuests)
+        {
+            partQuestNBT.add(StringTag.valueOf(quest.toString()));
+        }
+        nbtTagCompound.put(TAG_PART_QUESTS, partQuestNBT);
+
+
         return nbtTagCompound;
     }
 
@@ -1325,6 +1364,18 @@ public class CitizenData implements ICitizenData
 
         partner = nbtTagCompound.getInt(TAG_PARTNER);
         this.isWorking = nbtTagCompound.getBoolean(TAG_ACTIVE);
+
+        @NotNull final ListTag availQuestNbt = nbtTagCompound.getList(TAG_AV_QUESTS, TAG_STRING);
+        for (int i = 0; i < availQuestNbt.size(); i++)
+        {
+            availableQuests.add(new ResourceLocation(availQuestNbt.getString(i)));
+        }
+
+        @NotNull final ListTag partQuestsNbt = nbtTagCompound.getList(TAG_PART_QUESTS, TAG_STRING);
+        for (int i = 0; i < partQuestsNbt.size(); i++)
+        {
+            participatingQuests.add(new ResourceLocation(partQuestsNbt.getString(i)));
+        }
     }
 
     @Override
@@ -1644,9 +1695,50 @@ public class CitizenData implements ICitizenData
     {
         this.parents = new Tuple<>(firstParent, secondParent);
     }
+
     @Override
     public void setIdleDays(final int days)
     {
 
+    }
+
+    @Override
+    public void assignQuest(final IColonyQuest quest)
+    {
+        this.availableQuests.add(quest.getId());
+        openDialogue(quest, 0);
+    }
+
+    //@Override
+    public void openDialogue(final IColonyQuest quest, final int index)
+    {
+        //todo need to call this when we advance a new objective.
+        final Component comp = Component.literal(quest.getId().toString());
+        citizenChatOptions.put(comp, new QuestInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index));
+    }
+
+    @Override
+    public boolean isAlive()
+    {
+        return this.colony.getCitizenManager().getCivilian(this.getId()) != null;
+    }
+
+    @Override
+    public void addQuestParticipation(final IColonyQuest quest)
+    {
+        this.participatingQuests.add(quest.getId());
+    }
+
+    @Override
+    public void onQuestDeletion(final ResourceLocation questId)
+    {
+        this.availableQuests.remove(questId);
+        this.participatingQuests.remove(questId);
+    }
+
+    @Override
+    public boolean hasQuestOpen(final ResourceLocation questId)
+    {
+        return this.availableQuests.contains(questId) || this.participatingQuests.contains(questId);
     }
 }

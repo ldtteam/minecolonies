@@ -1,8 +1,8 @@
-package com.minecolonies.coremod.quests.type.sideeffects;
+package com.minecolonies.coremod.quests.sideeffects;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.quests.IQuest;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -20,9 +20,9 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
     /**
      * Quest this effect is in
      */
-    private final IQuest quest;
+    private final IColonyQuest quest;
 
-    public WorkerIdleSideEffect(final IQuest quest)
+    public WorkerIdleSideEffect(final IColonyQuest quest)
     {
         this.quest = quest;
     }
@@ -36,7 +36,7 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
     @Override
     public void onStart()
     {
-        applyToCitizen(quest.getQuestGiver());
+        //applyToCitizen(quest.getQuestGiver());
     }
 
     @Override
