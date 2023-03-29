@@ -59,7 +59,7 @@ public class WorldEventContext
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
         {
             ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
-            ColonyBlueprintRenderer.render(this);
+            ColonyBlueprintRenderer.renderBlueprints(this);
             ColonyWaypointRenderer.render(this);
             ColonyPatrolPointRenderer.render(this);
             GuardTowerRallyBannerRenderer.render(this);
@@ -67,9 +67,13 @@ public class WorldEventContext
 
             bufferSource.endBatch();
         }
-        else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS)
+        else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS)
         {
+            ColonyBlueprintRenderer.renderBoxes(this);
+            ItemOverlayBoxesRenderer.render(this);
             HighlightManager.render(this);
+
+            bufferSource.endBatch();
         }
 
         poseStack.popPose();
