@@ -281,7 +281,7 @@ public class EntityAIEatTask extends Goal
         }
 
 
-        final FoodProperties itemFood = stack.getItem().getFoodProperties();
+        final FoodProperties itemFood = stack.getItem().getFoodProperties(stack, citizen);
 
         Item containerItem = stack.getItem().getCraftingRemainingItem();
         if (containerItem == null && stack.getItem() instanceof BowlFoodItem)
