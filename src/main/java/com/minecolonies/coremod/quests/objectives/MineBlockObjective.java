@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IDialogueObjective;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
@@ -154,5 +155,23 @@ public class MineBlockObjective implements IMineBlockObjective
     public int getCurrentObjectiveCount()
     {
         return treesToChop;
+    }
+
+    @Override
+    public boolean isReady(final Player player, final IColonyQuest colonyQuest)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean tryResolve(final Player player, final IColonyQuest colonyQuest)
+    {
+        return false;
+    }
+
+    @Override
+    public IDialogueObjective.DialogueElement getReadyDialogueTree()
+    {
+        return null;
     }
 }

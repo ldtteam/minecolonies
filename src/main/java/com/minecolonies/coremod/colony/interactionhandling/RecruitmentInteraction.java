@@ -95,7 +95,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         if (recruitButton != null && dataView instanceof IVisitorViewData)
         {
             final ItemStack recruitCost = ((IVisitorViewData) dataView).getRecruitCost();
-            final IColonyView colony = ((IVisitorViewData) dataView).getColonyView();
+            final IColonyView colony = (IColonyView) dataView.getColony();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
                 .append(Component.literal(dataView.getName() + ": "))

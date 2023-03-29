@@ -31,6 +31,20 @@ public interface IQuestParticipant
      * @return true if so.
      */
     boolean hasQuestOpen(final ResourceLocation questId);
+
+    /**
+     * Initiates a dialogue at the citizen.
+     * @param quest the quest to open it for.
+     * @param index the current objective index
+     */
+    void openDialogue(final IColonyQuest quest, final int index);
+
+    /**
+     * Get a display name for the quest giver.
+     * @return the display name.
+     */
+    String getName();
 }
+
 
 

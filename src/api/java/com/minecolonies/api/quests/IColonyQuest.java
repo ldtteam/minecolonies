@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.List;
+
 /**
  * Quest instance
  */
@@ -20,10 +22,17 @@ public interface IColonyQuest extends INBTSerializable<CompoundTag>
 
     /**
      * Get the id of the quest giver.
+     * Server only!
      *
      * @return the id of the quest giver.
      */
     IQuestGiver getQuestGiver();
+
+    /**
+     * Id of questgiver.
+     * @return the id.
+     */
+    int getQuestGiverId();
 
     /**
      * Check if the expiration date relative to the colony day count was reached.
@@ -45,13 +54,27 @@ public interface IColonyQuest extends INBTSerializable<CompoundTag>
 
     /**
      * Advance the quest objective to this id.
+     * @param player the player advancing this objective.
      * @param nextObjective the id to advance it to.
      */
-    void advanceObjective(int nextObjective);
+    void advanceObjective(final Player player, int nextObjective);
 
     /**
      * Get the current objective index.
      * @return the index number.
      */
     int getIndex();
+
+    /**
+     * Get one of the other participants by index.
+     * @param target the target participant id.
+     * @return the quest participant.
+     */
+    IQuestParticipant getParticipant(int target);
+
+    /**
+     * Get the full list of quest participants.
+     * @return the list of participants.
+     */
+    List<Integer> getParticipants();
 }

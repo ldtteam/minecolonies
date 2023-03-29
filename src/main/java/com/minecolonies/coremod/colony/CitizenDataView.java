@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -56,6 +57,7 @@ public class CitizenDataView implements ICitizenDataView
      * Attributes.
      */
     private final int     id;
+    private final IColonyView colonyView;
     protected     int     entityId;
     protected     String  name;
     protected     boolean female;
@@ -161,11 +163,12 @@ public class CitizenDataView implements ICitizenDataView
      *
      * @param id the id to set.
      */
-    protected CitizenDataView(final int id)
+    protected CitizenDataView(final int id, final IColonyView colonyView)
     {
         this.id = id;
         this.citizenSkillHandler = new CitizenSkillHandler();
         this.citizenHappinessHandler = new CitizenHappinessHandler();
+        this.colonyView = colonyView;
     }
 
     @Override
@@ -196,6 +199,12 @@ public class CitizenDataView implements ICitizenDataView
     public boolean isPaused()
     {
         return paused;
+    }
+
+    @Override
+    public IColony getColony()
+    {
+        return colonyView;
     }
 
     @Override

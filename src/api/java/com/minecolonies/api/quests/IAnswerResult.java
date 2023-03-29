@@ -1,7 +1,7 @@
-package com.minecolonies.coremod.quests.objectives;
+package com.minecolonies.api.quests;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IColonyQuest;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public interface IAnswerResult
      */
     enum ResultOption
     {
-        DIALOGUE("dialogue", json -> DialogueObjective.DialogueElement.parse(json)),
+        DIALOGUE("dialogue", json -> IDialogueObjective.DialogueElement.parse(json)),
         RETURN("return", json -> new ReturnResult()),
         GO_TO("advanceObjective", json -> new GoToResult(json)),
         CANCEL("cancel", json -> new CancelResult());
@@ -39,7 +39,7 @@ public interface IAnswerResult
     class ReturnResult implements ITerminalAnswerResult
     {
         @Override
-        public void applyToQuest(final IColonyQuest quest)
+        public void applyToQuest(final Player player, final IColonyQuest quest)
         {
             // Do nothing, just close UI.
         }
@@ -74,9 +74,21 @@ public interface IAnswerResult
         }
 
         @Override
-        public void applyToQuest(final IColonyQuest quest)
+        public void applyToQuest(final Player player, final IColonyQuest quest)
         {
-            quest.advanceObjective(nextObjective);
+            quest.advanceObjective(player, nextObjective);
+        }
+    }
+
+    /**
+     * Will advance the quest to the next objective.
+     */
+    class AdvanceResult implements ITerminalAnswerResult
+    {
+        @Override
+        public void applyToQuest(final Player player, final IColonyQuest quest)
+        {
+            quest.advanceObjective(player, quest.getIndex() + 1);
         }
     }
 
@@ -86,7 +98,7 @@ public interface IAnswerResult
     class CancelResult implements ITerminalAnswerResult
     {
         @Override
-        public void applyToQuest(final IColonyQuest quest)
+        public void applyToQuest(final Player player, final IColonyQuest quest)
         {
             quest.onDeletion();
         }

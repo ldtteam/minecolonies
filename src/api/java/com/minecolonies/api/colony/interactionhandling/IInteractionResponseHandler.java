@@ -28,6 +28,16 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     Component getInquiry();
 
     /**
+     * The inquiry of the GUI to the player. This is the key for the interaction, functions as id.
+     *
+     * @return the text inquiry.
+     */
+    default Component getInquiry(final Player player)
+    {
+        return getInquiry();
+    }
+
+    /**
      * Get a list of all possible responses.
      *
      * @return a list of the possible responses the player can give..
@@ -129,4 +139,14 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     {
         return null;
     }
+
+    /**
+     * Trigger on forcefully closing the interaction.
+     */
+    default void onClosed() {}
+
+    /**
+     * Trigger on opening the interaction.
+     */
+    default void onOpened(final Player player) {}
 }

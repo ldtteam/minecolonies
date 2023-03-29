@@ -4,12 +4,13 @@ import com.ldtteam.blockui.Alignment;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.controls.Tooltip;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
+import com.minecolonies.coremod.network.messages.server.colony.InteractionClose;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -85,7 +86,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         final Text chatText = findPaneOfTypeByID(CHAT_LABEL_ID, Text.class);
         chatText.setTextAlignment(Alignment.TOP_LEFT);
         chatText.setAlignment(Alignment.TOP_LEFT);
-        chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry().getString()));
+        chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry(Minecraft.getInstance().player).getString()));
         int responseIndex = 1;
         for (final Component component : handler.getPossibleResponses())
         {
@@ -111,6 +112,18 @@ public class WindowInteraction extends AbstractWindowSkeleton
         }
 
         handler.onWindowOpened(this, citizen);
+    }
+
+    @Override
+    public void onClosed()
+    {
+        super.onClosed();
+        if (currentInteraction < interactions.size())
+        {
+            interactions.get(currentInteraction).onClosed();
+            Network.getNetwork().sendToServer(new InteractionClose(citizen.getColonyId(), citizen.getId(), mc.level.dimension(), interactions.get(currentInteraction).getInquiry()));
+
+        }
     }
 
     /**

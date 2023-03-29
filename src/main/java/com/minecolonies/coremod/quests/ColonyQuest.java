@@ -55,6 +55,11 @@ public class ColonyQuest implements IColonyQuest
     private int objectiveProgress = 0;
 
     /**
+     * Tracking data of the currently active objective.
+     */
+    //private ObjectiveData objectiveData;
+
+    /**
      * Create a new colony quest.
      * @param questID the global id of the quest.
      * @param colony the colony it belongs to.
@@ -108,6 +113,12 @@ public class ColonyQuest implements IColonyQuest
     }
 
     @Override
+    public int getQuestGiverId()
+    {
+        return questGiver;
+    }
+
+    @Override
     public boolean isValid(final IColony colony)
     {
         if (questGiver == Integer.MIN_VALUE || !colony.getCitizenManager().getCivilian(questGiver).isAlive() )
@@ -148,9 +159,14 @@ public class ColonyQuest implements IColonyQuest
     }
 
     @Override
-    public void advanceObjective(final int nextObjective)
+    public void advanceObjective(final Player player, final int nextObjective)
     {
+        if (this.objectiveProgress == 0)
+        {
+            this.onStart(player, getColony());
+        }
         this.objectiveProgress = nextObjective;
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).init(this);
     }
 
     @Override
@@ -191,5 +207,17 @@ public class ColonyQuest implements IColonyQuest
     public int getIndex()
     {
         return objectiveProgress;
+    }
+
+    @Override
+    public IQuestParticipant getParticipant(final int target)
+    {
+        return colony.getCitizenManager().getCivilian(questParticipants.get(target) - 1);
+    }
+
+    @Override
+    public List<Integer> getParticipants()
+    {
+        return questParticipants;
     }
 }

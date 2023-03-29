@@ -284,6 +284,12 @@ public class CitizenData implements ICitizenData
     private final List<ResourceLocation> participatingQuests = new ArrayList<>();
 
     /**
+     * Tracking quests the citizen participated in and finished their participation.
+     */
+    private final List<ResourceLocation> finishedQuests = new ArrayList<>();
+    private final List<ResourceLocation> finishedQuestParticipation = new ArrayList<>();
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -1242,6 +1248,20 @@ public class CitizenData implements ICitizenData
         }
         nbtTagCompound.put(TAG_PART_QUESTS, partQuestNBT);
 
+        @NotNull final ListTag finishedQuestNBT = new ListTag();
+        for (final ResourceLocation quest : finishedQuests)
+        {
+            finishedQuestNBT.add(StringTag.valueOf(quest.toString()));
+        }
+        nbtTagCompound.put(TAG_FINISHED_AV_QUESTS, finishedQuestNBT);
+
+        @NotNull final ListTag finishedPartQuestNBT = new ListTag();
+        for (final ResourceLocation quest : finishedQuestParticipation)
+        {
+            finishedPartQuestNBT.add(StringTag.valueOf(quest.toString()));
+        }
+        nbtTagCompound.put(TAG_FINISHED_PART_QUESTS, finishedPartQuestNBT);
+
 
         return nbtTagCompound;
     }
@@ -1375,6 +1395,18 @@ public class CitizenData implements ICitizenData
         for (int i = 0; i < partQuestsNbt.size(); i++)
         {
             participatingQuests.add(new ResourceLocation(partQuestsNbt.getString(i)));
+        }
+
+        @NotNull final ListTag finQuestNbt = nbtTagCompound.getList(TAG_FINISHED_AV_QUESTS, TAG_STRING);
+        for (int i = 0; i < finQuestNbt.size(); i++)
+        {
+            finishedQuests.add(new ResourceLocation(finQuestNbt.getString(i)));
+        }
+
+        @NotNull final ListTag finPartQuestsNbt = nbtTagCompound.getList(TAG_FINISHED_PART_QUESTS, TAG_STRING);
+        for (int i = 0; i < finPartQuestsNbt.size(); i++)
+        {
+            finishedQuestParticipation.add(new ResourceLocation(finPartQuestsNbt.getString(i)));
         }
     }
 
@@ -1706,15 +1738,13 @@ public class CitizenData implements ICitizenData
     public void assignQuest(final IColonyQuest quest)
     {
         this.availableQuests.add(quest.getId());
-        openDialogue(quest, 0);
     }
 
-    //@Override
+    @Override
     public void openDialogue(final IColonyQuest quest, final int index)
     {
-        //todo need to call this when we advance a new objective.
         final Component comp = Component.literal(quest.getId().toString());
-        citizenChatOptions.put(comp, new QuestInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index));
+        citizenChatOptions.put(comp, new QuestInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
     }
 
     @Override
@@ -1740,5 +1770,26 @@ public class CitizenData implements ICitizenData
     public boolean hasQuestOpen(final ResourceLocation questId)
     {
         return this.availableQuests.contains(questId) || this.participatingQuests.contains(questId);
+    }
+
+    @Override
+    public void onQuestCompletion(final ResourceLocation questId)
+    {
+        if (this.availableQuests.contains(questId))
+        {
+            this.availableQuests.remove(questId);
+            this.finishedQuests.add(questId);
+        }
+        else if (this.participatingQuests.contains(questId))
+        {
+            this.participatingQuests.remove(questId);
+            this.finishedQuestParticipation.add(questId);
+        }
+    }
+
+    @Override
+    public void onInteractionClosed(final Component key, final ServerPlayer sender)
+    {
+        citizenChatOptions.get(key).onClosed();
     }
 }

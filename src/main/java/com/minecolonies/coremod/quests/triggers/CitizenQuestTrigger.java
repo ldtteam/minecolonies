@@ -5,6 +5,9 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Random quest trigger.
  */
@@ -37,7 +40,9 @@ public class CitizenQuestTrigger implements IQuestTrigger
     @Override
     public ITriggerReturnData isFulfilledForColony(final IColony colony)
     {
-        for (final ICitizenData data : colony.getCitizenManager().getCitizens())
+        final List<ICitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
+        Collections.shuffle(citizenDataList);
+        for (final ICitizenData data : citizenDataList)
         {
             if (matchNbt(data.serializeNBT(), matchTag))
             {

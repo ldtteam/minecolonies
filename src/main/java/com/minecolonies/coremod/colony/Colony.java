@@ -1956,4 +1956,10 @@ public class Colony implements IColony
     {
         return questManager;
     }
+
+    @Override
+    public ICitizen getCitizen(final int id)
+    {
+        return citizenManager.getCivilian(id);
+    }
 }

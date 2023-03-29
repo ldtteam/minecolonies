@@ -86,8 +86,10 @@ public final class NbtTagConstants
     public static final String TAG_PARTNER  = "partner";
 
     public static final String TAG_AV_QUESTS = "avquests";
-
     public static final String TAG_PART_QUESTS = "partquests";
+    public static final String TAG_FINISHED_AV_QUESTS = "finavquests";
+    public static final String TAG_FINISHED_PART_QUESTS = "finpartquests";
+
     /**
      * Event tags
      */

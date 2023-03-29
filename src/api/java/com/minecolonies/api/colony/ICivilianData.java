@@ -39,13 +39,6 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     void markDirty();
 
     /**
-     * Returns the colony of the citizen.
-     *
-     * @return colony of the citizen.
-     */
-    IColony getColony();
-
-    /**
      * Initializes a new citizen, when not read from nbt
      */
     void initForNewCivilian();
