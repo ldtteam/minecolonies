@@ -421,6 +421,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 }
             }
         }
+
+        if (citizenData != null && citizenData.getJob() != null)
+        {
+            ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -578,7 +583,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+                final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
                   .getResearchManager()
                   .getResearchEffects()
                   .getEffectStrength(SATURATION));
@@ -626,7 +631,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide())
         {
-            final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+            final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
               .getResearchManager()
               .getResearchEffects()
               .getEffectStrength(SATURATION));
