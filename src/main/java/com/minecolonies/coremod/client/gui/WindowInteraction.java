@@ -79,6 +79,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         }
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
+        handler.onOpened(Minecraft.getInstance().player);
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         group.getChildren().clear();
         int y = 0;
@@ -122,7 +123,6 @@ public class WindowInteraction extends AbstractWindowSkeleton
         {
             interactions.get(currentInteraction).onClosed();
             Network.getNetwork().sendToServer(new InteractionClose(citizen.getColonyId(), citizen.getId(), mc.level.dimension(), interactions.get(currentInteraction).getInquiry()));
-
         }
     }
 

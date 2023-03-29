@@ -48,7 +48,7 @@ public interface IAnswerResult
     /**
      * Will advance the quest to another objective.
      */
-    class GoToResult implements ITerminalAnswerResult
+    class GoToResult implements IResolveResult
     {
         /**
          * The next objective to go to.
@@ -83,7 +83,7 @@ public interface IAnswerResult
     /**
      * Will advance the quest to the next objective.
      */
-    class AdvanceResult implements ITerminalAnswerResult
+    class AdvanceResult implements IResolveResult
     {
         @Override
         public void applyToQuest(final Player player, final IColonyQuest quest)

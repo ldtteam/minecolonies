@@ -44,8 +44,13 @@ public final class ModInteractionsInitializer
                                                        .createEntry());
 
         ModInteractionResponseHandlers.quest = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.QUEST.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
-                                                      .setResponseHandlerProducer(QuestInteraction::new)
+                                                      .setResponseHandlerProducer(QuestDialogueInteraction::new)
                                                       .setRegistryName(ModInteractionResponseHandlers.QUEST)
                                                       .createEntry());
+
+        ModInteractionResponseHandlers.questAction = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.QUEST_ACTION.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
+                                                                                                                                  .setResponseHandlerProducer(QuestActionInteraction::new)
+                                                                                                                                  .setRegistryName(ModInteractionResponseHandlers.QUEST_ACTION)
+                                                                                                                                  .createEntry());
     }
 }

@@ -18,12 +18,15 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestActionObjective;
+import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.coremod.colony.interactionhandling.QuestInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.QuestActionInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.QuestDialogueInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -1744,7 +1747,14 @@ public class CitizenData implements ICitizenData
     public void openDialogue(final IColonyQuest quest, final int index)
     {
         final Component comp = Component.literal(quest.getId().toString());
-        citizenChatOptions.put(comp, new QuestInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
+        if (IQuestManager.GLOBAL_SERVER_QUESTS.get(quest.getId()).getObjective(index) instanceof IQuestActionObjective)
+        {
+            citizenChatOptions.put(comp, new QuestActionInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
+        }
+        else
+        {
+            citizenChatOptions.put(comp, new QuestDialogueInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
+        }
     }
 
     @Override

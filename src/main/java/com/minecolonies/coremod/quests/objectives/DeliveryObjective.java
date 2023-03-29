@@ -80,7 +80,7 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
     @Override
     public boolean isReady(final Player player, final IColonyQuest colonyQuest)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), item.getItem()) > quantity;
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), item.getItem()) >= quantity;
     }
 
     @Override
