@@ -6,10 +6,16 @@ package com.minecolonies.api.quests;
  */
 public interface IQuestObjective
 {
-
     /**
      * Initialization of an objective.
+     *
      * @param colonyQuest the colony quest it belongs to.
+     * @return
      */
-    void init(final IColonyQuest colonyQuest);
+    IObjectiveData init(final IColonyQuest colonyQuest);
+
+    /**
+     * On objective abort.
+     */
+    default void onAbort() { }
 }

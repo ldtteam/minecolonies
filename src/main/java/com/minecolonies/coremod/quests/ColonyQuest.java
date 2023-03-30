@@ -10,6 +10,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ColonyQuest implements IColonyQuest
     /**
      * Tracking data of the currently active objective.
      */
-    //private ObjectiveData objectiveData;
+    private IObjectiveData objectiveData = null;
 
     /**
      * Create a new colony quest.
@@ -154,6 +155,7 @@ public class ColonyQuest implements IColonyQuest
             colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
         }
 
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).onAbort();
         colony.getQuestManager().deactivateQuest(this.questID);
     }
 
@@ -172,8 +174,7 @@ public class ColonyQuest implements IColonyQuest
             this.onCompletion();
             return;
         }
-
-        questData.getObjective(this.objectiveProgress).init(this);
+        objectiveData = questData.getObjective(this.objectiveProgress).init(this);
     }
 
     @Override
@@ -246,5 +247,12 @@ public class ColonyQuest implements IColonyQuest
     public List<Integer> getParticipants()
     {
         return questParticipants;
+    }
+
+    @Override
+    @Nullable
+    public IObjectiveData getObjectiveData()
+    {
+        return objectiveData;
     }
 }

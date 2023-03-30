@@ -2,84 +2,52 @@ package com.minecolonies.coremod.quests.objectives;
 
 import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.quests.IDialogueObjective;
+import com.minecolonies.api.quests.IObjectiveData;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.quests.ColonyQuest;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MineBlockObjective implements IMineBlockObjective
+public class MineBlockObjective extends DialogueObjective implements IMineBlockObjective
 {
     /**
-     * ID for this special blockbreak effect
+     * Amount of blocks to mine.
      */
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "tracktreechop");
+    private int blocksToMine;
 
     /**
-     * Min block distance between block breaks to count as another tree
+     * The block to mine.
      */
-    private static final double MIN_TREE_SEPERATION = 8;
+    private Block blockToMine;
 
-    /**
-     * Amount of trees to chop
-     */
-    private int treesToChop = 5;
-
-    /**
-     * The block to break
-     */
-    private Block treeBlock = Blocks.OAK_LOG;
-
-    /**
-     * Quest reference
-     */
-    private final IColonyQuest quest;
-
-    /**
-     * Last chopped position
-     */
-    private BlockPos lastTreePos = BlockPos.ZERO;
-
-    public MineBlockObjective(final IColonyQuest quest)
+    public MineBlockObjective(final int target, final int blocksToMine, final Block blockToMine)
     {
-        this.quest = quest;
-    }
-
-    public ResourceLocation getID()
-    {
-        return ID;
-    }
-
-    public void onStart()
-    {
-
-    }
-
-    public void onFinish()
-    {
-
-    }
-
-    public void onCancel()
-    {
-
-    }
-
-    public boolean isFulfilled()
-    {
-        return treesToChop <= 0;
+        super(target, null);
+        this.blocksToMine = blocksToMine;
+        this.blockToMine = blockToMine;
     }
 
     @Override
-    public void onBlockBreak(final BlockState state, final BlockPos pos, final Player player)
+    public IObjectiveData init(final IColonyQuest colonyQuest)
     {
+        super.init(colonyQuest);
+        //todo add to an event listener that tracks a <Player-Quest, Block, Map> This should also now the colony quest
+        return new ObjectiveData();
+    }
+
+    @Override
+    public void onAbort()
+    {
+        //todo cleanup the event listener we added.
+    }
+
+    @Override
+    public void onBlockBreak(final ColonyQuest colonyQuest)
+    {
+        //todo gets colony quest as input and thats all we need, we increment quest objective then until fulfilled. (No need to go on forever).
         if (isFulfilled() || state.getBlock() != treeBlock)
         {
             return;
@@ -87,7 +55,6 @@ public class MineBlockObjective implements IMineBlockObjective
 
         if (BlockPosUtil.getDistance2D(lastTreePos, pos) > MIN_TREE_SEPERATION && hasLeavesAround(pos, player.level))
         {
-            treesToChop--;
             if (isFulfilled())
             {
                 //quest.onEffectComplete(this);
@@ -95,83 +62,47 @@ public class MineBlockObjective implements IMineBlockObjective
         }
     }
 
-    /**
-     * Save data
-     */
-    public CompoundTag serializeNBT()
-    {
-        final CompoundTag nbt = IMineBlockObjective.super.serializeNBT();
-        BlockPosUtil.write(nbt, "pos,", lastTreePos);
-        return nbt;
-    }
-
-    /**
-     * Load data
-     *
-     * @param nbt compound to read from
-     */
-    public void deserializeNBT(final CompoundTag nbt)
-    {
-        lastTreePos = BlockPosUtil.read(nbt, "pos");
-        IMineBlockObjective.super.deserializeNBT(nbt);
-    }
-
-    /**
-     * Check if the position has leaves around
-     *
-     * @param pos   position to check
-     * @param world world to check
-     * @return true if had leaves close
-     */
-    private boolean hasLeavesAround(final BlockPos pos, final Level world)
-    {
-        for (final Direction dir : Direction.values())
-        {
-            if (world.getBlockState(pos.relative(dir)).getBlock() instanceof LeavesBlock)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public int getBreakCounter()
-    {
-        return treesToChop;
-    }
-
-    @Override
-    public void setBreakCounter(final int count)
-    {
-        treesToChop = count;
-    }
-
-    public int getMaxObjectiveCount()
-    {
-        return 5;
-    }
-
-    public int getCurrentObjectiveCount()
-    {
-        return treesToChop;
-    }
-
     @Override
     public boolean isReady(final Player player, final IColonyQuest colonyQuest)
     {
-        return false;
+        return colonyQuest.getObjectiveData() instanceof ObjectiveData && colonyQuest.getObjectiveData().isFulfilled();
     }
 
     @Override
     public boolean tryResolve(final Player player, final IColonyQuest colonyQuest)
     {
-        return false;
+        //todo also cleanup
+        return colonyQuest.getObjectiveData() instanceof ObjectiveData && colonyQuest.getObjectiveData().isFulfilled();
     }
 
     @Override
     public IDialogueObjective.DialogueElement getReadyDialogueTree()
     {
+        //todo almost same dialogue setup
+        //todo we need to give the dialogue thing also the objective data so that it can do checkups. It should query this on client and serverside.
         return null;
+    }
+
+    public class ObjectiveData implements IObjectiveData
+    {
+        private int currentProgress = 0;
+
+        @Override
+        public boolean isFulfilled()
+        {
+            return currentProgress >= blocksToMine;
+        }
+
+        @Override
+        public CompoundTag serializeNBT()
+        {
+            return null;
+        }
+
+        @Override
+        public void deserializeNBT(final CompoundTag nbt)
+        {
+
+        }
     }
 }

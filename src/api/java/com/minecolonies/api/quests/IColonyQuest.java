@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -82,4 +83,11 @@ public interface IColonyQuest extends INBTSerializable<CompoundTag>
      * @return the list of participants.
      */
     List<Integer> getParticipants();
+
+    /**
+     * Get the objective data of the current objective.
+     * @return the data.
+     */
+    @Nullable
+    IObjectiveData getObjectiveData();
 }

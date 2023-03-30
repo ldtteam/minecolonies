@@ -18,11 +18,6 @@ import java.util.List;
 public class DeliveryObjective extends DialogueObjective implements IQuestActionObjective
 {
     /**
-     * The quest participant target of this delivery (0 if questgiver).
-     */
-    private final int target;
-
-    /**
      * The stack to be delivered.
      */
     private final ItemStack item;
@@ -47,7 +42,6 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
     public DeliveryObjective(final int target, final ItemStack item, final int quantity)
     {
         super(target, null);
-        this.target = target;
         this.item = item;
         this.quantity = quantity;
         this.buildDialogueTrees();

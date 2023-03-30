@@ -107,7 +107,7 @@ public class QuestActionInteraction extends QuestDialogueInteraction
             }
         }
 
-        //todo quest: QuestObjectives can have an ObjectiveData object that is stored in the colony quest. We only need this for the currently active objective.
+        //+todo quest: QuestObjectives can have an ObjectiveData object that is stored in the colony quest. We only need this for the currently active objective.
         // This can store the necessary data. Delivery requests and dialogue quests have "EmptyData". The ready check might check on the data, or general on the player.
 
         // todo this data we can then also check for a dif icon.

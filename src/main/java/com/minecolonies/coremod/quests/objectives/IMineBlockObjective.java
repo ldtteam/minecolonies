@@ -17,38 +17,4 @@ public interface IMineBlockObjective extends IQuestActionObjective
      * @param player player entity
      */
     void onBlockBreak(final BlockState state, final BlockPos pos, final Player player);
-
-    /**
-     * Save data
-     */
-    default CompoundTag serializeNBT()
-    {
-        final CompoundTag nbt = new CompoundTag();
-        nbt.putInt("count", getBreakCounter());
-        return nbt;
-    }
-
-    /**
-     * Gets the amount of blocks to break
-     *
-     * @return amount
-     */
-    int getBreakCounter();
-
-    /**
-     * Load data
-     *
-     * @param nbt compound to read from
-     */
-    default void deserializeNBT(final CompoundTag nbt)
-    {
-        setBreakCounter(nbt.getInt("count"));
-    }
-
-    /**
-     * Sets the amount of blocks to break
-     *
-     * @param count
-     */
-    void setBreakCounter(int count);
 }

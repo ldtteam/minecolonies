@@ -3,6 +3,7 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.quests.IDialogueObjective;
+import com.minecolonies.api.quests.IObjectiveData;
 import com.minecolonies.api.quests.IQuestObjective;
 
 /**
@@ -51,7 +52,7 @@ public class DialogueObjective implements IDialogueObjective
     }
 
     @Override
-    public void init(final IColonyQuest colonyQuest)
+    public IObjectiveData init(final IColonyQuest colonyQuest)
     {
         if (target == 0)
         {
@@ -61,5 +62,6 @@ public class DialogueObjective implements IDialogueObjective
         {
             colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getIndex());
         }
+        return null;
     }
 }
