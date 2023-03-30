@@ -149,4 +149,10 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
      * Trigger on opening the interaction.
      */
     default void onOpened(final Player player) {}
+
+    /**
+     * Get the id.
+     * @return the id.
+     */
+    Component getId();
 }

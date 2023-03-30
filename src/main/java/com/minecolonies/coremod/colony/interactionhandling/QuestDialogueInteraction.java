@@ -15,16 +15,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers.QUEST;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUEST_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUEST_INDEX;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * A simple interaction which displays until an acceptable response is clicked
@@ -40,7 +41,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     /**
      * Currently open colony quest.
      */
-    protected final IColonyQuest colonyQuest;
+    protected IColonyQuest colonyQuest;
 
     /**
      * The respective citizen.
@@ -67,6 +68,11 @@ public class QuestDialogueInteraction extends StandardInteraction
      */
     protected DialogueObjective.DialogueElement currentElement = null;
 
+    /**
+     * Some finished flag to make it disappear more quickly on the client side.
+     */
+    protected boolean finished = false;
+
     public QuestDialogueInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData)
     {
         super(inquiry, null, priority);
@@ -88,7 +94,11 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
-        if (currentElement != null)
+        if (colonyQuest == null)
+        {
+            colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
+        }
+        if (currentElement != null && colonyQuest != null)
         {
             final IAnswerResult result = this.currentElement.getOptionResult(response);
             if (result instanceof ITerminalAnswerResult)
@@ -96,6 +106,7 @@ public class QuestDialogueInteraction extends StandardInteraction
                 ((ITerminalAnswerResult) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
                 if (!(result instanceof IAnswerResult.ReturnResult))
                 {
+                    finished = true;
                     currentElement = null;
                     data.getColony().markDirty();
                     return;
@@ -117,24 +128,35 @@ public class QuestDialogueInteraction extends StandardInteraction
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (currentElement != null)
+        if (colonyQuest == null)
+        {
+            colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
+        }
+        if (currentElement != null && colonyQuest != null)
         {
             final IAnswerResult result = this.currentElement.getOptionResult(response);
             if (result instanceof ITerminalAnswerResult)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(startElement.getText()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), response));
                 this.currentElement = this.startElement;
+                finished = true;
                 return true;
             }
             else if (result instanceof DialogueObjective.DialogueElement)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(startElement.getText()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), response));
                 this.currentElement = (DialogueObjective.DialogueElement) result;
                 return false;
             }
         }
 
         return true;
+    }
+
+    @Override
+    public Component getId()
+    {
+        return Component.literal(this.questId.toString());
     }
 
     @Override
@@ -170,9 +192,15 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
+    public boolean isVisible(final Level world)
+    {
+        return !finished;
+    }
+
+    @Override
     public List<Component> getPossibleResponses()
     {
-        return currentElement.getOptions();
+        return currentElement == null ? Collections.emptyList() : currentElement.getOptions();
     }
 
     @Override
@@ -181,7 +209,7 @@ public class QuestDialogueInteraction extends StandardInteraction
         final CompoundTag tag = super.serializeNBT();
         tag.putString(TAG_QUEST_ID, questId.toString());
         tag.putInt(TAG_QUEST_INDEX, index);
-
+        tag.putBoolean(TAG_FINISHED, finished);
         return tag;
     }
 
@@ -193,6 +221,7 @@ public class QuestDialogueInteraction extends StandardInteraction
         this.index = compoundNBT.getInt(TAG_QUEST_INDEX);
         this.currentElement = ((DialogueObjective) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();
         this.startElement = currentElement;
+        this.finished = compoundNBT.getBoolean(TAG_FINISHED);
     }
 
     @Override
@@ -210,6 +239,6 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return currentElement != null && citizen.hasQuestOpen(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getIndex() == index;
+        return currentElement != null && citizen.hasQuestOpen(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId) != null && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getIndex() == index;
     }
 }

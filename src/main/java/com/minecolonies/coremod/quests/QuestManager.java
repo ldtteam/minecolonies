@@ -44,12 +44,7 @@ public class QuestManager implements IQuestManager
         this.colony = colony;
     }
 
-    /**
-     * Have player attempt to accept a colony quest.
-     * @param questID the unique id of the quest.
-     * @param player the player trying to accept it.
-     * @return true if successful.
-     */
+    @Override
     public boolean attemptAcceptQuest(final ResourceLocation questID, final Player player)
     {
         final IColonyQuest quest = availableQuests.getOrDefault(questID, null);
@@ -57,14 +52,12 @@ public class QuestManager implements IQuestManager
         {
             return false;
         }
-        quest.onStart(player, colony);
+        this.inProgressQuests.put(questID, quest);
+        this.availableQuests.remove(questID);
         return true;
     }
 
-    /**
-     * Conclude a given quest. This is called FROM the quest, to the colony.
-     * @param questId the unique id of the quest.
-     */
+    @Override
     public void concludeQuest(final ResourceLocation questId)
     {
         if (inProgressQuests.containsKey(questId))

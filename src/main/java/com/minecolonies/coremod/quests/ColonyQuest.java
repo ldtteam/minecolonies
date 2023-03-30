@@ -2,10 +2,7 @@ package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IColonyQuest;
-import com.minecolonies.api.quests.IQuestGiver;
-import com.minecolonies.api.quests.IQuestManager;
-import com.minecolonies.api.quests.IQuestParticipant;
+import com.minecolonies.api.quests.*;
 import com.minecolonies.coremod.quests.triggers.ITriggerReturnData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
@@ -84,6 +81,7 @@ public class ColonyQuest implements IColonyQuest
                 ((ICitizenData) data.get()).addQuestParticipation(this);
             }
         }
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).init(this);
     }
 
     /**
@@ -103,6 +101,7 @@ public class ColonyQuest implements IColonyQuest
     @Override
     public void onStart(final Player player, final IColony colony)
     {
+        colony.getQuestManager().attemptAcceptQuest(this.getId(), player);
         // activeEffects.addAll(type.createEffectsFor(this));
     }
 
@@ -166,7 +165,35 @@ public class ColonyQuest implements IColonyQuest
             this.onStart(player, getColony());
         }
         this.objectiveProgress = nextObjective;
-        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).init(this);
+
+        final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+        if (this.objectiveProgress >= questData.getObjectiveCount())
+        {
+            this.onCompletion();
+            return;
+        }
+
+        questData.getObjective(this.objectiveProgress).init(this);
+    }
+
+    @Override
+    public void onCompletion()
+    {
+        colony.getQuestManager().concludeQuest(this.getId());
+        final ICitizenData questGiverData = colony.getCitizenManager().getCivilian(questGiver);
+        if (questGiverData != null)
+        {
+            questGiverData.onQuestCompletion(this.questID);
+        }
+
+        for (final int partId : questParticipants)
+        {
+            final ICitizenData partData = colony.getCitizenManager().getCivilian(partId);
+            if (partData != null)
+            {
+                partData.onQuestCompletion(this.questID);
+            }
+        }
     }
 
     @Override

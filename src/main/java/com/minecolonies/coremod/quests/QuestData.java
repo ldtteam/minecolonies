@@ -63,4 +63,10 @@ public class QuestData implements IQuestData
     {
         return objectives.get(index);
     }
+
+    @Override
+    public int getObjectiveCount()
+    {
+        return objectives.size();
+    }
 }

@@ -962,7 +962,7 @@ public class CitizenData implements ICitizenData
 
         if (colony.getWorld() != null)
         {
-            final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values().stream().filter(e -> e.isVisible(colony.getWorld())).collect(Collectors.toList());
+            final List<IInteractionResponseHandler> subInteractions = citizenChatOptions.values().stream().filter(e -> e.isVisible(colony.getWorld())).toList();
 
             buf.writeInt(subInteractions.size());
             for (final IInteractionResponseHandler interactionHandler : subInteractions)
@@ -1337,7 +1337,7 @@ public class CitizenData implements ICitizenData
                   (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
                                                .getInteractionResponseHandlerDataManager()
                                                .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
-                citizenChatOptions.put(handler.getInquiry(), handler);
+                citizenChatOptions.put(handler.getId(), handler);
             }
         }
 
@@ -1452,12 +1452,12 @@ public class CitizenData implements ICitizenData
 
         for (final IInteractionResponseHandler handler : toRemove)
         {
-            citizenChatOptions.remove(handler.getInquiry());
+            citizenChatOptions.remove(handler.getId());
             for (final Component comp : handler.getPossibleResponses())
             {
                 if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
                 {
-                    citizenChatOptions.get(handler.getResponseResult(comp)).removeParent(handler.getInquiry());
+                    citizenChatOptions.get(handler.getResponseResult(comp)).removeParent(handler.getId());
                 }
             }
         }
@@ -1466,12 +1466,12 @@ public class CitizenData implements ICitizenData
     @Override
     public void triggerInteraction(@NotNull final IInteractionResponseHandler handler)
     {
-        if (!this.citizenChatOptions.containsKey(handler.getInquiry()))
+        if (!this.citizenChatOptions.containsKey(handler.getId()))
         {
-            this.citizenChatOptions.put(handler.getInquiry(), handler);
+            this.citizenChatOptions.put(handler.getId(), handler);
             for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())
             {
-                this.citizenChatOptions.put(childHandler.getInquiry(), (ServerCitizenInteraction) childHandler);
+                this.citizenChatOptions.put(childHandler.getId(), (ServerCitizenInteraction) childHandler);
             }
             markDirty();
         }

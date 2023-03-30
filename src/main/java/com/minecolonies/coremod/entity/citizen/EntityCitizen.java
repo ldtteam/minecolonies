@@ -623,10 +623,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void eatFoodInteraction(final ItemStack usedStack, final Player player, final InteractionHand hand)
     {
-        usedStack.shrink(1);
-        player.setItemInHand(hand, usedStack);
         interactionCooldown = 100;
-
         if (!level.isClientSide())
         {
             final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
@@ -647,6 +644,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getYRot(),
                 getEyeHeight()), this);
         }
+
+        usedStack.shrink(1);
+        player.setItemInHand(hand, usedStack);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class QuestActionInteraction extends QuestDialogueInteraction
     {
         final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index);
         triggerResponseState(player, objective);
-        if (currentElement != null)
+        if (currentElement != null && colonyQuest != null)
         {
             final IAnswerResult result = this.currentElement.getOptionResult(response);
             if (result instanceof ITerminalAnswerResult)
@@ -57,6 +57,7 @@ public class QuestActionInteraction extends QuestDialogueInteraction
                     if (((IQuestActionObjective) objective).isReady(player, colonyQuest) && ((IQuestActionObjective) objective).tryResolve(player, colonyQuest))
                     {
                         ((ITerminalAnswerResult) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
+                        finished = true;
                     }
                 }
                 else
@@ -85,18 +86,22 @@ public class QuestActionInteraction extends QuestDialogueInteraction
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (currentElement != null)
+        if (colonyQuest == null)
+        {
+            colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
+        }
+        if (currentElement != null && colonyQuest != null)
         {
             final IAnswerResult result = this.currentElement.getOptionResult(response);
             if (result instanceof ITerminalAnswerResult)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(startElement.getText()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), response));
                 this.currentElement = this.startElement;
                 return true;
             }
             else if (result instanceof DialogueObjective.DialogueElement)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(startElement.getText()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), response));
                 this.currentElement = (DialogueObjective.DialogueElement) result;
                 return false;
             }

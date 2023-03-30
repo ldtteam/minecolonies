@@ -37,7 +37,7 @@
       }
     }
   ],
-  "max-occurrences": 10,
+  "max-occurrences": 20,
   "triggerOrder": "(1 && 4) || (2 && 4) || (3 && 4)",
   "objectives": [
     {

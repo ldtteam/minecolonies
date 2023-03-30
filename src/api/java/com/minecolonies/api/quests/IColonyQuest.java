@@ -60,6 +60,11 @@ public interface IColonyQuest extends INBTSerializable<CompoundTag>
     void advanceObjective(final Player player, int nextObjective);
 
     /**
+     * On question completion call.
+     */
+    void onCompletion();
+
+    /**
      * Get the current objective index.
      * @return the index number.
      */

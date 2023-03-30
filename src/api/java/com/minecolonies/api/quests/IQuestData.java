@@ -32,4 +32,10 @@ public interface IQuestData
      * @return the current objective.
      */
     IQuestObjective getObjective(final int index);
+
+    /**
+     * Get the objective count of this quest.
+     * @return the count.
+     */
+    int getObjectiveCount();
 }

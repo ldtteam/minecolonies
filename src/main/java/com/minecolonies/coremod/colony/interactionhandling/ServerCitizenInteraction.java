@@ -195,4 +195,10 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     {
         this.validator = InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validatorId);
     }
+
+    @Override
+    public Component getId()
+    {
+        return getInquiry();
+    }
 }
