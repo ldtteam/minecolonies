@@ -172,7 +172,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public boolean isControlledByLocalInstance()
     {
-        return false;
+        return this.isEffectiveAi();
     }
 
     /**
