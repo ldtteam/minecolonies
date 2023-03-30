@@ -727,7 +727,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private boolean handlePathPointOnLadder(final PathPointExtended pEx)
     {
         Vec3 vec3 = this.getPath().getNextEntityPos(this.ourEntity);
-        final BlockPos entityPos = BlockPos.containing(this.ourEntity.position());
+        final BlockPos entityPos = this.ourEntity.blockPosition();
         if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < 0.6 && Math.abs(vec3.y - entityPos.getY()) <= 2.0)
         {
             //This way he is less nervous and gets up the ladder

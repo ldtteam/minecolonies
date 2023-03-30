@@ -157,12 +157,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return tickCount;
     }
 
-    @NotNull
-    public BlockPos blockPosition()
-    {
-        return BlockPos.containing(getX(), getY(), getZ());
-    }
-
     /**
      * Disable vanilla's item picking stuff as we're doing it ourselves
      */
