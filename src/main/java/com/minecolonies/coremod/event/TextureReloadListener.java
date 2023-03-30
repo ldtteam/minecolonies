@@ -37,9 +37,9 @@ public class TextureReloadListener extends SimplePreparableReloadListener<Textur
         final List<ResourceLocation> resLocs = new ArrayList<>(manager.listResources("textures/entity/citizen", f -> true).keySet());
         for (final ResourceLocation res : resLocs)
         {
-            if (!res.getPath().contains("png") && res.getPath().contains("textures/entity/citizen"))
+            if (res.getPath().contains("png") && res.getPath().contains("textures/entity/citizen"))
             {
-                final String folder = res.getPath().replace("textures/entity/citizen", "").replace("/", "");
+                final String folder = res.getPath().split("/")[3];
                 if (!folder.isEmpty())
                 {
                     set.add(folder);
