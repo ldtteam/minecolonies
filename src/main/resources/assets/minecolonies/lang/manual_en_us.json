@@ -1760,6 +1760,8 @@
   "death.attack.entity.minecolonies.shieldmaiden": "%s was crushed by a Shieldmaiden!",
   "death.attack.entity.minecolonies.visitor": "%s died after starting a brawl at the local tavern. They brought it upon themself!",
   "death.attack.entity.minecolonies.training": "%s got killed during Training. What happened?",
+  "death.attack.entity.minecolonies.guard": "%s was defeated by a Guard.",
+  "death.attack.entity.minecolonies.guardpvp": "%s was skewered by a Guard. Justice was served!",
 
   "item.minecolonies.shieldmaidenegg": "Shieldmaiden Spawn Egg",
   "item.minecolonies.norsemenarcheregg": "Archer Norseman Spawn Egg",
