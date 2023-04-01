@@ -23,7 +23,6 @@ public class GatherDataHandler
         final DataGenerator generator = event.getGenerator();
         final LootTables lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
-        generator.addProvider(true, new DefaultDamageTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator.getPackOutput()));
         generator.addProvider(event.includeClient(), new DefaultEntityIconProvider(generator));
@@ -31,10 +30,12 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultBlockLootTableProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultEntityLootProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultSupplyLootProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultDamageTypeProvider(generator.getPackOutput(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new DefaultAdvancementsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new DefaultItemTagsProvider(generator.getPackOutput(), event.getLookupProvider(), blockTagsProvider, event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new DefaultEntityTypeTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new DefaultDamageTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new DefaultResearchProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultRecipeProvider(generator.getPackOutput()));
 
