@@ -250,17 +250,6 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:2s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:bane_of_arthropods\",lvl:2s}]}"
             }
           ],
@@ -328,17 +317,6 @@
             {
               "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:fire_protection\",lvl:2s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:2s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -492,17 +470,6 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:3s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:bane_of_arthropods\",lvl:3s}]}"
             }
           ],
@@ -558,51 +525,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:fire_aspect\",lvl:3s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:fire_protection\",lvl:3s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:3s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:frost_walker\",lvl:3s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:knockback\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -647,17 +570,6 @@
             {
               "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:protection\",lvl:3s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:punch\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",

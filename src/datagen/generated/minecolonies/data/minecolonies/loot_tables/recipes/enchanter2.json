@@ -250,17 +250,6 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:2s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:bane_of_arthropods\",lvl:2s}]}"
             }
           ],
@@ -328,17 +317,6 @@
             {
               "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:fire_protection\",lvl:2s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:2s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
