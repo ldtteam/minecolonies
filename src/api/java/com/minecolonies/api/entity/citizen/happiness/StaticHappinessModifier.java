@@ -10,7 +10,7 @@ public class StaticHappinessModifier extends AbstractHappinessModifier
     /**
      * The supplier to get the happiness factor.
      */
-    private final DoubleSupplier supplier;
+    protected DoubleSupplier supplier;
 
     /**
      * Create an instance of the happiness modifier.

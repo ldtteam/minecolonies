@@ -8,12 +8,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -58,6 +60,11 @@ public class ColonyQuest implements IColonyQuest
     private IObjectiveData objectiveData = null;
 
     /**
+     * The player that accepted this.
+     */
+    private UUID assignedPlayer = null;
+
+    /**
      * Create a new colony quest.
      * @param questID the global id of the quest.
      * @param colony the colony it belongs to.
@@ -100,8 +107,17 @@ public class ColonyQuest implements IColonyQuest
     }
 
     @Override
+    public UUID getAssignedPlayer()
+    {
+        return assignedPlayer;
+    }
+
+    @Override
     public void onStart(final Player player, final IColony colony)
     {
+        // Reset quest timeout on acceptance.
+        assignmentStart = colony.getDay();
+        assignedPlayer = player.getUUID();
         colony.getQuestManager().attemptAcceptQuest(this.getId(), player);
         // activeEffects.addAll(type.createEffectsFor(this));
     }
@@ -155,13 +171,35 @@ public class ColonyQuest implements IColonyQuest
             colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
         }
 
-        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).onAbort();
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).onAbort(this);
         colony.getQuestManager().deactivateQuest(this.questID);
+    }
+
+    @Override
+    public void advanceObjective(final Player player)
+    {
+        this.advanceObjective(player, this.objectiveProgress + 1);
+    }
+
+    @Override
+    public void onWorldLoad()
+    {
+        if (objectiveData != null)
+        {
+            IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).onWorldLoad(this);
+        }
     }
 
     @Override
     public void advanceObjective(final Player player, final int nextObjective)
     {
+        colony.markDirty();
+        if (nextObjective == -1)
+        {
+            this.onCompletion();
+            return;
+        }
+
         if (this.objectiveProgress == 0)
         {
             this.onStart(player, getColony());
@@ -195,6 +233,14 @@ public class ColonyQuest implements IColonyQuest
                 partData.onQuestCompletion(this.questID);
             }
         }
+
+        final Player player = colony.getWorld().getPlayerByUUID(assignedPlayer);
+        if (player != null)
+        {
+            final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+            player.displayClientMessage(Component.literal("You have successfully completed the quest: " + questData.getName()), true);
+            questData.unlockQuestRewards(colony, player, this);
+        }
     }
 
     @Override
@@ -213,6 +259,11 @@ public class ColonyQuest implements IColonyQuest
         }
         compoundNBT.put(TAG_PARTICIPANTS, participantList);
 
+        if (objectiveData != null)
+        {
+            compoundNBT.put(TAG_OBJECTIVE, this.objectiveData.serializeNBT());
+        }
+
         return compoundNBT;
     }
 
@@ -228,6 +279,16 @@ public class ColonyQuest implements IColonyQuest
         for (final Tag tag : participantList)
         {
             questParticipants.add(((IntTag) tag).getAsInt());
+        }
+
+        if (nbt.contains(TAG_OBJECTIVE))
+        {
+            final IObjectiveData data = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(objectiveProgress).getObjectiveData();
+            if (data != null)
+            {
+                data.deserializeNBT(nbt.getCompound(TAG_OBJECTIVE));
+                this.objectiveData = data;
+            }
         }
     }
 

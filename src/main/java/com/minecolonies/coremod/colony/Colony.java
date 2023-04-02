@@ -1002,6 +1002,7 @@ public class Colony implements IColony
             if (eventHandler == null)
             {
                 eventHandler = new ColonyPermissionEventHandler(this);
+                questManager.onWorldLoad();
                 MinecraftForge.EVENT_BUS.register(eventHandler);
             }
             setColonyColor(this.colonyTeamColor);

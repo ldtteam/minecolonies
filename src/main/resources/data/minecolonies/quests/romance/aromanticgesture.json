@@ -1,0 +1,138 @@
+{
+  "name": "A Romantic Gesture",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "random",
+      "rarity": 1000
+    },
+    {
+      "type": "citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:baker"
+          }
+        }
+      }
+    },
+    {
+      "type": "citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:deliveryman"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "dialogue",
+      "target": 0,
+      "dialogue": {
+        "text": "Hello there, could I ask you to help me with something?",
+        "options": [
+          {
+            "answer": "Sure, what do you need?",
+            "result": {
+              "type": "dialogue",
+              "text": "I want to give a poppy to another citizen, but I'm too shy to do it myself. Can you deliver it for me?",
+              "options": [
+                {
+                  "answer": "Of course, I'll be happy to help.",
+                  "result": {
+                    "type": "advanceObjective",
+                    "go-to": 1
+                  }
+                },
+                {
+                  "answer": "I'm sorry, but I can't do that for you.",
+                  "result": {
+                    "type": "dialogue",
+                    "text": "Oh, that's too bad. I guess I'll have to try to do it myself.",
+                    "options": [
+                      {
+                        "answer": "Good luck with that!",
+                        "result": {
+                          "type": "cancel"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "answer": "I'm sorry, I don't have time right now.",
+            "result": {
+              "type": "return"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "delivery",
+      "details": {
+        "target": 1,
+        "item": "minecraft:poppy",
+        "qty": 1,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "dialogue",
+      "target": 1,
+      "dialogue": {
+        "text": "Oh, this is beautiful! Thank you so much! Who is it from?",
+        "options": [
+          {
+            "answer": "It's from $0",
+            "result": {
+              "type": "dialogue",
+              "text": "Oh, I see! I'll be sure to thank them. Here, take this as a token of my gratitude.",
+              "options": [
+                {
+                  "answer": "Thank you, I appreciate it.",
+                  "result": {
+                    "type": "advanceObjective",
+                    "go-to": 3
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "details": {
+        "item": "minecraft:diamond",
+        "qty": 1
+      }
+    },
+    {
+      "type": "happiness",
+      "details": {
+        "target": 0,
+        "qty": 2,
+        "days": 7
+      }
+    },
+    {
+      "type": "happiness",
+      "details": {
+        "target": 1,
+        "qty": 2,
+        "days": 7
+      }
+    }
+  ]
+}

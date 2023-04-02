@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import static com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers.QUEST;
 import static com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers.QUEST_ACTION;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -30,7 +31,6 @@ public class QuestActionInteraction extends QuestDialogueInteraction
      */
     private static final ResourceLocation QUEST_START_ICON = new ResourceLocation(Constants.MOD_ID, "textures/icons/queststart.png");
     private static final ResourceLocation QUEST_NEXT_TASK_ICON = new ResourceLocation(Constants.MOD_ID, "textures/icons/nexttask.png");
-    private static final ResourceLocation QUEST_WAITING_TASK_ICON = new ResourceLocation(Constants.MOD_ID, "textures/icons/opentask.png");
 
     public QuestActionInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData)
     {
@@ -45,6 +45,10 @@ public class QuestActionInteraction extends QuestDialogueInteraction
     @Override
     public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
+        if (colonyQuest == null)
+        {
+            colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
+        }
         final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index);
         triggerResponseState(player, objective);
         if (currentElement != null && colonyQuest != null)
@@ -106,11 +110,6 @@ public class QuestActionInteraction extends QuestDialogueInteraction
                 return false;
             }
         }
-
-        //+todo quest: QuestObjectives can have an ObjectiveData object that is stored in the colony quest. We only need this for the currently active objective.
-        // This can store the necessary data. Delivery requests and dialogue quests have "EmptyData". The ready check might check on the data, or general on the player.
-
-        // todo this data we can then also check for a dif icon.
 
         return true;
     }

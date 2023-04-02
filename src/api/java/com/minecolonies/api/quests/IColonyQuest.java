@@ -8,6 +8,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Quest instance
@@ -90,4 +91,27 @@ public interface IColonyQuest extends INBTSerializable<CompoundTag>
      */
     @Nullable
     IObjectiveData getObjectiveData();
+
+    /**
+     * Get the colony matching the quest.
+     * @return the colony.
+     */
+    IColony getColony();
+
+    /**
+     * Get the player UUID that accepted the quest.
+     * @return the player uuid.
+     */
+    UUID getAssignedPlayer();
+
+    /**
+     * Simple advance objective by one.
+     * @param player the player involved.
+     */
+    void advanceObjective(Player player);
+
+    /**
+     * On world load trigger.
+     */
+    void onWorldLoad();
 }

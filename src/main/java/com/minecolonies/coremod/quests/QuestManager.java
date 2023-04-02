@@ -79,10 +79,25 @@ public class QuestManager implements IQuestManager
                 continue;
             }
 
+            boolean missingParent = false;
+            for (final ResourceLocation parent: quest.getValue().getParents())
+            {
+                if (!finishedQuests.containsKey(parent))
+                {
+                    missingParent = true;
+                    break;
+                }
+            }
+
+            if (missingParent)
+            {
+                continue;
+            }
+
             final IColonyQuest colonyQuest = quest.getValue().attemptStart(colony);
             if (colonyQuest != null)
             {
-                availableQuests.put(quest.getKey(), colonyQuest);
+                this.availableQuests.put(quest.getKey(), colonyQuest);
             }
         }
 
@@ -91,7 +106,7 @@ public class QuestManager implements IQuestManager
             if (!GLOBAL_SERVER_QUESTS.containsKey(availableQuest.getKey()) || !availableQuest.getValue().isValid(colony))
             {
                 availableQuest.getValue().onDeletion();
-                availableQuests.remove(availableQuest.getKey());
+                this.availableQuests.remove(availableQuest.getKey());
             }
         }
 
@@ -100,7 +115,7 @@ public class QuestManager implements IQuestManager
             if (!GLOBAL_SERVER_QUESTS.containsKey(inProgressQuest.getKey()) || !inProgressQuest.getValue().isValid(colony))
             {
                 inProgressQuest.getValue().onDeletion();
-                availableQuests.remove(inProgressQuest.getKey());
+                this.inProgressQuests.remove(inProgressQuest.getKey());
             }
         }
     }
@@ -116,6 +131,15 @@ public class QuestManager implements IQuestManager
     public IColonyQuest getAvailableOrInProgressQuest(final ResourceLocation questId)
     {
         return availableQuests.containsKey(questId) ? availableQuests.get(questId) : inProgressQuests.get(questId);
+    }
+
+    @Override
+    public void onWorldLoad()
+    {
+        for (final IColonyQuest colonyQuest : inProgressQuests.values())
+        {
+            colonyQuest.onWorldLoad();
+        }
     }
 
     @Override
@@ -166,10 +190,10 @@ public class QuestManager implements IQuestManager
         {
             final IColonyQuest colonyQuest = new ColonyQuest(colony);
             colonyQuest.deserializeNBT((CompoundTag) element);
-            availableQuests.put(colonyQuest.getId(), colonyQuest);
+            inProgressQuests.put(colonyQuest.getId(), colonyQuest);
         }
 
-        final ListTag finishedListTag = nbt.getList(TAG_IN_PROGRESS, Tag.TAG_COMPOUND);
+        final ListTag finishedListTag = nbt.getList(TAG_IS_FINISHED, Tag.TAG_COMPOUND);
         for (final Tag element : finishedListTag)
         {
             finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));

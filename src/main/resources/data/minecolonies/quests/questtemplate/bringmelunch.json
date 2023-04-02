@@ -1,4 +1,6 @@
 {
+  "name": "Missing Lunch",
+  "parents": [],
   "triggers": [
     {
       "type": "random",
@@ -38,7 +40,7 @@
     }
   ],
   "max-occurrences": 20,
-  "triggerOrder": "(1 && 4) || (2 && 4) || (3 && 4)",
+  "triggerOrder": "(1 && 4 && 4) || (2 && 4) || (3 && 4)",
   "objectives": [
     {
       "type": "dialogue",
@@ -105,7 +107,8 @@
       "details": {
         "target": 0,
         "item": "minecraft:apple",
-        "qty": 1
+        "qty": 1,
+        "next-objective": 3
       }
     },
     {
@@ -113,7 +116,61 @@
       "details": {
         "target": 0,
         "item": "minecraft:baked_potato",
+        "qty": 1,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "breakblock",
+      "details": {
+        "target": 0,
+        "block": "minecraft:dirt",
+        "qty": 10
+      }
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "details": {
+        "item": "minecraft:gold_ingot",
         "qty": 1
+      }
+    },
+    {
+      "type": "skill",
+      "details": {
+        "target": 0,
+        "skill": "Strength",
+        "qty": 1
+      }
+    },
+    {
+      "type": "research-finish",
+      "details": {
+        "id": "this"
+      }
+    },
+    {
+      "type": "raid",
+      "details": {
+        "change": -1
+      }
+    },
+    {
+      "type": "relationship",
+      "details": {
+        "target1": 0,
+        "target2": 1,
+        "type": "couple"
+      }
+    },
+    {
+      "type": "happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
       }
     }
   ]

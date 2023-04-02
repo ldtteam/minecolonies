@@ -5,20 +5,18 @@ package com.minecolonies.coremod.quests;
  */
 public class QuestParsingConstants
 {
-    public static final String QUEST_CATEGORY        = "category";
-    public static final String QUEST_EFFECTS         = "effects";
+    public static final String QUEST_EFFECTS         = "side-effects";
     public static final String QUEST_REWARDS         = "rewards";
     public static final String QUEST_TRIGGERS        = "triggers";
     public static final String QUEST_OBJECTIVES      = "objectives";
     public static final String TRIGGER_ORDER         = "triggerOrder";
     public static final String MAX_OCC               = "max-occurrences";
     public static final String TYPE                  = "type";
+    public static final String TIMEOUT               = "timeout";
+    public static final String NAME                  = "name";
 
     public static final String ID                    = "id";
-    public static final String QUEST_REPEATING       = "repeatingtimes";
-    public static final String QUEST_PRE_QUESTS      = "pre-quests";
-    public static final String QUEST_FOLLOWUP_QUESTS = "followup-quests";
-    public static final String QUEST_LOCATION        = "location ";
+    public static final String QUEST_PARENTS         = "parents";
 
     /**
      * Logical symbols for conditions

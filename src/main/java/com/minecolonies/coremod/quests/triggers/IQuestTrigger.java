@@ -16,7 +16,7 @@ import java.util.function.Function;
  */
 public interface IQuestTrigger
 {
-    //todo make this a forge registry!
+    //todo quest make this a forge registry!
     Map<String, Function<JsonObject, IQuestTrigger>> QUEST_TRIGGER_REGISTRY = new HashMap<>();
     enum TriggerTypes
     {

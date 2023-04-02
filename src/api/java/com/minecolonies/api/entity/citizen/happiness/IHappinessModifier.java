@@ -58,4 +58,11 @@ public interface IHappinessModifier
      * @return the days.
      */
     int getDays();
+
+    /**
+     * Method to set the values at a later day.
+     * @param qty the supplier value.
+     * @param days the period.
+     */
+    void set(int qty, int days);
 }

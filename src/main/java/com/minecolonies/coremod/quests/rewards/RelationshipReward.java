@@ -1,0 +1,108 @@
+package com.minecolonies.coremod.quests.rewards;
+
+import com.google.gson.JsonObject;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestReward;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.CitizenData;
+import net.minecraft.world.entity.player.Player;
+
+/**
+ * Relationship adjustment quest reward.
+ */
+public class RelationshipReward implements IQuestReward
+{
+    /**
+     * The first target citizen to apply things to.
+     */
+    private final int target1;
+
+    /**
+     * The second target citizen to apply things to.
+     */
+    private final int target2;
+
+    /**
+     * The relationship adjustment.
+     */
+    private final String type;
+
+    /**
+     * Setup the item reward.
+     */
+    public RelationshipReward(final int target1, final int target2, final String type)
+    {
+        this.target1 = target1;
+        this.target2 = target2;
+        this.type = type;
+    }
+
+    /**
+     * Create the reward.
+     * @param jsonObject the json to read from.
+     * @return the reward object.
+     */
+    public static IQuestReward createReward(final JsonObject jsonObject)
+    {
+        JsonObject details = jsonObject.getAsJsonObject("details");
+        final int target1 = details.get("target1").getAsInt();
+        final int target2 = details.get("target2").getAsInt();
+        final String type = jsonObject.get("type").getAsString();
+
+        return new RelationshipReward(target1, target2, type);
+    }
+    @Override
+    public void applyReward(final IColony colony, final Player player, final IColonyQuest colonyQuest)
+    {
+        try
+        {
+            final ICitizenData citTarget1;
+            if (this.target1 == 0)
+            {
+                citTarget1 = ((CitizenData) colonyQuest.getQuestGiver());
+            }
+            else
+            {
+                citTarget1 = ((CitizenData) colonyQuest.getParticipant(target1));
+            }
+
+            final ICitizenData citTarget2;
+            if (this.target2 == 0)
+            {
+                citTarget2 = ((CitizenData) colonyQuest.getQuestGiver());
+            }
+            else
+            {
+                citTarget2 = ((CitizenData) colonyQuest.getParticipant(target2));
+            }
+
+            if (citTarget1 != null && citTarget2 != null)
+            {
+                if (type.equals("couple"))
+                {
+                    if (citTarget1.getPartner() == null && citTarget2.getPartner() == null)
+                    {
+                        citTarget1.setPartner(citTarget2.getId());
+                        citTarget2.setPartner(citTarget1.getId());
+                    }
+                }
+                else
+                {
+                    if (citTarget1.getPartner() != null && citTarget2.getPartner() != null
+                          && citTarget1.getPartner().getId() == citTarget2.getId()
+                          && citTarget2.getPartner().getId() == citTarget1.getId())
+                    {
+                        citTarget1.setPartner(0);
+                        citTarget2.setPartner(0);
+                    }
+                }
+            }
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Couldn't apply relationship quest reward. Probably one of the citizens is missing.");
+        }
+    }
+}

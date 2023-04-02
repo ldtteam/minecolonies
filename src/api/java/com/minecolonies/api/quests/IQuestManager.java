@@ -49,4 +49,9 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @return the quest.
      */
     IColonyQuest getAvailableOrInProgressQuest(final ResourceLocation questId);
+
+    /**
+     * On world load handling.
+     */
+    void onWorldLoad();
 }

@@ -1,0 +1,106 @@
+{
+  "name": "The Zombie Menace",
+  "parents": [],
+  "max-occurrences": 5,
+  "triggers": [
+    {
+      "type": "random",
+      "rarity": 500
+    },
+    {
+      "type": "state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:guardtower",
+          "level": 2
+        }
+      }
+    },
+    {
+      "type": "citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "dialogue",
+      "target": 0,
+      "dialogue": {
+        "text": "We have a problem. The Zombies in the nearby forest are causing trouble. Can you help us take care of them?",
+        "options": [
+          {
+            "answer": "Sure, I'll do what I can.",
+            "result": {
+              "type": "dialogue",
+              "text": "Thank you! We need you to kill 10 Zombies. We'll reward you for your efforts.",
+              "options": [
+                {
+                  "answer": "I'm on it!",
+                  "result": {
+                    "type": "advanceObjective",
+                    "go-to": 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "answer": "I'm sorry, I can't help right now.",
+            "result": {
+              "type": "cancel"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "killentity",
+      "details": {
+        "target": 0,
+        "entity-type": "minecraft:zombie",
+        "qty": 10,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "dialogue",
+      "target": 0,
+      "dialogue": {
+        "text": "You did it! We're safe for now. Here's your reward.",
+        "options": [
+          {
+            "answer": "Thank you!",
+            "result": {
+              "type": "advanceObjective",
+              "go-to": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "rewards": [
+    {
+      "type": "item",
+      "details": {
+        "item": "minecraft:diamond",
+        "qty": 1
+      }
+    },
+    {
+      "type": "happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

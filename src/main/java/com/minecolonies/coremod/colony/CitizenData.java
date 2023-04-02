@@ -1333,11 +1333,18 @@ public class CitizenData implements ICitizenData
             final ListTag handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
-                final ServerCitizenInteraction handler =
-                  (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
-                                               .getInteractionResponseHandlerDataManager()
-                                               .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
-                citizenChatOptions.put(handler.getId(), handler);
+                try
+                {
+                    final ServerCitizenInteraction handler =
+                      (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
+                                                   .getInteractionResponseHandlerDataManager()
+                                                   .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                    citizenChatOptions.put(handler.getId(), handler);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Failed to load Interaction for a quest. Did the quest vanish?");
+                }
             }
         }
 
@@ -1755,6 +1762,7 @@ public class CitizenData implements ICitizenData
         {
             citizenChatOptions.put(comp, new QuestDialogueInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
         }
+        this.markDirty();
     }
 
     @Override

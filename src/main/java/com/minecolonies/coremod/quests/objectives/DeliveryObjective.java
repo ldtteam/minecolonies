@@ -28,6 +28,11 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
     private final int quantity;
 
     /**
+     * Next objective to go to, on fulfillment. -1 if final objective.
+     */
+    private final int nextObjective;
+
+    /**
      * The two dialogue options.
      */
     private DialogueElement readyDialogueElement;
@@ -39,18 +44,19 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
      * @param item the item to be delivered.
      * @param quantity the quantity to be delivered.
      */
-    public DeliveryObjective(final int target, final ItemStack item, final int quantity)
+    public DeliveryObjective(final int target, final ItemStack item, final int quantity, final int nextObjective)
     {
         super(target, null);
         this.item = item;
         this.quantity = quantity;
+        this.nextObjective = nextObjective;
         this.buildDialogueTrees();
     }
 
     private void buildDialogueTrees()
     {
         this.readyDialogueElement = new DialogueElement("Oh hey, you brought " + item.getDisplayName().getString() + " can I have it?",
-          List.of(new AnswerElement("Yes, here you are!", new IAnswerResult.AdvanceResult()), new AnswerElement("No, wait!", new IAnswerResult.ReturnResult())));
+          List.of(new AnswerElement("Yes, here you are!", new IAnswerResult.GoToResult(this.nextObjective)), new AnswerElement("No, wait!", new IAnswerResult.ReturnResult())));
 
         this.waitingDialogueElement = new DialogueElement("I am still waiting for " + item.getDisplayName().getString() + " !",
           List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have any of it!", new IAnswerResult.CancelResult())));
@@ -67,8 +73,8 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
         final int target = details.get("target").getAsInt();
         final int quantity = details.get("qty").getAsInt();
         final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get("item").getAsString())).get().get());
-
-        return new DeliveryObjective(target, item, quantity);
+        final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
+        return new DeliveryObjective(target, item, quantity, nextObj);
     }
 
     @Override

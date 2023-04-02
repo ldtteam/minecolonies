@@ -5,14 +5,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IAnswerResult;
-import com.minecolonies.api.quests.IQuestData;
-import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.quests.*;
 import com.minecolonies.coremod.quests.objectives.DeliveryObjective;
 import com.minecolonies.coremod.quests.objectives.DialogueObjective;
-import com.minecolonies.api.quests.IQuestObjective;
+import com.minecolonies.coremod.quests.objectives.BreakBlockObjective;
+import com.minecolonies.coremod.quests.objectives.KillEntityObjective;
+import com.minecolonies.coremod.quests.rewards.*;
 import com.minecolonies.coremod.quests.triggers.IQuestTrigger;
 import com.minecolonies.coremod.quests.triggers.ITriggerReturnData;
 import net.minecraft.resources.ResourceLocation;
@@ -35,12 +35,27 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    //todo make this a forge registry!
+    //todo quest make this a forge registry!
     private static Map<String, Function<JsonObject, IQuestObjective>> QUEST_OBJECTIVE_REGISTRY = new HashMap<>();
     static
     {
         QUEST_OBJECTIVE_REGISTRY.put("dialogue", DialogueObjective::createObjective);
         QUEST_OBJECTIVE_REGISTRY.put("delivery", DeliveryObjective::createObjective);
+        QUEST_OBJECTIVE_REGISTRY.put("breakblock", BreakBlockObjective::createObjective);
+        QUEST_OBJECTIVE_REGISTRY.put("killentity", KillEntityObjective::createObjective);
+    }
+
+
+    private static Map<String, Function<JsonObject, IQuestReward>> QUEST_REWARD_REGISTRY = new HashMap<>();
+    static
+    {
+        QUEST_REWARD_REGISTRY.put("item", ItemReward::createReward);
+        QUEST_REWARD_REGISTRY.put("skill", SkillReward::createReward);
+        QUEST_REWARD_REGISTRY.put("research-finish", ResearchCompleteReward::createReward);
+        QUEST_REWARD_REGISTRY.put("raid", RaidAdjustmentReward::createReward);
+        QUEST_REWARD_REGISTRY.put("relationship", RelationshipReward::createReward);
+        QUEST_REWARD_REGISTRY.put("happiness", HappinessReward::createReward);
+
     }
 
     /**
@@ -133,30 +148,50 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             maxOccurrences = 1;
         }
 
-        return new QuestData(questId, maxOccurrences, parseTriggerOrder(questId, order, questTriggers), questObjectives);
+        final int questTimeout;
+        if (jsonObject.has(TIMEOUT))
+        {
+            questTimeout = jsonObject.get(TIMEOUT).getAsInt();
+        }
+        else
+        {
+            questTimeout = 10;
+        }
+
+        final String questName = jsonObject.get(NAME).getAsString();
+
+        final List<IQuestReward> questRewards = new ArrayList<>();
+        for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())
+        {
+            final JsonObject objectiveObj = objectivesJson.getAsJsonObject();
+            final String type = objectiveObj.get(TYPE).getAsString();
+            try
+            {
+                questRewards.add(QUEST_REWARD_REGISTRY.get(type).apply(objectiveObj));
+            }
+            catch (final Exception ex)
+            {
+                throw new Exception("Failed loading rewards for type: " + type, ex);
+            }
+        }
+
+        final List<ResourceLocation> parents = new ArrayList<>();
+        for (final JsonElement objectivesJson : jsonObject.get(QUEST_PARENTS).getAsJsonArray())
+        {
+            try
+            {
+                parents.add(new ResourceLocation(objectivesJson.getAsString()));
+            }
+            catch (final Exception ex)
+            {
+                throw new Exception("Failed loading parents: ", ex);
+            }
+        }
+
+        return new QuestData(questId, questName, parents, maxOccurrences, parseTriggerOrder(questId, order, questTriggers), questObjectives, questTimeout, questRewards);
 
         /*
 
-        // How often the quest is allowed to repeat, default infinite
-        if (jsonObject.has(QUEST_REPEATING))
-        {
-            repeatingtimes = jsonObject.get(QUEST_REPEATING).getAsInt();
-        }
-
-        // Necessary completed pre-quests
-        if (jsonObject.has(QUEST_PRE_QUESTS)) todo: OKay, not a single parent request, but list<parentrequest>
-        {
-            preQuests = new ArrayList<>();
-            for (final JsonElement effectJson : jsonObject.get(QUEST_PRE_QUESTS).getAsJsonArray())
-            {
-                final ResourceLocation preQuest = getResourceLocation(effectJson.getAsString());
-                if (!allQuests.containsKey(preQuest))
-                {
-                    throw new Exception("Parsing failure: Missing quest-json for pre-quest: " + preQuest);
-                }
-                preQuests.add(getResourceLocation(effectJson.getAsString()));
-            }
-        }
 
         // Read effect ID's and save data for creating them
 
@@ -183,27 +218,6 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             }
 
             effectData.put(effectID, effectJsonObj);
-        }
-
-        // Read quest rewards
-        rewards = new ArrayList<>();
-        for (final JsonElement rewardJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())
-        {
-            // List of complex objects
-            final JsonObject effectJsonObj = rewardJson.getAsJsonObject();
-
-            if (!effectJsonObj.has(ID))
-            {
-                throw new Exception("Missing ID for " + QUEST_REWARDS);
-            }
-
-            final ResourceLocation rewardID = getResourceLocation(effectJsonObj.get(ID).getAsString());
-            if (!rewardRegistry.containsKey(rewardID))
-            {
-                throw new Exception("Unkown/unregistered quest reward: for " + rewardID);
-            }
-
-            effectData.put(rewardID, effectJsonObj);
         }*/
     }
 
@@ -294,8 +308,13 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             case NOT:
                 return evaluate(colony, triggerMap, data, lastReturnData) == null ? lastReturnData : null;
             case BRACE_OPEN:
-                final List<ITriggerReturnData> currentReturnData = lastReturnData;
-                final List<ITriggerReturnData> result = evaluate(colony, triggerMap, data, new ArrayList<>());
+                List<ITriggerReturnData> currentReturnData = lastReturnData;
+                List<ITriggerReturnData> result = evaluate(colony, triggerMap, data, new ArrayList<>());
+                if (result == null)
+                {
+                    return evaluate(colony, triggerMap, data, result);
+                }
+
                 result.addAll(currentReturnData);
                 return evaluate(colony, triggerMap, data, result);
             case BRACE_CLOSE:

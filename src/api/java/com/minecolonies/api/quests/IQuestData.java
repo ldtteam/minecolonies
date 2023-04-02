@@ -1,6 +1,10 @@
 package com.minecolonies.api.quests;
 
 import com.minecolonies.api.colony.IColony;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+
+import java.util.List;
 
 /**
  * Quest Data Instance.
@@ -27,6 +31,14 @@ public interface IQuestData
     int getMaxOccurrence();
 
     /**
+     * Unlock the quest rewards.
+     * @param colony the colony.
+     * @param player the player.
+     * @param colonyQuest the quest.
+     */
+    void unlockQuestRewards(IColony colony, Player player, final IColonyQuest colonyQuest);
+
+    /**
      * Get the objective at a given index.
      * @param index the index of the objective.
      * @return the current objective.
@@ -38,4 +50,16 @@ public interface IQuestData
      * @return the count.
      */
     int getObjectiveCount();
+
+    /**
+     * The name of the quest.
+     * @return the name of the quest.
+     */
+    String getName();
+
+    /**
+     * Get the list of parent quests.
+     * @return the list of parent quests.
+     */
+    List<ResourceLocation> getParents();
 }
