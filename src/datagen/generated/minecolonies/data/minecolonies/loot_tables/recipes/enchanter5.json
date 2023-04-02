@@ -8,11 +8,61 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fortune\",lvl:1s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:infinity\",lvl:1s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
-          "weight": 15
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:silk_touch\",lvl:1s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:mending\",lvl:1s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:multishot\",lvl:1s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fortune\",lvl:2s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book"
         },
         {
           "type": "minecraft:item",
@@ -74,7 +124,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:fire_aspect\",lvl:2s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fire_aspect\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -96,7 +146,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:frost_walker\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -107,18 +157,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:frost_walker\",lvl:2s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:knockback\",lvl:2s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:knockback\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -173,7 +212,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:punch\",lvl:2s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:punch\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -250,18 +289,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecolonies:raider_damage_enchant\",lvl:1s}]}"
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:fortune\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fortune\",lvl:3s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -326,7 +354,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:infinity\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:looting\",lvl:4s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -370,6 +398,28 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:quick_charge\",lvl:4s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:respiration\",lvl:4s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{id:\"minecraft:sharpness\",lvl:4s}]}"
             }
           ],
@@ -392,7 +442,29 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:fortune\",lvl:2s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:sweeping\",lvl:4s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:unbreaking\",lvl:4s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:bane_of_arthropods\",lvl:5s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -402,7 +474,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:bane_of_arthropods\",lvl:5s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:blast_protection\",lvl:5s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -422,7 +494,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:mending\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:feather_falling\",lvl:5s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -432,7 +504,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:multishot\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fire_protection\",lvl:5s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -452,7 +524,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:sharpness\",lvl:5s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:projectile_protection\",lvl:5s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -462,7 +534,17 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:silk_touch\",lvl:1s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:protection\",lvl:5s}]}"
+            }
+          ],
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{id:\"minecraft:sharpness\",lvl:5s}]}"
             }
           ],
           "name": "minecraft:enchanted_book"
@@ -482,10 +564,11 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:fortune\",lvl:3s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecolonies:raider_damage_enchant\",lvl:1s}]}"
             }
           ],
-          "name": "minecraft:enchanted_book"
+          "name": "minecraft:enchanted_book",
+          "weight": 15
         },
         {
           "type": "minecraft:item",
@@ -495,7 +578,8 @@
               "tag": "{StoredEnchantments:[{id:\"minecolonies:raider_damage_enchant\",lvl:2s}]}"
             }
           ],
-          "name": "minecraft:enchanted_book"
+          "name": "minecraft:enchanted_book",
+          "weight": 5
         }
       ],
       "rolls": 1.0
