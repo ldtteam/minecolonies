@@ -32,11 +32,13 @@ public interface IQuestData
 
     /**
      * Unlock the quest rewards.
-     * @param colony the colony.
-     * @param player the player.
-     * @param colonyQuest the quest.
+     *
+     * @param colony          the colony.
+     * @param player          the player.
+     * @param colonyQuest     the quest.
+     * @param unlockedRewards the applicable rewards.
      */
-    void unlockQuestRewards(IColony colony, Player player, final IColonyQuest colonyQuest);
+    void unlockQuestRewards(IColony colony, Player player, final IColonyQuest colonyQuest, final List<Integer> unlockedRewards);
 
     /**
      * Get the objective at a given index.

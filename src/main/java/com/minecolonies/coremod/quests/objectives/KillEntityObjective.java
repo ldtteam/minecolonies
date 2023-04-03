@@ -43,10 +43,10 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
      * @param entitiesToKill the number of entities to kill.
      * @param entityToKill the entity to kill.
      */
-    public KillEntityObjective(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective)
+    public KillEntityObjective(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards)
     {
         super(target, new DialogueElement("I am still waiting for you to kill " + entitiesToKill + " of " + entityToKill.getDescription().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))));
+          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))), rewards);
         this.entitiesToKill = entitiesToKill;
         this.nextObjective = nextObjective;
         this.entityToKill = entityToKill;
@@ -65,7 +65,7 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
         final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(new ResourceLocation(details.get("entity-type").getAsString())).get().get();
         final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
 
-        return new KillEntityObjective(target, quantity, entityType, nextObj);
+        return new KillEntityObjective(target, quantity, entityType, nextObj, parseRewards(jsonObject));
     }
 
     @Override

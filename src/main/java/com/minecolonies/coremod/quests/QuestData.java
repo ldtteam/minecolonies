@@ -82,11 +82,16 @@ public class QuestData implements IQuestData
     }
 
     @Override
-    public void unlockQuestRewards(final IColony colony, final Player player, final IColonyQuest colonyQuest)
+    public void unlockQuestRewards(final IColony colony, final Player player, final IColonyQuest colonyQuest, final List<Integer> unlockedRewards)
     {
+        int index = 0;
         for (final IQuestReward questReward : questRewards)
         {
-            questReward.applyReward(colony, player, colonyQuest);
+            if (unlockedRewards.contains(index))
+            {
+                questReward.applyReward(colony, player, colonyQuest);
+            }
+            index+=1;
         }
     }
 

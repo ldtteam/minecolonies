@@ -65,6 +65,11 @@ public class ColonyQuest implements IColonyQuest
     private UUID assignedPlayer = null;
 
     /**
+     * Unlocked rewards so far during the quest course.
+     */
+    private List<Integer> unlockedRewards = new ArrayList<>();
+
+    /**
      * Create a new colony quest.
      * @param questID the global id of the quest.
      * @param colony the colony it belongs to.
@@ -193,6 +198,11 @@ public class ColonyQuest implements IColonyQuest
     @Override
     public void advanceObjective(final Player player, final int nextObjective)
     {
+        final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+
+        // Always when advancing an objective, get the rewards from the current objective.
+        this.unlockedRewards.addAll(questData.getObjective(this.objectiveProgress).getRewardUnlocks());
+
         colony.markDirty();
         if (nextObjective == -1)
         {
@@ -206,7 +216,7 @@ public class ColonyQuest implements IColonyQuest
         }
         this.objectiveProgress = nextObjective;
 
-        final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+
         if (this.objectiveProgress >= questData.getObjectiveCount())
         {
             this.onCompletion();
@@ -239,7 +249,7 @@ public class ColonyQuest implements IColonyQuest
         {
             final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
             player.displayClientMessage(Component.literal("You have successfully completed the quest: " + questData.getName()), true);
-            questData.unlockQuestRewards(colony, player, this);
+            questData.unlockQuestRewards(colony, player, this, unlockedRewards);
         }
     }
 

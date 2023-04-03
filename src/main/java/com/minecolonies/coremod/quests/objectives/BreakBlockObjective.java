@@ -39,14 +39,16 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
 
     /**
      * Create a new objective of this type.
-     * @param target the target citizen.
+     *
+     * @param target       the target citizen.
      * @param blocksToMine the number of blocks to mine.
-     * @param blockToMine the block to mine.
+     * @param blockToMine  the block to mine.
+     * @param rewards the rewards this unlocks.
      */
-    public BreakBlockObjective(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective)
+    public BreakBlockObjective(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective, final List<Integer> rewards)
     {
         super(target, new DialogueElement("I am still waiting for you to mine " + blocksToMine + " of " + blockToMine.getName().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))));
+          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))), rewards);
         this.blocksToMine = blocksToMine;
         this.nextObjective = nextObjective;
         this.blockToMine = blockToMine;
@@ -65,7 +67,7 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
         final Block block = ForgeRegistries.BLOCKS.getHolder(new ResourceLocation(details.get("block").getAsString())).get().get();
         final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
 
-        return new BreakBlockObjective(target, quantity, block, nextObj);
+        return new BreakBlockObjective(target, quantity, block, nextObj, parseRewards(jsonObject));
     }
 
     @Override

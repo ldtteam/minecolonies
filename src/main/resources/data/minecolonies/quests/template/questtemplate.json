@@ -45,62 +45,59 @@
     {
       "type": "dialogue",
       "target": 0,
-      "dialogue":
-      {
-        "text": "Hi, how are you?",
-        "options": [
-          {
-            "answer": "Im alright, and you?",
-            "result": {
-              "type": "dialogue",
-              "text": "Could you bring me an Apple? I'm really hungry!",
-              "options": [
-                {
-                  "answer": "Sure!",
-                  "result": {
-                    "type": "advanceObjective",
-                    "go-to": 1
-                  }
-                },
-                {
-                  "answer": "Sorry, I don't have time right now!",
-                  "result": {
-                    "type": "return"
-                  }
-                },
-                {
-                  "answer": "We don't have any apples right now!",
-                  "result": {
-                    "type": "cancel"
-                  }
-                },
-                {
-                  "answer": "Could I bring you a baked potato?",
-                  "result": {
-                    "type": "dialogue",
-                    "text": "Sure sounds good!",
-                    "options": [
-                      {
-                        "answer": "Be right back then!",
-                        "result": {
-                          "type": "advanceObjective",
-                          "go-to": 2
-                        }
-                      }
-                    ]
-                  }
+      "text": "Hi, how are you?",
+      "options": [
+        {
+          "answer": "Im alright, and you?",
+          "result": {
+            "type": "dialogue",
+            "text": "Could you bring me an Apple? I'm really hungry!",
+            "options": [
+              {
+                "answer": "Sure!",
+                "result": {
+                  "type": "advanceObjective",
+                  "go-to": 1
                 }
-              ]
-            }
-          },
-          {
-            "answer": "I don't have time right now!",
-            "result": {
-              "type": "return"
-            }
+              },
+              {
+                "answer": "Sorry, I don't have time right now!",
+                "result": {
+                  "type": "return"
+                }
+              },
+              {
+                "answer": "We don't have any apples right now!",
+                "result": {
+                  "type": "cancel"
+                }
+              },
+              {
+                "answer": "Could I bring you a baked potato?",
+                "result": {
+                  "type": "dialogue",
+                  "text": "Sure sounds good!",
+                  "options": [
+                    {
+                      "answer": "Be right back then!",
+                      "result": {
+                        "type": "advanceObjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
-        ]
-      }
+        },
+        {
+          "answer": "I don't have time right now!",
+          "result": {
+            "type": "return"
+          }
+        }
+      ]
     },
     {
       "type": "delivery",
@@ -122,6 +119,7 @@
     },
     {
       "type": "breakblock",
+      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
       "details": {
         "target": 0,
         "block": "minecraft:dirt",

@@ -40,13 +40,15 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
 
     /**
      * Create a new delivery objective,
-     * @param target the target to receive the delivery.
-     * @param item the item to be delivered.
+     *
+     * @param target   the target to receive the delivery.
+     * @param item     the item to be delivered.
      * @param quantity the quantity to be delivered.
+     * @param rewards the rewards this unlocks.
      */
-    public DeliveryObjective(final int target, final ItemStack item, final int quantity, final int nextObjective)
+    public DeliveryObjective(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, null);
+        super(target, null, rewards);
         this.item = item;
         this.quantity = quantity;
         this.nextObjective = nextObjective;
@@ -74,7 +76,7 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
         final int quantity = details.get("qty").getAsInt();
         final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get("item").getAsString())).get().get());
         final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
-        return new DeliveryObjective(target, item, quantity, nextObj);
+        return new DeliveryObjective(target, item, quantity, nextObj, parseRewards(jsonObject));
     }
 
     @Override

@@ -32,60 +32,59 @@
     {
       "type": "dialogue",
       "target": 0,
-      "dialogue": {
-        "text": "Hey there, could I ask you a favour?",
-        "options": [
-          {
-            "answer": "Sure, what do you need?",
-            "result": {
-              "type": "dialogue",
-              "text": "I'm starving and I forgot my lunch at home. Could you bring me some food?",
-              "options": [
-                {
-                  "answer": "What kind of food do you want?",
-                  "result": {
-                    "type": "dialogue",
-                    "text": "Anything will do. Surprise me!",
-                    "options": [
-                      {
-                        "answer": "Got it. I'll be right back.",
-                        "result": {
-                          "type": "advanceObjective",
-                          "go-to": 1
-                        }
+      "text": "Hey there, could I ask you a favour?",
+      "options": [
+        {
+          "answer": "Sure, what do you need?",
+          "result": {
+            "type": "dialogue",
+            "text": "I'm starving and I forgot my lunch at home. Could you bring me some food?",
+            "options": [
+              {
+                "answer": "What kind of food do you want?",
+                "result": {
+                  "type": "dialogue",
+                  "text": "Anything will do. Surprise me!",
+                  "options": [
+                    {
+                      "answer": "Got it. I'll be right back.",
+                      "result": {
+                        "type": "advanceObjective",
+                        "go-to": 1
                       }
-                    ]
-                  }
-                },
-                {
-                  "answer": "I'm sorry, I don't have any food on me.",
-                  "result": {
-                    "type": "dialogue",
-                    "text": "Ah, too bad. I guess I'll just have to make do until I get home.",
-                    "options": [
-                      {
-                        "answer": "I'll see if I can find something for you later.",
-                        "result": {
-                          "type": "return"
-                        }
-                      }
-                    ]
-                  }
+                    }
+                  ]
                 }
-              ]
-            }
-          },
-          {
-            "answer": "Sorry, I'm in a rush right now!",
-            "result": {
-              "type": "cancel"
-            }
+              },
+              {
+                "answer": "I'm sorry, I don't have any food on me.",
+                "result": {
+                  "type": "dialogue",
+                  "text": "Ah, too bad. I guess I'll just have to make do until I get home.",
+                  "options": [
+                    {
+                      "answer": "I'll see if I can find something for you later.",
+                      "result": {
+                        "type": "return"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
-        ]
-      }
+        },
+        {
+          "answer": "Sorry, I'm in a rush right now!",
+          "result": {
+            "type": "cancel"
+          }
+        }
+      ]
     },
     {
       "type": "delivery",
+      "unlocks-rewards": [0, 1],
       "details": {
         "target": 0,
         "item": "minecraft:baked_potato",
@@ -96,18 +95,16 @@
     {
       "type": "dialogue",
       "target": 0,
-      "dialogue": {
-        "text": "Oh, this looks great! Thanks a lot!",
-        "options": [
-          {
-            "answer": "You're welcome!",
-            "result": {
-              "type": "advanceObjective",
-              "go-to": 3
-            }
+      "text": "Oh, this looks great! Thanks a lot!",
+      "options": [
+        {
+          "answer": "You're welcome!",
+          "result": {
+            "type": "advanceObjective",
+            "go-to": 3
           }
-        ]
-      }
+        }
+      ]
     }
   ],
   "rewards": [

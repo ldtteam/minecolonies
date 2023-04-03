@@ -2,6 +2,8 @@ package com.minecolonies.api.quests;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Quest objective interface for all objective types.
  */
@@ -30,4 +32,10 @@ public interface IQuestObjective
 
     @Nullable
     default IObjectiveData getObjectiveData() { return null; }
+
+    /**
+     * Get the list of reward unlocks from this objective.
+     * @return the unlocked rewards by this objective.
+     */
+    List<Integer> getRewardUnlocks();
 }

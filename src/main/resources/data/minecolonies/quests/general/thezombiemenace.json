@@ -32,36 +32,35 @@
     {
       "type": "dialogue",
       "target": 0,
-      "dialogue": {
-        "text": "We have a problem. The Zombies in the nearby forest are causing trouble. Can you help us take care of them?",
-        "options": [
-          {
-            "answer": "Sure, I'll do what I can.",
-            "result": {
-              "type": "dialogue",
-              "text": "Thank you! We need you to kill 10 Zombies. We'll reward you for your efforts.",
-              "options": [
-                {
-                  "answer": "I'm on it!",
-                  "result": {
-                    "type": "advanceObjective",
-                    "go-to": 1
-                  }
+      "text": "We have a problem. The Zombies in the nearby forest are causing trouble. Can you help us take care of them?",
+      "options": [
+        {
+          "answer": "Sure, I'll do what I can.",
+          "result": {
+            "type": "dialogue",
+            "text": "Thank you! We need you to kill 10 Zombies. We'll reward you for your efforts.",
+            "options": [
+              {
+                "answer": "I'm on it!",
+                "result": {
+                  "type": "advanceObjective",
+                  "go-to": 1
                 }
-              ]
-            }
-          },
-          {
-            "answer": "I'm sorry, I can't help right now.",
-            "result": {
-              "type": "cancel"
-            }
+              }
+            ]
           }
-        ]
-      }
+        },
+        {
+          "answer": "I'm sorry, I can't help right now.",
+          "result": {
+            "type": "cancel"
+          }
+        }
+      ]
     },
     {
       "type": "killentity",
+      "unlocks-rewards": [0, 1],
       "details": {
         "target": 0,
         "entity-type": "minecraft:zombie",
@@ -72,18 +71,16 @@
     {
       "type": "dialogue",
       "target": 0,
-      "dialogue": {
-        "text": "You did it! We're safe for now. Here's your reward.",
-        "options": [
-          {
-            "answer": "Thank you!",
-            "result": {
-              "type": "advanceObjective",
-              "go-to": 3
-            }
+      "text": "You did it! We're safe for now. Here's your reward.",
+      "options": [
+        {
+          "answer": "Thank you!",
+          "result": {
+            "type": "advanceObjective",
+            "go-to": 3
           }
-        ]
-      }
+        }
+      ]
     }
   ],
   "rewards": [
