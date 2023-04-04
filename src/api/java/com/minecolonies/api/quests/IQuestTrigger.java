@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.quests.triggers;
+package com.minecolonies.api.quests;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -7,29 +7,11 @@ import com.google.gson.JsonPrimitive;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 /**
  * Quest trigger interface.
  */
 public interface IQuestTrigger
 {
-    //todo quest make this a forge registry!
-    Map<String, Function<JsonObject, IQuestTrigger>> QUEST_TRIGGER_REGISTRY = new HashMap<>();
-    enum TriggerTypes
-    {
-        RANDOM("random", RandomQuestTrigger::createStateTrigger),
-        STATE("state", StateQuestTrigger::createStateTrigger),
-        CITIZEN("citizen", CitizenQuestTrigger::createStateTrigger);
-
-        TriggerTypes(final String id, Function<JsonObject, IQuestTrigger> triggerCreator)
-        {
-            QUEST_TRIGGER_REGISTRY.put(id, triggerCreator);
-        }
-    }
-
     /**
      * Check if the quest trigger condition is fulfilled.
      * @return true if so.
@@ -138,7 +120,7 @@ public interface IQuestTrigger
         // Larger equals for numbers.
         else if (nbtTag instanceof NumericTag && ((JsonPrimitive) matchTag).isNumber())
         {
-            return matchTag.getAsDouble() >= ((NumericTag) nbtTag).getAsDouble();
+            return ((NumericTag) nbtTag).getAsDouble() >= matchTag.getAsDouble();
         }
         return false;
     }

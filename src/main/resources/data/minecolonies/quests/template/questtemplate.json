@@ -3,11 +3,11 @@
   "parents": [],
   "triggers": [
     {
-      "type": "random",
+      "type": "minecolonies:random",
       "rarity": 1
     },
     {
-      "type": "state",
+      "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
         "match": {
@@ -17,7 +17,7 @@
       }
     },
     {
-      "type": "state",
+      "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
         "match": {
@@ -28,7 +28,7 @@
       }
     },
     {
-      "type": "citizen",
+      "type": "minecolonies:citizen",
       "state": {
         "match": {
           "female": true,
@@ -43,45 +43,45 @@
   "triggerOrder": "(1 && 4 && 4) || (2 && 4) || (3 && 4)",
   "objectives": [
     {
-      "type": "dialogue",
+      "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Hi, how are you?",
       "options": [
         {
           "answer": "Im alright, and you?",
           "result": {
-            "type": "dialogue",
+            "type": "minecolonies:dialogue",
             "text": "Could you bring me an Apple? I'm really hungry!",
             "options": [
               {
                 "answer": "Sure!",
                 "result": {
-                  "type": "advanceObjective",
+                  "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
               },
               {
                 "answer": "Sorry, I don't have time right now!",
                 "result": {
-                  "type": "return"
+                  "type": "minecolonies:return"
                 }
               },
               {
                 "answer": "We don't have any apples right now!",
                 "result": {
-                  "type": "cancel"
+                  "type": "minecolonies:cancel"
                 }
               },
               {
                 "answer": "Could I bring you a baked potato?",
                 "result": {
-                  "type": "dialogue",
+                  "type": "minecolonies:dialogue",
                   "text": "Sure sounds good!",
                   "options": [
                     {
                       "answer": "Be right back then!",
                       "result": {
-                        "type": "advanceObjective",
+                        "type": "minecolonies:advanceobjective",
                         "go-to": 2
                       }
                     }
@@ -94,13 +94,13 @@
         {
           "answer": "I don't have time right now!",
           "result": {
-            "type": "return"
+            "type": "minecolonies:return"
           }
         }
       ]
     },
     {
-      "type": "delivery",
+      "type": "minecolonies:delivery",
       "details": {
         "target": 0,
         "item": "minecraft:apple",
@@ -109,7 +109,7 @@
       }
     },
     {
-      "type": "delivery",
+      "type": "minecolonies:delivery",
       "details": {
         "target": 0,
         "item": "minecraft:baked_potato",
@@ -118,7 +118,7 @@
       }
     },
     {
-      "type": "breakblock",
+      "type": "minecolonies:breakblock",
       "unlocks-rewards": [0, 1, 2, 3, 4, 5],
       "details": {
         "target": 0,
@@ -128,7 +128,7 @@
       }
     },
     {
-      "type": "killentity",
+      "type": "minecolonies:killentity",
       "details": {
         "target": 0,
         "entity-type": "minecraft:skeleton",
@@ -138,14 +138,14 @@
   ],
   "rewards": [
     {
-      "type": "item",
+      "type": "minecolonies:item",
       "details": {
         "item": "minecraft:gold_ingot",
         "qty": 1
       }
     },
     {
-      "type": "skill",
+      "type": "minecolonies:skill",
       "details": {
         "target": 0,
         "skill": "Strength",
@@ -153,19 +153,19 @@
       }
     },
     {
-      "type": "research-finish",
+      "type": "minecolonies:research",
       "details": {
         "id": "this"
       }
     },
     {
-      "type": "raid",
+      "type": "minecolonies:raid",
       "details": {
         "change": -1
       }
     },
     {
-      "type": "relationship",
+      "type": "minecolonies:relationship",
       "details": {
         "target1": 0,
         "target2": 1,
@@ -173,7 +173,7 @@
       }
     },
     {
-      "type": "happiness",
+      "type": "minecolonies:happiness",
       "details": {
         "target": 0,
         "qty": 1,

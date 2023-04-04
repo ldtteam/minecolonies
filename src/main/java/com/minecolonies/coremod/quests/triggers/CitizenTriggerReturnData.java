@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.quests.triggers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.quests.ITriggerReturnData;
 
 /**
  * Wrapper around a citizen id.

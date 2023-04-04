@@ -65,6 +65,12 @@ public class QuestManager implements IQuestManager
             inProgressQuests.remove(questId);
             finishedQuests.put(questId, finishedQuests.getOrDefault(questId, 0) + 1);
         }
+        else if (availableQuests.containsKey(questId))
+        {
+            // When a player short-cut quits a job without accepting it. (E.g. been there, done that options).
+            availableQuests.remove(questId);
+            finishedQuests.put(questId, finishedQuests.getOrDefault(questId, 0) + 1);
+        }
     }
 
     @Override

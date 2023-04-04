@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.quests.triggers;
+package com.minecolonies.api.quests;
 
 /**
  * Custom return data for triggers.

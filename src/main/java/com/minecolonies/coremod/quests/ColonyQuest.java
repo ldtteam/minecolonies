@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.coremod.quests.triggers.ITriggerReturnData;
+import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
@@ -63,11 +63,6 @@ public class ColonyQuest implements IColonyQuest
      * The player that accepted this.
      */
     private UUID assignedPlayer = null;
-
-    /**
-     * Unlocked rewards so far during the quest course.
-     */
-    private List<Integer> unlockedRewards = new ArrayList<>();
 
     /**
      * Create a new colony quest.
@@ -201,7 +196,11 @@ public class ColonyQuest implements IColonyQuest
         final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
 
         // Always when advancing an objective, get the rewards from the current objective.
-        this.unlockedRewards.addAll(questData.getObjective(this.objectiveProgress).getRewardUnlocks());
+        final List<Integer> rewards = (questData.getObjective(this.objectiveProgress).getRewardUnlocks());
+        if(!rewards.isEmpty())
+        {
+            questData.unlockQuestRewards(colony, player, this, rewards);
+        }
 
         colony.markDirty();
         if (nextObjective == -1)
@@ -215,8 +214,6 @@ public class ColonyQuest implements IColonyQuest
             this.onStart(player, getColony());
         }
         this.objectiveProgress = nextObjective;
-
-
         if (this.objectiveProgress >= questData.getObjectiveCount())
         {
             this.onCompletion();
@@ -249,7 +246,6 @@ public class ColonyQuest implements IColonyQuest
         {
             final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
             player.displayClientMessage(Component.literal("You have successfully completed the quest: " + questData.getName()), true);
-            questData.unlockQuestRewards(colony, player, this, unlockedRewards);
         }
     }
 

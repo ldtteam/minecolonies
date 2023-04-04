@@ -5,7 +5,7 @@ import com.minecolonies.api.quests.IColonyQuest;
 import com.minecolonies.api.quests.IQuestData;
 import com.minecolonies.api.quests.IQuestObjective;
 import com.minecolonies.api.quests.IQuestReward;
-import com.minecolonies.coremod.quests.triggers.ITriggerReturnData;
+import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 

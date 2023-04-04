@@ -21,6 +21,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -65,6 +66,10 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
     private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
     private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
+    private        IForgeRegistry<QuestRegistries.ObjectiveEntry>          questObjectiveRegistry;
+    private        IForgeRegistry<QuestRegistries.RewardEntry>             questRewardRegistry;
+    private        IForgeRegistry<QuestRegistries.TriggerEntry>            questTriggerRegistry;
+    private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
 
     @Override
     @NotNull
@@ -240,6 +245,31 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                                         .setDefaultKey(GLOBAL_EFFECT_ID)
                                         .disableSaving().allowModification()
                                         .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
+
+
+        event.create(new RegistryBuilder<QuestRegistries.ObjectiveEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questobjectives"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questObjectiveRegistry = b);
+
+        event.create(new RegistryBuilder<QuestRegistries.RewardEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questrewards"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questRewardRegistry = b);
+
+        event.create(new RegistryBuilder<QuestRegistries.TriggerEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questtriggers"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questTriggerRegistry = b);
+
+        event.create(new RegistryBuilder<QuestRegistries.DialogueAnswerEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questanswerresults"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questDialogueAnswerRegistry = b);
     }
 
     @Override
@@ -264,6 +294,30 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
     {
         return craftingTypeRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
+    {
+        return questRewardRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
+    {
+        return questObjectiveRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
+    {
+        return questTriggerRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
+    {
+        return questDialogueAnswerRegistry;
     }
 }
 

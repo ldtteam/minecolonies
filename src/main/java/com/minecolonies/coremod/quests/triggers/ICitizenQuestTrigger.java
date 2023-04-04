@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.quests.triggers;
 
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.quests.IQuestTrigger;
 
 /**
  * Quest trigger interface.

@@ -4,11 +4,11 @@
   "max-occurrences": 10,
   "triggers": [
     {
-      "type": "random",
+      "type": "minecolonies:random",
       "rarity": 1000
     },
     {
-      "type": "state",
+      "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
         "match": {
@@ -18,7 +18,7 @@
       }
     },
     {
-      "type": "citizen",
+      "type": "minecolonies:citizen",
       "state": {
         "match": {
           "job": {
@@ -30,26 +30,26 @@
   ],
   "objectives": [
     {
-      "type": "dialogue",
+      "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Hey there, could I ask you a favour?",
       "options": [
         {
           "answer": "Sure, what do you need?",
           "result": {
-            "type": "dialogue",
+            "type": "minecolonies:dialogue",
             "text": "I'm starving and I forgot my lunch at home. Could you bring me some food?",
             "options": [
               {
                 "answer": "What kind of food do you want?",
                 "result": {
-                  "type": "dialogue",
+                  "type": "minecolonies:dialogue",
                   "text": "Anything will do. Surprise me!",
                   "options": [
                     {
                       "answer": "Got it. I'll be right back.",
                       "result": {
-                        "type": "advanceObjective",
+                        "type": "minecolonies:advanceobjective",
                         "go-to": 1
                       }
                     }
@@ -59,13 +59,13 @@
               {
                 "answer": "I'm sorry, I don't have any food on me.",
                 "result": {
-                  "type": "dialogue",
+                  "type": "minecolonies:dialogue",
                   "text": "Ah, too bad. I guess I'll just have to make do until I get home.",
                   "options": [
                     {
                       "answer": "I'll see if I can find something for you later.",
                       "result": {
-                        "type": "return"
+                        "type": "minecolonies:return"
                       }
                     }
                   ]
@@ -77,13 +77,13 @@
         {
           "answer": "Sorry, I'm in a rush right now!",
           "result": {
-            "type": "cancel"
+            "type": "minecolonies:cancel"
           }
         }
       ]
     },
     {
-      "type": "delivery",
+      "type": "minecolonies:delivery",
       "unlocks-rewards": [0, 1],
       "details": {
         "target": 0,
@@ -93,14 +93,14 @@
       }
     },
     {
-      "type": "dialogue",
+      "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Oh, this looks great! Thanks a lot!",
       "options": [
         {
           "answer": "You're welcome!",
           "result": {
-            "type": "advanceObjective",
+            "type": "minecolonies:advanceobjective",
             "go-to": 3
           }
         }
@@ -109,14 +109,14 @@
   ],
   "rewards": [
     {
-      "type": "item",
+      "type": "minecolonies:item",
       "details": {
         "item": "minecraft:gold_ingot",
         "qty": 1
       }
     },
     {
-      "type": "happiness",
+      "type": "minecolonies:happiness",
       "details": {
         "target": 0,
         "qty": 1,

@@ -2,7 +2,9 @@ package com.minecolonies.api.quests;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.IMinecoloniesAPI;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +135,7 @@ public interface IDialogueObjective extends IQuestObjective
         public static AnswerElement parse(final JsonObject jsonObject)
         {
             final JsonObject resultObj = jsonObject.getAsJsonObject("result");
-            return new AnswerElement(jsonObject.get("answer").getAsString(), IAnswerResult.ANSWER_REGISTRY.get(resultObj.get("type").getAsString()).apply(resultObj));
+            return new AnswerElement(jsonObject.get("answer").getAsString(), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().getValue(new ResourceLocation(resultObj.get("type").getAsString())).produce(resultObj));
         }
     }
 }

@@ -3,6 +3,8 @@ package com.minecolonies.coremod.quests.triggers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.quests.IQuestTrigger;
+import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.nbt.*;
 
 import java.util.List;

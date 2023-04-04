@@ -4,17 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.quests.*;
-import com.minecolonies.coremod.quests.objectives.DeliveryObjective;
-import com.minecolonies.coremod.quests.objectives.DialogueObjective;
-import com.minecolonies.coremod.quests.objectives.BreakBlockObjective;
-import com.minecolonies.coremod.quests.objectives.KillEntityObjective;
-import com.minecolonies.coremod.quests.rewards.*;
-import com.minecolonies.coremod.quests.triggers.IQuestTrigger;
-import com.minecolonies.coremod.quests.triggers.ITriggerReturnData;
+import com.minecolonies.api.quests.IQuestTrigger;
+import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -34,29 +30,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class QuestJsonListener extends SimpleJsonResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-
-    //todo quest make this a forge registry!
-    private static Map<String, Function<JsonObject, IQuestObjective>> QUEST_OBJECTIVE_REGISTRY = new HashMap<>();
-    static
-    {
-        QUEST_OBJECTIVE_REGISTRY.put("dialogue", DialogueObjective::createObjective);
-        QUEST_OBJECTIVE_REGISTRY.put("delivery", DeliveryObjective::createObjective);
-        QUEST_OBJECTIVE_REGISTRY.put("breakblock", BreakBlockObjective::createObjective);
-        QUEST_OBJECTIVE_REGISTRY.put("killentity", KillEntityObjective::createObjective);
-    }
-
-
-    private static Map<String, Function<JsonObject, IQuestReward>> QUEST_REWARD_REGISTRY = new HashMap<>();
-    static
-    {
-        QUEST_REWARD_REGISTRY.put("item", ItemReward::createReward);
-        QUEST_REWARD_REGISTRY.put("skill", SkillReward::createReward);
-        QUEST_REWARD_REGISTRY.put("research-finish", ResearchCompleteReward::createReward);
-        QUEST_REWARD_REGISTRY.put("raid", RaidAdjustmentReward::createReward);
-        QUEST_REWARD_REGISTRY.put("relationship", RelationshipReward::createReward);
-        QUEST_REWARD_REGISTRY.put("happiness", HappinessReward::createReward);
-
-    }
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/quests/<path>
@@ -96,10 +69,6 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
     public IQuestData loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
     {
-        // Init the two - move to forge registry later.
-        IQuestTrigger.TriggerTypes.values();
-        IAnswerResult.ResultOption.values();
-
         final List<IQuestTrigger> questTriggers = new ArrayList<>();
         // Read quest triggers
         for (final JsonElement triggerJson : jsonObject.get(QUEST_TRIGGERS).getAsJsonArray())
@@ -109,7 +78,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
             try
             {
-                questTriggers.add(IQuestTrigger.QUEST_TRIGGER_REGISTRY.get(type).apply(triggerObj));
+                questTriggers.add(IMinecoloniesAPI.getInstance().getQuestTriggerRegistry().getValue(new ResourceLocation(type)).produce(triggerObj));
             }
             catch (final Exception ex)
             {
@@ -124,7 +93,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questObjectives.add(QUEST_OBJECTIVE_REGISTRY.get(type).apply(objectiveObj));
+                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().getValue(new ResourceLocation(type)).produce(objectiveObj));
             }
             catch (final Exception ex)
             {
@@ -167,7 +136,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questRewards.add(QUEST_REWARD_REGISTRY.get(type).apply(objectiveObj));
+                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().getValue(new ResourceLocation(type)).produce(objectiveObj));
             }
             catch (final Exception ex)
             {

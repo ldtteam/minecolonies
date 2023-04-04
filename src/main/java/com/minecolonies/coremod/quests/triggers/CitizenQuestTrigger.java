@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.quests.IQuestTrigger;
+import com.minecolonies.api.quests.ITriggerReturnData;
 
 import java.util.Collections;
 import java.util.List;

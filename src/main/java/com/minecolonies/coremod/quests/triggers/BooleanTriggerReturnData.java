@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.quests.triggers;
 
+import com.minecolonies.api.quests.ITriggerReturnData;
+
 /**
  * Wrapper around boolean for return data.
  */
