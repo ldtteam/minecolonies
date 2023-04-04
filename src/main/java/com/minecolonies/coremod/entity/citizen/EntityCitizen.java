@@ -423,6 +423,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenData != null && citizenData.getJob() != null)
         {
             ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+            getNavigation().stop();
+            getLookControl().setLookAt(player);
         }
         return InteractionResult.SUCCESS;
     }
