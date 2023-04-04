@@ -1766,7 +1766,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void onPlayerCollide(final Player player)
     {
         super.onPlayerCollide(player);
-        if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
+        if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic && !citizenJobHandler.getColonyJob().isGuard())
         {
             ((AbstractEntityAIBasic) citizenJobHandler.getColonyJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
         }
