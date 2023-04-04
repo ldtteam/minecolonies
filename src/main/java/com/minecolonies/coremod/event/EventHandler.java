@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
@@ -26,10 +25,10 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
-import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
+import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
@@ -135,7 +134,7 @@ public class EventHandler
               .getType()
               .is(ModTags.mobAttackBlacklist)))
             {
-                ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
+                ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true, citizen -> !citizen.isInvisible()));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
             }
         }
@@ -391,6 +390,8 @@ public class EventHandler
                       || colony.getPermissions().hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
                     colony.getPackageManager().addImportantColonyPlayer(player);
+                    colony.getPackageManager().sendColonyViewPackets();
+                    colony.getPackageManager().sendPermissionsPackets();
                 }
             }
 
@@ -400,12 +401,9 @@ public class EventHandler
                 final ItemStack stack = player.getInventory().getItem(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
-                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getLevel(), player);
+                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getLevel(), new EntityLocation(player.getUUID()));
                 }
             }
-
-            IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayer) event.getPlayer());
-            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets((ServerPlayer) event.getPlayer());
         }
     }
 
@@ -720,7 +718,7 @@ public class EventHandler
     /**
      * Gets called when world loads. Calls {@link ColonyManager#onWorldLoad(Level)})}
      *
-     * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
+     * @param event {@link net.minecraftforge.event.level.LevelEvent.Load}
      */
     @SubscribeEvent(priority = HIGHEST)
     public static void onWorldLoad(@NotNull final WorldEvent.Load event)
@@ -737,14 +735,14 @@ public class EventHandler
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
         {
-            RenderBipedCitizen.isItGhostTime = true;
+            RenderBipedCitizen.isItGhostTime = false;
         }
     }
 
     /**
      * Gets called when world unloads. Calls {@link ColonyManager#onWorldLoad(Level)}
      *
-     * @param event {@link net.minecraftforge.event.world.WorldEvent.Unload}
+     * @param event {@link net.minecraftforge.event.level.LevelEvent.Unload}
      */
     @SubscribeEvent
     public static void onWorldUnload(@NotNull final WorldEvent.Unload event)

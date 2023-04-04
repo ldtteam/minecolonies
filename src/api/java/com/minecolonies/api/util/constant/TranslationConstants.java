@@ -56,7 +56,7 @@ public final class TranslationConstants
     @NonNls
     public static final String BAKER_HAS_NO_FURNACES_MESSAGE                                        = "com.minecolonies.coremod.bakery.nofurnace";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                             = "com.minecolonies.coremod.job.deliveryman";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                             = "com.minecolonies.job.deliveryman";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                              = "com.minecolonies.coremod.gui.hiring.off";
     @NonNls
@@ -630,6 +630,10 @@ public final class TranslationConstants
     public static final String PARTIAL_JEI_INFO                           = "com.minecolonies.coremod.jei.";
     @NonNls
     public static final String PARTIAL_JOURNEY_MAP_INFO                   = "com.minecolonies.coremod.journeymap.";
+    @NonNls
+    public static final String PARTIAL_EXPEDITION_STATUS                  = "com.minecolonies.gui.workerhuts.expedition.";
+    @NonNls
+    public static final String PARTIAL_STATS_MODIFIER_NAME                = "com.minecolonies.coremod.gui.townhall.stats.";
 
     //</editor-fold>
 
@@ -729,6 +733,8 @@ public final class TranslationConstants
 
     //</editor-fold>
 
+    @NonNls
+    public static final String DETAILS = "com.minecolonies.gui.details";
     private TranslationConstants()
     {
         // empty default

@@ -1,7 +1,5 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -26,21 +24,6 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 public abstract class AbstractTileEntityRack extends BlockEntity implements MenuProvider
 {
     /**
-     * Variable which determines if it is a single or doublechest.
-     */
-    protected boolean single = true;
-
-    /**
-     * Neighbor position of the rack (double chest).
-     */
-    protected BlockPos relativeNeighbor = null;
-
-    /**
-     * Is this the main chest of the doubleChest.
-     */
-    protected boolean main = false;
-
-    /**
      * whether this rack is in a warehouse or not. defaults to not set by the warehouse building upon being built
      */
     protected boolean inWarehouse = false;
@@ -55,10 +38,29 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      */
     protected ItemStackHandler inventory;
 
+    /**
+     * Create a new rack.
+     * @param tileEntityTypeIn the specific block entity type.
+     * @param pos the position.
+     * @param state its state.
+     */
     public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state)
     {
         super(tileEntityTypeIn, pos, state);
         inventory = createInventory(DEFAULT_SIZE);
+    }
+
+    /**
+     * Create a rack with a specific inventory size.
+     * @param tileEntityTypeIn the specific block entity type.
+     * @param pos the position.
+     * @param state its state.
+     * @param size the ack size.
+     */
+    public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state, final int size)
+    {
+        super(tileEntityTypeIn, pos, state);
+        inventory = createInventory(size);
     }
 
     /**
@@ -142,6 +144,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
                         if (building != null)
                         {
                             building.overruleNextOpenRequestWithStack(stack);
+                            building.markDirty();
                         }
                     }
                 }
@@ -263,93 +266,8 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      */
     public abstract boolean isEmpty();
 
-    /**
-     * Method to change the main attribute of the rack.
-     *
-     * @param main the boolean value defining it.
-     */
-    public void setMain(final boolean main)
-    {
-        this.main = main;
-        setChanged();
-    }
-
-    /**
-     * On neighbor changed this will be called from the block.
-     *
-     * @param newNeighbor the blockPos which has changed.
-     */
-    public void neighborChanged(final BlockPos newNeighbor)
-    {
-        if (level == null)
-        {
-            return;
-        }
-
-        final BlockEntity entity = level.getBlockEntity(newNeighbor);
-
-        if (relativeNeighbor == null && level.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
-              && !(entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).getOtherChest() != null))
-        {
-            if (!setNeighbor(newNeighbor))
-            {
-                return;
-            }
-
-            setSingle(false);
-            if (entity instanceof AbstractTileEntityRack)
-            {
-                if (!((AbstractTileEntityRack) entity).isMain())
-                {
-                    this.main = true;
-                    ((AbstractTileEntityRack) entity).setMain(false);
-                }
-                ((AbstractTileEntityRack) entity).setNeighbor(this.getBlockPos());
-
-                entity.setChanged();
-            }
-
-            updateItemStorage();
-            this.setChanged();
-            updateBlockState();
-        }
-        else if (relativeNeighbor != null && this.worldPosition.subtract(relativeNeighbor).equals(newNeighbor)
-                   && level.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
-        {
-            this.relativeNeighbor = null;
-            setSingle(true);
-            this.main = false;
-            updateItemStorage();
-            updateBlockState();
-        }
-    }
-
-    /**
-     * Set the rack as single (or unset).
-     *
-     * @param single if so.
-     */
-    public void setSingle(final boolean single)
-    {
-        this.single = single;
-    }
-
-    /**
-     * Check if this is the main chest of the double chest.
-     *
-     * @return true if so.
-     */
-    public boolean isMain()
-    {
-        return this.main;
-    }
-
     public IItemHandlerModifiable getInventory()
     {
         return inventory;
     }
-
-    public abstract BlockPos getNeighbor();
-
-    public abstract boolean setNeighbor(BlockPos neighbor);
 }

@@ -15,7 +15,7 @@ public final class Pond
      * The minimum pond requirements.
      */
     private static final int WATER_POOL_WIDTH_REQUIREMENT  = 6;
-    private static final int WATER_POOL_LENGTH_REQUIREMENT = 3;
+    private static final int WATER_POOL_LENGTH_REQUIREMENT = 2;
 
     /**
      * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough (bigger then 20).

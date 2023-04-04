@@ -283,5 +283,11 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         {
             return new WindowHutBuilderModule(this);
         }
+
+        @Override
+        public boolean allowsAssignment()
+        {
+            return true;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.CitizenNameFile;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -29,12 +30,20 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessH
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenMournHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -47,6 +56,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +72,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.DEBUG_WARNING_CITIZEN_LOAD_FAILURE;
 
 /**
  * Extra data for Citizens.
@@ -337,12 +348,12 @@ public class CitizenData implements ICitizenData
      * Returns a random element in a list.
      *
      * @param rand  Random object.
-     * @param array Array to select from.
+     * @param list Array to select from.
      * @return Random element from array.
      */
-    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
+    private static String getRandomElement(@NotNull final Random rand, @NotNull final List<String> list)
     {
-        return array[rand.nextInt(array.length)];
+        return list.get(rand.nextInt(list.size()));
     }
 
     /**
@@ -404,7 +415,7 @@ public class CitizenData implements ICitizenData
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         paused = false;
-        name = generateName(random, female, getColony());
+        name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
 
         saturation = MAX_SATURATION;
@@ -450,6 +461,35 @@ public class CitizenData implements ICitizenData
         citizen.getEntityData().set(DATA_JOB, getJob() == null ? "" : getJob().getJobRegistryEntry().getRegistryName().toString());
         citizen.getEntityData().set(DATA_STYLE, colony.getTextureStyleId());
 
+        // Safety check that ensure the citizen its job matches the work building job
+        if (getJob() != null && workBuilding != null)
+        {
+            boolean hasCorrectJob = false;
+            for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
+            {
+                if (module.getJobEntry().equals(getJob().getJobRegistryEntry()))
+                {
+                    hasCorrectJob = true;
+                    break;
+                }
+            }
+
+            if (!hasCorrectJob)
+            {
+                MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony).forAllPlayers();
+                Log.getLogger().log(Level.ERROR, String.format("Worker %s has been unassigned from his job, a problem was found during load. Worker job: %s; Building: %s",
+                  citizen.getName().getString(),
+                  getJob().getJobRegistryEntry().getKey().toString(),
+                  workBuilding.getBuildingType().getRegistryName().toString()));
+
+                // Remove the citizen from the building to prevent failures in the future.
+                for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
+                {
+                    module.removeCitizen(this);
+                }
+            }
+        }
+
         citizen.getCitizenExperienceHandler().updateLevel();
 
         setLastPosition(citizen.blockPosition());
@@ -488,7 +528,7 @@ public class CitizenData implements ICitizenData
      * @param colony the colony.
      * @return Name of the citizen.
      */
-    public static String generateName(@NotNull final Random rand, final boolean female, final IColony colony)
+    public static String generateName(@NotNull final Random rand, final boolean female, final IColony colony, final CitizenNameFile nameFile)
     {
         String citizenName;
         final String firstName;
@@ -497,30 +537,34 @@ public class CitizenData implements ICitizenData
 
         if (female)
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().femaleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.femalefirstNames);
         }
         else
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().maleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.maleFirstNames);
         }
 
         middleInitial = String.valueOf(getRandomLetter(rand));
-        lastName = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
+        lastName = getRandomElement(rand, nameFile.surnames);
 
-        if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        if (nameFile.order == CitizenNameFile.NameOrder.EASTERN)
         {
             //For now, don't include middle names, as their rules (and presence) vary heavily by region.
             citizenName = String.format("%s %s", lastName, firstName);
         }
         else
         {
-            if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+            if (nameFile.parts == 3)
             {
                 citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
             }
-            else
+            else if (nameFile.parts == 2)
             {
                 citizenName = String.format("%s %s", firstName, lastName);
+            }
+            else
+            {
+                citizenName = firstName;
             }
         }
 
@@ -530,7 +574,7 @@ public class CitizenData implements ICitizenData
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
-                citizenName = generateName(rand, female, colony);
+                citizenName = generateName(rand, female, colony, nameFile);
                 break;
             }
         }
@@ -543,24 +587,24 @@ public class CitizenData implements ICitizenData
      *
      * @param rand Random object.
      */
-    public void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName)
+    public void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName, final CitizenNameFile nameFile)
     {
         String nameA = firstParentName;
         String nameB = secondParentName;
 
         String citizenName;
         final String firstName;
-        final String middleInitial;
+        String middleInitial = "";
         final String lastName;
 
         if (firstParentName == null || firstParentName.isEmpty())
         {
-            nameA = generateName(rand, rand.nextBoolean(), colony);
+            nameA = generateName(rand, rand.nextBoolean(), colony, nameFile);
         }
 
         if (secondParentName == null || secondParentName.isEmpty())
         {
-            nameB = generateName(rand, rand.nextBoolean(), colony);
+            nameB = generateName(rand, rand.nextBoolean(), colony, nameFile);
         }
 
         final String[] firstParentNameSplit = nameA.split(" ");
@@ -568,64 +612,70 @@ public class CitizenData implements ICitizenData
 
         if (firstParentNameSplit.length <= 1)
         {
-            generateName(rand, "", secondParentName);
+            generateName(rand, "", secondParentName, nameFile);
             return;
         }
 
         if (secondParentNameSplit.length <= 1)
         {
-            generateName(rand, firstParentName, "");
+            generateName(rand, firstParentName, "", nameFile);
             return;
         }
 
-        int lastNameIndexFirst = 1;
-        int lastNameIndexSecond = 1;
-
-        if (MineColonies.getConfig().getServer().useEasternNameOrder.get())
-        {
-            lastNameIndexFirst = 0;
-            lastNameIndexSecond = 0;
-        }
-        else if (MineColonies.getConfig().getServer().useMiddleInitial.get())
-        {
-            lastNameIndexFirst = firstParentNameSplit.length <= 2 ? 1 : 2;
-            lastNameIndexSecond = secondParentNameSplit.length <= 2 ? 1 : 2;
-        }
+        final boolean eastern = nameFile.order == CitizenNameFile.NameOrder.EASTERN;
 
         if (random.nextBoolean())
         {
-            middleInitial = firstParentNameSplit[lastNameIndexFirst].substring(0, 1);
-            lastName = secondParentNameSplit[lastNameIndexSecond];
+            if (nameFile.parts == 3)
+            {
+                middleInitial = firstParentNameSplit[eastern? 0 : firstParentNameSplit.length - 1].substring(0, 1);
+                lastName = secondParentNameSplit[eastern ? 0 : secondParentNameSplit.length - 1];
+            }
+            else
+            {
+                lastName = eastern ? secondParentNameSplit[0] : nameB.replace(secondParentNameSplit[0], "").trim();
+            }
         }
         else
         {
-            middleInitial = secondParentNameSplit[lastNameIndexSecond].substring(0, 1);
-            lastName = firstParentNameSplit[lastNameIndexFirst];
+            if (nameFile.parts == 3)
+            {
+                middleInitial = secondParentNameSplit[eastern ? 0 : secondParentNameSplit.length - 1].substring(0, 1);
+                lastName = firstParentNameSplit[eastern ? 0 : firstParentNameSplit.length - 1];
+            }
+            else
+            {
+                lastName = eastern ? firstParentNameSplit[0] : nameA.replace(firstParentNameSplit[0], "").trim();
+            }
         }
 
         if (female)
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().femaleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.femalefirstNames);
         }
         else
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().maleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.maleFirstNames);
         }
 
-        if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        if (nameFile.order == CitizenNameFile.NameOrder.EASTERN)
         {
             //For now, don't include middle names, as their rules (and presence) vary heavily by region.
             citizenName = String.format("%s %s", lastName, firstName);
         }
         else
         {
-            if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+            if (nameFile.parts == 3)
             {
                 citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
             }
-            else
+            else if (nameFile.parts == 2)
             {
                 citizenName = String.format("%s %s", firstName, lastName);
+            }
+            else
+            {
+                citizenName = firstName;
             }
         }
 
@@ -635,7 +685,7 @@ public class CitizenData implements ICitizenData
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
-                generateName(rand, firstParentName, secondParentName);
+                generateName(rand, firstParentName, secondParentName, nameFile);
                 return;
             }
         }
@@ -670,7 +720,7 @@ public class CitizenData implements ICitizenData
     public void setGenderAndGenerateName(final boolean isFemale)
     {
         this.female = isFemale;
-        this.name = generateName(random, isFemale, getColony());
+        this.name = generateName(random, isFemale, getColony(), getColony().getCitizenNameFile());
         markDirty();
     }
 
@@ -1212,7 +1262,7 @@ public class CitizenData implements ICitizenData
 
         if (name.isEmpty())
         {
-            name = generateName(random, isFemale(), getColony());
+            name = generateName(random, isFemale(), getColony(), getColony().getCitizenNameFile());
         }
 
         if (nbtTagCompound.getAllKeys().contains(TAG_ASLEEP))

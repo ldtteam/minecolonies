@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -417,9 +418,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     /**
      * Calculate the number of reserved stacks the resolver can't touch.
+     * @param request ignore reservations that would exist for the current request.
      * @return a list of itemstorages.
      */
-    Map<ItemStorage, Integer> reservedStacks();
+    Map<ItemStorage, Integer> reservedStacksExcluding(@NotNull final IRequest<? extends IDeliverable> request);
 
     /**
      * Process time the colony was offline.

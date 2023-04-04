@@ -3,6 +3,8 @@ package com.minecolonies.api.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 
+import java.util.UUID;
+
 public interface ITownHall extends IBuilding
 {
     /**
@@ -11,4 +13,10 @@ public interface ITownHall extends IBuilding
      * @param event the event to add.
      */
     void addPermissionEvent(PermissionEvent event);
+
+    /**
+     * Removes all permission events with the given player id (because they were just given permissions)
+     * @param id the player id
+     */
+    void removePermissionEvents(UUID id);
 }

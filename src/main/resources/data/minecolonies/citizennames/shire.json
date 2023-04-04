@@ -1,0 +1,33 @@
+{
+  "parts": 2,
+  "order": "WESTERN",
+  "male_firstname": [
+    "Adalgrim", "Adelard", "Andwise", "Balbo", "Bandobras", "Bilbo", "Bingo", "Bob", "Bodo", "Bowman", "Bucca", "Bongo", "Carl", "Cotman",
+    "Cottar", "Déagol", "Dinodas", "Doderic", "Dondinas", "Drogo", "Dudo", "Eglantine", "Elfstan", "Erling", "Everard", "Falco", "Faramir",
+    "Fastolph", "Fastred", "Ferdibrand", "Fedinand", "Ferumbras", "Filibert", "Flambard", "Folco", "Fortinbras", "Fosco", "Fredegar", "Frodo",
+    "Gerontius", "Gorbadoc", "Gorbulas", "Gorhendad", "Gormadoc", "Griffo", "Halfast", "Halfred", "Hamfast", "Hamson", "Harding", "Hending", "Hob",
+    "Hobson", "Holfast", "Holman", "Hugo", "Ilberic", "Isembard", "Isengar", "Isengrim", "Isumbras", "Largo", "Longo", "Lotho", "Madoc", "Marmadas",
+    "Marmadoc", "Marroc", "Meriadoc", "Merimac", "Merimas", "Milo", "Minto", "Moro", "Mosco", "Mungo", "Nob", "Odo", "Odovacar", "Olo", "Orgulas",
+    "Otho", "Paladin", "Peregrin", "Pimpernel", "Pippin", "Polo", "Ponto", "Porto", "Posco", "Reginard", "Robin", "Rorimac", "Rudigar", "Rufus", "Sadoc",
+    "Salvia", "Samwise", "Sancho", "Saradas", "Saradoc", "Seredic", "Sigismond", "Sméagol", "Ted", "Tobold", "Togo", "Tolman", "Wilcombe", "Wilibald", "Will", "Wiseman"
+  ],
+  "female_firstname": [
+    "Adaldrida", "Adaltrude", "Adamanta", "Alicia", "Alura", "Amaranth", "Amethyst", "Amy", "Angela", "Angelica", "Aregund", "Asphodel", "Audofleda",
+    "Baldechildis", "Begga", "Belba", "Bell", "Belladonna", "Bertha", "Bertrada", "Berylla", "Camellia", "Celandine", "Chica", "Chlodeswinthe", "Clotild",
+    "Courtney", "Cunegonde", "Daisy", "Danielle", "Diamond", "Donnamira", "Dora", "Eadgithu", "Ealswid", "Elanor", "Ermenberga", "Esmeralda", "Estella", "Fallon",
+    "Fara", "Fastrada", "Firiel", "Gersvinda", "Gilly", "Gisela", "Goldilocks", "Gudula", "Gundradis", "Hanna", "Hilda", "Hildigard", "Hiltrude", "Ingeltrud", "Kayla",
+    "Keira", "Kelsey", "Kestrel", "Lalia", "Laura", "Leesha", "Lily", "Linda", "Llewella", "Lobelia", "Lavinia", "Leubovera", "Liutgarde", "Madelgarde", "Malva",
+    "Marigold", "May", "Melilot", "Menegilda", "Mentha", "Merofled", "Mimosa", "Mirabella", "Moria", "Molly", "Morgan", "Myrtle", "Nina", "Nora", "Olivia", "Pandora",
+    "Pansy", "Pearl", "Peony", "Pervinca", "Plectrudis", "Poppy", "Primrose", "Primula", "Prisca", "Radegund", "Rosa", "Rosamunda", "Rose", "Rothaide", "Rotrud",
+    "Rowan", "Ruby", "Salvia", "Semolina", "Sophie", "Tabitha", "Tanta", "Terri", "Teutberga", "Theodrada", "Veneranda"
+  ],
+  "surnames": [
+    "Baggins", "Banks", "Boffin", "Bolger", "Bracegirdle", "Brandybuck", "Brockhouse", "Brown", "Brownlock",
+    "Bunce", "Burrowes", "Burrows", "Butcher", "Chubb", "Chubb-Baggins", "Clayhanger", "Cotton", "Diggle",
+    "Fairbairn", "Fallohide", "Gamgee", "Gammidge", "Gamwich", "Gardner", "Gawkroger", "Goldworthy", "Goodbody",
+    "Goodchild", "Goodenough", "Goold", "Greenhand", "Grubb", "Hansen", "Hargoot", "Haward", "Headstrong", "Hogg",
+    "Hornblower", "Labingi", "Lightfoot", "Longholes", "Maggot", "Mugwort", "Noakes", "North-Tooks", "Oldbuck", "Pott",
+    "Proudfoot", "Puddifoot", "Roper", "Rumble", "Sackville", "Sackville-Baggins", "Sandheaver", "Sandyman", "Smallburrow",
+    "Stoor", "Took", "Tunnelly", "Twofoot", "Underhill", "Whitfoot", "Zaragamba"
+  ]
+}

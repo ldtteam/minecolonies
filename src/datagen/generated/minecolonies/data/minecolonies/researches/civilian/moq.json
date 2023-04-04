@@ -1,0 +1,27 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/rails",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.moq.subtitle",
+  "sortOrder": 10,
+  "icon": "minecolonies:clipboard",
+  "requirements": [
+    {
+      "building": "deliveryman",
+      "level": 9
+    },
+    {
+      "item": "minecolonies:clipboard",
+      "quantity": 1
+    },
+    {
+      "item": "minecraft:book",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/min_order": 1
+    }
+  ]
+}

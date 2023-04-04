@@ -81,11 +81,10 @@ public class FemaleStudentModel extends CitizenModel<AbstractEntityCitizen>
           .texOffs(88, 40).mirror().addBox(-4.0F, -0.6F, -2.3F, 7.0F, 3.0F, 4.0F, new CubeDeformation(0.252F)).mirror(false), PartPose.offsetAndRotation(-1.0F, 2.5F, -3.8F, -1.0472F, 0.0F, 0.0F));
 
         PartDefinition Right_Leg = partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(0, 32).addBox(-2.1F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
+                                                                                   .texOffs(0, 32).addBox(-2.1F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.6F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
 
-        PartDefinition Left_Leg = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(0, 48).addBox(-1.95F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.591F)), PartPose.offset(1.9F, 12.0F, 0.0F));
-
+        PartDefinition Left_Leg = partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+                                                                                 .texOffs(0, 48).addBox(-1.95F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.591F)), PartPose.offset(1.9F, 12.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 128, 64);
     }
 
@@ -94,7 +93,7 @@ public class FemaleStudentModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 
-        final boolean working = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        final boolean working = isWorking(entity);
         final boolean studying = entity.getRenderMetadata().contains(RENDER_META_STUDYING);
 
         rightArm.getChild("book").visible = entity.getRenderMetadata().contains(RENDER_META_BOOK);

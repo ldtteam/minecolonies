@@ -9,18 +9,27 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowMainPage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -72,13 +81,22 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
-        if (getBuildingLevel() >= 1 && !permissionEvents.contains(event))
+        if (!permissionEvents.contains(event))
         {
             if (permissionEvents.size() >= MAX_COLONY_EVENTS)
             {
                 permissionEvents.removeFirst();
             }
             permissionEvents.add(event);
+            markDirty();
+        }
+    }
+
+    @Override
+    public void removePermissionEvents(@NotNull final UUID id)
+    {
+        if (permissionEvents.removeIf(e -> id.equals(e.getId())))
+        {
             markDirty();
         }
     }
@@ -101,6 +119,23 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         {
             buf.writeUtf(event.getEventTypeId().getPath());
             event.serialize(buf);
+        }
+
+        final List<ItemStack> maps = new ArrayList<>();
+        for (final ItemStack stack : InventoryUtils.getBuildingInventory(this))
+        {
+            if (!stack.isEmpty() && stack.getItem() == Items.FILLED_MAP)
+            {
+                maps.add(stack);
+            }
+        }
+
+        final Level level = colony.getWorld();
+        buf.writeInt(maps.size());
+        for (final ItemStack stack : maps)
+        {
+            final MapItemSavedData mapData = MapItem.getSavedData(stack, level);
+            buf.writeNbt(mapData.save(new CompoundTag()));
         }
     }
 
@@ -164,6 +199,11 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         private boolean canPlayerUseTP = false;
 
         /**
+         * List of mapdata.
+         */
+        private List<MapItemSavedData> mapDataList = new ArrayList<>();
+
+        /**
          * Instantiates the view of the building.
          *
          * @param c the colonyView.
@@ -188,6 +228,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
             canPlayerUseTP = buf.readBoolean();
             final int permissionEventsSize = buf.readInt();
+            permissionEvents.clear();
             for (int i = 0; i < permissionEventsSize; i++)
             {
                 permissionEvents.add(new PermissionEvent(buf));
@@ -208,6 +249,14 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
                 colonyEvents.add(registryEntry.deserializeEventDescriptionFromFriendlyByteBuf(buf));
             }
+
+            final int size = buf.readInt();
+            mapDataList.clear();
+            for (int i = 0; i < size; i++)
+            {
+                final MapItemSavedData mapData = MapItemSavedData.load(buf.readNbt());
+                mapDataList.add(mapData);
+            }
         }
 
         @Override
@@ -226,6 +275,15 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         public boolean canPlayerUseTP()
         {
             return canPlayerUseTP;
+        }
+
+        /**
+         * Getter for the mapdata.
+         * @return the original list.
+         */
+        public List<MapItemSavedData> getMapDataList()
+        {
+            return mapDataList;
         }
     }
 }

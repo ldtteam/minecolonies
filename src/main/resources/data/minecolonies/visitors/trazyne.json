@@ -1,0 +1,10 @@
+{
+  "texture": "01df2471-df49-484b-aca0-17f09e6ed031",
+  "citizensuffix": "_w",
+  "name": "Trazyne Infinitas",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.trazyne",
+  "recruitcost": "minecraft:piston",
+  "recruitcostcount": 8,
+  "gender": "male"
+}

@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.world.NoteBlockEvent.Note;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import slimeknights.tconstruct.common.Sounds;
 
 import java.util.Map;
 import java.util.Random;

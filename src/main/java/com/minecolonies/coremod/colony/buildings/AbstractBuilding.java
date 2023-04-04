@@ -332,7 +332,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onPlacement()
     {
-        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
     }
 
     /**
@@ -424,7 +424,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
-        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
         getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
@@ -937,7 +937,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onUpgradeComplete(final int newLevel)
     {
         cachedRotation = -1;
-        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
@@ -2002,12 +2002,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Map<ItemStorage, Integer> reservedStacks()
+    public Map<ItemStorage, Integer> reservedStacksExcluding(@NotNull final IRequest<? extends IDeliverable> excluded)
     {
         final Map<ItemStorage, Integer> map = new HashMap<>();
         for (final IHasRequiredItemsModule module : getModules(IHasRequiredItemsModule.class))
         {
-            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacks().entrySet())
+            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacksExcluding(excluded).entrySet())
             {
                 final int current = map.getOrDefault(content.getKey(), 0);
                 map.put(content.getKey(), current + content.getValue());

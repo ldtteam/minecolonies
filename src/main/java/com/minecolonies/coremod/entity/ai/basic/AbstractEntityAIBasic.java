@@ -533,7 +533,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @return NEEDS_ITEM
      */
     @NotNull
-    private IAIState waitForRequests()
+    protected IAIState waitForRequests()
     {
         delay = DELAY_RECHECK;
         updateWorkerStatusFromRequests();
@@ -593,7 +593,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (!deliverableRequests.isEmpty())
             {
                 final IRequest<?> firstDeliverableRequest = deliverableRequests.get(0);
-                final IRequestResolver<?> resolver = building.getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                IRequestResolver<?> resolver = null;
+                try
+                {
+                    resolver = building.getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Resolver died for finished request. Oopsy. " +  worker.getCitizenData().getName() + " witnessed it.");
+                }
                 final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
 
                 if (walkToBlock(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))

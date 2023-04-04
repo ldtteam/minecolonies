@@ -428,7 +428,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
             }
         }
 
-        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.05))
+        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * (4 - daysToGo) * 0.1))
         {
             status = EventStatus.DONE;
         }
