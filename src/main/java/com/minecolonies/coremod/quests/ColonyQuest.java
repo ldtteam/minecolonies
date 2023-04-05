@@ -245,7 +245,7 @@ public class ColonyQuest implements IColonyQuest
         if (player != null)
         {
             final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
-            player.displayClientMessage(Component.literal("You have successfully completed the quest: " + questData.getName()), true);
+            player.sendSystemMessage(Component.literal("You have successfully completed the quest: " + questData.getName()));
         }
     }
 

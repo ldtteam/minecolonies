@@ -636,7 +636,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final LivingDeathEvent event)
     {
-        if (event.getEntity() instanceof Player && entityKillObjectives.containsKey(event.getEntity().getType()) && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getEntity().getUUID()))
+        if (event.getSource().getEntity() instanceof Player && entityKillObjectives.containsKey(event.getEntity().getType()) && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getSource().getEntity().getUUID()))
         {
             final IColonyQuest colonyQuest =  entityKillObjectives.get(event.getEntity().getType()).get(event.getEntity().getUUID());
             final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
