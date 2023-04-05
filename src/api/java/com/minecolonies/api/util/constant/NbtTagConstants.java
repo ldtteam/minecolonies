@@ -697,6 +697,8 @@ public final class NbtTagConstants
     public static final String TAG_QUEST_ID    = "questid";
     public static final String TAG_QUEST_INDEX = "questindex";
     public static final String TAG_OBJECTIVE = "objective";
+    public static final String TAG_PLAYER = "player";
+
 
 
 

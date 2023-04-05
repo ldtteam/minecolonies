@@ -257,7 +257,6 @@ public class ColonyQuest implements IColonyQuest
         compoundNBT.putInt(TAG_ASSIGN_START, assignmentStart);
         compoundNBT.putInt(TAG_PROGRESS, objectiveProgress);
         compoundNBT.putInt(TAG_QUEST_GIVER, questGiver);
-
         final ListTag participantList = new ListTag();
         for (final int citizenData : this.questParticipants)
         {
@@ -268,6 +267,11 @@ public class ColonyQuest implements IColonyQuest
         if (objectiveData != null)
         {
             compoundNBT.put(TAG_OBJECTIVE, this.objectiveData.serializeNBT());
+        }
+
+        if (assignedPlayer != null)
+        {
+            compoundNBT.putUUID(TAG_PLAYER, assignedPlayer);
         }
 
         return compoundNBT;
@@ -295,6 +299,11 @@ public class ColonyQuest implements IColonyQuest
                 data.deserializeNBT(nbt.getCompound(TAG_OBJECTIVE));
                 this.objectiveData = data;
             }
+        }
+
+        if (nbt.contains(TAG_PLAYER))
+        {
+            assignedPlayer = nbt.getUUID(TAG_PLAYER);
         }
     }
 
