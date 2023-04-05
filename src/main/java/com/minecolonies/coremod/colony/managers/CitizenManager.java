@@ -411,7 +411,7 @@ public class CitizenManager implements ICitizenManager
                 else if (b.hasModule(LivingBuildingModule.class))
                 {
                     final LivingBuildingModule module = b.getFirstModuleOccurance(LivingBuildingModule.class);
-                    if (HiringMode.MANUAL.equals(module.getHiringMode()))
+                    if (HiringMode.LOCKED.equals(module.getHiringMode()))
                     {
                         newMaxCitizens += module.getAssignedCitizen().size();
                     }

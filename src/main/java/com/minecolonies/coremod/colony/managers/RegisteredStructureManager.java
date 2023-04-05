@@ -462,7 +462,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             if (building.hasModule(LivingBuildingModule.class))
             {
                 final LivingBuildingModule module = building.getFirstModuleOccurance(LivingBuildingModule.class);
-                if (HiringMode.MANUAL.equals(module.getHiringMode()))
+                if (HiringMode.LOCKED.equals(module.getHiringMode()))
                 {
                     continue;
                 }

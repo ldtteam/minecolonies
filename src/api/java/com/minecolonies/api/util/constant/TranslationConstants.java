@@ -442,6 +442,8 @@ public final class TranslationConstants
     @NonNls
     public static final String HIRING_MODE_MANUAL                                                   = "com.minecolonies.coremod.gui.hiringmode.manual";
     @NonNls
+    public static final String HIRING_MODE_LOCKED                                                   = "com.minecolonies.coremod.gui.hiringmode.locked";
+    @NonNls
     public static final String WARNING_SUPPLY_SHIP_IN_WATER                                         = "item.supplychestdeployer.invalid";
     @NonNls
     public static final String WARNING_SUPPLY_BUILDING_BAD_BLOCKS                                   = "item.supply.badblocks";
