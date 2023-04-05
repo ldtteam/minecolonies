@@ -124,6 +124,12 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         worker.getCitizenData().setVisibleStatus(null);
     }
 
+    @Override
+    public boolean requiresUpdateEveryTick()
+    {
+        return true;
+    }
+
     /**
      * Updates the task.
      */
