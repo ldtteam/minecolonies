@@ -7,12 +7,13 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
 
 /**
  * Common base class for JEI teaching GUI extensions.
@@ -72,12 +71,12 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
 
     @NotNull
     @Override
-    public <I> List<Target<I>> getTargets(@NotNull final W gui,
-                                          @NotNull final I ingredient,
-                                          final boolean doStart)
+    public <I> List<Target<I>> getTargetsTyped(@NotNull final W gui,
+                                               @NotNull final ITypedIngredient<I> ingredient,
+                                               final boolean doStart)
     {
         final List<Target<I>> targets = new ArrayList<>();
-        if (ingredient instanceof ItemStack)
+        if (ingredient.getType().getIngredientClass() == ItemStack.class)
         {
             for (final Slot slot : gui.getMenu().slots)
             {
