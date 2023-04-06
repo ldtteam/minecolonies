@@ -199,7 +199,7 @@ public class QuestManager implements IQuestManager
             inProgressQuests.put(colonyQuest.getId(), colonyQuest);
         }
 
-        final ListTag finishedListTag = nbt.getList(TAG_IS_FINISHED, Tag.TAG_COMPOUND);
+        final ListTag finishedListTag = nbt.getList(TAG_FINISHED, Tag.TAG_COMPOUND);
         for (final Tag element : finishedListTag)
         {
             finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));

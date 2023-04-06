@@ -638,11 +638,11 @@ public class ColonyPermissionEventHandler
     {
         if (event.getSource().getEntity() instanceof Player && entityKillObjectives.containsKey(event.getEntity().getType()) && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getSource().getEntity().getUUID()))
         {
-            final IColonyQuest colonyQuest =  entityKillObjectives.get(event.getEntity().getType()).get(event.getEntity().getUUID());
+            final IColonyQuest colonyQuest =  entityKillObjectives.get(event.getEntity().getType()).get(event.getSource().getEntity().getUUID());
             final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
             if (objective instanceof IKillEntityObjective)
             {
-                ((IKillEntityObjective) objective).onEntityKill(colonyQuest.getObjectiveData(), colonyQuest, (Player) event.getEntity());
+                ((IKillEntityObjective) objective).onEntityKill(colonyQuest.getObjectiveData(), colonyQuest, (Player) event.getSource().getEntity());
             }
             else
             {

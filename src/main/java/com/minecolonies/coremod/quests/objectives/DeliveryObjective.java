@@ -4,7 +4,12 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.*;
 import com.minecolonies.api.quests.IAnswerResult;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -33,6 +38,11 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
     private final int nextObjective;
 
     /**
+     * Nbt mode.
+     */
+    private final String nbtMode;
+
+    /**
      * The two dialogue options.
      */
     private DialogueElement readyDialogueElement;
@@ -46,12 +56,13 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
      * @param quantity the quantity to be delivered.
      * @param rewards the rewards this unlocks.
      */
-    public DeliveryObjective(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards)
+    public DeliveryObjective(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards, final String nbtMode)
     {
         super(target, null, rewards);
         this.item = item;
         this.quantity = quantity;
         this.nextObjective = nextObjective;
+        this.nbtMode = nbtMode;
         this.buildDialogueTrees();
     }
 
@@ -75,20 +86,33 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
         final int target = details.get("target").getAsInt();
         final int quantity = details.get("qty").getAsInt();
         final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get("item").getAsString())).get().get());
+        if (details.has("nbt"))
+        {
+            try
+            {
+                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, "nbt")));
+            }
+            catch (CommandSyntaxException e)
+            {
+                Log.getLogger().error("Unable to load itemstack nbt from json!");
+                throw new RuntimeException(e);
+            }
+        }
         final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
-        return new DeliveryObjective(target, item, quantity, nextObj, parseRewards(jsonObject));
+        final String nbtMode = details.has("nbt-mode") ? details.get("nbt-mode").getAsString() : "";
+        return new DeliveryObjective(target, item, quantity, nextObj, parseRewards(jsonObject), nbtMode);
     }
 
     @Override
     public boolean isReady(final Player player, final IColonyQuest colonyQuest)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), item.getItem()) >= quantity;
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, item, !nbtMode.equals("any"), !nbtMode.equals("any"))) >= quantity;
     }
 
     @Override
     public boolean tryResolve(final Player player, final IColonyQuest colonyQuest)
     {
-        return InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), this.item, this.quantity);
+        return InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), this.item, this.quantity, nbtMode.equals("any"), nbtMode.equals("any"));
     }
 
     @Override

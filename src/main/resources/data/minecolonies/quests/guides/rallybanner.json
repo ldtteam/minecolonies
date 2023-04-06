@@ -97,16 +97,17 @@
     },
     {
       "type": "minecolonies:delivery",
-      "unlocks-rewards": [0],
       "details": {
         "target": 0,
         "item": "minecolonies:banner_rally_guards",
+        "nbt-mode": "any",
         "qty": 1,
         "next-objective": 4
       }
     },
     {
       "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
       "target": 0,
       "text": "Thanks for bringing me the rallying banner! To use it, simply shift-right click it on any hut block. This will allow you to assign guards to it, and you can manage it by right clicking in the air. It's a great tool for keeping the colony safe!",
       "options": [
