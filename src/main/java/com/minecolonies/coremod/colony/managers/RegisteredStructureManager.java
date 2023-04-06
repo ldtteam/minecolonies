@@ -5,10 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.IMysticalSite;
-import com.minecolonies.api.colony.buildings.IRSComponent;
+import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -465,6 +462,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             if (building.hasModule(LivingBuildingModule.class))
             {
                 final LivingBuildingModule module = building.getFirstModuleOccurance(LivingBuildingModule.class);
+                if (HiringMode.LOCKED.equals(module.getHiringMode()))
+                {
+                    continue;
+                }
                 if (module.getAssignedCitizen().size() < module.getModuleMax())
                 {
                     return building;

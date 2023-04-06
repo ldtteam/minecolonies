@@ -9,7 +9,8 @@ public enum HiringMode
 {
     DEFAULT(HIRING_MODE_DEFAULT),
     AUTO(HIRING_MODE_AUTOMATIC),
-    MANUAL(HIRING_MODE_MANUAL);
+    MANUAL(HIRING_MODE_MANUAL),
+    LOCKED(HIRING_MODE_LOCKED);
 
     private final String translationKey;
 
