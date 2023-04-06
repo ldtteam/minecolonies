@@ -61,37 +61,45 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     /** The list of supported enchantments and rules. */
     private static final Map<Enchantment, EnchantmentRule> RULES = ImmutableMap.<Enchantment, EnchantmentRule>builder()
             .put(Enchantments.AQUA_AFFINITY, new EnchantmentRule(1, 0, false))
-            .put(Enchantments.BANE_OF_ARTHROPODS, new EnchantmentRule(1, 1, false))
+            .put(Enchantments.BANE_OF_ARTHROPODS, new EnchantmentRule(1, 0, false))
             .put(Enchantments.BLAST_PROTECTION, new EnchantmentRule(1, 1, false))
             .put(Enchantments.DEPTH_STRIDER, new EnchantmentRule(1, 0, false))
-            .put(Enchantments.BLOCK_EFFICIENCY, new EnchantmentRule(1, 1, false))
+            .put(Enchantments.BLOCK_EFFICIENCY, new EnchantmentRule(1, 0, false))
             .put(Enchantments.FALL_PROTECTION, new EnchantmentRule(1, 1, false))
             .put(Enchantments.FIRE_ASPECT, new EnchantmentRule(1, 1, false))
             .put(Enchantments.FIRE_PROTECTION, new EnchantmentRule(1, 1, false))
             .put(Enchantments.FLAMING_ARROWS, new EnchantmentRule(1, 0, false))
-            .put(Enchantments.FROST_WALKER, new EnchantmentRule(1, 1, false))
             .put(Enchantments.KNOCKBACK, new EnchantmentRule(1, 1, false))
             .put(Enchantments.MOB_LOOTING, new EnchantmentRule(1, 1, false))
-            .put(Enchantments.POWER_ARROWS, new EnchantmentRule(1, 1, false))
+            .put(Enchantments.POWER_ARROWS, new EnchantmentRule(1, 0, false))
             .put(Enchantments.PROJECTILE_PROTECTION, new EnchantmentRule(1, 1, false))
             .put(Enchantments.ALL_DAMAGE_PROTECTION, new EnchantmentRule(1, 1, false))
+            .put(Enchantments.PIERCING, new EnchantmentRule(1, 1, false))
             .put(Enchantments.PUNCH_ARROWS, new EnchantmentRule(1, 1, false))
             .put(Enchantments.QUICK_CHARGE, new EnchantmentRule(1, 1, false))
             .put(Enchantments.RESPIRATION, new EnchantmentRule(1, 1, false))
-            .put(Enchantments.SHARPNESS, new EnchantmentRule(1, 1, false))
-            .put(Enchantments.SMITE, new EnchantmentRule(1, 1, false))
+            .put(Enchantments.SHARPNESS, new EnchantmentRule(1, 0, false))
+            .put(Enchantments.SMITE, new EnchantmentRule(1, 0, false))
             .put(Enchantments.SWEEPING_EDGE, new EnchantmentRule(1, 1, false))
             .put(Enchantments.UNBREAKING, new EnchantmentRule(1, 1, false))
 
+            .put(Enchantments.IMPALING, new EnchantmentRule(1, 0, true))
+            .put(Enchantments.RIPTIDE, new EnchantmentRule(1, 1, true))
+            .put(Enchantments.FROST_WALKER, new EnchantmentRule(2, 1, true))
+            .put(Enchantments.LOYALTY, new EnchantmentRule(2, 1, true))
+            .put(Enchantments.THORNS, new EnchantmentRule(2, 1, true))
             .put(Enchantments.BLOCK_FORTUNE, new EnchantmentRule(3, 0, true))
-            .put(Enchantments.INFINITY_ARROWS, new EnchantmentRule(4, 0, false))
+            .put(Enchantments.CHANNELING, new EnchantmentRule(3, 0, true))
+            .put(Enchantments.SWIFT_SNEAK, new EnchantmentRule(3, 0, true))
+            .put(Enchantments.SOUL_SPEED, new EnchantmentRule(3, 0, true))
+            .put(Enchantments.INFINITY_ARROWS, new EnchantmentRule(4, 0, true))
             .put(Enchantments.SILK_TOUCH, new EnchantmentRule(5, 0, true))
             .put(Enchantments.MENDING, new EnchantmentRule(5, 0, true))
             .put(Enchantments.MULTISHOT, new EnchantmentRule(5, 0, false))
 
             // we don't want to produce these enchantments
-            .put(Enchantments.BINDING_CURSE, new EnchantmentRule(NEVER, 0, false))
-            .put(Enchantments.VANISHING_CURSE, new EnchantmentRule(NEVER, 0, false))
+            .put(Enchantments.FISHING_LUCK, new EnchantmentRule(NEVER, 0, false))
+            .put(Enchantments.FISHING_SPEED, new EnchantmentRule(NEVER, 0, false))
             .build();
 
     private final List<LootTable.Builder> levels;
@@ -121,12 +129,13 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
             {
                 final Enchantment enchantment = entry.getKey();
                 final EnchantmentRule rule = entry.getValue();
+                final int maxEnchantLevel = enchantment.getMaxLevel() + rule.bonusLevels();
 
                 if (rule.firstLevel() > MAX_BUILDING_LEVEL)
                 {
                     continue;
                 }
-                if (enchantLevel > enchantment.getMaxLevel() + rule.bonusLevels())
+                if (enchantLevel > maxEnchantLevel)
                 {
                     continue;
                 }
@@ -138,6 +147,15 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 for (int buildingLevel = firstBuildingLevel; buildingLevel <= lastBuildingLevel; ++buildingLevel)
                 {
                     levelPools.get(buildingLevel - 1).add(enchantedBook(enchantment, enchantLevel).setWeight(weight));
+                }
+                if (enchantLevel == maxEnchantLevel)
+                {
+                    // ensure the final enchant level is available at all building levels, but at reduced weight
+                    for (int buildingLevel = lastBuildingLevel + 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
+                    {
+                        levelPools.get(buildingLevel - 1).add(enchantedBook(enchantment, enchantLevel)
+                                .setWeight(Math.min(weight, 5)));
+                    }
                 }
             }
         }
@@ -245,11 +263,26 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .values();
         for (final Map.Entry<Enchantment, Integer> entry : enchantLevels)
         {
-            if (entry.getValue() < entry.getKey().getMaxLevel())
+            final EnchantmentRule rule = RULES.getOrDefault(entry.getKey(), new EnchantmentRule(NEVER, 0, false));
+            if (entry.getValue() < entry.getKey().getMaxLevel() + rule.bonusLevels())
             {
-                Log.getLogger().warn("Enchanter max level produces {} but max is {}",
+                Log.getLogger().warn("Enchanter max level produces {} but max is {}{}",
                         entry.getKey().getFullname(entry.getValue()).getString(),
-                        entry.getKey().getFullname(entry.getKey().getMaxLevel()).getString());
+                        entry.getKey().getFullname(entry.getKey().getMaxLevel() + rule.bonusLevels()).getString(),
+                        rule.bonusLevels() > 0 ? " (with bonus)" : "");
+            }
+            if (entry.getKey() != ModEnchants.raiderDamage.get())   // only check the vanilla ones
+            {
+                if (entry.getKey().isTreasureOnly() && !rule.rare())
+                {
+                    Log.getLogger().warn("{} is a treasure enchant but isn't marked as rare?",
+                            Component.translatable(entry.getKey().getDescriptionId()).getString());
+                }
+                if (entry.getKey().getRarity().equals(Enchantment.Rarity.VERY_RARE) && !rule.rare())
+                {
+                    Log.getLogger().warn("{} is a very_rare enchant but isn't marked as rare?",
+                            Component.translatable(entry.getKey().getDescriptionId()).getString());
+                }
             }
         }
 
@@ -257,6 +290,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
         enchantLevels.stream().map(Map.Entry::getKey).forEach(enchantments::remove);
         RULES.entrySet().stream().filter(entry -> entry.getValue().firstLevel() > MAX_BUILDING_LEVEL)
                 .map(Map.Entry::getKey).forEach(enchantments::remove);
+        enchantments.removeIf(Enchantment::isCurse);
 
         for (final Enchantment enchantment : enchantments)
         {
