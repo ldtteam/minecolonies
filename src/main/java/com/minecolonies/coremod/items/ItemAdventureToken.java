@@ -31,7 +31,7 @@ public class ItemAdventureToken extends AbstractItemMinecolonies
      */
     public ItemAdventureToken(Properties properties)
     {
-        super("adventure_token", properties.tab(ModCreativeTabs.MINECOLONIES));
+        super("adventure_token", properties);
     }
 
     @Override
