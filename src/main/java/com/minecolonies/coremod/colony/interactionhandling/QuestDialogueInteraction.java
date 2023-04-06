@@ -47,7 +47,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     /**
      * The respective citizen.
      */
-    private final ICitizen citizen;
+    protected final ICitizen citizen;
 
     /**
      * The quest resource location.

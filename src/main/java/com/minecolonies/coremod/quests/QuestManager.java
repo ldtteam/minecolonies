@@ -183,26 +183,38 @@ public class QuestManager implements IQuestManager
     @Override
     public void deserializeNBT(final CompoundTag nbt)
     {
+        final Map<ResourceLocation, IColonyQuest> localAvailableQuests = new HashMap<>();
         final ListTag availableListTag = nbt.getList(TAG_AVAILABLE, Tag.TAG_COMPOUND);
         for (final Tag element : availableListTag)
         {
-            final IColonyQuest colonyQuest = new ColonyQuest(colony);
+            final ResourceLocation key = new ResourceLocation(((CompoundTag) element).getString(TAG_ID));
+            final IColonyQuest colonyQuest = availableQuests.containsKey(key) ? availableQuests.get(key) : new ColonyQuest(colony);
             colonyQuest.deserializeNBT((CompoundTag) element);
-            availableQuests.put(colonyQuest.getId(), colonyQuest);
+            localAvailableQuests.put(colonyQuest.getId(), colonyQuest);
         }
 
+        this.availableQuests.clear();
+        this.availableQuests.putAll(localAvailableQuests);
+
+        final Map<ResourceLocation, IColonyQuest> localInProgressQuests = new HashMap<>();
         final ListTag inProgressListTag = nbt.getList(TAG_IN_PROGRESS, Tag.TAG_COMPOUND);
         for (final Tag element : inProgressListTag)
         {
-            final IColonyQuest colonyQuest = new ColonyQuest(colony);
+            final ResourceLocation key = new ResourceLocation(((CompoundTag) element).getString(TAG_ID));
+            final IColonyQuest colonyQuest = this.inProgressQuests.containsKey(key) ? this.inProgressQuests.get(key) : new ColonyQuest(colony);
             colonyQuest.deserializeNBT((CompoundTag) element);
-            inProgressQuests.put(colonyQuest.getId(), colonyQuest);
+            localInProgressQuests.put(colonyQuest.getId(), colonyQuest);
         }
 
+        this.inProgressQuests.clear();
+        this.inProgressQuests.putAll(localInProgressQuests);
+
+
+        this.finishedQuests.clear();
         final ListTag finishedListTag = nbt.getList(TAG_FINISHED, Tag.TAG_COMPOUND);
         for (final Tag element : finishedListTag)
         {
-            finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));
+            this.finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));
         }
     }
 }
