@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.compatibility.Compatibility;
@@ -416,11 +417,19 @@ public class CitizenManager implements ICitizenManager
                 }
                 else if (b.hasModule(LivingBuildingModule.class))
                 {
-                    newMaxCitizens += b.getFirstModuleOccurance(LivingBuildingModule.class).getModuleMax();
+                    final LivingBuildingModule module = b.getFirstModuleOccurance(LivingBuildingModule.class);
+                    if (HiringMode.LOCKED.equals(module.getHiringMode()))
+                    {
+                        newMaxCitizens += module.getAssignedCitizen().size();
+                    }
+                    else
+                    {
+                        newMaxCitizens += module.getModuleMax();
+                    }
                 }
             }
         }
-        if (getMaxCitizens() != newMaxCitizens)
+        if (getMaxCitizens() != newMaxCitizens || getPotentialMaxCitizens() != potentialMax + newMaxCitizens)
         {
             setMaxCitizens(newMaxCitizens);
             setPotentialMaxCitizens(potentialMax + newMaxCitizens);

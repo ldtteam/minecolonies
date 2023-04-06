@@ -5,7 +5,6 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.controls.ToggleButton;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
@@ -22,6 +21,8 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
@@ -146,6 +147,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     private void switchHiringMode(final Button settingsButton)
     {
         int index = selectedModule.getHiringMode().ordinal() + 1;
+        if (index == HiringMode.LOCKED.ordinal()) { ++index; }  // only homes can be locked, not workplaces
 
         if (index >= HiringMode.values().length)
         {
