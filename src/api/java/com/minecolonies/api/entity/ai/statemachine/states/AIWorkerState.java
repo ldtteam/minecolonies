@@ -106,6 +106,10 @@ public enum AIWorkerState implements IAIState
      * There are no trees in his search range.
      */
     LUMBERJACK_NO_TREES_FOUND(true),
+    /**
+     * The Lumberjack is gathering saplings (second pass).
+     */
+    LUMBERJACK_GATHERING_2(true),
 
     /*
 ###Miner###
