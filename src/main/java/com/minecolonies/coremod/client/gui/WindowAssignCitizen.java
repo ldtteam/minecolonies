@@ -292,7 +292,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                     currentLivingLabel.setText(Component.translatable("com.minecolonies.coremod.gui.home.liveshere"));
                 }
 
-                if ((colony.isManualHousing() || building.getHiringMode() == HiringMode.MANUAL)
+                if ((colony.isManualHousing() || building.getHiringMode() != HiringMode.DEFAULT)
                       && !(building.getHiringMode() == HiringMode.AUTO)
                       && (!assign || building.getResidents().size() < building.getMax()))
                 {
