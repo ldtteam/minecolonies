@@ -27,6 +27,7 @@ public class SchemFixerUtil
     {
         String baseFolder = Paths.get("").toAbsolutePath().getParent().toString() + "/src/main/resources/assets/minecolonies/schematics";
         File baseFolderFile = new File(baseFolder);
+        if (!baseFolderFile.exists()) { return; }
         final List<File> files = Arrays.asList(baseFolderFile.listFiles());
         for (File subFolder :files)
         {
