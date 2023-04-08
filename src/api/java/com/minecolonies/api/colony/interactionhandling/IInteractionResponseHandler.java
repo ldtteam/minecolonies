@@ -86,23 +86,23 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     /**
      * Server side action triggered on a possible response.
      *
-     * @param response the clicked string response of the player.
+     * @param responseId the clicked string response of the player.
      * @param player   the world it was triggered in.
      * @param data     the citizen related to it.
      */
-    void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data);
+    void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data);
 
     /**
      * Client side action triggered on a possible response.
      *
-     * @param response the clicked string response of the player.
+     * @param responseId the clicked index.
      * @param player   the client side world.
      * @param data     the citizen data assigned to it.
      * @param window   the window it was triggered in.
      * @return if wishing to continue interacting.
      */
     @OnlyIn(Dist.CLIENT)
-    boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window);
+    boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window);
 
     /**
      * Remove a certain parent.

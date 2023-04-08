@@ -296,8 +296,17 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                 final ITriggerReturnData returnData = trigger.isFulfilledForColony(colony);
                 if (returnData.isPositive())
                 {
-                    lastReturnData.add(returnData);
-                    return evaluate(colony, triggerMap, data, lastReturnData);
+                    if (lastReturnData == null)
+                    {
+                        final List<ITriggerReturnData> newReturnData = new ArrayList<>();
+                        newReturnData.add(returnData);
+                        return evaluate(colony, triggerMap, data, newReturnData);
+                    }
+                    else
+                    {
+                        lastReturnData.add(returnData);
+                        return evaluate(colony, triggerMap, data, lastReturnData);
+                    }
                 }
                 return evaluate(colony, triggerMap, data, null);
             }

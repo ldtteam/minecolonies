@@ -13,4 +13,10 @@ public interface IObjectiveData extends INBTSerializable<CompoundTag>
      * @return true if so.
      */
     boolean isFulfilled();
+
+    /**
+     * Get the missing quantity.
+     * @return the quantity.
+     */
+    int getMissingQuantity();
 }

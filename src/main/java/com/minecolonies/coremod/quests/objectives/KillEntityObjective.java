@@ -45,7 +45,7 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
      */
     public KillEntityObjective(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, new DialogueElement("I am still waiting for you to kill " + entitiesToKill + " of " + entityToKill.getDescription().getString() + " !",
+        super(target, new DialogueElement("I am still waiting for you to kill %d " + entityToKill.getDescription().getString() + " !",
           List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))), rewards);
         this.entitiesToKill = entitiesToKill;
         this.nextObjective = nextObjective;
@@ -147,6 +147,12 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
             final CompoundTag compoundTag = new CompoundTag();
             compoundTag.putInt(TAG_QUANTITY, currentProgress);
             return compoundTag;
+        }
+
+        @Override
+        public int getMissingQuantity()
+        {
+            return entitiesToKill > currentProgress ? entitiesToKill - currentProgress : 0;
         }
 
         @Override

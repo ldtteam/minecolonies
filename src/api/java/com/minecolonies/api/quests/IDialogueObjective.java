@@ -88,16 +88,9 @@ public interface IDialogueObjective extends IQuestObjective
          * @param response the triggered response to match.
          * @return the next answer.
          */
-        public IAnswerResult getOptionResult(final Component response)
+        public IAnswerResult getOptionResult(final int responseId)
         {
-            for (final AnswerElement answerElement : answers)
-            {
-                if (answerElement.text.equals(response.getString()))
-                {
-                    return answerElement.answerResult;
-                }
-            }
-            return null;
+            return responseId < answers.size() ? answers.get(responseId).answerResult : null;
         }
     }
 

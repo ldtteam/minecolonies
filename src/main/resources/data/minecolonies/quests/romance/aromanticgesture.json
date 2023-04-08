@@ -12,7 +12,7 @@
       "state": {
         "match": {
           "job": {
-            "type": "minecolonies:baker"
+            "type": "minecolonies:deliveryman"
           }
         }
       }
@@ -22,7 +22,7 @@
       "state": {
         "match": {
           "job": {
-            "type": "minecolonies:deliveryman"
+            "type": "minecolonies:baker"
           }
         }
       }
@@ -38,7 +38,7 @@
           "answer": "Sure, what do you need?",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "I want to give a poppy to another citizen, but I'm too shy to do it myself. Can you deliver it for me?",
+            "text": "I want to give a poppy to $1, but I'm too shy to do it myself. Can you deliver it for me?",
             "options": [
               {
                 "answer": "Of course, I'll be happy to help.",

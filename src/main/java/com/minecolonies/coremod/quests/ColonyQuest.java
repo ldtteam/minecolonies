@@ -316,7 +316,7 @@ public class ColonyQuest implements IColonyQuest
     @Override
     public IQuestParticipant getParticipant(final int target)
     {
-        return colony.getCitizenManager().getCivilian(questParticipants.get(target) - 1);
+        return colony.getCitizenManager().getCivilian(questParticipants.get(target-1));
     }
 
     @Override

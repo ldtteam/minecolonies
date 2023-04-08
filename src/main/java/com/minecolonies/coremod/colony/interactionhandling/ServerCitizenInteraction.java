@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -127,8 +126,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
+    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
+        final Component response = getPossibleResponses().get(responseId);
         if (response.getContents() instanceof TranslatableContents)
         {
             if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
@@ -144,15 +144,15 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
+    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
+        if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), response));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), responseId));
         return true;
     }
 

@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
@@ -137,18 +138,19 @@ public class WindowInteraction extends AbstractWindowSkeleton
         if (!interactions.isEmpty())
         {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-            for (final Component component : handler.getPossibleResponses())
+            try
             {
-                if (component.getString().equals(button.getTextAsString()))
+                if (handler.onClientResponseTriggered(Integer.parseInt(button.getID().replace("response_", "")) - 1, Minecraft.getInstance().player, citizen, this))
                 {
-                    if (handler.onClientResponseTriggered(component, Minecraft.getInstance().player, citizen, this))
-                    {
-                        currentInteraction++;
-                        setupInteraction();
-                        return;
-                    }
+                    currentInteraction++;
                     setupInteraction();
+                    return;
                 }
+                setupInteraction();
+            }
+            catch (final Exception ex)
+            {
+                Log.getLogger().warn("Wrong button id of interaction.");
             }
         }
     }

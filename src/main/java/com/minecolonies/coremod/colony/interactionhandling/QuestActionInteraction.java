@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import static com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers.QUEST;
 import static com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers.QUEST_ACTION;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -43,7 +42,7 @@ public class QuestActionInteraction extends QuestDialogueInteraction
     }
 
     @Override
-    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
+    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
         if (colonyQuest == null)
         {
@@ -53,7 +52,7 @@ public class QuestActionInteraction extends QuestDialogueInteraction
         triggerResponseState(player, objective);
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(response);
+            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
             if (result instanceof ITerminalAnswerResult)
             {
                 if (result instanceof IResolveResult)
@@ -88,7 +87,7 @@ public class QuestActionInteraction extends QuestDialogueInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
+    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
         if (colonyQuest == null)
         {
@@ -96,16 +95,16 @@ public class QuestActionInteraction extends QuestDialogueInteraction
         }
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(response);
+            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
             if (result instanceof ITerminalAnswerResult)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), responseId));
                 this.currentElement = this.startElement;
                 return true;
             }
             else if (result instanceof DialogueObjective.DialogueElement)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), responseId));
                 this.currentElement = (DialogueObjective.DialogueElement) result;
                 return false;
             }

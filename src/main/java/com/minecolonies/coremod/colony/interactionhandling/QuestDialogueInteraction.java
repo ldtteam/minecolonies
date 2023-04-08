@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers.QUEST;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -93,7 +94,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
+    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
         if (colonyQuest == null)
         {
@@ -101,7 +102,7 @@ public class QuestDialogueInteraction extends StandardInteraction
         }
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(response);
+            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
             if (result instanceof ITerminalAnswerResult)
             {
                 ((ITerminalAnswerResult) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
@@ -127,7 +128,7 @@ public class QuestDialogueInteraction extends StandardInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
+    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
         if (colonyQuest == null)
         {
@@ -135,23 +136,33 @@ public class QuestDialogueInteraction extends StandardInteraction
         }
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(response);
+            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
             if (result instanceof ITerminalAnswerResult)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), responseId));
                 this.currentElement = this.startElement;
                 finished = true;
                 return true;
             }
             else if (result instanceof DialogueObjective.DialogueElement)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), response));
+                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), responseId));
                 this.currentElement = (DialogueObjective.DialogueElement) result;
                 return false;
             }
         }
 
         return true;
+    }
+
+    @Override
+    public void onOpened(final Player player)
+    {
+        super.onOpened(player);
+        if (colonyQuest == null && citizen != null)
+        {
+            colonyQuest = citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
+        }
     }
 
     @Override
@@ -187,7 +198,10 @@ public class QuestDialogueInteraction extends StandardInteraction
             {
                 localText = localText.replace("$" + index, citizen.getColony().getCitizen(participant).getName());
             }
-            this.colonyQuest.getQuestGiver();
+        }
+        if (localText.contains("%d") && colonyQuest != null && colonyQuest.getObjectiveData() != null)
+        {
+            localText = localText.replace("%d", String.valueOf(colonyQuest.getObjectiveData().getMissingQuantity()));
         }
         return localText;
     }
@@ -201,7 +215,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public List<Component> getPossibleResponses()
     {
-        return currentElement == null ? Collections.emptyList() : currentElement.getOptions();
+        return currentElement == null ? Collections.emptyList() : currentElement.getOptions().stream().map(str -> Component.literal(processText(str.getString()))).collect(Collectors.toList());
     }
 
     @Override

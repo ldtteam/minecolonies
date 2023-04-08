@@ -47,7 +47,7 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
      */
     public BreakBlockObjective(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, new DialogueElement("I am still waiting for you to mine " + blocksToMine + " of " + blockToMine.getName().getString() + " !",
+        super(target, new DialogueElement("I am still waiting for you to mine %d " + blockToMine.getName().getString() + " !",
           List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))), rewards);
         this.blocksToMine = blocksToMine;
         this.nextObjective = nextObjective;
@@ -149,6 +149,12 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
             final CompoundTag compoundTag = new CompoundTag();
             compoundTag.putInt(TAG_QUANTITY, currentProgress);
             return compoundTag;
+        }
+
+        @Override
+        public int getMissingQuantity()
+        {
+            return blocksToMine > currentProgress ? blocksToMine - currentProgress : 0;
         }
 
         @Override

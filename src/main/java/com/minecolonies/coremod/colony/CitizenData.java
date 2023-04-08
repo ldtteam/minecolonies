@@ -54,7 +54,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
@@ -309,11 +308,11 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void onResponseTriggered(@NotNull final Component key, @NotNull final Component response, final Player player)
+    public void onResponseTriggered(@NotNull final Component key, final int responseId, final Player player)
     {
         if (citizenChatOptions.containsKey(key))
         {
-            citizenChatOptions.get(key).onServerResponseTriggered(response, player, this);
+            citizenChatOptions.get(key).onServerResponseTriggered(responseId, player, this);
             markDirty();
         }
     }
