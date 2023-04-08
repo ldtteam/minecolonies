@@ -3,6 +3,8 @@ package com.minecolonies.api.quests;
 import com.google.gson.JsonObject;
 import net.minecraft.world.entity.player.Player;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.GO_TO_ID;
+
 /**
  * Possible answer results in a dialogue tree.
  */
@@ -45,7 +47,7 @@ public interface IAnswerResult
          */
         public GoToResult(final JsonObject jsonObject)
         {
-            this.nextObjective = jsonObject.get("go-to").getAsInt();
+            this.nextObjective = jsonObject.get(GO_TO_ID).getAsInt();
         }
 
         @Override

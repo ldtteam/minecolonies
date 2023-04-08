@@ -9,6 +9,8 @@ import net.minecraft.nbt.*;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+
 /**
  * Random quest trigger.
  */
@@ -48,10 +50,10 @@ public class StateQuestTrigger implements IQuestTrigger
      */
     public static StateQuestTrigger createStateTrigger(final JsonObject questTriggerJson)
     {
-        final JsonObject subObj = questTriggerJson.get("state").getAsJsonObject();
-        return new StateQuestTrigger(subObj.get("path").getAsString().split("/"),
-          subObj.get("match"),
-          subObj.has("count") ? subObj.get("count").getAsInt() : 1);
+        final JsonObject subObj = questTriggerJson.get(STATE_ID).getAsJsonObject();
+        return new StateQuestTrigger(subObj.get(PATH_ID).getAsString().split("/"),
+          subObj.get(MATCH_ID),
+          subObj.has(COUNT_ID) ? subObj.get(COUNT_ID).getAsInt() : 1);
 
     }
 

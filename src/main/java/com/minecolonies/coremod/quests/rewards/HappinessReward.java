@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.HappinessConstants.QUEST;
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
 
 /**
  * Happiness inducing reward.
@@ -46,10 +47,10 @@ public class HappinessReward implements IQuestReward
      */
     public static IQuestReward createReward(final JsonObject jsonObject)
     {
-        JsonObject details = jsonObject.getAsJsonObject("details");
-        final int target = details.get("target").getAsInt();
-        final int qty = details.get("qty").getAsInt();
-        final int days = details.get("days").getAsInt();
+        JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
+        final int target = details.get(TARGET_KEY).getAsInt();
+        final int qty = details.get(QUANTITY_KEY).getAsInt();
+        final int days = details.get(DAYS_KEY).getAsInt();
 
         return new HappinessReward(target, qty, days);
     }

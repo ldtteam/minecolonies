@@ -13,6 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+
 /**
  * Item based quest reward.
  */
@@ -39,14 +41,14 @@ public class ItemReward implements IQuestReward
      */
     public static IQuestReward createReward(final JsonObject jsonObject)
     {
-        JsonObject details = jsonObject.getAsJsonObject("details");
-        final int quantity = details.get("qty").getAsInt();
-        final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get("item").getAsString())).get().get());
-        if (details.has("nbt"))
+        JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
+        final int quantity = details.get(QUANTITY_KEY).getAsInt();
+        final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get(ITEM_KEY).getAsString())).get().get());
+        if (details.has(NBT_KEY))
         {
             try
             {
-                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, "nbt")));
+                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, NBT_KEY)));
             }
             catch (CommandSyntaxException e)
             {

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
 
 /**
  * Objective type entity killing mining.
@@ -59,11 +60,11 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
      */
     public static IQuestObjective createObjective(final JsonObject jsonObject)
     {
-        JsonObject details = jsonObject.getAsJsonObject("details");
-        final int target = details.get("target").getAsInt();
-        final int quantity = details.get("qty").getAsInt();
-        final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(new ResourceLocation(details.get("entity-type").getAsString())).get().get();
-        final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
+        JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
+        final int target = details.get(TARGET_KEY).getAsInt();
+        final int quantity = details.get(QUANTITY_KEY).getAsInt();
+        final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(new ResourceLocation(details.get(ENTITY_TYPE_KEY).getAsString())).get().get();
+        final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 
         return new KillEntityObjective(target, quantity, entityType, nextObj, parseRewards(jsonObject));
     }

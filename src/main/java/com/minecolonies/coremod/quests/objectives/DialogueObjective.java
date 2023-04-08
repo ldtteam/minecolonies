@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.TARGET_KEY;
+import static com.minecolonies.api.util.constant.QuestParseConstant.UNLOCKS_REWARDS_KEY;
+
 /**
  * Dialogue type of objective.
  */
@@ -66,7 +69,7 @@ public class DialogueObjective implements IDialogueObjective
      */
     public static IQuestObjective createObjective(final JsonObject jsonObject)
     {
-        return new DialogueObjective(jsonObject.get("target").getAsInt(),
+        return new DialogueObjective(jsonObject.get(TARGET_KEY).getAsInt(),
           DialogueElement.parse(jsonObject),
             parseRewards(jsonObject));
     }
@@ -78,13 +81,13 @@ public class DialogueObjective implements IDialogueObjective
      */
     public static List<Integer> parseRewards(final JsonObject jsonObject)
     {
-        if (!jsonObject.has("unlocks-rewards"))
+        if (!jsonObject.has(UNLOCKS_REWARDS_KEY))
         {
             return Collections.emptyList();
         }
 
         final List<Integer> rewardList = new ArrayList<>();
-        final JsonArray jsonArray = jsonObject.get("unlocks-rewards").getAsJsonArray();
+        final JsonArray jsonArray = jsonObject.get(UNLOCKS_REWARDS_KEY).getAsJsonArray();
         for (int i = 0; i < jsonArray.size(); i++)
         {
             rewardList.add(jsonArray.get(i).getAsInt());

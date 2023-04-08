@@ -10,6 +10,9 @@ import com.minecolonies.api.quests.ITriggerReturnData;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.MATCH_ID;
+import static com.minecolonies.api.util.constant.QuestParseConstant.STATE_ID;
+
 /**
  * Random quest trigger.
  */
@@ -35,8 +38,8 @@ public class CitizenQuestTrigger implements IQuestTrigger
      */
     public static CitizenQuestTrigger createStateTrigger(final JsonObject questTriggerJson)
     {
-        final JsonObject subObj = questTriggerJson.get("state").getAsJsonObject();
-        return new CitizenQuestTrigger(subObj.get("match"));
+        final JsonObject subObj = questTriggerJson.get(STATE_ID).getAsJsonObject();
+        return new CitizenQuestTrigger(subObj.get(MATCH_ID));
     }
 
     @Override

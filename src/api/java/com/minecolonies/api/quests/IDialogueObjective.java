@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+
 /**
  * Dialogue type of objective interface.
  */
@@ -56,9 +58,9 @@ public interface IDialogueObjective extends IQuestObjective
          */
         public static DialogueElement parse(final JsonObject jsonObject)
         {
-            final String text = jsonObject.get("text").getAsString();
+            final String text = jsonObject.get(TEXT_ID).getAsString();
             final List<AnswerElement> answerElementList = new ArrayList<>();
-            for (final JsonElement answerOption : jsonObject.getAsJsonArray("options"))
+            for (final JsonElement answerOption : jsonObject.getAsJsonArray(OPTIONS_ID))
             {
                 answerElementList.add(AnswerElement.parse(answerOption.getAsJsonObject()));
             }
@@ -85,7 +87,7 @@ public interface IDialogueObjective extends IQuestObjective
 
         /**
          * Get the matching answer result.
-         * @param response the triggered response to match.
+         * @param responseId the triggered response to match.
          * @return the next answer.
          */
         public IAnswerResult getOptionResult(final int responseId)
@@ -127,8 +129,8 @@ public interface IDialogueObjective extends IQuestObjective
          */
         public static AnswerElement parse(final JsonObject jsonObject)
         {
-            final JsonObject resultObj = jsonObject.getAsJsonObject("result");
-            return new AnswerElement(jsonObject.get("answer").getAsString(), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().getValue(new ResourceLocation(resultObj.get("type").getAsString())).produce(resultObj));
+            final JsonObject resultObj = jsonObject.getAsJsonObject(RESULT_ID);
+            return new AnswerElement(jsonObject.get(ANSWER_ID).getAsString(), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().getValue(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
         }
     }
 }

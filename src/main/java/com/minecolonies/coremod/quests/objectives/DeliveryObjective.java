@@ -17,6 +17,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+
 /**
  * Delivery type objective.
  */
@@ -82,15 +84,15 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
      */
     public static IQuestObjective createObjective(final JsonObject jsonObject)
     {
-        JsonObject details = jsonObject.getAsJsonObject("details");
-        final int target = details.get("target").getAsInt();
-        final int quantity = details.get("qty").getAsInt();
-        final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get("item").getAsString())).get().get());
-        if (details.has("nbt"))
+        JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
+        final int target = details.get(TARGET_KEY).getAsInt();
+        final int quantity = details.get(QUANTITY_KEY).getAsInt();
+        final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getHolder(new ResourceLocation(details.get(ITEM_KEY).getAsString())).get().get());
+        if (details.has(NBT_KEY))
         {
             try
             {
-                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, "nbt")));
+                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, NBT_KEY)));
             }
             catch (CommandSyntaxException e)
             {
@@ -98,8 +100,8 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
                 throw new RuntimeException(e);
             }
         }
-        final int nextObj = details.has("next-objective") ? details.get("next-objective").getAsInt() : -1;
-        final String nbtMode = details.has("nbt-mode") ? details.get("nbt-mode").getAsString() : "";
+        final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : - 1;
+        final String nbtMode = details.has(NBT_MODE_KEY) ? details.get(NBT_MODE_KEY).getAsString() : "";
         return new DeliveryObjective(target, item, quantity, nextObj, parseRewards(jsonObject), nbtMode);
     }
 

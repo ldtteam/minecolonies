@@ -9,6 +9,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+
 /**
  * Relationship adjustment quest reward.
  */
@@ -46,10 +48,10 @@ public class RelationshipReward implements IQuestReward
      */
     public static IQuestReward createReward(final JsonObject jsonObject)
     {
-        JsonObject details = jsonObject.getAsJsonObject("details");
-        final int target1 = details.get("target1").getAsInt();
-        final int target2 = details.get("target2").getAsInt();
-        final String type = jsonObject.get("type").getAsString();
+        JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
+        final int target1 = details.get(TARGET1_KEY).getAsInt();
+        final int target2 = details.get(TARGET2_KEY).getAsInt();
+        final String type = jsonObject.get(TYPE_KEY).getAsString();
 
         return new RelationshipReward(target1, target2, type);
     }

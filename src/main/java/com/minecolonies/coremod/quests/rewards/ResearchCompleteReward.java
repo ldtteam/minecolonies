@@ -7,6 +7,9 @@ import com.minecolonies.api.quests.IQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import static com.minecolonies.api.util.constant.QuestParseConstant.DETAILS_KEY;
+import static com.minecolonies.api.util.constant.QuestParseConstant.ID_KEY;
+
 /**
  * Research complete based reward.
  */
@@ -33,8 +36,8 @@ public class ResearchCompleteReward implements IQuestReward
      */
     public static IQuestReward createReward(final JsonObject jsonObject)
     {
-        JsonObject details = jsonObject.getAsJsonObject("details");
-        final ResourceLocation research = new ResourceLocation(details.get("id").getAsString());
+        JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
+        final ResourceLocation research = new ResourceLocation(details.get(ID_KEY).getAsString());
         return new ResearchCompleteReward(research);
     }
     @Override
