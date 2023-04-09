@@ -211,6 +211,7 @@ public class ScanCommand extends AbstractCommand
             isHut = false;
         }
 
+        final String piecesName = style.replace(" ", "").toLowerCase(Locale.US);
         for (final BlockPos mutablePos : BlockPos.betweenClosed(zero, zero.offset(box.getXSpan() - 1, box.getYSpan() - 1, box.getZSpan() - 1)))
         {
             BlockState state = world.getBlockState(mutablePos);
@@ -225,19 +226,19 @@ public class ScanCommand extends AbstractCommand
                     }
                     if (isHut)
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/roads")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + piecesName+ "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:building_entrance"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:building_entrance"));
                     }
                     else if (jigsawBlockEntity.getPool().location().getPath().contains("building"))
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/buildings")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + piecesName+ "/buildings")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:building_entrance"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:building_entrance"));
                     }
                     else
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + style+ "/roads")));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registry.TEMPLATE_POOL_REGISTRY, new ResourceLocation("minecolonies:" + piecesName+ "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies:street"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:street"));
                     }
@@ -252,7 +253,7 @@ public class ScanCommand extends AbstractCommand
         StructureTemplate structuretemplate;
         try
         {
-            final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", "").toLowerCase(Locale.US));
+            final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", "").replace(" ", "").toLowerCase(Locale.US));
             structuretemplate = structuretemplatemanager.getOrCreate(location);
             structuretemplate.fillFromWorld(world, zero, new BlockPos(box.getXSpan(), box.getYSpan(), box.getZSpan()), false, Blocks.STRUCTURE_VOID);
             com.minecolonies.coremod.Network.getNetwork().sendToPlayer(new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt").toLowerCase(Locale.US)), (ServerPlayer) player);
