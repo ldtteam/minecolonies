@@ -8,10 +8,15 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.client.GlobalQuestSyncMessage;
 import com.minecolonies.coremod.quests.*;
 import com.minecolonies.api.quests.IQuestTrigger;
 import com.minecolonies.api.quests.ITriggerReturnData;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -32,6 +37,11 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**
+     * The last json map.
+     */
+    private static Map<ResourceLocation, JsonElement> globalJsonElementMap = new HashMap<>();
+
+    /**
      * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/quests/<path>
      */
     public QuestJsonListener()
@@ -39,8 +49,50 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         super(GSON, "quests");
     }
 
+    /**
+     * Sync to client.
+     * @param player to send it to.
+     */
+    public static void sendGlobalQuestPackets(final ServerPlayer player)
+    {
+        final FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        byteBuf.writeInt(globalJsonElementMap.size());
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : globalJsonElementMap.entrySet())
+        {
+            byteBuf.writeResourceLocation(entry.getKey());
+            byteBuf.writeByteArray(entry.getValue().toString().getBytes());
+        }
+        Network.getNetwork().sendToPlayer(new GlobalQuestSyncMessage(byteBuf), player);
+    }
+
+    /**
+     * Read the data from the packet and parse it.
+     * @param byteBuf pck.
+     */
+    public static void readGlobalQuestPackets(final FriendlyByteBuf byteBuf)
+    {
+        globalJsonElementMap.clear();
+        final int size = byteBuf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            globalJsonElementMap.put(byteBuf.readResourceLocation(), GSON.fromJson(new String(byteBuf.readByteArray()), JsonObject.class));
+        }
+        apply(globalJsonElementMap);
+    }
+
     @Override
     protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
+    {
+        globalJsonElementMap.clear();
+        globalJsonElementMap.putAll(jsonElementMap);
+        apply(jsonElementMap);
+    }
+
+    /**
+     * Our universal apply.
+     * @param jsonElementMap the map.
+     */
+    private static void apply(final Map<ResourceLocation, JsonElement> jsonElementMap)
     {
         Log.getLogger().info("Loading quests from data");
 
@@ -66,8 +118,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         Log.getLogger().info("Finished loading quests from data");
     }
 
-
-    public IQuestData loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
+    public static IQuestData loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
     {
         final List<IQuestTrigger> questTriggers = new ArrayList<>();
         // Read quest triggers
@@ -191,7 +242,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     }
 
     // Unused yet
-    private Function<IColony, List<ITriggerReturnData>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTrigger> triggers)
+    private static Function<IColony, List<ITriggerReturnData>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTrigger> triggers)
     {
         // Default and.
         if (order.isEmpty())
@@ -263,7 +314,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      * @param data split string data
      * @return predicate from data
      */
-    private List<ITriggerReturnData> evaluate(final IColony colony, final Map<String, IQuestTrigger> triggerMap, final List<String> data, final List<ITriggerReturnData> lastReturnData)
+    private static List<ITriggerReturnData> evaluate(final IColony colony, final Map<String, IQuestTrigger> triggerMap, final List<String> data, final List<ITriggerReturnData> lastReturnData)
     {
         final String current = data.get(0);
         data.remove(0);
