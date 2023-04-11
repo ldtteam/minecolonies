@@ -2,6 +2,9 @@ package com.minecolonies.api.quests;
 
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * Terminal type answer. Will close the interaction.
+ */
 public interface ITerminalAnswerResult extends IAnswerResult
 {
 

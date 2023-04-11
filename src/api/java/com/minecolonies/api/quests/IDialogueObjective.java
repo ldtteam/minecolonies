@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +91,7 @@ public interface IDialogueObjective extends IQuestObjective
          * @param responseId the triggered response to match.
          * @return the next answer.
          */
+        @Nullable
         public IAnswerResult getOptionResult(final int responseId)
         {
             return responseId < answers.size() ? answers.get(responseId).answerResult : null;

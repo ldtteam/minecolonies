@@ -46,8 +46,17 @@ public class QuestData implements IQuestData
      */
     private final int questTimeout;
 
-    // We want two different things. a) A global "quest holder" kind of thing that has all the fields that we read from the json (e.g. the necessary triggers, side effects, etc)
-
+    /**
+     * Create new quest data.
+     * @param questID the id of the quest.
+     * @param name the name of the quest.
+     * @param parents the parent quests.
+     * @param maxOccurrence the max num of occurrences.
+     * @param questTriggerList the list of triggers.
+     * @param questObjectives the quest objectives.
+     * @param questTimeout the time until it times out.
+     * @param questRewards its rewards
+     */
     public QuestData(final ResourceLocation questID, final String name,
       final List<ResourceLocation> parents,
       final int maxOccurrence, final Function<IColony, List<ITriggerReturnData>> questTriggerList, final List<IQuestObjective> questObjectives, final int questTimeout, final List<IQuestReward> questRewards)

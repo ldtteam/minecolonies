@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @param questId the id.
      * @return the quest.
      */
+    @Nullable
     IColonyQuest getAvailableOrInProgressQuest(final ResourceLocation questId);
 
     /**

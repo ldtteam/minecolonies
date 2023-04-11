@@ -286,9 +286,13 @@ public class CitizenData implements ICitizenData
     private final List<ResourceLocation> participatingQuests = new ArrayList<>();
 
     /**
-     * Tracking quests the citizen participated in and finished their participation.
+     * Tracking quests the citizen was the quest giver in.
      */
     private final List<ResourceLocation> finishedQuests = new ArrayList<>();
+
+    /**
+     * Tracking quests the citizen participated in.
+     */
     private final List<ResourceLocation> finishedQuestParticipation = new ArrayList<>();
 
     /**

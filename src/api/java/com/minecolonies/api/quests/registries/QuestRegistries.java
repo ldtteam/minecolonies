@@ -55,6 +55,8 @@ public class QuestRegistries
      */
     public static class RewardEntry
     {
+        //todo create instance getters
+
         private final Function<JsonObject, IQuestReward> producer;
 
         public RewardEntry(final Function<JsonObject, IQuestReward> productionFunction)

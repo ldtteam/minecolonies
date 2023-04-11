@@ -10,7 +10,7 @@ public class StaticHappinessModifier extends AbstractHappinessModifier
     /**
      * The supplier to get the happiness factor.
      */
-    protected DoubleSupplier supplier;
+    private DoubleSupplier supplier;
 
     /**
      * Create an instance of the happiness modifier.
@@ -29,5 +29,14 @@ public class StaticHappinessModifier extends AbstractHappinessModifier
     public double getFactor()
     {
         return supplier.getAsDouble();
+    }
+
+    /**
+     * Change it.
+     * @param supplier the supplier to set.
+     */
+    public void setSupplier(final DoubleSupplier supplier)
+    {
+        this.supplier = supplier;
     }
 }

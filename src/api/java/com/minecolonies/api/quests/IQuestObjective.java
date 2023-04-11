@@ -30,6 +30,10 @@ public interface IQuestObjective
      */
     default void onWorldLoad(IColonyQuest colonyQuest) { };
 
+    /**
+     * Get objective data related to the objective.
+     * @return the data, default null.
+     */
     @Nullable
     default IObjectiveData getObjectiveData() { return null; }
 

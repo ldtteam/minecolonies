@@ -118,6 +118,6 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     {
         super.set(qty, days);
         this.days = days;
-        this.supplier = () -> qty;
+        setSupplier(() -> qty);
     }
 }
