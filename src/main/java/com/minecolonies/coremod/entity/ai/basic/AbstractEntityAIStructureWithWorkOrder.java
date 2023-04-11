@@ -39,6 +39,10 @@ import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_P
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_BUILT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_UPGRADED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_REPAIRED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_REMOVED;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -371,15 +375,19 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 case BUILD:
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_BUILT);
                     break;
                 case UPGRADE:
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), workOrderName, wo.getTargetLevel()));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_UPGRADED);
                     break;
                 case REPAIR:
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REPAIRED);
                     break;
                 case REMOVE:
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REMOVED);
                     break;
             }
 
