@@ -471,15 +471,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     protected IAIState startWorkingAtOwnBuilding()
     {
-        final ILocation rallyLocation = buildingGuards.getRallyLocation();
-        if ((rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted()) || (
-          buildingGuards.getTask().equals(GuardTaskSetting.PATROL_MINE) && buildingGuards.getMinePos() != null))
+        if (buildingGuards != null)
         {
-            return PREPARING;
+            buildingGuards.setTempNextPatrolPoint(buildingGuards.getPosition());
         }
-
-        // Walks to our building, only when not busy with another task
-        return super.startWorkingAtOwnBuilding();
+        return DECIDE;
     }
 
     /**
