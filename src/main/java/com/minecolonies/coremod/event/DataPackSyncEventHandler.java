@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.compatibility.CraftingTagAuditor;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithCompatibilityMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,7 +46,7 @@ public class DataPackSyncEventHandler
          *
          * @param server The server.
          */
-        private static void loadRecipes(@NotNull final MinecraftServer server)
+        private static void discoverCompatLists(@NotNull final MinecraftServer server)
         {
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager());
@@ -78,23 +79,24 @@ public class DataPackSyncEventHandler
         {
             final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
             final MinecraftServer server = event.getPlayerList().getServer();
+            final GameProfile owner = server.getSingleplayerProfile();
 
             if (event.getPlayer() == null)
             {
                 // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
-                loadRecipes(server);
+                discoverCompatLists(server);
 
-                // and then finally update every player with the results (not needed for single player)
-                if (!server.isSingleplayer())
+                // and then finally update every player with the results
+                final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
+                for (final ServerPlayer player : event.getPlayerList().getPlayers())
                 {
-                    final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
-                    for (final ServerPlayer player : event.getPlayerList().getPlayers())
+                    if (player.getGameProfile() != owner)   // don't need to send them in SP, or LAN owner
                     {
                         sendPackets(player, compatMsg);
                     }
                 }
             }
-            else if (!server.isSingleplayer())
+            else if (event.getPlayer().getGameProfile() != owner)
             {
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(true));
             }
@@ -116,7 +118,7 @@ public class DataPackSyncEventHandler
         @SubscribeEvent
         public static void onServerStarted(@NotNull final ServerStartedEvent event)
         {
-            loadRecipes(event.getServer());
+            discoverCompatLists(event.getServer());
         }
     }
 
