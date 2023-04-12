@@ -89,7 +89,6 @@ import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -618,10 +617,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void eatFoodInteraction(final ItemStack usedStack, final Player player, final InteractionHand hand)
     {
-        usedStack.shrink(1);
-        player.setItemInHand(hand, usedStack);
-        interactionCooldown = 100;
-
         if (!level.isClientSide())
         {
             final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
@@ -642,6 +637,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getYRot(),
                 getEyeHeight()), this);
         }
+
+        usedStack.shrink(1);
+        player.setItemInHand(hand, usedStack);
+        interactionCooldown = 100;
     }
 
     @Override
