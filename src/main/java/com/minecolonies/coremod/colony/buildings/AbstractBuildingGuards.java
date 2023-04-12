@@ -40,7 +40,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -475,11 +474,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         return PATROL_BASE_DIST + this.getBuildingLevel() * PATROL_DISTANCE;
     }
 
-    /**
-     * Sets a one time consumed temporary next position to patrol towards
-     *
-     * @param pos Position to set
-     */
+    @Override
     public void setTempNextPatrolPoint(final BlockPos pos)
     {
         tempNextPatrolPoint = pos;
