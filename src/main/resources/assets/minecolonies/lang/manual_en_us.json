@@ -1087,6 +1087,7 @@
   "com.minecolonies.coremod.gui.hiringmode.default": "Default (colony override)",
   "com.minecolonies.coremod.gui.hiringmode.auto": "Automatic",
   "com.minecolonies.coremod.gui.hiringmode.manual": "Manual",
+  "com.minecolonies.coremod.gui.hiringmode.locked": "Locked (no kids)",
   "com.minecolonies.coremod.gui.name.toolong": "We reduced the string to \"%s\" since it exceeded the limit of 15 letters.",
 
   "block.minecolonies.decorationcontroller": "Decoration Controller",
@@ -2370,6 +2371,10 @@
   "com.minecolonies.coremod.gui.townhall.stats.crops_harvested": "Crops Harvested: %d",
   "com.minecolonies.coremod.gui.townhall.stats.land_tilled": "Land Tilled: %d",
   "com.minecolonies.coremod.gui.townhall.stats.fish_caught": "Fish Caught: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_built": "Building Built: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_upgraded": "Building Upgraded: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_repaired": "Building Repaired: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_removed": "Building Removed: %d",
   "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
   "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
   "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
