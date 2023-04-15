@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.rewards;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestReward;
+import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.TagParser;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Item based quest reward.
  */
-public class ItemReward implements IQuestReward
+public class ItemRewardTemplate implements IQuestRewardTemplate
 {
     /**
      * The stack to give to the player.
@@ -29,7 +29,7 @@ public class ItemReward implements IQuestReward
      * Setup the item reward.
      * @param item the item.
      */
-    public ItemReward(final ItemStack item)
+    public ItemRewardTemplate(final ItemStack item)
     {
         this.item = item;
     }
@@ -39,7 +39,7 @@ public class ItemReward implements IQuestReward
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestReward createReward(final JsonObject jsonObject)
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
@@ -57,7 +57,7 @@ public class ItemReward implements IQuestReward
             }
         }
         item.setCount(quantity);
-        return new ItemReward(item);
+        return new ItemRewardTemplate(item);
     }
     @Override
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)

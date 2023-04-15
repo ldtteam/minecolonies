@@ -4,13 +4,13 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IObjectiveData;
-import com.minecolonies.api.quests.IQuestObjective;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,19 +20,19 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
- * Objective type entity killing mining.
+ * Objective type tracking block mining.
  */
-public class KillEntityObjective extends DialogueObjective implements IKillEntityObjective
+public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IBreakBlockObjectiveTemplate
 {
     /**
-     * Amount of entities to kill.
+     * Amount of blocks to mine.
      */
-    private final int entitiesToKill;
+    private final int blocksToMine;
 
     /**
      * The block to mine.
      */
-    private final EntityType<?> entityToKill;
+    private final Block blockToMine;
 
     /**
      * Next objective to go to, on fulfillment. -1 if final objective.
@@ -41,17 +41,19 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
 
     /**
      * Create a new objective of this type.
-     * @param target the target citizen.
-     * @param entitiesToKill the number of entities to kill.
-     * @param entityToKill the entity to kill.
+     *
+     * @param target       the target citizen.
+     * @param blocksToMine the number of blocks to mine.
+     * @param blockToMine  the block to mine.
+     * @param rewards the rewards this unlocks.
      */
-    public KillEntityObjective(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards)
+    public BreakBlockObjectiveTemplate(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, new DialogueElement("I am still waiting for you to kill %d " + entityToKill.getDescription().getString() + " !",
+        super(target, new DialogueElement("I am still waiting for you to mine %d " + blockToMine.getName().getString() + " !",
           List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have time for this!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()))), rewards);
-        this.entitiesToKill = entitiesToKill;
+        this.blocksToMine = blocksToMine;
         this.nextObjective = nextObjective;
-        this.entityToKill = entityToKill;
+        this.blockToMine = blockToMine;
     }
 
     /**
@@ -59,15 +61,15 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjective createObjective(final JsonObject jsonObject)
+    public static IQuestObjectiveTemplate createObjective(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
-        final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(new ResourceLocation(details.get(ENTITY_TYPE_KEY).getAsString())).get().get();
+        final Block block = ForgeRegistries.BLOCKS.getHolder(new ResourceLocation(details.get(BLOCK_KEY).getAsString())).get().get();
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 
-        return new KillEntityObjective(target, quantity, entityType, nextObj, parseRewards(jsonObject));
+        return new BreakBlockObjectiveTemplate(target, quantity, block, nextObj, parseRewards(jsonObject));
     }
 
     @Override
@@ -77,16 +79,16 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new EntityKillProgressData();
+        return new BlockMiningProgressData();
     }
 
     @Nullable
     @Override
     public IObjectiveData getObjectiveData()
     {
-        return new EntityKillProgressData();
+        return new BlockMiningProgressData();
     }
 
     @Override
@@ -96,28 +98,28 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
     }
 
     /**
-     * Cleanup the listener of this event.
-     * @param colonyQuest the quest instance it belongs to.
+     * Cleanup the listener of this objective,
+     * @param colonyQuest the listener.
      */
     private void cleanupListener(final IQuestInstance colonyQuest)
     {
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.removeQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.removeQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     @Override
-    public void onEntityKill(final IObjectiveData killProgressData, final IQuestInstance colonyQuest, final Player player)
+    public void onBlockBreak(final IObjectiveData blockMiningProgressData, final IQuestInstance colonyQuest, final Player player)
     {
-        if (killProgressData.isFulfilled())
+        if (blockMiningProgressData.isFulfilled())
         {
             return;
         }
 
-        ((EntityKillProgressData) killProgressData).currentProgress++;
-        if (killProgressData.isFulfilled())
+        ((BlockMiningProgressData) blockMiningProgressData).currentProgress++;
+        if (blockMiningProgressData.isFulfilled())
         {
             colonyQuest.advanceObjective(player, nextObjective);
         }
@@ -130,21 +132,21 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     /**
      * Progress data of this objective.
      */
-    public class EntityKillProgressData implements IObjectiveData
+    public class BlockMiningProgressData implements IObjectiveData
     {
         private int currentProgress = 0;
 
         @Override
         public boolean isFulfilled()
         {
-            return currentProgress >= entitiesToKill;
+            return currentProgress >= blocksToMine;
         }
 
         @Override
@@ -158,7 +160,7 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
         @Override
         public int getMissingQuantity()
         {
-            return entitiesToKill > currentProgress ? entitiesToKill - currentProgress : 0;
+            return blocksToMine > currentProgress ? blocksToMine - currentProgress : 0;
         }
 
         @Override

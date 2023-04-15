@@ -193,7 +193,7 @@ public class QuestInstance implements IQuestInstance
     @Override
     public void advanceObjective(final Player player, final int nextObjective)
     {
-        final IQuestModel questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+        final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
 
         // Always when advancing an objective, get the rewards from the current objective.
         final List<Integer> rewards = (questData.getObjective(this.objectiveProgress).getRewardUnlocks());
@@ -244,7 +244,7 @@ public class QuestInstance implements IQuestInstance
         final Player player = colony.getWorld().getPlayerByUUID(assignedPlayer);
         if (player != null)
         {
-            final IQuestModel questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+            final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
             player.sendSystemMessage(Component.literal("You have successfully completed the quest: " + questData.getName()));
         }
     }

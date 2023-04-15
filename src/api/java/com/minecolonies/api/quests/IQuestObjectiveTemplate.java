@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Quest objective interface for all objectives.
  */
-public interface IQuestObjective
+public interface IQuestObjectiveTemplate
 {
     /**
      * Initialization of an objective.

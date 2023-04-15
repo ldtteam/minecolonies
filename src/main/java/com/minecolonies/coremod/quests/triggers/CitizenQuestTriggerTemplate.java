@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IQuestTrigger;
+import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 
 import java.util.Collections;
@@ -16,7 +16,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.STATE_ID;
 /**
  * Random quest trigger.
  */
-public class CitizenQuestTrigger implements IQuestTrigger
+public class CitizenQuestTriggerTemplate implements IQuestTriggerTemplate
 {
     /**
      * The tag we are trying to match.
@@ -27,7 +27,7 @@ public class CitizenQuestTrigger implements IQuestTrigger
      * Create a new state quest trigger.
      * @param match the state to match.
      */
-    public CitizenQuestTrigger(final JsonElement match)
+    public CitizenQuestTriggerTemplate(final JsonElement match)
     {
         this.matchTag = match;
     }
@@ -36,10 +36,10 @@ public class CitizenQuestTrigger implements IQuestTrigger
      * Create a new trigger directly from json.
      * @param questTriggerJson the json associated to this trigger.
      */
-    public static CitizenQuestTrigger createStateTrigger(final JsonObject questTriggerJson)
+    public static CitizenQuestTriggerTemplate createStateTrigger(final JsonObject questTriggerJson)
     {
         final JsonObject subObj = questTriggerJson.get(STATE_ID).getAsJsonObject();
-        return new CitizenQuestTrigger(subObj.get(MATCH_ID));
+        return new CitizenQuestTriggerTemplate(subObj.get(MATCH_ID));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CitizenQuestTrigger implements IQuestTrigger
         Collections.shuffle(citizenDataList);
         for (final ICitizenData data : citizenDataList)
         {
-            if (IQuestTrigger.matchNbt(data.serializeNBT(), matchTag))
+            if (IQuestTriggerTemplate.matchNbt(data.serializeNBT(), matchTag))
             {
                 return new CitizenTriggerReturnData(data);
             }

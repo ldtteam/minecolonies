@@ -10,7 +10,7 @@ import net.minecraft.nbt.*;
 /**
  * Quest triggers are used to check if a colony fulfills certain conditions for a quest to be made available.
  */
-public interface IQuestTrigger
+public interface IQuestTriggerTemplate
 {
     /**
      * Check if the quest trigger condition is fulfilled.

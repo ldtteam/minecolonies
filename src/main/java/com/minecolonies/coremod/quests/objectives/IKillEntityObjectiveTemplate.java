@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Specific objective for entity killing.
  */
-public interface IKillEntityObjective
+public interface IKillEntityObjectiveTemplate
 {
     /**
      * Callback for entity kill event

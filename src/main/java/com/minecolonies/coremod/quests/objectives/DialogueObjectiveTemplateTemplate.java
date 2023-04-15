@@ -3,10 +3,10 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.quests.IDialogueObjectiveTemplateTemplate;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IDialogueObjective;
 import com.minecolonies.api.quests.IObjectiveData;
-import com.minecolonies.api.quests.IQuestObjective;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.UNLOCKS_REWARDS_KEY
 /**
  * Dialogue type of objective.
  */
-public class DialogueObjective implements IDialogueObjective
+public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemplateTemplate
 {
     /**
      * The quest participant target of this dialogue (0 if questgiver).
@@ -40,7 +40,7 @@ public class DialogueObjective implements IDialogueObjective
      * @param target the target of the dialogue.
      * @param dialogueTree the dialogue tree.
      */
-    public DialogueObjective(final int target, final DialogueElement dialogueTree, final List<Integer> rewards)
+    public DialogueObjectiveTemplateTemplate(final int target, final DialogueElement dialogueTree, final List<Integer> rewards)
     {
         this.target = target;
         this.dialogueTree = dialogueTree;
@@ -67,9 +67,9 @@ public class DialogueObjective implements IDialogueObjective
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjective createObjective(final JsonObject jsonObject)
+    public static IQuestObjectiveTemplate createObjective(final JsonObject jsonObject)
     {
-        return new DialogueObjective(jsonObject.get(TARGET_KEY).getAsInt(),
+        return new DialogueObjectiveTemplateTemplate(jsonObject.get(TARGET_KEY).getAsInt(),
           DialogueElement.parse(jsonObject),
             parseRewards(jsonObject));
     }

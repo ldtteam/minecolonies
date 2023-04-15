@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Quest Data Instance.
  */
-public interface IQuestModel
+public interface IQuestTemplate
 {
     /**
      * This is where we actually check if the colony fulfills the quest requirements.
@@ -45,7 +45,7 @@ public interface IQuestModel
      * @param index the index of the objective.
      * @return the current objective.
      */
-    IQuestObjective getObjective(final int index);
+    IQuestObjectiveTemplate getObjective(final int index);
 
     /**
      * Get the objective count of this quest.

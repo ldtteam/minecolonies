@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Specific objective for block breaking.
  */
-public interface IBreakBlockObjective
+public interface IBreakBlockObjectiveTemplate
 {
     /**
      * Callback for block break event

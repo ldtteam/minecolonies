@@ -2,10 +2,10 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestManager;
-import com.minecolonies.api.quests.IQuestObjective;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.quests.objectives.IBreakBlockObjective;
-import com.minecolonies.coremod.quests.objectives.IKillEntityObjective;
+import com.minecolonies.coremod.quests.objectives.IBreakBlockObjectiveTemplate;
+import com.minecolonies.coremod.quests.objectives.IKillEntityObjectiveTemplate;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
@@ -54,10 +54,10 @@ public class QuestObjectiveEventHandler
         if (breakBlockObjectives.containsKey(block) && breakBlockObjectives.get(block).containsKey(event.getPlayer().getUUID()))
         {
             final IQuestInstance colonyQuest = breakBlockObjectives.get(block).get(event.getPlayer().getUUID());
-            final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
-            if (objective instanceof IBreakBlockObjective)
+            final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
+            if (objective instanceof IBreakBlockObjectiveTemplate)
             {
-                ((IBreakBlockObjective) objective).onBlockBreak(colonyQuest.getObjectiveData(), colonyQuest, event.getPlayer());
+                ((IBreakBlockObjectiveTemplate) objective).onBlockBreak(colonyQuest.getObjectiveData(), colonyQuest, event.getPlayer());
             }
             else
             {
@@ -74,10 +74,10 @@ public class QuestObjectiveEventHandler
               && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getSource().getEntity().getUUID()))
         {
             final IQuestInstance colonyQuest = entityKillObjectives.get(event.getEntity().getType()).get(event.getSource().getEntity().getUUID());
-            final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
-            if (objective instanceof IKillEntityObjective)
+            final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
+            if (objective instanceof IKillEntityObjectiveTemplate)
             {
-                ((IKillEntityObjective) objective).onEntityKill(colonyQuest.getObjectiveData(), colonyQuest, (Player) event.getSource().getEntity());
+                ((IKillEntityObjectiveTemplate) objective).onEntityKill(colonyQuest.getObjectiveData(), colonyQuest, (Player) event.getSource().getEntity());
             }
             else
             {

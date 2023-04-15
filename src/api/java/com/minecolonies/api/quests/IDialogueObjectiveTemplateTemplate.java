@@ -16,7 +16,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Dialogue type of objective interface.
  */
-public interface IDialogueObjective extends IQuestObjective
+public interface IDialogueObjectiveTemplateTemplate extends IQuestObjectiveTemplate
 {
 
     /**

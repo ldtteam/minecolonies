@@ -2,7 +2,7 @@ package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestModel;
+import com.minecolonies.api.quests.IQuestTemplate;
 import com.minecolonies.api.quests.IQuestManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -76,7 +76,7 @@ public class QuestManager implements IQuestManager
     @Override
     public void onColonyTick()
     {
-        for (final Map.Entry<ResourceLocation, IQuestModel> quest : GLOBAL_SERVER_QUESTS.entrySet())
+        for (final Map.Entry<ResourceLocation, IQuestTemplate> quest : GLOBAL_SERVER_QUESTS.entrySet())
         {
             if (availableQuests.containsKey(quest.getKey())
                   || inProgressQuests.containsKey(quest.getKey())

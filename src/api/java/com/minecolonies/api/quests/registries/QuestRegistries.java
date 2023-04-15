@@ -57,9 +57,9 @@ public class QuestRegistries
     {
         //todo create instance getters
 
-        private final Function<JsonObject, IQuestReward> producer;
+        private final Function<JsonObject, IQuestRewardTemplate> producer;
 
-        public RewardEntry(final Function<JsonObject, IQuestReward> productionFunction)
+        public RewardEntry(final Function<JsonObject, IQuestRewardTemplate> productionFunction)
         {
             this.producer = productionFunction;
         }
@@ -69,7 +69,7 @@ public class QuestRegistries
          * @param jsonObject the input.
          * @return the reward.
          */
-        public IQuestReward produce(final JsonObject jsonObject)
+        public IQuestRewardTemplate produce(final JsonObject jsonObject)
         {
             return producer.apply(jsonObject);
         }
@@ -80,9 +80,9 @@ public class QuestRegistries
      */
     public static class ObjectiveEntry
     {
-        private final Function<JsonObject, IQuestObjective> producer;
+        private final Function<JsonObject, IQuestObjectiveTemplate> producer;
 
-        public ObjectiveEntry(final Function<JsonObject, IQuestObjective> productionFunction)
+        public ObjectiveEntry(final Function<JsonObject, IQuestObjectiveTemplate> productionFunction)
         {
             this.producer = productionFunction;
         }
@@ -92,7 +92,7 @@ public class QuestRegistries
          * @param jsonObject the input.
          * @return the objective.
          */
-        public IQuestObjective produce(final JsonObject jsonObject)
+        public IQuestObjectiveTemplate produce(final JsonObject jsonObject)
         {
             return producer.apply(jsonObject);
         }
@@ -103,9 +103,9 @@ public class QuestRegistries
      */
     public static class TriggerEntry
     {
-        private final Function<JsonObject, IQuestTrigger> producer;
+        private final Function<JsonObject, IQuestTriggerTemplate> producer;
 
-        public TriggerEntry(final Function<JsonObject, IQuestTrigger> productionFunction)
+        public TriggerEntry(final Function<JsonObject, IQuestTriggerTemplate> productionFunction)
         {
             this.producer = productionFunction;
         }
@@ -115,7 +115,7 @@ public class QuestRegistries
          * @param jsonObject the input.
          * @return the trigger.
          */
-        public IQuestTrigger produce(final JsonObject jsonObject)
+        public IQuestTriggerTemplate produce(final JsonObject jsonObject)
         {
             return producer.apply(jsonObject);
         }

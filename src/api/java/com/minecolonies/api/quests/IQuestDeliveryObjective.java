@@ -25,5 +25,5 @@ public interface IQuestDeliveryObjective
      * Dialogue tree when the conditions are fulfilled.
      * @return the dialogue to play.
      */
-    IDialogueObjective.DialogueElement getReadyDialogueTree();
+    IDialogueObjectiveTemplateTemplate.DialogueElement getReadyDialogueTree();
 }

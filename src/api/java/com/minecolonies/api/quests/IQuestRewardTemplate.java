@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Quest reward interface for all reward types.
  */
-public interface IQuestReward
+public interface IQuestRewardTemplate
 {
     /**
      * Apply the reward to colony and player.

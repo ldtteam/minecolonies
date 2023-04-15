@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
-import com.minecolonies.coremod.quests.objectives.DialogueObjective;
+import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -63,12 +63,12 @@ public class QuestDialogueInteraction extends StandardInteraction
     /**
      * The current dialogue element.
      */
-    protected DialogueObjective.DialogueElement startElement = null;
+    protected DialogueObjectiveTemplateTemplate.DialogueElement startElement = null;
 
     /**
      * The current dialogue element.
      */
-    protected DialogueObjective.DialogueElement currentElement = null;
+    protected DialogueObjectiveTemplateTemplate.DialogueElement currentElement = null;
 
     /**
      * Some finished flag to make it disappear more quickly on the client side.
@@ -80,7 +80,7 @@ public class QuestDialogueInteraction extends StandardInteraction
         super(inquiry, null, priority);
         this.questId = location;
         this.index = index;
-        this.currentElement = ((DialogueObjective) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();
+        this.currentElement = ((DialogueObjectiveTemplateTemplate) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();
         this.startElement = currentElement;
         this.colonyQuest = citizenData.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         this.citizen = citizenData;
@@ -115,9 +115,9 @@ public class QuestDialogueInteraction extends StandardInteraction
                 }
                 currentElement = startElement;
             }
-            else if (result instanceof DialogueObjective.DialogueElement)
+            else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
             {
-                this.currentElement = (DialogueObjective.DialogueElement) result;
+                this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
                 if (data != null && data.getJob() != null)
                 {
                     ((AbstractEntityAIBasic) data.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
@@ -144,10 +144,10 @@ public class QuestDialogueInteraction extends StandardInteraction
                 finished = true;
                 return true;
             }
-            else if (result instanceof DialogueObjective.DialogueElement)
+            else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
             {
                 Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), responseId));
-                this.currentElement = (DialogueObjective.DialogueElement) result;
+                this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
                 return false;
             }
         }
@@ -234,7 +234,7 @@ public class QuestDialogueInteraction extends StandardInteraction
         super.deserializeNBT(compoundNBT);
         this.questId = new ResourceLocation(compoundNBT.getString(TAG_QUEST_ID));
         this.index = compoundNBT.getInt(TAG_QUEST_INDEX);
-        this.currentElement = ((DialogueObjective) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();
+        this.currentElement = ((DialogueObjectiveTemplateTemplate) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();
         this.startElement = currentElement;
         this.finished = compoundNBT.getBoolean(TAG_FINISHED);
     }

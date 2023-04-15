@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestReward;
+import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
@@ -13,7 +13,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Skill addition quest reward.
  */
-public class SkillReward implements IQuestReward
+public class SkillRewardTemplate implements IQuestRewardTemplate
 {
     /**
      * The skill to assign to a target citizen.
@@ -33,7 +33,7 @@ public class SkillReward implements IQuestReward
     /**
      * Setup the item reward.
      */
-    public SkillReward(final Skill skill, final int target, final int qty)
+    public SkillRewardTemplate(final Skill skill, final int target, final int qty)
     {
         this.skill = skill;
         this.target = target;
@@ -45,14 +45,14 @@ public class SkillReward implements IQuestReward
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestReward createReward(final JsonObject jsonObject)
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int qty = details.get(QUANTITY_KEY).getAsInt();
         final Skill skill = Skill.valueOf(details.get(SKILL_KEY).getAsString());
 
-        return new SkillReward(skill, target, qty);
+        return new SkillRewardTemplate(skill, target, qty);
     }
     @Override
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)

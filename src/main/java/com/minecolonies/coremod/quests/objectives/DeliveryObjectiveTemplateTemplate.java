@@ -22,7 +22,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Delivery type objective.
  */
-public class DeliveryObjective extends DialogueObjective implements IQuestDeliveryObjective
+public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplateTemplate implements IQuestDeliveryObjective
 {
     /**
      * The stack to be delivered.
@@ -58,7 +58,7 @@ public class DeliveryObjective extends DialogueObjective implements IQuestDelive
      * @param quantity the quantity to be delivered.
      * @param rewards the rewards this unlocks.
      */
-    public DeliveryObjective(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards, final String nbtMode)
+    public DeliveryObjectiveTemplateTemplate(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards, final String nbtMode)
     {
         super(target, null, rewards);
         this.item = item;
@@ -82,7 +82,7 @@ public class DeliveryObjective extends DialogueObjective implements IQuestDelive
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjective createObjective(final JsonObject jsonObject)
+    public static IQuestObjectiveTemplate createObjective(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
@@ -102,7 +102,7 @@ public class DeliveryObjective extends DialogueObjective implements IQuestDelive
         }
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : - 1;
         final String nbtMode = details.has(NBT_MODE_KEY) ? details.get(NBT_MODE_KEY).getAsString() : "";
-        return new DeliveryObjective(target, item, quantity, nextObj, parseRewards(jsonObject), nbtMode);
+        return new DeliveryObjectiveTemplateTemplate(target, item, quantity, nextObj, parseRewards(jsonObject), nbtMode);
     }
 
     @Override

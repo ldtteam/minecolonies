@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestReward;
+import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +14,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Relationship adjustment quest reward.
  */
-public class RelationshipReward implements IQuestReward
+public class RelationshipRewardTemplate implements IQuestRewardTemplate
 {
     /**
      * The first target citizen to apply things to.
@@ -34,7 +34,7 @@ public class RelationshipReward implements IQuestReward
     /**
      * Setup the item reward.
      */
-    public RelationshipReward(final int target1, final int target2, final String type)
+    public RelationshipRewardTemplate(final int target1, final int target2, final String type)
     {
         this.target1 = target1;
         this.target2 = target2;
@@ -46,14 +46,14 @@ public class RelationshipReward implements IQuestReward
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestReward createReward(final JsonObject jsonObject)
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target1 = details.get(TARGET1_KEY).getAsInt();
         final int target2 = details.get(TARGET2_KEY).getAsInt();
         final String type = jsonObject.get(TYPE_KEY).getAsString();
 
-        return new RelationshipReward(target1, target2, type);
+        return new RelationshipRewardTemplate(target1, target2, type);
     }
     @Override
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)

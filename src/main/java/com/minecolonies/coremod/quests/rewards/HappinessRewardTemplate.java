@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.rewards;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestReward;
+import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
@@ -13,7 +13,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Happiness inducing reward.
  */
-public class HappinessReward implements IQuestReward
+public class HappinessRewardTemplate implements IQuestRewardTemplate
 {
     /**
      * Happiness boost.
@@ -33,7 +33,7 @@ public class HappinessReward implements IQuestReward
     /**
      * Setup the research reward.
      */
-    public HappinessReward(final int target, final int qty, final int days)
+    public HappinessRewardTemplate(final int target, final int qty, final int days)
     {
         this.target = target;
         this.qty = qty;
@@ -45,14 +45,14 @@ public class HappinessReward implements IQuestReward
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestReward createReward(final JsonObject jsonObject)
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int qty = details.get(QUANTITY_KEY).getAsInt();
         final int days = details.get(DAYS_KEY).getAsInt();
 
-        return new HappinessReward(target, qty, days);
+        return new HappinessRewardTemplate(target, qty, days);
     }
 
     @Override

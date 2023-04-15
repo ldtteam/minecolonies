@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.rewards;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestReward;
+import com.minecolonies.api.quests.IQuestRewardTemplate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -13,7 +13,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.ID_KEY;
 /**
  * Research complete based reward.
  */
-public class ResearchCompleteReward implements IQuestReward
+public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
 {
     /**
      * The research to complete
@@ -24,7 +24,7 @@ public class ResearchCompleteReward implements IQuestReward
      * Setup the research reward.
      * @param research the research.
      */
-    public ResearchCompleteReward(final ResourceLocation research)
+    public ResearchCompleteRewardTemplate(final ResourceLocation research)
     {
         this.research = research;
     }
@@ -34,11 +34,11 @@ public class ResearchCompleteReward implements IQuestReward
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestReward createReward(final JsonObject jsonObject)
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final ResourceLocation research = new ResourceLocation(details.get(ID_KEY).getAsString());
-        return new ResearchCompleteReward(research);
+        return new ResearchCompleteRewardTemplate(research);
     }
     @Override
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)

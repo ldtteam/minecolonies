@@ -11,7 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.GlobalQuestSyncMessage;
 import com.minecolonies.coremod.quests.*;
-import com.minecolonies.api.quests.IQuestTrigger;
+import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -106,7 +106,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
             try
             {
-                final IQuestModel data = loadDataFromJson(fileResLoc, questDataJson);
+                final IQuestTemplate data = loadDataFromJson(fileResLoc, questDataJson);
                 IQuestManager.GLOBAL_SERVER_QUESTS.put(fileResLoc, data);
             }
             catch (Exception e)
@@ -118,9 +118,9 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         Log.getLogger().info("Finished loading quests from data");
     }
 
-    public static IQuestModel loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
+    public static IQuestTemplate loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
     {
-        final List<IQuestTrigger> questTriggers = new ArrayList<>();
+        final List<IQuestTriggerTemplate> questTriggers = new ArrayList<>();
         // Read quest triggers
         for (final JsonElement triggerJson : jsonObject.get(QUEST_TRIGGERS).getAsJsonArray())
         {
@@ -137,7 +137,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             }
         }
 
-        final List<IQuestObjective> questObjectives = new ArrayList<>();
+        final List<IQuestObjectiveTemplate> questObjectives = new ArrayList<>();
         for (final JsonElement objectivesJson : jsonObject.get(QUEST_OBJECTIVES).getAsJsonArray())
         {
             final JsonObject objectiveObj = objectivesJson.getAsJsonObject();
@@ -180,7 +180,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
         final String questName = jsonObject.get(NAME).getAsString();
 
-        final List<IQuestReward> questRewards = new ArrayList<>();
+        final List<IQuestRewardTemplate> questRewards = new ArrayList<>();
         for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())
         {
             final JsonObject objectiveObj = objectivesJson.getAsJsonObject();
@@ -208,7 +208,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             }
         }
 
-        return new QuestModel(questId, questName, parents, maxOccurrences, parseTriggerOrder(questId, order, questTriggers), questObjectives, questTimeout, questRewards);
+        return new QuestTemplate(questId, questName, parents, maxOccurrences, parseTriggerOrder(questId, order, questTriggers), questObjectives, questTimeout, questRewards);
 
         /*
 
@@ -242,7 +242,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     }
 
     // Unused yet
-    private static Function<IColony, List<ITriggerReturnData>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTrigger> triggers)
+    private static Function<IColony, List<ITriggerReturnData>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTriggerTemplate> triggers)
     {
         // Default and.
         if (order.isEmpty())
@@ -250,7 +250,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             return colony -> {
                 final List<ITriggerReturnData> returnList = new ArrayList<>();
 
-                for (final IQuestTrigger trigger: triggers)
+                for (final IQuestTriggerTemplate trigger: triggers)
                 {
                     ITriggerReturnData returnData = trigger.canTriggerQuest(colony);
                     if (returnData.isPositive())
@@ -298,7 +298,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             return null;
         }
 
-        final Map<String, IQuestTrigger> triggerMap = new HashMap<>();
+        final Map<String, IQuestTriggerTemplate> triggerMap = new HashMap<>();
         for (int i = 0; i < triggers.size(); i++)
         {
             triggerMap.put(String.valueOf(i+1), triggers.get(i));
@@ -314,7 +314,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      * @param data split string data
      * @return predicate from data
      */
-    private static List<ITriggerReturnData> evaluate(final IColony colony, final Map<String, IQuestTrigger> triggerMap, final List<String> data, final List<ITriggerReturnData> lastReturnData)
+    private static List<ITriggerReturnData> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final List<String> data, final List<ITriggerReturnData> lastReturnData)
     {
         final String current = data.get(0);
         data.remove(0);
@@ -343,7 +343,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                 return evaluate(colony, triggerMap, data, lastReturnData);
             default:
             {
-                final IQuestTrigger trigger = triggerMap.get(current);
+                final IQuestTriggerTemplate trigger = triggerMap.get(current);
                 final ITriggerReturnData returnData = trigger.canTriggerQuest(colony);
                 if (returnData.isPositive())
                 {

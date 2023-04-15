@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.triggers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IQuestTrigger;
+import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.nbt.*;
 
@@ -14,7 +14,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Random quest trigger.
  */
-public class StateQuestTrigger implements IQuestTrigger
+public class StateQuestTriggerTemplate implements IQuestTriggerTemplate
 {
     /**
      * Path of keys to the nbt we are trying to match,
@@ -37,7 +37,7 @@ public class StateQuestTrigger implements IQuestTrigger
      * @param match the state to match.
      * @param count the number of matches we have to find.
      */
-    public StateQuestTrigger(final String[] paths, final JsonElement match, final int count)
+    public StateQuestTriggerTemplate(final String[] paths, final JsonElement match, final int count)
     {
         this.nbtPath = List.of(paths);
         this.matchTag = match;
@@ -48,10 +48,10 @@ public class StateQuestTrigger implements IQuestTrigger
      * Create a new trigger directly from json.
      * @param questTriggerJson the json associated to this trigger.
      */
-    public static StateQuestTrigger createStateTrigger(final JsonObject questTriggerJson)
+    public static StateQuestTriggerTemplate createStateTrigger(final JsonObject questTriggerJson)
     {
         final JsonObject subObj = questTriggerJson.get(STATE_ID).getAsJsonObject();
-        return new StateQuestTrigger(subObj.get(PATH_ID).getAsString().split("/"),
+        return new StateQuestTriggerTemplate(subObj.get(PATH_ID).getAsString().split("/"),
           subObj.get(MATCH_ID),
           subObj.has(COUNT_ID) ? subObj.get(COUNT_ID).getAsInt() : 1);
 
@@ -79,6 +79,6 @@ public class StateQuestTrigger implements IQuestTrigger
         }
 
 
-        return new BooleanTriggerReturnData(IQuestTrigger.matchNbt(subPathCompound, matchTag, matchCount));
+        return new BooleanTriggerReturnData(IQuestTriggerTemplate.matchNbt(subPathCompound, matchTag, matchCount));
     }
 }

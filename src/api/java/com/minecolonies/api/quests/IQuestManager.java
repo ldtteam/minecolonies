@@ -17,7 +17,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
     /**
      * All quests that exist.
      */
-   Map<ResourceLocation, IQuestModel> GLOBAL_SERVER_QUESTS = new HashMap<>();
+   Map<ResourceLocation, IQuestTemplate> GLOBAL_SERVER_QUESTS = new HashMap<>();
 
     /**
      * Have player attempt to accept a colony quest.

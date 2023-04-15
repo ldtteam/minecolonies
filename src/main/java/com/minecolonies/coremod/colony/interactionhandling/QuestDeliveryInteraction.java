@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
-import com.minecolonies.coremod.quests.objectives.DialogueObjective;
+import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +48,7 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
         {
             colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         }
-        final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index);
+        final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index);
         triggerResponseState(player, objective);
         if (currentElement != null && colonyQuest != null)
         {
@@ -74,9 +74,9 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
                 }
                 currentElement = startElement;
             }
-            else if (result instanceof DialogueObjective.DialogueElement)
+            else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
             {
-                this.currentElement = (DialogueObjective.DialogueElement) result;
+                this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
                 if (data != null && data.getJob() != null)
                 {
                     ((AbstractEntityAIBasic) data.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
@@ -102,10 +102,10 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
                 this.currentElement = this.startElement;
                 return true;
             }
-            else if (result instanceof DialogueObjective.DialogueElement)
+            else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
             {
                 Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), responseId));
-                this.currentElement = (DialogueObjective.DialogueElement) result;
+                this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
                 return false;
             }
         }
@@ -117,7 +117,7 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
     @OnlyIn(Dist.CLIENT)
     public void onOpened(final Player player)
     {
-        final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index);
+        final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index);
         triggerResponseState(player, objective);
     }
 
@@ -127,7 +127,7 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
      * @param player    the player for.
      * @param objective the objective to check.
      */
-    private void triggerResponseState(final Player player, final IQuestObjective objective)
+    private void triggerResponseState(final Player player, final IQuestObjectiveTemplate objective)
     {
         if (objective instanceof IQuestDeliveryObjective)
         {
@@ -137,7 +137,7 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
             }
             else
             {
-                currentElement = ((IDialogueObjective) objective).getDialogueTree();
+                currentElement = ((IDialogueObjectiveTemplateTemplate) objective).getDialogueTree();
             }
         }
     }

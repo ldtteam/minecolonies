@@ -2,7 +2,7 @@ package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.api.quests.IQuestModel;
+import com.minecolonies.api.quests.IQuestTemplate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -12,7 +12,7 @@ import java.util.function.Function;
 /**
  * Instance of a specific quest type
  */
-public class QuestModel implements IQuestModel
+public class QuestTemplate implements IQuestTemplate
 {
     /**
      * The unique id of this quest.
@@ -29,9 +29,9 @@ public class QuestModel implements IQuestModel
      */
     private final Function<IColony, List<ITriggerReturnData>> questTriggerList;
 
-    private final List<IQuestObjective> objectives;
+    private final List<IQuestObjectiveTemplate> objectives;
 
-    private final List<IQuestReward> questRewards;
+    private final List<IQuestRewardTemplate> questRewards;
 
 
     private final int maxOccurrence;
@@ -54,9 +54,9 @@ public class QuestModel implements IQuestModel
      * @param questTimeout the time until it times out.
      * @param questRewards its rewards
      */
-    public QuestModel(final ResourceLocation questID, final String name,
+    public QuestTemplate(final ResourceLocation questID, final String name,
       final List<ResourceLocation> parents,
-      final int maxOccurrence, final Function<IColony, List<ITriggerReturnData>> questTriggerList, final List<IQuestObjective> questObjectives, final int questTimeout, final List<IQuestReward> questRewards)
+      final int maxOccurrence, final Function<IColony, List<ITriggerReturnData>> questTriggerList, final List<IQuestObjectiveTemplate> questObjectives, final int questTimeout, final List<IQuestRewardTemplate> questRewards)
     {
         this.questID = questID;
         this.name = name;
@@ -91,7 +91,7 @@ public class QuestModel implements IQuestModel
     public void unlockQuestRewards(final IColony colony, final Player player, final IQuestInstance colonyQuest, final List<Integer> unlockedRewards)
     {
         int index = 0;
-        for (final IQuestReward questReward : questRewards)
+        for (final IQuestRewardTemplate questReward : questRewards)
         {
             if (unlockedRewards.contains(index))
             {
@@ -102,7 +102,7 @@ public class QuestModel implements IQuestModel
     }
 
     @Override
-    public IQuestObjective getObjective(final int index)
+    public IQuestObjectiveTemplate getObjective(final int index)
     {
         return objectives.get(index);
     }
