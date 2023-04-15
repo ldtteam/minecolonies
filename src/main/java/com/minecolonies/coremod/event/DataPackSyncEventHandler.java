@@ -18,6 +18,8 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * Handles synching of custom datapack and compatibility data from server to client (and initial population
  * for the server in both single-player and dedicated).
@@ -79,7 +81,7 @@ public class DataPackSyncEventHandler
         {
             final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
             final MinecraftServer server = event.getPlayerList().getServer();
-            final GameProfile owner = server.getSingleplayerProfile();
+            final String owner = server.getSingleplayerName();
 
             if (event.getPlayer() == null)
             {
@@ -90,13 +92,13 @@ public class DataPackSyncEventHandler
                 final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
                 for (final ServerPlayer player : event.getPlayerList().getPlayers())
                 {
-                    if (player.getGameProfile() != owner)   // don't need to send them in SP, or LAN owner
+                    if (!player.getGameProfile().getName().equals(owner))   // don't need to send them in SP, or LAN owner
                     {
                         sendPackets(player, compatMsg);
                     }
                 }
             }
-            else if (event.getPlayer().getGameProfile() != owner)
+            else if (!Objects.equals(event.getPlayer().getGameProfile().getName(), owner))
             {
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(true));
             }
