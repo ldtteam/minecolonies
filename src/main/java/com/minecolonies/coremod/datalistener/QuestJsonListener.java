@@ -30,7 +30,7 @@ import static com.minecolonies.coremod.quests.QuestParsingConstants.BRACE_CLOSE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- * Loader for Json based crafter specific recipes
+ * Loader for Json based quest data.
  */
 public class QuestJsonListener extends SimpleJsonResourceReloadListener
 {
@@ -106,7 +106,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
             try
             {
-                final IQuestData data = loadDataFromJson(fileResLoc, questDataJson);
+                final IQuestModel data = loadDataFromJson(fileResLoc, questDataJson);
                 IQuestManager.GLOBAL_SERVER_QUESTS.put(fileResLoc, data);
             }
             catch (Exception e)
@@ -118,7 +118,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         Log.getLogger().info("Finished loading quests from data");
     }
 
-    public static IQuestData loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
+    public static IQuestModel loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
     {
         final List<IQuestTrigger> questTriggers = new ArrayList<>();
         // Read quest triggers
@@ -208,7 +208,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             }
         }
 
-        return new QuestData(questId, questName, parents, maxOccurrences, parseTriggerOrder(questId, order, questTriggers), questObjectives, questTimeout, questRewards);
+        return new QuestModel(questId, questName, parents, maxOccurrences, parseTriggerOrder(questId, order, questTriggers), questObjectives, questTimeout, questRewards);
 
         /*
 
@@ -252,7 +252,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
                 for (final IQuestTrigger trigger: triggers)
                 {
-                    ITriggerReturnData returnData = trigger.isFulfilledForColony(colony);
+                    ITriggerReturnData returnData = trigger.canTriggerQuest(colony);
                     if (returnData.isPositive())
                     {
                         returnList.add(returnData);
@@ -344,7 +344,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             default:
             {
                 final IQuestTrigger trigger = triggerMap.get(current);
-                final ITriggerReturnData returnData = trigger.isFulfilledForColony(colony);
+                final ITriggerReturnData returnData = trigger.canTriggerQuest(colony);
                 if (returnData.isPositive())
                 {
                     if (lastReturnData == null)

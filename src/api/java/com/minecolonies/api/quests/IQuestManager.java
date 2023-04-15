@@ -17,7 +17,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
     /**
      * All quests that exist.
      */
-   Map<ResourceLocation, IQuestData> GLOBAL_SERVER_QUESTS = new HashMap<>();
+   Map<ResourceLocation, IQuestModel> GLOBAL_SERVER_QUESTS = new HashMap<>();
 
     /**
      * Have player attempt to accept a colony quest.
@@ -31,7 +31,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * Conclude a given quest. This is called FROM the quest, to the colony.
      * @param questId the unique id of the quest.
      */
-    void concludeQuest(ResourceLocation questId);
+    void completeQuest(ResourceLocation questId);
 
     /**
      * On each colony tick.
@@ -42,7 +42,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * Deactivate a given quest.
      * @param questID the id of the quest.
      */
-    void deactivateQuest(ResourceLocation questID);
+    void deleteQuest(ResourceLocation questID);
 
     /**
      * Get the currently available or in progress quest with a given id.
@@ -50,7 +50,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @return the quest.
      */
     @Nullable
-    IColonyQuest getAvailableOrInProgressQuest(final ResourceLocation questId);
+    IQuestInstance getAvailableOrInProgressQuest(final ResourceLocation questId);
 
     /**
      * On world load handling.

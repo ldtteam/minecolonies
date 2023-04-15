@@ -3,23 +3,23 @@ package com.minecolonies.api.quests;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * Quest objective interface only for action types (e.g. deliveries).
+ * Quest objective interface for deliveries.
  */
-public interface IQuestActionObjective
+public interface IQuestDeliveryObjective
 {
     /**
      * Check if the objective is ready to move on.
      * @param colonyQuest the objective belongs to.
      * @return true if so.
      */
-    boolean isReady(final Player player, final IColonyQuest colonyQuest);
+    boolean hasItem(final Player player, final IQuestInstance colonyQuest);
 
     /**
      * Attempt to resolve an objective.
      * @param colonyQuest the objective belongs to.
      * @return true if so.
      */
-    boolean tryResolve(final Player player, final IColonyQuest colonyQuest);
+    boolean tryDiscountItem(final Player player, final IQuestInstance colonyQuest);
 
     /**
      * Dialogue tree when the conditions are fulfilled.

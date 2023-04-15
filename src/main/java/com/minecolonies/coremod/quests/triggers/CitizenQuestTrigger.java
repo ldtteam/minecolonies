@@ -10,8 +10,8 @@ import com.minecolonies.api.quests.ITriggerReturnData;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.MATCH_ID;
-import static com.minecolonies.api.util.constant.QuestParseConstant.STATE_ID;
+import static com.minecolonies.api.quests.QuestParseConstant.MATCH_ID;
+import static com.minecolonies.api.quests.QuestParseConstant.STATE_ID;
 
 /**
  * Random quest trigger.
@@ -43,13 +43,13 @@ public class CitizenQuestTrigger implements IQuestTrigger
     }
 
     @Override
-    public ITriggerReturnData isFulfilledForColony(final IColony colony)
+    public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
         final List<ICitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
         Collections.shuffle(citizenDataList);
         for (final ICitizenData data : citizenDataList)
         {
-            if (matchNbt(data.serializeNBT(), matchTag))
+            if (IQuestTrigger.matchNbt(data.serializeNBT(), matchTag))
             {
                 return new CitizenTriggerReturnData(data);
             }

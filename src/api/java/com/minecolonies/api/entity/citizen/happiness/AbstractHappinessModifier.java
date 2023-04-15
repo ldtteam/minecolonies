@@ -74,7 +74,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void set(int qty, int days)
+    public void setModifier(int qty, int days)
     {
 
     }

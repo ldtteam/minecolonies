@@ -1,4 +1,4 @@
-package com.minecolonies.api.util.constant;
+package com.minecolonies.api.quests;
 
 /**
  * Constant for quest parsing.

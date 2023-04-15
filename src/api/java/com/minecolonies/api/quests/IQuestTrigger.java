@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.*;
 
 /**
- * Quest trigger interface.
+ * Quest triggers are used to check if a colony fulfills certain conditions for a quest to be made available.
  */
 public interface IQuestTrigger
 {
@@ -16,7 +16,7 @@ public interface IQuestTrigger
      * Check if the quest trigger condition is fulfilled.
      * @return true if so.
      */
-    ITriggerReturnData isFulfilledForColony(final IColony colony);
+    ITriggerReturnData canTriggerQuest(final IColony colony);
 
     /**
      * Match a nbt tag and a json element tag.
@@ -24,7 +24,7 @@ public interface IQuestTrigger
      * @param matchTag the element tag to check.
      * @return true if the matchTag fits into the nbtTag or if they match.
      */
-    default boolean matchNbt(final Tag nbtTag, final JsonElement matchTag)
+    static boolean matchNbt(final Tag nbtTag, final JsonElement matchTag)
     {
         return matchNbt(nbtTag, matchTag, 1);
     }
@@ -36,7 +36,7 @@ public interface IQuestTrigger
      * @param count the number of elements to match in a list.
      * @return true if the matchTag fits into the nbtTag or if they match.
      */
-    default boolean matchNbt(final Tag nbtTag, final JsonElement matchTag, final int count)
+    static boolean matchNbt(final Tag nbtTag, final JsonElement matchTag, final int count)
     {
         if (nbtTag instanceof final CompoundTag nbtCompound)
         {

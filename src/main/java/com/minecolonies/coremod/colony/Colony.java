@@ -32,7 +32,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
-import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
+import com.minecolonies.coremod.colony.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;

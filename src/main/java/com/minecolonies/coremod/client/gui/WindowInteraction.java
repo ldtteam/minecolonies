@@ -150,7 +150,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             }
             catch (final Exception ex)
             {
-                Log.getLogger().warn("Wrong button id of interaction.");
+                Log.getLogger().warn("Wrong button id of interaction.", ex);
             }
         }
     }

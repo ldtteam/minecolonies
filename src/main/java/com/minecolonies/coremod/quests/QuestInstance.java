@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Instance of a specific quest type
  */
-public class ColonyQuest implements IColonyQuest
+public class QuestInstance implements IQuestInstance
 {
     /**
      * Colony reference
@@ -70,7 +70,7 @@ public class ColonyQuest implements IColonyQuest
      * @param colony the colony it belongs to.
      * @param triggerReturnData the trigger return data that made this quest available.
      */
-    protected ColonyQuest(final ResourceLocation questID, final IColony colony, final List<ITriggerReturnData> triggerReturnData)
+    protected QuestInstance(final ResourceLocation questID, final IColony colony, final List<ITriggerReturnData> triggerReturnData)
     {
         this.colony = colony;
         this.questID = questID;
@@ -78,25 +78,25 @@ public class ColonyQuest implements IColonyQuest
 
         for (final ITriggerReturnData data : triggerReturnData)
         {
-            if (data.get() instanceof IQuestGiver && questGiver == Integer.MIN_VALUE)
+            if (data.getContent() instanceof IQuestGiver && questGiver == Integer.MIN_VALUE)
             {
-                questGiver = ((ICitizenData) data.get()).getId();
-                ((ICitizenData) data.get()).assignQuest(this);
+                questGiver = ((ICitizenData) data.getContent()).getId();
+                ((ICitizenData) data.getContent()).assignQuest(this);
             }
-            else if (data.get() instanceof IQuestParticipant)
+            else if (data.getContent() instanceof IQuestParticipant)
             {
-                questParticipants.add(((ICitizenData) data.get()).getId());
-                ((ICitizenData) data.get()).addQuestParticipation(this);
+                questParticipants.add(((ICitizenData) data.getContent()).getId());
+                ((ICitizenData) data.getContent()).addQuestParticipation(this);
             }
         }
-        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).init(this);
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).startObjective(this);
     }
 
     /**
      * Create an empty colony quest obj to deserialize the data from.
      * @param colony the colony it is assigned to.
      */
-    public ColonyQuest(final IColony colony)
+    public QuestInstance(final IColony colony)
     {
         this.colony = colony;
     }
@@ -171,8 +171,8 @@ public class ColonyQuest implements IColonyQuest
             colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
         }
 
-        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).onAbort(this);
-        colony.getQuestManager().deactivateQuest(this.questID);
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questID).getObjective(this.objectiveProgress).onCancellation(this);
+        colony.getQuestManager().deleteQuest(this.questID);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class ColonyQuest implements IColonyQuest
     @Override
     public void advanceObjective(final Player player, final int nextObjective)
     {
-        final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+        final IQuestModel questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
 
         // Always when advancing an objective, get the rewards from the current objective.
         final List<Integer> rewards = (questData.getObjective(this.objectiveProgress).getRewardUnlocks());
@@ -219,13 +219,13 @@ public class ColonyQuest implements IColonyQuest
             this.onCompletion();
             return;
         }
-        objectiveData = questData.getObjective(this.objectiveProgress).init(this);
+        objectiveData = questData.getObjective(this.objectiveProgress).startObjective(this);
     }
 
     @Override
     public void onCompletion()
     {
-        colony.getQuestManager().concludeQuest(this.getId());
+        colony.getQuestManager().completeQuest(this.getId());
         final ICitizenData questGiverData = colony.getCitizenManager().getCivilian(questGiver);
         if (questGiverData != null)
         {
@@ -244,7 +244,7 @@ public class ColonyQuest implements IColonyQuest
         final Player player = colony.getWorld().getPlayerByUUID(assignedPlayer);
         if (player != null)
         {
-            final IQuestData questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
+            final IQuestModel questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questID);
             player.sendSystemMessage(Component.literal("You have successfully completed the quest: " + questData.getName()));
         }
     }

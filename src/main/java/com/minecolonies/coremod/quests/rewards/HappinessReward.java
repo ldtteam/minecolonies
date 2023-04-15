@@ -2,13 +2,13 @@ package com.minecolonies.coremod.quests.rewards;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestReward;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.HappinessConstants.QUEST;
-import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Happiness inducing reward.
@@ -56,15 +56,15 @@ public class HappinessReward implements IQuestReward
     }
 
     @Override
-    public void applyReward(final IColony colony, final Player player, final IColonyQuest colonyQuest)
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
     {
         if (this.target == 0)
         {
-            ((CitizenData) colonyQuest.getQuestGiver()).getCitizenHappinessHandler().getModifier(QUEST).set(qty, days);
+            ((CitizenData) colonyQuest.getQuestGiver()).getCitizenHappinessHandler().getModifier(QUEST).setModifier(qty, days);
         }
         else
         {
-            ((CitizenData) colonyQuest.getParticipant(this.target)).getCitizenHappinessHandler().getModifier(QUEST).set(qty, days);
+            ((CitizenData) colonyQuest.getParticipant(this.target)).getCitizenHappinessHandler().getModifier(QUEST).setModifier(qty, days);
         }
     }
 }

@@ -2,12 +2,12 @@ package com.minecolonies.coremod.quests.rewards;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestReward;
 import net.minecraft.world.entity.player.Player;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.CHANGE_KEY;
-import static com.minecolonies.api.util.constant.QuestParseConstant.DETAILS_KEY;
+import static com.minecolonies.api.quests.QuestParseConstant.CHANGE_KEY;
+import static com.minecolonies.api.quests.QuestParseConstant.DETAILS_KEY;
 
 /**
  * Raid adjustment reward.
@@ -40,7 +40,7 @@ public class RaidAdjustmentReward implements IQuestReward
         return new RaidAdjustmentReward(change);
     }
     @Override
-    public void applyReward(final IColony colony, final Player player, final IColonyQuest colonyQuest)
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
     {
         colony.getRaiderManager().setNightsSinceLastRaid(colony.getRaiderManager().getNightsSinceLastRaid() + qty);
     }

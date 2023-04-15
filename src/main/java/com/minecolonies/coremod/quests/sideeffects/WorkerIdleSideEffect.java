@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.quests.sideeffects;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 
@@ -20,9 +20,9 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
     /**
      * Quest this effect is in
      */
-    private final IColonyQuest quest;
+    private final IQuestInstance quest;
 
-    public WorkerIdleSideEffect(final IColonyQuest quest)
+    public WorkerIdleSideEffect(final IQuestInstance quest)
     {
         this.quest = quest;
     }

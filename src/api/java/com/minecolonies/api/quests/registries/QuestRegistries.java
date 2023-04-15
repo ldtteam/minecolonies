@@ -126,9 +126,9 @@ public class QuestRegistries
      */
     public static class DialogueAnswerEntry
     {
-        private final Function<JsonObject, IAnswerResult> producer;
+        private final Function<JsonObject, IQuestDialogueAnswer> producer;
 
-        public DialogueAnswerEntry(final Function<JsonObject, IAnswerResult> productionFunction)
+        public DialogueAnswerEntry(final Function<JsonObject, IQuestDialogueAnswer> productionFunction)
         {
             this.producer = productionFunction;
         }
@@ -138,7 +138,7 @@ public class QuestRegistries
          * @param jsonObject the input.
          * @return the answer result.
          */
-        public IAnswerResult produce(final JsonObject jsonObject)
+        public IQuestDialogueAnswer produce(final JsonObject jsonObject)
         {
             return producer.apply(jsonObject);
         }

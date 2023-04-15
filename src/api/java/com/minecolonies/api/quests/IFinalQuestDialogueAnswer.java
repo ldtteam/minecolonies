@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Terminal type answer. Will close the interaction.
  */
-public interface ITerminalAnswerResult extends IAnswerResult
+public interface IFinalQuestDialogueAnswer extends IQuestDialogueAnswer
 {
 
     /**
@@ -13,5 +13,5 @@ public interface ITerminalAnswerResult extends IAnswerResult
      * @param player the player triggering it.
      * @param quest the quest to apply itself to.
      */
-    void applyToQuest(final Player player, IColonyQuest quest);
+    void applyToQuest(final Player player, IQuestInstance quest);
 }

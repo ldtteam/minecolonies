@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Dialogue type of objective interface.
@@ -29,7 +29,7 @@ public interface IDialogueObjective extends IQuestObjective
     /**
      * A dialogue element in the dialogue objective.
      */
-    class DialogueElement implements IAnswerResult
+    class DialogueElement implements IQuestDialogueAnswer
     {
         /**
          * The text the participant says.
@@ -92,7 +92,7 @@ public interface IDialogueObjective extends IQuestObjective
          * @return the next answer.
          */
         @Nullable
-        public IAnswerResult getOptionResult(final int responseId)
+        public IQuestDialogueAnswer getOptionResult(final int responseId)
         {
             return responseId < answers.size() ? answers.get(responseId).answerResult : null;
         }
@@ -111,14 +111,14 @@ public interface IDialogueObjective extends IQuestObjective
         /**
          * The result from the player answer.
          */
-        private final IAnswerResult answerResult;
+        private final IQuestDialogueAnswer answerResult;
 
         /**
          * Create a new answer element.
          * @param text the text for the player.
          * @param answerResult the result from the choice.
          */
-        public AnswerElement(final String text, final IAnswerResult answerResult)
+        public AnswerElement(final String text, final IQuestDialogueAnswer answerResult)
         {
             this.text = text;
             this.answerResult = answerResult;

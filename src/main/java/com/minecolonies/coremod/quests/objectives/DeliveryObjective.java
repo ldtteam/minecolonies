@@ -2,7 +2,7 @@ package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.api.quests.IAnswerResult;
+import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -17,12 +17,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Delivery type objective.
  */
-public class DeliveryObjective extends DialogueObjective implements IQuestActionObjective
+public class DeliveryObjective extends DialogueObjective implements IQuestDeliveryObjective
 {
     /**
      * The stack to be delivered.
@@ -71,10 +71,10 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
     private void buildDialogueTrees()
     {
         this.readyDialogueElement = new DialogueElement("Oh hey, you brought " + item.getDisplayName().getString() + " can I have it?",
-          List.of(new AnswerElement("Yes, here you are!", new IAnswerResult.GoToResult(this.nextObjective)), new AnswerElement("No, wait!", new IAnswerResult.ReturnResult())));
+          List.of(new AnswerElement("Yes, here you are!", new IQuestDialogueAnswer.NextObjectiveDialogueAnswer(this.nextObjective)), new AnswerElement("No, wait!", new IQuestDialogueAnswer.CloseUIDialogueAnswer())));
 
         this.waitingDialogueElement = new DialogueElement("I am still waiting for " + item.getDisplayName().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have any of it!", new IAnswerResult.CancelResult())));
+          List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have any of it!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer())));
     }
 
     /**
@@ -106,13 +106,13 @@ public class DeliveryObjective extends DialogueObjective implements IQuestAction
     }
 
     @Override
-    public boolean isReady(final Player player, final IColonyQuest colonyQuest)
+    public boolean hasItem(final Player player, final IQuestInstance colonyQuest)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, item, !nbtMode.equals("any"), !nbtMode.equals("any"))) >= quantity;
     }
 
     @Override
-    public boolean tryResolve(final Player player, final IColonyQuest colonyQuest)
+    public boolean tryDiscountItem(final Player player, final IQuestInstance colonyQuest)
     {
         return InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), this.item, this.quantity, nbtMode.equals("any"), nbtMode.equals("any"));
     }

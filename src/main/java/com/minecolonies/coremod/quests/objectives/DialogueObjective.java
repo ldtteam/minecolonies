@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IDialogueObjective;
 import com.minecolonies.api.quests.IObjectiveData;
 import com.minecolonies.api.quests.IQuestObjective;
@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.TARGET_KEY;
-import static com.minecolonies.api.util.constant.QuestParseConstant.UNLOCKS_REWARDS_KEY;
+import static com.minecolonies.api.quests.QuestParseConstant.TARGET_KEY;
+import static com.minecolonies.api.quests.QuestParseConstant.UNLOCKS_REWARDS_KEY;
 
 /**
  * Dialogue type of objective.
@@ -97,7 +97,7 @@ public class DialogueObjective implements IDialogueObjective
     }
 
     @Override
-    public IObjectiveData init(final IColonyQuest colonyQuest)
+    public IObjectiveData startObjective(final IQuestInstance colonyQuest)
     {
         if (target == 0)
         {

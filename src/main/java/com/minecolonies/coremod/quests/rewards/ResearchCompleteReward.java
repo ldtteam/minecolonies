@@ -2,13 +2,13 @@ package com.minecolonies.coremod.quests.rewards;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.DETAILS_KEY;
-import static com.minecolonies.api.util.constant.QuestParseConstant.ID_KEY;
+import static com.minecolonies.api.quests.QuestParseConstant.DETAILS_KEY;
+import static com.minecolonies.api.quests.QuestParseConstant.ID_KEY;
 
 /**
  * Research complete based reward.
@@ -41,7 +41,7 @@ public class ResearchCompleteReward implements IQuestReward
         return new ResearchCompleteReward(research);
     }
     @Override
-    public void applyReward(final IColony colony, final Player player, final IColonyQuest colonyQuest)
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
     {
         colony.getResearchManager().getResearchTree().finishResearch(research);
     }

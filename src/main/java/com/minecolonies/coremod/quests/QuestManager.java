@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IColonyQuest;
-import com.minecolonies.api.quests.IQuestData;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestModel;
 import com.minecolonies.api.quests.IQuestManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -22,7 +22,7 @@ public class QuestManager implements IQuestManager
     /**
      * All quests that have been unlocked.
      */
-    private final Map<ResourceLocation, IColonyQuest> availableQuests = new HashMap<>();
+    private final Map<ResourceLocation, IQuestInstance> availableQuests = new HashMap<>();
 
     /**
      * All quests that have been finished. And how often.
@@ -32,7 +32,7 @@ public class QuestManager implements IQuestManager
     /**
      * All quests in progress.
      */
-    private final Map<ResourceLocation, IColonyQuest> inProgressQuests = new HashMap<>();
+    private final Map<ResourceLocation, IQuestInstance> inProgressQuests = new HashMap<>();
 
     /**
      * This manager's colony
@@ -47,7 +47,7 @@ public class QuestManager implements IQuestManager
     @Override
     public boolean attemptAcceptQuest(final ResourceLocation questID, final Player player)
     {
-        final IColonyQuest quest = availableQuests.getOrDefault(questID, null);
+        final IQuestInstance quest = availableQuests.getOrDefault(questID, null);
         if (quest == null || !quest.isValid(colony))
         {
             return false;
@@ -58,7 +58,7 @@ public class QuestManager implements IQuestManager
     }
 
     @Override
-    public void concludeQuest(final ResourceLocation questId)
+    public void completeQuest(final ResourceLocation questId)
     {
         if (inProgressQuests.containsKey(questId))
         {
@@ -76,7 +76,7 @@ public class QuestManager implements IQuestManager
     @Override
     public void onColonyTick()
     {
-        for (final Map.Entry<ResourceLocation, IQuestData> quest : GLOBAL_SERVER_QUESTS.entrySet())
+        for (final Map.Entry<ResourceLocation, IQuestModel> quest : GLOBAL_SERVER_QUESTS.entrySet())
         {
             if (availableQuests.containsKey(quest.getKey())
                   || inProgressQuests.containsKey(quest.getKey())
@@ -100,14 +100,14 @@ public class QuestManager implements IQuestManager
                 continue;
             }
 
-            final IColonyQuest colonyQuest = quest.getValue().attemptStart(colony);
+            final IQuestInstance colonyQuest = quest.getValue().attemptStart(colony);
             if (colonyQuest != null)
             {
                 this.availableQuests.put(quest.getKey(), colonyQuest);
             }
         }
 
-        for (final Map.Entry<ResourceLocation, IColonyQuest> availableQuest : new ArrayList<>(availableQuests.entrySet()))
+        for (final Map.Entry<ResourceLocation, IQuestInstance> availableQuest : new ArrayList<>(availableQuests.entrySet()))
         {
             if (!GLOBAL_SERVER_QUESTS.containsKey(availableQuest.getKey()) || !availableQuest.getValue().isValid(colony))
             {
@@ -116,7 +116,7 @@ public class QuestManager implements IQuestManager
             }
         }
 
-        for (final Map.Entry<ResourceLocation, IColonyQuest> inProgressQuest : new ArrayList<>(inProgressQuests.entrySet()))
+        for (final Map.Entry<ResourceLocation, IQuestInstance> inProgressQuest : new ArrayList<>(inProgressQuests.entrySet()))
         {
             if (!GLOBAL_SERVER_QUESTS.containsKey(inProgressQuest.getKey()) || !inProgressQuest.getValue().isValid(colony))
             {
@@ -127,14 +127,14 @@ public class QuestManager implements IQuestManager
     }
 
     @Override
-    public void deactivateQuest(final ResourceLocation questID)
+    public void deleteQuest(final ResourceLocation questID)
     {
         this.availableQuests.remove(questID);
         this.inProgressQuests.remove(questID);
     }
 
     @Override
-    public IColonyQuest getAvailableOrInProgressQuest(final ResourceLocation questId)
+    public IQuestInstance getAvailableOrInProgressQuest(final ResourceLocation questId)
     {
         return availableQuests.containsKey(questId) ? availableQuests.get(questId) : inProgressQuests.get(questId);
     }
@@ -142,7 +142,7 @@ public class QuestManager implements IQuestManager
     @Override
     public void onWorldLoad()
     {
-        for (final IColonyQuest colonyQuest : inProgressQuests.values())
+        for (final IQuestInstance colonyQuest : inProgressQuests.values())
         {
             colonyQuest.onWorldLoad();
         }
@@ -154,14 +154,14 @@ public class QuestManager implements IQuestManager
         final CompoundTag managerCompound = new CompoundTag();
 
         final ListTag availableListTag = new ListTag();
-        for (Map.Entry<ResourceLocation, IColonyQuest> available : availableQuests.entrySet())
+        for (Map.Entry<ResourceLocation, IQuestInstance> available : availableQuests.entrySet())
         {
             availableListTag.add(available.getValue().serializeNBT());
         }
         managerCompound.put(TAG_AVAILABLE, availableListTag);
 
         final ListTag inProgressListTag = new ListTag();
-        for (Map.Entry<ResourceLocation, IColonyQuest> inProgress : inProgressQuests.entrySet())
+        for (Map.Entry<ResourceLocation, IQuestInstance> inProgress : inProgressQuests.entrySet())
         {
             inProgressListTag.add(inProgress.getValue().serializeNBT());
         }
@@ -183,12 +183,12 @@ public class QuestManager implements IQuestManager
     @Override
     public void deserializeNBT(final CompoundTag nbt)
     {
-        final Map<ResourceLocation, IColonyQuest> localAvailableQuests = new HashMap<>();
+        final Map<ResourceLocation, IQuestInstance> localAvailableQuests = new HashMap<>();
         final ListTag availableListTag = nbt.getList(TAG_AVAILABLE, Tag.TAG_COMPOUND);
         for (final Tag element : availableListTag)
         {
             final ResourceLocation key = new ResourceLocation(((CompoundTag) element).getString(TAG_ID));
-            final IColonyQuest colonyQuest = availableQuests.containsKey(key) ? availableQuests.get(key) : new ColonyQuest(colony);
+            final IQuestInstance colonyQuest = availableQuests.containsKey(key) ? availableQuests.get(key) : new QuestInstance(colony);
             colonyQuest.deserializeNBT((CompoundTag) element);
             localAvailableQuests.put(colonyQuest.getId(), colonyQuest);
         }
@@ -196,12 +196,12 @@ public class QuestManager implements IQuestManager
         this.availableQuests.clear();
         this.availableQuests.putAll(localAvailableQuests);
 
-        final Map<ResourceLocation, IColonyQuest> localInProgressQuests = new HashMap<>();
+        final Map<ResourceLocation, IQuestInstance> localInProgressQuests = new HashMap<>();
         final ListTag inProgressListTag = nbt.getList(TAG_IN_PROGRESS, Tag.TAG_COMPOUND);
         for (final Tag element : inProgressListTag)
         {
             final ResourceLocation key = new ResourceLocation(((CompoundTag) element).getString(TAG_ID));
-            final IColonyQuest colonyQuest = this.inProgressQuests.containsKey(key) ? this.inProgressQuests.get(key) : new ColonyQuest(colony);
+            final IQuestInstance colonyQuest = this.inProgressQuests.containsKey(key) ? this.inProgressQuests.get(key) : new QuestInstance(colony);
             colonyQuest.deserializeNBT((CompoundTag) element);
             localInProgressQuests.put(colonyQuest.getId(), colonyQuest);
         }

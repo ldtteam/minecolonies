@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- * A simple interaction which displays until an acceptable response is clicked
+ * A simple quest dialogue interaction that deals with different dialogue trees.
  */
 public class QuestDialogueInteraction extends StandardInteraction
 {
@@ -43,7 +43,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     /**
      * Currently open colony quest.
      */
-    protected IColonyQuest colonyQuest;
+    protected IQuestInstance colonyQuest;
 
     /**
      * The respective citizen.
@@ -102,11 +102,11 @@ public class QuestDialogueInteraction extends StandardInteraction
         }
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
-            if (result instanceof ITerminalAnswerResult)
+            final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
+            if (result instanceof IFinalQuestDialogueAnswer)
             {
-                ((ITerminalAnswerResult) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
-                if (!(result instanceof IAnswerResult.ReturnResult))
+                ((IFinalQuestDialogueAnswer) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
+                if (!(result instanceof IQuestDialogueAnswer.CloseUIDialogueAnswer))
                 {
                     finished = true;
                     currentElement = null;
@@ -136,8 +136,8 @@ public class QuestDialogueInteraction extends StandardInteraction
         }
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
-            if (result instanceof ITerminalAnswerResult)
+            final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
+            if (result instanceof IFinalQuestDialogueAnswer)
             {
                 Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(questId.toString()), responseId));
                 this.currentElement = this.startElement;
@@ -263,6 +263,6 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return currentElement != null && citizen.hasQuestOpen(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId) != null && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getIndex() == index;
+        return currentElement != null && citizen.isParticipantOfQuest(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId) != null && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getIndex() == index;
     }
 }

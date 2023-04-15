@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * Quest Data Instance.
  */
-public interface IQuestData
+public interface IQuestModel
 {
     /**
      * This is where we actually check if the colony fulfills the quest requirements.
      * @param colony the colony to check.
      * @return the colony quest instance if successful.
      */
-    IColonyQuest attemptStart(final IColony colony);
+    IQuestInstance attemptStart(final IColony colony);
 
     /**
      * Timeout in ingame days until an available quest or in progress quest gets deleted.
@@ -38,7 +38,7 @@ public interface IQuestData
      * @param colonyQuest     the quest.
      * @param unlockedRewards the applicable rewards.
      */
-    void unlockQuestRewards(IColony colony, Player player, final IColonyQuest colonyQuest, final List<Integer> unlockedRewards);
+    void unlockQuestRewards(IColony colony, Player player, final IQuestInstance colonyQuest, final List<Integer> unlockedRewards);
 
     /**
      * Get the objective at a given index.

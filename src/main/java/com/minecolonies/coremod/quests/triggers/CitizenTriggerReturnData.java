@@ -29,7 +29,7 @@ public class CitizenTriggerReturnData implements ITriggerReturnData<ICitizenData
     }
 
     @Override
-    public ICitizenData get()
+    public ICitizenData getContent()
     {
         return match;
     }

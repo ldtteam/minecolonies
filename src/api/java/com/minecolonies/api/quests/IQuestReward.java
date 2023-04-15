@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * Quest objective interface for all objective types.
+ * Quest reward interface for all reward types.
  */
 public interface IQuestReward
 {
@@ -14,5 +14,5 @@ public interface IQuestReward
      * @param player the involved player.
      * @param colonyQuest the related quest.
      */
-    void applyReward(final IColony colony, final Player player, final IColonyQuest colonyQuest);
+    void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest);
 }

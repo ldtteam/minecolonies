@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Quest objective interface for all objective types.
+ * Quest objective interface for all objectives.
  */
 public interface IQuestObjective
 {
@@ -16,19 +16,19 @@ public interface IQuestObjective
      * @return potentially related objective data.
      */
     @Nullable
-    IObjectiveData init(final IColonyQuest colonyQuest);
+    IObjectiveData startObjective(final IQuestInstance colonyQuest);
 
     /**
      * On objective abort.
      * @param colonyQuest related colony quest.
      */
-    default void onAbort(final IColonyQuest colonyQuest) { }
+    default void onCancellation(final IQuestInstance colonyQuest) { }
 
     /**
      * On world load trigger.
      * @param colonyQuest the quest.
      */
-    default void onWorldLoad(IColonyQuest colonyQuest) { };
+    default void onWorldLoad(IQuestInstance colonyQuest) { };
 
     /**
      * Get objective data related to the objective.

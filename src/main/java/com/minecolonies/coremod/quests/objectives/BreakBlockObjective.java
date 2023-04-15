@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IAnswerResult;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IObjectiveData;
 import com.minecolonies.api.quests.IQuestObjective;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
-import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Objective type tracking block mining.
@@ -49,7 +50,7 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
     public BreakBlockObjective(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective, final List<Integer> rewards)
     {
         super(target, new DialogueElement("I am still waiting for you to mine %d " + blockToMine.getName().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))), rewards);
+          List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have time for this!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()))), rewards);
         this.blocksToMine = blocksToMine;
         this.nextObjective = nextObjective;
         this.blockToMine = blockToMine;
@@ -72,13 +73,13 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
     }
 
     @Override
-    public IObjectiveData init(final IColonyQuest colonyQuest)
+    public IObjectiveData startObjective(final IQuestInstance colonyQuest)
     {
-        super.init(colonyQuest);
+        super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            ((Colony) colonyQuest.getColony()).getEventHandler().addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
         return new BlockMiningProgressData();
     }
@@ -91,22 +92,26 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
     }
 
     @Override
-    public void onAbort(final IColonyQuest colonyQuest)
+    public void onCancellation(final IQuestInstance colonyQuest)
     {
-        cleanupEvent(colonyQuest);
+        cleanupListener(colonyQuest);
     }
 
-    private void cleanupEvent(final IColonyQuest colonyQuest)
+    /**
+     * Cleanup the listener of this objective,
+     * @param colonyQuest the listener.
+     */
+    private void cleanupListener(final IQuestInstance colonyQuest)
     {
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            ((Colony) colonyQuest.getColony()).getEventHandler().removeQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.removeQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     @Override
-    public void onBlockBreak(final IObjectiveData blockMiningProgressData, final IColonyQuest colonyQuest, final Player player)
+    public void onBlockBreak(final IObjectiveData blockMiningProgressData, final IQuestInstance colonyQuest, final Player player)
     {
         if (blockMiningProgressData.isFulfilled())
         {
@@ -121,13 +126,13 @@ public class BreakBlockObjective extends DialogueObjective implements IBreakBloc
     }
 
     @Override
-    public void onWorldLoad(final IColonyQuest colonyQuest)
+    public void onWorldLoad(final IQuestInstance colonyQuest)
     {
         super.onWorldLoad(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            ((Colony) colonyQuest.getColony()).getEventHandler().addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 

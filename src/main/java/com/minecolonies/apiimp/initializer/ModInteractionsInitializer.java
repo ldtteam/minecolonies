@@ -49,7 +49,7 @@ public final class ModInteractionsInitializer
                                                       .createEntry());
 
         ModInteractionResponseHandlers.questAction = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.QUEST_ACTION.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
-                                                     .setResponseHandlerProducer(QuestActionInteraction::new)
+                                                     .setResponseHandlerProducer(QuestDeliveryInteraction::new)
                                                      .setRegistryName(ModInteractionResponseHandlers.QUEST_ACTION)
                                                      .createEntry());
     }

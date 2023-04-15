@@ -13,7 +13,7 @@ import java.util.UUID;
 /**
  * Quest instance
  */
-public interface IColonyQuest extends INBTSerializable<CompoundTag>
+public interface IQuestInstance extends INBTSerializable<CompoundTag>
 {
     /**
      * Triggered when the quest is accepted

@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.IColonyQuest;
-import com.minecolonies.api.quests.IQuestData;
-import com.minecolonies.api.quests.IQuestObjective;
-import com.minecolonies.api.quests.IQuestReward;
-import com.minecolonies.api.quests.ITriggerReturnData;
+import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IQuestModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -15,7 +12,7 @@ import java.util.function.Function;
 /**
  * Instance of a specific quest type
  */
-public class QuestData implements IQuestData
+public class QuestModel implements IQuestModel
 {
     /**
      * The unique id of this quest.
@@ -57,7 +54,7 @@ public class QuestData implements IQuestData
      * @param questTimeout the time until it times out.
      * @param questRewards its rewards
      */
-    public QuestData(final ResourceLocation questID, final String name,
+    public QuestModel(final ResourceLocation questID, final String name,
       final List<ResourceLocation> parents,
       final int maxOccurrence, final Function<IColony, List<ITriggerReturnData>> questTriggerList, final List<IQuestObjective> questObjectives, final int questTimeout, final List<IQuestReward> questRewards)
     {
@@ -72,10 +69,10 @@ public class QuestData implements IQuestData
     }
 
     @Override
-    public IColonyQuest attemptStart(final IColony colony)
+    public IQuestInstance attemptStart(final IColony colony)
     {
         final List<ITriggerReturnData> triggerReturnData = questTriggerList.apply(colony);
-        return triggerReturnData == null ? null : new ColonyQuest(questID, colony, triggerReturnData);
+        return triggerReturnData == null ? null : new QuestInstance(questID, colony, triggerReturnData);
     }
 
     @Override
@@ -91,7 +88,7 @@ public class QuestData implements IQuestData
     }
 
     @Override
-    public void unlockQuestRewards(final IColony colony, final Player player, final IColonyQuest colonyQuest, final List<Integer> unlockedRewards)
+    public void unlockQuestRewards(final IColony colony, final Player player, final IQuestInstance colonyQuest, final List<Integer> unlockedRewards)
     {
         int index = 0;
         for (final IQuestReward questReward : questRewards)

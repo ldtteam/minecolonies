@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public interface IQuestParticipant
 {
     /**
-     * Check if the quest giver is still available.
+     * Check if the participant is still available.
      * @return true if so.
      */
     boolean isAlive();
@@ -17,7 +17,7 @@ public interface IQuestParticipant
      * Notify quest participant about their participation.
      * @param quest the quest to assign to the entity.
      */
-    void addQuestParticipation(final IColonyQuest quest);
+    void addQuestParticipation(final IQuestInstance quest);
 
     /**
      * Method for cleanup purposes on quest deletion.
@@ -30,17 +30,17 @@ public interface IQuestParticipant
      * @param questId the id of the quest.
      * @return true if so.
      */
-    boolean hasQuestOpen(final ResourceLocation questId);
+    boolean isParticipantOfQuest(final ResourceLocation questId);
 
     /**
      * Initiates a dialogue at the citizen.
      * @param quest the quest to open it for.
      * @param index the current objective index
      */
-    void openDialogue(final IColonyQuest quest, final int index);
+    void openDialogue(final IQuestInstance quest, final int index);
 
     /**
-     * Get a display name for the quest giver.
+     * Get a display name for the quest participant.
      * @return the display name.
      */
     String getName();

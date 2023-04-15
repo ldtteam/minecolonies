@@ -9,7 +9,7 @@ import net.minecraft.nbt.*;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Random quest trigger.
@@ -58,7 +58,7 @@ public class StateQuestTrigger implements IQuestTrigger
     }
 
     @Override
-    public ITriggerReturnData isFulfilledForColony(final IColony colony)
+    public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
         Tag subPathCompound = colony.getColonyTag();
         for (final String subPath : nbtPath)
@@ -79,6 +79,6 @@ public class StateQuestTrigger implements IQuestTrigger
         }
 
 
-        return new BooleanTriggerReturnData(matchNbt(subPathCompound, matchTag, matchCount));
+        return new BooleanTriggerReturnData(IQuestTrigger.matchNbt(subPathCompound, matchTag, matchCount));
     }
 }

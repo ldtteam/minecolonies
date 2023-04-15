@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTrigger;
 import com.minecolonies.api.quests.ITriggerReturnData;
 
-import static com.minecolonies.api.util.constant.QuestParseConstant.RARITY_ID;
+import static com.minecolonies.api.quests.QuestParseConstant.RARITY_ID;
 
 /**
  * Random quest trigger.
@@ -36,7 +36,7 @@ public class RandomQuestTrigger implements IQuestTrigger
     }
 
     @Override
-    public ITriggerReturnData isFulfilledForColony(final IColony colony)
+    public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
         return new BooleanTriggerReturnData(colony.getWorld().random.nextInt(oneInChance) <= 1);
     }

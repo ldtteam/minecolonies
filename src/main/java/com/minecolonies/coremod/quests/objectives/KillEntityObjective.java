@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IAnswerResult;
-import com.minecolonies.api.quests.IColonyQuest;
+import com.minecolonies.api.quests.IQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IObjectiveData;
 import com.minecolonies.api.quests.IQuestObjective;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
-import static com.minecolonies.api.util.constant.QuestParseConstant.*;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Objective type entity killing mining.
@@ -47,7 +48,7 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
     public KillEntityObjective(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards)
     {
         super(target, new DialogueElement("I am still waiting for you to kill %d " + entityToKill.getDescription().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IAnswerResult.ReturnResult()), new AnswerElement("I don't have time for this!", new IAnswerResult.CancelResult()))), rewards);
+          List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have time for this!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()))), rewards);
         this.entitiesToKill = entitiesToKill;
         this.nextObjective = nextObjective;
         this.entityToKill = entityToKill;
@@ -70,13 +71,13 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
     }
 
     @Override
-    public IObjectiveData init(final IColonyQuest colonyQuest)
+    public IObjectiveData startObjective(final IQuestInstance colonyQuest)
     {
-        super.init(colonyQuest);
+        super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            ((Colony) colonyQuest.getColony()).getEventHandler().addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
         return new EntityKillProgressData();
     }
@@ -89,22 +90,26 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
     }
 
     @Override
-    public void onAbort(final IColonyQuest colonyQuest)
+    public void onCancellation(final IQuestInstance colonyQuest)
     {
-        cleanupEvent(colonyQuest);
+        cleanupListener(colonyQuest);
     }
 
-    private void cleanupEvent(final IColonyQuest colonyQuest)
+    /**
+     * Cleanup the listener of this event.
+     * @param colonyQuest the quest instance it belongs to.
+     */
+    private void cleanupListener(final IQuestInstance colonyQuest)
     {
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            ((Colony) colonyQuest.getColony()).getEventHandler().removeQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.removeQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     @Override
-    public void onEntityKill(final IObjectiveData killProgressData, final IColonyQuest colonyQuest, final Player player)
+    public void onEntityKill(final IObjectiveData killProgressData, final IQuestInstance colonyQuest, final Player player)
     {
         if (killProgressData.isFulfilled())
         {
@@ -119,13 +124,13 @@ public class KillEntityObjective extends DialogueObjective implements IKillEntit
     }
 
     @Override
-    public void onWorldLoad(final IColonyQuest colonyQuest)
+    public void onWorldLoad(final IQuestInstance colonyQuest)
     {
         super.onWorldLoad(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            ((Colony) colonyQuest.getColony()).getEventHandler().addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 

@@ -17,15 +17,15 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.quests.IColonyQuest;
-import com.minecolonies.api.quests.IQuestActionObjective;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestDeliveryObjective;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.coremod.colony.interactionhandling.QuestActionInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.QuestDeliveryInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.QuestDialogueInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
@@ -1346,7 +1346,7 @@ public class CitizenData implements ICitizenData
                 }
                 catch (final Exception ex)
                 {
-                    Log.getLogger().warn("Failed to load Interaction for a quest. Did the quest vanish?");
+                    Log.getLogger().warn("Failed to load Interaction for a quest. Did the quest vanish?", ex);
                 }
             }
         }
@@ -1748,18 +1748,18 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void assignQuest(final IColonyQuest quest)
+    public void assignQuest(final IQuestInstance quest)
     {
         this.availableQuests.add(quest.getId());
     }
 
     @Override
-    public void openDialogue(final IColonyQuest quest, final int index)
+    public void openDialogue(final IQuestInstance quest, final int index)
     {
         final Component comp = Component.literal(quest.getId().toString());
-        if (IQuestManager.GLOBAL_SERVER_QUESTS.get(quest.getId()).getObjective(index) instanceof IQuestActionObjective)
+        if (IQuestManager.GLOBAL_SERVER_QUESTS.get(quest.getId()).getObjective(index) instanceof IQuestDeliveryObjective)
         {
-            citizenChatOptions.put(comp, new QuestActionInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
+            citizenChatOptions.put(comp, new QuestDeliveryInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
         }
         else
         {
@@ -1775,7 +1775,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void addQuestParticipation(final IColonyQuest quest)
+    public void addQuestParticipation(final IQuestInstance quest)
     {
         this.participatingQuests.add(quest.getId());
     }
@@ -1788,7 +1788,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public boolean hasQuestOpen(final ResourceLocation questId)
+    public boolean isParticipantOfQuest(final ResourceLocation questId)
     {
         return this.availableQuests.contains(questId) || this.participatingQuests.contains(questId);
     }

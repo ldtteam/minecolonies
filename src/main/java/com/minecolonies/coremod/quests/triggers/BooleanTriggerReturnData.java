@@ -28,7 +28,7 @@ public class BooleanTriggerReturnData implements ITriggerReturnData<Boolean>
     }
 
     @Override
-    public Boolean get()
+    public Boolean getContent()
     {
         return this.match;
     }

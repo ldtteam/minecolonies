@@ -64,5 +64,5 @@ public interface IHappinessModifier
      * @param qty the supplier value.
      * @param days the period.
      */
-    void set(int qty, int days);
+    void setModifier(int qty, int days);
 }

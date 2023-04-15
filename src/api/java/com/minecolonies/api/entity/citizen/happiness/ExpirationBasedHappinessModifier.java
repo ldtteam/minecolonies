@@ -114,9 +114,9 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     }
 
     @Override
-    public void set(final int qty, final int days)
+    public void setModifier(final int qty, final int days)
     {
-        super.set(qty, days);
+        super.setModifier(qty, days);
         this.days = days;
         setSupplier(() -> qty);
     }

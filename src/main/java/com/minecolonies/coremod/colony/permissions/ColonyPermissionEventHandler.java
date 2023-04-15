@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.permissions;
+package com.minecolonies.coremod.colony.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -10,9 +10,6 @@ import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.quests.IColonyQuest;
-import com.minecolonies.api.quests.IQuestManager;
-import com.minecolonies.api.quests.IQuestObjective;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -22,11 +19,7 @@ import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.quests.objectives.IBreakBlockObjective;
-import com.minecolonies.coremod.quests.objectives.IKillEntityObjective;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,7 +41,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.level.BlockEvent;
@@ -81,16 +73,6 @@ public class ColonyPermissionEventHandler
      * The last time the player was notified about not having permission.
      */
     private Map<UUID, Long> lastPlayerNotificationTick = new HashMap<>();
-
-    /**
-     * Mine block objective tracker.
-     */
-    private final Map<Block, Map<UUID, IColonyQuest>> breakBlockObjectives = new HashMap<>();
-
-    /**
-     * Entity kill objective tracker.
-     */
-    private final Map<EntityType<?>, Map<UUID, IColonyQuest>> entityKillObjectives = new HashMap<>();
 
     /**
      * Create this EventHandler.
@@ -258,26 +240,6 @@ public class ColonyPermissionEventHandler
                 return;
             }
             colony.getBuildingManager().removeLeisureSite(event.getPos());
-        }
-        else
-        {
-            if (!checkEventCancelation(Action.BREAK_BLOCKS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos()) && event.getPlayer() != null)
-            {
-                final Block block = event.getLevel().getBlockState(event.getPos()).getBlock();
-                if (breakBlockObjectives.containsKey(block) && breakBlockObjectives.get(block).containsKey(event.getPlayer().getUUID()))
-                {
-                    final IColonyQuest colonyQuest =  breakBlockObjectives.get(block).get(event.getPlayer().getUUID());
-                    final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
-                    if (objective instanceof IBreakBlockObjective)
-                    {
-                        ((IBreakBlockObjective) objective).onBlockBreak(colonyQuest.getObjectiveData(), colonyQuest, event.getPlayer());
-                    }
-                    else
-                    {
-                        breakBlockObjectives.get(block).remove(event.getPlayer().getUUID());
-                    }
-                }
-            }
         }
     }
 
@@ -631,71 +593,5 @@ public class ColonyPermissionEventHandler
                 cancelEvent(event, event.getEntity(), colony, Action.ATTACK_ENTITY, new BlockPos(event.getTarget().position()));
             }
         }
-    }
-
-    @SubscribeEvent
-    public void on(final LivingDeathEvent event)
-    {
-        if (event.getSource().getEntity() instanceof Player && entityKillObjectives.containsKey(event.getEntity().getType()) && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getSource().getEntity().getUUID()))
-        {
-            final IColonyQuest colonyQuest =  entityKillObjectives.get(event.getEntity().getType()).get(event.getSource().getEntity().getUUID());
-            final IQuestObjective objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
-            if (objective instanceof IKillEntityObjective)
-            {
-                ((IKillEntityObjective) objective).onEntityKill(colonyQuest.getObjectiveData(), colonyQuest, (Player) event.getSource().getEntity());
-            }
-            else
-            {
-                entityKillObjectives.get(event.getEntity().getType()).remove(event.getEntity().getUUID());
-            }
-        }
-    }
-
-    /**
-     * Add an objective listener to this event handler.
-     * @param blockToMine the block that we listen for.
-     * @param assignedPlayer the player we check for.
-     * @param colonyQuest the colony quest it is related to.
-     */
-    public void addQuestObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IColonyQuest colonyQuest)
-    {
-        final Map<UUID, IColonyQuest> currentMap = breakBlockObjectives.getOrDefault(blockToMine, new HashMap<>());
-        currentMap.put(assignedPlayer, colonyQuest);
-        breakBlockObjectives.put(blockToMine, currentMap);
-    }
-
-    /**
-     * Remove an objective listener to this event handler.
-     * @param blockToMine the block that we listen for.
-     * @param assignedPlayer the player we check for.
-     * @param colonyQuest the colony quest it is related to.
-     */
-    public void removeQuestObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IColonyQuest colonyQuest)
-    {
-        breakBlockObjectives.getOrDefault(blockToMine, new HashMap<>()).remove(assignedPlayer);
-    }
-
-    /**
-     * Add an objective listener to this event handler.
-     * @param entityToKill the entity type that we listen for.
-     * @param assignedPlayer the player we check for.
-     * @param colonyQuest the colony quest it is related to.
-     */
-    public void addQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IColonyQuest colonyQuest)
-    {
-        final Map<UUID, IColonyQuest> currentMap = entityKillObjectives.getOrDefault(entityToKill, new HashMap<>());
-        currentMap.put(assignedPlayer, colonyQuest);
-        entityKillObjectives.put(entityToKill, currentMap);
-    }
-
-    /**
-     * Remove an objective listener to this event handler.
-     * @param entityToKill the entity type that we listen for.
-     * @param assignedPlayer the player we check for.
-     * @param colonyQuest the colony quest it is related to.
-     */
-    public void removeQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IColonyQuest colonyQuest)
-    {
-        entityKillObjectives.getOrDefault(entityToKill, new HashMap<>()).remove(assignedPlayer);
     }
 }

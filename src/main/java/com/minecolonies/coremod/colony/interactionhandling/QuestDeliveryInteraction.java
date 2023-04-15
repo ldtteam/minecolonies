@@ -21,9 +21,9 @@ import static com.minecolonies.api.colony.interactionhandling.ModInteractionResp
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
- * A simple interaction which displays until an acceptable response is clicked
+ * More specific quest dialogue interaction that also tries to fulfill a deliver request.
  */
-public class QuestActionInteraction extends QuestDialogueInteraction
+public class QuestDeliveryInteraction extends QuestDialogueInteraction
 {
     /**
      * Two icon options.
@@ -31,12 +31,12 @@ public class QuestActionInteraction extends QuestDialogueInteraction
     private static final ResourceLocation QUEST_START_ICON = new ResourceLocation(Constants.MOD_ID, "textures/icons/queststart.png");
     private static final ResourceLocation QUEST_NEXT_TASK_ICON = new ResourceLocation(Constants.MOD_ID, "textures/icons/nexttask.png");
 
-    public QuestActionInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData)
+    public QuestDeliveryInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData)
     {
         super(inquiry, priority, location, index, citizenData);
     }
 
-    public QuestActionInteraction(final ICitizen data)
+    public QuestDeliveryInteraction(final ICitizen data)
     {
         super(data);
     }
@@ -52,20 +52,20 @@ public class QuestActionInteraction extends QuestDialogueInteraction
         triggerResponseState(player, objective);
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
-            if (result instanceof ITerminalAnswerResult)
+            final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
+            if (result instanceof IFinalQuestDialogueAnswer)
             {
-                if (result instanceof IResolveResult)
+                if (result instanceof IQuestPositiveDialogueAnswer)
                 {
-                    if (((IQuestActionObjective) objective).isReady(player, colonyQuest) && ((IQuestActionObjective) objective).tryResolve(player, colonyQuest))
+                    if (((IQuestDeliveryObjective) objective).hasItem(player, colonyQuest) && ((IQuestDeliveryObjective) objective).tryDiscountItem(player, colonyQuest))
                     {
-                        ((ITerminalAnswerResult) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
+                        ((IFinalQuestDialogueAnswer) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
                         finished = true;
                     }
                 }
                 else
                 {
-                    if (!(result instanceof IAnswerResult.ReturnResult))
+                    if (!(result instanceof IQuestDialogueAnswer.CloseUIDialogueAnswer))
                     {
                         currentElement = null;
                         data.getColony().markDirty();
@@ -95,8 +95,8 @@ public class QuestActionInteraction extends QuestDialogueInteraction
         }
         if (currentElement != null && colonyQuest != null)
         {
-            final IAnswerResult result = this.currentElement.getOptionResult(responseId);
-            if (result instanceof ITerminalAnswerResult)
+            final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
+            if (result instanceof IFinalQuestDialogueAnswer)
             {
                 Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), Component.literal(colonyQuest.getId().toString()), responseId));
                 this.currentElement = this.startElement;
@@ -129,11 +129,11 @@ public class QuestActionInteraction extends QuestDialogueInteraction
      */
     private void triggerResponseState(final Player player, final IQuestObjective objective)
     {
-        if (objective instanceof IQuestActionObjective)
+        if (objective instanceof IQuestDeliveryObjective)
         {
-            if (((IQuestActionObjective) objective).isReady(player, colonyQuest))
+            if (((IQuestDeliveryObjective) objective).hasItem(player, colonyQuest))
             {
-                currentElement = ((IQuestActionObjective) objective).getReadyDialogueTree();
+                currentElement = ((IQuestDeliveryObjective) objective).getReadyDialogueTree();
             }
             else
             {
