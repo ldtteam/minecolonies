@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IObjectiveData;
+import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
@@ -71,7 +71,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public IObjectiveData startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
@@ -79,14 +79,14 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new EntityKillProgressData();
+        return new EntityKillProgressInstance();
     }
 
     @Nullable
     @Override
-    public IObjectiveData getObjectiveData()
+    public IObjectiveInstance getObjectiveInstance()
     {
-        return new EntityKillProgressData();
+        return new EntityKillProgressInstance();
     }
 
     @Override
@@ -109,14 +109,14 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public void onEntityKill(final IObjectiveData killProgressData, final IQuestInstance colonyQuest, final Player player)
+    public void onEntityKill(final IObjectiveInstance killProgressData, final IQuestInstance colonyQuest, final Player player)
     {
         if (killProgressData.isFulfilled())
         {
             return;
         }
 
-        ((EntityKillProgressData) killProgressData).currentProgress++;
+        ((EntityKillProgressInstance) killProgressData).currentProgress++;
         if (killProgressData.isFulfilled())
         {
             colonyQuest.advanceObjective(player, nextObjective);
@@ -137,7 +137,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     /**
      * Progress data of this objective.
      */
-    public class EntityKillProgressData implements IObjectiveData
+    public class EntityKillProgressInstance implements IObjectiveInstance
     {
         private int currentProgress = 0;
 

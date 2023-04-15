@@ -137,7 +137,7 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
             }
             else
             {
-                currentElement = ((IDialogueObjectiveTemplateTemplate) objective).getDialogueTree();
+                currentElement = ((IDialogueObjectiveTemplate) objective).getDialogueTree();
             }
         }
     }

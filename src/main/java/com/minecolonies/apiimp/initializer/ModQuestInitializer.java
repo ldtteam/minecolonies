@@ -1,6 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.quests.IDialogueObjectiveTemplateTemplate;
+import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.util.constant.Constants;
@@ -59,7 +59,7 @@ public final class ModQuestInitializer
         QuestRegistries.happinessReward = DEFERRED_REGISTER_REWARD.register(HAPPINESS_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(HappinessRewardTemplate::createReward));
 
         QuestRegistries.dialogueAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(DIALOGUE_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(
-          IDialogueObjectiveTemplateTemplate.DialogueElement::parse));
+          IDialogueObjectiveTemplate.DialogueElement::parse));
         QuestRegistries.returnAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(RETURN_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(json -> new IQuestDialogueAnswer.CloseUIDialogueAnswer()));
         QuestRegistries.gotoAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(GOTO_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(IQuestDialogueAnswer.NextObjectiveDialogueAnswer::new));
         QuestRegistries.cancelAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(CANCEL_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(json -> new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()));

@@ -6,7 +6,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 /**
  * Objective data type to take track of activities.
  */
-public interface IObjectiveData extends INBTSerializable<CompoundTag>
+public interface IObjectiveInstance extends INBTSerializable<CompoundTag>
 {
     /**
      * Check if the objective has been fulfilled.

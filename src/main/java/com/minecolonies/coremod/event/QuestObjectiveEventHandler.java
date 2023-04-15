@@ -57,7 +57,7 @@ public class QuestObjectiveEventHandler
             final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
             if (objective instanceof IBreakBlockObjectiveTemplate)
             {
-                ((IBreakBlockObjectiveTemplate) objective).onBlockBreak(colonyQuest.getObjectiveData(), colonyQuest, event.getPlayer());
+                ((IBreakBlockObjectiveTemplate) objective).onBlockBreak(colonyQuest.getCurrentObjectiveInstance(), colonyQuest, event.getPlayer());
             }
             else
             {
@@ -77,7 +77,7 @@ public class QuestObjectiveEventHandler
             final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
             if (objective instanceof IKillEntityObjectiveTemplate)
             {
-                ((IKillEntityObjectiveTemplate) objective).onEntityKill(colonyQuest.getObjectiveData(), colonyQuest, (Player) event.getSource().getEntity());
+                ((IKillEntityObjectiveTemplate) objective).onEntityKill(colonyQuest.getCurrentObjectiveInstance(), colonyQuest, (Player) event.getSource().getEntity());
             }
             else
             {

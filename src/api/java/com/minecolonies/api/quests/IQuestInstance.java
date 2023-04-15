@@ -90,7 +90,7 @@ public interface IQuestInstance extends INBTSerializable<CompoundTag>
      * @return the data.
      */
     @Nullable
-    IObjectiveData getObjectiveData();
+    IObjectiveInstance getCurrentObjectiveInstance();
 
     /**
      * Get the colony matching the quest.

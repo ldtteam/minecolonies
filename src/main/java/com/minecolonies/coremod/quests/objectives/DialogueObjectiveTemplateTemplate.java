@@ -3,9 +3,9 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IDialogueObjectiveTemplateTemplate;
+import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IObjectiveData;
+import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.UNLOCKS_REWARDS_KEY
 /**
  * Dialogue type of objective.
  */
-public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemplateTemplate
+public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemplate
 {
     /**
      * The quest participant target of this dialogue (0 if questgiver).
@@ -97,7 +97,7 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     }
 
     @Override
-    public IObjectiveData startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         if (target == 0)
         {

@@ -16,7 +16,7 @@ public interface IQuestObjectiveTemplate
      * @return potentially related objective data.
      */
     @Nullable
-    IObjectiveData startObjective(final IQuestInstance colonyQuest);
+    IObjectiveInstance startObjective(final IQuestInstance colonyQuest);
 
     /**
      * On objective abort.
@@ -35,7 +35,7 @@ public interface IQuestObjectiveTemplate
      * @return the data, default null.
      */
     @Nullable
-    default IObjectiveData getObjectiveData() { return null; }
+    default IObjectiveInstance getObjectiveInstance() { return null; }
 
     /**
      * Get the list of reward unlocks from this objective.

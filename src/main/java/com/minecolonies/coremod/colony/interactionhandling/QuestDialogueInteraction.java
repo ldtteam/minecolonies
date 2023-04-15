@@ -199,9 +199,9 @@ public class QuestDialogueInteraction extends StandardInteraction
                 localText = localText.replace("$" + index, citizen.getColony().getCitizen(participant).getName());
             }
         }
-        if (localText.contains("%d") && colonyQuest != null && colonyQuest.getObjectiveData() != null)
+        if (localText.contains("%d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
         {
-            localText = localText.replace("%d", String.valueOf(colonyQuest.getObjectiveData().getMissingQuantity()));
+            localText = localText.replace("%d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
         }
         return localText;
     }
@@ -253,7 +253,7 @@ public class QuestDialogueInteraction extends StandardInteraction
             colonyQuest = citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         }
 
-        if (colonyQuest != null && colonyQuest.getObjectiveData() != null && !colonyQuest.getObjectiveData().isFulfilled())
+        if (colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null && !colonyQuest.getCurrentObjectiveInstance().isFulfilled())
         {
             return QUEST_WAITING_TASK_ICON;
         }

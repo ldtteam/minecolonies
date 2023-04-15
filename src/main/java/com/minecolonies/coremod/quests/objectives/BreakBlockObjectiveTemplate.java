@@ -3,7 +3,7 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IObjectiveData;
+import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
@@ -73,7 +73,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public IObjectiveData startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
@@ -81,14 +81,14 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new BlockMiningProgressData();
+        return new BlockMiningProgressInstance();
     }
 
     @Nullable
     @Override
-    public IObjectiveData getObjectiveData()
+    public IObjectiveInstance getObjectiveInstance()
     {
-        return new BlockMiningProgressData();
+        return new BlockMiningProgressInstance();
     }
 
     @Override
@@ -111,14 +111,14 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public void onBlockBreak(final IObjectiveData blockMiningProgressData, final IQuestInstance colonyQuest, final Player player)
+    public void onBlockBreak(final IObjectiveInstance blockMiningProgressData, final IQuestInstance colonyQuest, final Player player)
     {
         if (blockMiningProgressData.isFulfilled())
         {
             return;
         }
 
-        ((BlockMiningProgressData) blockMiningProgressData).currentProgress++;
+        ((BlockMiningProgressInstance) blockMiningProgressData).currentProgress++;
         if (blockMiningProgressData.isFulfilled())
         {
             colonyQuest.advanceObjective(player, nextObjective);
@@ -139,7 +139,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     /**
      * Progress data of this objective.
      */
-    public class BlockMiningProgressData implements IObjectiveData
+    public class BlockMiningProgressInstance implements IObjectiveInstance
     {
         private int currentProgress = 0;
 
