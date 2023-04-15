@@ -35,7 +35,7 @@ public interface IQuestObjectiveTemplate
      * @return the data, default null.
      */
     @Nullable
-    default IObjectiveInstance getObjectiveInstance() { return null; }
+    default IObjectiveInstance createObjectiveInstance() { return null; }
 
     /**
      * Get the list of reward unlocks from this objective.

@@ -293,7 +293,7 @@ public class QuestInstance implements IQuestInstance
 
         if (nbt.contains(TAG_OBJECTIVE))
         {
-            final IObjectiveInstance data = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(objectiveProgress).getObjectiveInstance();
+            final IObjectiveInstance data = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(objectiveProgress).createObjectiveInstance();
             if (data != null)
             {
                 data.deserializeNBT(nbt.getCompound(TAG_OBJECTIVE));

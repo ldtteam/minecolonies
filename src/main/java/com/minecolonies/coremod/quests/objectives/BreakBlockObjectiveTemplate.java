@@ -86,7 +86,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
 
     @Nullable
     @Override
-    public IObjectiveInstance getObjectiveInstance()
+    public IObjectiveInstance createObjectiveInstance()
     {
         return new BlockMiningProgressInstance();
     }

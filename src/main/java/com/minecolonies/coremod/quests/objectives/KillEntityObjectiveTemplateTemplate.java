@@ -84,7 +84,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
 
     @Nullable
     @Override
-    public IObjectiveInstance getObjectiveInstance()
+    public IObjectiveInstance createObjectiveInstance()
     {
         return new EntityKillProgressInstance();
     }
