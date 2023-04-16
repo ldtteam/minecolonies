@@ -23,6 +23,22 @@
     {
       "structure": "minecolonies:caledonia_colony",
       "weight": 1
+    },
+    {
+      "structure": "minecolonies:lostmesacity_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:desertoasis_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:shire_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:incan_colony",
+      "weight": 1
     }
   ],
   "placement": {

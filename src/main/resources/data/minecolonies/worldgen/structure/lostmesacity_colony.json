@@ -1,0 +1,30 @@
+{
+  "type": "minecolonies:empty_colony",
+
+  "start_pool": "minecolonies:lostmesacity_pool",
+  "size": 5,
+  "max_distance_from_center": 80,
+  "step": "surface_structures",
+
+  "biomes": "#minecolonies:has_structure/lostmesacity_colony",
+
+  "start_height": {
+    "above_bottom": 32
+  },
+  "terrain_adaptation": "beard_box",
+
+  "adapt_noise": true,
+  "spawn_overrides": {
+    "creature": {
+      "bounding_box": "piece",
+      "spawns": [
+        {
+          "type": "minecraft:cat",
+          "weight": 100,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ]
+    }
+  }
+}
