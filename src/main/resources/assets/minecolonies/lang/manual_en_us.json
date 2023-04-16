@@ -1618,7 +1618,17 @@
   "com.minecolonies.coremod.journeymap.raidercolor.orange": "Orange",
   "com.minecolonies.coremod.journeymap.currentcolony": "Current MineColony",
   "com.minecolonies.coremod.journeymap.visitor": "Visitor",
+  "com.minecolonies.coremod.journeymap.child": "Child",
   "com.minecolonies.coremod.journeymap.unemployed": "Unemployed",
+
+  "config.jade.plugin_minecolonies.hut": "Building Name",
+  "config.jade.plugin_minecolonies.pack": "Building Pack",
+  "config.jade.plugin_minecolonies.citizens": "List Citizens",
+  "config.jade.plugin_minecolonies.colonist": "Colonist Info",
+  "config.jade.plugin_minecolonies.visitor_cost": "Visitor Recruit Cost",
+  "com.minecolonies.coremod.jade.visitor_cost": "Recruit for",
+  "com.minecolonies.coremod.jade.gender.male": "Male",
+  "com.minecolonies.coremod.jade.gender.female": "Female",
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 

@@ -13,6 +13,12 @@ repositories {
         name "Rei"
         url "https://maven.shedaniel.me/"
     }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -56,6 +62,8 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-common-api:${project.jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-forge-api:${project.jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-forge:${project.jei_version}")
+
+    implementation fg.deobf("curse.maven:jade-324717:${project.jade_id}")
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
