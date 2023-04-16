@@ -1,11 +1,14 @@
 package com.minecolonies.api.colony;
 
+import com.google.common.eventbus.EventBus;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.quests.IQuestGiver;
+import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -475,4 +478,17 @@ public interface IColony
      * @return the current day progress of the colony.
      */
     int getDay();
+
+    /**
+     * Get the quest manager of the colony.
+     * @return the quest manager.
+     */
+    IQuestManager getQuestManager();
+
+    /**
+     * Get citizen from colony.
+     * @param id the id of the cit.
+     * @return the cit.
+     */
+    ICitizen getCitizen(int id);
 }

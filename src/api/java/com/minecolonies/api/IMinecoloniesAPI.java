@@ -19,6 +19,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -75,4 +76,12 @@ public interface IMinecoloniesAPI
     IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry();
 
     IForgeRegistry<CraftingType> getCraftingTypeRegistry();
+
+    IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry();
+
+    IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry();
+
+    IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry();
+
+    IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry();
 }

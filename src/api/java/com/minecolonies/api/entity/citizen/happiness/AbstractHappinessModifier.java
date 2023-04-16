@@ -72,4 +72,10 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     {
         return weight;
     }
+
+    @Override
+    public void setModifier(int qty, int days)
+    {
+
+    }
 }

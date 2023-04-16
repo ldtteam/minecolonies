@@ -28,6 +28,16 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     Component getInquiry();
 
     /**
+     * The inquiry of the GUI to the player. This is the key for the interaction, functions as id.
+     *
+     * @return the text inquiry.
+     */
+    default Component getInquiry(final Player player)
+    {
+        return getInquiry();
+    }
+
+    /**
      * Get a list of all possible responses.
      *
      * @return a list of the possible responses the player can give..
@@ -76,23 +86,23 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     /**
      * Server side action triggered on a possible response.
      *
-     * @param response the clicked string response of the player.
+     * @param responseId the clicked string response of the player.
      * @param player   the world it was triggered in.
      * @param data     the citizen related to it.
      */
-    void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data);
+    void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data);
 
     /**
      * Client side action triggered on a possible response.
      *
-     * @param response the clicked string response of the player.
+     * @param responseId the clicked index.
      * @param player   the client side world.
      * @param data     the citizen data assigned to it.
      * @param window   the window it was triggered in.
      * @return if wishing to continue interacting.
      */
     @OnlyIn(Dist.CLIENT)
-    boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window);
+    boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window);
 
     /**
      * Remove a certain parent.
@@ -129,4 +139,20 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     {
         return null;
     }
+
+    /**
+     * Trigger on forcefully closing the interaction.
+     */
+    default void onClosed() {}
+
+    /**
+     * Trigger on opening the interaction.
+     */
+    default void onOpened(final Player player) {}
+
+    /**
+     * Get the id.
+     * @return the id.
+     */
+    Component getId();
 }
