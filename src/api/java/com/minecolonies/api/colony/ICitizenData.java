@@ -1,14 +1,17 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.quests.IQuestGiver;
+import com.minecolonies.api.quests.IQuestParticipant;
 import com.minecolonies.api.util.Tuple;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public interface ICitizenData extends ICivilianData
+public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticipant
 {
     /**
      * Maximum saturation of a citizen.
@@ -370,4 +373,24 @@ public interface ICitizenData extends ICivilianData
     {
         return false;
     }
+
+    /**
+     * Sets the citizen idle for a certain amount of days
+     *
+     * @param days amount of days
+     */
+    void setIdleDays(int days);
+
+    /**
+     * On completing a quest.
+     * @param questId the id of the completed quest.
+     */
+    void onQuestCompletion(ResourceLocation questId);
+
+    /**
+     * Trigger for server side interaction closing.
+     * @param key the key of the interaction.
+     * @param sender the player closing it.
+     */
+    void onInteractionClosed(Component key, ServerPlayer sender);
 }

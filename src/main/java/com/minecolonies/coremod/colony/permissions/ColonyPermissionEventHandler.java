@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.permissions;
+package com.minecolonies.coremod.colony.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -19,7 +19,6 @@ import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -241,10 +240,6 @@ public class ColonyPermissionEventHandler
                 return;
             }
             colony.getBuildingManager().removeLeisureSite(event.getPos());
-        }
-        else
-        {
-            checkEventCancelation(Action.BREAK_BLOCKS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos());
         }
     }
 

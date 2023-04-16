@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -56,6 +57,7 @@ public class CitizenDataView implements ICitizenDataView
      * Attributes.
      */
     private final int     id;
+    private final IColonyView colonyView;
     protected     int     entityId;
     protected     String  name;
     protected     boolean female;
@@ -147,15 +149,26 @@ public class CitizenDataView implements ICitizenDataView
     private Integer partner;
 
     /**
+     * The list of available quests the citizen can give out.
+     */
+    private final List<ResourceLocation> availableQuests = new ArrayList<>();
+
+    /**
+     * The list of participating quests the citizen can give out.
+     */
+    private final List<ResourceLocation> participatingQuests = new ArrayList<>();
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
      */
-    protected CitizenDataView(final int id)
+    protected CitizenDataView(final int id, final IColonyView colonyView)
     {
         this.id = id;
         this.citizenSkillHandler = new CitizenSkillHandler();
         this.citizenHappinessHandler = new CitizenHappinessHandler();
+        this.colonyView = colonyView;
     }
 
     @Override
@@ -186,6 +199,12 @@ public class CitizenDataView implements ICitizenDataView
     public boolean isPaused()
     {
         return paused;
+    }
+
+    @Override
+    public IColony getColony()
+    {
+        return colonyView;
     }
 
     @Override
@@ -351,6 +370,21 @@ public class CitizenDataView implements ICitizenDataView
         final String parentA = buf.readUtf();
         final String parentB = buf.readUtf();
         parents = new Tuple<>(parentA, parentB);
+
+        availableQuests.clear();
+        participatingQuests.clear();
+
+        final int avSize = buf.readInt();
+        for (int i = 0; i < avSize; i++)
+        {
+            availableQuests.add(buf.readResourceLocation());
+        }
+
+        final int partSize = buf.readInt();
+        for (int i = 0; i < partSize; i++)
+        {
+            participatingQuests.add(buf.readResourceLocation());
+        }
     }
 
     @Override
@@ -386,10 +420,12 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
-        if (interaction != null)
+        for (final IInteractionResponseHandler interaction : sortedInteractions)
         {
-            return interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority();
+            if (interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority())
+            {
+                return true;
+            }
         }
 
         return false;
@@ -403,12 +439,13 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
-        if (interaction != null)
+        for (final IInteractionResponseHandler interaction : sortedInteractions)
         {
-            return interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority();
+            if (interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority())
+            {
+                return true;
+            }
         }
-
         return false;
     }
 
@@ -420,10 +457,12 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
-        if (interaction != null)
+        for (final IInteractionResponseHandler interaction : sortedInteractions)
         {
-            return interaction.isPrimary();
+            if (interaction.isPrimary())
+            {
+                return true;
+            }
         }
 
         return false;

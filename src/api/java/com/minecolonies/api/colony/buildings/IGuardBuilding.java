@@ -1,10 +1,9 @@
 package com.minecolonies.api.colony.buildings;
 
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 public interface IGuardBuilding extends IBuilding
@@ -160,12 +159,21 @@ public interface IGuardBuilding extends IBuilding
 
     /**
      * If we have to calculate a new target manually.
+     *
      * @return true if so.
      */
     boolean requiresManualTarget();
 
     /**
+     * Sets a one time consumed temporary next position to patrol towards
+     *
+     * @param pos Position to set
+     */
+    void setTempNextPatrolPoint(BlockPos pos);
+
+    /**
      * Get the position of the assigned mine
+     *
      * @return the coords of the assigned mine
      */
     BlockPos getMinePos();

@@ -1,0 +1,89 @@
+{
+  "name": "Best Builders Tool",
+  "max-occurrences": 1,
+  "parents": [],
+  "triggers": [
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:builder",
+          "level": 1
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:builder"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hello there! Have you heard about the Resource Scroll? It's a powerful tool that can help you gather resources more efficiently. I really need one, but I don't have the time to go and find it myself. Would you be willing to bring one to me?",
+      "options": [
+        {
+          "answer": "Sure, I can try to find one for you!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "I'm sorry, I don't have the time right now.",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I already know what it does!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecolonies:resourcescroll",
+        "qty": 1,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
+      "target": 0,
+      "text": "Thank you so much for bringing me the Resource Scroll! You know, all you have to do is shift-right-click it on the hut block to activate it. It will help you gather resources more quickly and efficiently. I hope you find it as useful as I do!",
+      "options": [
+        {
+          "answer": "Thanks for the tip, I'll be sure to use it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:resourcescroll",
+        "qty": 1
+      }
+    }
+  ]
+}
