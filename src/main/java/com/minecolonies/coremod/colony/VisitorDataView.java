@@ -21,11 +21,6 @@ import java.util.UUID;
 public class VisitorDataView extends CitizenDataView implements IVisitorViewData
 {
     /**
-     * The related colony view
-     */
-    private final  IColonyView   colony;
-
-    /**
      * The recruitment costs
      */
     private ItemStack recruitmentCosts;
@@ -48,8 +43,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
      */
     public VisitorDataView(final int id, final IColonyView colony)
     {
-        super(id);
-        this.colony = colony;
+        super(id, colony);
     }
 
     @Override
@@ -62,12 +56,6 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         {
             textureUUID = buf.readUUID();
         }
-    }
-
-    @Override
-    public IColonyView getColonyView()
-    {
-        return colony;
     }
 
     @Override

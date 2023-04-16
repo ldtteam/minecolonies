@@ -32,7 +32,9 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
-import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
+import com.minecolonies.coremod.colony.permissions.ColonyPermissionEventHandler;
+import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -66,8 +68,7 @@ import java.util.*;
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.getConfig;
@@ -181,6 +182,11 @@ public class Colony implements IColony
     private final IStatisticsManager statisticManager = new StatisticsManager(this);
 
     /**
+     * Quest manager for this colony
+     */
+    private IQuestManager questManager;
+
+    /**
      * The Positions which players can freely interact.
      */
     private final Set<BlockPos> freePositions = new HashSet<>();
@@ -275,7 +281,7 @@ public class Colony implements IColony
     /**
      * If the colony is dirty.
      */
-    private boolean isActive = true;
+    private boolean isDirty = true;
 
     /**
      * The colony team color.
@@ -349,6 +355,7 @@ public class Colony implements IColony
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
         researchManager = new ResearchManager(this);
+        questManager = new QuestManager(this);
     }
 
     /**
@@ -359,6 +366,7 @@ public class Colony implements IColony
      */
     protected Colony(final int id, @Nullable final Level world)
     {
+        questManager = new QuestManager(this);
         this.id = id;
         if (world != null)
         {
@@ -400,13 +408,13 @@ public class Colony implements IColony
 
         if (!packageManager.getCloseSubscribers().isEmpty() || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty()))
         {
-            isActive = true;
+            isDirty = true;
             return ACTIVE;
         }
 
         if (!packageManager.getImportantColonyPlayers().isEmpty() || forceLoadTimer > 0)
         {
-            isActive = true;
+            isDirty = true;
             return UNLOADED;
         }
 
@@ -454,6 +462,7 @@ public class Colony implements IColony
         graveManager.onColonyTick(this);
         workManager.onColonyTick(this);
         reproductionManager.onColonyTick(this);
+        questManager.onColonyTick();
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)
@@ -745,6 +754,7 @@ public class Colony implements IColony
         eventManager.readFromNBT(compound);
         statisticManager.readFromNBT(compound);
 
+        questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.getAllKeys().contains(TAG_RESEARCH))
@@ -901,6 +911,7 @@ public class Colony implements IColony
         eventManager.writeToNBT(compound);
         statisticManager.writeToNBT(compound);
 
+        compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT());
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
@@ -952,7 +963,7 @@ public class Colony implements IColony
 
         this.colonyTag = compound;
 
-        isActive = false;
+        isDirty = false;
         return compound;
     }
 
@@ -993,6 +1004,7 @@ public class Colony implements IColony
             if (eventHandler == null)
             {
                 eventHandler = new ColonyPermissionEventHandler(this);
+                questManager.onWorldLoad();
                 MinecraftForge.EVENT_BUS.register(eventHandler);
             }
             setColonyColor(this.colonyTeamColor);
@@ -1307,7 +1319,7 @@ public class Colony implements IColony
     public void markDirty()
     {
         packageManager.setDirty();
-        isActive = true;
+        isDirty = true;
     }
 
     @Override
@@ -1662,7 +1674,7 @@ public class Colony implements IColony
     {
         try
         {
-            if (this.colonyTag == null || this.isActive)
+            if (this.colonyTag == null || this.isDirty)
             {
                 this.write(new CompoundTag());
             }
@@ -1783,13 +1795,13 @@ public class Colony implements IColony
     }
 
     /**
-     * Set the colony to be active.
+     * Set the colony to be dirty.
      *
-     * @param isActive if active.
+     * @param dirty if dirty.
      */
-    public void setActive(final boolean isActive)
+    public void setDirty(final boolean dirty)
     {
-        this.isActive = isActive;
+        this.isDirty = dirty;
     }
 
     /**
@@ -1940,5 +1952,17 @@ public class Colony implements IColony
     public int getDay()
     {
         return day;
+    }
+
+    @Override
+    public IQuestManager getQuestManager()
+    {
+        return questManager;
+    }
+
+    @Override
+    public ICitizen getCitizen(final int id)
+    {
+        return citizenManager.getCivilian(id);
     }
 }
