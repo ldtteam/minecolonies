@@ -62,4 +62,11 @@ public interface ICitizen
      * @return true for paused, false for working.
      */
     boolean isPaused();
+
+    /**
+     * Returns the visitor's colony
+     *
+     * @return colony
+     */
+    public IColony getColony();
 }

@@ -6,6 +6,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.compatibility.CraftingTagAuditor;
+import com.minecolonies.coremod.datalistener.QuestJsonListener;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithCompatibilityMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import com.mojang.authlib.GameProfile;
@@ -65,6 +66,7 @@ public class DataPackSyncEventHandler
             Network.getNetwork().sendToPlayer(compatMsg, player);
             CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
+            QuestJsonListener.sendGlobalQuestPackets(player);
         }
 
         /**

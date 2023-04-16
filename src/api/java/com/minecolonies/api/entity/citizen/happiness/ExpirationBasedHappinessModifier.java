@@ -112,4 +112,12 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
         super.write(compoundNBT);
         compoundNBT.putInt(TAG_DAY, days);
     }
+
+    @Override
+    public void setModifier(final int qty, final int days)
+    {
+        super.setModifier(qty, days);
+        this.days = days;
+        setSupplier(() -> qty);
+    }
 }
