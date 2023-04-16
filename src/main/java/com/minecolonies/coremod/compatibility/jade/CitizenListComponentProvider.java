@@ -20,7 +20,6 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 public class CitizenListComponentProvider implements IBlockComponentProvider
 {
     private static final ResourceLocation UID = new ResourceLocation(MOD_ID, "citizens");
-    private static final String CITIZENS_LIST = MOD_ID + ":citizens";
     private static final CitizenListComponentProvider INSTANCE = new CitizenListComponentProvider();
 
     public static CitizenListComponentProvider getInstance()
