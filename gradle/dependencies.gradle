@@ -64,8 +64,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-forge-api:${project.jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-forge:${project.jei_version}")
 
-    compileOnly fg.deobf("snownee.jade:Jade-${project.jade_mcversion}-forge:${project.jade_version}:api")
-    runtimeOnly fg.deobf("snownee.jade:Jade-${project.jade_mcversion}-forge:${project.jade_version}")
+    implementation fg.deobf("snownee.jade:Jade-${project.jade_mcversion}-forge:${project.jade_version}")
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
