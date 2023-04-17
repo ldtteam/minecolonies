@@ -31,22 +31,25 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,11 +63,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.FARMING;
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CROPS_HARVESTED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LAND_TILLED;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
-import net.minecraft.world.level.block.state.BlockState;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_SEED_SET;
 
 /**
  * Farmer AI class. Created: December 20, 2014
@@ -274,7 +277,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final BlockEntity entity = world.getBlockEntity(currentField);
         if (entity instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) entity).needsWork())
         {
-            if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, pos -> this.findHarvestableSurface(pos) != null))
+            if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity,
+              pos -> this.findHarvestableSurface(pos) != null))
             {
                 return FARMER_HARVEST;
             }
@@ -410,10 +414,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         position = getSurfacePos(position);
         if (position == null
-            || field.isNoPartOfField(world, position) 
-            || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
-            || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
-            || !world.getBlockState(position).is(BlockTags.DIRT)
+              || field.isNoPartOfField(world, position)
+              || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
+              || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
+              || !world.getBlockState(position).is(BlockTags.DIRT)
         )
         {
             return null;
@@ -433,12 +437,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     /**
-    * Finds the position of the surface near the specified position
-    *
-    * @param position the location to begin the search
-    * @param depth the depth of the search for the surface
-    * @return the position of the surface block or null if it can't be found
-    */
+     * Finds the position of the surface near the specified position
+     *
+     * @param position the location to begin the search
+     * @param depth    the depth of the search for the surface
+     * @return the position of the surface block or null if it can't be found
+     */
     private BlockPos getSurfacePos(final BlockPos position, final Integer depth)
     {
         if (Math.abs(depth) > MAX_DEPTH)
@@ -447,7 +451,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         final BlockState curBlockState = world.getBlockState(position);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if ((curBlockState.getMaterial().isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock)) || curBlockState.getMaterial().isLiquid())
+        if ((curBlockState.getMaterial().isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock))
+              || curBlockState.getMaterial().isLiquid())
         {
             if (depth < 0)
             {
@@ -455,7 +460,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             return getSurfacePos(position.above(), depth + 1);
         }
-        else 
+        else
         {
             if (depth > 0)
             {
@@ -463,7 +468,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             return getSurfacePos(position.below(), depth - 1);
         }
-        
     }
 
     /**
@@ -640,7 +644,18 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 equipHoe();
                 worker.swing(worker.getUsedItemHand());
-                world.setBlockAndUpdate(position, Blocks.FARMLAND.defaultBlockState());
+                final UseOnContext context = new UseOnContext(world,
+                  null,
+                  InteractionHand.MAIN_HAND,
+                  worker.getItemInHand(InteractionHand.MAIN_HAND),
+                  new BlockHitResult(worker.position(), Direction.DOWN, position, false));
+                final BlockState newState = world.getBlockState(position).getToolModifiedState(context, net.minecraftforge.common.ToolActions.HOE_TILL, false);
+                if (newState == null)
+                {
+                    return true;
+                }
+
+                world.setBlockAndUpdate(position, newState);
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(LAND_TILLED);
@@ -728,11 +743,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         position = getSurfacePos(position);
         if (position == null
-            || field.isNoPartOfField(world, position)
-            || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
-            || (world.getBlockState(position.above()).getBlock() instanceof StemBlock)
-            || (world.getBlockState(position).getBlock() instanceof BlockScarecrow)
-            || !(world.getBlockState(position).getBlock() instanceof FarmBlock)
+              || field.isNoPartOfField(world, position)
+              || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
+              || (world.getBlockState(position.above()).getBlock() instanceof StemBlock)
+              || (world.getBlockState(position).getBlock() instanceof BlockScarecrow)
+              || !(world.getBlockState(position).getBlock() instanceof FarmBlock)
         )
         {
             return null;
@@ -879,10 +894,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         final NonNullList<ItemStack> drops = NonNullList.create();
         state.getDrops(new LootContext.Builder((ServerLevel) world).withLuck(fortune)
-                         .withLuck(fortune)
-                         .withParameter(LootContextParams.ORIGIN, worker.position())
-                         .withParameter(LootContextParams.TOOL, tool)
-                         .withParameter(LootContextParams.THIS_ENTITY, getCitizen()));
+          .withLuck(fortune)
+          .withParameter(LootContextParams.ORIGIN, worker.position())
+          .withParameter(LootContextParams.TOOL, tool)
+          .withParameter(LootContextParams.THIS_ENTITY, getCitizen()));
         for (final ItemStack item : drops)
         {
             final ItemStack drop = item.copy();
