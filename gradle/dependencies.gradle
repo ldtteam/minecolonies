@@ -14,9 +14,10 @@ repositories {
         url "https://maven.shedaniel.me/"
     }
     maven {
-        url "https://www.cursemaven.com"
+        name "Mirality"
+        url "https://maven.mirality.co.nz/"
         content {
-            includeGroup "curse.maven"
+            includeGroup "snownee.jade"
         }
     }
 }
@@ -63,7 +64,8 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-forge-api:${project.jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${project.jei_mcversion}-forge:${project.jei_version}")
 
-    implementation fg.deobf("curse.maven:jade-324717:${project.jade_id}")
+    compileOnly fg.deobf("snownee.jade:Jade-${project.jade_mcversion}-forge:${project.jade_version}:api")
+    runtimeOnly fg.deobf("snownee.jade:Jade-${project.jade_mcversion}-forge:${project.jade_version}")
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
