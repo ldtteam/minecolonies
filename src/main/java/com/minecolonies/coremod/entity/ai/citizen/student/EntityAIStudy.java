@@ -136,12 +136,15 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.getItem());
                 if (bSlot > -1)
                 {
+                    //Need to move this here. Since worker's previous position was a bookshelf, he'll always walk to the building and then return getState, never actually grabbing the item.
+                    //This causes him to loop back and forth getting the free xp on line 131 and never hitting the delay on 173
+                    takeItemStackFromProvider(building, bSlot); 
                     if (walkToBuilding())
                     {
                         setDelay(WALK_DELAY);
                         return getState();
                     }
-                    takeItemStackFromProvider(building, bSlot);
+                    
                 }
                 else
                 {
