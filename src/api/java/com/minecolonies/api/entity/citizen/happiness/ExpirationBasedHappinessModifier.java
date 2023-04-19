@@ -20,7 +20,7 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     /**
      * Period of time this modifier applies.
      */
-    private final int period;
+    private int period;
 
     /**
      * If this should give a penalty if not active.
@@ -54,6 +54,14 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     {
         this(id, weight, supplier, period);
         this.inverted = inverted;
+    }
+
+    /**
+     * Create an instance of the happiness modifier.
+     */
+    public ExpirationBasedHappinessModifier()
+    {
+        super();
     }
 
     @Override

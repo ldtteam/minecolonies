@@ -699,10 +699,8 @@ public final class NbtTagConstants
     public static final String TAG_OBJECTIVE = "objective";
     public static final String TAG_PLAYER = "player";
 
-
-
-
-
+    public static final String TAG_MODIFIER_TYPE = "modifier";
+    public static final String TAG_WEIGHT = "weight";
 
     /**
      * Private constructor to hide the implicit one.

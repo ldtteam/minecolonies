@@ -1,5 +1,7 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
+import net.minecraft.nbt.CompoundTag;
+
 import java.util.function.DoubleSupplier;
 
 /**
@@ -25,10 +27,32 @@ public class StaticHappinessModifier extends AbstractHappinessModifier
         this.supplier = supplier;
     }
 
+    /**
+     * Create an instance of the static happiness modifier.
+     */
+    public StaticHappinessModifier()
+    {
+        super();
+    }
+
     @Override
     public double getFactor()
     {
         return supplier.getAsDouble();
+    }
+
+    @Override
+    public void write(final CompoundTag compoundNBT)
+    {
+        super.write(compoundNBT);
+        // write a simple double value.
+    }
+
+    @Override
+    public void read(final CompoundTag compoundNBT)
+    {
+        super.read(compoundNBT);
+        // If supplier is null, read, indentifier and load it from registry, else keep it.
     }
 
     /**

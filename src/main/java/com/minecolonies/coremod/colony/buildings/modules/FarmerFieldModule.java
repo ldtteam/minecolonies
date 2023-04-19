@@ -93,7 +93,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
-        if (compound.getAllKeys().contains(LAST_FIELD_TAG))
+        if (compound.contains(LAST_FIELD_TAG))
         {
             lastField = BlockPosUtil.read(compound, LAST_FIELD_TAG);
         }

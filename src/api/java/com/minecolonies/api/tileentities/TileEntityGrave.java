@@ -143,7 +143,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
         decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
 
-        if (compound.getAllKeys().contains(TAG_GRAVE_DATA))
+        if (compound.contains(TAG_GRAVE_DATA))
         {
             graveData = new GraveData();
             graveData.read(compound.getCompound(TAG_GRAVE_DATA));

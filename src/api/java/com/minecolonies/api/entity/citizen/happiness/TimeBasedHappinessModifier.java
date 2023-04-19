@@ -15,7 +15,7 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
     /**
      * The time based factors.
      */
-    private final Tuple<Integer, Double>[] timeBasedFactor;
+    private Tuple<Integer, Double>[] timeBasedFactor;
 
     /**
      * The number of passed days.
@@ -30,10 +30,18 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
      * @param supplier        the supplier to get the factor.
      * @param timeBasedFactor tuples about the boost/buff factor over time.
      */
-    public TimeBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final Tuple<Integer, Double>[] timeBasedFactor)
+    public TimeBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final Tuple<Integer, Double>...timeBasedFactor)
     {
         super(id, weight, supplier);
         this.timeBasedFactor = timeBasedFactor;
+    }
+
+    /**
+     * Create an instance of the happiness modifier.
+     */
+    public TimeBasedHappinessModifier()
+    {
+        super();
     }
 
     @Override

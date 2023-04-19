@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen.happiness;
 
 import net.minecraft.nbt.CompoundTag;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Abstract happiness modifier implementation.
@@ -12,12 +12,12 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     /**
      * The id of the modifier.
      */
-    public final String id;
+    public String id;
 
     /**
      * The weight of the modifier.
      */
-    private final double weight;
+    private double weight;
 
     /**
      * Create an instance of the happiness modifier.
@@ -31,6 +31,14 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
         this.weight = weight;
     }
 
+    /**
+     * Create an empty instance of the abstract happiness modifier.
+     */
+    public AbstractHappinessModifier()
+    {
+        super();
+    }
+
     @Override
     public String getId()
     {
@@ -40,13 +48,15 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     @Override
     public void read(final CompoundTag compoundNBT)
     {
-
+        this.id = compoundNBT.getString(TAG_ID);
+        this.weight = compoundNBT.getDouble(TAG_WEIGHT);
     }
 
     @Override
     public void write(final CompoundTag compoundNBT)
     {
-        compoundNBT.putDouble(TAG_VALUE, getFactor());
+        compoundNBT.putString(TAG_ID, this.id);
+        compoundNBT.putDouble(TAG_WEIGHT, this.weight);
     }
 
     @Override
@@ -71,11 +81,5 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     public double getWeight()
     {
         return weight;
-    }
-
-    @Override
-    public void setModifier(int qty, int days)
-    {
-
     }
 }
