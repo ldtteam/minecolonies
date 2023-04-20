@@ -137,14 +137,14 @@ public class QuestInstance implements IQuestInstance
     @Override
     public boolean isValid(final IColony colony)
     {
-        if (questGiver == Integer.MIN_VALUE || colony.getCitizenManager().getCivilian(questGiver) == null || !colony.getCitizenManager().getCivilian(questGiver).isAlive() )
+        if (questGiver == Integer.MIN_VALUE || colony.getCitizenManager().getCivilian(questGiver) == null )
         {
             return false;
         }
 
         for (final int participant : questParticipants)
         {
-            if (colony.getCitizenManager().getCivilian(participant) == null || !colony.getCitizenManager().getCivilian(participant).isAlive())
+            if (colony.getCitizenManager().getCivilian(participant) == null)
             {
                 return false;
             }

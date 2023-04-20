@@ -1769,12 +1769,6 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public boolean isAlive()
-    {
-        return this.colony.getCitizenManager().getCivilian(this.getId()) != null;
-    }
-
-    @Override
     public void addQuestParticipation(final IQuestInstance quest)
     {
         this.participatingQuests.add(quest.getId());
