@@ -1,23 +1,25 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 import static com.minecolonies.api.quests.QuestParseConstant.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
  * Objective type entity killing mining.
@@ -47,11 +49,21 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
      */
     public KillEntityObjectiveTemplateTemplate(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, new DialogueElement("I am still waiting for you to kill %d " + entityToKill.getDescription().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have time for this!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()))), rewards);
+        super(target, buildDialogueTree(entityToKill), rewards);
         this.entitiesToKill = entitiesToKill;
         this.nextObjective = nextObjective;
         this.entityToKill = entityToKill;
+    }
+
+    @NotNull
+    private static DialogueElement buildDialogueTree(final EntityType<?> entityToKill)
+    {
+        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.kill", entityToKill.getDescription());
+        final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+                new IQuestDialogueAnswer.CloseUIDialogueAnswer());
+        final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
+                new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
+        return new DialogueElement(text, List.of(answer1, answer2));
     }
 
     /**

@@ -1,23 +1,25 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 import static com.minecolonies.api.quests.QuestParseConstant.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
  * Objective type tracking block mining.
@@ -49,11 +51,21 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
      */
     public BreakBlockObjectiveTemplate(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, new DialogueElement("I am still waiting for you to mine %d " + blockToMine.getName().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have time for this!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()))), rewards);
+        super(target, buildDialogueTree(blockToMine), rewards);
         this.blocksToMine = blocksToMine;
         this.nextObjective = nextObjective;
         this.blockToMine = blockToMine;
+    }
+
+    @NotNull
+    private static DialogueElement buildDialogueTree(final Block blockToMine)
+    {
+        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.breakblock", blockToMine.getName());
+        final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+                new IQuestDialogueAnswer.CloseUIDialogueAnswer());
+        final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
+                new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
+        return new DialogueElement(text, List.of(answer1, answer2));
     }
 
     /**
