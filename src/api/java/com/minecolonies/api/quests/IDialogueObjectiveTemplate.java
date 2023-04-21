@@ -34,7 +34,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
         /**
          * The text the participant says.
          */
-        private final String text;
+        private final Component text;
 
         /**
          * The player options.
@@ -46,7 +46,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
          * @param text the participant.
          * @param answers the player answers.
          */
-        public DialogueElement(final String text, final List<AnswerElement> answers)
+        public DialogueElement(final Component text, final List<AnswerElement> answers)
         {
             this.text = text;
             this.answers = answers;
@@ -59,7 +59,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
          */
         public static DialogueElement parse(final JsonObject jsonObject)
         {
-            final String text = jsonObject.get(TEXT_ID).getAsString();
+            final Component text = Component.translatable(jsonObject.get(TEXT_ID).getAsString());
             final List<AnswerElement> answerElementList = new ArrayList<>();
             for (final JsonElement answerOption : jsonObject.getAsJsonArray(OPTIONS_ID))
             {
@@ -72,7 +72,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
          * Getter for the element text.
          * @return the text.
          */
-        public String getText()
+        public Component getText()
         {
             return this.text;
         }
@@ -83,7 +83,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
          */
         public List<Component> getOptions()
         {
-            return answers.stream().map(answerElement -> Component.literal(answerElement.text)).collect(Collectors.toList());
+            return answers.stream().map(answerElement -> answerElement.text).collect(Collectors.toList());
         }
 
         /**
@@ -106,7 +106,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
         /**
          * The text the player displays.
          */
-        private final String text;
+        private final Component text;
 
         /**
          * The result from the player answer.
@@ -118,7 +118,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
          * @param text the text for the player.
          * @param answerResult the result from the choice.
          */
-        public AnswerElement(final String text, final IQuestDialogueAnswer answerResult)
+        public AnswerElement(final Component text, final IQuestDialogueAnswer answerResult)
         {
             this.text = text;
             this.answerResult = answerResult;
@@ -132,7 +132,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
         public static AnswerElement parse(final JsonObject jsonObject)
         {
             final JsonObject resultObj = jsonObject.getAsJsonObject(RESULT_ID);
-            return new AnswerElement(jsonObject.get(ANSWER_ID).getAsString(), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().getValue(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
+            return new AnswerElement(Component.translatable(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().getValue(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
         }
     }
 }
