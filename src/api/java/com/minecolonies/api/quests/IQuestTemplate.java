@@ -1,6 +1,7 @@
 package com.minecolonies.api.quests;
 
 import com.minecolonies.api.colony.IColony;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -57,7 +58,7 @@ public interface IQuestTemplate
      * The name of the quest.
      * @return the name of the quest.
      */
-    String getName();
+    Component getName();
 
     /**
      * Get the list of parent quests.

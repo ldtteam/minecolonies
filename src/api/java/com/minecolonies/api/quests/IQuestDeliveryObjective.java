@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Quest objective interface for deliveries.
  */
-public interface IQuestDeliveryObjective
+public interface IQuestDeliveryObjective extends IDialogueObjectiveTemplate
 {
     /**
      * Check if the objective is ready to move on.

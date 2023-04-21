@@ -180,16 +180,17 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public Component getInquiry()
     {
-        return Component.literal(processText(currentElement.getText()));
+        return processText(currentElement.getText());
     }
 
     /**
      * Process the text to include the participant names.
      * @return the processed text.
      */
-    private String processText(final String text)
+    private Component processText(final Component text)
     {
-        String localText = text;
+        // TODO: this is not ideal, we should do something more clever and preserve the item subcomponents for tooltips etc
+        String localText = text.getString();
         if (localText.contains("$"))
         {
             localText = localText.replace("$0", citizen.getColony().getCitizen(this.colonyQuest.getQuestGiverId()).getName());
@@ -203,7 +204,7 @@ public class QuestDialogueInteraction extends StandardInteraction
         {
             localText = localText.replace("%d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
         }
-        return localText;
+        return Component.literal(localText);
     }
 
     @Override
@@ -215,7 +216,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public List<Component> getPossibleResponses()
     {
-        return currentElement == null ? Collections.emptyList() : currentElement.getOptions().stream().map(str -> Component.literal(processText(str.getString()))).collect(Collectors.toList());
+        return currentElement == null ? Collections.emptyList() : currentElement.getOptions().stream().map(this::processText).collect(Collectors.toList());
     }
 
     @Override

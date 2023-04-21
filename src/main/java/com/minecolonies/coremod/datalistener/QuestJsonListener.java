@@ -15,6 +15,7 @@ import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -178,7 +179,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             questTimeout = 10;
         }
 
-        final String questName = jsonObject.get(NAME).getAsString();
+        final Component questName = Component.translatable(jsonObject.get(NAME).getAsString());
 
         final List<IQuestRewardTemplate> questRewards = new ArrayList<>();
         for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())
