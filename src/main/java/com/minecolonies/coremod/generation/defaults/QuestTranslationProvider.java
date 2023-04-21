@@ -1,0 +1,112 @@
+package com.minecolonies.coremod.generation.defaults;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.minecolonies.api.quests.IDialogueObjectiveTemplate.DialogueElement;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.util.GsonHelper;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.resource.ResourcePackLoader;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import static com.minecolonies.api.quests.QuestParseConstant.*;
+import static com.minecolonies.api.quests.registries.QuestRegistries.DIALOGUE_OBJECTIVE_ID;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.coremod.quests.QuestParsingConstants.*;
+
+public class QuestTranslationProvider implements DataProvider
+{
+    private final DataGenerator generator;
+
+    public QuestTranslationProvider(@NotNull final DataGenerator generator)
+    {
+        this.generator = generator;
+    }
+
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "QuestTranslationProvider";
+    }
+
+    @Override
+    public void run(@NotNull final CachedOutput cache) throws IOException
+    {
+        final DataGenerator.PathProvider langProvider = generator.createPathProvider(DataGenerator.Target.RESOURCE_PACK, "lang");
+        final DataGenerator.PathProvider questProvider = generator.createPathProvider(DataGenerator.Target.DATA_PACK, "quests");
+
+        final JsonObject langJson = new JsonObject();
+        final IModFileInfo modFileInfo = ModList.get().getModFileById(MOD_ID);
+        try (final PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo))
+        {
+            for (final ResourceLocation questId : pack.getResources(PackType.SERVER_DATA, MOD_ID,
+                    "quests", id -> id.getPath().endsWith(".json")))
+            {
+                final ResourceLocation questPath = new ResourceLocation(questId.getNamespace(), questId.getPath().replace("quests/", "").replace(".json", ""));
+                final String baseKey = questPath.getNamespace() + ".quests." + questPath.getPath().replace("/", ".");
+
+                final JsonObject json;
+                try (final InputStreamReader reader = new InputStreamReader(pack.getResource(PackType.SERVER_DATA, questId)))
+                {
+                    json = GsonHelper.parse(reader);
+                }
+
+                processQuest(langJson, baseKey, json);
+
+                DataProvider.saveStable(cache, json, questProvider.json(questPath));
+            }
+        }
+
+        DataProvider.saveStable(cache, langJson, langProvider.file(new ResourceLocation(MOD_ID, "quests"), "json"));
+    }
+
+    private void processQuest(final JsonObject langJson, final String baseKey, final JsonObject json)
+    {
+        final String name = json.get(NAME).getAsString();
+        langJson.addProperty(baseKey, name);
+        json.addProperty(NAME, baseKey);
+
+        int objectiveCount = 0;
+        for (final JsonElement objectivesJson : json.get(QUEST_OBJECTIVES).getAsJsonArray())
+        {
+            final String objectiveKey = baseKey + ".obj" + objectiveCount;
+            final JsonObject objective = objectivesJson.getAsJsonObject();
+            processObjective(langJson, objectiveKey, objective);
+            ++objectiveCount;
+        }
+    }
+
+    private void processObjective(final JsonObject langJson, final String baseKey, final JsonObject json)
+    {
+        final ResourceLocation type = new ResourceLocation(json.get(TYPE).getAsString());
+        if (type.equals(DIALOGUE_OBJECTIVE_ID))
+        {
+            final DialogueElement dialogue = DialogueElement.parse(json);
+            langJson.addProperty(baseKey, dialogue.getText().getString());
+            json.addProperty(TEXT_ID, baseKey);
+
+            int answerCount = 0;
+            for (final JsonElement answerJson : json.get(OPTIONS_ID).getAsJsonArray())
+            {
+                final String answerKey = baseKey + ".answer" + answerCount;
+                langJson.addProperty(answerKey, answerJson.getAsJsonObject().get(ANSWER_ID).getAsString());
+                answerJson.getAsJsonObject().addProperty(ANSWER_ID, answerKey);
+
+                final JsonObject result = answerJson.getAsJsonObject().get(RESULT_ID).getAsJsonObject();
+                processObjective(langJson, answerKey + ".reply", result);
+                ++answerCount;
+            }
+        }
+    }
+
+}
