@@ -200,9 +200,9 @@ public class QuestDialogueInteraction extends StandardInteraction
                 localText = localText.replace("$" + index, citizen.getColony().getCitizen(participant).getName());
             }
         }
-        if (localText.contains("%d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
+        if (localText.contains("$d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
         {
-            localText = localText.replace("%d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
+            localText = localText.replace("$d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
         }
         return Component.literal(localText);
     }
