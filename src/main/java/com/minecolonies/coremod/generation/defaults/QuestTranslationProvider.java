@@ -10,13 +10,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.resource.ResourcePackLoader;
+import net.minecraftforge.resource.PathPackResources;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
 import static com.minecolonies.api.quests.registries.QuestRegistries.DIALOGUE_OBJECTIVE_ID;
@@ -46,8 +45,7 @@ public class QuestTranslationProvider implements DataProvider
         final DataGenerator.PathProvider questProvider = generator.createPathProvider(DataGenerator.Target.DATA_PACK, "quests");
 
         final JsonObject langJson = new JsonObject();
-        final IModFileInfo modFileInfo = ModList.get().getModFileById(MOD_ID);
-        try (final PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo))
+        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", Path.of("..", "src", "main", "resources")))
         {
             for (final ResourceLocation questId : pack.getResources(PackType.SERVER_DATA, MOD_ID,
                     "quests", id -> id.getPath().endsWith(".json")))
