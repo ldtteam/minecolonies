@@ -2,7 +2,6 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IDialogueObjectiveTemplate.DialogueElement;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -89,8 +88,7 @@ public class QuestTranslationProvider implements DataProvider
         final ResourceLocation type = new ResourceLocation(json.get(TYPE).getAsString());
         if (type.equals(DIALOGUE_OBJECTIVE_ID))
         {
-            final DialogueElement dialogue = DialogueElement.parse(json);
-            langJson.addProperty(baseKey, dialogue.getText().getString());
+            langJson.addProperty(baseKey, json.get(TEXT_ID).getAsString());
             json.addProperty(TEXT_ID, baseKey);
 
             int answerCount = 0;
