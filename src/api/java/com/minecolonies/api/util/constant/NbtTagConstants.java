@@ -56,6 +56,8 @@ public final class NbtTagConstants
     public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
     public static final String TAG_STATUS                 = "status";
     public static final String TAG_DAY                    = "day";
+    public static final String TAG_INVERTED               = "inverted";
+    public static final String TAG_PERIOD                 = "period";
     public static final String TAG_IS_BUILT               = "isBuilt";
     public static final String TAG_CUSTOM_NAME            = "customName";
     public static final String TAG_OTHER_LEVEL            = "otherLevel";
@@ -701,6 +703,7 @@ public final class NbtTagConstants
 
     public static final String TAG_MODIFIER_TYPE = "modifier";
     public static final String TAG_WEIGHT = "weight";
+    public static final String TAG_SUPPLIER = "supplier";
 
     /**
      * Private constructor to hide the implicit one.

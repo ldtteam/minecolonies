@@ -1688,6 +1688,7 @@
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
   "com.minecolonies.coremod.gui.townhall.happiness.health": "Health",
   "com.minecolonies.coremod.gui.townhall.happiness.idleatjob": "Idling as a Worker",
+  "com.minecolonies.coremod.gui.townhall.happiness.quest": "Quest",
 
   "com.minecolonies.coremod.gui.townhall.happiness.school": "Kids in School",
   "com.minecolonies.coremod.gui.townhall.happiness.security": "Guards in the Colony",
@@ -1704,6 +1705,7 @@
   "com.minecolonies.coremod.gui.townhall.happiness.desc.unemployment": "Increases happiness if colonists have a job, and for higher-level work buildings.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.health": "Decreases happiness if colonists are sick.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.idleatjob": "Decreases happiness if colonists are unable to work due to missing tools or farmer fields.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.quest": "Altered happiness because of quest participation.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.desc.school": "Increases happiness for child colonists if they are assigned to a school.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.security": "Increases happiness as more guards are employed at the colony.",

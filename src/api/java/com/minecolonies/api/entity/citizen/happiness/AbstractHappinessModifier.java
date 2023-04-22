@@ -1,6 +1,8 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
+import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -9,6 +11,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public abstract class AbstractHappinessModifier implements IHappinessModifier
 {
+    /**
+     * The supplier to get the happiness factor.
+     */
+    private IHappinessSupplierWrapper supplier;
+
     /**
      * The id of the modifier.
      */
@@ -25,10 +32,17 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
      * @param id     its string id.
      * @param weight its weight.
      */
-    public AbstractHappinessModifier(final String id, final double weight)
+    public AbstractHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier)
     {
         this.id = id;
         this.weight = weight;
+        this.supplier = supplier;
+    }
+
+    @Override
+    public double getFactor(@Nullable final ICitizenData citizenData)
+    {
+        return citizenData == null ? supplier.getLastCachedValue() : supplier.getValue(citizenData);
     }
 
     /**
@@ -50,6 +64,16 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     {
         this.id = compoundNBT.getString(TAG_ID);
         this.weight = compoundNBT.getDouble(TAG_WEIGHT);
+        final CompoundTag supplierCompound = compoundNBT.getCompound(TAG_SUPPLIER);
+        if (supplierCompound.contains(TAG_ID))
+        {
+            supplier = new DynamicHappinessSupplier();
+        }
+        else
+        {
+            supplier = new StaticHappinessSupplier();
+        }
+        supplier.deserializeNBT(supplierCompound);
     }
 
     @Override
@@ -57,24 +81,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     {
         compoundNBT.putString(TAG_ID, this.id);
         compoundNBT.putDouble(TAG_WEIGHT, this.weight);
-    }
-
-    @Override
-    public void dayEnd()
-    {
-
-    }
-
-    @Override
-    public void reset()
-    {
-
-    }
-
-    @Override
-    public int getDays()
-    {
-        return 0;
+        compoundNBT.put(TAG_SUPPLIER, this.supplier.serializeNBT());
     }
 
     @Override

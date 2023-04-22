@@ -1472,7 +1472,7 @@ public class Colony implements IColony
         double happinessSum = 0;
         for (final ICitizenData citizen : citizenManager.getCitizens())
         {
-            happinessSum += citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony());
+            happinessSum += citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen);
         }
         return happinessSum / citizenManager.getCitizens().size();
     }

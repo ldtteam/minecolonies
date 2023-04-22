@@ -171,7 +171,11 @@ public class QuestInstance implements IQuestInstance
             colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
         }
 
-        IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(this.objectiveProgress).onCancellation(this);
+        final IQuestTemplate instance = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
+        if (instance != null && instance.getObjective(this.objectiveProgress) != null)
+        {
+            instance.getObjective(this.objectiveProgress).onCancellation(this);
+        }
         colony.getQuestManager().deleteQuest(this.questTemplateID);
     }
 

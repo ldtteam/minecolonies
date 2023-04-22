@@ -2,6 +2,8 @@ package com.minecolonies.coremod.quests.rewards;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -60,11 +62,11 @@ public class HappinessRewardTemplate implements IQuestRewardTemplate
     {
         if (this.target == 0)
         {
-            ((CitizenData) colonyQuest.getQuestGiver()).getCitizenHappinessHandler().getModifier(QUEST).setModifier(qty, days);
+            ((CitizenData) colonyQuest.getQuestGiver()).getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(QUEST, 2.0, new StaticHappinessSupplier(qty), days));
         }
         else
         {
-            ((CitizenData) colonyQuest.getParticipant(this.target)).getCitizenHappinessHandler().getModifier(QUEST).setModifier(qty, days);
+            ((CitizenData) colonyQuest.getParticipant(this.target)).getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(QUEST, 2.0, new StaticHappinessSupplier(qty), days));
         }
     }
 }

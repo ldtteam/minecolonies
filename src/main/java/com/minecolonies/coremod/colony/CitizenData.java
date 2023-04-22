@@ -950,7 +950,7 @@ public class CitizenData implements ICitizenData
         buf.writeFloat(getEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeDouble(getSaturation());
-        buf.writeDouble(citizenHappinessHandler.getHappiness(getColony()));
+        buf.writeDouble(citizenHappinessHandler.getHappiness(getColony(), this));
 
         buf.writeNbt(citizenSkillHandler.write());
 
@@ -1356,7 +1356,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_LEVEL_MAP) && !nbtTagCompound.contains(TAG_NEW_SKILLS))
         {
-            citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony()));
+            citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony(), this));
             final Map<String, Integer> levels = new HashMap<>();
             final ListTag levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Tag.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)

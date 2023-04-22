@@ -1,16 +1,16 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.function.DoubleSupplier;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The Expiration based happiness modifier. These modifiers are invoked for a limited period of time and have a happiness buff or boost for this time on the happiness. This can
  * also be inverted resulting in a buff or boost if this modifier is not invoked regularly.
  */
-public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
+public final class ExpirationBasedHappinessModifier extends AbstractHappinessModifier implements ITimeBasedHappinessModifier
 {
     /**
      * The number of passed days.
@@ -35,7 +35,7 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
      * @param period   the period.
      * @param supplier the supplier to get the factor.
      */
-    public ExpirationBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final int period)
+    public ExpirationBasedHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier, final int period)
     {
         super(id, weight, supplier);
         this.period = period;
@@ -50,7 +50,7 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
      * @param supplier the supplier to get the factor.
      * @param inverted if inverted.
      */
-    public ExpirationBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final int period, final boolean inverted)
+    public ExpirationBasedHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier, final int period, final boolean inverted)
     {
         this(id, weight, supplier, period);
         this.inverted = inverted;
@@ -65,23 +65,23 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     }
 
     @Override
-    public double getFactor()
+    public double getFactor(final ICitizenData data)
     {
         if (inverted)
         {
-            if (days > 0)
+            if (days <= period)
             {
-                return 1;
+                return 1.0;
             }
-            return super.getFactor();
+            return super.getFactor(data);
         }
         else
         {
-            if (days > 0)
+            if (days < period)
             {
-                return super.getFactor();
+                return super.getFactor(data);
             }
-            return 1;
+            return 1.0;
         }
     }
 
@@ -92,9 +92,8 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     }
 
     @Override
-    public void dayEnd()
+    public void dayEnd(final ICitizenData data)
     {
-        super.dayEnd();
         if (days > 0)
         {
             days--;
@@ -112,20 +111,17 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     {
         super.read(compoundNBT);
         this.days = compoundNBT.getInt(TAG_DAY);
+        this.inverted = compoundNBT.getBoolean(TAG_INVERTED);
+        this.period = compoundNBT.getInt(TAG_PERIOD);
     }
 
     @Override
     public void write(final CompoundTag compoundNBT)
     {
         super.write(compoundNBT);
+        compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.EXPIRATION_MODIFIER.toString());
         compoundNBT.putInt(TAG_DAY, days);
-    }
-
-    @Override
-    public void setModifier(final int qty, final int days)
-    {
-        super.setModifier(qty, days);
-        this.days = days;
-        setSupplier(() -> qty);
+        compoundNBT.putBoolean(TAG_INVERTED, inverted);
+        compoundNBT.putInt(TAG_PERIOD, period);
     }
 }

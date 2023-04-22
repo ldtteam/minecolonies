@@ -47,7 +47,7 @@ public interface ICitizenHappinessHandler
      * @param colony the colony.
      * @return the happiness.
      */
-    double getHappiness(IColony colony);
+    double getHappiness(final IColony colony, final ICitizenData citizenData);
 
     /**
      * Read the handler from NBT.

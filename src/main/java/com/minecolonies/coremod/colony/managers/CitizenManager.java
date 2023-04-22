@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.happiness.IHappinessModifier;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -521,11 +522,11 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void updateModifier(final String id)
+    public void injectModifier(final IHappinessModifier modifier)
     {
         for (final ICitizenData citizenData : citizens.values())
         {
-            citizenData.getCitizenHappinessHandler().getModifier(id).reset();
+            citizenData.getCitizenHappinessHandler().addModifier(modifier);
         }
     }
 
