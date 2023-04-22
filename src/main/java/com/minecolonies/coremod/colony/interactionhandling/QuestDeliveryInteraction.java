@@ -129,15 +129,15 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
      */
     private void triggerResponseState(final Player player, final IQuestObjectiveTemplate objective)
     {
-        if (objective instanceof IQuestDeliveryObjective)
+        if (objective instanceof final IQuestDeliveryObjective delivery)
         {
-            if (((IQuestDeliveryObjective) objective).hasItem(player, colonyQuest))
+            if (delivery.hasItem(player, colonyQuest))
             {
-                currentElement = ((IQuestDeliveryObjective) objective).getReadyDialogueTree();
+                currentElement = delivery.getReadyDialogueTree();
             }
             else
             {
-                currentElement = ((IDialogueObjectiveTemplate) objective).getDialogueTree();
+                currentElement = delivery.getDialogueTree();
             }
         }
     }

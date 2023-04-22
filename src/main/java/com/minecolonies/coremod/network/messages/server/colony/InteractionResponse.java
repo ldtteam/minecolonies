@@ -41,18 +41,18 @@ public class InteractionResponse extends AbstractColonyServerMessage
     /**
      * Trigger the server response handler.
      *
-     * @param colonyId  the colony id.
-     * @param citizenId the citizen id.
-     * @param dimension the dimension the colony and citizen are in.
-     * @param key       the key of the handler.
-     * @param response  the response to trigger.
+     * @param colonyId   the colony id.
+     * @param citizenId  the citizen id.
+     * @param dimension  the dimension the colony and citizen are in.
+     * @param key        the key of the handler.
+     * @param responseId the response to trigger.
      */
     public InteractionResponse(
       final int colonyId,
       final int citizenId,
       final ResourceKey<Level> dimension,
       @NotNull final Component key,
-      @NotNull final int responseId)
+      final int responseId)
     {
         super(dimension, colonyId);
         this.citizenId = citizenId;

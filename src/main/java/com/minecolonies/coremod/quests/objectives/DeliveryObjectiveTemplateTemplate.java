@@ -8,6 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
@@ -70,11 +71,19 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
 
     private void buildDialogueTrees()
     {
-        this.readyDialogueElement = new DialogueElement("Oh hey, you brought " + item.getDisplayName().getString() + " can I have it?",
-          List.of(new AnswerElement("Yes, here you are!", new IQuestDialogueAnswer.NextObjectiveDialogueAnswer(this.nextObjective)), new AnswerElement("No, wait!", new IQuestDialogueAnswer.CloseUIDialogueAnswer())));
+        final Component ready = Component.translatable("com.minecolonies.coremod.questobjectives.delivery.ready", item.getDisplayName());
+        final AnswerElement ready1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.delivery.ready.give"),
+                new IQuestDialogueAnswer.NextObjectiveDialogueAnswer(this.nextObjective));
+        final AnswerElement ready2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.delivery.ready.later"),
+                new IQuestDialogueAnswer.CloseUIDialogueAnswer());
+        this.readyDialogueElement = new DialogueElement(ready, List.of(ready1, ready2));
 
-        this.waitingDialogueElement = new DialogueElement("I am still waiting for " + item.getDisplayName().getString() + " !",
-          List.of(new AnswerElement("Sorry, be right back!", new IQuestDialogueAnswer.CloseUIDialogueAnswer()), new AnswerElement("I don't have any of it!", new IQuestDialogueAnswer.QuestCancellationDialogueAnswer())));
+        final Component waiting = Component.translatable("com.minecolonies.coremod.questobjectives.delivery.waiting", item.getDisplayName());
+        final AnswerElement waiting1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+                new IQuestDialogueAnswer.CloseUIDialogueAnswer());
+        final AnswerElement waiting2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.delivery.waiting.cancel"),
+                new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
+        this.waitingDialogueElement = new DialogueElement(waiting, List.of(waiting1, waiting2));
     }
 
     /**
