@@ -83,10 +83,14 @@ public class JigsawPlacementHandler implements IPlacementHandler
                 Log.getLogger().warn("Unable to place Jigsaw");
             }
 
+            if (finalState.getBlock() == Blocks.STRUCTURE_VOID)
+            {
+                return ActionProcessingResult.SUCCESS;
+            }
+
             WorldUtil.setBlockState(world, pos, finalState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
         }
-
-
+        
         return ActionProcessingResult.SUCCESS;
     }
 
@@ -121,7 +125,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
             Log.getLogger().warn("Unable to place Jigsaw");
         }
 
-        if (finalState.getBlock() == Blocks.AIR)
+        if (finalState.getBlock() == Blocks.AIR || finalState.getBlock() == Blocks.STRUCTURE_VOID)
         {
             return Collections.emptyList();
         }
