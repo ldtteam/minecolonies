@@ -156,6 +156,15 @@ public class BlockSetting implements ISetting
 
     }
 
+    @Override
+    public void updateSetting(final ISetting iSetting)
+    {
+        if (iSetting instanceof final BlockSetting other)
+        {
+            setValue(other.getValue());
+        }
+    }
+
     /**
      * Special block getter for shapes.
      */
