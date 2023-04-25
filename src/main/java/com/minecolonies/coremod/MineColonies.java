@@ -218,6 +218,17 @@ public class MineColonies
         }
     }
 
+    @SubscribeEvent
+    public static void onConfigLoaded(final ModConfigEvent.Loading event)
+    {
+        if (event.getConfig().getType() == ModConfig.Type.COMMON)
+        {
+            // ModConfig fires for each of server, client, and common.
+            // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
+            RequestSystemInitializer.reconfigureLogging();
+        }
+    }
+
     /**
      * Get the config handler.
      *
