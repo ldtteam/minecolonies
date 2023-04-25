@@ -271,7 +271,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Retrieve a material from the building. For this go to the building if no position has been set. Then check for the chest with the required material and set the position and
+     * Retrieve a material from the building. For this check for the chest with the required material and set the position and
      * return.
      * <p>
      * If the position has been set navigate to it. On arrival transfer to inventory and return to StartWorking.
@@ -281,11 +281,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private IAIState getNeededItem()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-
-        if (walkTo == null && walkToBuilding())
-        {
-            return getState();
-        }
 
         if (needsCurrently == null)
         {
