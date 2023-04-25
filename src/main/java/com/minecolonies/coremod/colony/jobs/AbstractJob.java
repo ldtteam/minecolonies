@@ -145,14 +145,14 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public void deserializeNBT(final CompoundTag compound)
     {
         this.asyncRequests.clear();
-        if (compound.getAllKeys().contains(TAG_ASYNC_REQUESTS))
+        if (compound.contains(TAG_ASYNC_REQUESTS))
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Tag.TAG_COMPOUND))
                                         .map(StandardFactoryController.getInstance()::deserialize)
                                         .map(o -> (IToken<?>) o)
                                         .collect(Collectors.toSet()));
         }
-        if (compound.getAllKeys().contains(TAG_ACTIONS_DONE))
+        if (compound.contains(TAG_ACTIONS_DONE))
         {
             actionsDone = compound.getInt(TAG_ACTIONS_DONE);
         }

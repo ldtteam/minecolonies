@@ -147,7 +147,7 @@ public class MinerLevel
     {
 
         this.depth = compound.getInt(TAG_DEPTH);
-        if (compound.getAllKeys().contains(TAG_LEVEL_SIGN))
+        if (compound.contains(TAG_LEVEL_SIGN))
         {
             this.levelSign = BlockPosUtil.read(compound, TAG_LEVEL_SIGN);
         }
@@ -163,7 +163,7 @@ public class MinerLevel
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
-        final boolean hasDoubles = compound.getAllKeys().contains(TAG_LADDERX);
+        final boolean hasDoubles = compound.contains(TAG_LADDERX);
 
         final int ladderX;
         final int ladderZ;

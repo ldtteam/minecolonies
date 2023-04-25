@@ -8,12 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 public interface IQuestParticipant
 {
     /**
-     * Check if the participant is still available.
-     * @return true if so.
-     */
-    boolean isAlive();
-
-    /**
      * Notify quest participant about their participation.
      * @param quest the quest to assign to the entity.
      */

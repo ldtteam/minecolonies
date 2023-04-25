@@ -188,7 +188,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.getAllKeys().contains(TAG_CORNER1) && compound.getAllKeys().contains(TAG_CORNER2))
+        if (compound.contains(TAG_CORNER1) && compound.contains(TAG_CORNER2))
         {
             setCorners(BlockPosUtil.read(compound, TAG_CORNER1), BlockPosUtil.read(compound, TAG_CORNER2));
         }

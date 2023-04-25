@@ -33,7 +33,7 @@ public final class ModQuestInitializer
 
     private ModQuestInitializer()
     {
-        throw new IllegalStateException("Tried to initialize: ModResearchRequirementInitializer but this is a Utility class.");
+        throw new IllegalStateException("Tried to initialize: ModQuestInitializer but this is a Utility class.");
     }
 
     static
