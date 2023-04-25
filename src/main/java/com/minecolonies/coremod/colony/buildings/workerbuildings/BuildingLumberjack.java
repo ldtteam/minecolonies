@@ -156,7 +156,7 @@ public class BuildingLumberjack extends AbstractBuilding
     {
         super.deserializeNBT(compound);
 
-        if (compound.getAllKeys().contains(TAG_RESTRICT_START))
+        if (compound.contains(TAG_RESTRICT_START))
         {
             startRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
         }
@@ -165,7 +165,7 @@ public class BuildingLumberjack extends AbstractBuilding
             startRestriction = null;
         }
 
-        if (compound.getAllKeys().contains(TAG_RESTRICT_END))
+        if (compound.contains(TAG_RESTRICT_END))
         {
             endRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_END));
         }

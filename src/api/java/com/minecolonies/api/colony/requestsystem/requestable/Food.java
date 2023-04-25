@@ -111,7 +111,7 @@ public class Food implements IDeliverable
     public static Food deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final int count = compound.getInt(NBT_COUNT);
-        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
         final List<ItemStorage> items = new ArrayList<>();
 
         if (compound.contains(NBT_EXCLUSION))

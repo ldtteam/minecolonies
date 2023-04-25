@@ -350,7 +350,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public void load(@NotNull final CompoundTag compound)
     {
         super.load(compound);
-        if (compound.getAllKeys().contains(TAG_COLONY))
+        if (compound.contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);
         }

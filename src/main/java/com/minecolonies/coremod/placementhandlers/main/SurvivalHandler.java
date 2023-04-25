@@ -162,11 +162,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 boolean finishedUpgrade = false;
                 if (compound != null)
                 {
-                    if (compound.getAllKeys().contains(TAG_OTHER_LEVEL))
+                    if (compound.contains(TAG_OTHER_LEVEL))
                     {
                         level = compound.getInt(TAG_OTHER_LEVEL);
                     }
-                    if (compound.getAllKeys().contains(TAG_PASTEABLE))
+                    if (compound.contains(TAG_PASTEABLE))
                     {
                         String newBlueprintPath = blueprintPath;
                         newBlueprintPath = newBlueprintPath.substring(0, newBlueprintPath.length() - 1);

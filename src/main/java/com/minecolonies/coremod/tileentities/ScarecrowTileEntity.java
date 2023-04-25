@@ -396,7 +396,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     {
         final CompoundTag compound = packet.getTag();
         this.load(compound);
-        if (compound.getAllKeys().contains(TAG_COLONY_ID))
+        if (compound.contains(TAG_COLONY_ID))
         {
             setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), level.dimension()));
         }

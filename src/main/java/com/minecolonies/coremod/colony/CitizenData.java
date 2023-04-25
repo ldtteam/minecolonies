@@ -950,7 +950,7 @@ public class CitizenData implements ICitizenData
         buf.writeFloat(getEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeDouble(getSaturation());
-        buf.writeDouble(citizenHappinessHandler.getHappiness(getColony()));
+        buf.writeDouble(citizenHappinessHandler.getHappiness(getColony(), this));
 
         buf.writeNbt(citizenSkillHandler.write());
 
@@ -1281,7 +1281,7 @@ public class CitizenData implements ICitizenData
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
 
-        if (nbtTagCompound.getAllKeys().contains(TAG_SUFFIX))
+        if (nbtTagCompound.contains(TAG_SUFFIX))
         {
             textureSuffix = nbtTagCompound.getString(TAG_SUFFIX);
         }
@@ -1301,12 +1301,12 @@ public class CitizenData implements ICitizenData
 
         saturation = nbtTagCompound.getDouble(TAG_SATURATION);
 
-        if (nbtTagCompound.getAllKeys().contains("job"))
+        if (nbtTagCompound.contains("job"))
         {
             setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job")));
         }
 
-        if (nbtTagCompound.getAllKeys().contains(TAG_INVENTORY))
+        if (nbtTagCompound.contains(TAG_INVENTORY))
         {
             final ListTag nbttaglist = nbtTagCompound.getList(TAG_INVENTORY, 10);
             this.inventory.read(nbttaglist);
@@ -1319,19 +1319,19 @@ public class CitizenData implements ICitizenData
             name = generateName(random, isFemale(), getColony(), getColony().getCitizenNameFile());
         }
 
-        if (nbtTagCompound.getAllKeys().contains(TAG_ASLEEP))
+        if (nbtTagCompound.contains(TAG_ASLEEP))
         {
             bedPos = BlockPosUtil.read(nbtTagCompound, TAG_BEDS);
             isAsleep = nbtTagCompound.getBoolean(TAG_ASLEEP);
         }
 
-        if (nbtTagCompound.getAllKeys().contains(TAG_JUST_ATE))
+        if (nbtTagCompound.contains(TAG_JUST_ATE))
         {
             justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
         }
 
         //  Citizen chat options.
-        if (nbtTagCompound.getAllKeys().contains(TAG_CHAT_OPTIONS))
+        if (nbtTagCompound.contains(TAG_CHAT_OPTIONS))
         {
             final ListTag handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < handlerTagList.size(); ++i)
@@ -1354,9 +1354,9 @@ public class CitizenData implements ICitizenData
         this.citizenHappinessHandler.read(nbtTagCompound);
         this.citizenMournHandler.read(nbtTagCompound);
 
-        if (nbtTagCompound.getAllKeys().contains(TAG_LEVEL_MAP) && !nbtTagCompound.getAllKeys().contains(TAG_NEW_SKILLS))
+        if (nbtTagCompound.contains(TAG_LEVEL_MAP) && !nbtTagCompound.contains(TAG_NEW_SKILLS))
         {
-            citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony()));
+            citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony(), this));
             final Map<String, Integer> levels = new HashMap<>();
             final ListTag levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Tag.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)
@@ -1766,12 +1766,6 @@ public class CitizenData implements ICitizenData
             citizenChatOptions.put(comp, new QuestDialogueInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
         }
         this.markDirty();
-    }
-
-    @Override
-    public boolean isAlive()
-    {
-        return this.colony.getCitizenManager().getCivilian(this.getId()) != null;
     }
 
     @Override

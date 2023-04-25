@@ -1077,17 +1077,17 @@ public final class StandardRequestFactories
 
         request.addChildren(childTokens);
 
-        if (compound.getAllKeys().contains(NBT_PARENT))
+        if (compound.contains(NBT_PARENT))
         {
             request.setParent(controller.deserialize(compound.getCompound(NBT_PARENT)));
         }
 
-        if (compound.getAllKeys().contains(NBT_RESULT))
+        if (compound.contains(NBT_RESULT))
         {
             request.setResult(typeDeserialization.apply(controller, compound.getCompound(NBT_RESULT)));
         }
 
-        if (compound.getAllKeys().contains(NBT_DELIVERIES))
+        if (compound.contains(NBT_DELIVERIES))
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
             final ListTag deliveriesList = compound.getList(NBT_DELIVERIES, Tag.TAG_COMPOUND);

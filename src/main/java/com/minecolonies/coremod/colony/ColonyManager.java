@@ -637,7 +637,7 @@ public final class ColonyManager implements IColonyManager
             serverUUID = compound.getUUID(TAG_UUID);
         }
 
-        if (compound.getAllKeys().contains(TAG_COMPATABILITY_MANAGER))
+        if (compound.contains(TAG_COMPATABILITY_MANAGER))
         {
             compatibilityManager.read(compound.getCompound(TAG_COMPATABILITY_MANAGER));
         }

@@ -92,14 +92,14 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     {
         super.deserializeNBT(compound);
 
-        if (compound.getAllKeys().contains(TAG_WATER_POND))
+        if (compound.contains(TAG_WATER_POND))
         {
             water = new Tuple<>(BlockPosUtil.read(compound, TAG_WATER_POND), BlockPosUtil.read(compound, TAG_PARENT_POND));
         }
 
         ponds = new ArrayList<>();
 
-        if (compound.getAllKeys().contains(TAG_PONDS))
+        if (compound.contains(TAG_PONDS))
         {
             final ListTag listOfPonds = compound.getList(TAG_PONDS, Tag.TAG_COMPOUND);
             for (int i = 0; i < listOfPonds.size(); i++)

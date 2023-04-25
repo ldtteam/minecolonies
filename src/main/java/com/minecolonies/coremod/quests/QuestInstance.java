@@ -137,14 +137,14 @@ public class QuestInstance implements IQuestInstance
     @Override
     public boolean isValid(final IColony colony)
     {
-        if (questGiver == Integer.MIN_VALUE || colony.getCitizenManager().getCivilian(questGiver) == null || !colony.getCitizenManager().getCivilian(questGiver).isAlive() )
+        if (questGiver == Integer.MIN_VALUE || colony.getCitizenManager().getCivilian(questGiver) == null )
         {
             return false;
         }
 
         for (final int participant : questParticipants)
         {
-            if (colony.getCitizenManager().getCivilian(participant) == null || !colony.getCitizenManager().getCivilian(participant).isAlive())
+            if (colony.getCitizenManager().getCivilian(participant) == null)
             {
                 return false;
             }
@@ -171,7 +171,11 @@ public class QuestInstance implements IQuestInstance
             colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
         }
 
-        IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(this.objectiveProgress).onCancellation(this);
+        final IQuestTemplate instance = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
+        if (instance != null && instance.getObjective(this.objectiveProgress) != null)
+        {
+            instance.getObjective(this.objectiveProgress).onCancellation(this);
+        }
         colony.getQuestManager().deleteQuest(this.questTemplateID);
     }
 

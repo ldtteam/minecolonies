@@ -35,6 +35,7 @@ public final class HappinessConstants
      * Storage tag for the handler.
      */
     public static final String TAG_HAPPINESS = "happinessHandler";
+    public static final String TAG_NEW_HAPPINESS = "newhappinesshandler";
 
     /**
      * Happiness modifiers

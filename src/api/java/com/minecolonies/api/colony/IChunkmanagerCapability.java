@@ -105,7 +105,7 @@ public interface IChunkmanagerCapability
           @NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance,
           @Nullable final Direction side, @NotNull final Tag nbt)
         {
-            if (nbt instanceof CompoundTag && ((CompoundTag) nbt).getAllKeys().contains(TAG_ALL_CHUNK_STORAGES))
+            if (nbt instanceof CompoundTag && ((CompoundTag) nbt).contains(TAG_ALL_CHUNK_STORAGES))
             {
                 NBTUtils.streamCompound(((CompoundTag) nbt).getList(TAG_ALL_CHUNK_STORAGES, Tag.TAG_COMPOUND))
                   .map(Storage::read).forEach(key -> instance.addChunkStorage(key.getA().x, key.getA().z, key.getB()));
