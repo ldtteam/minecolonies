@@ -2388,6 +2388,7 @@
   "com.minecolonies.gui.edit": "Edit",
   "com.minecolonies.gui.details": "More Details...",
 
+  "com.minecolonies.coremod.quest.completed": "You have successfully completed the quest: %s",
   "com.minecolonies.coremod.questobjectives.answer.later": "Sorry, be right back!",
   "com.minecolonies.coremod.questobjectives.answer.cancel": "I don't have time for this!",
   "com.minecolonies.coremod.questobjectives.breakblock": "I am still waiting for you to mine $d %s!",

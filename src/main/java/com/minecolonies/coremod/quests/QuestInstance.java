@@ -249,7 +249,7 @@ public class QuestInstance implements IQuestInstance
         if (player != null)
         {
             final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
-            player.sendSystemMessage(Component.literal("You have successfully completed the quest: " + questData.getName()));
+            player.sendSystemMessage(Component.translatable("com.minecolonies.coremod.quest.completed", questData.getName()));
         }
     }
 
