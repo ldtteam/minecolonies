@@ -21,6 +21,13 @@ import static com.minecolonies.api.quests.registries.QuestRegistries.DIALOGUE_OB
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.coremod.quests.QuestParsingConstants.*;
 
+/**
+ * Magic translator for quests.  This parses the existing quest JSON files and moves the dialogue elements to
+ * translation resources, so that translations can be provided for them.
+ *
+ * This requires that the 'source' quests under src/main/resources/data/minecolonies/quests only contain en-US
+ * text and do not already contain translation keys.
+ */
 public class QuestTranslationProvider implements DataProvider
 {
     private final DataGenerator generator;
