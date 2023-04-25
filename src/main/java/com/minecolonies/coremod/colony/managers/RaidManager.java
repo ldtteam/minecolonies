@@ -811,7 +811,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void read(final CompoundTag compound)
     {
-        if (compound.getAllKeys().contains(TAG_RAIDABLE))
+        if (compound.contains(TAG_RAIDABLE))
         {
             setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }

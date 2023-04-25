@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -38,17 +37,18 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.IItemHandler;
@@ -68,7 +68,6 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * This class provides basic ai functionality.
@@ -269,7 +268,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Retrieve a material from the building. For this go to the building if no position has been set. Then check for the chest with the required material and set the position and
+     * Retrieve a material from the building. For this check for the chest with the required material and set the position and
      * return.
      * <p>
      * If the position has been set navigate to it. On arrival transfer to inventory and return to StartWorking.
@@ -279,11 +278,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private IAIState getNeededItem()
     {
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-
-        if (walkTo == null && walkToBuilding())
-        {
-            return getState();
-        }
 
         if (needsCurrently == null)
         {

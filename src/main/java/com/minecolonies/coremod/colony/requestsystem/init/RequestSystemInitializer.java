@@ -41,6 +41,8 @@ public class RequestSystemInitializer
 
     public static void reconfigureLogging()
     {
+        LogManager.getLogger(MineColonies.class.getName()).warn("Reconfiguring logging for RS.");
+
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
         final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));
@@ -53,6 +55,8 @@ public class RequestSystemInitializer
 
         LogManager.getLogger(String.format("%s.requestsystem", Constants.MOD_ID)).warn(String.format("Updated logging config. RS Debug logging enabled: %s",
           MineColonies.getConfig().getCommon().rsEnableDebugLogging.get()));
+
+        LogManager.getLogger(MineColonies.class.getName()).warn("Reconfigured logging for RS.");
     }
 
     private static LoggerConfig getLoggerConfiguration(@NotNull final Configuration configuration, @NotNull final String loggerName)

@@ -744,7 +744,7 @@ public class Colony implements IColony
 
         graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
 
-        if (compound.getAllKeys().contains(TAG_PROGRESS_MANAGER))
+        if (compound.contains(TAG_PROGRESS_MANAGER))
         {
             progressManager.read(compound);
         }
@@ -755,7 +755,7 @@ public class Colony implements IColony
         questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
-        if (compound.getAllKeys().contains(TAG_RESEARCH))
+        if (compound.contains(TAG_RESEARCH))
         {
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
             // now that buildings, colonists, and research are loaded, check for new autoStartResearch.
@@ -798,7 +798,7 @@ public class Colony implements IColony
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
-        if (compound.getAllKeys().contains(TAG_MOVE_IN))
+        if (compound.contains(TAG_MOVE_IN))
         {
             moveIn = compound.getBoolean(TAG_MOVE_IN);
         }
@@ -814,7 +814,7 @@ public class Colony implements IColony
 
         raidManager.read(compound);
 
-        if (compound.getAllKeys().contains(TAG_AUTO_DELETE))
+        if (compound.contains(TAG_AUTO_DELETE))
         {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
         }
@@ -823,20 +823,20 @@ public class Colony implements IColony
             this.canColonyBeAutoDeleted = true;
         }
 
-        if (compound.getAllKeys().contains(TAG_TEAM_COLOR))
+        if (compound.contains(TAG_TEAM_COLOR))
         {
             // This read can occur before the world is non-null, due to Minecraft's order of operations for capabilities.
             // As a result, setColonyColor proper must wait until onWorldLoad fires.
             this.colonyTeamColor = ChatFormatting.values()[compound.getInt(TAG_TEAM_COLOR)];
         }
 
-        if (compound.getAllKeys().contains(TAG_FLAG_PATTERNS))
+        if (compound.contains(TAG_FLAG_PATTERNS))
         {
             this.setColonyFlag(compound.getList(TAG_FLAG_PATTERNS, Constants.TAG_COMPOUND));
         }
 
         this.requestManager.reset();
-        if (compound.getAllKeys().contains(TAG_REQUESTMANAGER))
+        if (compound.contains(TAG_REQUESTMANAGER))
         {
             this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
@@ -1472,7 +1472,7 @@ public class Colony implements IColony
         double happinessSum = 0;
         for (final ICitizenData citizen : citizenManager.getCitizens())
         {
-            happinessSum += citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony());
+            happinessSum += citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen);
         }
         return happinessSum / citizenManager.getCitizens().size();
     }

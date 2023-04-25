@@ -36,6 +36,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
+import static com.minecolonies.api.util.constant.HappinessConstants.SLEPTTONIGHT;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISleep.SleepState.*;
 
 /**
@@ -284,7 +285,7 @@ public class EntityAISleep extends Goal
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
                     usedBed = null;
                 }
-                citizen.getCitizenData().getCitizenHappinessHandler().resetModifier("slepttonight");
+                citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(SLEPTTONIGHT);
             }
         }
     }

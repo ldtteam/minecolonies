@@ -54,7 +54,7 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
         super.load(compound);
 
         textLines.clear();
-        if (compound.getAllKeys().contains(TAG_CONTENT))
+        if (compound.contains(TAG_CONTENT))
         {
             final ListTag lines = compound.getList(TAG_CONTENT, TAG_STRING);
             for (int i = 0; i < lines.size(); i++)

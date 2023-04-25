@@ -116,7 +116,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     {
         super.deserializeNBT(compound);
 
-        if (compound.getAllKeys().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if (compound.contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
             rsDataStoreToken = StandardFactoryController.getInstance()
                                  .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
@@ -126,17 +126,17 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
             setupRsDataStore();
         }
 
-        if (compound.getAllKeys().contains(NbtTagConstants.TAG_PROGRESS))
+        if (compound.contains(NbtTagConstants.TAG_PROGRESS))
         {
             this.progress = compound.getInt(NbtTagConstants.TAG_PROGRESS);
         }
 
-        if (compound.getAllKeys().contains(NbtTagConstants.TAG_MAX_COUNTER))
+        if (compound.contains(NbtTagConstants.TAG_MAX_COUNTER))
         {
             this.progress = compound.getInt(NbtTagConstants.TAG_MAX_COUNTER);
         }
 
-        if (compound.getAllKeys().contains(NbtTagConstants.TAG_CRAFT_COUNTER))
+        if (compound.contains(NbtTagConstants.TAG_CRAFT_COUNTER))
         {
             this.progress = compound.getInt(NbtTagConstants.TAG_CRAFT_COUNTER);
         }

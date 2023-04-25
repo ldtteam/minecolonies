@@ -95,6 +95,8 @@ public class MineColonies
         ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModQuestInitializer.DEFERRED_REGISTER_REWARD.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModQuestInitializer.DEFERRED_REGISTER_ANSWER_RESULT.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FACTOR.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FMLJavaModLoadingContext.get().getModEventBus());
 
 
         ModEnchantInitializer.init();
@@ -209,6 +211,17 @@ public class MineColonies
      */
     @SubscribeEvent
     public static void onConfigReload(final ModConfigEvent.Reloading event)
+    {
+        if (event.getConfig().getType() == ModConfig.Type.COMMON)
+        {
+            // ModConfig fires for each of server, client, and common.
+            // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
+            RequestSystemInitializer.reconfigureLogging();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onConfigLoaded(final ModConfigEvent.Loading event)
     {
         if (event.getConfig().getType() == ModConfig.Type.COMMON)
         {
