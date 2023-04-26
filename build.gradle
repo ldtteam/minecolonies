@@ -39,3 +39,6 @@ minecraft.runs.all {
     }
 }
 
+project.tasks.getByName("processResources", {task ->
+    task.duplicatesStrategy 'include'
+})

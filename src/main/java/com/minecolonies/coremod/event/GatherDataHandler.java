@@ -26,6 +26,7 @@ public class GatherDataHandler
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator));
         generator.addProvider(event.includeClient(), new DefaultEntityIconProvider(generator));
+        generator.addProvider(event.includeClient() && event.includeServer(), new QuestTranslationProvider(generator));
 
         generator.addProvider(event.includeServer(), new DefaultBlockLootTableProvider(generator));
         generator.addProvider(event.includeServer(), new DefaultEntityLootProvider(generator));
