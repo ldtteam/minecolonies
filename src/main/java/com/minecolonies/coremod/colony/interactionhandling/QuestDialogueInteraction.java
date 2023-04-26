@@ -191,7 +191,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     {
         // TODO: this is not ideal, we should do something more clever and preserve the item subcomponents for tooltips etc
         String localText = text.getString();
-        if (localText.contains("$"))
+        if (localText.contains("$") && colonyQuest != null)
         {
             localText = localText.replace("$0", citizen.getColony().getCitizen(this.colonyQuest.getQuestGiverId()).getName());
             int index = 1;
@@ -200,9 +200,9 @@ public class QuestDialogueInteraction extends StandardInteraction
                 localText = localText.replace("$" + index, citizen.getColony().getCitizen(participant).getName());
             }
         }
-        if (localText.contains("%d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
+        if (localText.contains("$d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
         {
-            localText = localText.replace("%d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
+            localText = localText.replace("$d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
         }
         return Component.literal(localText);
     }
