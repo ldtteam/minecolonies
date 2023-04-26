@@ -161,14 +161,17 @@ public class QuestInstance implements IQuestInstance
     @Override
     public void onDeletion()
     {
-        if (questGiver != Integer.MIN_VALUE)
+        if (questGiver != Integer.MIN_VALUE && colony.getCitizenManager().getCivilian(questGiver) != null)
         {
             colony.getCitizenManager().getCivilian(questGiver).onQuestDeletion(this.getId());
         }
 
         for (final int participant : questParticipants)
         {
-            colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
+            if (colony.getCitizenManager().getCivilian(participant) != null)
+            {
+                colony.getCitizenManager().getCivilian(participant).onQuestDeletion(this.getId());
+            }
         }
 
         final IQuestTemplate instance = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
