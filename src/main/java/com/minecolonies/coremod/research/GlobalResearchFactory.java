@@ -10,6 +10,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -144,11 +145,11 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
             {
                 final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
                 is.setCount(Integer.parseInt(costParts[2]));
-                if (compound.hasUUID(TAG_COST_NBT))
+                if (compound.contains(TAG_COST_NBT))
                 {
                     is.setTag(compound.getCompound(TAG_COST_NBT));
                 }
-                research.addCost(new ItemStorage(is, false, !is.hasTag()));
+                research.addCost(new ItemStorage(is, false, !ItemStackUtils.hasTag(is)));
             }
         });
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Tag.TAG_COMPOUND)).
