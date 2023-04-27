@@ -34,7 +34,7 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class GenericRecipe implements IGenericRecipe
 {
     @Nullable
-    public static IGenericRecipe of(@Nullable final Recipe<?> recipe, @Nullable final Level world)
+    public static IGenericRecipe of(@Nullable final Recipe<?> recipe, @NotNull final Level world)
     {
         if (recipe == null) return null;
 

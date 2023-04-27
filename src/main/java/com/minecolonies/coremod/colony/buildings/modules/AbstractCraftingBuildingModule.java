@@ -42,6 +42,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -893,7 +894,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
     @NotNull
     @Override
-    public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+    public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
     {
         return Collections.emptyList();
     }

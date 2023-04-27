@@ -43,7 +43,7 @@ public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extend
     @Override
     @NotNull
     public List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager,
-                                            @Nullable final Level world)
+                                            @NotNull final Level world)
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();
         for (final T recipe : recipeManager.getAllRecipesFor(recipeType))
@@ -57,7 +57,7 @@ public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extend
 
     private static void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
                                                @NotNull final Recipe<?> recipe,
-                                               @Nullable final Level world)
+                                               @NotNull final Level world)
     {
         if (recipe.isSpecial() || recipe.getResultItem(world.registryAccess()).isEmpty()) return;     // invalid or special recipes
         try

@@ -29,12 +29,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -116,22 +114,23 @@ public class JEIPlugin implements IModPlugin
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
-        final ClientLevel level = Minecraft.getInstance().level;
+        final ClientLevel level = Objects.requireNonNull(Minecraft.getInstance().level);
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            addJobBasedRecipes(vanilla, category, registration::addRecipes);
+            addJobBasedRecipes(vanilla, category, registration::addRecipes, level);
         }
     }
 
     private <R> void addJobBasedRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
                                         @NotNull final JobBasedRecipeCategory<R> category,
-                                        @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar)
+                                        @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar,
+                                        @NotNull final Level world)
     {
         try
         {
-            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla));
+            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla, world));
         }
         catch (Exception e)
         {

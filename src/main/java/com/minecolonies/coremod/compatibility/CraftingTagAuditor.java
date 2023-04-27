@@ -193,7 +193,7 @@ public class CraftingTagAuditor
             writer.write(',');
             writer.write(crafter.getCustomRecipeKey());
 
-            final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(vanillaRecipesMap, crafter);
+            final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(vanillaRecipesMap, crafter, server.overworld());
             for (final IGenericRecipe recipe : recipes)
             {
                 add(customRecipeManager, craftingMap, crafter, recipe);
