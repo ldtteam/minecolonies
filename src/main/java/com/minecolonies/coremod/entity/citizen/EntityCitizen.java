@@ -702,6 +702,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
         citizenDiseaseHandler.read(compound);
+        setPose(Pose.STANDING);
     }
 
     /**
