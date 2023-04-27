@@ -2,6 +2,8 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -63,7 +65,15 @@ public class UpdateClientWithCompatibilityMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ClientLevel world = Minecraft.getInstance().level;
-        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().deserialize(this.buffer, world);
+        FurnaceRecipes.getInstance().loadUtilityPredicates();
+        try
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().deserialize(this.buffer, world);
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().error("Failed to load compatibility manager", e);
+        }
         this.buffer.release();
     }
 }

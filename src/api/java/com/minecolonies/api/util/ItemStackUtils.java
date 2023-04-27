@@ -21,6 +21,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -86,8 +87,12 @@ public final class ItemStackUtils
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
     public static final Predicate<ItemStack> ISFOOD =
-      stack -> ItemStackUtils.isNotEmpty(stack) && stack.isEdible() && stack.getFoodProperties(null) != null && stack.getFoodProperties(null).getNutrition() > 0
-                 && stack.getFoodProperties(null).getSaturationModifier() > 0;
+      stack ->
+      {
+          final FoodProperties foodProperties = stack.isEdible() ? stack.getFoodProperties(null) : null;
+          return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.getNutrition() > 0
+                     && foodProperties.getSaturationModifier() > 0;
+      };
 
     /**
      * Predicate describing things which work in the furnace.
