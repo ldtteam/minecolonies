@@ -11,6 +11,7 @@ import com.minecolonies.coremod.network.messages.client.UpdateClientWithCompatib
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
@@ -137,7 +138,10 @@ public class DataPackSyncEventHandler
         @SubscribeEvent
         public static void onRecipesLoaded(@NotNull final RecipesUpdatedEvent event)
         {
-            if (Minecraft.getInstance().hasSingleplayerServer())
+            final IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
+            final GameProfile owner = server == null ? null : server.getSingleplayerProfile();
+
+            if (owner != null && owner == Minecraft.getInstance().player.getGameProfile())
             {
                 // don't need to update on single player, this already happened "server-side".
                 return;
