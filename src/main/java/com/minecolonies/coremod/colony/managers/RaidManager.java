@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
@@ -514,7 +516,7 @@ public class RaidManager implements IRaiderManager
 
                 if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
                 {
-                    if (isValidSpawnPoint(buildings, new BlockPos(tempPos)))
+                    if (isValidSpawnPoint(buildings, new BlockPos(tempPos)) && !isOtherColony((int) tempPos.x, (int) tempPos.z))
                     {
                         spawnPos = new BlockPos(tempPos);
                         validChunkCount++;
@@ -541,6 +543,18 @@ public class RaidManager implements IRaiderManager
         }
 
         return null;
+    }
+
+    /**
+     * Check if the spawn position is within another colony
+     *
+     * @param pos
+     * @return
+     */
+    private boolean isOtherColony(final int x, final int z)
+    {
+        final IColonyTagCapability cap = colony.getWorld().getChunk(x >> 4, z >> 4).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        return cap != null && cap.getOwningColony() != 0 && cap.getOwningColony() != colony.getID();
     }
 
     /**
