@@ -141,7 +141,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.buildingView));
 
-        if (this.resources.isEmpty() || this.resources.stream().noneMatch(res -> res.getAvailabilityStatus() == BuildingBuilderResource.RessourceAvailability.DONT_HAVE || res.getAvailabilityStatus() == BuildingBuilderResource.RessourceAvailability.NEED_MORE))
+        if (this.resources.isEmpty() || this.resources.stream().allMatch(res -> res.getAvailable() >= res.getAmount()))
         {
             findPaneOfTypeByID(RESOURCES_ADD, Button.class).hide();
         }
@@ -268,5 +268,10 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         Network.getNetwork().sendToServer(new TransferAllItemsRequestMessage(this.buildingView, true));
 
         resources.sort(new BuildingBuilderResource.ResourceComparator());
+
+        if (this.resources.isEmpty() || this.resources.stream().allMatch(res -> res.getAvailable() >= res.getAmount()))
+        {
+            findPaneOfTypeByID(RESOURCES_ADD, Button.class).hide();
+        }
     }
 }

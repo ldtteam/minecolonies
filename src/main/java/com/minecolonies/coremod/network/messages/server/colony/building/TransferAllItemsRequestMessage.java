@@ -58,12 +58,17 @@ public class TransferAllItemsRequestMessage extends AbstractBuildingServerMessag
 
                 if (isCreative)
                 {
-                    amountToTake = res.getAmount();
+                    amountToTake = res.getAmount() - res.getAvailable();
                 }
                 else
                 {
-                    amountToTake = Math.min(res.getAmount(), InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()),
+                    amountToTake = Math.min(res.getAmount() - res.getAvailable(), InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()),
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, res.getItemStack(), true, true)));
+                }
+
+                if (amountToTake == 0)
+                {
+                    continue;
                 }
 
                 ItemStack remainingItemStack = ItemStack.EMPTY;
@@ -87,11 +92,11 @@ public class TransferAllItemsRequestMessage extends AbstractBuildingServerMessag
                 {
                     //Only doing this at the moment as the additional chest do not detect new content
                     changed = true;
+                }
 
-                    if (ItemStackUtils.getSize(remainingItemStack) == amountToTake)
-                    {
-                        break;
-                    }
+                if (InventoryUtils.openSlotCount(building.getTileEntity().getInventory()) <= 0)
+                {
+                    break;
                 }
 
                 if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
