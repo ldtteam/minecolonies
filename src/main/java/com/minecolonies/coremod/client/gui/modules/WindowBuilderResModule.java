@@ -141,6 +141,11 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.buildingView));
 
+        if (this.resources.isEmpty() || this.resources.stream().noneMatch(res -> res.getAvailabilityStatus() == BuildingBuilderResource.RessourceAvailability.DONT_HAVE || res.getAvailabilityStatus() == BuildingBuilderResource.RessourceAvailability.NEED_MORE))
+        {
+            findPaneOfTypeByID(RESOURCES_ADD, Button.class).hide();
+        }
+
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
         findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
     }
