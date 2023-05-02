@@ -265,9 +265,15 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     private void transferAllItems(final Button button)
     {
         button.disable();
-        Network.getNetwork().sendToServer(new TransferAllItemsRequestMessage(this.buildingView, true));
 
-        resources.sort(new BuildingBuilderResource.ResourceComparator());
+        for (BuildingBuilderResource res : resources)
+        {
+            int needed = res.getAmount() - res.getAvailable();
+            res.setAvailable(Math.min(res.getAmount(), res.getAvailable() + res.getPlayerAmount()));
+            res.setPlayerAmount(Math.max(0, res.getPlayerAmount() - needed));
+        }
+
+        Network.getNetwork().sendToServer(new TransferAllItemsRequestMessage(this.buildingView, true));
 
         if (this.resources.isEmpty() || this.resources.stream().allMatch(res -> res.getAvailable() >= res.getAmount()))
         {
