@@ -3,6 +3,10 @@
     <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
 
     <label size="164 11" pos="13 29" id="constructionName" textalign="MIDDLE" label="" color="black"/>
+
+    <buttonimage id="resourcesAdd" size="16 15" label="↥↥" pos="155 29"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+
     <label size="164 11" pos="13 40" id="stepprogress" textalign="MIDDLE" label="" color="black"/>
     <label size="164 11" pos="13 51" id="progress" textalign="MIDDLE" label="" color="black"/>
     <list id="resources" size="164 163" pos="13 62">

@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesMo
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.TransferAllItemsRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.TransferItemsRequestMessage;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -72,6 +73,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         pullResourcesFromHut();
 
         registerButton(RESOURCE_ADD, this::transferItems);
+        registerButton(RESOURCES_ADD, this::transferAllItems);
     }
 
     /**
@@ -253,5 +255,13 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             resources.sort(new BuildingBuilderResource.ResourceComparator());
             Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.buildingView, itemStack, quantity, true));
         }
+    }
+
+    private void transferAllItems(final Button button)
+    {
+        button.disable();
+        Network.getNetwork().sendToServer(new TransferAllItemsRequestMessage(this.buildingView, true));
+
+        resources.sort(new BuildingBuilderResource.ResourceComparator());
     }
 }

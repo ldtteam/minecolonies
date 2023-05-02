@@ -420,6 +420,7 @@ public final class WindowConstants
     public static final String RESOURCE_AVAILABLE_NEEDED = "resourceAvailableNeeded";
     public static final String RESOURCE_MISSING          = "resourceMissing";
     public static final String RESOURCE_ADD              = "resourceAdd";
+    public static final String RESOURCES_ADD             = "resourcesAdd";
     public static final String RESOURCE_ID               = "resourceId";
     public static final String RESOURCE_QUANTITY_MISSING = "resourceQuantity";
     public static final String RESOURCE_ICON             = "resourceIcon";
