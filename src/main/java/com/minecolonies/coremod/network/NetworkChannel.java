@@ -144,6 +144,7 @@ public class NetworkChannel
         registerMessage(++idx, GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
         registerMessage(++idx, RecallCitizenHutMessage.class, RecallCitizenHutMessage::new);
         registerMessage(++idx, TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
+        registerMessage(++idx, TransferAllItemsRequestMessage.class, TransferAllItemsRequestMessage::new);
         registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
         registerMessage(++idx, ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage::new);
         registerMessage(++idx, CreateColonyMessage.class, CreateColonyMessage::new);
