@@ -87,6 +87,11 @@ public class TransferAllItemsRequestMessage extends AbstractBuildingServerMessag
                 {
                     //Only doing this at the moment as the additional chest do not detect new content
                     changed = true;
+
+                    if (ItemStackUtils.getSize(remainingItemStack) == amountToTake)
+                    {
+                        break;
+                    }
                 }
 
                 if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
