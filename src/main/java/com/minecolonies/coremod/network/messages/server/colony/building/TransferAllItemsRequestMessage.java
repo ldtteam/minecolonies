@@ -56,13 +56,15 @@ public class TransferAllItemsRequestMessage extends AbstractBuildingServerMessag
                 final ItemStack itemStack = res.getItemStack();
                 final int amountToTake;
 
+                int needed = res.getAmount() - res.getAvailable();
+
                 if (isCreative)
                 {
-                    amountToTake = res.getAmount() - res.getAvailable();
+                    amountToTake = needed;
                 }
                 else
                 {
-                    amountToTake = Math.min(res.getAmount() - res.getAvailable(), InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()),
+                    amountToTake = Math.min(needed, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()),
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, res.getItemStack(), true, true)));
                 }
 
