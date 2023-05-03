@@ -1,0 +1,133 @@
+{
+  "name": "Rally the Troops",
+  "max-occurrences": 1,
+  "parents": [],
+  "triggers": [
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:barracks",
+          "level": 1
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:ranger"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Lately, we've been seeing a lot of skeletons wandering around at night. If you could help us out by taking care of ten of them, we'd be very grateful!",
+      "options": [
+        {
+          "answer": "No problem, I'll take care of it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "Sorry, I'm too busy right now.",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Skeletons? Pfft, no problem.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "Sorry, I don't think I can help you with that.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:killentity",
+      "details": {
+        "target": 0,
+        "entity-type": "minecraft:skeleton",
+        "qty": 10,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Thank you for taking care of those skeletons! You're very brave. Listen, I have something that might help us out. It's called a rallying banner. Could you bring it to me?",
+      "options": [
+        {
+          "answer": "Sorry, I don't think I can help you with that.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        },
+        {
+          "answer": "A rallying banner? Sounds interesting. I'll go find it.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "Not right now, maybe later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecolonies:banner_rally_guards",
+        "nbt-mode": "any",
+        "qty": 1,
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
+      "target": 0,
+      "text": "Thanks for bringing me the rallying banner! To use it, simply shift-right click it on any hut block. This will allow you to assign guards to it, and you can manage it by right clicking in the air. It's a great tool for keeping the colony safe!",
+      "options": [
+        {
+          "answer": "Great, I'll make sure to put it to good use!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:banner_rally_guards",
+        "qty": 1
+      }
+    }
+  ]
+}

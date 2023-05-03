@@ -26,6 +26,7 @@ public class GatherDataHandler
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator));
         generator.addProvider(event.includeClient(), new DefaultEntityIconProvider(generator));
+        generator.addProvider(event.includeClient() && event.includeServer(), new QuestTranslationProvider(generator));
 
         generator.addProvider(event.includeServer(), new DefaultBlockLootTableProvider(generator));
         generator.addProvider(event.includeServer(), new DefaultEntityLootProvider(generator));
@@ -46,7 +47,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultCookAssistantCraftingProvider(generator));
         generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator));
         generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator));
-        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator));
+        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator, lootTableManager));
         generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator));
         generator.addProvider(event.includeServer(), new DefaultFishermanLootProvider(generator));
         generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator));

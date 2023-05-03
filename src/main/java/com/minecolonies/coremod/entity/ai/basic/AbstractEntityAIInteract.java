@@ -16,8 +16,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
@@ -348,16 +346,28 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * Search for all items around the worker. and store them in the items list.
      *
-     * @param boundingBox the area to search.
+     * @param boundingBox     the area to search.
      */
     public void searchForItems(final AABB boundingBox)
     {
         items = world.getEntitiesOfClass(ItemEntity.class, boundingBox)
                   .stream()
                   .filter(item -> item != null && item.isAlive() &&
-                                    (!item.getPersistentData().getAllKeys().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")))
+                                    (!item.getPersistentData().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")) &&
+                          isItemWorthPickingUp(item.getItem()))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
+    }
+
+    /**
+     * Check if an item is sufficiently interesting to want to go pick it up.  (This won't stop a
+     * worker picking up something else as they pass by, but it makes them not want to go over to it.)
+     * @param stack the stack to check.
+     * @return      true if the worker wants to go over to it.
+     */
+    protected boolean isItemWorthPickingUp(final ItemStack stack)
+    {
+        return true;
     }
 
     /**

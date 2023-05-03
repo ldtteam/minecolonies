@@ -28,7 +28,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
     /**
      * The chosen response.
      */
-    private Component response;
+    private int responseId;
 
     /**
      * Empty public constructor.
@@ -41,23 +41,23 @@ public class InteractionResponse extends AbstractColonyServerMessage
     /**
      * Trigger the server response handler.
      *
-     * @param colonyId  the colony id.
-     * @param citizenId the citizen id.
-     * @param dimension the dimension the colony and citizen are in.
-     * @param key       the key of the handler.
-     * @param response  the response to trigger.
+     * @param colonyId   the colony id.
+     * @param citizenId  the citizen id.
+     * @param dimension  the dimension the colony and citizen are in.
+     * @param key        the key of the handler.
+     * @param responseId the response to trigger.
      */
     public InteractionResponse(
       final int colonyId,
       final int citizenId,
       final ResourceKey<Level> dimension,
       @NotNull final Component key,
-      @NotNull final Component response)
+      final int responseId)
     {
         super(dimension, colonyId);
         this.citizenId = citizenId;
         this.key = key;
-        this.response = response;
+        this.responseId = responseId;
     }
 
     /**
@@ -70,7 +70,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
     {
         this.citizenId = buf.readInt();
         this.key = buf.readComponent();
-        this.response = buf.readComponent();
+        this.responseId = buf.readInt();
     }
 
     /**
@@ -83,7 +83,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
     {
         buf.writeInt(this.citizenId);
         buf.writeComponent(key);
-        buf.writeComponent(response);
+        buf.writeInt(responseId);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
 
         if (citizenData != null && ctxIn.getSender() != null)
         {
-            citizenData.onResponseTriggered(key, response, ctxIn.getSender());
+            citizenData.onResponseTriggered(key, responseId, ctxIn.getSender());
         }
     }
 }

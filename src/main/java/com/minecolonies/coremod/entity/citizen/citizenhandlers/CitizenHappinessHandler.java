@@ -9,8 +9,9 @@ import com.minecolonies.api.entity.citizen.happiness.*;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobPupil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.*;
 import static com.minecolonies.api.research.util.ResearchConstants.HAPPINESS;
+import static com.minecolonies.api.research.util.ResearchConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.DEMANDS;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO;
@@ -45,33 +48,35 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     public CitizenHappinessHandler(final ICitizenData data)
     {
-        add(new TimeBasedHappinessModifier(HOMELESSNESS,
-          4.0,
-          () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5,
-          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
-        add(new TimeBasedHappinessModifier(UNEMPLOYMENT,
+        // Add static modifiers. These modifiers are on/off.
+        addModifier(new StaticHappinessModifier(SCHOOL, 1.0, new DynamicHappinessSupplier(SCHOOL_FUNCTION)));
+        addModifier(new StaticHappinessModifier(SECURITY, 4.0, new DynamicHappinessSupplier(SECURITY_FUNCTION)));
+        addModifier(new StaticHappinessModifier(SOCIAL, 2.0, new DynamicHappinessSupplier(SOCIAL_FUNCTION)));
+        addModifier(new StaticHappinessModifier(SATURATION, 2.0, new DynamicHappinessSupplier(SATURATION_FUNCTION)));
+        addModifier(new StaticHappinessModifier(MYSTICAL_SITE, 1.0, new DynamicHappinessSupplier(MYSTICAL_SITE_FUNCTION)));
+
+        // Add time based modifiers. These modifiers change their value over time.
+        addModifier(new TimeBasedHappinessModifier(HOMELESSNESS,
+          3.0,
+          new DynamicHappinessSupplier(HOUSING_FUNCTION),
+         new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)));
+
+        addModifier(new TimeBasedHappinessModifier(UNEMPLOYMENT,
           2.0,
-          () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0),
-          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
-        add(new TimeBasedHappinessModifier(HEALTH,
+          new DynamicHappinessSupplier(UNEMPLOYMENT_FUNCTION),
+          new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)));
+
+        addModifier(new TimeBasedHappinessModifier(HEALTH,
           2.0,
-          () -> data.getEntity().isPresent() ? (data.getEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0,
-          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
-        add(new TimeBasedHappinessModifier(IDLEATJOB,
+          new DynamicHappinessSupplier(HEALTH_FUNCTION),
+          new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)));
+
+        addModifier(new TimeBasedHappinessModifier(IDLEATJOB,
           1.0,
-          () -> data.isIdleAtJob() ? 0.5 : 1.0,
-          new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
+          new DynamicHappinessSupplier(IDLEATJOB_FUNCTION),
+          new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
-        add(new StaticHappinessModifier(SCHOOL, 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
-        add(new StaticHappinessModifier(SECURITY, 4.0, () -> getGuardFactor(data.getColony())));
-        add(new StaticHappinessModifier(SOCIAL, 2.0, () -> getSocialModifier(data.getColony())));
-        add(new StaticHappinessModifier(SATURATION, 2.0, () -> (data.getSaturation() + 5.0) / 10.0));
-        add(new StaticHappinessModifier(MYSTICAL_SITE, 1.0, () -> getMysticalSiteFactor(data.getColony())));
-
-        add(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, () -> 0.0, 1));
-        add(new ExpirationBasedHappinessModifier(DEATH, 3.0, () -> 0.0, 3));
-        add(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, () -> 2.0, 3));
-        add(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 2.0, () -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.0, 3, true));
+        addModifier(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), 3, true));
     }
 
     /**
@@ -79,31 +84,25 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     public CitizenHappinessHandler()
     {
-        add(new ClientHappinessModifier(HOMELESSNESS, 4.0));
-        add(new ClientHappinessModifier(UNEMPLOYMENT, 2.0));
-        add(new ClientHappinessModifier(HEALTH, 2.0));
-        add(new ClientHappinessModifier(IDLEATJOB, 1.0));
+        super();
+    }
 
-        add(new ClientHappinessModifier(SCHOOL, 1.0));
-        add(new ClientHappinessModifier(SECURITY, 2.0));
-        add(new ClientHappinessModifier(SOCIAL, 2.0));
-        add(new ClientHappinessModifier(SATURATION, 1.0));
-        add(new ClientHappinessModifier(MYSTICAL_SITE, 1.0));
-
-        add(new ClientHappinessModifier(DAMAGE, 1.0));
-        add(new ClientHappinessModifier(DEATH, 2.0));
-        add(new ClientHappinessModifier(RAIDWITHOUTDEATH, 1.0));
-        add(new ClientHappinessModifier(SLEPTTONIGHT, 2.0));
+    @Override
+    public void addModifier(final IHappinessModifier modifier)
+    {
+        this.happinessFactors.put(modifier.getId(), modifier);
+        cachedHappiness = -1;
     }
 
     @Override
     public void resetModifier(final String name)
     {
-        if (happinessFactors.containsKey(name))
+        final IHappinessModifier modifier = happinessFactors.get(name);
+        if (modifier instanceof ITimeBasedHappinessModifier)
         {
-            happinessFactors.get(name).reset();
+            ((ITimeBasedHappinessModifier) modifier).reset();
+            cachedHappiness = -1;
         }
-        cachedHappiness = -1;
     }
 
     @Override
@@ -117,7 +116,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     {
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            happinessModifier.dayEnd();
+            if (happinessModifier instanceof TimeBasedHappinessModifier)
+            {
+                ((TimeBasedHappinessModifier) happinessModifier).dayEnd(citizenData);
+            }
             if (InteractionValidatorRegistry.hasValidator(Component.translatable(NO + happinessModifier.getId())))
             {
                 citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
@@ -131,7 +133,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public double getHappiness(final IColony colony)
+    public double getHappiness(final IColony colony, final ICitizenData citizenData)
     {
         if (cachedHappiness == -1)
         {
@@ -139,7 +141,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             double totalWeight = 0.0;
             for (final IHappinessModifier happinessModifier : happinessFactors.values())
             {
-                total += happinessModifier.getFactor() * happinessModifier.getWeight();
+                final double factor = happinessModifier.getFactor(citizenData);
+                if (factor == 1.0)
+                    continue;
+                total += factor * happinessModifier.getWeight();
                 totalWeight += happinessModifier.getWeight();
             }
 
@@ -153,12 +158,26 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     @Override
     public void read(final CompoundTag compound)
     {
-        final CompoundTag tag = compound.getCompound(TAG_HAPPINESS);
-        for (final IHappinessModifier happinessModifier : happinessFactors.values())
+        // Only deserialize for new version. Old can keep the above defaults just fine.
+        if (compound.contains(TAG_NEW_HAPPINESS))
         {
-            if (tag.contains(happinessModifier.getId()))
+            final ListTag tag = compound.getList(TAG_NEW_HAPPINESS, Tag.TAG_COMPOUND);
+            for (int i = 0; i < tag.size(); i++)
             {
-                happinessModifier.read(tag.getCompound(happinessModifier.getId()));
+                final CompoundTag compoundTag = tag.getCompound(i);
+                final String id = compoundTag.getString(TAG_ID);
+                if (happinessFactors.containsKey(id))
+                {
+                    happinessFactors.get(id).read(compoundTag);
+                }
+                else
+                {
+                    final IHappinessModifier modifier = HappinessRegistry.loadFrom(compoundTag);
+                    if (modifier != null)
+                    {
+                        happinessFactors.put(modifier.getId(), modifier);
+                    }
+                }
             }
         }
     }
@@ -166,16 +185,15 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     @Override
     public void write(final CompoundTag compound)
     {
-        final CompoundTag tag = new CompoundTag();
-
+        final ListTag listTag = new ListTag();
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
             final CompoundTag compoundNbt = new CompoundTag();
             happinessModifier.write(compoundNbt);
-            tag.put(happinessModifier.getId(), compoundNbt);
+            listTag.add(compoundNbt);
         }
 
-        compound.put(TAG_HAPPINESS, tag);
+        compound.put(TAG_NEW_HAPPINESS, listTag);
     }
 
     @Override
@@ -184,15 +202,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         return new ArrayList<>(happinessFactors.keySet());
     }
 
-    /**
-     * Add the modifier to the handler.
-     *
-     * @param modifier the modifier.
-     */
-    private void add(final IHappinessModifier modifier)
-    {
-        this.happinessFactors.put(modifier.getId(), modifier);
-    }
+    // --------------------------------------------- Static Utility Methods --------------------------------------------- //
 
     /**
      * Get the social modifier for the colony.
@@ -200,7 +210,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param colony the colony.
      * @return true if so.
      */
-    private double getSocialModifier(final IColony colony)
+    public static double getSocialModifier(final IColony colony)
     {
         final double total = colony.getCitizenManager().getCitizens().size();
         double unemployment = 0;
@@ -240,7 +250,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param colony the colony.
      * @return true if so.
      */
-    private double getGuardFactor(final IColony colony)
+    public static double getGuardFactor(final IColony colony)
     {
         double guards = 1;
         double workers = 1;
@@ -266,8 +276,8 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param colony the colony.
      * @return double supply factor.
      */
-    private double getMysticalSiteFactor(final IColony colony)
+    public static double getMysticalSiteFactor(final IColony colony)
     {
-        return 1 + ((double)colony.getBuildingManager().getMysticalSiteMaxBuildingLevel()/2.0);
+        return Math.max(1, ((double)colony.getBuildingManager().getMysticalSiteMaxBuildingLevel() / 2.0));
     }
 }

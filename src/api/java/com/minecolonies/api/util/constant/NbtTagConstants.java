@@ -49,6 +49,7 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
     public static final String TAG_EVENT_DESC_MANAGER     = "event_desc_manager";
+    public static final String TAG_QUEST_MANAGER          = "quest_manager";
     public static final String TAG_GRAVE_MANAGER          = "graveManager";
     public static final String TAG_COLONY_ID              = "colony";
     public static final String TAG_CITIZEN                = "citizen";
@@ -56,6 +57,8 @@ public final class NbtTagConstants
     public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
     public static final String TAG_STATUS                 = "status";
     public static final String TAG_DAY                    = "day";
+    public static final String TAG_INVERTED               = "inverted";
+    public static final String TAG_PERIOD                 = "period";
     public static final String TAG_IS_BUILT               = "isBuilt";
     public static final String TAG_CUSTOM_NAME            = "customName";
     public static final String TAG_OTHER_LEVEL            = "otherLevel";
@@ -84,6 +87,11 @@ public final class NbtTagConstants
     public static final String TAG_SIBLINGS = "siblings";
     public static final String TAG_CHILDREN = "children";
     public static final String TAG_PARTNER  = "partner";
+
+    public static final String TAG_AV_QUESTS = "avquests";
+    public static final String TAG_PART_QUESTS = "partquests";
+    public static final String TAG_FINISHED_AV_QUESTS = "finavquests";
+    public static final String TAG_FINISHED_PART_QUESTS = "finpartquests";
 
     /**
      * Event tags
@@ -689,6 +697,24 @@ public final class NbtTagConstants
      * Version tag.
      */
     public static final String TAG_VERSION = "version";
+
+    /**
+     * Quest related nbt tags.
+     */
+    public static final String TAG_IN_PROGRESS = "inprogquests";
+    public static final String TAG_AVAILABLE   = "availquests";
+    public static final String TAG_FINISHED = "finishedquests";
+    public static final String TAG_ASSIGN_START = "assignstartquest";
+    public static final String TAG_QUEST_GIVER = "questgiver";
+    public static final String TAG_PARTICIPANTS = "questparticps";
+    public static final String TAG_QUEST_ID    = "questid";
+    public static final String TAG_QUEST_INDEX = "questindex";
+    public static final String TAG_OBJECTIVE = "objective";
+    public static final String TAG_PLAYER = "player";
+
+    public static final String TAG_MODIFIER_TYPE = "modifier";
+    public static final String TAG_WEIGHT = "weight";
+    public static final String TAG_SUPPLIER = "supplier";
 
     /**
      * Private constructor to hide the implicit one.

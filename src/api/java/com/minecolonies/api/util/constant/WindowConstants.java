@@ -626,12 +626,12 @@ public final class WindowConstants
      * The row where the emtpy Happiness bar starts.
      */
 
-    public static final int HAPPINESS_BAR_EMPTY_ROW = 74;
+    public static final int HAPPINESS_BAR_EMPTY_ROW = 0;
 
     /**
      * The row where the full happiness bar starts.
      */
-    public static final int HAPPINESS_BAR_FULL_ROW = 79;
+    public static final int HAPPINESS_BAR_FULL_ROW = 0;
 
     /**
      * X position of the empty heart icon.

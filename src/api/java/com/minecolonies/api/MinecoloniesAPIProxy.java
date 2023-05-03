@@ -18,7 +18,9 @@ import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
+import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -168,5 +170,41 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
     {
         return apiInstance.getCraftingTypeRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
+    {
+        return apiInstance.getQuestRewardRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
+    {
+        return apiInstance.getQuestObjectiveRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
+    {
+        return apiInstance.getQuestTriggerRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
+    {
+        return apiInstance.getQuestDialogueAnswerRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
+    {
+        return apiInstance.getHappinessTypeRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
+    {
+        return apiInstance.getHappinessFunctionRegistry();
     }
 }

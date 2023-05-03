@@ -352,7 +352,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         super.deserializeNBT(compound);
         loadRequestSystemFromNBT(compound);
-        if (compound.getAllKeys().contains(TAG_IS_BUILT))
+        if (compound.contains(TAG_IS_BUILT))
         {
             isBuilt = compound.getBoolean(TAG_IS_BUILT);
         }
@@ -360,7 +360,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             isBuilt = true;
         }
-        if (compound.getAllKeys().contains(TAG_CUSTOM_NAME))
+        if (compound.contains(TAG_CUSTOM_NAME))
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
@@ -1127,7 +1127,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return stack.getItem().getFoodProperties().getNutrition() >= getBuildingLevel();
+        return stack.getItem().getFoodProperties(stack, null).getNutrition() >= getBuildingLevel();
     }
 
     @Override
@@ -1290,7 +1290,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     private void loadRequestSystemFromNBT(final CompoundTag compound)
     {
-        if (compound.getAllKeys().contains(TAG_REQUESTOR_ID))
+        if (compound.contains(TAG_REQUESTOR_ID))
         {
             this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_REQUESTOR_ID));
         }
@@ -1299,7 +1299,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         }
 
-        if (compound.getAllKeys().contains(TAG_RS_BUILDING_DATASTORE))
+        if (compound.contains(TAG_RS_BUILDING_DATASTORE))
         {
             this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
         }

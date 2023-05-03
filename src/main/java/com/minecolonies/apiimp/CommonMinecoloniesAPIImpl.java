@@ -20,7 +20,9 @@ import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
+import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -65,6 +67,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
     private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
     private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
+    private        IForgeRegistry<QuestRegistries.ObjectiveEntry>          questObjectiveRegistry;
+    private        IForgeRegistry<QuestRegistries.RewardEntry>             questRewardRegistry;
+    private        IForgeRegistry<QuestRegistries.TriggerEntry>            questTriggerRegistry;
+    private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
+    private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
+    private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
 
     @Override
     @NotNull
@@ -169,77 +177,114 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() { return researchRequirementRegistry;}
+    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() { return researchEffectRegistry;}
+    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
 
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         event.create(new RegistryBuilder<BuildingEntry>()
-                             .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
-                             .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                             .disableSaving()
-                             .allowModification()
-                             .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving()
+                       .allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingRegistry = b);
 
         event.create(new RegistryBuilder<JobEntry>()
-                        .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))
-                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                        .disableSaving()
-                        .allowModification()
-                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> jobRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving()
+                       .allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> jobRegistry = b);
 
-       event.create(new RegistryBuilder<GuardType>()
-                              .setName(new ResourceLocation(Constants.MOD_ID, "guardtypes"))
-                              .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                              .disableSaving()
-                              .allowModification()
-                              .setDefaultKey(ModGuardTypes.KNIGHT_ID)
-                              .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> guardTypeRegistry = b);
+        event.create(new RegistryBuilder<GuardType>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "guardtypes"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving()
+                       .allowModification()
+                       .setDefaultKey(ModGuardTypes.KNIGHT_ID)
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> guardTypeRegistry = b);
 
         event.create(new RegistryBuilder<InteractionResponseHandlerEntry>()
-                                       .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
-                                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                                       .disableSaving()
-                                       .allowModification()
-                                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> interactionHandlerRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving()
+                       .allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> interactionHandlerRegistry = b);
 
         event.create(new RegistryBuilder<ColonyEventTypeRegistryEntry>()
-                                .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"))
-                                .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                                .disableSaving().allowModification()
-                                .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventRegistry = b);
 
         event.create(new RegistryBuilder<ColonyEventDescriptionTypeRegistryEntry>()
-                .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventdesctypes"))
-                .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                .disableSaving().allowModification()
-                .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventDescriptionRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventdesctypes"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventDescriptionRegistry = b);
 
 
         event.create(new RegistryBuilder<CraftingType>()
-                .setName(new ResourceLocation(Constants.MOD_ID, "craftingtypes"))
-                .disableSaving().allowModification()
-                .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> craftingTypeRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "craftingtypes"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> craftingTypeRegistry = b);
 
         event.create(new RegistryBuilder<RecipeTypeEntry>()
-                                    .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
-                                    .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
-                                    .disableSaving().allowModification()
-                                    .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> recipeTypeEntryRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> recipeTypeEntryRegistry = b);
 
         event.create(new RegistryBuilder<ResearchRequirementEntry>()
-                                        .setName(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"))
-                                        .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
-                                        .disableSaving().allowModification()
-                                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchRequirementRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"))
+                       .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchRequirementRegistry = b);
 
         event.create(new RegistryBuilder<ResearchEffectEntry>()
-                                        .setName(new ResourceLocation(Constants.MOD_ID, "researcheffecttypes"))
-                                        .setDefaultKey(GLOBAL_EFFECT_ID)
-                                        .disableSaving().allowModification()
-                                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
+                       .setName(new ResourceLocation(Constants.MOD_ID, "researcheffecttypes"))
+                       .setDefaultKey(GLOBAL_EFFECT_ID)
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
+
+
+        event.create(new RegistryBuilder<QuestRegistries.ObjectiveEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questobjectives"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questObjectiveRegistry = b);
+
+        event.create(new RegistryBuilder<QuestRegistries.RewardEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questrewards"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questRewardRegistry = b);
+
+        event.create(new RegistryBuilder<QuestRegistries.TriggerEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questtriggers"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questTriggerRegistry = b);
+
+        event.create(new RegistryBuilder<QuestRegistries.DialogueAnswerEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "questanswerresults"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questDialogueAnswerRegistry = b);
+
+        event.create(new RegistryBuilder<HappinessRegistry.HappinessFactorTypeEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "happinessfactortypes"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFactorTypeRegistry = b);
+
+        event.create(new RegistryBuilder<HappinessRegistry.HappinessFunctionEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "happinessfunction"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFunctionRegistry = b);
     }
 
     @Override
@@ -264,6 +309,42 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
     {
         return craftingTypeRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
+    {
+        return questRewardRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
+    {
+        return questObjectiveRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
+    {
+        return questTriggerRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
+    {
+        return questDialogueAnswerRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
+    {
+        return happinessFactorTypeRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
+    {
+        return happinessFunctionRegistry;
     }
 }
 

@@ -7,7 +7,7 @@
             "Name": "minecraft:coarse_dirt"
           },
           "input_predicate": {
-            "block": "minecraft:dirt",
+            "block": "minecraft:terracotta",
             "predicate_type": "minecraft:random_block_match",
             "probability":0.15
           },

@@ -79,7 +79,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
         {
             for (final String modifier : data.getHappinessHandler().getModifiers())
             {
-                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor());
+                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor(null));
             }
         }
 

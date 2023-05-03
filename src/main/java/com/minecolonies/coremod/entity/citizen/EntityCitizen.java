@@ -25,6 +25,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -33,6 +35,7 @@ import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -89,7 +92,6 @@ import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,6 +107,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.HappinessConstants.DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.DEATH;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
@@ -419,6 +422,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 }
             }
         }
+
+        if (citizenData != null && citizenData.getJob() != null)
+        {
+            ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+            getNavigation().stop();
+            getLookControl().setLookAt(player);
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -576,7 +586,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+                final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
                   .getResearchManager()
                   .getResearchEffects()
                   .getEffectStrength(SATURATION));
@@ -618,13 +628,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void eatFoodInteraction(final ItemStack usedStack, final Player player, final InteractionHand hand)
     {
-        usedStack.shrink(1);
-        player.setItemInHand(hand, usedStack);
-        interactionCooldown = 100;
-
         if (!level.isClientSide())
         {
-            final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+            final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
               .getResearchManager()
               .getResearchEffects()
               .getEffectStrength(SATURATION));
@@ -642,6 +648,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getYRot(),
                 getEyeHeight()), this);
         }
+
+        usedStack.shrink(1);
+        player.setItemInHand(hand, usedStack);
+        interactionCooldown = 100;
     }
 
     @Override
@@ -700,6 +710,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
         citizenDiseaseHandler.read(compound);
+        setPose(Pose.STANDING);
     }
 
     /**
@@ -1657,7 +1668,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenItemHandler.updateArmorDamage(damageInc);
             if (citizenData != null)
             {
-                getCitizenData().getCitizenHappinessHandler().getModifier("damage").reset();
+                getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, new StaticHappinessSupplier(0.0), 1));
             }
         }
 
@@ -1764,7 +1775,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void onPlayerCollide(final Player player)
     {
         super.onPlayerCollide(player);
-        if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
+        if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic && !citizenJobHandler.getColonyJob().isGuard())
         {
             ((AbstractEntityAIBasic) citizenJobHandler.getColonyJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
         }
@@ -1787,7 +1798,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             this.remove(RemovalReason.KILLED);
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
             {
-                citizenColonyHandler.getColony().getCitizenManager().updateModifier("death");
+                citizenColonyHandler.getColony().getCitizenManager().injectModifier(new ExpirationBasedHappinessModifier(HappinessConstants.DEATH, 3.0, new StaticHappinessSupplier(0.0), 3));
             }
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);

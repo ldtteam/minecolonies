@@ -342,7 +342,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     public void load(final CompoundTag compound)
     {
         super.load(compound);
-        if (compound.getAllKeys().contains(TAG_SIZE))
+        if (compound.contains(TAG_SIZE))
         {
             size = compound.getInt(TAG_SIZE);
             inventory = createInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);

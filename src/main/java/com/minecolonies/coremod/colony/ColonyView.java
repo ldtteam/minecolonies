@@ -20,6 +20,7 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -37,6 +38,7 @@ import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
+import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -249,6 +251,11 @@ public final class ColonyView implements IColonyView
     private IStatisticsManager statisticManager = new StatisticsManager(this);
 
     /**
+     * Client side quest manager.
+     */
+    private IQuestManager questManager;
+
+    /**
      * Day in the colony.
      */
     private int day;
@@ -262,6 +269,7 @@ public final class ColonyView implements IColonyView
     {
         this.id = id;
         this.manager = new ResearchManager(this);
+        this.questManager = new QuestManager(this);
     }
 
     /**
@@ -440,6 +448,7 @@ public final class ColonyView implements IColonyView
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
         colony.getStatisticsManager().serialize(buf);
+        buf.writeNbt(colony.getQuestManager().serializeNBT());
         buf.writeInt(colony.getDay());
     }
 
@@ -921,6 +930,7 @@ public final class ColonyView implements IColonyView
 
         this.graveManager.read(buf.readNbt());
         this.statisticManager.deserialize(buf);
+        this.questManager.deserializeNBT(buf.readNbt());
         this.day = buf.readInt();
         return null;
     }
@@ -1632,5 +1642,11 @@ public final class ColonyView implements IColonyView
     public int getDay()
     {
         return this.day;
+    }
+
+    @Override
+    public IQuestManager getQuestManager()
+    {
+        return this.questManager;
     }
 }

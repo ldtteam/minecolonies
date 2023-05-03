@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.happiness.ITimeBasedHappinessModifier;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -237,26 +238,26 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic<?, ?>) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(DEMANDS + HOMELESSNESS),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS)).getDays() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HOMELESSNESS),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() > COMPLAIN_DAYS_WITHOUT_HOUSE
-                       && (citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS)).getDays() > COMPLAIN_DAYS_WITHOUT_HOUSE
+                       && ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS)).getDays() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(DEMANDS + UNEMPLOYMENT),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT)).getDays() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + UNEMPLOYMENT),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() > COMPLAIN_DAYS_WITHOUT_JOB
-                       && (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT)).getDays() > COMPLAIN_DAYS_WITHOUT_JOB
+                       && ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT)).getDays() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(DEMANDS + IDLEATJOB),
-          citizen -> citizen.getJob() != null && (citizen.getCitizenHappinessHandler()).getModifier(IDLEATJOB).getDays() > citizen.getJob().getIdleSeverity(true));
+          citizen -> citizen.getJob() != null && ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(IDLEATJOB)).getDays() > citizen.getJob().getIdleSeverity(true));
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + IDLEATJOB),
-          citizen -> citizen.getJob() != null && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() > citizen.getJob().getIdleSeverity(false)
-                       && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() <= citizen.getJob().getIdleSeverity(true));
+          citizen -> citizen.getJob() != null && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB)).getDays() > citizen.getJob().getIdleSeverity(false)
+                       && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB)).getDays() <= citizen.getJob().getIdleSeverity(true));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + SLEPTTONIGHT),
-          citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT).getDays() <= 0);
+          citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT)).getDays() <= 0);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper

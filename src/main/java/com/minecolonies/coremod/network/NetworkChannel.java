@@ -249,6 +249,7 @@ public class NetworkChannel
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
         registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
         registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
+        registerMessage(++idx, InteractionClose.class, InteractionClose::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
@@ -272,6 +273,7 @@ public class NetworkChannel
         registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
         registerMessage(++idx, OpenDecoWindowMessage.class, OpenDecoWindowMessage::new);
         registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
+        registerMessage(++idx, GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);

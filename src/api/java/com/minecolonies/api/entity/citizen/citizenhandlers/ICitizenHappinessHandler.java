@@ -13,6 +13,13 @@ import java.util.List;
 public interface ICitizenHappinessHandler
 {
     /**
+     * Add the modifier to the handler.
+     *
+     * @param modifier the modifier.
+     */
+    void addModifier(IHappinessModifier modifier);
+
+    /**
      * Reset a modifier.
      *
      * @param name the name of the modifier.
@@ -40,7 +47,7 @@ public interface ICitizenHappinessHandler
      * @param colony the colony.
      * @return the happiness.
      */
-    double getHappiness(IColony colony);
+    double getHappiness(final IColony colony, final ICitizenData citizenData);
 
     /**
      * Read the handler from NBT.

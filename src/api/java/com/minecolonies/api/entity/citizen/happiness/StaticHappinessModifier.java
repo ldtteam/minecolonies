@@ -1,17 +1,13 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
-import java.util.function.DoubleSupplier;
+import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * Static modifier that doesn't change.
  */
-public class StaticHappinessModifier extends AbstractHappinessModifier
+public final class StaticHappinessModifier extends AbstractHappinessModifier
 {
-    /**
-     * The supplier to get the happiness factor.
-     */
-    private final DoubleSupplier supplier;
-
     /**
      * Create an instance of the happiness modifier.
      *
@@ -19,15 +15,23 @@ public class StaticHappinessModifier extends AbstractHappinessModifier
      * @param weight   its weight.
      * @param supplier the supplier to get the factor.
      */
-    public StaticHappinessModifier(final String id, final double weight, final DoubleSupplier supplier)
+    public StaticHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier)
     {
-        super(id, weight);
-        this.supplier = supplier;
+        super(id, weight, supplier);
+    }
+
+    /**
+     * Create an instance of the static happiness modifier.
+     */
+    public StaticHappinessModifier()
+    {
+        super();
     }
 
     @Override
-    public double getFactor()
+    public void write(final CompoundTag compoundNBT)
     {
-        return supplier.getAsDouble();
+        super.write(compoundNBT);
+        compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.STATIC_MODIFIER.toString());
     }
 }

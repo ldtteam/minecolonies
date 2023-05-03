@@ -82,11 +82,11 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             final CompoundTag containerCompound = containerTagList.getCompound(i);
             containerList.add(NbtUtils.readBlockPos(containerCompound));
         }
-        if (compound.getAllKeys().contains(TAG_PRIO))
+        if (compound.contains(TAG_PRIO))
         {
             this.unscaledPickUpPriority = compound.getInt(TAG_PRIO);
         }
-        if (compound.getAllKeys().contains(TAG_PRIO_STATE))
+        if (compound.contains(TAG_PRIO_STATE))
         {
             // This was the old int representation of Pickup:Never
             if (compound.getInt(TAG_PRIO_STATE) == 0)
