@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -23,9 +24,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -171,9 +172,15 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        protected @Nullable IField getFreeField(final IColony colony)
+        protected @NotNull List<IField> getFreeFields(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeField(FieldType.FARMER_FIELDS);
+            return colony.getBuildingManager().getFreeFields(FieldType.FARMER_FIELDS);
+        }
+
+        @Override
+        public boolean canAddField(final IField field)
+        {
+            return true;
         }
     }
 
@@ -182,6 +189,12 @@ public class BuildingFarmer extends AbstractBuilding
      */
     public static class FarmerFieldsModuleView extends FieldsModuleView
     {
+        @Override
+        public boolean canAssignField(final IFieldView field)
+        {
+            return true;
+        }
+
         @Override
         public FieldType getExpectedFieldType()
         {

@@ -53,6 +53,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private BlockPos currentWorkingPosition;
 
     /**
+     * The amount of actions performed on the current field.
+     */
+    private int currentActionCount = 0;
+
+    /**
      * Constructor for the planter.
      *
      * @param job a planter job to use.
@@ -72,11 +77,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         if (building == null || building.getBuildingLevel() < 1)
         {
             return PREPARING;
-        }
-
-        if (!job.getTaskQueue().isEmpty() || getActionsDoneUntilDumping() <= job.getActionsDone())
-        {
-            return START_WORKING;
         }
 
         FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
@@ -107,12 +107,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             if (lastField != fieldToWork)
             {
                 currentWorkingPosition = null;
+                currentActionCount = 0;
             }
 
             return PLANTATION_MOVE_TO_FIELD;
         }
 
-        return START_WORKING;
+        return IDLE;
     }
 
     /**
@@ -128,7 +129,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return PREPARING;
         }
 
-        if (walkToBlock(currentPlantationField.getPosition().above(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY))
+        if (walkToBlock(currentPlantationField.getPosition(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY))
         {
             return getState();
         }
@@ -163,23 +164,28 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         if (currentWorkingPosition != null)
         {
             PlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
+            if (result.getModuleState().hasPerformedAction())
+            {
+                currentActionCount++;
+            }
+
             if (result.shouldResetWorkingPosition())
             {
                 currentWorkingPosition = null;
             }
-            if (result.shouldResetCurrentField())
+            if (result.shouldResetCurrentField() || currentActionCount >= planterModule.getActionLimit())
             {
                 // In certain scenarios the module may request to immediately release the current field, disregarding whether the next tick still has work or not.
+                // Alternatively, if the maximum action count is reached, the field must be reset as well.
                 FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
                 fieldsModule.resetCurrentField();
-                currentWorkingPosition = null;
+                currentActionCount = 0;
             }
-            return result.getNextState();
+
+            return result.getModuleState() == PlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? GATHERING_REQUIRED_MATERIALS : PLANTATION_WORK_FIELD;
         }
-        else
-        {
-            return PREPARING;
-        }
+
+        return PREPARING;
     }
 
     @Nullable
@@ -194,50 +200,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     }
 
     @Override
-    protected int getActionRewardForCraftingSuccess()
-    {
-        return MAX_BLOCKS_MINED;
-    }
-
-    @Override
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(getState() == CRAFT
                                    || getState() == PLANTATION_WORK_FIELD
                                    || getState() == PLANTATION_MOVE_TO_FIELD ? RENDER_META_WORKING : "");
-    }
-
-    @Override
-    protected IAIState decide()
-    {
-        final IAIState nextState = super.decide();
-        if (nextState != START_WORKING && nextState != IDLE)
-        {
-            return nextState;
-        }
-
-        if (wantInventoryDumped())
-        {
-            // Wait to dump before continuing.
-            return getState();
-        }
-
-        if (job.getTaskQueue().isEmpty())
-        {
-            return PREPARING;
-        }
-
-        if (job.getCurrentTask() == null)
-        {
-            return PREPARING;
-        }
-
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
-            return QUERY_ITEMS;
-        }
-
-        return GET_RECIPE;
     }
 
     @Override

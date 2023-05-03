@@ -41,7 +41,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Block class for the plantation field block.
@@ -67,6 +69,11 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      * The resistance this block has.
      */
     private static final float RESISTANCE = 1F;
+
+    /**
+     * Cached list of shapes
+     */
+    private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Direction.class);
 
     /**
      * Default constructor.
@@ -136,10 +143,11 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     @Override
     public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
-        // Force the different halves to share the same collision space,
-        // the user will think it is one big block
         Direction dir = state.getValue(FACING);
-        return Shapes.box(
+        if (SHAPES.containsKey(dir)) {
+            return SHAPES.get(dir);
+        }
+        VoxelShape shape = Shapes.box(
           0D + (dir.getStepX() > 0 ? 0.5 : 0),
           0D,
           0D + (dir.getStepZ() > 0 ? 0.5 : 0),
@@ -147,6 +155,8 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
           0.625D,
           1D - (dir.getStepZ() < 0 ? 0.5 : 0)
         );
+        SHAPES.put(dir, shape);
+        return shape;
     }
 
     @Override

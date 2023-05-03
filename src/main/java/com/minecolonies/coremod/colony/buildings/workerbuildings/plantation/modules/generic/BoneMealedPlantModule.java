@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
-import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
@@ -81,54 +80,54 @@ public abstract class BoneMealedPlantModule extends PlantationModule
 
         PlanterAIModuleState action = decideWorkAction(field, workPosition);
         return switch (action)
-                 {
-                     case NONE -> PlanterAIModuleResult.NONE;
-                     case HARVESTING ->
-                     {
-                         // Walk to the position where work has to happen.
-                         if (planterAI.planterWalkToBlock(workPosition.above()))
-                         {
-                             yield PlanterAIModuleResult.MOVING;
-                         }
+        {
+            case NONE -> PlanterAIModuleResult.NONE;
+            case HARVESTING ->
+            {
+                // Walk to the position where work has to happen.
+                if (planterAI.planterWalkToBlock(workPosition.above()))
+                {
+                    yield PlanterAIModuleResult.MOVING;
+                }
 
-                         // Harvest the field block by block.
-                         final PlanterAIModuleResult harvestResult = getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.above(), true));
-                         if (harvestResult != PlanterAIModuleResult.HARVESTED)
-                         {
-                             yield harvestResult;
-                         }
+                // Harvest the field block by block.
+                final PlanterAIModuleResult harvestResult = getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.above(), true));
+                if (harvestResult != PlanterAIModuleResult.HARVESTED)
+                {
+                    yield harvestResult;
+                }
 
-                         if (getPositionToHarvest(field) != null)
-                         {
-                             // Return a custom result here indicates that we harvested something, however we do want to keep working on the field
-                             // but on another position.
-                             yield new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, AIWorkerState.PLANTATION_WORK_FIELD, true, false);
-                         }
-                         else
-                         {
-                             // Return a custom result here indicates that we harvested something, however we want to completely abort working on the field right now.
-                             // Therefore, we need to release the current field so that next tick a new field will be selected,
-                             // running the needsWork check on the field again.
-                             yield new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, AIWorkerState.PREPARING, false, true);
-                         }
-                     }
-                     case PLANTING ->
-                     {
-                         if (planterAI.planterWalkToBlock(workPosition))
-                         {
-                             yield PlanterAIModuleResult.MOVING;
-                         }
+                if (getPositionToHarvest(field) != null)
+                {
+                    // Return a custom result here indicates that we harvested something, however we do want to keep working on the field
+                    // but on another position.
+                    yield new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, PlanterAIModuleResultResetState.POSITION);
+                }
+                else
+                {
+                    // Return a custom result here indicates that we harvested something, however we want to completely abort working on the field right now.
+                    // Therefore, we need to release the current field so that next tick a new field will be selected,
+                    // running the needsWork check on the field again.
+                    yield new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, PlanterAIModuleResultResetState.FIELD);
+                }
+            }
+            case PLANTING ->
+            {
+                if (planterAI.planterWalkToBlock(workPosition))
+                {
+                    yield PlanterAIModuleResult.MOVING;
+                }
 
-                         final int boneMealSlot =
-                           InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> getValidBonemeal().contains(stack.getItem()));
-                         final ItemStack stackInSlot = worker.getInventoryCitizen().getStackInSlot(boneMealSlot);
-                         applyBonemeal(worker, workPosition, stackInSlot, fakePlayer);
+                final int boneMealSlot =
+                  InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> getValidBonemeal().contains(stack.getItem()));
+                final ItemStack stackInSlot = worker.getInventoryCitizen().getStackInSlot(boneMealSlot);
+                applyBonemeal(worker, workPosition, stackInSlot, fakePlayer);
 
-                         // Return a custom result that indicates we planted something, but we want to remain working on the field, at a different position.
-                         yield new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, AIWorkerState.PLANTATION_WORK_FIELD, true, false);
-                     }
-                     default -> PlanterAIModuleResult.INVALID;
-                 };
+                // Return a custom result that indicates we planted something, but we want to remain working on the field, at a different position.
+                yield new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, PlanterAIModuleResultResetState.POSITION);
+            }
+            default -> PlanterAIModuleResult.INVALID;
+        };
     }
 
     @Override
@@ -162,6 +161,12 @@ public abstract class BoneMealedPlantModule extends PlantationModule
     public List<ItemStack> getRequiredItemsForOperation()
     {
         return getValidBonemeal().stream().map(ItemStack::new).toList();
+    }
+
+    @Override
+    public int getActionLimit()
+    {
+        return 1;
     }
 
     /**

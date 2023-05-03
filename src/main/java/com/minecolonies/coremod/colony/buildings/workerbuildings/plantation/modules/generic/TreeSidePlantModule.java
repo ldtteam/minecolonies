@@ -63,20 +63,20 @@ public abstract class TreeSidePlantModule extends PlantationModule
 
         PlanterAIModuleState action = decideWorkAction(field, workPosition);
         return switch (action)
-                 {
-                     case NONE -> PlanterAIModuleResult.NONE;
-                     case HARVESTING -> getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition, true));
-                     case PLANTING ->
-                     {
-                         if (planterAI.planterPlaceBlock(workPosition, getItem(), getPlantsToRequest(), state -> generatePlantingBlockState(field, workPosition, state)))
-                         {
-                             yield PlanterAIModuleResult.PLANTED;
-                         }
-                         yield PlanterAIModuleResult.REQUIRES_ITEMS;
-                     }
-                     case CLEARED -> getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition, false));
-                     default -> PlanterAIModuleResult.INVALID;
-                 };
+        {
+            case NONE -> PlanterAIModuleResult.NONE;
+            case HARVESTING -> getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition, true));
+            case PLANTING ->
+            {
+                if (planterAI.planterPlaceBlock(workPosition, getItem(), getPlantsToRequest(), state -> generatePlantingBlockState(field, workPosition, state)))
+                {
+                    yield PlanterAIModuleResult.PLANTED;
+                }
+                yield PlanterAIModuleResult.REQUIRES_ITEMS;
+            }
+            case CLEARED -> getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition, false));
+            default -> PlanterAIModuleResult.INVALID;
+        };
     }
 
     /**
@@ -191,6 +191,12 @@ public abstract class TreeSidePlantModule extends PlantationModule
     public List<ItemStack> getRequiredItemsForOperation()
     {
         return List.of(new ItemStack(getItem()));
+    }
+
+    @Override
+    public int getActionLimit()
+    {
+        return 5;
     }
 
     @Override

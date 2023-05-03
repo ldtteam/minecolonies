@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
-import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_PLANTATION_RESEARCH_REQUIRED;
@@ -70,12 +69,6 @@ public class BuildingPlantation extends AbstractBuilding
     {
         super.onUpgradeComplete(newLevel);
         updateFields();
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     private void updateFields()
@@ -131,13 +124,13 @@ public class BuildingPlantation extends AbstractBuilding
         {
             boolean hasDoubleTrouble = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANTATION_LARGE) > 0;
             int allowedPlants = switch (building.getBuildingLevel())
-                                  {
-                                      case 0 -> 0;
-                                      case 1, 2 -> 1;
-                                      case 3, 4 -> 2;
-                                      case 5 -> 3;
-                                      default -> throw new IllegalStateException("Unexpected value: " + building.getBuildingLevel());
-                                  };
+            {
+                case 0 -> 0;
+                case 1, 2 -> 1;
+                case 3, 4 -> 2;
+                case 5 -> 3;
+                default -> throw new IllegalStateException("Unexpected value: " + building.getBuildingLevel());
+            };
 
             return hasDoubleTrouble ? allowedPlants + 1 : allowedPlants;
         }
@@ -149,15 +142,15 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        protected @Nullable IField getFreeField(final IColony colony)
+        protected @NotNull List<IField> getFreeFields(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeField(FieldType.PLANTATION_FIELDS);
+            return colony.getBuildingManager().getFreeFields(FieldType.PLANTATION_FIELDS);
         }
 
         @Override
         public boolean canAddField(IField field)
         {
-            if (super.canAddField(field) && field instanceof PlantationField plantationField)
+            if (field instanceof PlantationField plantationField)
             {
                 final PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
                 if (module != null && module.getRequiredResearchEffect() != null)
@@ -178,7 +171,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         public boolean canAssignField(final IFieldView field)
         {
-            return super.canAssignField(field) && hasRequiredResearchForField(field);
+            return hasRequiredResearchForField(field);
         }
 
         /**

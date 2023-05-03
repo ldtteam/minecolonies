@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
-import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
@@ -164,6 +163,13 @@ public abstract class PlantationModule
     public abstract ToolType getRequiredTool();
 
     /**
+     * Returns the maximum amount of actions that can be performed on a field, before the planter must forcefully switch to a new field.
+     *
+     * @return the maximum of actions the planter can perform on the field per cycle.
+     */
+    public abstract int getActionLimit();
+
+    /**
      * Get the appropriate harvesting result for a mine block result.
      *
      * @param result the mine block result.
@@ -172,11 +178,11 @@ public abstract class PlantationModule
     protected final PlanterAIModuleResult getHarvestingResultFromMiningResult(PlanterMineBlockResult result)
     {
         return switch (result)
-                 {
-                     case NO_TOOL -> PlanterAIModuleResult.REQUIRES_ITEMS;
-                     case MINING -> PlanterAIModuleResult.HARVESTING;
-                     case MINED -> PlanterAIModuleResult.HARVESTED;
-                 };
+        {
+            case NO_TOOL -> PlanterAIModuleResult.REQUIRES_ITEMS;
+            case MINING -> PlanterAIModuleResult.HARVESTING;
+            case MINED -> PlanterAIModuleResult.HARVESTED;
+        };
     }
 
     /**
@@ -188,11 +194,11 @@ public abstract class PlantationModule
     protected final PlanterAIModuleResult getClearingResultFromMiningResult(PlanterMineBlockResult result)
     {
         return switch (result)
-                 {
-                     case NO_TOOL -> PlanterAIModuleResult.REQUIRES_ITEMS;
-                     case MINING -> PlanterAIModuleResult.CLEARING;
-                     case MINED -> PlanterAIModuleResult.CLEARED;
-                 };
+        {
+            case NO_TOOL -> PlanterAIModuleResult.REQUIRES_ITEMS;
+            case MINING -> PlanterAIModuleResult.CLEARING;
+            case MINED -> PlanterAIModuleResult.CLEARED;
+        };
     }
 
     /**
@@ -226,43 +232,66 @@ public abstract class PlantationModule
         /**
          * Something is wrong in the planter AI module, request to reset the AI back to decision state.
          */
-        INVALID,
+        INVALID(false),
         /**
          * The planter had to do nothing on this position.
          */
-        NONE,
+        NONE(false),
         /**
          * The planter is moving to it's working position.
          */
-        MOVING,
+        MOVING(false),
         /**
          * The planter requires certain items in order to continue operating.
          */
-        REQUIRES_ITEMS,
+        REQUIRES_ITEMS(false),
         /**
          * The planter is harvesting a plant.
          */
-        HARVESTING,
+        HARVESTING(false),
         /**
          * The planter has harvested a plant.
          */
-        HARVESTED,
+        HARVESTED(true),
         /**
          * The planter is planting a plant.
          */
-        PLANTING,
+        PLANTING(false),
         /**
          * The planter has planted a plant.
          */
-        PLANTED,
+        PLANTED(true),
         /**
          * The planter is clearing a working position.
          */
-        CLEARING,
+        CLEARING(false),
         /**
          * The planter has cleared a block working position.
          */
-        CLEARED
+        CLEARED(true);
+
+        /**
+         * Whether the module state represents a performed action.
+         */
+        private final boolean isAction;
+
+        /**
+         * Default constructor
+         */
+        PlanterAIModuleState(final boolean isAction)
+        {
+            this.isAction = isAction;
+        }
+
+        /**
+         * Whether the module state represents a performed action.
+         *
+         * @return true if so
+         */
+        public boolean hasPerformedAction()
+        {
+            return isAction;
+        }
     }
 
     /**
@@ -285,6 +314,25 @@ public abstract class PlantationModule
     }
 
     /**
+     * Enum containing the reset state of the result state.
+     */
+    public enum PlanterAIModuleResultResetState
+    {
+        /**
+         * Do not reset the position/field.
+         */
+        NONE,
+        /**
+         * Reset the current position.
+         */
+        POSITION,
+        /**
+         * Reset the current field.
+         */
+        FIELD
+    }
+
+    /**
      * Class containing possible states that the planter AI can be in.
      */
     public static class PlanterAIModuleResult
@@ -292,53 +340,52 @@ public abstract class PlantationModule
         /**
          * Something is wrong in the planter AI module, request to reset the AI back to decision state.
          */
-        public static final PlanterAIModuleResult INVALID = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, AIWorkerState.PREPARING, true, true);
+        public static final PlanterAIModuleResult INVALID = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, PlanterAIModuleResultResetState.FIELD);
 
         /**
          * The planter had to do nothing on this position.
          */
-        public static final PlanterAIModuleResult NONE = new PlanterAIModuleResult(PlanterAIModuleState.NONE, AIWorkerState.PREPARING, true, true);
+        public static final PlanterAIModuleResult NONE = new PlanterAIModuleResult(PlanterAIModuleState.NONE, PlanterAIModuleResultResetState.FIELD);
 
         /**
          * The planter is moving to it's working position.
          */
-        public static final PlanterAIModuleResult MOVING = new PlanterAIModuleResult(PlanterAIModuleState.MOVING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult MOVING = new PlanterAIModuleResult(PlanterAIModuleState.MOVING, PlanterAIModuleResultResetState.NONE);
 
         /**
          * The planter requires certain items in order to continue operating.
          */
-        public static final PlanterAIModuleResult REQUIRES_ITEMS =
-          new PlanterAIModuleResult(PlanterAIModuleState.REQUIRES_ITEMS, AIWorkerState.GATHERING_REQUIRED_MATERIALS, false, false);
+        public static final PlanterAIModuleResult REQUIRES_ITEMS = new PlanterAIModuleResult(PlanterAIModuleState.REQUIRES_ITEMS, PlanterAIModuleResultResetState.NONE);
 
         /**
          * The planter is harvesting a plant.
          */
-        public static final PlanterAIModuleResult HARVESTING = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult HARVESTING = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTING, PlanterAIModuleResultResetState.NONE);
 
         /**
          * The planter has harvested a plant.
          */
-        public static final PlanterAIModuleResult HARVESTED = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult HARVESTED = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, PlanterAIModuleResultResetState.POSITION);
 
         /**
          * The planter is planting a plant.
          */
-        public static final PlanterAIModuleResult PLANTING = new PlanterAIModuleResult(PlanterAIModuleState.PLANTING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult PLANTING = new PlanterAIModuleResult(PlanterAIModuleState.PLANTING, PlanterAIModuleResultResetState.NONE);
 
         /**
          * The planter has planted a plant.
          */
-        public static final PlanterAIModuleResult PLANTED = new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult PLANTED = new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, PlanterAIModuleResultResetState.POSITION);
 
         /**
          * The planter is clearing a working position.
          */
-        public static final PlanterAIModuleResult CLEARING = new PlanterAIModuleResult(PlanterAIModuleState.CLEARING, AIWorkerState.PLANTATION_WORK_FIELD, false, false);
+        public static final PlanterAIModuleResult CLEARING = new PlanterAIModuleResult(PlanterAIModuleState.CLEARING, PlanterAIModuleResultResetState.NONE);
 
         /**
          * The planter has cleared a block working position.
          */
-        public static final PlanterAIModuleResult CLEARED = new PlanterAIModuleResult(PlanterAIModuleState.CLEARED, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult CLEARED = new PlanterAIModuleResult(PlanterAIModuleState.CLEARED, PlanterAIModuleResultResetState.POSITION);
 
         /**
          * The state to transition to.
@@ -346,34 +393,20 @@ public abstract class PlantationModule
         private final PlanterAIModuleState moduleState;
 
         /**
-         * The state to transition to.
+         * The reset state of the result.
          */
-        private final AIWorkerState nextState;
-
-        /**
-         * Whether to reset the current working position.
-         */
-        private final boolean resetWorkingPosition;
-
-        /**
-         * Whether to reset the current field.
-         */
-        private final boolean resetCurrentField;
+        private final PlanterAIModuleResultResetState resetState;
 
         /**
          * Default constructor.
          *
-         * @param moduleState          the module state.
-         * @param nextState            the state to transition to.
-         * @param resetWorkingPosition whether to reset the current working position.
-         * @param resetCurrentField    whether to reset the current field.
+         * @param moduleState the module state.
+         * @param resetState  the reset state.
          */
-        public PlanterAIModuleResult(final PlanterAIModuleState moduleState, final AIWorkerState nextState, final boolean resetWorkingPosition, final boolean resetCurrentField)
+        public PlanterAIModuleResult(final PlanterAIModuleState moduleState, final PlanterAIModuleResultResetState resetState)
         {
             this.moduleState = moduleState;
-            this.nextState = nextState;
-            this.resetWorkingPosition = resetWorkingPosition;
-            this.resetCurrentField = resetCurrentField;
+            this.resetState = resetState;
         }
 
         /**
@@ -387,23 +420,13 @@ public abstract class PlantationModule
         }
 
         /**
-         * Get the state to transition to.
-         *
-         * @return the new state.
-         */
-        public AIWorkerState getNextState()
-        {
-            return nextState;
-        }
-
-        /**
          * Whether to reset the current working position.
          *
          * @return true if so.
          */
         public boolean shouldResetWorkingPosition()
         {
-            return resetWorkingPosition;
+            return resetState == PlanterAIModuleResultResetState.POSITION || resetState == PlanterAIModuleResultResetState.FIELD;
         }
 
         /**
@@ -413,7 +436,7 @@ public abstract class PlantationModule
          */
         public boolean shouldResetCurrentField()
         {
-            return resetCurrentField;
+            return resetState == PlanterAIModuleResultResetState.FIELD;
         }
     }
 }

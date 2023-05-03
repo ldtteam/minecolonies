@@ -70,24 +70,24 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
 
         PlanterAIModuleState action = decideWorkAction(field, workPosition, false);
         return switch (action)
-                 {
-                     case NONE -> PlanterAIModuleResult.NONE;
-                     case HARVESTING ->
-                         // Tell the AI to mine a block, if we're harvesting we need to mine 1 block from the ceiling (2 below).
-                       getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(2), true));
-                     case PLANTING ->
-                     {
-                         if (planterAI.planterPlaceBlock(workPosition.below(), getItem(), getPlantsToRequest()))
-                         {
-                             yield PlanterAIModuleResult.PLANTED;
-                         }
-                         yield PlanterAIModuleResult.REQUIRES_ITEMS;
-                     }
-                     case CLEARING ->
-                         // Tell the AI to mine a block, if we're clearing an obstacle we need to clear the item at the position directly below (1 high).
-                       getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(), false));
-                     default -> PlanterAIModuleResult.INVALID;
-                 };
+        {
+            case NONE -> PlanterAIModuleResult.NONE;
+            case HARVESTING ->
+                // Tell the AI to mine a block, if we're harvesting we need to mine 1 block from the ceiling (2 below).
+              getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(2), true));
+            case PLANTING ->
+            {
+                if (planterAI.planterPlaceBlock(workPosition.below(), getItem(), getPlantsToRequest()))
+                {
+                    yield PlanterAIModuleResult.PLANTED;
+                }
+                yield PlanterAIModuleResult.REQUIRES_ITEMS;
+            }
+            case CLEARING ->
+                // Tell the AI to mine a block, if we're clearing an obstacle we need to clear the item at the position directly below (1 high).
+              getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(), false));
+            default -> PlanterAIModuleResult.INVALID;
+        };
     }
 
     @Override
@@ -108,6 +108,12 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
     public List<ItemStack> getRequiredItemsForOperation()
     {
         return List.of(new ItemStack(getItem()));
+    }
+
+    @Override
+    public int getActionLimit()
+    {
+        return 10;
     }
 
     /**

@@ -322,12 +322,13 @@ public interface IRegisteredStructureManager
     @Nullable IField getField(FieldType type, FieldRecord matcher);
 
     /**
-     * Gets any free field in the colony, if any, and return it.
+     * Gets all free field in the colony, if any, and return them.
      *
      * @param type the field type.
-     * @return the free field, if any.
+     * @return all free fields, if any.
      */
-    @Nullable IField getFreeField(FieldType type);
+    @NotNull
+    List<IField> getFreeFields(FieldType type);
 
     /**
      * Add a new field to the building manager.

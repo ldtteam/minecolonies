@@ -111,7 +111,8 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      */
     public void assignField(final IFieldView field)
     {
-        if (buildingView != null && canAssignField(field))
+        if (buildingView != null && FieldsModule.checkFieldConditions(getOwnedFields().size(), getWorkedPlants().size(), maxFieldCount, maxConcurrentPlants)
+              && canAssignField(field))
         {
             Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getMatcher()));
 
@@ -124,17 +125,6 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     /**
-     * Check to see if a new field can be assigned to the worker.
-     *
-     * @param field the field which is being added.
-     * @return true if so.
-     */
-    public boolean canAssignField(IFieldView field)
-    {
-        return FieldsModule.checkFieldConditions(getOwnedFields().size(), getWorkedPlants().size(), maxFieldCount, maxConcurrentPlants);
-    }
-
-    /**
      * Getter of all owned fields.
      *
      * @return an unmodifiable list.
@@ -144,7 +134,6 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         return getColony().getFields(getExpectedFieldType()).stream()
                  .filter(field -> buildingView.getID().equals(field.getBuildingId()))
-                 .map(m -> (IFieldView) m)
                  .distinct()
                  .sorted(new FieldsComparator(buildingView))
                  .toList();
@@ -162,6 +151,14 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
                  .map(IFieldView::getPlant)
                  .collect(Collectors.toSet());
     }
+
+    /**
+     * Check to see if a new field can be assigned to the worker.
+     *
+     * @param field the field which is being added.
+     * @return true if so.
+     */
+    public abstract boolean canAssignField(IFieldView field);
 
     /**
      * Get the class type which is expected for the fields to have.

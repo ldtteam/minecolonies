@@ -157,35 +157,23 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void claimFields()
     {
-        if (getFields().size() < building.getBuildingLevel() && !shouldAssignManually)
+        if (!shouldAssignManually)
         {
-            IField freeField = getFreeField(building.getColony());
-            if (freeField != null)
+            for (IField field : getFreeFields(building.getColony()))
             {
-                assignField(freeField);
+                assignField(field);
             }
         }
     }
 
     /**
-     * Returns list of fields of the farmer.
-     *
-     * @return a list of field objects.
-     */
-    @NotNull
-    public List<IField> getFields()
-    {
-        return new ArrayList<>(fields);
-    }
-
-    /**
-     * Getter to obtain any free field in the colony.
+     * Getter to obtain all free fields in the colony.
      *
      * @param colony the current colony.
-     * @return any free field or null.
+     * @return all free fields or empty list.
      */
-    @Nullable
-    protected abstract IField getFreeField(IColony colony);
+    @NotNull
+    protected abstract List<IField> getFreeFields(IColony colony);
 
     /**
      * Method called to assign a field to the building.
@@ -194,25 +182,13 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void assignField(final IField field)
     {
-        if (!canAddField(field))
+        if (checkFieldConditions(fields.size(), fields.stream().map(IField::getPlant).collect(Collectors.toSet()).size(), getMaxFieldCount(), getMaxConcurrentPlants())
+              && canAddField(field))
         {
-            return;
+            field.setBuilding(building.getID());
+            fields.add(field);
+            markDirty();
         }
-
-        field.setBuilding(building.getID());
-        fields.add(field);
-        markDirty();
-    }
-
-    /**
-     * Check if a field can be added to the building.
-     *
-     * @param field the field which is being added.
-     * @return true if the field can be added.
-     */
-    public boolean canAddField(IField field)
-    {
-        return checkFieldConditions(fields.size(), fields.stream().map(IField::getPlant).collect(Collectors.toSet()).size(), getMaxFieldCount(), getMaxConcurrentPlants());
     }
 
     /**
@@ -228,6 +204,14 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     {
         return checkFieldCount(amountOfFields, maxFieldCount) && checkPlantCount(amountOfPlants, maxConcurrentPlants);
     }
+
+    /**
+     * Check if a field can be added to the building.
+     *
+     * @param field the field which is being added.
+     * @return true if the field can be added.
+     */
+    public abstract boolean canAddField(IField field);
 
     /**
      * Checks if the amount of fields is lower than the maximum allowed fields.
@@ -251,6 +235,17 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     public static boolean checkPlantCount(int amountOfPlants, int maxConcurrentPlants)
     {
         return amountOfPlants < maxConcurrentPlants;
+    }
+
+    /**
+     * Returns list of fields of the farmer.
+     *
+     * @return a list of field objects.
+     */
+    @NotNull
+    public List<IField> getFields()
+    {
+        return new ArrayList<>(fields);
     }
 
     /**
