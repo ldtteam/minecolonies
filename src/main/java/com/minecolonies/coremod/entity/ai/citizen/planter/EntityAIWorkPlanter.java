@@ -66,13 +66,14 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     {
         super(job);
         super.registerTargets(
-          new AITarget(PREPARING, this::prepareForFieldWork, TICKS_20),
+          new AITarget(PREPARING, () -> PLANTATION_PICK_FIELD, STANDARD_DELAY),
+          new AITarget(PLANTATION_PICK_FIELD, this::pickField, TICKS_20),
           new AITarget(PLANTATION_MOVE_TO_FIELD, this::moveToField, TICKS_20),
           new AITarget(PLANTATION_WORK_FIELD, this::workField, TICKS_20 * 3));
         worker.setCanPickUpLoot(true);
     }
 
-    private IAIState prepareForFieldWork()
+    private IAIState pickField()
     {
         if (building == null || building.getBuildingLevel() < 1)
         {
@@ -144,10 +145,15 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private IAIState workField()
     {
+        if (inventoryNeedsDump())
+        {
+            return IDLE;
+        }
+
         PlantationField currentPlantationField = getCurrentField();
         if (currentPlantationField == null)
         {
-            return PREPARING;
+            return PLANTATION_PICK_FIELD;
         }
 
         PlantationModule planterModule = PlantationModuleRegistry.getPlantationModule(currentPlantationField.getPlantationFieldType());
@@ -167,6 +173,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             if (result.getModuleState().hasPerformedAction())
             {
                 currentActionCount++;
+                worker.decreaseSaturationForAction();
             }
 
             if (result.shouldResetWorkingPosition())
@@ -185,7 +192,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return result.getModuleState() == PlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? GATHERING_REQUIRED_MATERIALS : PLANTATION_WORK_FIELD;
         }
 
-        return PREPARING;
+        return PLANTATION_PICK_FIELD;
     }
 
     @Nullable
@@ -205,12 +212,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         worker.setRenderMetadata(getState() == CRAFT
                                    || getState() == PLANTATION_WORK_FIELD
                                    || getState() == PLANTATION_MOVE_TO_FIELD ? RENDER_META_WORKING : "");
-    }
-
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return MAX_BLOCKS_MINED;
     }
 
     @Override
