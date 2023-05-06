@@ -409,7 +409,7 @@ public class CompatibilityManager implements ICompatibilityManager
         final Set<ItemStorage> filteredEdibles = new HashSet<>();
         for (final ItemStorage storage : edibles)
         {
-            if ((storage.getItem().getFoodProperties(storage.getItemStack(), null) != null && storage.getItem().getFoodProperties().getNutrition() >= minNutrition))
+            if ((storage.getItemStack().getFoodProperties(null) != null && storage.getItemStack().getFoodProperties(null).getNutrition() >= minNutrition))
             {
                 filteredEdibles.add(storage);
             }
