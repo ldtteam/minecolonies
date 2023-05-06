@@ -74,7 +74,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
     /**
      * Load all the utility predicates.
      */
-    private static void loadUtilityPredicates()
+    public void loadUtilityPredicates()
     {
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));

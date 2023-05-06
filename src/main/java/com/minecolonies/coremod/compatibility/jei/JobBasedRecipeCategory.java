@@ -44,6 +44,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -159,7 +160,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return this.icon;
     }
 
-    public List<T> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
+    public List<T> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla, Level world)
     {
         return Collections.emptyList();
     }

@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -236,13 +237,13 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return The list of additional recipes.
      */
     @NotNull
-    List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly();
+    List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull Level world);
 
     /**
      * Gets a list of loot tables that should be available for drop
      * analysis (beyond any already used in recipes).  This is not
      * intended for actually generating loot, just for display purposes
-     * such as in JEI (e.g. via {@link #getAdditionalRecipesForDisplayPurposesOnly()}).
+     * such as in JEI (e.g. via {@link #getAdditionalRecipesForDisplayPurposesOnly(Level)}).
      *
      * @return The list of loot table ids
      */

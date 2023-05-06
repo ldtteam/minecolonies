@@ -257,9 +257,9 @@ public class BuildingAlchemist extends AbstractBuilding
         }
 
         @Override
-        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
         {
-            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // growing mistletoe
             recipes.add(new GenericRecipe(null, new ItemStack(ModItems.mistletoe),

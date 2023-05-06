@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +142,7 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
 
     @NotNull
     @Override
-    public List<HerdingRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
+    public List<HerdingRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla, Level world)
     {
         final List<ItemStack> breedingItems = this.herding.getBreedingItems();
 

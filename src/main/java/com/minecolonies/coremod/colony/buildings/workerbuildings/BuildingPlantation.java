@@ -258,9 +258,9 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
         {
-            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // indicate which plants we can grow
             for (final Map.Entry<Item, PlantationItem> entry : COMBINATIONS.entrySet())
