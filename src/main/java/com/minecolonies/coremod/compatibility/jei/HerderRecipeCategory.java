@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei;
 
+import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -8,6 +9,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -134,9 +136,9 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
             final float yaw = animalTimer.getValue();
             final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
             final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-            RenderHelper.scissor(stack, ANIMAL_X, ANIMAL_Y, ANIMAL_W, ANIMAL_H);
-            RenderHelper.renderEntity(stack, animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
-            RenderHelper.stopScissor();
+            Lighting.setupForFlatItems();
+            UiRenderMacros.drawEntity(stack, animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
+            Lighting.setupFor3DItems();
         }
     }
 
