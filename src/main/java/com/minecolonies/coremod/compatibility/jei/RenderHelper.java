@@ -11,10 +11,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
-
-import java.nio.FloatBuffer;
 
 /**
  * JEI GUI rendering utility helpers
@@ -61,24 +57,5 @@ public class RenderHelper
         matrixStack.popPose();
 
         matrixStack.popPose();
-    }
-
-    private static double[] getGLTranslation(final PoseStack poseStack, final double scale)
-    {
-        final Matrix4f matrix = poseStack.last().pose();
-        final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-        matrix.set(buf);
-        // { x, y, z }
-        return new double[]
-        {
-            buf.get(getIndexFloatBuffer(0,3)) * scale,
-            buf.get(getIndexFloatBuffer(1, 3)) * scale,
-            buf.get(getIndexFloatBuffer(2, 3)) * scale
-        };
-    }
-
-    private static int getIndexFloatBuffer(final int x, final int y)
-    {
-        return y * 4 + x;
     }
 }
