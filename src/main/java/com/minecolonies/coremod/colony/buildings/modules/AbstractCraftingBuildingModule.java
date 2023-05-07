@@ -172,7 +172,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      * @param crafterRecipes the list of custom recipes.
      * @return true if so.
      */
-    private boolean isPreTaughtRecipe(
+    protected boolean isPreTaughtRecipe(
       final IRecipeStorage storage,
       final Map<ResourceLocation, CustomRecipe> crafterRecipes)
     {

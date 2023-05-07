@@ -6,10 +6,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
-import com.minecolonies.api.crafting.GenericRecipe;
-import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -17,6 +14,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -179,6 +177,17 @@ public class BuildingSmeltery extends AbstractBuilding
             }
 
             return lootTables;
+        }
+
+        @Override
+        protected boolean isPreTaughtRecipe(final IRecipeStorage storage, final Map<ResourceLocation, CustomRecipe> crafterRecipes)
+        {
+            if (storage.getPrimaryOutput().isEmpty() && storage.getLootTable() != null)
+            {
+                return true;
+            }
+
+            return super.isPreTaughtRecipe(storage, crafterRecipes);
         }
 
         @NotNull
