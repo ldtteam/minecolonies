@@ -10,11 +10,10 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.modules.SimpleCraftingModule;
-import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
-import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
+import com.minecolonies.coremod.colony.crafting.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -58,6 +57,7 @@ public class CraftingTagAuditor
         createFile("block tag audit", server, "tag_block_audit.csv", writer -> doBlockTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
+        createFile("tools audit", server, "tools_audit.csv", writer -> doToolsAudit(writer, server));
     }
 
     private static boolean createFile(@NotNull final String description,
@@ -265,6 +265,41 @@ public class CraftingTagAuditor
 
                 writer.newLine();
             }
+        }
+    }
+
+    private static void doToolsAudit(@NotNull final BufferedWriter writer,
+                                     @NotNull final MinecraftServer server) throws IOException
+    {
+        final List<ToolUsage> toolUsages = ToolsAnalyzer.findTools();
+
+        writeItemHeaders(writer);
+        for (final ToolUsage tool : toolUsages)
+        {
+            writer.write(',');
+            writer.write(tool.tool().getName());
+        }
+        writer.newLine();
+
+        for (final ItemStack item : getAllItems())
+        {
+            writeItemData(writer, item);
+
+            for (final ToolUsage tool : toolUsages)
+            {
+                writer.write(',');
+                for (int level = 0; level < tool.toolLevels().size(); ++level)
+                {
+                    final List<ItemStack> stacks = tool.toolLevels().get(level);
+                    if (ItemStackUtils.compareItemStackListIgnoreStackSize(stacks, item, false, true))
+                    {
+                        writer.write(Integer.toString(level));
+                        break;
+                    }
+                }
+            }
+
+            writer.newLine();
         }
     }
 
