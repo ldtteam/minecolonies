@@ -13,6 +13,9 @@ public class ModRecipeTypes
     public static final RecipeType<FishermanRecipeCategory.FishingRecipe> FISHING =
             RecipeType.create(MOD_ID, "fishing", FishermanRecipeCategory.FishingRecipe.class);
 
+    public static final RecipeType<ToolRecipeCategory.ToolUsage> TOOLS =
+            RecipeType.create(MOD_ID, "tools", ToolRecipeCategory.ToolUsage.class);
+
     private ModRecipeTypes()
     {
         // purely static

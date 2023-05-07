@@ -55,6 +55,7 @@ public class JEIPlugin implements IModPlugin
         final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
+        registration.addRecipeCategories(new ToolRecipeCategory(guiHelper));
         registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
         registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
 
@@ -111,6 +112,7 @@ public class JEIPlugin implements IModPlugin
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM_STACK,
                 Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
+        registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
@@ -166,12 +168,4 @@ public class JEIPlugin implements IModPlugin
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
         new BrewingCraftingGuiHandler(this.categories).register(registration);
     }
-
-    // while this looks suspiciously similar to BiConsumer, it works around a generic type incompatibility
-    @FunctionalInterface
-    private interface Registrar
-    {
-        <T> void accept(RecipeType<T> type, List<T> list);
-    }
-
 }
