@@ -74,8 +74,5 @@ public interface ISetting
      * Allow updating a setting with new data.
      * @param iSetting the setting with new data
      */
-    default void updateSetting(final ISetting iSetting)
-    {
-
-    }
+    void updateSetting(final ISetting iSetting);
 }
