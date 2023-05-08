@@ -108,6 +108,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         Network.getNetwork()
           .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
 
+        worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         worker.swing(InteractionHand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
 
@@ -144,6 +145,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IAIState checkForImportantJobs()
     {
+        if (!ItemStackUtils.isEmpty(worker.getMainHandItem()))
+        {
+            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        }
+
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
             return INVENTORY_FULL;
