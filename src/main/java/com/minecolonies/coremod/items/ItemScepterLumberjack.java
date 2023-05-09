@@ -2,6 +2,7 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
@@ -24,6 +25,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 import net.minecraft.world.item.Item.Properties;
+
+import java.util.Collections;
 
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
