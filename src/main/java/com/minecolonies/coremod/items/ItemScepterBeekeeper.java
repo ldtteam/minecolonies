@@ -30,9 +30,6 @@ import net.minecraft.world.item.Item.Properties;
  */
 public class ItemScepterBeekeeper extends AbstractItemMinecolonies
 {
-    private static final int RED_OVERLAY = 0xFFFF0000;
-    private static final int YELLOW_OVERLAY = 0xFFFFFF00;
-
     /**
      * BeekeeperScepter constructor. Sets max stack to 1, like other tools.
      *
@@ -95,30 +92,5 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
         }
 
         return super.useOn(useContext);
-    }
-
-    @NotNull
-    @Override
-    public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
-    {
-        final CompoundTag compound = stack.getOrCreateTag();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), world.dimension());
-        final BlockPos pos = BlockPosUtil.read(compound, TAG_POS);
-
-        if (colony != null && colony.getBuilding(pos) instanceof final BuildingBeekeeper.View hut)
-        {
-            final List<OverlayBox> overlays = new ArrayList<>();
-
-            overlays.add(new OverlayBox(new AABB(pos), RED_OVERLAY, 0.02f, true));
-
-            for (final BlockPos hive : hut.getHives())
-            {
-                overlays.add(new OverlayBox(new AABB(hive), YELLOW_OVERLAY, 0.04f, true));
-            }
-
-            return overlays;
-        }
-
-        return Collections.emptyList();
     }
 }

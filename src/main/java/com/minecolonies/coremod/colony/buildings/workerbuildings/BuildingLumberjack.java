@@ -245,13 +245,6 @@ public class BuildingLumberjack extends AbstractBuilding
     {
         this.startRestriction = startPosition;
         this.endRestriction = endPosition;
-
-        final boolean areaIsDefined = startPosition != null && endPosition != null;
-        if (getSetting(RESTRICT).getValue() != areaIsDefined)
-        {
-            getSetting(RESTRICT).trigger();
-        }
-        markDirty();
     }
 
     public BlockPos getStartRestriction()
