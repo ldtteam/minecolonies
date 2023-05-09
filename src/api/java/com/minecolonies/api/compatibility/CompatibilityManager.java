@@ -27,8 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -122,7 +120,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Set of all beekeeper flowers.
      */
-    private final Set<ItemStorage> beekeeperflowers = new HashSet<>();
+    private ImmutableSet<ItemStorage> beekeeperflowers = ImmutableSet.of();
 
     /**
      * Set of all possible diseases.
@@ -196,11 +194,12 @@ public class CompatibilityManager implements ICompatibilityManager
         oreBlocks.clear();
         smeltableOres.clear();
         plantables.clear();
+        beekeeperflowers = ImmutableSet.of();
+
         food.clear();
         edibles.clear();
         fuel.clear();
         compostRecipes.clear();
-        beekeeperflowers.clear();
 
         luckyOres.clear();
         recruitmentCostsWeights.clear();
@@ -239,6 +238,8 @@ public class CompatibilityManager implements ICompatibilityManager
         serializeBlockList(buf, oreBlocks);
         serializeItemStorageList(buf, smeltableOres);
         serializeItemStorageList(buf, plantables);
+        serializeItemStorageList(buf, beekeeperflowers);
+
         serializeItemStorageList(buf, food);
         serializeItemStorageList(buf, edibles);
         serializeItemStorageList(buf, fuel);
@@ -258,6 +259,8 @@ public class CompatibilityManager implements ICompatibilityManager
         oreBlocks.addAll(deserializeBlockList(buf));
         smeltableOres.addAll(deserializeItemStorageList(buf));
         plantables.addAll(deserializeItemStorageList(buf));
+        beekeeperflowers = ImmutableSet.copyOf(deserializeItemStorageList(buf));
+
         food.addAll(deserializeItemStorageList(buf));
         edibles.addAll(deserializeItemStorageList(buf));
         fuel.addAll(deserializeItemStorageList(buf));
@@ -266,6 +269,8 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Synchronized {} saplings", saplings.size());
         Log.getLogger().info("Synchronized {} ore blocks with {} smeltable ores", oreBlocks.size(), smeltableOres.size());
         Log.getLogger().info("Synchronized {} plantables", plantables.size());
+        Log.getLogger().info("Synchronized {} flowers", beekeeperflowers.size());
+
         Log.getLogger().info("Synchronized {} food types with {} edible", food.size(), edibles.size());
         Log.getLogger().info("Synchronized {} fuel types", fuel.size());
         Log.getLogger().info("Synchronized {} monsters", monsters.size());
@@ -450,6 +455,13 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public Set<ItemStorage> getImmutableFlowers()
+    {
+        if (beekeeperflowers.isEmpty()) Log.getLogger().error("getImmutableFlowers when empty");
+        return beekeeperflowers;
+    }
+
+    @Override
     public String getRandomDisease()
     {
         return diseaseList.get(random.nextInt(diseaseList.size()));
@@ -607,6 +619,8 @@ public class CompatibilityManager implements ICompatibilityManager
             return;
         }
 
+        final Set<ItemStorage> tempFlowers = new HashSet<>();
+
         final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), true, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
@@ -646,13 +660,14 @@ public class CompatibilityManager implements ICompatibilityManager
                     discoverPlantables(item);
                     discoverFood(item);
                     discoverFuel(item);
-                    discoverBeekeeperFlowers(item);
+                    discoverBeekeeperFlowers(item, tempFlowers);
 
                     creativeModeTabMap.put(new ItemStorage(item), tab);
                 }
             }
         }
 
+        beekeeperflowers = ImmutableSet.copyOf(tempFlowers);
         Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
         Log.getLogger().info("Finished discovering saplings " + saplings.size());
         Log.getLogger().info("Finished discovering plantables " + plantables.size());
@@ -668,11 +683,11 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Discover all flowers for the beekeeper.
      */
-    private void discoverBeekeeperFlowers(final ItemStack item)
+    private void discoverBeekeeperFlowers(final ItemStack item, final Set<ItemStorage> tempFlowers)
     {
         if (item.is(ItemTags.FLOWERS))
         {
-            beekeeperflowers.add(new ItemStorage(item));
+            tempFlowers.add(new ItemStorage(item));
         }
     }
 
@@ -957,15 +972,5 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
-    }
-
-    /**
-     * Gets all the possible flowers for the beekeeper.
-     * 
-     * @return a set of the flowers.
-     */
-    public Set<ItemStorage> getAllBeekeeperFlowers()
-    {
-        return beekeeperflowers;
     }
 }
