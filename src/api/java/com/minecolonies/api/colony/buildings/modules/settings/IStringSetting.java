@@ -36,4 +36,13 @@ public interface IStringSetting extends ISetting
      * @param value the value to set.
      */
     void set(final String value);
+
+    @Override
+    default void updateSetting(final ISetting iSetting)
+    {
+        if (iSetting instanceof final IStringSetting other)
+        {
+            set(other.getValue());
+        }
+    }
 }

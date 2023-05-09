@@ -62,10 +62,10 @@
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
   "item.minecolonies.scepterlumberjack": "Forest Tool",
-  "item.minecolonies.scepterlumberjack.usedend": "Position A set. Select Position B with a right-click or left-click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.usedstart": "Position B set. Select Position A with a left-click or right-click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
-  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
+  "item.minecolonies.scepterlumberjack.usedend": "Position A set. Select Position B with a right-click or discard tool when finished.",
+  "item.minecolonies.scepterlumberjack.usedstart": "Position B set. Select Position A with a left-click or discard tool when finished.",
+  "item.minecolonies.scepterlumberjack.restrictiontoobig": "A zone of %d blocks is too large. The maximum restricted volume for the Forester is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted zone set (x: %d to %d, y: %d to %d, z: %d to %d, total: %d blocks). The max size is %d blocks.",
 
   "minecolonies.config.maxtreesize": "Max Tree Size",
   "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
