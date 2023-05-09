@@ -3,6 +3,7 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -17,6 +18,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -208,9 +210,9 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
         final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
         final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-        RenderHelper.scissor(stack, CITIZEN_X, CITIZEN_Y, CITIZEN_W, CITIZEN_H);
-        RenderHelper.renderEntity(stack, citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
-        RenderHelper.stopScissor();
+        Lighting.setupForFlatItems();
+        UiRenderMacros.drawEntity(stack, citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
+        Lighting.setupFor3DItems();
 
         int y = 0;
         final Minecraft mc = Minecraft.getInstance();
