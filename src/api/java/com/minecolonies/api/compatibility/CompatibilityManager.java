@@ -166,7 +166,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of all the items that can be used by the apiary.
      */
-    private final Set<ItemStorage> flowers = new HashSet<>();
+    private ImmutableSet<ItemStorage> flowers = ImmutableSet.of();
 
     /**
      * Instantiates the compatibilityManager.
@@ -184,7 +184,7 @@ public class CompatibilityManager implements ICompatibilityManager
         oreBlocks.clear();
         smeltableOres.clear();
         plantables.clear();
-        flowers.clear();
+        flowers = ImmutableSet.of();
 
         food.clear();
         edibles.clear();
@@ -267,7 +267,7 @@ public class CompatibilityManager implements ICompatibilityManager
         oreBlocks.addAll(deserializeBlockList(buf));
         smeltableOres.addAll(deserializeItemStorageList(buf));
         plantables.addAll(deserializeItemStorageList(buf));
-        flowers.addAll(deserializeItemStorageList(buf));
+        flowers = ImmutableSet.copyOf(deserializeItemStorageList(buf));
 
         food.addAll(deserializeItemStorageList(buf));
         edibles.addAll(deserializeItemStorageList(buf));
@@ -463,10 +463,10 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getCopyOfFlowers()
+    public Set<ItemStorage> getImmutableFlowers()
     {
-        if (flowers.isEmpty()) Log.getLogger().error("getCopyOfFlowers when empty");
-        return new HashSet<>(flowers);
+        if (flowers.isEmpty()) Log.getLogger().error("getImmutableFlowers when empty");
+        return flowers;
     }
 
     @Override
@@ -970,15 +970,17 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (flowers.isEmpty())
         {
+            final HashSet<ItemStorage> tempFlowers = new HashSet<ItemStorage>();
             for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.FLOWERS))
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
                 item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
                 for (final ItemStack stack : list)
                 {
-                    flowers.add(new ItemStorage(stack));
+                    tempFlowers.add(new ItemStorage(stack));
                 }
             }
+            flowers = ImmutableSet.copyOf(tempFlowers);
         }
     }
 }

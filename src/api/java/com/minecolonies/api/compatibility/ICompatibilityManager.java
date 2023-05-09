@@ -128,7 +128,7 @@ public interface ICompatibilityManager
      *
      * @return the list of flowers.
      */
-    Set<ItemStorage> getCopyOfFlowers();
+    Set<ItemStorage> getImmutableFlowers();
 
     /**
      * Get the set of all monsters.
