@@ -74,5 +74,14 @@ public interface ISetting
      * Allow updating a setting with new data.
      * @param iSetting the setting with new data
      */
-    void updateSetting(final ISetting iSetting);
+    default void updateSetting(final ISetting iSetting)
+    {
+        
+    }
+
+    /**
+     * Copy value from another instance.
+     * @param iSetting the setting to copy from
+     */
+    void copyValue(final ISetting iSetting);
 }

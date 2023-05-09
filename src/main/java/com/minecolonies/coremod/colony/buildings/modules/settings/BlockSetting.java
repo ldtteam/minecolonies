@@ -157,7 +157,7 @@ public class BlockSetting implements ISetting
     }
 
     @Override
-    public void updateSetting(final ISetting iSetting)
+    public void copyValue(final ISetting iSetting)
     {
         if (iSetting instanceof final BlockSetting other)
         {
