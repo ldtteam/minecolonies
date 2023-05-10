@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
@@ -32,14 +32,14 @@ public class ColonyViewFieldViewMessage implements IMessage
     private ResourceKey<Level> dimension;
 
     /**
+     * The type of the field.
+     */
+    private FieldRegistries.FieldEntry type;
+
+    /**
      * The position of the field.
      */
     private BlockPos position;
-
-    /**
-     * The type of the field.
-     */
-    private FieldType type;
 
     /**
      * The buffer containing the serialized field class.
@@ -63,9 +63,9 @@ public class ColonyViewFieldViewMessage implements IMessage
     {
         super();
         this.colonyId = field.getColony().getID();
-        this.position = field.getPosition();
-        this.type = field.getType();
         this.dimension = field.getColony().getDimension();
+        this.type = field.getFieldType();
+        this.position = field.getPosition();
         this.fieldData = new FriendlyByteBuf(Unpooled.buffer());
         field.serializeToView(fieldData);
     }
@@ -74,9 +74,9 @@ public class ColonyViewFieldViewMessage implements IMessage
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
-        buf.writeBlockPos(position);
-        buf.writeEnum(type);
         buf.writeUtf(dimension.location().toString());
+        buf.writeRegistryId(FieldRegistries.getFieldRegistry(), type);
+        buf.writeBlockPos(position);
         buf.writeBytes(fieldData);
     }
 
@@ -84,9 +84,9 @@ public class ColonyViewFieldViewMessage implements IMessage
     public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         colonyId = buf.readInt();
-        position = buf.readBlockPos();
-        type = buf.readEnum(FieldType.class);
         dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        type = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
+        position = buf.readBlockPos();
         fieldData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(fieldData, buf.readableBytes());
     }
@@ -101,6 +101,6 @@ public class ColonyViewFieldViewMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        IColonyManager.getInstance().handleColonyFieldViewMessage(colonyId, position, type, fieldData, dimension);
+        IColonyManager.getInstance().handleColonyFieldViewMessage(colonyId, dimension, type, position, fieldData);
     }
 }

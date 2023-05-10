@@ -4,15 +4,14 @@ import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.WindowPlantationField;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
+import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.tileentities.TileEntityPlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -144,7 +143,8 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         Direction dir = state.getValue(FACING);
-        if (SHAPES.containsKey(dir)) {
+        if (SHAPES.containsKey(dir))
+        {
             return SHAPES.get(dir);
         }
         VoxelShape shape = Shapes.box(
@@ -183,19 +183,18 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityPlantationField plantationField)
+        if (tileEntity instanceof TileEntityPlantationField tileEntityPlantationField)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                for (PlantationFieldType plantationFieldType : plantationField.getPlantationFieldTypes())
+                for (PlantationFieldType plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes())
                 {
                     PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
                     if (module != null)
                     {
-                        final List<BlockPos> validWorkingPositions = module.getValidWorkingPositions(worldIn, plantationField.getWorkingPositions(module.getWorkTag()));
-                        PlantationField field = new PlantationField(colony, pos, plantationFieldType, module.getItem(), validWorkingPositions);
-                        colony.getBuildingManager().addOrUpdateField(field);
+                        final List<BlockPos> workingPositions = module.getValidWorkingPositions(worldIn, tileEntityPlantationField.getWorkingPositions(module.getWorkTag()));
+                        colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, pos, plantationFieldType, workingPositions));
                     }
                 }
             }
@@ -233,11 +232,8 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 {
                     for (PlantationFieldType plantationFieldType : plantationField.getPlantationFieldTypes())
                     {
-                        PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
-                        if (module != null)
-                        {
-                            colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, new FieldRecord(pos, module.getItem()));
-                        }
+                        colony.getBuildingManager().removeField(new PlantationField.Matcher(FieldRegistries.plantationField.get(), pos)
+                                                                  .setPlantationFieldType(plantationFieldType));
                     }
                 }
             }

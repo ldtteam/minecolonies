@@ -1,14 +1,18 @@
-package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
+package com.minecolonies.coremod.colony.fields;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFieldView;
+import com.minecolonies.api.colony.fields.AbstractField;
+import com.minecolonies.api.colony.fields.AbstractFieldMatcher;
+import com.minecolonies.api.colony.fields.AbstractFieldView;
+import com.minecolonies.api.colony.fields.IFieldMatcher;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
@@ -27,9 +31,15 @@ public class FarmField extends AbstractField
      */
     private static final int MAX_RANGE = 5;
 
+    private static final String TAG_SEED      = "seed";
     private static final String TAG_RADIUS    = "radius";
     private static final String TAG_MAX_RANGE = "maxRange";
     private static final String TAG_STAGE     = "stage";
+
+    /**
+     * The currently selected seed on the field, if any.
+     */
+    private ItemStack seed = ItemStack.EMPTY;
 
     /**
      * The size of the field in all four directions
@@ -53,26 +63,10 @@ public class FarmField extends AbstractField
      *
      * @param colony the colony this field belongs to.
      */
-    public FarmField(final IColony colony)
+    public FarmField(final IColony colony, final BlockPos position)
     {
-        super(colony);
+        super(colony, position);
         this.maxRadius = MAX_RANGE;
-    }
-
-    /**
-     * Copy constructor.
-     *
-     * @param field the original field class.
-     */
-    public FarmField(final FarmField field)
-    {
-        super(field.colony);
-        this.buildingId = field.buildingId;
-        this.position = field.position;
-        this.plant = field.plant;
-        this.radii = field.radii.clone();
-        this.maxRadius = field.maxRadius;
-        this.fieldStage = field.fieldStage;
     }
 
     /**
@@ -81,23 +75,59 @@ public class FarmField extends AbstractField
      * @param colony   the colony it is created in.
      * @param position the position it is placed in.
      */
-    public FarmField(final IColony colony, final BlockPos position)
+    public static FarmField create(final IColony colony, final BlockPos position)
     {
-        super(colony);
-        this.position = position;
-        this.maxRadius = MAX_RANGE;
-    }
-
-    @Override
-    public FieldType getType()
-    {
-        return FieldType.FARMER_FIELDS;
+        return (FarmField) FieldRegistries.farmField.get().produceField(colony, position);
     }
 
     @Override
     public boolean needsWork()
     {
-        return getPlant() != null;
+        return true;
+    }
+
+    @Override
+    public boolean isValidPlacement()
+    {
+        BlockState blockState = getColony().getWorld().getBlockState(getPosition());
+        return blockState.is(ModBlocks.blockHutFarmer);
+    }
+
+    @Override
+    public @NotNull CompoundTag serializeNBT()
+    {
+        CompoundTag compound = super.serializeNBT();
+        compound.put(TAG_SEED, seed.serializeNBT());
+        compound.putIntArray(TAG_RADIUS, radii);
+        compound.putInt(TAG_MAX_RANGE, maxRadius);
+        compound.putString(TAG_STAGE, fieldStage.name());
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final @NotNull CompoundTag compound)
+    {
+        super.deserializeNBT(compound);
+        seed = ItemStack.of(compound.getCompound(TAG_SEED));
+        radii = compound.getIntArray(TAG_RADIUS);
+        maxRadius = compound.getInt(TAG_MAX_RANGE);
+        fieldStage = Stage.valueOf(compound.getString(TAG_STAGE));
+    }
+
+    @Override
+    public void serializeToView(final @NotNull FriendlyByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeItem(seed);
+        buf.writeVarIntArray(radii);
+        buf.writeInt(maxRadius);
+        buf.writeEnum(fieldStage);
+    }
+
+    @Override
+    public @NotNull IFieldMatcher getMatcher()
+    {
+        return new Matcher(getFieldType(), getPosition());
     }
 
     /**
@@ -181,43 +211,27 @@ public class FarmField extends AbstractField
      */
     private static boolean isValidDelimiter(final Block block)
     {
-        return block instanceof FenceBlock || block instanceof FenceGateBlock
-                 || block instanceof WallBlock;
+        return block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock;
     }
 
-    @Override
-    public void deserializeNBT(final CompoundTag compound)
+    /**
+     * Get the current seed on the field.
+     *
+     * @return the current seed.
+     */
+    public ItemStack getSeed()
     {
-        super.deserializeNBT(compound);
-        radii = compound.getIntArray(TAG_RADIUS);
-        maxRadius = compound.getInt(TAG_MAX_RANGE);
-        fieldStage = Stage.valueOf(compound.getString(TAG_STAGE));
+        return seed;
     }
 
-    @Override
-    public @NotNull CompoundTag serializeNBT()
+    /**
+     * Updates the seed in the field.
+     *
+     * @param seed the new seed
+     */
+    public void setSeed(final ItemStack seed)
     {
-        CompoundTag compound = super.serializeNBT();
-        compound.putIntArray(TAG_RADIUS, radii);
-        compound.putInt(TAG_MAX_RANGE, maxRadius);
-        compound.putString(TAG_STAGE, fieldStage.name());
-        return compound;
-    }
-
-    @Override
-    public void serializeToView(final FriendlyByteBuf fieldData)
-    {
-        super.serializeToView(fieldData);
-        fieldData.writeVarIntArray(radii);
-        fieldData.writeInt(maxRadius);
-        fieldData.writeEnum(fieldStage);
-    }
-
-    @Override
-    public boolean isValidPlacement()
-    {
-        BlockState blockState = colony.getWorld().getBlockState(position);
-        return blockState.is(ModBlocks.blockHutFarmer);
+        this.seed = seed;
     }
 
     /**
@@ -235,6 +249,11 @@ public class FarmField extends AbstractField
      */
     public static class View extends AbstractFieldView
     {
+        /**
+         * The currently selected seed on the field, if any.
+         */
+        private ItemStack seed = ItemStack.EMPTY;
+
         /**
          * The size of the field in all four directions
          * in the same order as {@link Direction}:
@@ -255,24 +274,45 @@ public class FarmField extends AbstractField
         /**
          * Default constructor.
          */
-        protected View(final IColonyView colony)
+        public View(final IColonyView colony, final BlockPos position)
         {
-            super(colony);
+            super(colony, position);
         }
 
         @Override
-        public void deserialize(final FriendlyByteBuf fieldData)
+        public void deserialize(final FriendlyByteBuf buf)
         {
-            super.deserialize(fieldData);
-            radii = fieldData.readVarIntArray();
-            maxRadius = fieldData.readInt();
-            fieldStage = fieldData.readEnum(Stage.class);
+            super.deserialize(buf);
+            seed = buf.readItem();
+            radii = buf.readVarIntArray();
+            maxRadius = buf.readInt();
+            fieldStage = buf.readEnum(Stage.class);
         }
 
         @Override
-        public @NotNull FieldType getType()
+        public @NotNull IFieldMatcher getMatcher()
         {
-            return FieldType.FARMER_FIELDS;
+            return new Matcher(getFieldType(), getPosition());
+        }
+
+        /**
+         * Get the seed currently on the field.
+         *
+         * @return the current seed.
+         */
+        public ItemStack getSeed()
+        {
+            return seed;
+        }
+
+        /**
+         * Updates the seed in the field.
+         *
+         * @param seed the new seed
+         */
+        public void setSeed(final ItemStack seed)
+        {
+            this.seed = seed;
         }
 
         /**
@@ -315,6 +355,17 @@ public class FarmField extends AbstractField
         public Stage getFieldStage()
         {
             return fieldStage;
+        }
+    }
+
+    /**
+     * Matcher class for the {@link FarmField}.
+     */
+    public static class Matcher extends AbstractFieldMatcher
+    {
+        public Matcher(FieldRegistries.FieldEntry fieldType, BlockPos position)
+        {
+            super(fieldType, position);
         }
     }
 }

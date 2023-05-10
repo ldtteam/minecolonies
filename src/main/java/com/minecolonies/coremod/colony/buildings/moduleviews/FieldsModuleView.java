@@ -1,30 +1,24 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.modules.FieldsModuleWindow;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.BUILDING_TAB_FIELDS;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT;
 
 /**
  * Client side version of the abstract class to list all fields (assigned) to a building.
@@ -41,24 +35,11 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      */
     private int maxFieldCount;
 
-    /**
-     * The maximum amount of different plants the building can support.
-     */
-    private int maxConcurrentPlants;
-
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         shouldAssignFieldManually = buf.readBoolean();
         maxFieldCount = buf.readInt();
-        maxConcurrentPlants = buf.readInt();
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
-        return new FieldsModuleWindow(buildingView, this);
     }
 
     @Override
@@ -90,18 +71,8 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      */
     public void setAssignFieldManually(final boolean assignFieldManually)
     {
-        Network.getNetwork().sendToServer(new AssignmentModeMessage(buildingView, assignFieldManually));
         this.shouldAssignFieldManually = assignFieldManually;
-    }
-
-    /**
-     * Get the maximum allowed concurrent plants.
-     *
-     * @return the max concurrent plants.
-     */
-    public int getMaxConcurrentPlants()
-    {
-        return maxConcurrentPlants;
+        Network.getNetwork().sendToServer(new AssignmentModeMessage(buildingView, assignFieldManually));
     }
 
     /**
@@ -111,8 +82,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      */
     public void assignField(final IFieldView field)
     {
-        if (buildingView != null && FieldsModule.checkFieldConditions(getOwnedFields().size(), getWorkedPlants().size(), maxFieldCount, maxConcurrentPlants)
-              && canAssignField(field))
+        if (buildingView != null && FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount) && canAssignField(field))
         {
             Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getMatcher()));
 
@@ -140,19 +110,6 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     /**
-     * Getter of the worked plants set.
-     *
-     * @return an unmodifiable set.
-     */
-    @NotNull
-    public Set<Item> getWorkedPlants()
-    {
-        return getOwnedFields().stream()
-                 .map(IFieldView::getPlant)
-                 .collect(Collectors.toSet());
-    }
-
-    /**
      * Check to see if a new field can be assigned to the worker.
      *
      * @param field the field which is being added.
@@ -163,9 +120,9 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     /**
      * Get the class type which is expected for the fields to have.
      *
-     * @return the class type.
+     * @return the field type.
      */
-    public abstract FieldType getExpectedFieldType();
+    public abstract FieldRegistries.FieldEntry getExpectedFieldType();
 
     /**
      * Getter of all fields that are either free, or taken by the current building.
@@ -214,10 +171,10 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
         {
             return Component.translatable(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
-        else if (!FieldsModule.checkPlantCount(getWorkedPlants().size(), maxConcurrentPlants))
-        {
-            return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
-        }
+        //else if (!FieldsModule.checkPlantCount(getWorkedPlants().size(), maxConcurrentPlants))
+        //{
+        //    return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
+        //}
         return null;
     }
 

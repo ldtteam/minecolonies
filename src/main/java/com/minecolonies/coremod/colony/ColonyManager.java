@@ -4,8 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -832,26 +832,36 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyFieldViewMessage(final int colonyId, final BlockPos position, FieldType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyFieldViewMessage(
+      final int colonyId,
+      final @NotNull ResourceKey<Level> dim,
+      final @NotNull FieldRegistries.FieldEntry type,
+      final @NotNull BlockPos position,
+      @NotNull final FriendlyByteBuf buf)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
-            view.handleColonyFieldViewMessage(type, buf);
+            view.handleColonyFieldViewMessage(type, position, buf);
         }
         else
         {
-            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId), new Exception());
+            Log.getLogger().error("Colony view does not exist for ID #{}", colonyId);
         }
     }
 
     @Override
-    public void handleColonyRemoveFieldViewMessage(final int colonyId, BlockPos position, FieldType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyRemoveFieldViewMessage(
+      final int colonyId,
+      final @NotNull ResourceKey<Level> dim,
+      final @NotNull FieldRegistries.FieldEntry type,
+      final @NotNull BlockPos position,
+      @NotNull final FriendlyByteBuf buf)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
-            view.handleColonyRemoveFieldViewMessage(type, buf);
+            view.handleColonyRemoveFieldViewMessage(type, position, buf);
         }
     }
 

@@ -1,10 +1,14 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,7 +21,7 @@ import java.util.Set;
 /**
  * The abstract implementation for plantation field tile entities.
  */
-public abstract class AbstractTileEntityPlantationField extends BlockEntity
+public abstract class AbstractTileEntityPlantationField extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
 {
     /**
      * Default method.
@@ -55,17 +59,26 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity
     public abstract boolean canOpenMenu(@NotNull Player player);
 
     /**
-     * Gets the schematic name, required to be saved
-     *
-     * @return schematic name
-     */
-    public abstract String getSchematicName();
-
-    /**
      * Get the dimension this plantation field is placed in.
      *
      * @return the dimension key.
      */
     @Nullable
     public abstract ResourceKey<Level> getDimension();
+
+    @Nullable
+    @Override
+    public abstract ClientboundBlockEntityDataPacket getUpdatePacket();
+
+    /**
+     * Get the rotation of the controller.
+     * @return the placed rotation.
+     */
+    public abstract Rotation getRotation();
+
+    /**
+     * Get the mirroring setting of the controller.
+     * @return true if mirrored.
+     */
+    public abstract boolean getMirror();
 }

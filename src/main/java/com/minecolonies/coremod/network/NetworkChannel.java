@@ -17,7 +17,8 @@ import com.minecolonies.coremod.network.messages.server.colony.building.builder.
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.fields.FieldPlotResizeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldUpdatePlantMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
@@ -234,7 +235,8 @@ public class NetworkChannel
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
         registerMessage(++idx, AddMinimumStockToBuildingModuleMessage.class, AddMinimumStockToBuildingModuleMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingModuleMessage.class, RemoveMinimumStockFromBuildingModuleMessage::new);
-        registerMessage(++idx, FieldPlotResizeMessage.class, FieldPlotResizeMessage::new);
+        registerMessage(++idx, FarmFieldPlotResizeMessage.class, FarmFieldPlotResizeMessage::new);
+        registerMessage(++idx, FarmFieldUpdatePlantMessage.class, FarmFieldUpdatePlantMessage::new);
         registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
         registerMessage(++idx, TriggerSettingMessage.class, TriggerSettingMessage::new);
@@ -243,7 +245,7 @@ public class NetworkChannel
         registerMessage(++idx, SwitchBuildingWithToolMessage.class, SwitchBuildingWithToolMessage::new);
         registerMessage(++idx, ColonyTextureStyleMessage.class, ColonyTextureStyleMessage::new);
         registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
-        registerMessage(++idx, PlantationFieldRepairMessage.class, PlantationFieldRepairMessage::new);
+        registerMessage(++idx, PlantationFieldBuildRequestMessage.class, PlantationFieldBuildRequestMessage::new);
         registerMessage(++idx, ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
@@ -271,7 +273,8 @@ public class NetworkChannel
         registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
         registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
-        registerMessage(++idx, OpenDecoWindowMessage.class, OpenDecoWindowMessage::new);
+        registerMessage(++idx, OpenDecoBuildWindowMessage.class, OpenDecoBuildWindowMessage::new);
+        registerMessage(++idx, OpenPlantationFieldBuildWindowMessage.class, OpenPlantationFieldBuildWindowMessage::new);
         registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
         registerMessage(++idx, GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
 

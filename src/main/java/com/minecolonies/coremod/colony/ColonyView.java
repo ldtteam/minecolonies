@@ -5,10 +5,10 @@ import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.fields.IFieldMatcher;
+import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -28,7 +28,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldRegistry;
 import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.coremod.colony.managers.StatisticsManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
@@ -59,6 +58,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,7 +87,7 @@ public final class ColonyView implements IColonyView
     @NotNull
     private final Map<BlockPos, IBuildingView> buildings   = new HashMap<>();
     @NotNull
-    private final Collection<IFieldView>       fields      = new HashSet<>();
+    private final Set<IFieldView>              fields      = new HashSet<>();
 
     //  Citizenry
     @NotNull
@@ -1102,36 +1102,35 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyFieldViewMessage(final FieldType type, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
     {
-        final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
-        field.deserialize(buf);
-        fields.remove(field);
-        fields.add(field);
+        final IFieldView fieldView = type.produceFieldView(this, position);
+        fieldView.deserialize(buf);
+        fields.remove(fieldView);
+        fields.add(fieldView);
     }
 
     @Override
-    public void handleColonyRemoveFieldViewMessage(final FieldType type, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyRemoveFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
     {
-        final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
-        field.deserialize(buf);
-        fields.remove(field);
+        final IFieldView fieldView = type.produceFieldView(this, position);
+        fieldView.deserialize(buf);
+        fields.remove(fieldView);
     }
 
     @Override
-    public @NotNull Collection<IFieldView> getFields(FieldType type)
+    public @NotNull Collection<IFieldView> getFields(final FieldRegistries.FieldEntry type)
     {
         return fields.stream()
-                 .filter(f -> f.getType().equals(type))
+                 .filter(f -> f.getFieldType().getRegistryName().equals(type.getRegistryName()))
                  .toList();
     }
 
     @Override
-    public IFieldView getField(FieldType type, final FieldRecord matcher)
+    public IFieldView getField(final IFieldMatcher matcher)
     {
         return fields.stream()
-                 .filter(f -> f.getType().equals(type))
-                 .filter(f -> f.getMatcher().equals(matcher))
+                 .filter(matcher::matchesView)
                  .findFirst()
                  .orElse(null);
     }

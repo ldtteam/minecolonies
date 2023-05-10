@@ -3,7 +3,8 @@ package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.fields.IFieldMatcher;
+import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,8 +16,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
 {
-    private boolean     assign;
-    private FieldRecord matcher;
+    private boolean assign;
+
+    private IFieldMatcher matcher;
 
     /**
      * Empty standard constructor.
@@ -33,7 +35,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param matcher  the field matcher to lookup fields by.
      * @param building the building we're executing on.
      */
-    public AssignFieldMessage(final IBuildingView building, final boolean assign, final FieldRecord matcher)
+    public AssignFieldMessage(final IBuildingView building, final boolean assign, final IFieldMatcher matcher)
     {
         super(building);
         this.assign = assign;
@@ -44,14 +46,14 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBoolean(assign);
-        matcher.toBytes(buf);
+        IFieldDataManager.getInstance().matcherToBytes(matcher, buf);
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         assign = buf.readBoolean();
-        matcher = FieldRecord.fromBytes(buf);
+        matcher = IFieldDataManager.getInstance().matcherFromBytes(buf);
     }
 
     @Override

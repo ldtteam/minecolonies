@@ -70,21 +70,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         super(MinecoloniesTileEntities.DECO_CONTROLLER.get(), pos, state);
     }
 
-    /**
-     * Getter for the name stored in this.
-     *
-     * @return String name.
-     */
-    public String getSchematicPath()
-    {
-        return schematicPath;
-    }
-
-    /**
-     * Getter for the pack.
-     *
-     * @return String name.
-     */
+    @Override
     public String getPackName()
     {
         return packName;

@@ -5,16 +5,17 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.IFieldMatcher;
 import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Abstract class to list all fields (assigned) to a building.
@@ -25,11 +26,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * NBT tag to store assign manually.
      */
     private static final String TAG_ASSIGN_MANUALLY = "assign";
-
-    /**
-     * The list of the fields the citizen manages.
-     */
-    private final Set<IField> fields = new HashSet<>();
 
     /**
      * The field the citizen is currently working on.
@@ -46,8 +42,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     public void deserializeNBT(final CompoundTag compound)
     {
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
-
-        updateFields();
     }
 
     @Override
@@ -61,7 +55,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     {
         buf.writeBoolean(shouldAssignManually);
         buf.writeInt(getMaxFieldCount());
-        buf.writeInt(getMaxConcurrentPlants());
     }
 
     /**
@@ -70,32 +63,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @return an integer stating the maximum field count.
      */
     protected abstract int getMaxFieldCount();
-
-    /**
-     * Getter to obtain the maximum amount of concurrent plants.
-     *
-     * @return an integer stating the maximum concurrent plant count.
-     */
-    protected abstract int getMaxConcurrentPlants();
-
-    /**
-     * Updates the internal set of fields backed by {@link FieldsModule#getFields(IColony)}
-     */
-    private void updateFields()
-    {
-        fields.clear();
-        fields.addAll(getFields(building.getColony()).stream()
-                        .filter(f -> building.getID().equals(f.getBuildingId()))
-                        .toList());
-    }
-
-    /**
-     * Getter to obtain the fields this module should process.
-     *
-     * @param colony the current colony.
-     * @return a collection of fields.
-     */
-    protected abstract @NotNull Set<? extends IField> getFields(IColony colony);
 
     /**
      * Get the class type which is expected for the fields to have.
@@ -116,14 +83,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     }
 
     /**
-     * Resets the current field if the worker indicates this field should no longer be worked on.
-     */
-    public void resetCurrentField()
-    {
-        currentField = null;
-    }
-
-    /**
      * Retrieves the field to work on for the citizen, as long as the current field has work, it will keep returning that field.
      * Else it will retrieve a random field to work on for the citizen.
      * This method will also automatically claim any fields that are not in use if the building is on automatic assignment mode.
@@ -138,7 +97,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             return currentField;
         }
 
-        final List<IField> randomizedFields = this.fields.stream()
+        final List<IField> randomizedFields = getOwnedFields().stream()
                                                 .filter(field -> !field.equals(currentField))
                                                 .collect(CollectorUtils.toShuffledList());
         for (final IField field : randomizedFields)
@@ -151,6 +110,14 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
         }
         return null;
     }
+
+    /**
+     * Returns list of fields.
+     *
+     * @return a list of field objects.
+     */
+    @NotNull
+    public abstract List<IField> getFields();
 
     /**
      * Attempt to automatically claim free fields, if possible and if any fields are available.
@@ -182,36 +149,12 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void assignField(final IField field)
     {
-        if (checkFieldConditions(fields.size(), fields.stream().map(IField::getPlant).collect(Collectors.toSet()).size(), getMaxFieldCount(), getMaxConcurrentPlants())
-              && canAddField(field))
+        if (checkFieldCount(getOwnedFields().size(), getMaxFieldCount()) && canAddField(field))
         {
             field.setBuilding(building.getID());
-            fields.add(field);
             markDirty();
         }
     }
-
-    /**
-     * Utility method to see if a field can be still be assigned.
-     *
-     * @param amountOfFields      the amount of fields the module currently contains.
-     * @param amountOfPlants      the amount of unique plants that the citizen works on.
-     * @param maxFieldCount       the maximum amount of fields the building supports.
-     * @param maxConcurrentPlants the maximum amount of concurrent plants the building supports.
-     * @return true if all conditions pass.
-     */
-    public static boolean checkFieldConditions(int amountOfFields, int amountOfPlants, int maxFieldCount, int maxConcurrentPlants)
-    {
-        return checkFieldCount(amountOfFields, maxFieldCount) && checkPlantCount(amountOfPlants, maxConcurrentPlants);
-    }
-
-    /**
-     * Check if a field can be added to the building.
-     *
-     * @param field the field which is being added.
-     * @return true if the field can be added.
-     */
-    public abstract boolean canAddField(IField field);
 
     /**
      * Checks if the amount of fields is lower than the maximum allowed fields.
@@ -226,34 +169,30 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     }
 
     /**
-     * Checks if the amount of fields is lower than the maximum allowed fields.
-     *
-     * @param amountOfPlants      the amount of plants.
-     * @param maxConcurrentPlants the maximum amount of concurrent plants.
-     * @return true if so.
-     */
-    public static boolean checkPlantCount(int amountOfPlants, int maxConcurrentPlants)
-    {
-        return amountOfPlants < maxConcurrentPlants;
-    }
-
-    /**
-     * Returns list of fields of the farmer.
+     * Returns list of fields.
      *
      * @return a list of field objects.
      */
     @NotNull
-    public List<IField> getFields()
+    public final List<IField> getOwnedFields()
     {
-        return new ArrayList<>(fields);
+        return getFields().stream().filter(f -> building.getID().equals(f.getBuildingId())).toList();
     }
+
+    /**
+     * Check if a field can be added to the building.
+     *
+     * @param field the field which is being added.
+     * @return true if the field can be added.
+     */
+    public abstract boolean canAddField(IField field);
 
     /**
      * Method called to assign a field to the building.
      *
      * @param matcher the field matcher.
      */
-    public final void assignField(final FieldRecord matcher)
+    public final void assignField(final IFieldMatcher matcher)
     {
         getFieldByMatcher(matcher).ifPresent(this::assignField);
     }
@@ -264,9 +203,9 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @param matcher the field matcher.
      * @return an optional containing a field if one was found.
      */
-    private Optional<? extends IField> getFieldByMatcher(final FieldRecord matcher)
+    private Optional<? extends IField> getFieldByMatcher(final IFieldMatcher matcher)
     {
-        return getFields(building.getColony()).stream().filter(f -> f.matches(matcher)).findFirst();
+        return getFields().stream().filter(matcher::matches).findFirst();
     }
 
     /**
@@ -286,7 +225,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public final boolean hasNoFields()
     {
-        return fields.isEmpty();
+        return getOwnedFields().isEmpty();
     }
 
     /**
@@ -304,7 +243,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @param matcher the field matcher.
      */
-    public final void freeField(final FieldRecord matcher)
+    public final void freeField(final IFieldMatcher matcher)
     {
         getFieldByMatcher(matcher).ifPresent(this::freeField);
     }
@@ -316,13 +255,20 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void freeField(final IField field)
     {
-        fields.remove(field);
         field.resetOwningBuilding();
         markDirty();
 
-        if (currentField != null && currentField.equals(field))
+        if (Objects.equals(currentField, field))
         {
-            currentField = null;
+            resetCurrentField();
         }
+    }
+
+    /**
+     * Resets the current field if the worker indicates this field should no longer be worked on.
+     */
+    public void resetCurrentField()
+    {
+        currentField = null;
     }
 }

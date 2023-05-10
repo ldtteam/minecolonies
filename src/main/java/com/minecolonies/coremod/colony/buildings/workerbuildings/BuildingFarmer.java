@@ -1,34 +1,37 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.client.gui.modules.FarmFieldsModuleWindow;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
+import com.minecolonies.coremod.colony.fields.FarmField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
@@ -88,12 +91,11 @@ public class BuildingFarmer extends AbstractBuilding
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
         for (FieldsModule module : getModules(FieldsModule.class))
         {
-            for (final IField field : module.getFields())
+            for (final IField field : module.getOwnedFields())
             {
-                if (field.getPlant() != null)
+                if (field instanceof FarmField farmField && farmField.getSeed().isEmpty())
                 {
-                    final ItemStack seedStack = new ItemStack(field.getPlant());
-                    toKeep.put(seedStack::sameItem, new Tuple<>(64, true));
+                    toKeep.put(farmField.getSeed()::sameItem, new Tuple<>(64, true));
                 }
             }
         }
@@ -105,9 +107,9 @@ public class BuildingFarmer extends AbstractBuilding
     {
         for (FieldsModule module : getModules(FieldsModule.class))
         {
-            for (final IField field : module.getFields())
+            for (final IField field : module.getOwnedFields())
             {
-                if (field.getPlant() != null && ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(field.getPlant()), stack))
+                if (field instanceof FarmField farmField && farmField.getSeed() != null && ItemStackUtils.compareItemStacksIgnoreStackSize(farmField.getSeed(), stack))
                 {
                     return false;
                 }
@@ -154,27 +156,21 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        protected int getMaxConcurrentPlants()
-        {
-            return building.getBuildingLevel();
-        }
-
-        @Override
-        protected @NotNull Set<IField> getFields(final IColony colony)
-        {
-            return colony.getBuildingManager().getFields(FieldType.FARMER_FIELDS);
-        }
-
-        @Override
         public Class<?> getExpectedFieldType()
         {
             return FarmField.class;
         }
 
         @Override
+        public @NotNull List<IField> getFields()
+        {
+            return building.getColony().getBuildingManager().getFields(FieldRegistries.farmField.get()).stream().toList();
+        }
+
+        @Override
         protected @NotNull List<IField> getFreeFields(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeFields(FieldType.FARMER_FIELDS);
+            return colony.getBuildingManager().getFreeFields(FieldRegistries.farmField.get());
         }
 
         @Override
@@ -190,15 +186,22 @@ public class BuildingFarmer extends AbstractBuilding
     public static class FarmerFieldsModuleView extends FieldsModuleView
     {
         @Override
+        @OnlyIn(Dist.CLIENT)
+        public BOWindow getWindow()
+        {
+            return new FarmFieldsModuleWindow(buildingView, this);
+        }
+
+        @Override
         public boolean canAssignField(final IFieldView field)
         {
             return true;
         }
 
         @Override
-        public FieldType getExpectedFieldType()
+        public FieldRegistries.FieldEntry getExpectedFieldType()
         {
-            return FieldType.FARMER_FIELDS;
+            return FieldRegistries.farmField.get();
         }
     }
 

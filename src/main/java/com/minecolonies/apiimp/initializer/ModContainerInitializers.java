@@ -16,8 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModContainerInitializers
 {
-    public final static DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Constants.MOD_ID);
-
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Constants.MOD_ID);
     static
     {
         ModContainers.craftingFurnace = CONTAINERS.register("crafting_furnace", () -> IForgeMenuType.create(ContainerCraftingFurnace::fromFriendlyByteBuf));
@@ -26,10 +25,8 @@ public class ModContainerInitializers
         ModContainers.craftingGrid = CONTAINERS.register("crafting_building", () -> IForgeMenuType.create(ContainerCrafting::fromFriendlyByteBuf));
         ModContainers.rackInv = CONTAINERS.register("rack_inv", () -> IForgeMenuType.create(ContainerRack::fromFriendlyByteBuf));
         ModContainers.graveInv = CONTAINERS.register("grave_inv", () -> IForgeMenuType.create(ContainerGrave::fromFriendlyByteBuf));
-        ModContainers.field = CONTAINERS.register("field", () -> IForgeMenuType.create(ContainerField::fromFriendlyByteBuf));
         ModContainers.craftingBrewingstand = CONTAINERS.register("crafting_brewingstand", () -> IForgeMenuType.create(ContainerCraftingBrewingstand::fromFriendlyByteBuf));
- }
-
+    }
     @SubscribeEvent
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
@@ -41,6 +38,5 @@ public class ModContainerInitializers
         MenuScreens.register(ModContainers.citizenInv.get(), WindowCitizenInventory::new);
         MenuScreens.register(ModContainers.rackInv.get(), WindowRack::new);
         MenuScreens.register(ModContainers.graveInv.get(), WindowGrave::new);
-        MenuScreens.register(ModContainers.field.get(), WindowField::new);
     }
 }

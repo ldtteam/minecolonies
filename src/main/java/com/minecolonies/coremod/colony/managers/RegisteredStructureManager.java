@@ -10,9 +10,10 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.IFieldMatcher;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -30,7 +31,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarrack
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldRegistry;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
@@ -52,7 +52,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
@@ -66,7 +65,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     /**
      * List of fields of the colony.
      */
-    private final Set<IField> fields;
+    private final Set<IField> fields = new HashSet<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -121,7 +120,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
-        this.fields = new HashSet<>();
     }
 
     @Override
@@ -140,9 +138,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             for (int i = 0; i < fieldsTagList.size(); ++i)
             {
                 final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-                IField fieldInstance = FieldRegistry.getFieldClassForType(FieldType.valueOf(fieldCompound.getString(TAG_TYPE)), colony);
-                fieldInstance.deserializeNBT(fieldCompound.getCompound(TAG_FIELD));
-                addOrUpdateField(fieldInstance);
+                final IField field = IFieldDataManager.getInstance().createFrom(colony, fieldCompound);
+                if (field != null)
+                {
+                    addOrUpdateField(field);
+                }
             }
         }
 
@@ -211,13 +211,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         // Fields
         compound.put(TAG_FIELDS, fields.stream()
-                                   .filter(f -> f.getPlant() != null)
-                                   .map(field -> {
-                                       final CompoundTag fieldCompound = new CompoundTag();
-                                       fieldCompound.put(TAG_FIELD, field.serializeNBT());
-                                       fieldCompound.putString(TAG_TYPE, field.getType().toString());
-                                       return fieldCompound;
-                                   })
+                                   .map(IFieldDataManager.getInstance()::createCompound)
                                    .collect(NBTUtils.toListNBT()));
 
         // Leisure sites
@@ -279,10 +273,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         for (final IField field : fields)
         {
-            if (field.getPlant() == null || WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition())
-                                                                                                                  || !field.isValidPlacement()))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement()))
             {
-                removeField(field.getType(), field.getMatcher());
+                removeField(field.getMatcher());
             }
         }
 
@@ -395,6 +388,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public ITownHall getTownHall()
     {
         return townHall;
+    }
+
+    @Override
+    public void setTownHall(@Nullable final ITownHall building)
+    {
+        this.townHall = building;
     }
 
     @Override
@@ -650,12 +649,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void setTownHall(@Nullable final ITownHall building)
-    {
-        this.townHall = building;
-    }
-
-    @Override
     public void removeWareHouse(final IWareHouse wareHouse)
     {
         wareHouses.remove(wareHouse);
@@ -800,27 +793,27 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public @NotNull Set<IField> getFields(FieldType type)
+    public @NotNull List<IField> getFields(FieldRegistries.FieldEntry type)
     {
-        return getFieldsStream(type).collect(Collectors.toSet());
+        return getFieldsStream(type).toList();
     }
 
-    private Stream<IField> getFieldsStream(FieldType type)
+    private Stream<IField> getFieldsStream(FieldRegistries.FieldEntry type)
     {
-        return fields.stream().filter(field -> field.getType().equals(type));
+        return fields.stream().filter(field -> field.getFieldType().getRegistryName().equals(type.getRegistryName()));
     }
 
     @Override
-    public @Nullable IField getField(FieldType type, FieldRecord matcher)
+    public @Nullable IField getField(IFieldMatcher matcher)
     {
-        return getFieldsStream(type)
-                 .filter(f -> f.matches(matcher))
+        return getFieldsStream(matcher.getFieldType())
+                 .filter(matcher::matches)
                  .findFirst()
                  .orElse(null);
     }
 
     @Override
-    public @NotNull List<IField> getFreeFields(FieldType type)
+    public @NotNull List<IField> getFreeFields(FieldRegistries.FieldEntry type)
     {
         return getFieldsStream(type).filter(field -> !field.isTaken()).toList();
     }
@@ -828,19 +821,27 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public void addOrUpdateField(IField field)
     {
-        if (field.getPlant() != null)
+        IFieldMatcher matcher = field.getMatcher();
+        fields.remove(field);
+        fields.add(field);
+
+        for (IBuilding building : buildings.values())
         {
-            fields.remove(field);
-            fields.add(field);
-            markFieldBuildingsDirty();
+            final FieldsModule fieldsModule = building.getFirstOptionalModuleOccurance(FieldsModule.class).orElse(null);
+            if (fieldsModule != null && (matcher.matches(fieldsModule.getCurrentField())))
+            {
+                fieldsModule.resetCurrentField();
+            }
         }
+
+        markFieldBuildingsDirty();
     }
 
     @Override
-    public void removeField(FieldType type, FieldRecord matcher)
+    public void removeField(IFieldMatcher matcher)
     {
         final List<IField> fieldsToRemove = fields.stream()
-                                              .filter(f -> f.matches(matcher))
+                                              .filter(matcher::matches)
                                               .toList();
 
         // We must send the message to everyone since fields here will be permanently removed from the list.

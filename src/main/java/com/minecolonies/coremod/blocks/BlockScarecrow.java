@@ -4,16 +4,14 @@ import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
-import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
+import com.minecolonies.coremod.client.gui.containers.WindowField;
+import com.minecolonies.coremod.colony.fields.FarmField;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,7 +37,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,26 +75,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void onPlace(final BlockState state, final Level worldIn, final BlockPos pos, final BlockState oldState, final boolean isMoving)
-    {
-        super.onPlace(state, worldIn, pos, oldState, isMoving);
-        if (worldIn.isClientSide)
-        {
-            return;
-        }
-
-        @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-        if (colony != null)
-        {
-            final TileEntityScarecrow scareCrow = (TileEntityScarecrow) worldIn.getBlockEntity(pos);
-            if (scareCrow != null)
-            {
-                colony.getBuildingManager().addOrUpdateField(new FarmField(colony, pos));
-            }
-        }
-    }
-
-    @Override
     public InteractionResult use(
       final BlockState state,
       final Level worldIn,
@@ -106,8 +83,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
       final InteractionHand hand,
       final BlockHitResult ray)
     {
-        //If the world is server, open the inventory of the field.
-        if (!worldIn.isClientSide)
+        // If the world is client, open the inventory of the field.
+        if (worldIn.isClientSide)
         {
             // Get the entity of the bottom half
             DoubleBlockHalf half = state.getValue(HALF);
@@ -115,7 +92,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
             if (entity instanceof TileEntityScarecrow scarecrow && scarecrow.canOpenMenu(player))
             {
-                NetworkHooks.openScreen((ServerPlayer) player, scarecrow, pos);
+                new WindowField(scarecrow).open();
+                return InteractionResult.SUCCESS;
             }
             else
             {
@@ -201,7 +179,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         BlockPos otherpos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
         BlockState otherstate = worldIn.getBlockState(otherpos);
 
-        // just double check the other block is also the scarecrow and not the same half,
+        // just double-check the other block is also the scarecrow and not the same half,
         // then destroy it (make it air)
         if (otherstate.getBlock() == this && otherstate.getValue(HALF) != half)
         {
@@ -231,11 +209,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-                if (blockEntity instanceof AbstractTileEntityScarecrow scarecrow)
-                {
-                    colony.getBuildingManager().removeField(FieldType.FARMER_FIELDS, new FieldRecord(pos, scarecrow.getPlant()));
-                }
+                colony.getBuildingManager().removeField(new FarmField.Matcher(FieldRegistries.farmField.get(), pos));
             }
         }
     }

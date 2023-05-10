@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
+import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import com.minecolonies.coremod.util.CollectorUtils;

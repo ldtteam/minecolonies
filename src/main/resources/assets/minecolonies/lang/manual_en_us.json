@@ -594,7 +594,7 @@
   "com.minecolonies.coremod.gui.workerhuts.fields.plantcount.reached": "You already reached the limit of concurrent plants.",
   "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research": "You do not have the required research to assign this field to the plantation.",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
-  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",

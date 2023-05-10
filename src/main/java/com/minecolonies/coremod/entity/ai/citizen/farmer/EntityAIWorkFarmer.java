@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
@@ -22,7 +22,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
+import com.minecolonies.coremod.colony.fields.FarmField;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -186,7 +186,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         module.claimFields();
 
-        if (module.getFields().size() == building.getMaxBuildingLevel())
+        if (module.getOwnedFields().size() == building.getMaxBuildingLevel())
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
         }
@@ -291,14 +291,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private IAIState canGoPlanting(@NotNull final FarmField farmField, @NotNull final BuildingFarmer buildingFarmer)
     {
-        if (farmField.getPlant() == null)
+        if (farmField.getSeed() == null)
         {
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
         worker.getCitizenData().setIdleAtJob(false);
 
-        final ItemStack seeds = new ItemStack(farmField.getPlant());
+        final ItemStack seeds = farmField.getSeed();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem());
         if (slot != -1)
         {
@@ -598,7 +598,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean tryToPlant(final FarmField farmField, BlockPos position)
     {
         position = findPlantableSurface(position, farmField);
-        return position == null || plantCrop(new ItemStack(farmField.getPlant()), position);
+        return position == null || plantCrop(farmField.getSeed(), position);
     }
 
     /**

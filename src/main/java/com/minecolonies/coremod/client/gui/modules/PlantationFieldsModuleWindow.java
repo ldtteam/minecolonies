@@ -7,14 +7,18 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.fields.IFieldView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
+import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +30,12 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 /**
  * BOWindow for the fields tab in huts.
  */
-public class FieldsModuleWindow extends AbstractModuleWindow
+public class PlantationFieldsModuleWindow extends AbstractModuleWindow
 {
     /**
      * Resource suffix of the GUI.
      */
-    private static final String HUT_FIELDS_RESOURCE_SUFFIX = ":gui/layouthuts/layoutfields.xml";
+    private static final String HUT_FIELDS_RESOURCE_SUFFIX = ":gui/layouthuts/layoutplantationfields.xml";
 
     /**
      * ID of the fields list inside the GUI.
@@ -86,7 +90,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
     /**
      * The field module view.
      */
-    private final FieldsModuleView moduleView;
+    private final BuildingPlantation.PlantationFieldsModuleView moduleView;
 
     /**
      * ScrollList with the fields.
@@ -98,7 +102,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
      *
      * @param moduleView {@link FieldsModuleView}.
      */
-    public FieldsModuleWindow(final IBuildingView building, final FieldsModuleView moduleView)
+    public PlantationFieldsModuleWindow(final IBuildingView building, final BuildingPlantation.PlantationFieldsModuleView moduleView)
     {
         super(building, Constants.MOD_ID + HUT_FIELDS_RESOURCE_SUFFIX);
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
@@ -147,7 +151,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
           .setText(Component.translatable(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
         findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
-          .setText(Component.translatable(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
+          .setText(Component.translatable(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getCurrentPlants(), moduleView.getMaxConcurrentPlants()));
     }
 
     @Override
@@ -167,7 +171,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IFieldView field = moduleView.getFields().get(index);
+                final PlantationField.View field = ((PlantationField.View) moduleView.getFields().get(index));
                 final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
@@ -211,10 +215,8 @@ public class FieldsModuleWindow extends AbstractModuleWindow
                     }
                 }
 
-                if (field.getPlant() != null)
-                {
-                    rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(field.getPlant()));
-                }
+                final Item item = PlantationModuleRegistry.getPlantationModule(field.getPlantationFieldType()).getItem();
+                rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(item));
             }
         });
 

@@ -4,14 +4,13 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
-import com.minecolonies.coremod.network.messages.server.PlantationFieldRepairMessage;
-import net.minecraft.resources.ResourceKey;
+import com.minecolonies.coremod.network.messages.server.PlantationFieldBuildRequestMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -77,18 +76,20 @@ public class WindowPlantationField extends AbstractWindowSkeleton
 
     private void repairField()
     {
-        ResourceKey<Level> dimension = tileEntityPlantationField.getDimension();
-        if (dimension != null)
-        {
-            PlantationFieldRepairMessage message = new PlantationFieldRepairMessage(
-              tileEntityPlantationField.getBlockPos(),
-              tileEntityPlantationField.getSchematicName()
-                .substring(tileEntityPlantationField.getSchematicName().lastIndexOf("/") + 1)
-                .replaceAll("\\d$", ""),
-              tileEntityPlantationField.getSchematicName(),
-              tileEntityPlantationField.getDimension());
-            Network.getNetwork().sendToServer(message);
-        }
+        close();
+        new WindowBuildDecoration(tileEntityPlantationField.getBlockPos(),
+          tileEntityPlantationField.getPackName(),
+          tileEntityPlantationField.getBlueprintPath(),
+          tileEntityPlantationField.getRotation(),
+          tileEntityPlantationField.getMirror(),
+          builder -> new PlantationFieldBuildRequestMessage(WorkOrderType.REPAIR,
+            tileEntityPlantationField.getBlockPos(),
+            tileEntityPlantationField.getPackName(),
+            tileEntityPlantationField.getBlueprintPath(),
+            Minecraft.getInstance().level.dimension(),
+            tileEntityPlantationField.getRotation(),
+            tileEntityPlantationField.getMirror(),
+            builder)).open();
     }
 
     @Override

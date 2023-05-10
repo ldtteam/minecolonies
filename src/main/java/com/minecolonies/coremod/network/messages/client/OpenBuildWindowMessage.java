@@ -8,50 +8,51 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Message to open the deco build window on the client.
+ * Message to open the build window, for example for decorations.
  */
-public class OpenDecoWindowMessage implements IMessage
+public abstract class OpenBuildWindowMessage implements IMessage
 {
     /**
      * Town hall position to create building on.
      */
-    BlockPos pos;
+    protected BlockPos pos;
 
     /**
      * The colony name.
      */
-    String path;
+    protected String path;
 
     /**
      * The structure pack name.
      */
-    String packName;
+    protected String packName;
 
     /**
      * The rotation.
      */
-    private Rotation rotation;
+    protected Rotation rotation;
 
     /**
      * If mirrored.
      */
-    private boolean mirror;
+    protected boolean mirror;
 
-    public OpenDecoWindowMessage()
+    protected OpenBuildWindowMessage()
     {
         super();
     }
 
     /**
      * Create a new message.
-     * @param pos the position the deco will be anchored at.
+     *
+     * @param pos      the position the deco will be anchored at.
      * @param packName the pack of the deco.
-     * @param path the path in the pack.
+     * @param path     the path in the pack.
      */
-    public OpenDecoWindowMessage(final BlockPos pos, final String packName, final String path, final Rotation rotation, final Mirror mirror)
+    protected OpenBuildWindowMessage(final BlockPos pos, final String packName, final String path, final Rotation rotation, final Mirror mirror)
     {
         this.pos = pos;
         this.path = path;
@@ -80,16 +81,17 @@ public class OpenDecoWindowMessage implements IMessage
         this.rotation = Rotation.values()[buf.readInt()];
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    public final @NotNull LogicalSide getExecutionSide()
     {
         return LogicalSide.CLIENT;
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        new WindowBuildDecoration(pos, packName, path, rotation, mirror).open();
+        new WindowBuildDecoration(this.pos, this.packName, this.path, this.rotation, this.mirror, this::createWorkOrderMessage).open();
     }
+
+    protected abstract IMessage createWorkOrderMessage(BlockPos builder);
 }

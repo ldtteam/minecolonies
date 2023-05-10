@@ -1,0 +1,15 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide.png" size="190 115"/>
+    <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
+           label="$(block.minecolonies.blockhutfield)"/>
+
+    <label id="not-in-colony-text" size="130 50" pos="30 14" color="black" textalign="MIDDLE"
+           label="Field is not inside a colony"/>
+
+    <itemicon id="plant-icon" size="16 16" pos="53 48"/>
+    <buttonimage id="dir-resize-north" size="24 24" pos="48 13" textcolor="white" source="minecolonies:textures/gui/scarecrow.png"/>
+    <buttonimage id="dir-resize-south" size="24 24" pos="48 73" textcolor="white" source="minecolonies:textures/gui/scarecrow.png"/>
+    <buttonimage id="dir-resize-west" size="24 24" pos="18 43" textcolor="white" source="minecolonies:textures/gui/scarecrow.png"/>
+    <buttonimage id="dir-resize-east" size="24 24" pos="78 43" textcolor="white" source="minecolonies:textures/gui/scarecrow.png"/>
+</window>

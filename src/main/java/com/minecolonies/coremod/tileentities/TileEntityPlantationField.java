@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
-import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -37,7 +35,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Implementation for plantation field tile entities.
  */
-public class TileEntityPlantationField extends AbstractTileEntityPlantationField implements IBlueprintDataProviderBE, IRotatableBlockEntity
+public class TileEntityPlantationField extends AbstractTileEntityPlantationField
 {
     /**
      * The schematic name of the placeholder block.
@@ -86,16 +84,6 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         super(MinecoloniesTileEntities.PLANTATION_FIELD.get(), pos, state);
     }
 
-    /**
-     * Getter for the name stored in this.
-     *
-     * @return String name.
-     */
-    public String getSchematicPath()
-    {
-        return schematicPath;
-    }
-
     @Override
     public Set<PlantationFieldType> getPlantationFieldTypes()
     {
@@ -132,6 +120,50 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
             return colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS);
         }
         return false;
+    }
+
+    @Override
+    @Nullable
+    public ResourceKey<Level> getDimension()
+    {
+        IColony colony = getCurrentColony();
+        if (colony != null)
+        {
+            return colony.getDimension();
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    /**
+     * Get the rotation of the controller.
+     *
+     * @return the placed rotation.
+     */
+    public Rotation getRotation()
+    {
+        return rotation;
+    }
+
+    /**
+     * Get the mirroring setting of the controller.
+     *
+     * @return true if mirrored.
+     */
+    public boolean getMirror()
+    {
+        return this.mirror;
+    }
+
+    private IColony getCurrentColony()
+    {
+        return level != null ? IColonyManager.getInstance().getIColony(level, worldPosition) : null;
     }
 
     @Override
@@ -180,51 +212,9 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
-    public BlockPos getTilePos()
-    {
-        return worldPosition;
-    }
-
-    @Override
-    @Nullable
-    public ResourceKey<Level> getDimension()
-    {
-        IColony colony = getCurrentColony();
-        if (colony != null)
-        {
-            return colony.getDimension();
-        }
-        return null;
-    }
-
-    private IColony getCurrentColony()
-    {
-        return level != null ? IColonyManager.getInstance().getIColony(level, worldPosition) : null;
-    }
-
-    @Override
-    public void rotate(final Rotation rotationIn)
-    {
-        this.rotation = rotationIn;
-    }
-
-    @Override
-    public void mirror(final Mirror mirror)
-    {
-        this.mirror = mirror != Mirror.NONE;
-    }
-
-    @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
-    {
-        final CompoundTag compound = packet.getTag();
-        this.load(compound);
-    }
-
-    @Override
     public void readSchematicDataFromNBT(final CompoundTag compound)
     {
-        IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
+        super.readSchematicDataFromNBT(compound);
         final CompoundTag blueprintDataProvider = compound.getCompound(TAG_BLUEPRINTDATA);
         if (compound.contains(TAG_PACK)) // New structure
         {
@@ -286,10 +276,35 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
+    public BlockPos getTilePos()
+    {
+        return worldPosition;
+    }
+
+    @Override
+    public void rotate(final Rotation rotationIn)
+    {
+        this.rotation = rotationIn;
+    }
+
+    @Override
+    public void mirror(final Mirror mirror)
+    {
+        this.mirror = mirror != Mirror.NONE;
+    }
+
+    @Override
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
+    {
+        final CompoundTag compound = packet.getTag();
+        this.load(compound);
+    }
+
+    @Override
     public void load(final CompoundTag compound)
     {
         super.load(compound);
-        IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
+        super.readSchematicDataFromNBT(compound);
         this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
         this.mirror = compound.getBoolean(TAG_MIRROR);
         if (compound.contains(TAG_PATH))
@@ -334,23 +349,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         {
             WorldUtil.markChunkDirty(level, worldPosition);
         }
-    }
-
-    @Nullable
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @NotNull
-    @Override
-    public CompoundTag getUpdateTag()
-    {
-        return this.saveWithId();
-    }
-
-    @Override
+    }    @Override
     public void setBlueprintPath(final String filePath)
     {
         this.schematicPath = filePath;
@@ -361,7 +360,12 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         setChanged();
     }
 
+    @NotNull
     @Override
+    public CompoundTag getUpdateTag()
+    {
+        return this.saveWithId();
+    }    @Override
     public void setPackName(final String packName)
     {
         this.packName = packName;
@@ -383,4 +387,8 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         return packName;
     }
+
+
+
+
 }

@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -12,23 +13,31 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.client.gui.modules.PlantationFieldsModuleWindow;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
+import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
@@ -89,9 +98,7 @@ public class BuildingPlantation extends AbstractBuilding
         if (module != null)
         {
             final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
-            final PlantationField updatedField = new PlantationField(colony, getPosition(), type, module.getItem(), workingPositions);
-            updatedField.setBuilding(getID());
-            colony.getBuildingManager().addOrUpdateField(updatedField);
+            colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, getPosition(), type, workingPositions));
         }
     }
 
@@ -108,13 +115,18 @@ public class BuildingPlantation extends AbstractBuilding
     public static class PlantationFieldsModule extends FieldsModule
     {
         @Override
-        protected @NotNull Set<? extends IField> getFields(final IColony colony)
+        public void serializeToView(final @NotNull FriendlyByteBuf buf)
         {
-            return colony.getBuildingManager().getFields(FieldType.PLANTATION_FIELDS);
+            super.serializeToView(buf);
+            buf.writeInt(getMaxConcurrentPlants());
         }
 
-        @Override
-        protected int getMaxConcurrentPlants()
+        /**
+         * Get the maximum allowed plants the plantation can work on simultaneously.
+         *
+         * @return the maximum amount of concurrent plants.
+         */
+        public int getMaxConcurrentPlants()
         {
             return getMaxFieldCount();
         }
@@ -142,9 +154,15 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
+        public @NotNull List<IField> getFields()
+        {
+            return building.getColony().getBuildingManager().getFields(FieldRegistries.plantationField.get());
+        }
+
+        @Override
         protected @NotNull List<IField> getFreeFields(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeFields(FieldType.PLANTATION_FIELDS);
+            return colony.getBuildingManager().getFreeFields(FieldRegistries.plantationField.get());
         }
 
         @Override
@@ -168,6 +186,18 @@ public class BuildingPlantation extends AbstractBuilding
      */
     public static class PlantationFieldsModuleView extends FieldsModuleView
     {
+        /**
+         * The maximum amount of concurrent plants the planter can work on.
+         */
+        private int maxConcurrentPlants = 0;
+
+        @Override
+        public void deserialize(final @NotNull FriendlyByteBuf buf)
+        {
+            super.deserialize(buf);
+            maxConcurrentPlants = buf.readInt();
+        }
+
         @Override
         public boolean canAssignField(final IFieldView field)
         {
@@ -195,9 +225,9 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public FieldType getExpectedFieldType()
+        public FieldRegistries.FieldEntry getExpectedFieldType()
         {
-            return FieldType.PLANTATION_FIELDS;
+            return FieldRegistries.plantationField.get();
         }
 
         @Override
@@ -214,6 +244,36 @@ public class BuildingPlantation extends AbstractBuilding
                 return Component.translatable(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
             }
             return null;
+        }
+
+        @Override
+        @OnlyIn(Dist.CLIENT)
+        public BOWindow getWindow()
+        {
+            return new PlantationFieldsModuleWindow(buildingView, this);
+        }
+
+        /**
+         * Get the maximum allowed plants the plantation can work on simultaneously.
+         *
+         * @return the maximum amount of concurrent plants.
+         */
+        public int getMaxConcurrentPlants()
+        {
+            return maxConcurrentPlants;
+        }
+
+        /**
+         * Getter of the worked plants.
+         *
+         * @return the amount of worked plants.
+         */
+        public int getCurrentPlants()
+        {
+            return getOwnedFields().stream()
+                     .map(field -> ((PlantationField.View) field).getPlantationFieldType())
+                     .collect(Collectors.toSet())
+                     .size();
         }
     }
 

@@ -2,17 +2,12 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.IItemHandler;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractTileEntityScarecrow extends BlockEntity implements MenuProvider
+public abstract class AbstractTileEntityScarecrow extends BlockEntity
 {
-
     /**
      * Default constructor.
      */
@@ -20,21 +15,6 @@ public abstract class AbstractTileEntityScarecrow extends BlockEntity implements
     {
         super(MinecoloniesTileEntities.SCARECROW.get(), pos, state);
     }
-
-    /**
-     * Getter of the seed of the field.
-     *
-     * @return the ItemSeed
-     */
-    @Nullable
-    public abstract Item getPlant();
-
-    /**
-     * Get the inventory of the scarecrow.
-     *
-     * @return the IItemHandler.
-     */
-    public abstract IItemHandler getInventory();
 
     /**
      * Returns the type of the scarecrow (Important for the rendering).

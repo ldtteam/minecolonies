@@ -1,39 +1,42 @@
-package com.minecolonies.api.colony.buildings.views;
+package com.minecolonies.api.colony.fields;
 
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Interface for any field view instance.
- */
 public interface IFieldView
 {
     /**
-     * Gets the position of the field.
+     * Return the field type for this field.
      *
-     * @return central location of the field.
+     * @return the field registry entry.
      */
-    @NotNull BlockPos getPosition();
+    @NotNull FieldRegistries.FieldEntry getFieldType();
 
     /**
-     * Gets the plant which is being cultivated on this field.
+     * Set the field type for this current field instance.
      *
-     * @return the plant for this field.
+     * @param fieldType the field type for this field.
      */
-    @Nullable Item getPlant();
+    void setFieldType(@NotNull FieldRegistries.FieldEntry fieldType);
 
     /**
      * Getter for the colony of the field.
      *
      * @return the int id.
      */
-    IColonyView getColonyView();
+    @NotNull IColonyView getColonyView();
+
+    /**
+     * Gets the position of the field.
+     *
+     * @return central location of the field.
+     */
+    @NotNull BlockPos getPosition();
 
     /**
      * Getter for the owning building of the field.
@@ -64,9 +67,9 @@ public interface IFieldView
     /**
      * Deserialize a field from a buffer.
      *
-     * @param fieldData the bugger to read the field from.
+     * @param buf the bugger to read the field from.
      */
-    void deserialize(FriendlyByteBuf fieldData);
+    void deserialize(FriendlyByteBuf buf);
 
     /**
      * Get the distance to the building.
@@ -81,21 +84,15 @@ public interface IFieldView
      *
      * @return the field record matcher.
      */
-    FieldRecord getMatcher();
+    IFieldMatcher getMatcher();
 
     /**
-     * Whether this field matches the provided field record matcher.
-     *
-     * @param matcher the field record matcher.
-     * @return true if so.
+     * Hashcode implementation for this field.
      */
-    boolean matches(FieldRecord matcher);
+    int hashCode();
 
     /**
-     * Get the type for this field view.
-     *
-     * @return the field type.
+     * Equals implementation for this field.
      */
-    @NotNull
-    FieldType getType();
+    boolean equals(Object other);
 }
