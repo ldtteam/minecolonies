@@ -117,6 +117,15 @@ public class IntSetting implements ISetting
 
     }
 
+    @Override
+    public void copyValue(final ISetting iSetting)
+    {
+        if (iSetting instanceof final IntSetting other)
+        {
+            setValue(other.getValue());
+        }
+    }
+
     /**
      * Set a new int value.
      * @param value the int to set.

@@ -97,4 +97,13 @@ public class BoolSetting implements ISetting
     {
         this.value = !this.value;
     }
+
+    @Override
+    public void copyValue(final ISetting iSetting)
+    {
+        if (iSetting instanceof final BoolSetting other)
+        {
+            this.value = other.value;
+        }
+    }
 }

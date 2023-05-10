@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
@@ -607,7 +606,7 @@ public final class ModBuildingsInitializer
                                                                       .with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                       .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
                                    .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, RequestSystemTranslationConstants.REQUEST_TYPE_FLOWERS, false,
-                                     (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
+                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getImmutableFlowers()))
                                    .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterBeekeeper))
                                    .addBuildingModuleProducer(BuildingBeekeeper.HerdingModule::new)
                                    .createBuildingEntry());

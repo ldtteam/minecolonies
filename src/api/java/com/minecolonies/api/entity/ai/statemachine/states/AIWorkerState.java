@@ -327,6 +327,11 @@ public enum AIWorkerState implements IAIState
      */
     ADD_FUEL_TO_FURNACE(true),
 
+    /**
+     * Break down ores.
+     */
+    BREAK_ORES(true),
+
     /*
 ###Cook###
      */
