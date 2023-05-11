@@ -90,7 +90,7 @@ public class FarmField extends AbstractField
     public boolean isValidPlacement()
     {
         BlockState blockState = getColony().getWorld().getBlockState(getPosition());
-        return blockState.is(ModBlocks.blockHutFarmer);
+        return blockState.is(ModBlocks.blockScarecrow);
     }
 
     @Override

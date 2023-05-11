@@ -2,13 +2,11 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,17 +60,6 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
             this.currentColony = IColonyManager.getInstance().getIColony(level, worldPosition);
         }
         return currentColony;
-    }
-
-    @Override
-    public boolean canOpenMenu(@NotNull Player player)
-    {
-        IColony colony = getCurrentColony();
-        if (colony != null)
-        {
-            return colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS);
-        }
-        return false;
     }
 
     @Override

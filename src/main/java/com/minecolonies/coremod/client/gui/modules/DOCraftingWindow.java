@@ -213,7 +213,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
      */
     private void addBlock1()
     {
-        new WindowSelectRes(this, buildingView, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(0, stack), (stack, qty) -> {
+        new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(0, stack), (stack, qty) -> {
             inputInventory.setItem(0, stack);
             findPaneOfTypeByID(BLOCK1, ItemIcon.class).setItem(stack);
             updateStockList();
@@ -225,7 +225,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
      */
     private void addBlock2()
     {
-        new WindowSelectRes(this, buildingView, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(1, stack), (stack, qty) -> {
+        new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(1, stack), (stack, qty) -> {
             inputInventory.setItem(1, stack);
             findPaneOfTypeByID(BLOCK2, ItemIcon.class).setItem(stack);
             updateStockList();
@@ -237,7 +237,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
      */
     private void addBlock3()
     {
-        new WindowSelectRes(this, buildingView, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(2, stack), (stack, qty) -> {
+        new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(2, stack), (stack, qty) -> {
             inputInventory.setItem(2, stack);
             updateStockList();
             findPaneOfTypeByID(BLOCK3, ItemIcon.class).setItem(stack);

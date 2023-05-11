@@ -90,7 +90,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             DoubleBlockHalf half = state.getValue(HALF);
             final BlockEntity entity = worldIn.getBlockEntity(half == DoubleBlockHalf.UPPER ? pos.below() : pos);
 
-            if (entity instanceof TileEntityScarecrow scarecrow && scarecrow.canOpenMenu(player))
+            if (entity instanceof TileEntityScarecrow scarecrow)
             {
                 new WindowField(scarecrow).open();
                 return InteractionResult.SUCCESS;
@@ -170,6 +170,15 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
     {
         worldIn.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
+
+        if (!worldIn.isClientSide())
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            if (colony != null)
+            {
+                colony.getBuildingManager().addOrUpdateField(FarmField.create(colony, pos));
+            }
+        }
     }
 
     @Override

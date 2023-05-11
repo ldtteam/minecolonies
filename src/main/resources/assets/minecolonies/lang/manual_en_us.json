@@ -584,17 +584,17 @@
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
-  "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
 
   "com.minecolonies.coremod.gui.workerhuts.fields": "Fields",
+  "com.minecolonies.coremod.gui.workerhuts.fields.notincolony": "Field is not inside a colony",
   "com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode": "Assign fields to worker",
   "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount": "%d/%d fields in use",
   "com.minecolonies.coremod.gui.workerhuts.fields.plantcount": "%d/%d types of plants",
   "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount.reached": "You already reached the limit of fields.",
-  "com.minecolonies.coremod.gui.workerhuts.fields.plantcount.reached": "You already reached the limit of concurrent plants.",
   "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research": "You do not have the required research to assign this field to the plantation.",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached": "You already reached the limit of concurrent plants.",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
@@ -1841,6 +1841,9 @@
   "com.minecolonies.coremod.gui.field.to_right": "To your right",
   "com.minecolonies.coremod.gui.field.near": "Nearest to you",
   "com.minecolonies.coremod.gui.field.worker": "Farmer: %s",
+  "com.minecolonies.coremod.gui.field.selectseed": "Pick seed",
+  "com.minecolonies.coremod.gui.field.assignedfarmer": "Farmer: %s",
+  "com.minecolonies.coremod.gui.field.noassignedfarmer": "Farmer: No one",
 
   "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the chit-chat",
 

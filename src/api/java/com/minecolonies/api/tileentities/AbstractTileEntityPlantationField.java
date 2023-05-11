@@ -2,17 +2,16 @@ package com.minecolonies.api.tileentities;
 
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -51,12 +50,11 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity impl
     public abstract List<BlockPos> getWorkingPositions(String tag);
 
     /**
-     * Check condition whether the field UI can be opened or not.
+     * The colony this field is located in.
      *
-     * @param player the player attempting to open the menu.
-     * @return whether the player is authorized to open this menu.
+     * @return the colony instance.
      */
-    public abstract boolean canOpenMenu(@NotNull Player player);
+    public abstract IColony getCurrentColony();
 
     /**
      * Get the dimension this plantation field is placed in.

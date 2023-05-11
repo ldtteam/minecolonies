@@ -52,6 +52,4 @@ public interface IFieldDataManager
     CompoundTag createCompound(@NotNull final IField field);
 
     IFieldMatcher matcherFromBytes(@NotNull final FriendlyByteBuf buf);
-
-    void matcherToBytes(@NotNull final IFieldMatcher matcher, @NotNull final FriendlyByteBuf buf);
 }

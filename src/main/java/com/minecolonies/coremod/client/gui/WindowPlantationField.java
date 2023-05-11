@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.util.constant.Constants;
@@ -12,6 +15,7 @@ import com.minecolonies.coremod.network.messages.server.PlantationFieldBuildRequ
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,19 +31,29 @@ public class WindowPlantationField extends AbstractWindowSkeleton
     private static final String WINDOW_RESOURCE = ":gui/windowplantationfield.xml";
 
     /**
-     * ID of the button to repair the schematic.
+     * The ID for the "not in colony" text.
      */
-    private static final String BUTTON_REPAIR = "repair";
+    private static final String NOT_IN_COLONY_TEXT_ID = "not-in-colony";
+
+    /**
+     * The ID of the select seed button.
+     */
+    private static final String PLANTS_HEADER_TEXT_ID = "plants-header";
 
     /**
      * ID of the plants list inside the GUI.
      */
-    private static final String LIST_PLANTS = "plants";
+    private static final String LIST_PLANTS_ID = "plants";
 
     /**
      * ID of the plants list icon items inside the GUI.
      */
-    private static final String LIST_PLANTS_ICON = "icon";
+    private static final String LIST_PLANTS_ICON_ID = "icon";
+
+    /**
+     * ID of the button to repair the schematic.
+     */
+    private static final String BUTTON_REPAIR_ID = "repair";
 
     /**
      * The amount of columns every row in the list of plants has.
@@ -71,7 +85,7 @@ public class WindowPlantationField extends AbstractWindowSkeleton
                         .map(module -> new ItemStack(module.getItem()))
                         .toList();
 
-        registerButton(BUTTON_REPAIR, this::repairField);
+        registerButton(BUTTON_REPAIR_ID, this::repairField);
     }
 
     private void repairField()
@@ -93,11 +107,46 @@ public class WindowPlantationField extends AbstractWindowSkeleton
     }
 
     @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        updateElementStates();
+    }
+
+    /**
+     * Updates the states of certain additional elements, determining whether they should be enabled/visible.
+     */
+    private void updateElementStates()
+    {
+        IColonyView colonyView = getCurrentColony();
+
+        findPaneOfTypeByID(NOT_IN_COLONY_TEXT_ID, Text.class).setVisible(colonyView == null);
+        findPaneOfTypeByID(PLANTS_HEADER_TEXT_ID, Text.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(LIST_PLANTS_ID, ScrollingList.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(BUTTON_REPAIR_ID, ButtonImage.class).setVisible(colonyView != null);
+    }
+
+    /**
+     * Get the current colony, if any, from the tile entity.
+     *
+     * @return the colony view, if exists.
+     */
+    @Nullable
+    private IColonyView getCurrentColony()
+    {
+        if (tileEntityPlantationField.getCurrentColony() instanceof IColonyView colonyView)
+        {
+            return colonyView;
+        }
+        return null;
+    }
+
+    @Override
     public void onOpened()
     {
         super.onOpened();
 
-        ScrollingList fieldList = findPaneOfTypeByID(LIST_PLANTS, ScrollingList.class);
+        ScrollingList fieldList = findPaneOfTypeByID(LIST_PLANTS_ID, ScrollingList.class);
         fieldList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -111,7 +160,7 @@ public class WindowPlantationField extends AbstractWindowSkeleton
             {
                 for (int id = 1; id <= LIST_PLANTS_COLUMN_COUNT; id++)
                 {
-                    ItemIcon pane = rowPane.findPaneOfTypeByID(LIST_PLANTS_ICON + id, ItemIcon.class);
+                    ItemIcon pane = rowPane.findPaneOfTypeByID(LIST_PLANTS_ICON_ID + id, ItemIcon.class);
                     final Box parent = (Box) pane.getParent();
                     parent.setLineWidth(0);
 

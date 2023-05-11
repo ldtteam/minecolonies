@@ -127,7 +127,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
             }
 
             final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityPlantationField plantationField && plantationField.canOpenMenu(player))
+            if (tileEntity instanceof TileEntityPlantationField plantationField)
             {
                 new WindowPlantationField(plantationField).open();
                 return InteractionResult.SUCCESS;

@@ -4,7 +4,6 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
@@ -17,7 +16,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -74,6 +72,11 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
 
     /**
+     * The colony this plantation field is located in.
+     */
+    private IColony currentColony;
+
+    /**
      * Default constructor.
      *
      * @param pos   The positions this tile entity is at.
@@ -105,21 +108,14 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
                  .toList();
     }
 
-    /**
-     * Check condition whether the field UI can be opened or not.
-     *
-     * @param player the player attempting to open the menu.
-     * @return whether the player is authorized to open this menu.
-     */
     @Override
-    public boolean canOpenMenu(@NotNull Player player)
+    public IColony getCurrentColony()
     {
-        IColony colony = getCurrentColony();
-        if (colony != null)
+        if (currentColony == null && level != null)
         {
-            return colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS);
+            this.currentColony = IColonyManager.getInstance().getIColony(level, worldPosition);
         }
-        return false;
+        return currentColony;
     }
 
     @Override
@@ -159,11 +155,6 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     public boolean getMirror()
     {
         return this.mirror;
-    }
-
-    private IColony getCurrentColony()
-    {
-        return level != null ? IColonyManager.getInstance().getIColony(level, worldPosition) : null;
     }
 
     @Override
@@ -349,7 +340,16 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         {
             WorldUtil.markChunkDirty(level, worldPosition);
         }
-    }    @Override
+    }
+
+    @NotNull
+    @Override
+    public CompoundTag getUpdateTag()
+    {
+        return this.saveWithId();
+    }
+
+    @Override
     public void setBlueprintPath(final String filePath)
     {
         this.schematicPath = filePath;
@@ -360,12 +360,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         setChanged();
     }
 
-    @NotNull
     @Override
-    public CompoundTag getUpdateTag()
-    {
-        return this.saveWithId();
-    }    @Override
     public void setPackName(final String packName)
     {
         this.packName = packName;
@@ -387,8 +382,4 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         return packName;
     }
-
-
-
-
 }

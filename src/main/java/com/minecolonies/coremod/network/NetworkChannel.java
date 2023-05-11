@@ -18,7 +18,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.enchante
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldUpdatePlantMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldUpdateSeedMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
@@ -236,7 +236,7 @@ public class NetworkChannel
         registerMessage(++idx, AddMinimumStockToBuildingModuleMessage.class, AddMinimumStockToBuildingModuleMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingModuleMessage.class, RemoveMinimumStockFromBuildingModuleMessage::new);
         registerMessage(++idx, FarmFieldPlotResizeMessage.class, FarmFieldPlotResizeMessage::new);
-        registerMessage(++idx, FarmFieldUpdatePlantMessage.class, FarmFieldUpdatePlantMessage::new);
+        registerMessage(++idx, FarmFieldUpdateSeedMessage.class, FarmFieldUpdateSeedMessage::new);
         registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
         registerMessage(++idx, TriggerSettingMessage.class, TriggerSettingMessage::new);

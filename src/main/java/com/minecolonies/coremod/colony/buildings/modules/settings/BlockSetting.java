@@ -120,7 +120,6 @@ public class BlockSetting implements ISetting
 
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
-          building,
           (stack) -> {
               final Item item = stack.getItem();
               if (!( item instanceof BlockItem ))

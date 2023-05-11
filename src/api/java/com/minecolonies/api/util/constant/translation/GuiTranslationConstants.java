@@ -22,7 +22,13 @@ public class GuiTranslationConstants
     @NonNls
     public static final String FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT     = "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount.reached";
     @NonNls
-    public static final String FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT     = "com.minecolonies.coremod.gui.workerhuts.fields.plantcount.reached";
+    public static final String FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT     = "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached";
     @NonNls
     public static final String FIELD_LIST_PLANTATION_RESEARCH_REQUIRED = "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research";
+
+    // Field UI
+    @NonNls
+    public static final String FIELD_GUI_ASSIGNED_FARMER    = "com.minecolonies.coremod.gui.field.assignedfarmer";
+    @NonNls
+    public static final String FIELD_GUI_NO_ASSIGNED_FARMER = "com.minecolonies.coremod.gui.field.noassignedfarmer";
 }

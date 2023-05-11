@@ -46,7 +46,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBoolean(assign);
-        IFieldDataManager.getInstance().matcherToBytes(matcher, buf);
+        matcher.toBytes(buf);
     }
 
     @Override

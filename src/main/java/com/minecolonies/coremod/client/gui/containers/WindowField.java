@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui.containers;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.IColonyView;
@@ -12,16 +13,22 @@ import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.coremod.client.gui.WindowSelectRes;
 import com.minecolonies.coremod.colony.fields.FarmField;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldUpdateSeedMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +36,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_GUI_ASSIGNED_FARMER;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_GUI_NO_ASSIGNED_FARMER;
 
 /**
  * Class which creates the GUI of our field inventory.
@@ -37,14 +46,39 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class WindowField extends AbstractWindowSkeleton
 {
     /**
+     * Link to the xml file of the window.
+     */
+    private static final String WINDOW_RESOURCE = ":gui/windowfield.xml";
+
+    /**
+     * The ID for the "not in colony" text.
+     */
+    private static final String NOT_IN_COLONY_TEXT_ID = "not-in-colony";
+
+    /**
      * The prefix ID of the directional buttons.
      */
     private static final String DIRECTIONAL_BUTTON_ID_PREFIX = "dir-resize-";
 
     /**
-     * The ID for the "not in colony" text.
+     * The ID of the center icon of the directional buttons.
      */
-    private static final String TEXT_NOT_IN_COLONY_ID = "not-in-colony-text";
+    private static final String DIRECTIONAL_BUTTON_CENTER_ICON_ID = "dir-center";
+
+    /**
+     * The ID of the select seed button.
+     */
+    private static final String SELECT_SEED_BUTTON_ID = "select-seed";
+
+    /**
+     * The ID for the current seed text.
+     */
+    private static final String CURRENT_SEED_TEXT_ID = "current-seed";
+
+    /**
+     * The ID for the current farmer text.
+     */
+    private static final String CURRENT_FARMER_TEXT_ID = "current-farmer";
 
     /**
      * The resource location of the GUI background.
@@ -63,12 +97,6 @@ public class WindowField extends AbstractWindowSkeleton
     private final AbstractTileEntityScarecrow tileEntityScarecrow;
 
     /**
-     * The colony view.
-     */
-    @Nullable
-    private final IColonyView colonyView;
-
-    /**
      * The farm field instance.
      */
     @Nullable
@@ -81,51 +109,36 @@ public class WindowField extends AbstractWindowSkeleton
      */
     public WindowField(@NotNull AbstractTileEntityScarecrow tileEntityScarecrow)
     {
-        super(Constants.MOD_ID + ":gui/windowfield.xml");
+        super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.tileEntityScarecrow = tileEntityScarecrow;
-        this.colonyView = (IColonyView) tileEntityScarecrow.getCurrentColony();
 
-        updateFarmField();
-
-        if (colonyView != null)
-        {
-            findPaneOfTypeByID(TEXT_NOT_IN_COLONY_ID, Text.class).setVisible(false);
-        }
-
+        registerButton(SELECT_SEED_BUTTON_ID, this::selectSeed);
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
-            if (colonyView != null)
-            {
-                registerButton(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), this::onDirectionalButtonClick);
-            }
-            else
-            {
-                ButtonImage button = findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class);
-                button.setEnabled(false);
-                button.setVisible(false);
-            }
+            registerButton(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), this::onDirectionalButtonClick);
         }
     }
 
     /**
-     * Keep attempting to fetch the currently loaded farm field, if not present already.
+     * Button handler for selecting a seed.
      */
-    private void updateFarmField()
+    private void selectSeed()
     {
-        if (colonyView == null || farmField != null)
-        {
-            return;
-        }
-
-        if (colonyView.getField(new FarmField.Matcher(FieldRegistries.farmField.get(), tileEntityScarecrow.getBlockPos())) instanceof FarmField.View farmFieldView)
-        {
-            farmField = farmFieldView;
-        }
+        new WindowSelectRes(
+          this,
+          stack -> stack.is(Tags.Items.SEEDS) || stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock,
+          (stack, qty) -> setSeed(stack),
+          false).open();
     }
 
+    /**
+     * Button handler for clicking on any of the directional buttons.
+     *
+     * @param button which button was clicked.
+     */
     private void onDirectionalButtonClick(Button button)
     {
-        if (this.farmField == null || !button.isEnabled())
+        if (farmField == null || !button.isEnabled())
         {
             return;
         }
@@ -138,11 +151,42 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        int newRadius = (this.farmField.getRadius(direction.get()) % this.farmField.getMaxRadius()) + 1;
-        this.farmField.setRadius(direction.get(), newRadius);
+        int newRadius = (farmField.getRadius(direction.get()) % farmField.getMaxRadius()) + 1;
+        farmField.setRadius(direction.get(), newRadius);
         button.setText(Component.literal(String.valueOf(newRadius)));
 
-        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(colonyView, newRadius, direction.get(), this.farmField.getMatcher()));
+        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getMatcher()));
+    }
+
+    /**
+     * Sends a message to the server to update the seed of the field.
+     *
+     * @param stack the provided item stack with the seed.
+     */
+    private void setSeed(ItemStack stack)
+    {
+        IColonyView colonyView = getCurrentColony();
+        if (colonyView != null && farmField != null)
+        {
+            Network.getNetwork().sendToServer(new FarmFieldUpdateSeedMessage(colonyView, stack, (FarmField.Matcher) farmField.getMatcher()));
+
+            farmField.setSeed(stack);
+        }
+    }
+
+    /**
+     * Get the current colony, if any, from the tile entity.
+     *
+     * @return the colony view, if exists.
+     */
+    @Nullable
+    private IColonyView getCurrentColony()
+    {
+        if (tileEntityScarecrow.getCurrentColony() instanceof IColonyView colonyView)
+        {
+            return colonyView;
+        }
+        return null;
     }
 
     @Override
@@ -150,8 +194,51 @@ public class WindowField extends AbstractWindowSkeleton
     {
         super.onUpdate();
         updateFarmField();
+        updateElementStates();
         updateOwner();
+        updateSeed();
         updateButtons();
+    }
+
+    /**
+     * Keep attempting to fetch the currently loaded farm field, if not present already.
+     */
+    private void updateFarmField()
+    {
+        if (farmField != null)
+        {
+            return;
+        }
+
+        IColonyView colonyView = getCurrentColony();
+        if (colonyView == null)
+        {
+            return;
+        }
+
+        if (colonyView.getField(new FarmField.Matcher(FieldRegistries.farmField.get(), tileEntityScarecrow.getBlockPos())) instanceof FarmField.View farmFieldView)
+        {
+            farmField = farmFieldView;
+        }
+    }
+
+    /**
+     * Updates the states of certain additional elements, determining whether they should be enabled/visible.
+     */
+    private void updateElementStates()
+    {
+        IColonyView colonyView = getCurrentColony();
+
+        findPaneOfTypeByID(NOT_IN_COLONY_TEXT_ID, Text.class).setVisible(colonyView == null);
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(SELECT_SEED_BUTTON_ID, ButtonImage.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(CURRENT_SEED_TEXT_ID, ItemIcon.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(DIRECTIONAL_BUTTON_CENTER_ICON_ID, ItemIcon.class).setVisible(colonyView != null);
+
+        for (Direction dir : Direction.Plane.HORIZONTAL)
+        {
+            findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class).setVisible(colonyView != null);
+        }
     }
 
     /**
@@ -159,29 +246,55 @@ public class WindowField extends AbstractWindowSkeleton
      */
     private void updateOwner()
     {
-        if (this.farmField == null || this.farmField.isTaken())
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_NO_ASSIGNED_FARMER));
+
+        IColonyView colonyView = getCurrentColony();
+        if (colonyView == null || farmField == null || !farmField.isTaken())
         {
             return;
         }
 
-        final IBuildingView building = this.farmField.getColonyView().getBuilding(this.farmField.getBuildingId());
-        final Integer citizenId = building.getAllAssignedCitizens().stream().findFirst().orElse(null);
-        if (citizenId != null)
+        final IBuildingView building = colonyView.getBuilding(farmField.getBuildingId());
+        if (building == null)
         {
-            ICitizen citizen = this.farmField.getColonyView().getCitizen(citizenId);
-            if (citizen != null)
-            {
-                //this.font.draw(stack, Component.translatable(WORKER_FIELD, citizenId), X_OFFSET, -Y_OFFSET * 2F, 16777215 /* WHITE */);
-            }
+            return;
+        }
+
+        final Integer citizenId = building.getAllAssignedCitizens().stream().findFirst().orElse(null);
+        if (citizenId == null)
+        {
+            return;
+        }
+
+        ICitizen citizen = farmField.getColonyView().getCitizen(citizenId);
+        if (citizen == null)
+        {
+            return;
+        }
+
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_ASSIGNED_FARMER, citizen.getName()));
+    }
+
+    /**
+     * Updates the seed icon next to the selection button.
+     */
+    private void updateSeed()
+    {
+        if (farmField != null)
+        {
+            findPaneOfTypeByID(CURRENT_SEED_TEXT_ID, ItemIcon.class).setItem(farmField.getSeed());
         }
     }
 
+    /**
+     * Updates the directional buttons.
+     */
     private void updateButtons()
     {
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
             ButtonImage button = findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class);
-            button.setEnabled(!Objects.isNull(this.farmField));
+            button.setEnabled(!Objects.isNull(farmField));
 
             int buttonState = 1;
             if (!button.isEnabled())
@@ -194,7 +307,7 @@ public class WindowField extends AbstractWindowSkeleton
             }
 
             button.setImage(TEXTURE, dir.get2DDataValue() * BUTTON_SIZE, buttonState * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
-            button.setText(Component.literal(String.valueOf(Objects.isNull(this.farmField) ? "" : this.farmField.getRadius(dir))));
+            button.setText(Component.literal(String.valueOf(Objects.isNull(farmField) ? "" : farmField.getRadius(dir))));
 
             PaneBuilders.tooltipBuilder()
               .hoverPane(button)
@@ -204,6 +317,12 @@ public class WindowField extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Get translation keys for the different directional buttons.
+     *
+     * @param direction the direction.
+     * @return the translation key.
+     */
     private String getDirectionalTranslationKey(Direction direction)
     {
         Direction[] looks = Direction.orderedByNearest(Minecraft.getInstance().player);

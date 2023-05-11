@@ -51,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -65,7 +66,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     /**
      * List of fields of the colony.
      */
-    private final Set<IField> fields = new HashSet<>();
+    private final Set<IField> fields = ConcurrentHashMap.newKeySet();
 
     /**
      * The warehouse building position. Initially null.

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to change the farm field current plant.
  */
-public class FarmFieldUpdatePlantMessage extends AbstractColonyServerMessage
+public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
 {
     /**
      * The new seed to assign to the field.
@@ -27,7 +27,7 @@ public class FarmFieldUpdatePlantMessage extends AbstractColonyServerMessage
     /**
      * Forge default constructor
      */
-    public FarmFieldUpdatePlantMessage()
+    public FarmFieldUpdateSeedMessage()
     {
         super();
     }
@@ -39,7 +39,7 @@ public class FarmFieldUpdatePlantMessage extends AbstractColonyServerMessage
      * @param newSeed the new seed to assign to the field.
      * @param matcher the field matcher.
      */
-    public FarmFieldUpdatePlantMessage(@NotNull IColony colony, ItemStack newSeed, FarmField.Matcher matcher)
+    public FarmFieldUpdateSeedMessage(@NotNull IColony colony, ItemStack newSeed, FarmField.Matcher matcher)
     {
         super(colony);
         this.newSeed = newSeed;

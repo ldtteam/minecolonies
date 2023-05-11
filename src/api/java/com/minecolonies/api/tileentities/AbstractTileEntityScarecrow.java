@@ -2,7 +2,6 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -29,12 +28,4 @@ public abstract class AbstractTileEntityScarecrow extends BlockEntity
      * @return the colony instance.
      */
     public abstract IColony getCurrentColony();
-
-    /**
-     * Check whether the menu of the scarecrow can still be opened.
-     *
-     * @param playerIn the current player.
-     * @return true if so.
-     */
-    public abstract boolean canOpenMenu(final Player playerIn);
 }

@@ -63,6 +63,8 @@ public abstract class AbstractFieldMatcher implements IFieldMatcher
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        buf.writeRegistryId(FieldRegistries.getFieldRegistry(), fieldType);
+        buf.writeBlockPos(position);
     }
 
     @Override

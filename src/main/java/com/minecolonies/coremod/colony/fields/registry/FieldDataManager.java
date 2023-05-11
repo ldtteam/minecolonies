@@ -66,13 +66,4 @@ public class FieldDataManager implements IFieldDataManager
         fieldMatcher.fromBytes(buf);
         return fieldMatcher;
     }
-
-    @Override
-    public void matcherToBytes(final @NotNull IFieldMatcher matcher, final @NotNull FriendlyByteBuf buf)
-    {
-        buf.writeRegistryId(FieldRegistries.getFieldRegistry(), matcher.getFieldType());
-        buf.writeBlockPos(matcher.getPosition());
-
-        matcher.toBytes(buf);
-    }
 }
