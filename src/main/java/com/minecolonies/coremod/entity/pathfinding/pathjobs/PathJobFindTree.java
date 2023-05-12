@@ -8,12 +8,12 @@ import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

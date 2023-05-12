@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.ButtonImage;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;

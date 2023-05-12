@@ -11,16 +11,15 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

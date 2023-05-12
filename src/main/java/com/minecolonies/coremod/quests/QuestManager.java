@@ -2,15 +2,17 @@ package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestTemplate;
 import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestTemplate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 

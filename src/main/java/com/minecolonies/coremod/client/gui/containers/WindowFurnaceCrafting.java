@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
@@ -27,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * Furnace crafting gui.

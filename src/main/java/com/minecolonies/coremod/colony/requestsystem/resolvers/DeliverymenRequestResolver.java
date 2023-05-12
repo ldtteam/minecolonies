@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -15,14 +14,10 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.CourierAssignmentModule;
-import com.minecolonies.coremod.colony.buildings.modules.DeliverymanAssignmentModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

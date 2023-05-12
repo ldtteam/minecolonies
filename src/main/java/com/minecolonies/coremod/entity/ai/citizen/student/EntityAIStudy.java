@@ -10,10 +10,10 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 

@@ -11,13 +11,11 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.file.Path;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;

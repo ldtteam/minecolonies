@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
-import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -15,14 +14,13 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +28,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.LIFE_COUNT_DIVIDER;
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**

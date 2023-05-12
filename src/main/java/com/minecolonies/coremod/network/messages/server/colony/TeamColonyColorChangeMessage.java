@@ -3,8 +3,8 @@ package com.minecolonies.coremod.network.messages.server.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 

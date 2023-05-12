@@ -14,20 +14,20 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Citizen mourning goal. Has citizens randomly walk around townhall.

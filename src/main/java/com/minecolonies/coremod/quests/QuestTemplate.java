@@ -2,7 +2,6 @@ package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.api.quests.IQuestTemplate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;

@@ -12,8 +12,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
-
 public class MaleCarpenterModel extends CitizenModel<AbstractEntityCitizen>
 {
     public MaleCarpenterModel(final ModelPart part)

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DEATH_CAUSE;

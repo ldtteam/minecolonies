@@ -43,7 +43,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUILD;
+import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowBuildDecoration extends AbstractWindowSkeleton

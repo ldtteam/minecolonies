@@ -3,18 +3,16 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.stats.RecipeBook;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 /**
  * Basic proxy interface.

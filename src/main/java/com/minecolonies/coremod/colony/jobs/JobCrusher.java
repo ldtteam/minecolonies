@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.entity.ai.citizen.crusher.EntityAIWorkCrusher;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 

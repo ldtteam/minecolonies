@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;

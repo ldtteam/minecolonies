@@ -8,14 +8,13 @@ import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistry
 import com.minecolonies.api.colony.managers.interfaces.IEventManager;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.Log;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

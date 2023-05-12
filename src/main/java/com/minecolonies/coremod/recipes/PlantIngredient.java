@@ -3,13 +3,13 @@ package com.minecolonies.coremod.recipes;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.StemBlock;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.common.util.Lazy;
@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import net.minecraft.world.item.crafting.Ingredient.Value;
-import net.minecraft.world.item.crafting.Ingredient.ItemValue;
 /**
  * An ingredient that can be used in a vanilla recipe to match plantable items.
  *

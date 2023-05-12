@@ -3,7 +3,6 @@ package com.minecolonies.coremod.quests;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;

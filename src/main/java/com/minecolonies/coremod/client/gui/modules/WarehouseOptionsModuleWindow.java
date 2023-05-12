@@ -17,13 +17,13 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;

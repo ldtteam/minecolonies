@@ -4,17 +4,15 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.core.BlockPos;
 
 import java.util.EnumSet;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Break door entity AI with mutex.

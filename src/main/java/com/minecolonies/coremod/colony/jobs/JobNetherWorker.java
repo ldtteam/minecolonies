@@ -1,18 +1,17 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
-
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.netherworker.EntityAIWorkNether;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobNetherWorker>
 {

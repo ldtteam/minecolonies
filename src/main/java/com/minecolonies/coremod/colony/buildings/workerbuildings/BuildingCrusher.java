@@ -6,15 +6,16 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.RecipeSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import com.minecolonies.coremod.colony.buildings.modules.settings.RecipeSetting;
-import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
-import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CRUSHER_RATIO;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
 
 /**
  * Class of the crusher building.

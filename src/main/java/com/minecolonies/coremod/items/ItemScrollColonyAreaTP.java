@@ -6,16 +6,18 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,9 +26,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Colony teleport scroll, which teleports the user and any nearby players to the colony, invite a friend-style

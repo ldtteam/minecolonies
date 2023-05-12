@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.loot;
 
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraftforge.event.LootTableLoadEvent;
 
 import java.util.HashMap;

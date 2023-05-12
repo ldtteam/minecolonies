@@ -20,6 +20,7 @@ import net.minecraft.core.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
 import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGLE;
 
 /**

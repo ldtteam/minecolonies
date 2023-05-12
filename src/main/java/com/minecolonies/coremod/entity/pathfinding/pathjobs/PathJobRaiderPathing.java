@@ -5,12 +5,12 @@ import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.coremod.colony.managers.RaidManager;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

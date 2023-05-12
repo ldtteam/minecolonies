@@ -14,7 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.TagConstants.*;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_GLASSBLOWER;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_GLASSBLOWER_SMELTING;
 
 /**
  * Class of the glassblower building.

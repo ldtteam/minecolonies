@@ -13,15 +13,13 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!

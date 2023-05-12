@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 
 /**

@@ -20,7 +20,6 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.*;

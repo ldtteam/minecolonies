@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.NorsemenModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.model.HumanoidModel;
 
 public class ModelChiefNorsemen extends NorsemenModel
 {

@@ -4,7 +4,6 @@ import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessMod
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.TimeBasedHappinessModifier;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
@@ -12,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.*;
-import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler.*;
 
 /**

@@ -3,10 +3,10 @@ package com.minecolonies.coremod.client.model.raiders;// Made with Blockbench 3.
 // Paste this class into your mod and generate all required imports
 
 import com.minecolonies.api.client.render.modeltype.NorsemenModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.model.HumanoidModel;
 
 public class ModelShieldmaiden extends NorsemenModel
 {

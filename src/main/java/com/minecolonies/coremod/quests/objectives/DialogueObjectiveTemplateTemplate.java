@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
-import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IObjectiveInstance;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 
 import java.util.ArrayList;

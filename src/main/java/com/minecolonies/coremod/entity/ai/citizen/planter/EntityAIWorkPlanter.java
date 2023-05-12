@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -13,20 +12,19 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
  * Planter AI class.

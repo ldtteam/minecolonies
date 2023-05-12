@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import com.minecolonies.coremod.network.messages.server.colony.building.ResetFilterableItemMessage;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;

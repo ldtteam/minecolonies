@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.particles;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.particle.*;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 

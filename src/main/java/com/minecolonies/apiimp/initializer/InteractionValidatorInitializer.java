@@ -18,9 +18,10 @@ import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
@@ -37,7 +38,6 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class containing initializer for all the validator predicates.

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.coremod.Network;
@@ -9,8 +8,8 @@ import com.minecolonies.coremod.client.gui.modules.FarmerFieldsModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;

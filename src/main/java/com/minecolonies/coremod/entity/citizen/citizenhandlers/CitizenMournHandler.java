@@ -7,7 +7,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DECEASED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MOURNING;

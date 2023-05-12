@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 import static com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman.RENDER_META_BACKPACK;
 
 public class MaleCourierModel extends CitizenModel<AbstractEntityCitizen>

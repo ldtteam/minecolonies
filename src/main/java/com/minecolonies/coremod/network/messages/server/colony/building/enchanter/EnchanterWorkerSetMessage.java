@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 

@@ -5,13 +5,11 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidEvent;
-
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_NORSEMEN;

@@ -7,7 +7,9 @@ import com.minecolonies.api.colony.requestsystem.management.update.UpdateType;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.IUpdateStep;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.*;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.InitialUpdate;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.ResetRSToStoreJobInResolvers;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.ResetRSToUpdateRestaurantResolver;
 
 import java.util.Comparator;
 import java.util.List;

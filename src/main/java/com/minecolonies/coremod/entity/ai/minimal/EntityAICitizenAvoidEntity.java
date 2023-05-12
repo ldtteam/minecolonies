@@ -9,13 +9,12 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +26,6 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.R
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.SAFE;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI task to avoid an Entity class.

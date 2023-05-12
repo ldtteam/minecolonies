@@ -5,12 +5,10 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.world.entity.Pose;
-import org.jetbrains.annotations.NotNull;
 
 public class FemaleChildModel extends CitizenModel<AbstractEntityCitizen>
 {

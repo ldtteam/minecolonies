@@ -9,7 +9,7 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.HUT_BUILDER_RESOURCE_SUFFIX;
 
 /**
  * BOWindow for the builder hut.

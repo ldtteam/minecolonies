@@ -18,7 +18,6 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

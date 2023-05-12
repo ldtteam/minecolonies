@@ -13,14 +13,13 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.VisitorData;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyVisitorViewDataMessage;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

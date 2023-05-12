@@ -4,10 +4,10 @@ import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

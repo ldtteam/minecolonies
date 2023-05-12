@@ -7,7 +7,6 @@ import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
-import com.minecolonies.api.entity.mobs.ISpearmanMobEntity;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIBreakDoor;
@@ -16,9 +15,9 @@ import com.minecolonies.coremod.entity.mobs.aitasks.RaiderRangedAI;
 import com.minecolonies.coremod.entity.mobs.aitasks.RaiderWalkAI;
 import com.minecolonies.coremod.util.MultimapCollector;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 

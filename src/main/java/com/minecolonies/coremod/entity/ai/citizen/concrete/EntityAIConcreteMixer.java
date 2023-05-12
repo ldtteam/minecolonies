@@ -8,12 +8,12 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ConcretePowderBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ConcretePowderBlock;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 

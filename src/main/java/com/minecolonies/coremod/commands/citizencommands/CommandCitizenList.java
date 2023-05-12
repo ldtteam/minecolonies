@@ -9,10 +9,13 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,8 +24,6 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_CITIZEN_INFO;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.colonycommands.CommandListColonies.START_PAGE_ARG;
-
-import net.minecraft.ChatFormatting;
 
 /**
  * Lists all citizen of a given colony.

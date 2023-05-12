@@ -12,14 +12,11 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingR
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import java.util.AbstractMap;
 
 public class StandardRetryingRequestResolverFactory implements IFactory<IRequestManager, StandardRetryingRequestResolver>
 {

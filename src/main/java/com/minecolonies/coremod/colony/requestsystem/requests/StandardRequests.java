@@ -23,13 +23,13 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 

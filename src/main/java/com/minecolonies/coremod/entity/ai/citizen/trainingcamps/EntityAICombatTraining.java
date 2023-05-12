@@ -11,10 +11,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCombatA
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;

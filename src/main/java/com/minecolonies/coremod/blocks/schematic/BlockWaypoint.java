@@ -5,8 +5,6 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Material;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 /**
  * This block is a waypoint, which makes citizens path to it.
  */

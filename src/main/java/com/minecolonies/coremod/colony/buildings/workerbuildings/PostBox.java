@@ -16,8 +16,8 @@ import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 

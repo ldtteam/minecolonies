@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -16,10 +15,10 @@ import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;

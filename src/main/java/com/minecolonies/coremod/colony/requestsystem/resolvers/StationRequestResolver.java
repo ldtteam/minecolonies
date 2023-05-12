@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**

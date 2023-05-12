@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.research;
 
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;

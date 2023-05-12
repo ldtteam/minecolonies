@@ -6,9 +6,9 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_WHO_AM_I_HAS_COLONY;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_WHO_AM_I_NO_COLONY;

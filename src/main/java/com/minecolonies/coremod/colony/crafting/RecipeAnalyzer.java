@@ -2,16 +2,12 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Utility helpers for analyzing the available recipes and determining which crafters are able to use them.

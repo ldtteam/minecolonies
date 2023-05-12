@@ -24,7 +24,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_NAME_TOO_LONG;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 

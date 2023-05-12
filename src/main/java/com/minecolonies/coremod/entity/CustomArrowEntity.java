@@ -1,20 +1,18 @@
 package com.minecolonies.coremod.entity;
 
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 /**
  * Custom arrow entity class which remove themselves when on the ground for a bit to not cause lag and they do not scale in damage with their motion.

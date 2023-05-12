@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowRequestTree;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

@@ -4,14 +4,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WoolCarpetBlock;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -3,16 +3,12 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).

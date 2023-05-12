@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;

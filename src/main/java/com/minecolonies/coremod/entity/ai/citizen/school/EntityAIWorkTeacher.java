@@ -15,9 +15,9 @@ import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

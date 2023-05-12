@@ -15,27 +15,27 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
-import com.minecolonies.coremod.colony.buildings.views.EmptyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
-import net.minecraft.network.chat.Component;
 
 /**
  * BOWindow to display a particular branch of the tree.

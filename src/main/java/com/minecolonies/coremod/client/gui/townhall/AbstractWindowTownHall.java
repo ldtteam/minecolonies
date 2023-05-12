@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**

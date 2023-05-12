@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 

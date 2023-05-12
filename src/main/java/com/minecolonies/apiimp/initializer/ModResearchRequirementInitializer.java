@@ -1,6 +1,5 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
@@ -9,8 +8,6 @@ import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.ResearchResearchRequirement;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.research.ModResearchRequirements.*;
 

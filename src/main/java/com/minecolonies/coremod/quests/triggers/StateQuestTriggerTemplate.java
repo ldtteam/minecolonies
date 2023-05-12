@@ -5,7 +5,8 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.List;
 

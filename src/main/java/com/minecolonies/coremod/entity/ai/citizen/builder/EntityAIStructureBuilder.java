@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.placement.StructurePlacer;
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -11,21 +10,19 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;

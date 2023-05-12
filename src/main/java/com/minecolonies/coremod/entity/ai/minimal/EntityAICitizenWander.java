@@ -27,8 +27,6 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAICitizenWander.WanderState.*;
 
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
-
 /**
  * Entity action to wander randomly around.
  */

@@ -17,12 +17,10 @@ import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderDecorationView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

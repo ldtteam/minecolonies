@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IQuestDeliveryObjective;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;

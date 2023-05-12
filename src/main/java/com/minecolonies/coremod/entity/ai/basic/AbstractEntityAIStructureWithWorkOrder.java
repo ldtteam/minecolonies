@@ -37,11 +37,8 @@ import org.jetbrains.annotations.Nullable;
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_BUILT;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_UPGRADED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_REPAIRED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_REMOVED;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.

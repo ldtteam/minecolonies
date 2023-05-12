@@ -10,7 +10,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.Nullable;
 

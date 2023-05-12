@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
-import com.minecolonies.api.util.Log;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
@@ -14,8 +12,10 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -23,18 +23,16 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.DETAILS;

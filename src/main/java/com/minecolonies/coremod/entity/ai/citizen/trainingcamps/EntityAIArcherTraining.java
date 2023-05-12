@@ -11,13 +11,13 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 

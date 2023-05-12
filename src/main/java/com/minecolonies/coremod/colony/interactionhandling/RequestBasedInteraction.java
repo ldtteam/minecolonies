@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -13,10 +13,10 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;

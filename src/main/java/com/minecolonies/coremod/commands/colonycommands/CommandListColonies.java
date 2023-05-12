@@ -6,17 +6,16 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandListColonies implements IMCCommand
 {

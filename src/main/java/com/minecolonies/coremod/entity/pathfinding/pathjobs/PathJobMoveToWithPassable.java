@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

@@ -10,7 +10,6 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 

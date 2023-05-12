@@ -12,18 +12,20 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 

@@ -3,13 +3,9 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class HighlightManager
 {

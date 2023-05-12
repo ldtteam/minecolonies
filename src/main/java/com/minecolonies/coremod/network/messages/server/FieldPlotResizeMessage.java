@@ -2,10 +2,10 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;

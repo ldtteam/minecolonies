@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 /**

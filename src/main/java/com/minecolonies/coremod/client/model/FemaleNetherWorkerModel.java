@@ -11,7 +11,6 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.*;
 
 public class FemaleNetherWorkerModel extends CitizenModel<AbstractEntityCitizen>

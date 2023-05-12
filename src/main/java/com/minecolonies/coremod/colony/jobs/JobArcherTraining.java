@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTraining;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The Archers's Training Job class

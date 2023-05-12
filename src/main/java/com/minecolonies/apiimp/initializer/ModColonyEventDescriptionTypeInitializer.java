@@ -1,7 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
@@ -10,8 +9,6 @@ import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgra
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 
 /**
  * Initializer for colony event types, register new event types here.

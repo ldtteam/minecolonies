@@ -2,30 +2,28 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
-import net.minecraft.world.level.block.AbstractBannerBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BannerPatterns;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.entity.BannerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractBannerBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.world.level.block.entity.BannerPatterns;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * This item represents the colony flag banner, both wall and floor blocks.

@@ -4,15 +4,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class describing the Ancient Tome item.

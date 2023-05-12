@@ -11,7 +11,6 @@ import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -28,8 +27,6 @@ import java.util.List;
 
 import static com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG;
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
-
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
 
 public class DoDoorBlockPlacementHandler implements IPlacementHandler
 {

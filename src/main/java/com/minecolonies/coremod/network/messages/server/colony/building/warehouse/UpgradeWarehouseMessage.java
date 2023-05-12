@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 

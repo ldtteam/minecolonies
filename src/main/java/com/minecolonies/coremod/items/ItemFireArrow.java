@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.item.Item.Properties;
-
 /**
  * Class handling the Scepter for the Pharao.
  */

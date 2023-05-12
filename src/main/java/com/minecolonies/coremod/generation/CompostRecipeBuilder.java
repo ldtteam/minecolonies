@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
-import com.minecolonies.apiimp.initializer.ModRecipeSerializerInitializer;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;

@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.client.render.mobs;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.PathfinderMob;
 
 /**
  * Renderer for EntityMercenary.

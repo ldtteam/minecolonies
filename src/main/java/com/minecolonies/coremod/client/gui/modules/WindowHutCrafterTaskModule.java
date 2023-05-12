@@ -27,7 +27,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;
 
 /**
  * Task list module.

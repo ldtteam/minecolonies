@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.DESC_LABEL;
+import static com.minecolonies.api.util.constant.WindowConstants.LIST_SETTINGS;
 
 /**
  * BOWindow for all the settings of a hut.

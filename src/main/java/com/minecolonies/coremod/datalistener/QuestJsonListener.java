@@ -10,9 +10,7 @@ import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.GlobalQuestSyncMessage;
-import com.minecolonies.coremod.quests.*;
-import com.minecolonies.api.quests.IQuestTriggerTemplate;
-import com.minecolonies.api.quests.ITriggerReturnData;
+import com.minecolonies.coremod.quests.QuestTemplate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -27,7 +25,6 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.minecolonies.coremod.quests.QuestParsingConstants.*;
-import static com.minecolonies.coremod.quests.QuestParsingConstants.BRACE_CLOSE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**

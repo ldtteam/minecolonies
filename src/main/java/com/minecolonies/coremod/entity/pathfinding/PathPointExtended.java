@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.pathfinder.Node;
 import org.jetbrains.annotations.NotNull;
 
 /**

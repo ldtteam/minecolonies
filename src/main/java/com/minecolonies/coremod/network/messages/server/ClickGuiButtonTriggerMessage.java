@@ -2,8 +2,8 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;

@@ -9,8 +9,8 @@ import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
-import static com.minecolonies.api.util.constant.HappinessConstants.QUEST;
 import static com.minecolonies.api.quests.QuestParseConstant.*;
+import static com.minecolonies.api.util.constant.HappinessConstants.QUEST;
 
 /**
  * Happiness inducing reward.

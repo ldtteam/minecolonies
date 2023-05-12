@@ -14,15 +14,13 @@ import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI for visitors, they do sometimes nap on their place, sit on their place, randomly walk around inside building outline

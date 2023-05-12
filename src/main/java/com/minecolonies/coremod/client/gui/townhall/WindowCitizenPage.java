@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;

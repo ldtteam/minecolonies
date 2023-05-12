@@ -13,10 +13,10 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.FarmerFieldModuleVi
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

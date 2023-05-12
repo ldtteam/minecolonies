@@ -16,17 +16,17 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawned
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

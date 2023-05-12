@@ -8,12 +8,12 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,8 +22,6 @@ import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
-
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
 
 public class GravePlacementHandler implements IPlacementHandler
 {

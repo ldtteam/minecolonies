@@ -13,10 +13,11 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;

@@ -25,21 +25,20 @@ import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_ORE;
 
 /**
  * Smelter AI class.

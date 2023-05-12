@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.quests.objectives;
 
-import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IObjectiveInstance;
+import com.minecolonies.api.quests.IQuestInstance;
 import net.minecraft.world.entity.player.Player;
 
 /**

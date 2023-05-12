@@ -2,8 +2,8 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.*;
-import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -12,17 +12,16 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 

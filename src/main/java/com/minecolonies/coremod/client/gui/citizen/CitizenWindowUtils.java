@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +33,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
-
-import net.minecraft.network.chat.Component;
 
 /**
  * BOWindow for the citizen.

@@ -2,11 +2,12 @@ package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_POS;
 
 /**
  * Event for something happening to a citizen.

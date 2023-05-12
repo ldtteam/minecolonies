@@ -7,14 +7,13 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.GameRules;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;

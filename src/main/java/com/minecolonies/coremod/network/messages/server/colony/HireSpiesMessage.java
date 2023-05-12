@@ -3,10 +3,10 @@ package com.minecolonies.coremod.network.messages.server.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 

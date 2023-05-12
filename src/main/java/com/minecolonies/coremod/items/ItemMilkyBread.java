@@ -2,16 +2,15 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Milk Bread item, made by the baker, with milk bucket effect

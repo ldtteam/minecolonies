@@ -43,8 +43,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 import static com.minecolonies.coremod.MineColonies.getConfig;
 
-import net.minecraftforge.event.TickEvent.LevelTickEvent;
-
 /**
  * Singleton class that links colonies to minecraft.
  */

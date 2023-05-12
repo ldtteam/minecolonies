@@ -26,13 +26,13 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.item.*;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.*;
 
 import java.util.EnumSet;
 

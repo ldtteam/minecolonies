@@ -5,16 +5,13 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.*;
-import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_PICKAXE;
 
 public class MaleMinerModel extends CitizenModel<AbstractEntityCitizen>
 {

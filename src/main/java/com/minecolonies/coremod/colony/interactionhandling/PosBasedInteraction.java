@@ -9,9 +9,8 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 

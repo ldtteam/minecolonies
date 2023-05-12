@@ -10,7 +10,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
 import org.jetbrains.annotations.NotNull;
 

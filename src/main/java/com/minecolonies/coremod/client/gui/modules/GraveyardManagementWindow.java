@@ -9,17 +9,12 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.GraveyardManagementModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * BOWindow for the Graveyard building.

@@ -16,11 +16,10 @@ import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
-
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;

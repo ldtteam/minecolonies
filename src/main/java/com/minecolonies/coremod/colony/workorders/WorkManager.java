@@ -14,11 +14,11 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +28,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 
 /**
  * Handles work orders for a colony.

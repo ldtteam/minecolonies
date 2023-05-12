@@ -3,8 +3,8 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenInventoryHandler;
 import com.minecolonies.api.util.InventoryUtils;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 /**
  * Handles the inventory of the citizen.

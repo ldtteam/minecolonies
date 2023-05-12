@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -9,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import org.jetbrains.annotations.NotNull;
 
 /**

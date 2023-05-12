@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 
 import java.util.Collections;
 import java.util.List;

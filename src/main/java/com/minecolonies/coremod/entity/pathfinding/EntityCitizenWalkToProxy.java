@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -16,9 +15,9 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

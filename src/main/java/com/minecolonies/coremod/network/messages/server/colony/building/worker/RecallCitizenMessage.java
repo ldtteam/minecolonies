@@ -10,10 +10,10 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;

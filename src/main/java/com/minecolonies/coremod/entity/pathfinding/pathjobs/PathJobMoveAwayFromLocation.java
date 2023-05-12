@@ -3,10 +3,10 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

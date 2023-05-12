@@ -1,20 +1,18 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NyliumBlock;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
 
 public class NetherrackPlacementHandler implements IPlacementHandler
 {

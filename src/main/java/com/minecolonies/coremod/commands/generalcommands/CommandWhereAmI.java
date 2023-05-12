@@ -8,9 +8,9 @@ import com.minecolonies.api.util.constant.translation.CommandTranslationConstant
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
 
 public class CommandWhereAmI implements IMCCommand
 {

@@ -8,11 +8,11 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;

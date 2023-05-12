@@ -7,9 +7,8 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import com.minecolonies.api.util.MessageUtils;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.function.Function;
 

@@ -1,18 +1,24 @@
 package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;

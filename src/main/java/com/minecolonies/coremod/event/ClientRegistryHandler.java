@@ -8,7 +8,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.model.*;
-import com.minecolonies.coremod.client.model.ScarecrowModel;
 import com.minecolonies.coremod.client.model.raiders.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;

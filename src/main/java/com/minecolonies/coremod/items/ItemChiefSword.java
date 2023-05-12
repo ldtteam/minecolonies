@@ -4,19 +4,17 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.items.IChiefSwordItem;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Chief Sword item.

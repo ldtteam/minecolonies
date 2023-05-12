@@ -13,7 +13,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
