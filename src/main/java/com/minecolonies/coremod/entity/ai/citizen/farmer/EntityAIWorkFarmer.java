@@ -100,7 +100,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     /**
      * Farming icon
      */
-    private final static VisibleCitizenStatus FARMING_ICON =
+    private static final VisibleCitizenStatus FARMING_ICON =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/farmer.png"), "com.minecolonies.gui.visiblestatus.farmer");
 
     /**
@@ -119,10 +119,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     @Nullable
     private BlockPos prevPos;
+
     /**
      * The current index within the current field
      */
-    private int      cell = -1;
+    private int cell = -1;
 
     /**
      * Constructor for the Farmer. Defines the tasks the Farmer executes.
@@ -133,7 +134,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING, 10),
           new AITarget(PREPARING, this::prepareForFarming, TICKS_SECOND),
           new AITarget(FARMER_HOE, this::workAtField, 5),
           new AITarget(FARMER_PLANT, this::workAtField, 5),
@@ -164,6 +164,36 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         return super.wantInventoryDumped();
     }
 
+    @Override
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata((getState() == FARMER_PLANT || getState() == FARMER_HARVEST) ? RENDER_META_WORKING : "");
+    }
+
+    @Override
+    protected IAIState decide()
+    {
+        IAIState state = super.decide();
+
+        if (state == IDLE)
+        {
+            return PREPARING;
+        }
+        return state;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
     /**
      * Prepares the farmer for farming. Also requests the tools and checks if the farmer has sufficient fields.
      *
@@ -172,16 +202,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @NotNull
     private IAIState prepareForFarming()
     {
+        worker.getCitizenData().setIdleAtJob(true);
+
         if (building == null || building.getBuildingLevel() < 1)
         {
             return PREPARING;
         }
-
-        if (!job.getTaskQueue().isEmpty() || getActionsDoneUntilDumping() <= job.getActionsDone())
-        {
-            return START_WORKING;
-        }
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         module.claimFields();
@@ -216,22 +242,23 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
-            worker.getCitizenData().setIdleAtJob(true);
-            return PREPARING;
+            return IDLE;
         }
-        worker.getCitizenData().setIdleAtJob(false);
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
+        module.resetCurrentField();
         final IField fieldToWork = module.getFieldToWorkOn();
         if (fieldToWork instanceof FarmField farmField)
         {
+            worker.getCitizenData().setIdleAtJob(false);
+            worker.getCitizenData().setVisibleStatus(FARMING_ICON);
+
             if (farmField.getFieldStage() == FarmField.Stage.PLANTED && checkIfShouldExecute(farmField, pos -> this.findHarvestableSurface(pos) != null))
             {
                 return FARMER_HARVEST;
             }
             else if (farmField.getFieldStage() == FarmField.Stage.HOED)
             {
-                return canGoPlanting(farmField, building);
+                return canGoPlanting(farmField);
             }
             else if (farmField.getFieldStage() == FarmField.Stage.EMPTY && checkIfShouldExecute(farmField, pos -> this.findHoeableSurface(pos, farmField) != null))
             {
@@ -285,18 +312,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     /**
      * Checks if the farmer is ready to plant.
      *
-     * @param farmField      the field to plant.
-     * @param buildingFarmer the farmer building.
-     * @return true if he is ready.
+     * @param farmField the field to plant.
+     * @return the next AI state.
      */
-    private IAIState canGoPlanting(@NotNull final FarmField farmField, @NotNull final BuildingFarmer buildingFarmer)
+    private IAIState canGoPlanting(@NotNull final FarmField farmField)
     {
         if (farmField.getSeed() == null)
         {
-            worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
-        worker.getCitizenData().setIdleAtJob(false);
 
         final ItemStack seeds = farmField.getSeed();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem());
@@ -384,7 +408,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     /**
-     * Fetch the next available block within the field. Uses mathemajical quadratic equations to determine the coordinates by an index. Considers max radii set in the field gui.
+     * Fetch the next available block within the field. Uses mathematical quadratic equations to determine the coordinates by an index. Considers max radii set in the field gui.
      *
      * @return the new offset position
      */
@@ -432,7 +456,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLargestCell(FarmField farmField)
     {
-        return (int) Math.pow(farmField.getMaxRadius() * 2 + 1, 2);
+        return (int) Math.pow(farmField.getMaxRadius() * 2D + 1D, 2);
     }
 
     /**
@@ -442,9 +466,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private IAIState workAtField()
     {
-        @Nullable final BuildingFarmer buildingFarmer = building;
-
-        final FieldsModule module = buildingFarmer.getFirstModuleOccurance(FieldsModule.class);
+        final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         if (checkForToolOrWeapon(ToolType.HOE) || module.getCurrentField() == null)
         {
             return PREPARING;
@@ -577,12 +599,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         return true;
     }
 
-    @Override
-    protected void updateRenderMetaData()
-    {
-        worker.setRenderMetadata((getState() == FARMER_PLANT || getState() == FARMER_HARVEST) ? RENDER_META_WORKING : "");
-    }
-
     protected int getLevelDelay()
     {
         return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
@@ -637,7 +653,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      *
      * @param item     the crop.
      * @param position the location.
-     * @return true if succesful.
+     * @return true if successful.
      */
     private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
@@ -651,7 +667,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return false;
         }
 
-        if (item.getItem() instanceof BlockItem && (((BlockItem) item.getItem()).getBlock() instanceof CropBlock || ((BlockItem) item.getItem()).getBlock() instanceof StemBlock))
+        if (item.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() instanceof CropBlock || blockItem.getBlock() instanceof StemBlock))
         {
             @NotNull final Item seed = item.getItem();
             if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))
@@ -819,51 +835,5 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     public AbstractEntityCitizen getCitizen()
     {
         return worker;
-    }
-
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return MAX_BLOCKS_MINED;
-    }
-
-    @Override
-    protected int getActionRewardForCraftingSuccess()
-    {
-        return MAX_BLOCKS_MINED;
-    }
-
-    @Override
-    protected IAIState decide()
-    {
-        final IAIState nextState = super.decide();
-        if (nextState != START_WORKING && nextState != IDLE)
-        {
-            return nextState;
-        }
-
-        if (wantInventoryDumped())
-        {
-            // Wait to dump before continuing.
-            return getState();
-        }
-
-        if (job.getTaskQueue().isEmpty())
-        {
-            return PREPARING;
-        }
-
-        if (job.getCurrentTask() == null)
-        {
-            return PREPARING;
-        }
-
-
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
-            return QUERY_ITEMS;
-        }
-
-        return GET_RECIPE;
     }
 }

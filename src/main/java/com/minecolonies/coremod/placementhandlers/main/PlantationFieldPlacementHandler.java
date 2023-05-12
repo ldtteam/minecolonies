@@ -16,6 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
+/**
+ * Minecolonies plantation field blueprint handler.
+ */
 public class PlantationFieldPlacementHandler implements ISurvivalBlueprintHandler
 {
     public static final String ID = MOD_ID + ":plantation_field";
