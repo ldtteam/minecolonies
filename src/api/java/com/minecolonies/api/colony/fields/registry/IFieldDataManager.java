@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The field manager class responsible for creating field instances from NBT data, etc.
+ * Interface for the field manager class responsible for creating field instances from NBT data, etc.
  */
 public interface IFieldDataManager
 {

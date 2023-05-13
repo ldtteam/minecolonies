@@ -8,6 +8,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Interface for field instances.
+ */
 public interface IField
 {
     /**

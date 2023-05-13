@@ -31,6 +31,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Message to request a work order for a plantation field.
+ */
 public class PlantationFieldBuildRequestMessage implements IMessage
 {
     /**

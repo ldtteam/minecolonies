@@ -6,6 +6,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Abstract field matcher implementation, can be overridden without having to do
+ * anything else to get a basic "position only" field matcher.
+ */
 public abstract class AbstractFieldMatcher implements IFieldMatcher
 {
     /**

@@ -9,6 +9,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Abstract implementation of the field it's view instance.
+ */
 public abstract class AbstractFieldView implements IFieldView
 {
     /**

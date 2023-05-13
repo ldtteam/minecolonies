@@ -11,6 +11,10 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 
+/**
+ * Abstract implementation for field instances.
+ * Contains some basic mandatory logic for fields.
+ */
 public abstract class AbstractField implements IField
 {
     /**

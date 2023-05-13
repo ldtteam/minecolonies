@@ -13,6 +13,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The field manager class responsible for creating field instances from NBT data, etc.
+ */
 public class FieldDataManager implements IFieldDataManager
 {
     private static final String TAG_FIELD_NAME     = "name";

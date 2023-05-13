@@ -5,6 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+/**
+ * The abstract implementation for farmer field tile entities.
+ */
 public abstract class AbstractTileEntityScarecrow extends BlockEntity
 {
     /**

@@ -93,7 +93,7 @@ public class BuildingFarmer extends AbstractBuilding
         {
             for (final IField field : module.getOwnedFields())
             {
-                if (field instanceof FarmField farmField && farmField.getSeed().isEmpty())
+                if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty())
                 {
                     toKeep.put(farmField.getSeed()::sameItem, new Tuple<>(64, true));
                 }
@@ -109,7 +109,7 @@ public class BuildingFarmer extends AbstractBuilding
         {
             for (final IField field : module.getOwnedFields())
             {
-                if (field instanceof FarmField farmField && farmField.getSeed() != null && ItemStackUtils.compareItemStacksIgnoreStackSize(farmField.getSeed(), stack))
+                if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(farmField.getSeed(), stack))
                 {
                     return false;
                 }
