@@ -169,15 +169,18 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
     {
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
         worldIn.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
 
-        if (!worldIn.isClientSide())
+        if (worldIn.isClientSide)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-            if (colony != null)
-            {
-                colony.getBuildingManager().addOrUpdateField(FarmField.create(colony, pos));
-            }
+            return;
+        }
+
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+        if (colony != null)
+        {
+            colony.getBuildingManager().addOrUpdateField(FarmField.create(colony, pos));
         }
     }
 

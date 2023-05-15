@@ -18,6 +18,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_ON;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_FIELD_COUNT;
@@ -95,9 +97,10 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
     public FarmFieldsModuleWindow(final IBuildingView building, final FieldsModuleView moduleView)
     {
         super(building, Constants.MOD_ID + HUT_FIELDS_RESOURCE_SUFFIX);
+        this.moduleView = moduleView;
+
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
-        this.moduleView = moduleView;
     }
 
     /**
@@ -153,13 +156,13 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return moduleView.getFields().size();
+                return getFields().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final FarmField.View field = ((FarmField.View) moduleView.getFields().get(index));
+                final FarmField.View field = getFields().get(index);
                 final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
@@ -211,6 +214,19 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
         });
 
         updateUI();
+    }
+
+    /**
+     * Fetches the list of fields, specifically filtered for the farm field.
+     *
+     * @return the filtered list of fields.
+     */
+    private List<FarmField.View> getFields()
+    {
+        return this.moduleView.getFields().stream()
+                 .filter(f -> f instanceof FarmField.View farmField && !farmField.getSeed().isEmpty())
+                 .map(m -> (FarmField.View) m)
+                 .toList();
     }
 
     @Override

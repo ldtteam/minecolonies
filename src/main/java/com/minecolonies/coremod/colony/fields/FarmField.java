@@ -108,7 +108,7 @@ public class FarmField extends AbstractField
     public void deserializeNBT(final @NotNull CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        seed = ItemStack.of(compound.getCompound(TAG_SEED));
+        setSeed(ItemStack.of(compound.getCompound(TAG_SEED)));
         radii = compound.getIntArray(TAG_RADIUS);
         maxRadius = compound.getInt(TAG_MAX_RANGE);
         fieldStage = Stage.valueOf(compound.getString(TAG_STAGE));
@@ -118,7 +118,7 @@ public class FarmField extends AbstractField
     public void serializeToView(final @NotNull FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
-        buf.writeItem(seed);
+        buf.writeItem(getSeed());
         buf.writeVarIntArray(radii);
         buf.writeInt(maxRadius);
         buf.writeEnum(fieldStage);
@@ -128,6 +128,28 @@ public class FarmField extends AbstractField
     public @NotNull IFieldMatcher getMatcher()
     {
         return new Matcher(getFieldType(), getPosition());
+    }
+
+    /**
+     * Get the current seed on the field.
+     *
+     * @return the current seed.
+     */
+    public ItemStack getSeed()
+    {
+        seed.setCount(1);
+        return seed;
+    }
+
+    /**
+     * Updates the seed in the field.
+     *
+     * @param seed the new seed
+     */
+    public void setSeed(final ItemStack seed)
+    {
+        this.seed = seed.copy();
+        this.seed.setCount(1);
     }
 
     /**
@@ -212,26 +234,6 @@ public class FarmField extends AbstractField
     private static boolean isValidDelimiter(final Block block)
     {
         return block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock;
-    }
-
-    /**
-     * Get the current seed on the field.
-     *
-     * @return the current seed.
-     */
-    public ItemStack getSeed()
-    {
-        return seed;
-    }
-
-    /**
-     * Updates the seed in the field.
-     *
-     * @param seed the new seed
-     */
-    public void setSeed(final ItemStack seed)
-    {
-        this.seed = seed;
     }
 
     /**
