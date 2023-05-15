@@ -22,6 +22,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.Plan
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,6 +42,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_PLANTATION_RESEARCH_REQUIRED;
@@ -73,13 +76,6 @@ public class BuildingPlantation extends AbstractBuilding
         updateFields();
     }
 
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-        updateFields();
-    }
-
     private void updateFields()
     {
         updateField(PlantationFieldType.SUGAR_CANE);
@@ -100,6 +96,31 @@ public class BuildingPlantation extends AbstractBuilding
             final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
             colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, getPosition(), type, workingPositions));
         }
+    }
+
+    /**
+     * TODO: 1.20
+     * Legacy code, can be removed when plantations will no longer have to support fields
+     * directly from the hut building.
+     * <p>
+     * This is used for initial migration to the new plantation field system.
+     * This will register the fields on colony load, only when the building still contains old NBT data.
+     */
+    @Override
+    public void deserializeNBT(final CompoundTag compound)
+    {
+        super.deserializeNBT(compound);
+        if (compound.contains(TAG_PLANTGROUND, Tag.TAG_COMPOUND))
+        {
+            updateFields();
+        }
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        updateFields();
     }
 
     @NotNull
