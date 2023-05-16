@@ -8,9 +8,7 @@ import com.minecolonies.coremod.quests.objectives.*;
 import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
 import com.minecolonies.coremod.quests.objectives.KillEntityObjectiveTemplateTemplate;
 import com.minecolonies.coremod.quests.rewards.*;
-import com.minecolonies.coremod.quests.triggers.CitizenQuestTriggerTemplate;
-import com.minecolonies.coremod.quests.triggers.RandomQuestTriggerTemplate;
-import com.minecolonies.coremod.quests.triggers.StateQuestTriggerTemplate;
+import com.minecolonies.coremod.quests.triggers.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -50,6 +48,8 @@ public final class ModQuestInitializer
         QuestRegistries.randomTrigger = DEFERRED_REGISTER_TRIGGER.register(RANDOM_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(RandomQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.stateTrigger = DEFERRED_REGISTER_TRIGGER.register(STATE_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(StateQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.citizenTrigger = DEFERRED_REGISTER_TRIGGER.register(CITIZEN_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(CitizenQuestTriggerTemplate::createStateTrigger));
+        QuestRegistries.unlockTrigger = DEFERRED_REGISTER_TRIGGER.register(UNLOCK_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(UnlockQuestTriggerTemplate::createUnlockTrigger));
+        QuestRegistries.questReputationTrigger = DEFERRED_REGISTER_TRIGGER.register(QUEST_REPUTATION_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(QuestReputationTriggerTemplate::createQuestReputationTrigger));
 
         QuestRegistries.itemReward = DEFERRED_REGISTER_REWARD.register(ITEM_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(ItemRewardTemplate::createReward));
         QuestRegistries.skillReward = DEFERRED_REGISTER_REWARD.register(SKILL_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(SkillRewardTemplate::createReward));
@@ -57,6 +57,8 @@ public final class ModQuestInitializer
         QuestRegistries.raidReward = DEFERRED_REGISTER_REWARD.register(RAID_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(RaidAdjustmentRewardTemplate::createReward));
         QuestRegistries.relationshipReward = DEFERRED_REGISTER_REWARD.register(RELATIONSHIP_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(RelationshipRewardTemplate::createReward));
         QuestRegistries.happinessReward = DEFERRED_REGISTER_REWARD.register(HAPPINESS_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(HappinessRewardTemplate::createReward));
+        QuestRegistries.unlockQuestReward = DEFERRED_REGISTER_REWARD.register(UNLOCK_QUEST_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(UnlockQuestRewardTemplate::createReward));
+        QuestRegistries.questReputationReward = DEFERRED_REGISTER_REWARD.register(QUEST_REPUTATION_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(QuestReputationRewardTemplate::createReward));
 
         QuestRegistries.dialogueAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(DIALOGUE_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(
           IDialogueObjectiveTemplate.DialogueElement::parse));

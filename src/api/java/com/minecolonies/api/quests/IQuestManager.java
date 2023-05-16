@@ -56,4 +56,29 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * On world load handling.
      */
     void onWorldLoad();
+
+    /**
+     * Unlock a quest with a given id.
+     * @param questId the quest to unlock.
+     */
+    void unlockQuest(ResourceLocation questId);
+
+    /**
+     * Check if a quest is unlocked.
+     * @param questId the id of the quest.
+     * @return true if so.
+     */
+    boolean isUnlocked(ResourceLocation questId);
+
+    /**
+     * Alter the quest reputation.
+     * @param difference the alteration.
+     */
+    void alterReputation(double difference);
+
+    /**
+     * Get the reputation of the colony.
+     * @return the reputation.
+     */
+    double getReputation();
 }

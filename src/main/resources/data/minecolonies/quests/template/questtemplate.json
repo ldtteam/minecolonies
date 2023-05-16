@@ -4,7 +4,14 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 100000000000
+      "rarity": 0
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "qty": 0.5
+    },
+    {
+      "type": "minecolonies:unlock"
     },
     {
       "type": "minecolonies:state",
@@ -178,6 +185,18 @@
         "target": 0,
         "qty": 1,
         "days": 7
+      }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "details": {
+        "qty": 0.5
+      }
+    },
+    {
+      "type": "minecolonies:unlockquest",
+      "details": {
+        "id": "minecolonies:questtemplate"
       }
     }
   ]

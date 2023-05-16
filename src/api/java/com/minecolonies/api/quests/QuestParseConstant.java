@@ -37,4 +37,5 @@ public class QuestParseConstant
     public static final String COUNT_ID = "count";
     public static final String PATH_ID = "path";
     public static final String RARITY_ID = "rarity";
+    public static final String REPUTATION_ID = "reputation";
 }

@@ -253,7 +253,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
                 for (final IQuestTriggerTemplate trigger: triggers)
                 {
-                    ITriggerReturnData returnData = trigger.canTriggerQuest(colony);
+                    ITriggerReturnData returnData = trigger.canTriggerQuest(questId, colony);
                     if (returnData.isPositive())
                     {
                         returnList.add(returnData);
