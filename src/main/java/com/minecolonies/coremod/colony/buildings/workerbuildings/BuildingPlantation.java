@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
@@ -23,7 +24,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.Plan
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -56,6 +56,14 @@ public class BuildingPlantation extends AbstractBuilding
      * Description string of the building.
      */
     private static final String PLANTATION = "plantation";
+
+    /**
+     * TODO: 1.20
+     * Legacy code, can be removed when plantations will no longer have to support fields
+     * directly from the hut building.
+     * Whether field migration from the old system to the new system should occur.
+     */
+    private boolean triggerFieldMigration = false;
 
     /**
      * Instantiates a new plantation building.
@@ -94,7 +102,10 @@ public class BuildingPlantation extends AbstractBuilding
         if (module != null)
         {
             final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
-            colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, getPosition(), type, workingPositions));
+            if (!workingPositions.isEmpty())
+            {
+                colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, getPosition(), type, workingPositions));
+            }
         }
     }
 
@@ -110,9 +121,9 @@ public class BuildingPlantation extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        if (compound.contains(TAG_PLANTGROUND, Tag.TAG_COMPOUND))
+        if (compound.contains(TAG_PLANTGROUND))
         {
-            updateFields();
+            triggerFieldMigration = true;
         }
     }
 
@@ -121,6 +132,22 @@ public class BuildingPlantation extends AbstractBuilding
     {
         super.onUpgradeComplete(newLevel);
         updateFields();
+    }
+
+    /**
+     * TODO: 1.20
+     * Legacy code, can be removed when plantations will no longer have to support fields
+     * directly from the hut building.
+     */
+    @Override
+    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
+    {
+        super.setTileEntity(te);
+        if (triggerFieldMigration)
+        {
+            updateFields();
+            triggerFieldMigration = false;
+        }
     }
 
     @NotNull

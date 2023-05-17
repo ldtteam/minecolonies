@@ -35,7 +35,7 @@ public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
      */
     public WeepingVinesPlantModule()
     {
-        super("weepv_field", "vine", Items.WEEPING_VINES);
+        super("weepv_field", "weepv_vine", Items.WEEPING_VINES);
     }
 
     @Override

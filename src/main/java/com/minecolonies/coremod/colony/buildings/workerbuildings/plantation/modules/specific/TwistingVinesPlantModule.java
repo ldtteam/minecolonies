@@ -35,7 +35,7 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
      */
     public TwistingVinesPlantModule()
     {
-        super("twistv_field", "vine", Items.TWISTING_VINES);
+        super("twistv_field", "twistv_vine", Items.TWISTING_VINES);
     }
 
     @Override

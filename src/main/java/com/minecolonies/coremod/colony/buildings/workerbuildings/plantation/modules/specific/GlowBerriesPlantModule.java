@@ -24,7 +24,7 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
      */
     public GlowBerriesPlantModule()
     {
-        super("glowb_field", "vine", Items.GLOW_BERRIES);
+        super("glowb_field", "glowb_vine", Items.GLOW_BERRIES);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -36,7 +37,6 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildin
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveFieldViewMessage;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -284,7 +284,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
-                if (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController))
+                if (!(colony.getWorld().getBlockEntity(pos) instanceof IBlueprintDataProviderBE))
                 {
                     removeLeisureSite(pos);
                 }

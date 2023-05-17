@@ -195,6 +195,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                     {
                         final List<BlockPos> workingPositions = module.getValidWorkingPositions(worldIn, tileEntityPlantationField.getWorkingPositions(module.getWorkTag()));
                         colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, pos, plantationFieldType, workingPositions));
+                        colony.getBuildingManager().addLeisureSite(pos);
                     }
                 }
             }
@@ -234,6 +235,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                     {
                         colony.getBuildingManager().removeField(new PlantationField.Matcher(FieldRegistries.plantationField.get(), pos)
                                                                   .setPlantationFieldType(plantationFieldType));
+                        colony.getBuildingManager().removeLeisureSite(pos);
                     }
                 }
             }
