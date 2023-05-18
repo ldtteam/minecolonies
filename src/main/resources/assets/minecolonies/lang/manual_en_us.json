@@ -2392,6 +2392,8 @@
   "com.minecolonies.coremod.questobjectives.answer.later": "Sorry, be right back!",
   "com.minecolonies.coremod.questobjectives.answer.cancel": "I don't have time for this!",
   "com.minecolonies.coremod.questobjectives.breakblock": "I am still waiting for you to mine $d %s!",
+  "com.minecolonies.coremod.questobjectives.placeblock": "I am still waiting for you to place $d %s!",
+
   "com.minecolonies.coremod.questobjectives.delivery.waiting": "I am still waiting for %s!",
   "com.minecolonies.coremod.questobjectives.delivery.waiting.cancel": "I don't have any of it!",
   "com.minecolonies.coremod.questobjectives.delivery.ready": "Oh hey, you brought %s; can I have it?",

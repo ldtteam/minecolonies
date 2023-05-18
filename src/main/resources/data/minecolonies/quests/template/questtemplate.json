@@ -7,13 +7,6 @@
       "rarity": 0
     },
     {
-      "type": "minecolonies:questreputation",
-      "qty": 0.5
-    },
-    {
-      "type": "minecolonies:unlock"
-    },
-    {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -44,10 +37,17 @@
           }
         }
       }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "qty": 0.5
+    },
+    {
+      "type": "minecolonies:unlock"
     }
   ],
   "max-occurrences": 20,
-  "triggerOrder": "(1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)",
+  "triggerOrder": "((1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)) && 5 && 6",
   "objectives": [
     {
       "type": "minecolonies:dialogue",
@@ -126,12 +126,21 @@
     },
     {
       "type": "minecolonies:breakblock",
-      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
       "details": {
         "target": 0,
         "block": "minecraft:dirt",
         "qty": 10,
         "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:placeblock",
+      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
+      "details": {
+        "target": 0,
+        "block": "minecraft:dirt",
+        "qty": 10,
+        "next-objective": 5
       }
     },
     {

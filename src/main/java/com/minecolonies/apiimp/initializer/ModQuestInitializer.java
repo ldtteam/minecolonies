@@ -44,6 +44,8 @@ public final class ModQuestInitializer
           KillEntityObjectiveTemplateTemplate::createObjective));
         QuestRegistries.breakBlockObjective = DEFERRED_REGISTER_OBJECTIVE.register(BREAKBLOCK_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
           BreakBlockObjectiveTemplate::createObjective));
+        QuestRegistries.placeBlockObjective = DEFERRED_REGISTER_OBJECTIVE.register(PLACEBLOCK_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
+          PlaceBlockObjectiveTemplate::createObjective));
 
         QuestRegistries.randomTrigger = DEFERRED_REGISTER_TRIGGER.register(RANDOM_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(RandomQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.stateTrigger = DEFERRED_REGISTER_TRIGGER.register(STATE_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(StateQuestTriggerTemplate::createStateTrigger));

@@ -84,6 +84,15 @@
         "next-objective": 4,
         "qty": 10,
         "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:placeblock",
+      "details": {
+        "block": "minecraft:dirt",
+        "next-objective": 5,
+        "qty": 10,
+        "target": 0
       },
       "unlocks-rewards": [
         0,
@@ -147,13 +156,25 @@
         "qty": 1,
         "target": 0
       }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "details": {
+        "qty": 0.5
+      }
+    },
+    {
+      "type": "minecolonies:unlockquest",
+      "details": {
+        "id": "minecolonies:questtemplate"
+      }
     }
   ],
-  "triggerOrder": "(1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)",
+  "triggerOrder": "((1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)) && 5 && 6",
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 100000000000
+      "rarity": 0
     },
     {
       "type": "minecolonies:state",
@@ -186,6 +207,13 @@
           }
         }
       }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "qty": 0.5
+    },
+    {
+      "type": "minecolonies:unlock"
     }
   ]
 }

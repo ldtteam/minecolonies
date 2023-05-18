@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 
+import static com.minecolonies.api.quests.QuestParseConstant.QUANTITY_KEY;
 import static com.minecolonies.api.quests.QuestParseConstant.REPUTATION_ID;
 
 /**
@@ -31,7 +32,7 @@ public class QuestReputationTriggerTemplate implements IQuestTriggerTemplate
      */
     public static QuestReputationTriggerTemplate createQuestReputationTrigger(final JsonObject jsonObj)
     {
-        return new QuestReputationTriggerTemplate(jsonObj.get(REPUTATION_ID).getAsDouble());
+        return new QuestReputationTriggerTemplate(jsonObj.get(QUANTITY_KEY).getAsDouble());
     }
 
     @Override

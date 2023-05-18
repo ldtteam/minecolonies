@@ -22,19 +22,19 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
- * Objective type tracking block mining.
+ * Objective type tracking block placing.
  */
-public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IBreakBlockObjectiveTemplate
+public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IPlaceBlockObjectiveTemplate
 {
     /**
-     * Amount of blocks to mine.
+     * Amount of blocks to place.
      */
-    private final int blocksToMine;
+    private final int qty;
 
     /**
-     * The block to mine.
+     * The block to place.
      */
-    private final Block blockToMine;
+    private final Block blockToPlace;
 
     /**
      * Next objective to go to, on fulfillment. -1 if final objective.
@@ -45,22 +45,22 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
      * Create a new objective of this type.
      *
      * @param target       the target citizen.
-     * @param blocksToMine the number of blocks to mine.
-     * @param blockToMine  the block to mine.
+     * @param qty the number of blocks to place.
+     * @param blockToPlace  the block to place.
      * @param rewards the rewards this unlocks.
      */
-    public BreakBlockObjectiveTemplate(final int target, final int blocksToMine, final Block blockToMine, final int nextObjective, final List<Integer> rewards)
+    public PlaceBlockObjectiveTemplate(final int target, final int qty, final Block blockToPlace, final int nextObjective, final List<Integer> rewards)
     {
-        super(target, buildDialogueTree(blockToMine), rewards);
-        this.blocksToMine = blocksToMine;
+        super(target, buildDialogueTree(blockToPlace), rewards);
+        this.qty = qty;
         this.nextObjective = nextObjective;
-        this.blockToMine = blockToMine;
+        this.blockToPlace = blockToPlace;
     }
 
     @NotNull
     private static DialogueElement buildDialogueTree(final Block blockToMine)
     {
-        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.breakblock", blockToMine.getName());
+        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.placeblock", blockToMine.getName());
         final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
         final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
@@ -81,7 +81,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         final Block block = ForgeRegistries.BLOCKS.getHolder(new ResourceLocation(details.get(BLOCK_KEY).getAsString())).get().get();
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 
-        return new BreakBlockObjectiveTemplate(target, quantity, block, nextObj, parseRewards(jsonObject));
+        return new PlaceBlockObjectiveTemplate(target, quantity, block, nextObj, parseRewards(jsonObject));
     }
 
     @Override
@@ -91,16 +91,16 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestPlaceObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new BlockMiningProgressInstance();
+        return new BlockPlacementProgressInstance();
     }
 
     @Nullable
     @Override
     public IObjectiveInstance createObjectiveInstance()
     {
-        return new BlockMiningProgressInstance();
+        return new BlockPlacementProgressInstance();
     }
 
     @Override
@@ -118,20 +118,20 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.removeQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.removeQuestPlaceBlockObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     @Override
-    public void onBlockBreak(final IObjectiveInstance blockMiningProgressData, final IQuestInstance colonyQuest, final Player player)
+    public void onBlockPlace(final IObjectiveInstance blockPlacementProgressData, final IQuestInstance colonyQuest, final Player player)
     {
-        if (blockMiningProgressData.isFulfilled())
+        if (blockPlacementProgressData.isFulfilled())
         {
             return;
         }
 
-        ((BlockMiningProgressInstance) blockMiningProgressData).currentProgress++;
-        if (blockMiningProgressData.isFulfilled())
+        ((BlockPlacementProgressInstance) blockPlacementProgressData).currentProgress++;
+        if (blockPlacementProgressData.isFulfilled())
         {
             cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(player, nextObjective);
@@ -145,21 +145,21 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestPlaceObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     /**
      * Progress data of this objective.
      */
-    public class BlockMiningProgressInstance implements IObjectiveInstance
+    public class BlockPlacementProgressInstance implements IObjectiveInstance
     {
         private int currentProgress = 0;
 
         @Override
         public boolean isFulfilled()
         {
-            return currentProgress >= blocksToMine;
+            return currentProgress >= qty;
         }
 
         @Override
@@ -173,7 +173,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         @Override
         public int getMissingQuantity()
         {
-            return blocksToMine > currentProgress ? blocksToMine - currentProgress : 0;
+            return qty > currentProgress ? qty - currentProgress : 0;
         }
 
         @Override
