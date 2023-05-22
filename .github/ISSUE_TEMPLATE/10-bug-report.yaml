@@ -26,7 +26,7 @@ body:
           required: true
   - type: checkboxes
     attributes:
-      label: What were you playing at the time? Did you try the other one too?
+      label: What were you playing at the time? Were you able to reproduce it in both settings?
       options:
         - label: Single Player
         - label: Multi Player
