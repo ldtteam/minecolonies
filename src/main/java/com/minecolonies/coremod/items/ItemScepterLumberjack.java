@@ -155,13 +155,41 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     @NotNull
     private Box getBox(@NotNull final Level world, final CompoundTag compound)
     {
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), world.dimension());
+        final int colonyId = compound.getInt(TAG_ID);
         final BlockPos pos = BlockPosUtil.read(compound, TAG_POS);
+        final BlockPos start = compound.contains(NBT_START_POS) ? BlockPosUtil.read(compound, NBT_START_POS) : null;
+        final BlockPos end = compound.contains(NBT_END_POS) ? BlockPosUtil.read(compound, NBT_END_POS) : null;
+
+        if (world.isClientSide())
+        {
+            return getBox(world, colonyId, pos, start, end);
+        }
+
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
+        if (colony != null && colony.getBuildingManager().getBuilding(pos) instanceof final BuildingLumberjack hut)
+        {
+            final BlockPos startRestriction = start != null ? start : hut.getStartRestriction();
+            final BlockPos endRestriction = end != null ? end : hut.getEndRestriction();
+            if (!startRestriction.equals(BlockPos.ZERO) && !endRestriction.equals(BlockPos.ZERO))
+            {
+                return new Box(pos, new Tuple<>(startRestriction, endRestriction));
+            }
+            return new Box(pos, null);
+        }
+
+        return new Box(null, null);
+    }
+
+    @NotNull
+    private Box getBox(@NotNull final Level world, final int colonyId, @NotNull final BlockPos pos,
+                       @Nullable final BlockPos start, @Nullable final BlockPos end)
+    {
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, world.dimension());
 
         if (colony != null && colony.getBuilding(pos) instanceof final BuildingLumberjack.View hut)
         {
-            final BlockPos startRestriction = compound.contains(NBT_START_POS) ? BlockPosUtil.read(compound, NBT_START_POS) : hut.getStartRestriction();
-            final BlockPos endRestriction = compound.contains(NBT_END_POS) ? BlockPosUtil.read(compound, NBT_END_POS) : hut.getEndRestriction();
+            final BlockPos startRestriction = start != null ? start : hut.getStartRestriction();
+            final BlockPos endRestriction = end != null ? end : hut.getEndRestriction();
             if (!startRestriction.equals(BlockPos.ZERO) && !endRestriction.equals(BlockPos.ZERO))
             {
                 return new Box(pos, new Tuple<>(startRestriction, endRestriction));
