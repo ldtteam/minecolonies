@@ -9,12 +9,12 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,6 +41,13 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      */
     private final static VisibleCitizenStatus HERD_COW               =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cowboy.png"), "com.minecolonies.gui.visiblestatus.cowboy");
+
+    /**
+     * Min wait between failed milking attempts.
+     */
+    private static final int MILK_COOL_DOWN = 10;
+
+    private int milkCoolDown;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -96,8 +103,11 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public IAIState decideWhatToDo()
     {
         final IAIState result = super.decideWhatToDo();
-        final boolean hasBucket = InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BUCKET);
-        if (building != null && building.getSetting(BuildingCowboy.MILKING).getValue() && result.equals(START_WORKING) && hasBucket)
+        if (milkCoolDown > 0)
+        {
+            --milkCoolDown;
+        }
+        else if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToMilk() && result.equals(START_WORKING))
         {
             return COWBOY_MILK;
         }
@@ -109,7 +119,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
-        if (building.getSetting(BuildingCowboy.MILKING).getValue())
+        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToMilk())
         {
             list.add(new ItemStack(Items.BUCKET));
         }
@@ -126,29 +136,33 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
         worker.getCitizenData().setVisibleStatus(HERD_COW);
 
-        if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(new ItemStack(Items.BUCKET, 1)), 2) > 1)
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET))
         {
-            if (!walkToBuilding())
+            if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(new ItemStack(Items.BUCKET, 1)), 1) > 0
+                    && !walkToBuilding())
             {
                 checkAndTransferFromHut(new ItemStack(Items.BUCKET, 1));
             }
             else
             {
+                milkCoolDown = MILK_COOL_DOWN;
                 return DECIDE;
             }
         }
 
-        final Cow cow = searchForAnimals().stream().findFirst().orElse(null);
+        final Cow cow = searchForAnimals().stream().filter(c -> !c.isBaby()).findFirst().orElse(null);
 
         if (cow == null)
         {
+            milkCoolDown = MILK_COOL_DOWN;
             return DECIDE;
         }
 
-        if (!walkingToAnimal(cow) && equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)))
+        if (equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)) && !walkingToAnimal(cow))
         {
             if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.MILK_BUCKET)))
             {
+                building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).onMilked();
                 worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
@@ -156,6 +170,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
             incrementActionsDoneAndDecSaturation();
             worker.getCitizenExperienceHandler().addExperience(1.0);
+            return INVENTORY_FULL;
         }
 
         return DECIDE;

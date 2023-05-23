@@ -1162,6 +1162,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null));
+
+                if (getInventory().getHeldItemSlot(InteractionHand.MAIN_HAND) == slotAt)
+                {
+                    getInventory().setHeldItem(InteractionHand.MAIN_HAND, -1);
+                    worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                }
+                if (getInventory().getHeldItemSlot(InteractionHand.OFF_HAND) == slotAt)
+                {
+                    getInventory().setHeldItem(InteractionHand.OFF_HAND, -1);
+                    worker.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+                }
+
                 hasDumpedItems = true;
             }
         }
