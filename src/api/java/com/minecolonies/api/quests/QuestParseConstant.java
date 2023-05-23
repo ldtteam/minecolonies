@@ -31,11 +31,13 @@ public class QuestParseConstant
     public static final String ANSWER_ID = "answer";
     public static final String TYPE_ID = "type";
     public static final String GO_TO_ID = "go-to";
-
+    public static final String BUILDING_KEY = "type";
     public static final String STATE_ID = "state";
     public static final String MATCH_ID = "match";
     public static final String COUNT_ID = "count";
     public static final String PATH_ID = "path";
     public static final String RARITY_ID = "rarity";
     public static final String REPUTATION_ID = "reputation";
+    public static final String LEVEL_KEY = "lvl";
+    public static final String COUNT_EXIST_KEY = "count-existing";
 }

@@ -158,6 +158,7 @@ public class QuestRegistries
     public static ResourceLocation DELIVERY_OBJECTIVE_ID   = new ResourceLocation(Constants.MOD_ID, "delivery");
     public static ResourceLocation KILLENTITY_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "killentity");
     public static ResourceLocation PLACEBLOCK_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "placeblock");
+    public static ResourceLocation BUILD_BUILDING_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "buildbuilding");
 
     public static ResourceLocation STATE_TRIGGER_ID       = new ResourceLocation(Constants.MOD_ID, "state");
     public static ResourceLocation RANDOM_TRIGGER_ID      = new ResourceLocation(Constants.MOD_ID, "random");
@@ -185,6 +186,7 @@ public class QuestRegistries
     public static RegistryObject <ObjectiveEntry> deliveryObjective;
     public static RegistryObject <ObjectiveEntry> killEntityObjective;
     public static RegistryObject <ObjectiveEntry> placeBlockObjective;
+    public static RegistryObject <ObjectiveEntry> buildBuildingObjective;
 
     public static RegistryObject <TriggerEntry> stateTrigger;
     public static RegistryObject <TriggerEntry> randomTrigger;

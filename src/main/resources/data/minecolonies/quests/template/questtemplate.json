@@ -148,7 +148,18 @@
       "details": {
         "target": 0,
         "entity-type": "minecraft:skeleton",
-        "qty": 10
+        "qty": 10,
+        "next-objective": 6
+      }
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "target": 0,
+        "type": "minecolonies:builder",
+        "lvl": 3,
+        "qty": 1,
+        "count-existing": false
       }
     }
   ],

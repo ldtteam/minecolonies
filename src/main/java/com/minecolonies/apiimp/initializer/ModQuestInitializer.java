@@ -46,6 +46,8 @@ public final class ModQuestInitializer
           BreakBlockObjectiveTemplate::createObjective));
         QuestRegistries.placeBlockObjective = DEFERRED_REGISTER_OBJECTIVE.register(PLACEBLOCK_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
           PlaceBlockObjectiveTemplate::createObjective));
+        QuestRegistries.buildBuildingObjective = DEFERRED_REGISTER_OBJECTIVE.register(BUILD_BUILDING_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
+          BuildBuildingObjectiveTemplate::createObjective));
 
         QuestRegistries.randomTrigger = DEFERRED_REGISTER_TRIGGER.register(RANDOM_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(RandomQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.stateTrigger = DEFERRED_REGISTER_TRIGGER.register(STATE_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(StateQuestTriggerTemplate::createStateTrigger));
@@ -62,8 +64,7 @@ public final class ModQuestInitializer
         QuestRegistries.unlockQuestReward = DEFERRED_REGISTER_REWARD.register(UNLOCK_QUEST_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(UnlockQuestRewardTemplate::createReward));
         QuestRegistries.questReputationReward = DEFERRED_REGISTER_REWARD.register(QUEST_REPUTATION_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(QuestReputationRewardTemplate::createReward));
 
-        QuestRegistries.dialogueAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(DIALOGUE_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(
-          IDialogueObjectiveTemplate.DialogueElement::parse));
+        QuestRegistries.dialogueAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(DIALOGUE_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(IDialogueObjectiveTemplate.DialogueElement::parse));
         QuestRegistries.returnAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(RETURN_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(json -> new IQuestDialogueAnswer.CloseUIDialogueAnswer()));
         QuestRegistries.gotoAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(GOTO_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(IQuestDialogueAnswer.NextObjectiveDialogueAnswer::new));
         QuestRegistries.cancelAnswerResult = DEFERRED_REGISTER_ANSWER_RESULT.register(CANCEL_ANSWER_ID.getPath(), () -> new QuestRegistries.DialogueAnswerEntry(json -> new IQuestDialogueAnswer.QuestCancellationDialogueAnswer()));
