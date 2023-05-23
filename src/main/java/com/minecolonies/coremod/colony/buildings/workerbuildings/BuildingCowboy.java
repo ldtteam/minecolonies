@@ -1,16 +1,18 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,9 +48,14 @@ public class BuildingCowboy extends AbstractBuilding
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * Milking setting.
+     * Milking amount setting.
      */
-    public static final ISettingKey<BoolSetting> MILKING  = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "milking"));
+    public static final ISettingKey<IntSetting> MILKING_AMOUNT  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_amount"));
+
+    /**
+     * Milking days setting.
+     */
+    public static final ISettingKey<IntSetting> MILKING_DAYS  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_days"));
 
     /**
      * Instantiates the building.
@@ -88,11 +95,60 @@ public class BuildingCowboy extends AbstractBuilding
      * Custom crafting module to indicate that we produce milk buckets.
      * (This is just for JEI and does not mean they're crafted on demand... although that could be changed.)
      */
-    public static class MilkingModule extends AbstractCraftingBuildingModule.Custom
+    public static class MilkingModule extends AbstractCraftingBuildingModule.Custom implements IBuildingEventsModule
     {
+        private int currentMilk;
+        private int currentMilkDays;
+
         public MilkingModule()
         {
             super(ModJobs.cowboy.get());
+        }
+
+        @Override
+        public void serializeNBT(@NotNull CompoundTag compound)
+        {
+            super.serializeNBT(compound);
+
+            compound.putInt("milkValue", currentMilk);
+            compound.putInt("milkDays", currentMilkDays);
+        }
+
+        @Override
+        public void deserializeNBT(CompoundTag compound)
+        {
+            super.deserializeNBT(compound);
+
+            this.currentMilk = compound.getInt("milkValue");
+            this.currentMilkDays = compound.getInt("milkDays");
+        }
+
+        @Override
+        public void onWakeUp()
+        {
+            ++this.currentMilkDays;
+
+            if (this.currentMilkDays >= getBuilding().getSetting(MILKING_DAYS).getValue())
+            {
+                this.currentMilk = 0;
+                this.currentMilkDays = 0;
+            }
+        }
+
+        /**
+         * @return true if the cowboy should be allowed to try to milk (not yet reached limit)
+         */
+        public boolean canTryToMilk()
+        {
+            return this.currentMilk < getBuilding().getSetting(MILKING_AMOUNT).getValue();
+        }
+
+        /**
+         * Called to record successful milking.
+         */
+        public void onMilked()
+        {
+            ++this.currentMilk;
         }
 
         @NotNull
