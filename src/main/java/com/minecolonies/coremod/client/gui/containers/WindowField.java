@@ -217,11 +217,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IField field = colonyView.getFields(FieldRegistries.farmField.get())
-                               .stream()
-                               .filter(f -> f.getPosition().equals(tileEntityScarecrow.getBlockPos()))
-                               .findFirst()
-                               .orElse(null);
+        final IField field = colonyView.getField(FieldRegistries.farmField.get(), otherField -> otherField.getPosition().equals(tileEntityScarecrow.getBlockPos()));
         if (field instanceof FarmField farmFieldFound)
         {
             farmField = farmFieldFound;

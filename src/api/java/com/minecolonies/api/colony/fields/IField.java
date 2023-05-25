@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.fields;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -73,6 +74,14 @@ public interface IField
      * @return true if so.
      */
     boolean needsWork();
+
+    /**
+     * Get the distance to a building.
+     *
+     * @param building the building to get the distance to.
+     * @return the distance
+     */
+    int getDistance(IBuildingView building);
 
     /**
      * Stores the NBT data of the field.

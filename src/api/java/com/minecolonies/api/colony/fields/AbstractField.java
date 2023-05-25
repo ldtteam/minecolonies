@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.fields;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
@@ -100,6 +101,12 @@ public abstract class AbstractField implements IField
     }
 
     @Override
+    public final int getDistance(final IBuildingView building)
+    {
+        return (int) Math.sqrt(BlockPosUtil.getDistanceSquared(position, building.getPosition()));
+    }
+
+    @Override
     public @NotNull CompoundTag serializeNBT()
     {
         CompoundTag compound = new CompoundTag();
@@ -136,5 +143,35 @@ public abstract class AbstractField implements IField
         {
             buildingId = buf.readBlockPos();
         }
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+        int result = position.hashCode();
+        result = 31 * result + fieldType.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final AbstractField that = (AbstractField) o;
+
+        if (!position.equals(that.position))
+        {
+            return false;
+        }
+        return fieldType.equals(that.fieldType);
     }
 }

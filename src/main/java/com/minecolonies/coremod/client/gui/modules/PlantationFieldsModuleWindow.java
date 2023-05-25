@@ -7,7 +7,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -129,7 +129,7 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
     private void assignClicked(@NotNull final Button button)
     {
         final int row = fieldList.getListElementIndexByPane(button);
-        final IFieldView field = moduleView.getFields().get(row);
+        final IField field = moduleView.getFields().get(row);
         if (field.isTaken())
         {
             moduleView.freeField(field);
@@ -171,7 +171,7 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final PlantationField.View field = ((PlantationField.View) moduleView.getFields().get(index));
+                final PlantationField field = (PlantationField) moduleView.getFields().get(index);
                 final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 

@@ -11,13 +11,14 @@ public final class ModFieldsInitializer
 {
     public static final DeferredRegister<FieldRegistries.FieldEntry> DEFERRED_REGISTER =
       DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "fields"), Constants.MOD_ID);
+
     static
     {
         FieldRegistries.farmField = DEFERRED_REGISTER.register(FieldRegistries.FARM_FIELD_ID.getPath(),
-          () -> new FieldRegistries.FieldEntry(FieldRegistries.FARM_FIELD_ID, FarmField::new, FarmField.View::new, FarmField.Matcher::new));
+          () -> new FieldRegistries.FieldEntry(FieldRegistries.FARM_FIELD_ID, FarmField::new));
 
         FieldRegistries.plantationField = DEFERRED_REGISTER.register(FieldRegistries.PLANTATION_FIELD_ID.getPath(),
-          () -> new FieldRegistries.FieldEntry(FieldRegistries.PLANTATION_FIELD_ID, PlantationField::new, PlantationField.View::new, PlantationField.Matcher::new));
+          () -> new FieldRegistries.FieldEntry(FieldRegistries.PLANTATION_FIELD_ID, PlantationField::new));
     }
     private ModFieldsInitializer()
     {

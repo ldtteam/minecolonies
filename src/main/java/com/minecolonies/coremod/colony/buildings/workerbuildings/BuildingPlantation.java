@@ -4,7 +4,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldView;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
@@ -44,6 +43,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_PLANTATION_RESEARCH_REQUIRED;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT;
 
 /**
  * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
@@ -301,7 +301,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public boolean canAssignField(final IFieldView field)
+        public boolean canAssignField(final IField field)
         {
             return hasRequiredResearchForField(field);
         }
@@ -312,9 +312,9 @@ public class BuildingPlantation extends AbstractBuilding
          * @param field the field in question.
          * @return true if the research is handled.
          */
-        private boolean hasRequiredResearchForField(final IFieldView field)
+        private boolean hasRequiredResearchForField(final IField field)
         {
-            if (field instanceof PlantationField.View plantationField)
+            if (field instanceof PlantationField plantationField)
             {
                 final PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
                 if (module != null && module.getRequiredResearchEffect() != null)
@@ -333,7 +333,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public @Nullable MutableComponent getFieldWarningTooltip(final IFieldView field)
+        public @Nullable MutableComponent getFieldWarningTooltip(final IField field)
         {
             MutableComponent result = super.getFieldWarningTooltip(field);
             if (result != null)
@@ -341,11 +341,29 @@ public class BuildingPlantation extends AbstractBuilding
                 return result;
             }
 
+            if (getCurrentPlants() >= maxConcurrentPlants)
+            {
+                return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
+            }
+
             if (!hasRequiredResearchForField(field))
             {
                 return Component.translatable(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
             }
             return null;
+        }
+
+        /**
+         * Getter of the worked plants.
+         *
+         * @return the amount of worked plants.
+         */
+        public int getCurrentPlants()
+        {
+            return getOwnedFields().stream()
+                     .map(field -> ((PlantationField) field).getPlantationFieldType())
+                     .collect(Collectors.toSet())
+                     .size();
         }
 
         @Override
@@ -363,19 +381,6 @@ public class BuildingPlantation extends AbstractBuilding
         public int getMaxConcurrentPlants()
         {
             return maxConcurrentPlants;
-        }
-
-        /**
-         * Getter of the worked plants.
-         *
-         * @return the amount of worked plants.
-         */
-        public int getCurrentPlants()
-        {
-            return getOwnedFields().stream()
-                     .map(field -> ((PlantationField.View) field).getPlantationFieldType())
-                     .collect(Collectors.toSet())
-                     .size();
         }
     }
 

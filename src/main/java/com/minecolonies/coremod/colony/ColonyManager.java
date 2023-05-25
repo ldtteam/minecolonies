@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -828,40 +827,6 @@ public final class ColonyManager implements IColonyManager
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
             //  possible to receive a 'remove' notice before receiving the View.
             view.handleColonyViewRemoveBuildingMessage(buildingId);
-        }
-    }
-
-    @Override
-    public void handleColonyFieldViewMessage(
-      final int colonyId,
-      final @NotNull ResourceKey<Level> dim,
-      final @NotNull FieldRegistries.FieldEntry type,
-      final @NotNull BlockPos position,
-      @NotNull final FriendlyByteBuf buf)
-    {
-        final IColonyView view = getColonyView(colonyId, dim);
-        if (view != null)
-        {
-            view.handleColonyFieldViewMessage(type, position, buf);
-        }
-        else
-        {
-            Log.getLogger().error("Colony view does not exist for ID #{}", colonyId);
-        }
-    }
-
-    @Override
-    public void handleColonyRemoveFieldViewMessage(
-      final int colonyId,
-      final @NotNull ResourceKey<Level> dim,
-      final @NotNull FieldRegistries.FieldEntry type,
-      final @NotNull BlockPos position,
-      @NotNull final FriendlyByteBuf buf)
-    {
-        final IColonyView view = getColonyView(colonyId, dim);
-        if (view != null)
-        {
-            view.handleColonyRemoveFieldViewMessage(type, position, buf);
         }
     }
 

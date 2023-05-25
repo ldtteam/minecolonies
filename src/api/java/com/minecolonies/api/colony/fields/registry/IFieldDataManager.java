@@ -3,7 +3,6 @@ package com.minecolonies.api.colony.fields.registry;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,10 +45,10 @@ public interface IFieldDataManager
      */
     IField createFrom(@NotNull final IColony colony, @NotNull final BlockPos position, @NotNull final ResourceLocation fieldName);
 
+    IField createFromBuffer(@NotNull final IColony colony, @NotNull final FriendlyByteBuf buf);
+
     /**
      * @param field
      */
     CompoundTag createCompound(@NotNull final IField field);
-
-    IFieldMatcher matcherFromBytes(@NotNull final FriendlyByteBuf buf);
 }

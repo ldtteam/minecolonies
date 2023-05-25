@@ -3,7 +3,6 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import net.minecraft.core.BlockPos;
@@ -373,40 +372,6 @@ public interface IColonyManager
      * @param dim        the dimension.
      */
     void handleColonyViewRemoveBuildingMessage(int colonyId, final BlockPos buildingId, final ResourceKey<Level> dim);
-
-    /**
-     * Returns result of {@link IColonyView#handleColonyFieldViewMessage} (BlockPos, FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
-     * #getColonyView(int, ResourceKey)} is null, returns null.
-     *
-     * @param colonyId ID of the colony.
-     * @param dim      the dimension.
-     * @param type     the field type.
-     * @param position the field position.
-     * @param buf      {@link FriendlyByteBuf} with field data.
-     */
-    void handleColonyFieldViewMessage(
-      int colonyId,
-      @NotNull ResourceKey<Level> dim,
-      @NotNull FieldRegistries.FieldEntry type,
-      @NotNull BlockPos position,
-      @NotNull FriendlyByteBuf buf);
-
-    /**
-     * Returns result of {@link IColonyView#handleColonyRemoveFieldViewMessage} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
-     * #getColonyView(int, ResourceKey)} is null, returns null.
-     *
-     * @param colonyId ID of the colony.
-     * @param dim      the dimension.
-     * @param type     the field type.
-     * @param position the field position.
-     * @param buf      {@link FriendlyByteBuf} with field data.
-     */
-    void handleColonyRemoveFieldViewMessage(
-      int colonyId,
-      @NotNull ResourceKey<Level> dim,
-      @NotNull FieldRegistries.FieldEntry type,
-      @NotNull BlockPos position,
-      @NotNull FriendlyByteBuf buf);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link #getColonyView(int,

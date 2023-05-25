@@ -62,6 +62,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
@@ -1123,6 +1124,15 @@ public final class ColonyView implements IColonyView
         return fields.stream()
                  .filter(f -> f.getFieldType().getRegistryName().equals(type.getRegistryName()))
                  .toList();
+    }
+
+    @Override
+    public @Nullable IField getField(final FieldRegistries.FieldEntry type, final Predicate<IField> matcher)
+    {
+        return getFields(type).stream()
+                 .filter(matcher)
+                 .findFirst()
+                 .orElse(null);
     }
 
     /**

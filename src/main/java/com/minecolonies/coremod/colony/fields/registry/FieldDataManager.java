@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.fields.registry;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -51,6 +50,16 @@ public class FieldDataManager implements IFieldDataManager
     }
 
     @Override
+    public IField createFromBuffer(final @NotNull IColony colony, final @NotNull FriendlyByteBuf buf)
+    {
+        final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
+        final BlockPos position = buf.readBlockPos();
+        final IField field = fieldType.produceField(colony, position);
+        field.deserialize(buf);
+        return field;
+    }
+
+    @Override
     public CompoundTag createCompound(final @NotNull IField field)
     {
         final CompoundTag compound = new CompoundTag();
@@ -58,15 +67,5 @@ public class FieldDataManager implements IFieldDataManager
         BlockPosUtil.write(compound, TAG_FIELD_POSITION, field.getPosition());
         compound.put(TAG_FIELD_DATA, field.serializeNBT());
         return compound;
-    }
-
-    @Override
-    public IFieldMatcher matcherFromBytes(final @NotNull FriendlyByteBuf buf)
-    {
-        final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
-        final BlockPos position = buf.readBlockPos();
-        final IFieldMatcher fieldMatcher = fieldType.produceFieldMatcher(position);
-        fieldMatcher.fromBytes(buf);
-        return fieldMatcher;
     }
 }

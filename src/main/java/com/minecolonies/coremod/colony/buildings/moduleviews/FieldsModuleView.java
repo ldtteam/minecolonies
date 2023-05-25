@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
@@ -80,11 +80,11 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @param field the field to assign.
      */
-    public void assignField(final IFieldView field)
+    public void assignField(final IField field)
     {
         if (buildingView != null && FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount) && canAssignField(field))
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getMatcher()));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, true));
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
@@ -100,7 +100,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IFieldView> getOwnedFields()
+    public List<IField> getOwnedFields()
     {
         return getColony().getFields(getExpectedFieldType()).stream()
                  .filter(field -> buildingView.getID().equals(field.getBuildingId()))
@@ -115,7 +115,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @param field the field which is being added.
      * @return true if so.
      */
-    public abstract boolean canAssignField(IFieldView field);
+    public abstract boolean canAssignField(IField field);
 
     /**
      * Get the class type which is expected for the fields to have.
@@ -130,7 +130,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IFieldView> getFields()
+    public List<IField> getFields()
     {
         return getColony().getFields(getExpectedFieldType()).stream()
                  .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
@@ -144,11 +144,11 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @param field the field to free.
      */
-    public void freeField(final IFieldView field)
+    public void freeField(final IField field)
     {
         if (buildingView != null)
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, false, field.getMatcher()));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, false));
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
@@ -165,16 +165,12 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return a text component that should be shown if there is a problem for the specific field, else null.
      */
     @Nullable
-    public MutableComponent getFieldWarningTooltip(IFieldView field)
+    public MutableComponent getFieldWarningTooltip(IField field)
     {
         if (!FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount))
         {
             return Component.translatable(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
-        //else if (!FieldsModule.checkPlantCount(getWorkedPlants().size(), maxConcurrentPlants))
-        //{
-        //    return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
-        //}
         return null;
     }
 
@@ -191,7 +187,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     /**
      * Comparator class for sorting fields in a predictable order in the window.
      */
-    static class FieldsComparator implements Comparator<IFieldView>
+    static class FieldsComparator implements Comparator<IField>
     {
         /**
          * The building this comparator is running on.
@@ -209,7 +205,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
         }
 
         @Override
-        public int compare(final IFieldView field1, final IFieldView field2)
+        public int compare(final IField field1, final IField field2)
         {
             if (field1.isTaken() && field2.isTaken())
             {

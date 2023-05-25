@@ -4,7 +4,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldView;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -193,7 +192,7 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        public boolean canAssignField(final IFieldView field)
+        public boolean canAssignField(final IField field)
         {
             return true;
         }

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
 import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Abstract class to list all fields (assigned) to a building.
@@ -188,27 +186,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     public abstract boolean canAddField(IField field);
 
     /**
-     * Method called to assign a field to the building.
-     *
-     * @param matcher the field matcher.
-     */
-    public final void assignField(final IFieldMatcher matcher)
-    {
-        getFieldByMatcher(matcher).ifPresent(this::assignField);
-    }
-
-    /**
-     * Query a field by checking for the appropriate field matcher.
-     *
-     * @param matcher the field matcher.
-     * @return an optional containing a field if one was found.
-     */
-    private Optional<? extends IField> getFieldByMatcher(final IFieldMatcher matcher)
-    {
-        return getFields().stream().filter(matcher::matches).findFirst();
-    }
-
-    /**
      * Getter for the assign manually.
      *
      * @return true if he should.
@@ -236,16 +213,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     public final void setAssignManually(final boolean assignManually)
     {
         this.shouldAssignManually = assignManually;
-    }
-
-    /**
-     * Method called to free a field.
-     *
-     * @param matcher the field matcher.
-     */
-    public final void freeField(final IFieldMatcher matcher)
-    {
-        getFieldByMatcher(matcher).ifPresent(this::freeField);
     }
 
     /**

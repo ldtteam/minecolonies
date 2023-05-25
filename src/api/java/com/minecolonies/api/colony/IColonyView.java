@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public interface IColonyView extends IColony
 {
@@ -297,6 +298,15 @@ public interface IColonyView extends IColony
      * @return a collection of fields.
      */
     @NotNull Collection<IField> getFields(FieldRegistries.FieldEntry type);
+
+    /**
+     * Get a specific field.
+     *
+     * @param type    the field type.
+     * @param matcher the field matcher predicate.
+     * @return a field instance, or null.
+     */
+    @Nullable IField getField(FieldRegistries.FieldEntry type, Predicate<IField> matcher);
 
     /**
      * Update a players permissions.

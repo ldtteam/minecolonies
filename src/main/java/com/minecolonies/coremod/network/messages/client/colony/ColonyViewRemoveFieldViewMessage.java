@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -101,6 +103,14 @@ public class ColonyViewRemoveFieldViewMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        IColonyManager.getInstance().handleColonyRemoveFieldViewMessage(colonyId, dimension, type, position, fieldData);
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
+        if (view != null)
+        {
+            view.handleColonyRemoveFieldViewMessage(type, position, fieldData);
+        }
+        else
+        {
+            Log.getLogger().error("Colony view does not exist for ID #{}", colonyId);
+        }
     }
 }

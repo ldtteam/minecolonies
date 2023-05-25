@@ -7,7 +7,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -122,7 +122,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
     private void assignClicked(@NotNull final Button button)
     {
         final int row = fieldList.getListElementIndexByPane(button);
-        final IFieldView field = moduleView.getFields().get(row);
+        final IField field = moduleView.getFields().get(row);
         if (field.isTaken())
         {
             moduleView.freeField(field);
@@ -162,7 +162,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final FarmField.View field = getFields().get(index);
+                final FarmField field = getFields().get(index);
                 final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
@@ -221,11 +221,11 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      *
      * @return the filtered list of fields.
      */
-    private List<FarmField.View> getFields()
+    private List<FarmField> getFields()
     {
         return this.moduleView.getFields().stream()
-                 .filter(f -> f instanceof FarmField.View farmField && !farmField.getSeed().isEmpty())
-                 .map(m -> (FarmField.View) m)
+                 .filter(f -> f instanceof FarmField farmField && !farmField.getSeed().isEmpty())
+                 .map(m -> (FarmField) m)
                  .toList();
     }
 
