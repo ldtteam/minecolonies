@@ -192,7 +192,8 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                      .with(AbstractBuilding.FEEDING, new BoolSetting(true))
-                                                                                     .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
+                                                                                     .with(BuildingCowboy.MILKING_AMOUNT, new IntSetting(1))
+                                                                                     .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1)), () -> SettingsModuleView::new)
                                 .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy.get(), EntityType.COW, new ItemStack(Items.WHEAT, 2)))
                                 .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
                                 .createBuildingEntry());
