@@ -85,13 +85,15 @@ public final class ColonyView implements IColonyView
     private final PermissionsView              permissions = new PermissionsView();
     @NotNull
     private final Map<BlockPos, IBuildingView> buildings   = new HashMap<>();
+    @NotNull
+    private final Set<IField>                  fields      = new HashSet<>();
 
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens = new HashMap<>();
-    private final Map<Integer, IVisitorViewData> visitors = new HashMap<>();
-    private       String                         name     = "Unknown";
-    private       ResourceKey<Level>             dimensionId;
+    private final Map<Integer, ICitizenDataView> citizens  = new HashMap<>();
+    private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
+    private       String                         name        = "Unknown";
+    private       ResourceKey<Level>                            dimensionId;
 
     /**
      * Colony team color.
@@ -101,9 +103,9 @@ public final class ColonyView implements IColonyView
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListTag colonyFlag = new BannerPattern.Builder()
-                                   .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-                                   .toListTag();
+    private ListTag        colonyFlag      = new BannerPattern.Builder()
+                                               .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+                                               .toListTag();
 
     private BlockPos center = BlockPos.ZERO;
 
@@ -1096,6 +1098,31 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+    }
+
+    @Override
+    public void handleColonyFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
+    {
+        final IField fieldView = type.produceField(this, position);
+        fieldView.deserialize(buf);
+        fields.remove(fieldView);
+        fields.add(fieldView);
+    }
+
+    @Override
+    public void handleColonyRemoveFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
+    {
+        final IField field = type.produceField(this, position);
+        field.deserialize(buf);
+        fields.remove(field);
+    }
+
+    @Override
+    public @NotNull Collection<IField> getFields(final FieldRegistries.FieldEntry type)
+    {
+        return fields.stream()
+                 .filter(f -> f.getFieldType().getRegistryName().equals(type.getRegistryName()))
+                 .toList();
     }
 
     /**

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -82,14 +81,12 @@ public interface IRegisteredStructureManager
 
     /**
      * Get the leisure site positions.
-     *
      * @return the list.
      */
     List<BlockPos> getLeisureSites();
 
     /**
      * Get the first building matching the conditions.
-     *
      * @param predicate the predicate matching the building.
      * @return the position or null.
      */
@@ -98,21 +95,18 @@ public interface IRegisteredStructureManager
 
     /**
      * Register a new leisure site.
-     *
      * @param pos the position of it.
      */
     void addLeisureSite(BlockPos pos);
 
     /**
      * Remove a leisure site.
-     *
      * @param pos the position of it.
      */
     void removeLeisureSite(BlockPos pos);
 
     /**
      * Get the closest warehouse relative to a position.
-     *
      * @param pos the position,.
      * @return the closest warehouse.
      */
@@ -133,13 +127,6 @@ public interface IRegisteredStructureManager
      * @return the townhall building.
      */
     ITownHall getTownHall();
-
-    /**
-     * Set the townhall building.
-     *
-     * @param building the building to set.
-     */
-    void setTownHall(@Nullable final ITownHall building);
 
     /**
      * Get the maximum level among built mystical sites
@@ -177,7 +164,8 @@ public interface IRegisteredStructureManager
      * @param <B>        Building class.
      * @return the building with the specified id.
      */
-    @Nullable <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
+    @Nullable
+    <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
@@ -205,7 +193,7 @@ public interface IRegisteredStructureManager
     /**
      * Calculate a good cook for a certain citizen.
      *
-     * @param citizen  the citizen.
+     * @param citizen the citizen.
      * @param building the type of building.
      * @return the Position of it.
      */
@@ -214,7 +202,7 @@ public interface IRegisteredStructureManager
     /**
      * Calculate a good building for a certain pos.
      *
-     * @param pos      the pos.
+     * @param pos the pos.
      * @param building the building class type.
      * @return the Position of it.
      */
@@ -238,11 +226,17 @@ public interface IRegisteredStructureManager
 
     /**
      * Event once a guard building changed at a certain level.
-     *
      * @param guardBuilding the guard building.
-     * @param newLevel      the level of it.
+     * @param newLevel the level of it.
      */
     void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
+
+    /**
+     * Set the townhall building.
+     *
+     * @param building the building to set.
+     */
+    void setTownHall(@Nullable final ITownHall building);
 
     /**
      * Removes a warehouse from the BuildingManager
@@ -284,7 +278,6 @@ public interface IRegisteredStructureManager
 
     /**
      * Check if the chunk position it within of the building zone of the colony.
-     *
      * @param chunk the chunk to check
      * @return true if within.
      */
@@ -292,7 +285,6 @@ public interface IRegisteredStructureManager
 
     /**
      * Get a house with a spare bed.
-     *
      * @return the house or null.
      */
     IBuilding getHouseWithSpareBed();
@@ -307,7 +299,6 @@ public interface IRegisteredStructureManager
 
     /**
      * Get a random leisure site to go to.
-     *
      * @return the position of it.
      */
     BlockPos getRandomLeisureSite();
@@ -323,10 +314,11 @@ public interface IRegisteredStructureManager
     /**
      * Get a specific field on the given location.
      *
-     * @param matcher the field matcher record.
+     * @param type    the field type.
+     * @param matcher the field matcher predicate.
      * @return the field, if any.
      */
-    @Nullable IField getField(IFieldMatcher matcher);
+    @Nullable IField getField(FieldRegistries.FieldEntry type, Predicate<IField> matcher);
 
     /**
      * Gets all free field in the colony, if any, and return them.
@@ -347,7 +339,8 @@ public interface IRegisteredStructureManager
     /**
      * Remove a field from the field collection.
      *
-     * @param matcher the field matcher record.
+     * @param type    the field type.
+     * @param matcher the field matcher predicate.
      */
-    void removeField(IFieldMatcher matcher);
+    void removeField(FieldRegistries.FieldEntry type, Predicate<IField> matcher);
 }

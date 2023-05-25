@@ -2,11 +2,7 @@ package com.minecolonies.coremod.colony.fields;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.fields.AbstractField;
-import com.minecolonies.api.colony.fields.AbstractFieldMatcher;
-import com.minecolonies.api.colony.fields.AbstractFieldView;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -125,9 +121,13 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public @NotNull IFieldMatcher getMatcher()
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
-        return new Matcher(getFieldType(), getPosition());
+        super.deserialize(buf);
+        setSeed(buf.readItem());
+        radii = buf.readVarIntArray();
+        maxRadius = buf.readInt();
+        fieldStage = buf.readEnum(Stage.class);
     }
 
     /**
@@ -244,130 +244,5 @@ public class FarmField extends AbstractField
         EMPTY,
         HOED,
         PLANTED
-    }
-
-    /**
-     * View class for the {@link FarmField}.
-     */
-    public static class View extends AbstractFieldView
-    {
-        /**
-         * The currently selected seed on the field, if any.
-         */
-        private ItemStack seed = ItemStack.EMPTY;
-
-        /**
-         * The size of the field in all four directions
-         * in the same order as {@link Direction}:
-         * S, W, N, E
-         */
-        private int[] radii;
-
-        /**
-         * The maximum radius for this field.
-         */
-        private int maxRadius;
-
-        /**
-         * Has the field been planted
-         */
-        private Stage fieldStage;
-
-        /**
-         * Default constructor.
-         */
-        public View(final IColonyView colony, final BlockPos position)
-        {
-            super(colony, position);
-        }
-
-        @Override
-        public void deserialize(final FriendlyByteBuf buf)
-        {
-            super.deserialize(buf);
-            seed = buf.readItem();
-            radii = buf.readVarIntArray();
-            maxRadius = buf.readInt();
-            fieldStage = buf.readEnum(Stage.class);
-        }
-
-        @Override
-        public @NotNull IFieldMatcher getMatcher()
-        {
-            return new Matcher(getFieldType(), getPosition());
-        }
-
-        /**
-         * Get the seed currently on the field.
-         *
-         * @return the current seed.
-         */
-        public ItemStack getSeed()
-        {
-            return seed;
-        }
-
-        /**
-         * Updates the seed in the field.
-         *
-         * @param seed the new seed
-         */
-        public void setSeed(final ItemStack seed)
-        {
-            this.seed = seed;
-        }
-
-        /**
-         * Get the radius for a given direction.
-         *
-         * @param direction the direction.
-         * @return the radius for that direction.
-         */
-        public int getRadius(Direction direction)
-        {
-            return radii[direction.get2DDataValue()];
-        }
-
-        /**
-         * Sets the new radius for a given direction.
-         *
-         * @param direction the direction
-         * @param radius    the radius to apply.
-         */
-        public void setRadius(final Direction direction, final int radius)
-        {
-            radii[direction.get2DDataValue()] = radius;
-        }
-
-        /**
-         * Get the maximum radius for all directions.
-         *
-         * @return the maximum possible radius.
-         */
-        public int getMaxRadius()
-        {
-            return maxRadius;
-        }
-
-        /**
-         * Get the maximum radius for all directions.
-         *
-         * @return the maximum possible radius.
-         */
-        public Stage getFieldStage()
-        {
-            return fieldStage;
-        }
-    }
-
-    /**
-     * Matcher class for the {@link FarmField}.
-     */
-    public static class Matcher extends AbstractFieldMatcher
-    {
-        public Matcher(FieldRegistries.FieldEntry fieldType, BlockPos position)
-        {
-            super(fieldType, position);
-        }
     }
 }

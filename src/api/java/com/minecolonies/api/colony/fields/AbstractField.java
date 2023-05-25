@@ -128,4 +128,13 @@ public abstract class AbstractField implements IField
             buf.writeBlockPos(buildingId);
         }
     }
+
+    @Override
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    {
+        if (buf.readBoolean())
+        {
+            buildingId = buf.readBlockPos();
+        }
+    }
 }

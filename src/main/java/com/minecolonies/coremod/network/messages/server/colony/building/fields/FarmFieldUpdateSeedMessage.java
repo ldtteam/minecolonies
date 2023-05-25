@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.coremod.colony.fields.FarmField;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
@@ -20,9 +21,9 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     private ItemStack newSeed;
 
     /**
-     * The field matcher.
+     * The field position.
      */
-    private FarmField.Matcher matcher;
+    private BlockPos position;
 
     /**
      * Forge default constructor
@@ -35,15 +36,15 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     /**
      * Default constructor.
      *
-     * @param colony  the colony where the field is in.
-     * @param newSeed the new seed to assign to the field.
-     * @param matcher the field matcher.
+     * @param colony   the colony where the field is in.
+     * @param newSeed  the new seed to assign to the field.
+     * @param position the field position.
      */
-    public FarmFieldUpdateSeedMessage(@NotNull IColony colony, ItemStack newSeed, FarmField.Matcher matcher)
+    public FarmFieldUpdateSeedMessage(@NotNull IColony colony, ItemStack newSeed, BlockPos position)
     {
         super(colony);
         this.newSeed = newSeed;
-        this.matcher = matcher;
+        this.position = position;
     }
 
     @Override
@@ -54,10 +55,10 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
             return;
         }
 
-        FarmField field = (FarmField) colony.getBuildingManager().getField(matcher);
+        FarmField field = (FarmField) colony.getBuildingManager().getField(FieldRegistries.farmField.get(), f -> f.getPosition().equals(position));
         if (field == null)
         {
-            field = FarmField.create(colony, matcher.getPosition());
+            field = FarmField.create(colony, position);
         }
 
         field.setSeed(newSeed);
@@ -68,13 +69,13 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     public void toBytesOverride(final FriendlyByteBuf buf)
     {
         buf.writeItem(newSeed);
-        matcher.toBytes(buf);
+        buf.writeBlockPos(position);
     }
 
     @Override
     public void fromBytesOverride(final FriendlyByteBuf buf)
     {
         newSeed = buf.readItem();
-        matcher = (FarmField.Matcher) IFieldDataManager.getInstance().matcherFromBytes(buf);
+        position = buf.readBlockPos();
     }
 }

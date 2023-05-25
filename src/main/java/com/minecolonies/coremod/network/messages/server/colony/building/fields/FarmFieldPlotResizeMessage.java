@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
-import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.coremod.colony.fields.FarmField;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -26,9 +25,9 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
     private Direction direction;
 
     /**
-     * The field matcher.
+     * The field position.
      */
-    private IFieldMatcher matcher;
+    private BlockPos position;
 
     /**
      * Forge default constructor
@@ -41,14 +40,14 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
     /**
      * @param size      the new radius of the field plot
      * @param direction the specified direction for the new radius
-     * @param matcher   the field matcher.
+     * @param position  the field position.
      */
-    public FarmFieldPlotResizeMessage(IColony colony, int size, Direction direction, IFieldMatcher matcher)
+    public FarmFieldPlotResizeMessage(IColony colony, int size, Direction direction, BlockPos position)
     {
         super(colony);
         this.size = size;
         this.direction = direction;
-        this.matcher = matcher;
+        this.position = position;
     }
 
     @Override
@@ -59,27 +58,29 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
             return;
         }
 
-        final IField existingField = colony.getBuildingManager().getField(matcher);
-        if (existingField instanceof FarmField farmField)
+        FarmField field = (FarmField) colony.getBuildingManager().getField(FieldRegistries.farmField.get(), f -> f.getPosition().equals(position));
+        if (field == null)
         {
-            farmField.setRadius(this.direction, this.size);
-            colony.getBuildingManager().addOrUpdateField(farmField);
+            field = FarmField.create(colony, position);
         }
+
+        field.setRadius(this.direction, this.size);
+        colony.getBuildingManager().addOrUpdateField(field);
     }
 
     @Override
     public void toBytesOverride(final FriendlyByteBuf buf)
     {
-        buf.writeInt(this.size);
-        buf.writeInt(this.direction.get2DDataValue());
-        this.matcher.toBytes(buf);
+        buf.writeInt(size);
+        buf.writeInt(direction.get2DDataValue());
+        buf.writeBlockPos(position);
     }
 
     @Override
     public void fromBytesOverride(final FriendlyByteBuf buf)
     {
-        this.size = buf.readInt();
-        this.direction = Direction.from2DDataValue(buf.readInt());
-        this.matcher = IFieldDataManager.getInstance().matcherFromBytes(buf);
+        size = buf.readInt();
+        direction = Direction.from2DDataValue(buf.readInt());
+        position = buf.readBlockPos();
     }
 }

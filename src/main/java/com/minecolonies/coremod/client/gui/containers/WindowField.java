@@ -101,7 +101,7 @@ public class WindowField extends AbstractWindowSkeleton
      * The farm field instance.
      */
     @Nullable
-    private FarmField.View farmField;
+    private FarmField farmField;
 
     /**
      * Create the field GUI.
@@ -156,7 +156,7 @@ public class WindowField extends AbstractWindowSkeleton
         farmField.setRadius(direction.get(), newRadius);
         button.setText(Component.literal(String.valueOf(newRadius)));
 
-        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getMatcher()));
+        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()));
     }
 
     /**
@@ -169,7 +169,7 @@ public class WindowField extends AbstractWindowSkeleton
         IColonyView colonyView = getCurrentColony();
         if (colonyView != null && farmField != null)
         {
-            Network.getNetwork().sendToServer(new FarmFieldUpdateSeedMessage(colonyView, stack, (FarmField.Matcher) farmField.getMatcher()));
+            Network.getNetwork().sendToServer(new FarmFieldUpdateSeedMessage(colonyView, stack, farmField.getPosition()));
 
             farmField.setSeed(stack);
         }
@@ -222,9 +222,9 @@ public class WindowField extends AbstractWindowSkeleton
                                .filter(f -> f.getPosition().equals(tileEntityScarecrow.getBlockPos()))
                                .findFirst()
                                .orElse(null);
-        if (field instanceof FarmField.View farmFieldView)
+        if (field instanceof FarmField farmFieldFound)
         {
-            farmField = farmFieldView;
+            farmField = farmFieldFound;
         }
     }
 
@@ -272,7 +272,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        ICitizen citizen = farmField.getColonyView().getCitizen(citizenId);
+        ICitizen citizen = farmField.getColony().getCitizen(citizenId);
         if (citizen == null)
         {
             return;
