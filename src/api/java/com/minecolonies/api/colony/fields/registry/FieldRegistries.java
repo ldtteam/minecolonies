@@ -2,10 +2,7 @@ package com.minecolonies.api.colony.fields.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
-import com.minecolonies.api.colony.fields.IFieldView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -40,26 +37,19 @@ public class FieldRegistries
     }
 
     /**
-     * Entry for the {@link IField} registry. Makes it possible to create a single registry for a {@link IField}. Used to lookup how to create {@link IField} and {@link
-     * IFieldView}.
+     * Entry for the {@link IField} registry. Makes it possible to create a single registry for a {@link IField}. Used to lookup how to create {@link IField}.
      */
     public static class FieldEntry
     {
-        private final ResourceLocation                                registryName;
-        private final BiFunction<IColony, BlockPos, IField>           fieldProducer;
-        private final BiFunction<IColonyView, BlockPos, IFieldView>   fieldViewProducer;
-        private final BiFunction<FieldEntry, BlockPos, IFieldMatcher> fieldMatcherProducer;
+        private final ResourceLocation                      registryName;
+        private final BiFunction<IColony, BlockPos, IField> fieldProducer;
 
         public FieldEntry(
           final ResourceLocation registryName,
-          final BiFunction<IColony, BlockPos, IField> fieldProducer,
-          final BiFunction<IColonyView, BlockPos, IFieldView> fieldViewProducer,
-          final BiFunction<FieldEntry, BlockPos, IFieldMatcher> fieldMatcherProducer)
+          final BiFunction<IColony, BlockPos, IField> fieldProducer)
         {
             this.registryName = registryName;
             this.fieldProducer = fieldProducer;
-            this.fieldViewProducer = fieldViewProducer;
-            this.fieldMatcherProducer = fieldMatcherProducer;
         }
 
         /**
@@ -74,33 +64,6 @@ public class FieldRegistries
             final IField field = fieldProducer.apply(colony, position);
             field.setFieldType(this);
             return field;
-        }
-
-        /**
-         * Produces a field view instance based on a colony and block pos.
-         *
-         * @param colony   the colony the field is in.
-         * @param position the position the field is at.
-         * @return the field view instance.
-         */
-        public IFieldView produceFieldView(final IColonyView colony, final BlockPos position)
-        {
-            final IFieldView fieldView = fieldViewProducer.apply(colony, position);
-            fieldView.setFieldType(this);
-            return fieldView;
-        }
-
-        /**
-         * Produces a field matcher instance based on block pos.
-         * Unlike the other 2 methods, the matcher does not need to know in which colony the field is at.
-         * This class is mostly used in messages across the network to tell the client/server which field we're talking about.
-         *
-         * @param position the position the field is at.
-         * @return the field matcher instance.
-         */
-        public IFieldMatcher produceFieldMatcher(final BlockPos position)
-        {
-            return fieldMatcherProducer.apply(this, position);
         }
 
         /**

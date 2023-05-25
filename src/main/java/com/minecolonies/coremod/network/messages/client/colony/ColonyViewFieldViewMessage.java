@@ -67,7 +67,7 @@ public class ColonyViewFieldViewMessage implements IMessage
         this.type = field.getFieldType();
         this.position = field.getPosition();
         this.fieldData = new FriendlyByteBuf(Unpooled.buffer());
-        field.serializeToView(fieldData);
+        field.serialize(fieldData);
     }
 
     @Override

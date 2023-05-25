@@ -115,9 +115,9 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public void serializeToView(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull FriendlyByteBuf buf)
     {
-        super.serializeToView(buf);
+        super.serialize(buf);
         buf.writeItem(getSeed());
         buf.writeVarIntArray(radii);
         buf.writeInt(maxRadius);

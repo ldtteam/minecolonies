@@ -8,6 +8,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
@@ -216,7 +217,12 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        if (colonyView.getField(new FarmField.Matcher(FieldRegistries.farmField.get(), tileEntityScarecrow.getBlockPos())) instanceof FarmField.View farmFieldView)
+        final IField field = colonyView.getFields(FieldRegistries.farmField.get())
+                               .stream()
+                               .filter(f -> f.getPosition().equals(tileEntityScarecrow.getBlockPos()))
+                               .findFirst()
+                               .orElse(null);
+        if (field instanceof FarmField.View farmFieldView)
         {
             farmField = farmFieldView;
         }

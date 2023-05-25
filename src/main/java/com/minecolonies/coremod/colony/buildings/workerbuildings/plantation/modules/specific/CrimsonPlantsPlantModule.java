@@ -32,7 +32,7 @@ public class CrimsonPlantsPlantModule extends BoneMealedPlantModule
      */
     public CrimsonPlantsPlantModule()
     {
-        super("crimsonp_field", "plant", Items.CRIMSON_FUNGUS);
+        super("crimsonp_field", "crimsonp_ground", Items.CRIMSON_FUNGUS);
     }
 
     @Override

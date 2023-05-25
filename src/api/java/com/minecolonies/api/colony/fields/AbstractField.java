@@ -120,32 +120,12 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public void serializeToView(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull FriendlyByteBuf buf)
     {
         buf.writeBoolean(buildingId != null);
         if (buildingId != null)
         {
             buf.writeBlockPos(buildingId);
         }
-    }
-
-    @Override
-    public abstract @NotNull IFieldMatcher getMatcher();
-
-    @Override
-    public final int hashCode()
-    {
-        return getMatcher().hashCode();
-    }
-
-    @Override
-    public final boolean equals(final Object obj)
-    {
-        if (obj instanceof IField field)
-        {
-            return getMatcher().matches(field);
-        }
-
-        return false;
     }
 }

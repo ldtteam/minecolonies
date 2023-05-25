@@ -1,26 +1,31 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.PercentageHarvestPlantModule;
+import com.minecolonies.coremod.colony.fields.PlantationField;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
 
 /**
  * Planter module for growing {@link Items#VINE}.
- * Planting of vines is not possible, it is only harvested on tree sides when upper blocks let it grow down.
- * This is because vines have natural generation (in any direction), their growth cycle revolves around spreading to other blocks.
+ * All possible positions of the vines should be tagged with the vine tag.
+ * The planter will automatically plant an X amount of vines down, depending on the amount of tagged positions.
+ * After that any excess that will grow will be harvested.
+ * The planter will make an attempt to not plant the vines next to one another as much as possible.
  * <br/>
  * Requirements:
  * <ol>
- *     <li>All requirements from {@link TreeSidePlantModule}</li>
- *     <li>There must be some vines nearby the marked tagged working positions, this is needed because the worker cannot plant these vines himself.</li>
+ *     <li>All requirements from {@link PercentageHarvestPlantModule}</li>
  * </ol>
  */
-public class VinePlantModule extends TreeSidePlantModule
+public class VinePlantModule extends PercentageHarvestPlantModule
 {
     /**
      * Default constructor.
@@ -28,24 +33,6 @@ public class VinePlantModule extends TreeSidePlantModule
     public VinePlantModule()
     {
         super("vine_field", "vine", Items.VINE);
-    }
-
-    @Override
-    protected boolean isValidPlantingBlock(final BlockState blockState)
-    {
-        return false;
-    }
-
-    @Override
-    protected boolean isValidClearingBlock(final BlockState blockState)
-    {
-        return !blockState.isAir() && blockState.getBlock() != Blocks.VINE;
-    }
-
-    @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
-        return blockState.getBlock() == Blocks.VINE;
     }
 
     @Override
@@ -57,6 +44,29 @@ public class VinePlantModule extends TreeSidePlantModule
     @Override
     public ToolType getRequiredTool()
     {
-        return ToolType.NONE;
+        return ToolType.SHEARS;
+    }
+
+    @Override
+    protected BlockState generatePlantingBlockState(final PlantationField field, final BlockPos workPosition, final BlockState blockState)
+    {
+        return super.generatePlantingBlockState(field, workPosition, blockState)
+                 .setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.above(), Direction.DOWN)))
+                 .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.north(), Direction.SOUTH)))
+                 .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.south(), Direction.NORTH)))
+                 .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.west(), Direction.EAST)))
+                 .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.east(), Direction.WEST)));
+    }
+
+    @Override
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.is(Blocks.VINE);
+    }
+
+    @Override
+    protected int getMinimumPlantPercentage()
+    {
+        return 20;
     }
 }

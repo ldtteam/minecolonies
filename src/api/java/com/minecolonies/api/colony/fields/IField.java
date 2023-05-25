@@ -91,14 +91,14 @@ public interface IField
      *
      * @param buf the buffer to write the field data to.
      */
-    void serializeToView(@NotNull FriendlyByteBuf buf);
+    void serialize(@NotNull FriendlyByteBuf buf);
 
     /**
-     * Generate a matcher for this field.
+     * Deserialize a field from a buffer.
      *
-     * @return the field record matcher.
+     * @param buf the buffer to read the field data from.
      */
-    IFieldMatcher getMatcher();
+    void deserialize(@NotNull FriendlyByteBuf buf);
 
     /**
      * Condition to check whether this field instance is currently properly placed down.

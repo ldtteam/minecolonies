@@ -32,7 +32,7 @@ public class WarpedPlantsPlantModule extends BoneMealedPlantModule
      */
     public WarpedPlantsPlantModule()
     {
-        super("warpedp_field", "plant", Items.WARPED_FUNGUS);
+        super("warpedp_field", "warpedp_ground", Items.WARPED_FUNGUS);
     }
 
     @Override

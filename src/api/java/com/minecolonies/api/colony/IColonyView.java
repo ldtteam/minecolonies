@@ -2,8 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
-import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -294,15 +293,7 @@ public interface IColonyView extends IColony
      * @param type the field type.
      * @return a collection of fields.
      */
-    @NotNull Collection<IFieldView> getFields(FieldRegistries.FieldEntry type);
-
-    /**
-     * Get a field at a given position.
-     *
-     * @param matcher the field matcher record.
-     * @return the field view class if it exists.
-     */
-    @Nullable IFieldView getField(IFieldMatcher matcher);
+    @NotNull Collection<IField> getFields(FieldRegistries.FieldEntry type);
 
     /**
      * Update a players permissions.

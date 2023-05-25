@@ -140,9 +140,9 @@ public class PlantationField extends AbstractField
     }
 
     @Override
-    public void serializeToView(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull FriendlyByteBuf buf)
     {
-        super.serializeToView(buf);
+        super.serialize(buf);
         buf.writeEnum(plantationFieldType);
         buf.writeInt(workingPositions.size());
         for (BlockPos workingPosition : workingPositions)

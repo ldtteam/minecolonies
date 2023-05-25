@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.fields.IFieldMatcher;
-import com.minecolonies.api.colony.fields.IFieldView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
@@ -86,8 +85,6 @@ public final class ColonyView implements IColonyView
     private final PermissionsView              permissions = new PermissionsView();
     @NotNull
     private final Map<BlockPos, IBuildingView> buildings   = new HashMap<>();
-    @NotNull
-    private final Set<IFieldView>              fields      = new HashSet<>();
 
     //  Citizenry
     @NotNull
@@ -1099,40 +1096,6 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
-    }
-
-    @Override
-    public void handleColonyFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
-    {
-        final IFieldView fieldView = type.produceFieldView(this, position);
-        fieldView.deserialize(buf);
-        fields.remove(fieldView);
-        fields.add(fieldView);
-    }
-
-    @Override
-    public void handleColonyRemoveFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
-    {
-        final IFieldView fieldView = type.produceFieldView(this, position);
-        fieldView.deserialize(buf);
-        fields.remove(fieldView);
-    }
-
-    @Override
-    public @NotNull Collection<IFieldView> getFields(final FieldRegistries.FieldEntry type)
-    {
-        return fields.stream()
-                 .filter(f -> f.getFieldType().getRegistryName().equals(type.getRegistryName()))
-                 .toList();
-    }
-
-    @Override
-    public IFieldView getField(final IFieldMatcher matcher)
-    {
-        return fields.stream()
-                 .filter(matcher::matchesView)
-                 .findFirst()
-                 .orElse(null);
     }
 
     /**

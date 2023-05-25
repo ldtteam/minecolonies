@@ -35,10 +35,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
@@ -75,6 +73,7 @@ public class BuildingPlantation extends AbstractBuilding
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHEARS, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     @Override
@@ -132,6 +131,61 @@ public class BuildingPlantation extends AbstractBuilding
     {
         super.onUpgradeComplete(newLevel);
         updateFields();
+    }
+
+    @Override
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
+        for (FieldsModule module : getModules(FieldsModule.class))
+        {
+            for (final IField field : module.getOwnedFields())
+            {
+                if (field instanceof PlantationField plantationField)
+                {
+                    final PlantationModule plantationModule = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
+                    if (plantationModule != null)
+                    {
+                        toKeep.put(new ItemStack(plantationModule.getItem())::sameItem, new Tuple<>(plantationModule.getPlantsToRequest(), true));
+                    }
+                }
+            }
+        }
+        return toKeep;
+    }
+
+    /**
+     * Check if the assigned citizens are allowed to eat the following stack.
+     * Additionally, if the stack is even edible in the first place, then it also checks if the fields aren't producing these items.
+     * If this item is being produced here, the planter is not allowed to eat his own products in that case. (Although most items the planter produces won't be edible to begin with).
+     *
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (!super.canEat(stack))
+        {
+            return false;
+        }
+
+        for (FieldsModule module : getModules(FieldsModule.class))
+        {
+            for (final IField field : module.getOwnedFields())
+            {
+                if (field instanceof PlantationField plantationField)
+                {
+                    final PlantationModule plantationModule = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
+                    if (plantationModule != null && (ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(plantationModule.getItem()), stack)))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
