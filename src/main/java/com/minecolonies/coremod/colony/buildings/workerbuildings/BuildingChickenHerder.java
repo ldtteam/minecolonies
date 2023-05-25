@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public class BuildingChickenHerder extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.chickenHerder.get(), EntityType.CHICKEN, new ItemStack(Items.WHEAT_SEEDS, 2));
+            super(ModJobs.chickenHerder.get(), EntityType.CHICKEN, Chicken.class, new ItemStack(Items.WHEAT_SEEDS, 2));
         }
 
         @Override

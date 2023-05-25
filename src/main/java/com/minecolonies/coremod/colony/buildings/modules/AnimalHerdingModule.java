@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,21 +15,23 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Currently this module is only used to provide some metadata for JEI, but
- * in the future it could be accessed by animal herding AI too.
+ * Provides some basic definitions used by the animal herding AI (and JEI).
  */
 public class AnimalHerdingModule extends AbstractBuildingModule
 {
     private final JobEntry jobEntry;
-    private final EntityType<?> animalType;
+    private final EntityType<? extends Animal> animalType;
+    private final Class<? extends Animal> animalClass;
     private final ItemStack breedingItem;
 
     public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
-                               @NotNull final EntityType<?> animalType,
+                               @NotNull final EntityType<? extends Animal> animalType,
+                               @NotNull final Class<? extends Animal> animalClass,
                                @NotNull final ItemStack breedingItem)
     {
         this.jobEntry = jobEntry;
         this.animalType = animalType;
+        this.animalClass = animalClass;
         this.breedingItem = breedingItem;
     }
 
@@ -49,9 +52,20 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @return The animal entity type.
      */
     @NotNull
-    public EntityType<?> getAnimalType()
+    public EntityType<? extends Animal> getAnimalType()
     {
         return animalType;
+    }
+
+    /**
+     * Gets the animal class managed by this herder.
+     *
+     * @return The animal class.
+     */
+    @NotNull
+    public Class<? extends Animal> getAnimalClass()
+    {
+        return animalClass;
     }
 
     /**

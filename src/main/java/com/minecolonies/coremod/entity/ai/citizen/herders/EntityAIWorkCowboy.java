@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -24,13 +25,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
-public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, BuildingCowboy, Cow>
+public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, BuildingCowboy>
 {
-    /**
-     * Max amount of animals per Hut Level.
-     */
-    private static final int MAX_ANIMALS_PER_LEVEL = 2;
-
     /**
      * Bucket metadata.
      */
@@ -77,26 +73,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public Class<BuildingCowboy> getExpectedBuildingClass()
     {
         return BuildingCowboy.class;
-    }
-
-    @Override
-    public ItemStack getBreedingItem()
-    {
-        final ItemStack stack = new ItemStack(Items.WHEAT);
-        stack.setCount(2);
-        return stack;
-    }
-
-    @Override
-    public int getMaxAnimalMultiplier()
-    {
-        return MAX_ANIMALS_PER_LEVEL;
-    }
-
-    @Override
-    public Class<Cow> getAnimalClass()
-    {
-        return Cow.class;
     }
 
     @Override
@@ -150,7 +126,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final Cow cow = searchForAnimals().stream().filter(c -> !c.isBaby()).findFirst().orElse(null);
+        final Cow cow = searchForAnimals(Cow.class).stream().filter(c -> !c.isBaby()).findFirst().orElse(null);
 
         if (cow == null)
         {
@@ -158,13 +134,13 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             return DECIDE;
         }
 
-        if (equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)) && !walkingToAnimal(cow))
+        if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.BUCKET))) && !walkingToAnimal(cow))
         {
             if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.MILK_BUCKET)))
             {
                 building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).onMilked();
                 worker.getCitizenItemHandler().removeHeldItem();
-                equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
+                equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.MILK_BUCKET)));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
             }
 
