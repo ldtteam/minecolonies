@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -27,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -48,6 +51,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * Amount of animals needed to bread.
      */
     private static final int NUM_OF_ANIMALS_TO_BREED = 2;
+
+    /**
+     * Request this many sets of breeding items at once, to reduce courier workload.
+     */
+    private static final int EXTRA_BREEDING_ITEMS_REQUEST = 8;
 
     /**
      * Butchering attack damage.
@@ -79,7 +87,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * New born age.
      */
-    private static final double MAX_ENTITY_AGE = -24000.0;
+    private static final double MAX_ENTITY_AGE = AgeableMob.BABY_START_AGE;
 
     /**
      * Xp per action, like breed feed butcher
@@ -90,6 +98,16 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * The current herding module we're working on
      */
     @Nullable protected AnimalHerdingModule current_module;
+
+    /**
+     * Selected breeding partners
+     */
+    private final List<Animal> animalsToBreed = new ArrayList<>();
+
+    /**
+     * Prevents retrying breeding too quickly if last attempt failed
+     */
+    private int breedTimeOut = 0;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -204,7 +222,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 return HERDER_BUTCHER;
             }
-            else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+            else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem && breedTimeOut == 0)
             {
                 return HERDER_BREED;
             }
@@ -212,10 +230,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 return HERDER_FEED;
             }
-            return START_WORKING;
         }
 
-        return DECIDE;
+        if (breedTimeOut > 0)
+        {
+            --breedTimeOut;
+        }
+        return START_WORKING;
     }
 
     /**
@@ -226,7 +247,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean isBreedAble(final Animal entity)
     {
-        return entity.getAge() == 0 && entity.canFallInLove();
+        return entity.getAge() == 0 && (entity.isInLove() || entity.canFallInLove());
     }
 
     /**
@@ -299,7 +320,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             for (final ItemStack breedingItem : current_module.getBreedingItems())
             {
-                checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
+                checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getCount() * EXTRA_BREEDING_ITEMS_REQUEST, breedingItem.getCount());
             }
         }
 
@@ -366,43 +387,74 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (current_module == null)
         {
+            worker.getCitizenItemHandler().removeHeldItem();
             return DECIDE;
         }
 
-        final List<? extends Animal> breedables = searchForAnimals(current_module.getAnimalClass()).stream()
-                .filter(this::isBreedAble).toList();
+        if (breedTwoAnimals())
+        {
+            return getState();
+        }
+
+        final List<? extends Animal> breedables = new ArrayList<>(searchForAnimals(current_module.getAnimalClass()).stream()
+                .filter(this::isBreedAble).toList());
+        Collections.shuffle(breedables);
 
         final Animal animalOne = breedables.stream().findAny().orElse(null);
 
         if (animalOne == null)
         {
+            worker.getCitizenItemHandler().removeHeldItem();
+            breedTimeOut = 15;
             return DECIDE;
         }
 
+        final int oldAnimalOneLove = animalOne.getInLoveTime();
+        animalOne.setInLoveTime(5);
+
         final Animal animalTwo = breedables.stream().filter(animal ->
           {
-              final float range = animal.distanceTo(animalOne);
-              final boolean isAnimalOne = animalOne.equals(animal);
-              return range <= DISTANCE_TO_BREED && !isAnimalOne;
+              if (animalOne.equals(animal) || animal.distanceTo(animalOne) > DISTANCE_TO_BREED)
+              {
+                  return false;
+              }
+
+              final int oldLove = animal.getInLoveTime();
+              animal.setInLoveTime(5);
+              final boolean canMate = animalOne.canMate(animal);
+              animal.setInLoveTime(oldLove);
+
+              return canMate;
           }
         ).findAny().orElse(null);
 
+        animalOne.setInLoveTime(oldAnimalOneLove);
+
         if (animalTwo == null)
         {
+            worker.getCitizenItemHandler().removeHeldItem();
+            breedTimeOut = 5;
             return DECIDE;
         }
 
         if (!equipItem(InteractionHand.MAIN_HAND, current_module.getBreedingItems()))
         {
+            worker.getCitizenItemHandler().removeHeldItem();
             return START_WORKING;
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
-        breedTwoAnimals(animalOne, animalTwo);
-        worker.decreaseSaturationForContinuousAction();
+        animalsToBreed.add(animalOne);
+        animalsToBreed.add(animalTwo);
+
+        if (breedTwoAnimals())
+        {
+            return getState();
+        }
+
         worker.getCitizenItemHandler().removeHeldItem();
-        return DECIDE;
+        return IDLE;
     }
 
     /**
@@ -517,26 +569,32 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     /**
      * Breed two animals together!
-     *
-     * @param animalOne the first {@link Animal} to breed.
-     * @param animalTwo the second {@link Animal} to breed.
+     * @return true if still working on it
      */
-    private void breedTwoAnimals(final Animal animalOne, final Animal animalTwo)
+    private boolean breedTwoAnimals()
     {
-        final List<Animal> animalsToBreed = new ArrayList<>();
-        animalsToBreed.add(animalOne);
-        animalsToBreed.add(animalTwo);
-
-        for (final Animal animal : animalsToBreed)
+        for (final Iterator<Animal> it = animalsToBreed.iterator(); it.hasNext(); )
         {
-            if (!animal.isInLove() && !walkingToAnimal(animal))
+            final Animal animal = it.next();
+            if (animal.isInLove() || animal.isDeadOrDying())
+            {
+                it.remove();
+            }
+            else if (walkingToAnimal(animal))
+            {
+                break;
+            }
+            else
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
                 worker.getMainHandItem().shrink(1);
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
+                worker.decreaseSaturationForAction();
+                it.remove();
             }
         }
+        return !animalsToBreed.isEmpty();
     }
 
     /**
@@ -669,7 +727,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         for (final ItemStack stack : module.getBreedingItems())
         {
             final ItemStack requestable = stack.copy();
-            ItemStackUtils.setSize(requestable, stack.getCount() * 8); // means that we can breed 8 animals before requesting again.
+            ItemStackUtils.setSize(requestable, stack.getCount() * EXTRA_BREEDING_ITEMS_REQUEST);
             breedingItems.add(requestable);
         }
 
