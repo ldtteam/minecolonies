@@ -195,6 +195,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                      .with(AbstractBuilding.FEEDING, new BoolSetting(true))
                                                                                      .with(BuildingCowboy.MILKING_AMOUNT, new IntSetting(1))
+                                                                                     .with(BuildingCowboy.STEWING_AMOUNT, new IntSetting(1))
                                                                                      .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1)), () -> SettingsModuleView::new)
                                 .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2)))
                                 .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
