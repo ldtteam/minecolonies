@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
@@ -19,10 +20,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -51,6 +54,11 @@ public class BuildingCowboy extends AbstractBuilding
      * Milking amount setting.
      */
     public static final ISettingKey<IntSetting> MILKING_AMOUNT  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_amount"));
+
+    /**
+     * Stewing amount setting.
+     */
+    public static final ISettingKey<IntSetting> STEWING_AMOUNT = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "stewing_amount"));
 
     /**
      * Milking days setting.
@@ -92,12 +100,13 @@ public class BuildingCowboy extends AbstractBuilding
     }
 
     /**
-     * Custom crafting module to indicate that we produce milk buckets.
+     * Custom crafting module to indicate that we produce milk buckets (and soup, given mooshrooms).
      * (This is just for JEI and does not mean they're crafted on demand... although that could be changed.)
      */
     public static class MilkingModule extends AbstractCraftingBuildingModule.Custom implements IBuildingEventsModule
     {
         private int currentMilk;
+        private int currentStew;
         private int currentMilkDays;
 
         public MilkingModule()
@@ -111,6 +120,7 @@ public class BuildingCowboy extends AbstractBuilding
             super.serializeNBT(compound);
 
             compound.putInt("milkValue", currentMilk);
+            compound.putInt("stewValue", currentStew);
             compound.putInt("milkDays", currentMilkDays);
         }
 
@@ -120,6 +130,7 @@ public class BuildingCowboy extends AbstractBuilding
             super.deserializeNBT(compound);
 
             this.currentMilk = compound.getInt("milkValue");
+            this.currentStew = compound.getInt("stewValue");
             this.currentMilkDays = compound.getInt("milkDays");
         }
 
@@ -131,6 +142,7 @@ public class BuildingCowboy extends AbstractBuilding
             if (this.currentMilkDays >= getBuilding().getSetting(MILKING_DAYS).getValue())
             {
                 this.currentMilk = 0;
+                this.currentStew = 0;
                 this.currentMilkDays = 0;
             }
         }
@@ -144,11 +156,27 @@ public class BuildingCowboy extends AbstractBuilding
         }
 
         /**
+         * @return true if the cowboy should be allowed to try to collect stew (not yet reached limit)
+         */
+        public boolean canTryToStew()
+        {
+            return this.currentStew < getBuilding().getSetting(STEWING_AMOUNT).getValue();
+        }
+
+        /**
          * Called to record successful milking.
          */
         public void onMilked()
         {
             ++this.currentMilk;
+        }
+
+        /**
+         * Called to record successful stewing.
+         */
+        public void onStewed()
+        {
+            ++this.currentStew;
         }
 
         @NotNull
@@ -160,6 +188,14 @@ public class BuildingCowboy extends AbstractBuilding
             final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "", CraftingBookCategory.MISC,
                     new ItemStack(Items.MILK_BUCKET), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BUCKET)));
             recipes.add(GenericRecipe.of(milk, world));
+
+            final GenericRecipe stew = new GenericRecipe(null,
+                    new ItemStack(Items.MUSHROOM_STEW),                                                 // output
+                    Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
+                    Collections.emptyList(),                                                            // extra output
+                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
+                    1, Blocks.AIR, null, ToolType.NONE, Collections.emptyList(), 1);
+            recipes.add(stew);
 
             return recipes;
         }

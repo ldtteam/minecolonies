@@ -11,10 +11,15 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -31,6 +36,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      * Bucket metadata.
      */
     public static final String RENDER_META_BUCKET = "bucket";
+    public static final String RENDER_META_BOWL = "bowl";
 
     /**
      * Herd cow icon
@@ -44,6 +50,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     private static final int MILK_COOL_DOWN = 10;
 
     private int milkCoolDown;
+    private int stewCoolDown;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -54,7 +61,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     {
         super(job);
         super.registerTargets(
-          new AITarget(COWBOY_MILK, this::milkCows, 1)
+          new AITarget(COWBOY_MILK, this::milkCows, 1),
+          new AITarget(COWBOY_STEW, this::milkMooshrooms, 1)
         );
     }
 
@@ -65,6 +73,10 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET))
         {
             renderMeta += RENDER_META_BUCKET;
+        }
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.BOWL))
+        {
+            renderMeta += RENDER_META_BOWL;
         }
         worker.setRenderMetadata(renderMeta);
     }
@@ -79,6 +91,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public IAIState decideWhatToDo()
     {
         final IAIState result = super.decideWhatToDo();
+
         if (milkCoolDown > 0)
         {
             --milkCoolDown;
@@ -87,6 +100,16 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         {
             return COWBOY_MILK;
         }
+
+        if (stewCoolDown > 0)
+        {
+            --stewCoolDown;
+        }
+        else if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToStew() && result.equals(START_WORKING))
+        {
+            return COWBOY_STEW;
+        }
+
         return result;
     }
 
@@ -95,9 +118,15 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
-        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToMilk())
+        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToMilk() &&
+                !searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow)).isEmpty())
         {
             list.add(new ItemStack(Items.BUCKET));
+        }
+        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToStew() &&
+                !searchForAnimals(a -> a instanceof MushroomCow).isEmpty())
+        {
+            list.add(new ItemStack(Items.BOWL));
         }
         return list;
     }
@@ -126,7 +155,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final Cow cow = searchForAnimals(a -> a instanceof Cow && !a.isBaby()).stream()
+        final Cow cow = searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow) && !a.isBaby()).stream()
                 .map(a -> (Cow) a).findFirst().orElse(null);
 
         if (cow == null)
@@ -143,6 +172,63 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
                 worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.MILK_BUCKET)));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
+            }
+
+            incrementActionsDoneAndDecSaturation();
+            worker.getCitizenExperienceHandler().addExperience(1.0);
+            return INVENTORY_FULL;
+        }
+
+        return DECIDE;
+    }
+
+    /**
+     * Makes the Cowboy "Milk" the mooshrooms
+     *
+     * @return The next {@link IAIState}
+     */
+    private IAIState milkMooshrooms()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
+        worker.getCitizenData().setVisibleStatus(HERD_COW);
+
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BOWL))
+        {
+            if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(new ItemStack(Items.BOWL, 1)), 1) > 0
+                    && !walkToBuilding())
+            {
+                checkAndTransferFromHut(new ItemStack(Items.BOWL, 1));
+            }
+            else
+            {
+                stewCoolDown = MILK_COOL_DOWN;
+                return DECIDE;
+            }
+        }
+
+        final MushroomCow mooshroom = searchForAnimals(a -> a instanceof MushroomCow && !a.isBaby()).stream()
+                .map(a -> (MushroomCow) a).findFirst().orElse(null);
+
+        if (mooshroom == null)
+        {
+            stewCoolDown = MILK_COOL_DOWN;
+            return DECIDE;
+        }
+
+        if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.BOWL))) && !walkingToAnimal(mooshroom))
+        {
+            final FakePlayer fakePlayer = FakePlayerFactory.getMinecraft((ServerLevel) worker.getLevel());
+            fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOWL));
+            if (mooshroom.mobInteract(fakePlayer, InteractionHand.MAIN_HAND).equals(InteractionResult.CONSUME))
+            {
+                if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()))
+                {
+                    building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).onStewed();
+                    worker.getCitizenItemHandler().removeHeldItem();
+                    equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(fakePlayer.getMainHandItem()));
+                    InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));
+                }
+                fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             }
 
             incrementActionsDoneAndDecSaturation();

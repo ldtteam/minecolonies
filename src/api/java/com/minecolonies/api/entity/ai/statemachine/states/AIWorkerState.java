@@ -374,6 +374,11 @@ public enum AIWorkerState implements IAIState
      */
     COWBOY_MILK(false),
 
+    /**
+     * Milk mooshrooms!
+     */
+    COWBOY_STEW(false),
+
     /*
 ### Shepherd ###
      */
