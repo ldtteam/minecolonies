@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.fields;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.colony.fields.AbstractField;
 import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
@@ -11,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,23 +133,7 @@ public class PlantationField extends AbstractField
     public void deserializeNBT(@NotNull CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        switch (Enum.valueOf(PlantationFieldType.class, compound.getString(TAG_FIELD_TYPE)))
-        {
-            case SUGAR_CANE -> plantationFieldType = PlantationFieldRegistries.sugarCaneField.get();
-            case CACTUS -> plantationFieldType = PlantationFieldRegistries.cactusField.get();
-            case BAMBOO -> plantationFieldType = PlantationFieldRegistries.bambooField.get();
-            case COCOA_BEANS -> plantationFieldType = PlantationFieldRegistries.cocoaBeansField.get();
-            case VINES -> plantationFieldType = PlantationFieldRegistries.vinesField.get();
-            case KELP -> plantationFieldType = PlantationFieldRegistries.kelpField.get();
-            case SEAGRASS -> plantationFieldType = PlantationFieldRegistries.seagrassField.get();
-            case SEA_PICKLES -> plantationFieldType = PlantationFieldRegistries.seaPicklesField.get();
-            case GLOWBERRIES -> plantationFieldType = PlantationFieldRegistries.glowberriesField.get();
-            case WEEPING_VINES -> plantationFieldType = PlantationFieldRegistries.weepingVinesField.get();
-            case TWISTING_VINES -> plantationFieldType = PlantationFieldRegistries.twistingVinesField.get();
-            case CRIMSON_FUNGUS -> plantationFieldType = PlantationFieldRegistries.crimsonPlantsField.get();
-            case WARPED_FUNGUS -> plantationFieldType = PlantationFieldRegistries.warpedPlantsField.get();
-        }
-        //plantationFieldType = PlantationFieldRegistries.getPlantationFieldRegistry().getValue(new ResourceLocation(
+        plantationFieldType = PlantationFieldRegistries.getPlantationFieldRegistry().getValue(new ResourceLocation(compound.getString(TAG_FIELD_TYPE)));
         workingPositions = BlockPosUtil.readPosListFromNBT(compound, TAG_WORKING_POS);
     }
 
