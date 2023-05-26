@@ -7,8 +7,13 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -90,6 +95,31 @@ public final class RecipeAnalyzer
         recipes.addAll(crafting.getAdditionalRecipesForDisplayPurposesOnly(world));
 
         return recipes;
+    }
+
+    /**
+     * Create example instances of every possible {@link Animal} entity.
+     *
+     * @param level a level
+     * @return list of animals
+     */
+    public static List<Animal> createAnimals(@NotNull final Level level)
+    {
+        final List<Animal> animals = new ArrayList<>();
+
+        for (final EntityType<?> entityType : ForgeRegistries.ENTITY_TYPES.getValues())
+        {
+            if (entityType.getCategory() != MobCategory.CREATURE) { continue; }
+
+            // sadly there doesn't seem to be a better way to discover the actual classes for each type, because Java
+            final Entity entity = entityType.create(level);
+            if (entity instanceof Animal animal)
+            {
+                animals.add(animal);
+            }
+        }
+
+        return animals;
     }
 
     private RecipeAnalyzer()

@@ -17,6 +17,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +72,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     {
         final IAIState result = super.decideWhatToDo();
 
-        final Sheep shearingSheep = searchForAnimals(Sheep.class).stream()
-                .filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
+        final Sheep shearingSheep = findShearableSheep();
 
         if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
@@ -91,6 +91,16 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     }
 
     /**
+     * @return a shearable {@link Sheep} or null.
+     */
+    @Nullable
+    private Sheep findShearableSheep()
+    {
+        return searchForAnimals(a -> a instanceof Sheep sheepie && !sheepie.isSheared() && !sheepie.isBaby())
+                .stream().map(a -> (Sheep) a).findAny().orElse(null);
+    }
+
+    /**
      * Shears a sheep, with a chance of dying it!
      *
      * @return The next {@link IAIState}
@@ -99,9 +109,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     {
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
-        final List<? extends Sheep> sheeps = searchForAnimals(Sheep.class);
+        final Sheep sheep = findShearableSheep();
 
-        if (sheeps.isEmpty())
+        if (sheep == null)
         {
             return DECIDE;
         }
@@ -111,9 +121,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             return PREPARING;
         }
 
-        final Sheep sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
-
-        if (worker.getMainHandItem() != null && sheep != null)
+        if (worker.getMainHandItem() != null)
         {
             if (walkingToAnimal(sheep))
             {

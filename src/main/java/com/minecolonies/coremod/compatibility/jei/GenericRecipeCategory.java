@@ -22,6 +22,7 @@ import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -293,6 +294,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 
     @NotNull
     public List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                            @NotNull final List<Animal> animals,
                                             @NotNull final Level world)
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();

@@ -52,7 +52,7 @@ public class DataPackSyncEventHandler
         {
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
-            CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
+            CustomRecipeManager.getInstance().buildLootData(server.getLootTables(), server.overworld());
         }
 
         /**

@@ -5,14 +5,13 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Provides some basic definitions used by the animal herding AI (and JEI).
@@ -20,18 +19,15 @@ import java.util.List;
 public class AnimalHerdingModule extends AbstractBuildingModule
 {
     private final JobEntry jobEntry;
-    private final EntityType<? extends Animal> animalType;
-    private final Class<? extends Animal> animalClass;
+    private final Predicate<Animal> animalPredicate;
     private final ItemStack breedingItem;
 
     public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
-                               @NotNull final EntityType<? extends Animal> animalType,
-                               @NotNull final Class<? extends Animal> animalClass,
+                               @NotNull final Predicate<Animal> animalPredicate,
                                @NotNull final ItemStack breedingItem)
     {
         this.jobEntry = jobEntry;
-        this.animalType = animalType;
-        this.animalClass = animalClass;
+        this.animalPredicate = animalPredicate;
         this.breedingItem = breedingItem;
     }
 
@@ -47,25 +43,14 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     }
 
     /**
-     * Gets the animal type managed by this herder.
+     * Check if this module handles the particular animal.
      *
-     * @return The animal entity type.
+     * @param animal the animal to check.
+     * @return true if so.
      */
-    @NotNull
-    public EntityType<? extends Animal> getAnimalType()
+    public boolean isCompatible(@NotNull final Animal animal)
     {
-        return animalType;
-    }
-
-    /**
-     * Gets the animal class managed by this herder.
-     *
-     * @return The animal class.
-     */
-    @NotNull
-    public Class<? extends Animal> getAnimalClass()
-    {
-        return animalClass;
+        return animalPredicate.test(animal);
     }
 
     /**
@@ -80,26 +65,16 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     }
 
     /**
-     * The loot table for killing the animal.
-     *
-     * @return The resource location of the loot table.
-     */
-    @NotNull
-    public ResourceLocation getDefaultLootTable()
-    {
-        return getAnimalType().getDefaultLootTable();
-    }
-
-    /**
      * Returns a list of expected loot from farming the animals.
      * Can be overridden if something other than just killing the animals happens.
      * This should *not* be used to actually generate loot; it's just informative.
      *
+     * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
      * @return The list of expected loot.
      */
     @NotNull
-    public List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+    public List<LootTableAnalyzer.LootDrop> getExpectedLoot(@NotNull final Animal animal)
     {
-        return CustomRecipeManager.getInstance().getLootDrops(getDefaultLootTable());
+        return CustomRecipeManager.getInstance().getLootDrops(animal.getLootTable());
     }
 }
