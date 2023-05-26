@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,6 +66,7 @@ public class JEIPlugin implements IModPlugin
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
+            final Map<JobEntry, HerderRecipeCategory> herdingCategories = new HashMap<>();
 
             for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
@@ -90,10 +92,24 @@ public class JEIPlugin implements IModPlugin
 
                 if (module instanceof final AnimalHerdingModule herding)
                 {
-                    registerCategory(registration, new HerderRecipeCategory(building, herding.getHerdingJob(), herding, guiHelper));
+                    final IJob<?> job = herding.getHerdingJob();
+                    HerderRecipeCategory category = herdingCategories.get(job.getJobRegistryEntry());
+                    if (category == null)
+                    {
+                        category = new HerderRecipeCategory(building, job, herding, guiHelper);
+                        herdingCategories.put(job.getJobRegistryEntry(), category);
+                    }
+                    else
+                    {
+                        category.addModule(herding);
+                    }
                 }
             }
 
+            for (final HerderRecipeCategory category : herdingCategories.values())
+            {
+                registerCategory(registration, category);
+            }
             for (final GenericRecipeCategory category : craftingCategories.values())
             {
                 registerCategory(registration, category);
@@ -120,20 +136,22 @@ public class JEIPlugin implements IModPlugin
 
         final ClientLevel level = Minecraft.getInstance().level;
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
+        final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            addJobBasedRecipes(vanilla, category, registration::addRecipes);
+            addJobBasedRecipes(vanilla, animals, category, registration::addRecipes);
         }
     }
 
     private <R> void addJobBasedRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                        @NotNull final List<Animal> animals,
                                         @NotNull final JobBasedRecipeCategory<R> category,
                                         @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar)
     {
         try
         {
-            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla));
+            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla, animals));
         }
         catch (Exception e)
         {

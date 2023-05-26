@@ -126,7 +126,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final Cow cow = searchForAnimals(Cow.class).stream().filter(c -> !c.isBaby()).findFirst().orElse(null);
+        final Cow cow = searchForAnimals(a -> a instanceof Cow && !a.isBaby()).stream()
+                .map(a -> (Cow) a).findFirst().orElse(null);
 
         if (cow == null)
         {

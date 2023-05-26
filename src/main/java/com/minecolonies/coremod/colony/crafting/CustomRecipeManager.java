@@ -12,8 +12,10 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
@@ -247,8 +249,11 @@ public class CustomRecipeManager
      * Analyses and builds an approximate list of possible loot drops from registered recipes.
      * @param lootTableManager the loot table manager
      */
-    public void buildLootData(@NotNull final LootTables lootTableManager)
+    public void buildLootData(@NotNull final LootTables lootTableManager,
+                              @NotNull final Level level)
     {
+        final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
+
         final List<ResourceLocation> lootIds = new ArrayList<>();
         for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values())
         {
@@ -268,7 +273,13 @@ public class CustomRecipeManager
             {
                 if (module instanceof AnimalHerdingModule herding)
                 {
-                    lootIds.add(herding.getDefaultLootTable());
+                    for (final Animal animal : animals)
+                    {
+                        if (herding.isCompatible(animal))
+                        {
+                            lootIds.add(animal.getLootTable());
+                        }
+                    }
                 }
                 if (module instanceof ICraftingBuildingModule crafting)
                 {

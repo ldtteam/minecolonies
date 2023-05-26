@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -61,14 +61,17 @@ public class BuildingChickenHerder extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.chickenHerder.get(), EntityType.CHICKEN, Chicken.class, new ItemStack(Items.WHEAT_SEEDS, 2));
+            super(ModJobs.chickenHerder.get(), a -> a instanceof Chicken, new ItemStack(Items.WHEAT_SEEDS, 2));
         }
 
         @Override
-        public @NotNull List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+        public @NotNull List<LootTableAnalyzer.LootDrop> getExpectedLoot(@NotNull final Animal animal)
         {
-            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
-            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.EGG)), 1, 0, false));
+            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot(animal));
+            if (animal instanceof Chicken)
+            {
+                drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.EGG)), 1, 0, false));
+            }
             return drops;
         }
     }

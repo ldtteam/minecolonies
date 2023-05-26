@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -93,19 +93,20 @@ public class BuildingShepherd extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.shepherd.get(), EntityType.SHEEP, Sheep.class, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStack(Items.WHEAT, 2));
         }
 
         @Override
-        public @NotNull List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+        public @NotNull List<LootTableAnalyzer.LootDrop> getExpectedLoot(@NotNull final Animal animal)
         {
-            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
-
-            final List<ItemStack> wool = ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream()
-                    .map(ItemStack::new)
-                    .collect(Collectors.toList());
-            drops.add(new LootTableAnalyzer.LootDrop(wool, 1, 0, false));
-
+            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot(animal));
+            if (animal instanceof Sheep)
+            {
+                final List<ItemStack> wool = ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream()
+                        .map(ItemStack::new)
+                        .collect(Collectors.toList());
+                drops.add(new LootTableAnalyzer.LootDrop(wool, 1, 0, false));
+            }
             return drops;
         }
 

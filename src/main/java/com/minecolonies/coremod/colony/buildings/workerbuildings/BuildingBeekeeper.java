@@ -21,7 +21,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -226,7 +226,7 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.beekeeper.get(), EntityType.BEE, Bee.class, ItemStack.EMPTY);
+            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, ItemStack.EMPTY);
         }
 
         @NotNull
@@ -245,13 +245,14 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         @NotNull
         @Override
-        public List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+        public List<LootTableAnalyzer.LootDrop> getExpectedLoot(@NotNull final Animal animal)
         {
-            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
-
-            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEYCOMB, 3)), 1, 0, false));
-            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEY_BOTTLE)), 1, 0, false));
-
+            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot(animal));
+            if (animal instanceof Bee)
+            {
+                drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEYCOMB, 3)), 1, 0, false));
+                drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEY_BOTTLE)), 1, 0, false));
+            }
             return drops;
         }
     }

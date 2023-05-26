@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -188,7 +189,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
         {
-            final List<? extends Animal> animals = searchForAnimals(module.getAnimalClass());
+            final List<? extends Animal> animals = searchForAnimals(module::isCompatible);
             if (animals.isEmpty())
             {
                 continue;
@@ -345,7 +346,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        final List<? extends Animal> animals = searchForAnimals(current_module.getAnimalClass());
+        final List<? extends Animal> animals = searchForAnimals(current_module::isCompatible);
 
         if (!maxAnimals(animals))
         {
@@ -397,8 +398,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return getState();
         }
 
-        final List<? extends Animal> breedables = new ArrayList<>(searchForAnimals(current_module.getAnimalClass()).stream()
-                .filter(this::isBreedAble).toList());
+        final Predicate<Animal> predicate = ((Predicate<Animal>) current_module::isCompatible).and(this::isBreedAble);
+        final List<? extends Animal> breedables = new ArrayList<>(searchForAnimals(predicate));
         Collections.shuffle(breedables);
 
         final Animal animalOne = breedables.stream().findAny().orElse(null);
@@ -470,10 +471,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        final Animal animalOne = searchForAnimals(current_module.getAnimalClass()).stream()
-                                         .filter(this::isFeedAble)
-                                         .findAny()
-                                         .orElse(null);
+        final Predicate<Animal> predicate = ((Predicate<Animal>) current_module::isCompatible).and(this::isFeedAble);
+        final Animal animalOne = searchForAnimals(predicate).stream().findAny().orElse(null);
 
         if (animalOne == null)
         {
@@ -526,12 +525,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Find animals in area.
      *
-     * @param clazz the animal class.
+     * @param predicate true if the animal is interesting.
      * @return a {@link Stream} of animals in the area.
      */
-    public <T extends Animal> List<? extends T> searchForAnimals(final Class<T> clazz)
+    public List<? extends Animal> searchForAnimals(final Predicate<Animal> predicate)
     {
-        return WorldUtil.getEntitiesWithinBuilding(world, clazz, building, null);
+        return WorldUtil.getEntitiesWithinBuilding(world, Animal.class, building, predicate);
     }
 
     public int getMaxAnimalMultiplier()

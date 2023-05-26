@@ -16,21 +16,16 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The JEI recipe category for animal herders.
@@ -38,7 +33,7 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCategory.HerdingRecipe>
 {
-    private final AnimalHerdingModule herding;
+    private final List<AnimalHerdingModule> herding = new ArrayList<>();
     private final ITickTimer animalTimer;
 
     public HerderRecipeCategory(@NotNull final BuildingEntry building,
@@ -48,7 +43,7 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
     {
         super(job, createRecipeType(job), getCatalyst(building), guiHelper);
 
-        this.herding = herding;
+        this.herding.add(herding);
         this.animalTimer = guiHelper.createTickTimer(200, 359, false);
     }
 
@@ -59,6 +54,11 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
     private static final int ANIMAL_H = CITIZEN_H - 10;
     private static final int ANIMAL_X = CITIZEN_X + CITIZEN_W + (WIDTH - CITIZEN_X - CITIZEN_W - ANIMAL_W) / 2;
     private static final int ANIMAL_Y = CITIZEN_Y - 20;
+
+    public void addModule(@NotNull final AnimalHerdingModule module)
+    {
+        this.herding.add(module);
+    }
 
     @NotNull
     private static RecipeType<HerdingRecipe> createRecipeType(@NotNull final IJob<?> job)
@@ -141,35 +141,47 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
 
     @NotNull
     @Override
-    public List<HerdingRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
+    public List<HerdingRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                           @NotNull final List<Animal> animals)
     {
-        final List<ItemStack> breedingItems = this.herding.getBreedingItems();
+        final List<HerdingRecipe> recipes = new ArrayList<>();
 
-        final List<LootTableAnalyzer.LootDrop> drops = this.herding.getExpectedLoot();
-        drops.sort(Comparator.comparing(LootTableAnalyzer.LootDrop::getProbability).reversed());
+        for (final AnimalHerdingModule module : this.herding)
+        {
+            final List<ItemStack> breedingItems = module.getBreedingItems();
 
-        final HerdingRecipe recipe = new HerdingRecipe(this.herding.getDefaultLootTable(), this.herding.getAnimalType(), breedingItems, drops);
-        return Collections.singletonList(recipe);
+            for (final Animal animal : animals)
+            {
+                if (module.isCompatible(animal))
+                {
+                    final List<LootTableAnalyzer.LootDrop> drops = module.getExpectedLoot(animal);
+                    drops.sort(Comparator.comparing(LootTableAnalyzer.LootDrop::getProbability).reversed());
+
+                    recipes.add(new HerdingRecipe(animal, breedingItems, drops));
+                }
+            }
+        }
+
+        return recipes;
     }
 
     public static class HerdingRecipe
     {
         @NotNull
         private final ResourceLocation id;
-        @Nullable
-        private final LivingEntity animal;
+        @NotNull
+        private final Animal animal;
         @NotNull
         private final List<ItemStack> breedingItems;
         @NotNull
         private final List<LootTableAnalyzer.LootDrop> drops;
 
-        public HerdingRecipe(@NotNull final ResourceLocation id,
-                             @NotNull final EntityType<?> animalType,
+        public HerdingRecipe(@NotNull final Animal animal,
                              @NotNull final List<ItemStack> breedingItems,
                              @NotNull final List<LootTableAnalyzer.LootDrop> drops)
         {
-            this.id = id;
-            this.animal = (LivingEntity) animalType.create(Minecraft.getInstance().level);
+            this.id = animal.getLootTable();
+            this.animal = animal;
             this.breedingItems = breedingItems;
             this.drops = drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
         }
@@ -180,8 +192,8 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
             return this.id;
         }
 
-        @Nullable
-        public LivingEntity getAnimal()
+        @NotNull
+        public Animal getAnimal()
         {
             return this.animal;
         }
