@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,10 +33,14 @@ public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
 
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public WeepingVinesPlantModule()
+    public WeepingVinesPlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("weepv_field", "weepv_vine", Items.WEEPING_VINES);
+        super(fieldTag, workTag, item);
     }
 
     @Override

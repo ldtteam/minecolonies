@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
-import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -39,14 +40,18 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
 
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public KelpPlantModule()
+    public KelpPlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("kelp_field", "kelp", Items.KELP);
+        super(fieldTag, workTag, item);
     }
 
     @Override
-    protected boolean walkToWorkPosition(final EntityAIWorkPlanter planterAI, final PlantationField field, final BlockPos workPosition)
+    protected boolean walkToWorkPosition(final BasicPlanterAI planterAI, final IField field, final BlockPos workPosition)
     {
         // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
         // that the AI can actually walk to.

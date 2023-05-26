@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -30,10 +31,14 @@ public class CocoaPlantModule extends TreeSidePlantModule
 {
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public CocoaPlantModule()
+    public CocoaPlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("cocoa_field", "cocoa", Items.COCOA_BEANS);
+        super(fieldTag, workTag, item);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class CocoaPlantModule extends TreeSidePlantModule
     }
 
     @Override
-    protected BlockState generatePlantingBlockState(final PlantationField field, final BlockPos workPosition, final BlockState blockState)
+    protected BlockState generatePlantingBlockState(final IField field, final BlockPos workPosition, final BlockState blockState)
     {
         return Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
                  .filter(position -> field.getColony().getWorld().getBlockState(position).getBlock() == Blocks.JUNGLE_LOG)

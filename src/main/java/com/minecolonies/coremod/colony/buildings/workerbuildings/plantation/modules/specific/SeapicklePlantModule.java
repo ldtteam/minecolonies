@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
-import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
@@ -33,10 +33,14 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
 {
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public SeapicklePlantModule()
+    public SeapicklePlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("seapickle_field", "seapickle", Items.SEA_PICKLE);
+        super(fieldTag, workTag, item);
     }
 
     @Override
@@ -47,8 +51,8 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
 
     @Override
     public PlanterAIModuleResult workField(
-      final @NotNull PlantationField field,
-      final @NotNull EntityAIWorkPlanter planterAI,
+      final @NotNull IField field,
+      final @NotNull BasicPlanterAI planterAI,
       final @NotNull AbstractEntityCitizen worker,
       final @NotNull BlockPos workPosition,
       final @NotNull FakePlayer fakePlayer)

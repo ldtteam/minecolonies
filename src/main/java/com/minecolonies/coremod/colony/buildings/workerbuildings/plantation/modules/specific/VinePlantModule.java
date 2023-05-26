@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.PercentageHarvestPlantModule;
-import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.VineBlock;
@@ -29,10 +30,14 @@ public class VinePlantModule extends PercentageHarvestPlantModule
 {
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public VinePlantModule()
+    public VinePlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("vine_field", "vine", Items.VINE);
+        super(fieldTag, workTag, item);
     }
 
     @Override
@@ -48,7 +53,7 @@ public class VinePlantModule extends PercentageHarvestPlantModule
     }
 
     @Override
-    protected BlockState generatePlantingBlockState(final PlantationField field, final BlockPos workPosition, final BlockState blockState)
+    protected BlockState generatePlantingBlockState(final IField field, final BlockPos workPosition, final BlockState blockState)
     {
         return super.generatePlantingBlockState(field, workPosition, blockState)
                  .setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.above(), Direction.DOWN)))

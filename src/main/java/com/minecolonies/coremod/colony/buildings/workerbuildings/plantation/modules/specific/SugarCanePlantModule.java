@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,10 +19,14 @@ public class SugarCanePlantModule extends UpwardsGrowingPlantModule
 {
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public SugarCanePlantModule()
+    public SugarCanePlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("sugar_field", "sugar", Items.SUGAR_CANE);
+        super(fieldTag, workTag, item);
     }
 
     @Override

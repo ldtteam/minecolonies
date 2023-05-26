@@ -29,7 +29,7 @@ public class FieldRegistries
     /**
      * Get the field registry.
      *
-     * @return the reward registry.
+     * @return the field registry.
      */
     public static IForgeRegistry<FieldEntry> getFieldRegistry()
     {

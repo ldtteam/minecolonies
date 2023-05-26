@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
-import com.minecolonies.coremod.colony.fields.PlantationField;
-import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  *     <li>All the positions you expect the plants to appear have to be tagged.</li>
  * </ol>
  */
-public abstract class PercentageHarvestPlantModule extends PlantationModule
+public abstract class PercentageHarvestPlantModule extends AbstractPlantationModule
 {
     /**
      * Default constructor.
@@ -50,8 +50,8 @@ public abstract class PercentageHarvestPlantModule extends PlantationModule
 
     @Override
     public PlanterAIModuleResult workField(
-      @NotNull final PlantationField field,
-      @NotNull final EntityAIWorkPlanter planterAI,
+      @NotNull final IField field,
+      @NotNull final BasicPlanterAI planterAI,
       @NotNull final AbstractEntityCitizen worker,
       @NotNull final BlockPos workPosition,
       @NotNull final FakePlayer fakePlayer)
@@ -88,7 +88,7 @@ public abstract class PercentageHarvestPlantModule extends PlantationModule
      * @param workPosition the position that has been chosen for work.
      * @return true if
      */
-    protected boolean walkToWorkPosition(final EntityAIWorkPlanter planterAI, final PlantationField field, final BlockPos workPosition)
+    protected boolean walkToWorkPosition(final BasicPlanterAI planterAI, final IField field, final BlockPos workPosition)
     {
         // If an empty adjacent position was found, we move to that position directly,
         // else we move to the work position itself and let entity pathing figure out how to get there (within the default range).
@@ -108,7 +108,7 @@ public abstract class PercentageHarvestPlantModule extends PlantationModule
      * @param plantingPosition the specific position to check for.
      * @return the {@link PlanterAIModuleResult} that the AI is going to perform.
      */
-    private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
+    private PlanterAIModuleState decideWorkAction(IField field, BlockPos plantingPosition)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition);
         if (isValidPlantingBlock(blockState))
@@ -136,7 +136,7 @@ public abstract class PercentageHarvestPlantModule extends PlantationModule
      * @param workPosition the position that has been chosen for work.
      * @param blockState   the default block state for the block.
      */
-    protected BlockState generatePlantingBlockState(PlantationField field, BlockPos workPosition, BlockState blockState)
+    protected BlockState generatePlantingBlockState(IField field, BlockPos workPosition, BlockState blockState)
     {
         return blockState;
     }
@@ -173,9 +173,9 @@ public abstract class PercentageHarvestPlantModule extends PlantationModule
     protected abstract boolean isValidHarvestBlock(BlockState blockState);
 
     @Override
-    public @Nullable BlockPos getNextWorkingPosition(final PlantationField field)
+    public @Nullable BlockPos getNextWorkingPosition(final IField field)
     {
-        final List<BlockPos> workingPositions = field.getWorkingPositions().stream().collect(CollectorUtils.toShuffledList());
+        final List<BlockPos> workingPositions = getWorkingPositions(field).stream().collect(CollectorUtils.toShuffledList());
         final List<BlockPos> harvestablePositions = new ArrayList<>();
 
         final double minimumPlantFraction = Mth.clamp(getMinimumPlantPercentage(), 0, 100) / 100d;

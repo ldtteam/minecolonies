@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import com.minecolonies.coremod.network.messages.server.PlantationFieldBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * The window shown when clicking on plantation fields blocks.
@@ -80,12 +78,12 @@ public class WindowPlantationField extends AbstractWindowSkeleton
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.tileEntityPlantationField = tileEntityPlantationField;
         this.plants = tileEntityPlantationField.getPlantationFieldTypes().stream()
-                        .map(PlantationModuleRegistry::getPlantationModule)
-                        .filter(Objects::nonNull)
-                        .map(module -> new ItemStack(module.getItem()))
+                        .map(fieldType -> new ItemStack(fieldType.getModule().getItem()))
                         .toList();
 
         registerButton(BUTTON_REPAIR_ID, this::repairField);
+
+        updateElementStates();
     }
 
     private void repairField()
@@ -104,13 +102,6 @@ public class WindowPlantationField extends AbstractWindowSkeleton
             tileEntityPlantationField.getRotation(),
             tileEntityPlantationField.getMirror(),
             builder)).open();
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-        updateElementStates();
     }
 
     /**
@@ -139,6 +130,13 @@ public class WindowPlantationField extends AbstractWindowSkeleton
             return colonyView;
         }
         return null;
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        updateElementStates();
     }
 
     @Override

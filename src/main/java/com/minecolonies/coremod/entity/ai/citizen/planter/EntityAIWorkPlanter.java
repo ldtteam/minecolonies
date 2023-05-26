@@ -2,7 +2,10 @@ package com.minecolonies.coremod.entity.ai.citizen.planter;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
+import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -10,8 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
@@ -34,7 +36,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FI
 /**
  * Planter AI class.
  */
-public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation>
+public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation> implements BasicPlanterAI
 {
     /**
      * Xp per harvesting block
@@ -147,12 +149,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return PLANTATION_PICK_FIELD;
         }
 
-        PlantationModule planterModule = PlantationModuleRegistry.getPlantationModule(currentPlantationField.getPlantationFieldType());
-        if (planterModule == null)
-        {
-            throw new IllegalStateException("Planter AI could not load module for field, plantation type is likely null.");
-        }
-
+        IPlantationModule planterModule = currentPlantationField.getPlantationFieldType().getModule();
         if (currentWorkingPosition == null)
         {
             currentWorkingPosition = planterModule.getNextWorkingPosition(currentPlantationField);
@@ -160,7 +157,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (currentWorkingPosition != null)
         {
-            PlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
+            AbstractPlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
             if (result.getModuleState().hasPerformedAction())
             {
                 currentFieldActionCount++;
@@ -180,7 +177,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 currentFieldActionCount = 0;
             }
 
-            return result.getModuleState() == PlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? IDLE : PLANTATION_WORK_FIELD;
+            return result.getModuleState() == AbstractPlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? IDLE : PLANTATION_WORK_FIELD;
         }
 
         return PLANTATION_PICK_FIELD;
@@ -231,13 +228,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return super.getActionsDoneUntilDumping();
         }
 
-        PlantationModule planterModule = PlantationModuleRegistry.getPlantationModule(currentPlantationField.getPlantationFieldType());
-        if (planterModule == null)
-        {
-            return super.getActionsDoneUntilDumping();
-        }
-
-        return planterModule.getActionLimit();
+        return currentPlantationField.getPlantationFieldType().getModule().getActionLimit();
     }
 
     @Override
@@ -246,23 +237,26 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         return BuildingPlantation.class;
     }
 
+    @Override
     public boolean planterWalkToBlock(final BlockPos blockPos)
     {
         return planterWalkToBlock(blockPos, CitizenConstants.DEFAULT_RANGE_FOR_DELAY);
     }
 
+    @Override
     public boolean planterWalkToBlock(final BlockPos blockPos, final int range)
     {
         return walkToBlock(blockPos, range);
     }
 
-    public PlantationModule.PlanterMineBlockResult planterMineBlock(final BlockPos blockPos, boolean isHarvest)
+    @Override
+    public IPlantationModule.PlanterMineBlockResult planterMineBlock(final BlockPos blockPos, boolean isHarvest)
     {
         boolean mineResult = mineBlock(blockPos);
 
         if (!holdEfficientTool(world.getBlockState(blockPos), blockPos))
         {
-            return PlantationModule.PlanterMineBlockResult.NO_TOOL;
+            return AbstractPlantationModule.PlanterMineBlockResult.NO_TOOL;
         }
 
         if (mineResult)
@@ -275,14 +269,16 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
 
-        return mineResult ? PlantationModule.PlanterMineBlockResult.MINED : PlantationModule.PlanterMineBlockResult.MINING;
+        return mineResult ? AbstractPlantationModule.PlanterMineBlockResult.MINED : AbstractPlantationModule.PlanterMineBlockResult.MINING;
     }
 
+    @Override
     public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest)
     {
         return planterPlaceBlock(blockToPlaceAt, item, numberToRequest, t -> t);
     }
 
+    @Override
     public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest, UnaryOperator<BlockState> blockStateModifier)
     {
         ItemStack currentStack = new ItemStack(item);
@@ -301,5 +297,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         return false;
+    }
+
+    @Override
+    public boolean requestItems(final IDeliverable deliverable)
+    {
+        return this.checkIfRequestForItemExistOrCreate(deliverable);
     }
 }

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.colony.fields.PlantationField;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
-import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  *     <li>Must break all blocks below when an upper block is destroyed.</li>
  * </ol>
  */
-public abstract class DownwardsGrowingPlantModule extends PlantationModule
+public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModule
 {
     /**
      * The default minimum plant length.
@@ -57,8 +57,8 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
 
     @Override
     public PlanterAIModuleResult workField(
-      final @NotNull PlantationField field,
-      final @NotNull EntityAIWorkPlanter planterAI,
+      final @NotNull IField field,
+      final @NotNull BasicPlanterAI planterAI,
       final @NotNull AbstractEntityCitizen worker,
       final @NotNull BlockPos workPosition,
       final @NotNull FakePlayer fakePlayer)
@@ -90,32 +90,6 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
         };
     }
 
-    @Override
-    public BlockPos getNextWorkingPosition(PlantationField field)
-    {
-        for (BlockPos position : field.getWorkingPositions())
-        {
-            if (decideWorkAction(field, position, true) != PlanterAIModuleState.NONE)
-            {
-                return position;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public List<ItemStack> getRequiredItemsForOperation()
-    {
-        return List.of(new ItemStack(getItem()));
-    }
-
-    @Override
-    public int getActionLimit()
-    {
-        return 10;
-    }
-
     /**
      * Logic to walk to a work position.
      * Default implementation, walk to any adjacent block which is free.
@@ -125,7 +99,7 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
      * @param workPosition the position that has been chosen for work.
      * @return true if
      */
-    protected boolean walkToWorkPosition(EntityAIWorkPlanter planterAI, PlantationField field, BlockPos workPosition)
+    protected boolean walkToWorkPosition(final BasicPlanterAI planterAI, final IField field, final BlockPos workPosition)
     {
         // If an empty adjacent position was found, we move to that position directly,
         // else we move to the work position itself and let entity pathing figure out how to get there (within the default range).
@@ -146,7 +120,7 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
      * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
      * @return the {@link PlanterAIModuleResult} that the AI is going to perform.
      */
-    private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition, boolean enablePercentChance)
+    private PlanterAIModuleState decideWorkAction(IField field, BlockPos plantingPosition, boolean enablePercentChance)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.below());
         if (isValidPlantingBlock(blockState))
@@ -198,7 +172,7 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
      * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
      * @return true if plant is harvestable.
      */
-    private boolean canHarvest(PlantationField field, BlockPos plantingPosition, boolean enablePercentChance)
+    private boolean canHarvest(IField field, BlockPos plantingPosition, boolean enablePercentChance)
     {
         int minimumPlantLength = getMinimumPlantLength();
         Integer maximumPlantLength = getMaximumPlantLength();
@@ -255,5 +229,31 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
     protected Integer getMaximumPlantLength()
     {
         return null;
+    }
+
+    @Override
+    public BlockPos getNextWorkingPosition(IField field)
+    {
+        for (BlockPos position : getWorkingPositions(field))
+        {
+            if (decideWorkAction(field, position, true) != PlanterAIModuleState.NONE)
+            {
+                return position;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<ItemStack> getRequiredItemsForOperation()
+    {
+        return List.of(new ItemStack(getItem()));
+    }
+
+    @Override
+    public int getActionLimit()
+    {
+        return 10;
     }
 }

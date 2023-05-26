@@ -2,8 +2,9 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
+import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
@@ -18,8 +19,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -85,9 +84,9 @@ public class BuildingPlantation extends AbstractBuilding
 
     private void updateFields()
     {
-        updateField(PlantationFieldType.SUGAR_CANE);
-        updateField(PlantationFieldType.CACTUS);
-        updateField(PlantationFieldType.BAMBOO);
+        updateField(PlantationFieldRegistries.sugarCaneField.get());
+        updateField(PlantationFieldRegistries.cactusField.get());
+        updateField(PlantationFieldRegistries.bambooField.get());
     }
 
     /**
@@ -95,16 +94,13 @@ public class BuildingPlantation extends AbstractBuilding
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      */
-    private void updateField(PlantationFieldType type)
+    private void updateField(PlantationFieldRegistries.FieldEntry type)
     {
-        final PlantationModule module = PlantationModuleRegistry.getPlantationModule(type);
-        if (module != null)
+        final IPlantationModule module = type.getModule();
+        final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
+        if (!workingPositions.isEmpty())
         {
-            final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
-            if (!workingPositions.isEmpty())
-            {
-                colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, getPosition(), type, workingPositions));
-            }
+            colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, getPosition(), type, workingPositions));
         }
     }
 
@@ -143,7 +139,7 @@ public class BuildingPlantation extends AbstractBuilding
             {
                 if (field instanceof PlantationField plantationField)
                 {
-                    final PlantationModule plantationModule = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
+                    final IPlantationModule plantationModule = plantationField.getPlantationFieldType().getModule();
                     if (plantationModule != null)
                     {
                         toKeep.put(new ItemStack(plantationModule.getItem())::sameItem, new Tuple<>(plantationModule.getPlantsToRequest(), true));
@@ -176,7 +172,7 @@ public class BuildingPlantation extends AbstractBuilding
             {
                 if (field instanceof PlantationField plantationField)
                 {
-                    final PlantationModule plantationModule = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
+                    final IPlantationModule plantationModule = plantationField.getPlantationFieldType().getModule();
                     if (plantationModule != null && (ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(plantationModule.getItem()), stack)))
                     {
                         return false;
@@ -272,10 +268,10 @@ public class BuildingPlantation extends AbstractBuilding
         {
             if (field instanceof PlantationField plantationField)
             {
-                final PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
-                if (module != null && module.getRequiredResearchEffect() != null)
+                final IPlantationModule plantationModule = plantationField.getPlantationFieldType().getModule();
+                if (plantationModule != null && plantationModule.getRequiredResearchEffect() != null)
                 {
-                    return building.getColony().getResearchManager().getResearchEffects().getEffectStrength(module.getRequiredResearchEffect()) > 0;
+                    return building.getColony().getResearchManager().getResearchEffects().getEffectStrength(plantationModule.getRequiredResearchEffect()) > 0;
                 }
                 return true;
             }
@@ -316,10 +312,10 @@ public class BuildingPlantation extends AbstractBuilding
         {
             if (field instanceof PlantationField plantationField)
             {
-                final PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationField.getPlantationFieldType());
-                if (module != null && module.getRequiredResearchEffect() != null)
+                final IPlantationModule plantationModule = plantationField.getPlantationFieldType().getModule();
+                if (plantationModule.getRequiredResearchEffect() != null)
                 {
-                    return getColony().getResearchManager().getResearchEffects().getEffectStrength(module.getRequiredResearchEffect()) > 0;
+                    return getColony().getResearchManager().getResearchEffects().getEffectStrength(plantationModule.getRequiredResearchEffect()) > 0;
                 }
                 return true;
             }
@@ -412,22 +408,19 @@ public class BuildingPlantation extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
 
-            for (PlantationFieldType type : PlantationFieldType.values())
+            for (PlantationFieldRegistries.FieldEntry type : PlantationFieldRegistries.getPlantationFieldRegistry().getValues())
             {
-                PlantationModule module = PlantationModuleRegistry.getPlantationModule(type);
-                if (module != null)
-                {
-                    recipes.add(new GenericRecipe(null,
-                      new ItemStack(module.getItem()),
-                      Collections.emptyList(),
-                      List.of(module.getRequiredItemsForOperation()),
-                      1,
-                      Blocks.AIR,
-                      null,
-                      module.getRequiredTool(),
-                      Collections.emptyList(),
-                      -1));
-                }
+                IPlantationModule module = type.getModule();
+                recipes.add(new GenericRecipe(null,
+                  new ItemStack(module.getItem()),
+                  Collections.emptyList(),
+                  List.of(module.getRequiredItemsForOperation()),
+                  1,
+                  Blocks.AIR,
+                  null,
+                  module.getRequiredTool(),
+                  Collections.emptyList(),
+                  -1));
             }
 
             return recipes;

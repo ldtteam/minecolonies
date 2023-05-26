@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
+import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.colony.guardtype.GuardType;
@@ -94,6 +95,12 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry()
     {
         return apiInstance.getFieldRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<PlantationFieldRegistries.FieldEntry> getPlantationFieldRegistry()
+    {
+        return apiInstance.getPlantationFieldRegistry();
     }
 
     @Override

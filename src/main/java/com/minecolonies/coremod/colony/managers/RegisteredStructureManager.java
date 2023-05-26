@@ -26,9 +26,13 @@ import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveFieldViewMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
@@ -91,9 +95,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private ITownHall townHall;
 
     /**
-     * Variable to check if the buildings needs to be synched.
+     * Variable to check if the buildings needs to be synced.
      */
     private boolean isBuildingsDirty = false;
+
+    /**
+     * Variable to check if the fields needs to be synced.
+     */
+    private boolean isFieldsDirty = false;
 
     /**
      * The colony of the manager.
@@ -254,6 +263,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void clearDirty()
     {
         isBuildingsDirty = false;
+        isFieldsDirty = false;
         buildings.values().forEach(IBuilding::clearDirty);
     }
 
@@ -261,7 +271,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
         sendBuildingPackets(closeSubscribers, newSubscribers);
+        sendFieldPackets(closeSubscribers, newSubscribers);
         isBuildingsDirty = false;
+        isFieldsDirty = false;
     }
 
     @Override
@@ -773,6 +785,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     /**
+     * Updates all subscribers of fields etc.
+     */
+    private void markFieldsDirty()
+    {
+        isFieldsDirty = true;
+        for (IBuilding building : buildings.values())
+        {
+            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(AbstractBuildingModule::markDirty);
+        }
+    }
+
+    /**
      * Add a AbstractBuilding to the Colony.
      *
      * @param building AbstractBuilding to add to the colony.
@@ -821,6 +845,29 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 {
                     players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
                 }
+            }
+        }
+    }
+
+    /**
+     * Sends packages to update the fields.
+     *
+     * @param closeSubscribers the current event subscribers.
+     * @param newSubscribers   the new event subscribers.
+     */
+    private void sendFieldPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
+    {
+        if (isFieldsDirty || !newSubscribers.isEmpty())
+        {
+            final Set<ServerPlayer> players = new HashSet<>();
+            if (isFieldsDirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
+            for (final IField field : fields)
+            {
+                players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(field), player));
             }
         }
     }
@@ -906,7 +953,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-        markFieldBuildingsDirty();
+        markFieldsDirty();
     }
 
     @Override
@@ -925,14 +972,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(field));
         }
 
-        markFieldBuildingsDirty();
-    }
-
-    private void markFieldBuildingsDirty()
-    {
-        for (IBuilding building : buildings.values())
-        {
-            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(AbstractBuildingModule::markDirty);
-        }
+        markFieldsDirty();
     }
 }

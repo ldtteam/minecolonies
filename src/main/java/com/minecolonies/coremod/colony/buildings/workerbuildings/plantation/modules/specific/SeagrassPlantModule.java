@@ -33,10 +33,14 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
 {
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public SeagrassPlantModule()
+    public SeagrassPlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("seagrass_field", "seagrass", Items.SEAGRASS);
+        super(fieldTag, workTag, item);
     }
 
     @Override

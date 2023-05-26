@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
@@ -29,10 +30,14 @@ public class WarpedPlantsPlantModule extends BoneMealedPlantModule
 
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public WarpedPlantsPlantModule()
+    public WarpedPlantsPlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("warpedp_field", "warpedp_ground", Items.WARPED_FUNGUS);
+        super(fieldTag, workTag, item);
     }
 
     @Override
@@ -48,14 +53,14 @@ public class WarpedPlantsPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
-    {
-        return ToolType.NONE;
-    }
-
-    @Override
     public int getMaxPlants()
     {
         return MAX_PLANTS;
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.NONE;
     }
 }

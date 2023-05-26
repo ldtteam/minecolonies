@@ -4,10 +4,10 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.colony.fields.AbstractField;
+import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
+import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,7 +28,7 @@ public class PlantationField extends AbstractField
     /**
      * The plantation field type.
      */
-    private PlantationFieldType plantationFieldType;
+    private PlantationFieldRegistries.FieldEntry plantationFieldType;
 
     /**
      * A list of all found tagged working positions.
@@ -53,7 +53,7 @@ public class PlantationField extends AbstractField
      * @param type             the plantation field type.
      * @param workingPositions the list of positions this field can be worked on.
      */
-    public static PlantationField create(final IColony colony, final BlockPos position, final PlantationFieldType type, final List<BlockPos> workingPositions)
+    public static PlantationField create(final IColony colony, final BlockPos position, final PlantationFieldRegistries.FieldEntry type, final List<BlockPos> workingPositions)
     {
         PlantationField field = (PlantationField) FieldRegistries.plantationField.get().produceField(colony, position);
         field.setPlantationFieldType(type);
@@ -64,7 +64,7 @@ public class PlantationField extends AbstractField
     @Override
     public boolean needsWork()
     {
-        PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
+        IPlantationModule module = plantationFieldType.getModule();
         if (module != null)
         {
             return module.needsWork(this);
@@ -85,7 +85,7 @@ public class PlantationField extends AbstractField
      *
      * @return the field type.
      */
-    public PlantationFieldType getPlantationFieldType()
+    public PlantationFieldRegistries.FieldEntry getPlantationFieldType()
     {
         return plantationFieldType;
     }
@@ -95,7 +95,7 @@ public class PlantationField extends AbstractField
      *
      * @param plantationFieldType the field type.
      */
-    public void setPlantationFieldType(final PlantationFieldType plantationFieldType)
+    public void setPlantationFieldType(final PlantationFieldRegistries.FieldEntry plantationFieldType)
     {
         this.plantationFieldType = plantationFieldType;
     }
@@ -124,7 +124,7 @@ public class PlantationField extends AbstractField
     public @NotNull CompoundTag serializeNBT()
     {
         CompoundTag compound = super.serializeNBT();
-        compound.putString(TAG_FIELD_TYPE, plantationFieldType.name());
+        compound.putString(TAG_FIELD_TYPE, plantationFieldType.getRegistryName().toString());
         BlockPosUtil.writePosListToNBT(compound, TAG_WORKING_POS, workingPositions);
         return compound;
     }
@@ -133,7 +133,23 @@ public class PlantationField extends AbstractField
     public void deserializeNBT(@NotNull CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        plantationFieldType = Enum.valueOf(PlantationFieldType.class, compound.getString(TAG_FIELD_TYPE));
+        switch (Enum.valueOf(PlantationFieldType.class, compound.getString(TAG_FIELD_TYPE)))
+        {
+            case SUGAR_CANE -> plantationFieldType = PlantationFieldRegistries.sugarCaneField.get();
+            case CACTUS -> plantationFieldType = PlantationFieldRegistries.cactusField.get();
+            case BAMBOO -> plantationFieldType = PlantationFieldRegistries.bambooField.get();
+            case COCOA_BEANS -> plantationFieldType = PlantationFieldRegistries.cocoaBeansField.get();
+            case VINES -> plantationFieldType = PlantationFieldRegistries.vinesField.get();
+            case KELP -> plantationFieldType = PlantationFieldRegistries.kelpField.get();
+            case SEAGRASS -> plantationFieldType = PlantationFieldRegistries.seagrassField.get();
+            case SEA_PICKLES -> plantationFieldType = PlantationFieldRegistries.seaPicklesField.get();
+            case GLOWBERRIES -> plantationFieldType = PlantationFieldRegistries.glowberriesField.get();
+            case WEEPING_VINES -> plantationFieldType = PlantationFieldRegistries.weepingVinesField.get();
+            case TWISTING_VINES -> plantationFieldType = PlantationFieldRegistries.twistingVinesField.get();
+            case CRIMSON_FUNGUS -> plantationFieldType = PlantationFieldRegistries.crimsonPlantsField.get();
+            case WARPED_FUNGUS -> plantationFieldType = PlantationFieldRegistries.warpedPlantsField.get();
+        }
+        //plantationFieldType = PlantationFieldRegistries.getPlantationFieldRegistry().getValue(new ResourceLocation(
         workingPositions = BlockPosUtil.readPosListFromNBT(compound, TAG_WORKING_POS);
     }
 
@@ -141,7 +157,7 @@ public class PlantationField extends AbstractField
     public void serialize(final @NotNull FriendlyByteBuf buf)
     {
         super.serialize(buf);
-        buf.writeEnum(plantationFieldType);
+        buf.writeRegistryId(PlantationFieldRegistries.getPlantationFieldRegistry(), plantationFieldType);
         buf.writeInt(workingPositions.size());
         for (BlockPos workingPosition : workingPositions)
         {
@@ -153,9 +169,10 @@ public class PlantationField extends AbstractField
     public void deserialize(final @NotNull FriendlyByteBuf buf)
     {
         super.deserialize(buf);
-        plantationFieldType = buf.readEnum(PlantationFieldType.class);
+        plantationFieldType = buf.readRegistryIdSafe(PlantationFieldRegistries.FieldEntry.class);
         workingPositions = new ArrayList<>();
-        for (int index = 0; index < buf.readInt(); index++)
+        final int workingPositionCount = buf.readInt();
+        for (int index = 0; index < workingPositionCount; index++)
         {
             workingPositions.add(buf.readBlockPos());
         }
@@ -188,7 +205,7 @@ public class PlantationField extends AbstractField
 
         final PlantationField that = (PlantationField) o;
 
-        if (plantationFieldType != that.plantationFieldType)
+        if (!plantationFieldType.equals(that.plantationFieldType))
         {
             return false;
         }

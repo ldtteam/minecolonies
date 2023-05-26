@@ -118,7 +118,7 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public void deserializeNBT(@NotNull CompoundTag compound)
+    public void deserializeNBT(final @NotNull CompoundTag compound)
     {
         if (compound.contains(TAG_OWNER))
         {
@@ -137,14 +137,13 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(final @NotNull FriendlyByteBuf buf)
     {
         if (buf.readBoolean())
         {
             buildingId = buf.readBlockPos();
         }
     }
-
 
     @Override
     public int hashCode()

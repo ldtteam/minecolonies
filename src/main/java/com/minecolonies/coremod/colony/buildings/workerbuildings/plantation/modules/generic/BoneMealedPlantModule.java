@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.coremod.colony.fields.PlantationField;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
-import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
@@ -32,7 +32,7 @@ import java.util.Random;
  *     <li>Anything that grows on the field will be harvested, but only things that are 1 block high (multi block high things must break completely, else they are ignored).</li>
  * </ol>
  */
-public abstract class BoneMealedPlantModule extends PlantationModule
+public abstract class BoneMealedPlantModule extends AbstractPlantationModule
 {
     /**
      * The default percentage chance to be able to work on this field.
@@ -67,8 +67,8 @@ public abstract class BoneMealedPlantModule extends PlantationModule
 
     @Override
     public PlanterAIModuleResult workField(
-      final @NotNull PlantationField field,
-      final @NotNull EntityAIWorkPlanter planterAI,
+      final @NotNull IField field,
+      final @NotNull BasicPlanterAI planterAI,
       final @NotNull AbstractEntityCitizen worker,
       final @NotNull BlockPos workPosition,
       final @NotNull FakePlayer fakePlayer)
@@ -130,66 +130,16 @@ public abstract class BoneMealedPlantModule extends PlantationModule
         };
     }
 
-    @Override
-    public boolean needsWork(final PlantationField field)
-    {
-        // A bone-mealed field has no growth stage, since the growth stage is instant.
-        // Therefore, we need to prevent the worker from constantly running around on this field only.
-        // This is achieved by only allowing work when a percentage chance is met,
-        // so that the field is not often considered as "needing work".
-        int percentChance = Math.max(Math.min(getPercentageChance(), 100), 1);
-        boolean willWork = random.nextFloat() < (percentChance / 100F);
-        return willWork && !field.getWorkingPositions().isEmpty();
-    }
-
-    @Override
-    public @Nullable BlockPos getNextWorkingPosition(final PlantationField field)
-    {
-        // If there is anything to harvest, return the first position where a non-air block is present.
-        BlockPos positionToHarvest = getPositionToHarvest(field);
-        if (positionToHarvest != null)
-        {
-            return positionToHarvest;
-        }
-
-        // Get a random position on the field, which will act as the planting position.
-        int idx = random.nextInt(0, field.getWorkingPositions().size());
-        return field.getWorkingPositions().get(idx);
-    }
-
-    @Override
-    public List<ItemStack> getRequiredItemsForOperation()
-    {
-        return getValidBonemeal().stream().map(ItemStack::new).toList();
-    }
-
-    @Override
-    public int getActionLimit()
-    {
-        return 1;
-    }
-
-    /**
-     * Get the chance in percentages of being able to perform work on this field when asked.
-     * Defaults to {@link BoneMealedPlantModule#DEFAULT_PERCENTAGE_CHANCE}.
-     *
-     * @return a number between 1 and 100.
-     */
-    protected int getPercentageChance()
-    {
-        return DEFAULT_PERCENTAGE_CHANCE;
-    }
-
     /**
      * Check if the planter has bonemeal available.
      *
      * @param planterAI the AI class of the planter so instructions can be ordered to it.
      * @return whether the planter has bonemeal available.
      */
-    private boolean checkForBoneMeal(EntityAIWorkPlanter planterAI)
+    private boolean checkForBoneMeal(BasicPlanterAI planterAI)
     {
         List<ItemStack> bonemeal = getValidBonemeal().stream().map(ItemStack::new).toList();
-        return planterAI.checkIfRequestForItemExistOrCreate(new StackList(bonemeal,
+        return planterAI.requestItems(new StackList(bonemeal,
           RequestSystemTranslationConstants.REQUEST_TYPE_FERTILIZER,
           BONEMEAL_TO_KEEP,
           BONEMEAL_TO_KEEP));
@@ -202,7 +152,7 @@ public abstract class BoneMealedPlantModule extends PlantationModule
      * @param workPosition the position that has been chosen for work.
      * @return the {@link PlanterAIModuleResult} that the AI is going to perform.
      */
-    private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos workPosition)
+    private PlanterAIModuleState decideWorkAction(IField field, BlockPos workPosition)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(workPosition.above());
         if (isValidHarvestBlock(blockState))
@@ -226,9 +176,9 @@ public abstract class BoneMealedPlantModule extends PlantationModule
      * @return the position to harvest or null if no position needs harvesting.
      */
     @Nullable
-    private BlockPos getPositionToHarvest(PlantationField field)
+    private BlockPos getPositionToHarvest(IField field)
     {
-        return field.getWorkingPositions().stream()
+        return getWorkingPositions(field).stream()
                  .filter(pos -> isValidHarvestBlock(field.getColony().getWorld().getBlockState(pos.above())))
                  .findFirst()
                  .orElse(null);
@@ -279,5 +229,56 @@ public abstract class BoneMealedPlantModule extends PlantationModule
     protected boolean isValidPlantingBlock(BlockState blockState)
     {
         return blockState.isAir();
+    }
+
+    @Override
+    public boolean needsWork(final IField field)
+    {
+        // A bone-mealed field has no growth stage, since the growth stage is instant.
+        // Therefore, we need to prevent the worker from constantly running around on this field only.
+        // This is achieved by only allowing work when a percentage chance is met,
+        // so that the field is not often considered as "needing work".
+        int percentChance = Math.max(Math.min(getPercentageChance(), 100), 1);
+        boolean willWork = random.nextFloat() < (percentChance / 100F);
+        return willWork && !getWorkingPositions(field).isEmpty();
+    }
+
+    /**
+     * Get the chance in percentages of being able to perform work on this field when asked.
+     * Defaults to {@link BoneMealedPlantModule#DEFAULT_PERCENTAGE_CHANCE}.
+     *
+     * @return a number between 1 and 100.
+     */
+    protected int getPercentageChance()
+    {
+        return DEFAULT_PERCENTAGE_CHANCE;
+    }
+
+    @Override
+    public @Nullable BlockPos getNextWorkingPosition(final IField field)
+    {
+        // If there is anything to harvest, return the first position where a non-air block is present.
+        BlockPos positionToHarvest = getPositionToHarvest(field);
+        if (positionToHarvest != null)
+        {
+            return positionToHarvest;
+        }
+
+        // Get a random position on the field, which will act as the planting position.
+        List<BlockPos> workingPositions = getWorkingPositions(field);
+        int idx = random.nextInt(0, workingPositions.size());
+        return workingPositions.get(idx);
+    }
+
+    @Override
+    public List<ItemStack> getRequiredItemsForOperation()
+    {
+        return getValidBonemeal().stream().map(ItemStack::new).toList();
+    }
+
+    @Override
+    public int getActionLimit()
+    {
+        return 1;
     }
 }

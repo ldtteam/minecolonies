@@ -13,7 +13,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -215,7 +214,7 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
                     }
                 }
 
-                final Item item = PlantationModuleRegistry.getPlantationModule(field.getPlantationFieldType()).getItem();
+                final Item item = field.getPlantationFieldType().getModule().getItem();
                 rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(item));
             }
         });

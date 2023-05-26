@@ -3,13 +3,12 @@ package com.minecolonies.coremod.tileentities;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
+import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -88,11 +87,11 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
-    public Set<PlantationFieldType> getPlantationFieldTypes()
+    public Set<PlantationFieldRegistries.FieldEntry> getPlantationFieldTypes()
     {
         return tagPosMap.values().stream()
                  .flatMap(Collection::stream)
-                 .map(PlantationModuleRegistry::getFromFieldTag)
+                 .map(this::getPlantationFieldEntryFromFieldTag)
                  .filter(Objects::nonNull)
                  .collect(Collectors.toSet());
     }
@@ -155,6 +154,14 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     public boolean getMirror()
     {
         return this.mirror;
+    }
+
+    private PlantationFieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
+    {
+        return PlantationFieldRegistries.getPlantationFieldRegistry().getValues().stream()
+                 .filter(f -> f.getModule().getFieldTag().equals(fieldTag))
+                 .findFirst()
+                 .orElse(null);
     }
 
     @Override

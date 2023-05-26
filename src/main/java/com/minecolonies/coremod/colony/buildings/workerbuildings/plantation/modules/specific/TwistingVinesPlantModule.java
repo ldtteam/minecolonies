@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,10 +33,14 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
 
     /**
      * Default constructor.
+     *
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param item     the item which is harvested.
      */
-    public TwistingVinesPlantModule()
+    public TwistingVinesPlantModule(final String fieldTag, final String workTag, final Item item)
     {
-        super("twistv_field", "twistv_vine", Items.TWISTING_VINES);
+        super(fieldTag, workTag, item);
     }
 
     @Override

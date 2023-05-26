@@ -1,94 +1,44 @@
-package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
+package com.minecolonies.api.colony.fields.plantation;
 
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.fields.PlantationField;
-import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * Base class for planter modules that determines how the AI should work specific fields.
+ * Interface for planter modules that determines how the AI should work specific fields.
  */
-public abstract class PlantationModule
+public interface IPlantationModule
 {
-    /**
-     * The default maximum amount of plants the field can have.
-     */
-    protected static final int DEFAULT_MAX_PLANTS = 20;
-
-    /**
-     * The tag that the field anchor block contains in order to select which of these modules to use.
-     */
-    private final String fieldTag;
-
-    /**
-     * The tag that the individual working positions must contain.
-     */
-    private final String workTag;
-
-    /**
-     * The block which is harvested in this module.
-     */
-    private final Item item;
-
-    /**
-     * Default constructor.
-     *
-     * @param fieldTag the tag of the field anchor block.
-     * @param workTag  the tag of the working positions.
-     * @param item     the item which is harvested.
-     */
-    protected PlantationModule(
-      final String fieldTag,
-      final String workTag,
-      final Item item)
-    {
-        this.fieldTag = fieldTag;
-        this.workTag = workTag;
-        this.item = item;
-    }
-
     /**
      * Get the field tag property.
      *
      * @return the field tag.
      */
-    public final String getFieldTag()
-    {
-        return fieldTag;
-    }
+    String getFieldTag();
 
     /**
      * Get the work tag property.
      *
      * @return the work tag.
      */
-    public final String getWorkTag()
-    {
-        return workTag;
-    }
+    String getWorkTag();
 
     /**
      * Get the item the module uses.
-     * (This is obtained through the block using {@link Block#asItem()})
      *
      * @return the item.
      */
-    public final Item getItem()
-    {
-        return item;
-    }
+    Item getItem();
 
     /**
      * Get the amount of plants to request when the planter no longer has any left.
@@ -96,138 +46,83 @@ public abstract class PlantationModule
      *
      * @return the amount of plants to request.
      */
-    public int getPlantsToRequest()
-    {
-        return (int) Math.ceil(new ItemStack(item).getMaxStackSize() / 4d);
-    }
+    int getPlantsToRequest();
 
     /**
      * Get the required research effect for this module.
+     * Null if there is no research required for this field.
      *
      * @return the key of where to find the effect.
      */
-    public ResourceLocation getRequiredResearchEffect()
-    {
-        return null;
-    }
+    ResourceLocation getRequiredResearchEffect();
 
     /**
      * Core function for the planter module, is responsible for telling the AI what to do on the specific field.
      *
      * @param field        the field reference to fetch data from.
-     * @param planterAI    the AI class of the planter so instructions can be ordered to it.
+     * @param planterAI    the AI class of the planter so basic instructions can be ordered to it.
      * @param worker       the worker entity working on the plantation.
      * @param workPosition the position that has been chosen for work.
      * @param fakePlayer   a fake player class to use.
      * @return a basic enum state telling the planter AI what the AI should be doing next.
      */
-    public abstract PlanterAIModuleResult workField(
-      @NotNull PlantationField field,
-      @NotNull EntityAIWorkPlanter planterAI,
+    PlanterAIModuleResult workField(
+      @NotNull IField field,
+      @NotNull BasicPlanterAI planterAI,
       @NotNull AbstractEntityCitizen worker,
       @NotNull BlockPos workPosition,
       @NotNull FakePlayer fakePlayer);
 
     /**
-     * Determines if the given field needs work.
+     * Obtains the next working position for the given field, if any.
      *
-     * @param field the field reference to fetch data from.
-     * @return true if so.
+     * @param field the field instance.
+     * @return the next position to work on, or null.
      */
-    public boolean needsWork(PlantationField field)
-    {
-        return getNextWorkingPosition(field) != null;
-    }
+    @Nullable BlockPos getNextWorkingPosition(IField field);
 
     /**
-     * Determines if there's any work left to do on this field. If so, where.
+     * Get a list of actual valid working positions, based on the tags read from the plantation field.
      *
-     * @param field the field reference to fetch data from.
-     * @return the position inside the field that needs work or null.
+     * @param world            the level the tags were read from.
+     * @param workingPositions the list of initially parsed working positions, based on work tag.
+     * @return the list of actually valid parsed working positions.
      */
-    @Nullable
-    public abstract BlockPos getNextWorkingPosition(PlantationField field);
+    List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions);
 
     /**
-     * Returns a list of items that are mandatory for this module to function.
+     * Get whether a field needs work or not.
      *
-     * @return a list of items.
+     * @param field the field instance.
+     * @return whether the field needs work.
      */
-    public abstract List<ItemStack> getRequiredItemsForOperation();
-
-    /**
-     * Returns the requested tool type in order to work on this module.
-     *
-     * @return the tool to work on this module.
-     */
-    public abstract ToolType getRequiredTool();
+    boolean needsWork(IField field);
 
     /**
      * Returns the maximum amount of actions that can be performed on a field, before the planter must forcefully switch to a new field.
      *
      * @return the maximum of actions the planter can perform on the field per cycle.
      */
-    public abstract int getActionLimit();
+    int getActionLimit();
 
     /**
-     * Get the appropriate harvesting result for a mine block result.
+     * Returns a list of items that are mandatory for this module to function.
      *
-     * @param result the mine block result.
-     * @return the harvesting result.
+     * @return a list of items.
      */
-    protected final PlanterAIModuleResult getHarvestingResultFromMiningResult(PlanterMineBlockResult result)
-    {
-        return switch (result)
-        {
-            case NO_TOOL -> PlanterAIModuleResult.REQUIRES_ITEMS;
-            case MINING -> PlanterAIModuleResult.HARVESTING;
-            case MINED -> PlanterAIModuleResult.HARVESTED;
-        };
-    }
+    List<ItemStack> getRequiredItemsForOperation();
 
     /**
-     * Get the appropriate clearing result for a mine block result.
+     * Returns the requested tool type in order to work on this module.
      *
-     * @param result the mine block result.
-     * @return the clearing result.
+     * @return the tool to work on this module.
      */
-    protected final PlanterAIModuleResult getClearingResultFromMiningResult(PlanterMineBlockResult result)
-    {
-        return switch (result)
-        {
-            case NO_TOOL -> PlanterAIModuleResult.REQUIRES_ITEMS;
-            case MINING -> PlanterAIModuleResult.CLEARING;
-            case MINED -> PlanterAIModuleResult.CLEARED;
-        };
-    }
-
-    /**
-     * Returns the list of valid working positions.
-     *
-     * @param world            the world all of these positions appear in.
-     * @param workingPositions the original input working positions.
-     * @return the new list.
-     */
-    public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
-    {
-        return workingPositions.stream().distinct().limit(getMaxPlants()).collect(Collectors.toList());
-    }
-
-    /**
-     * Get the maximum amount of plants this module is allowed to handle.
-     * Defaults to {@link PlantationModule#DEFAULT_MAX_PLANTS}.
-     *
-     * @return the maximum amount of plants.
-     */
-    public int getMaxPlants()
-    {
-        return DEFAULT_MAX_PLANTS;
-    }
+    ToolType getRequiredTool();
 
     /**
      * Enum containing possible states obtained from a mining result.
      */
-    public enum PlanterAIModuleState
+    enum PlanterAIModuleState
     {
         /**
          * Something is wrong in the planter AI module, request to reset the AI back to decision state.
@@ -297,7 +192,7 @@ public abstract class PlantationModule
     /**
      * Enum containing possible states obtained from a mining result.
      */
-    public enum PlanterMineBlockResult
+    enum PlanterMineBlockResult
     {
         /**
          * The planter doesn't have the tool to mine the defined block.
@@ -316,7 +211,7 @@ public abstract class PlantationModule
     /**
      * Enum containing the reset state of the result state.
      */
-    public enum PlanterAIModuleResultResetState
+    enum PlanterAIModuleResultResetState
     {
         /**
          * Do not reset the position/field.
@@ -335,7 +230,7 @@ public abstract class PlantationModule
     /**
      * Class containing possible states that the planter AI can be in.
      */
-    public static class PlanterAIModuleResult
+    class PlanterAIModuleResult
     {
         /**
          * Something is wrong in the planter AI module, request to reset the AI back to decision state.

@@ -118,6 +118,8 @@ public class WindowField extends AbstractWindowSkeleton
         {
             registerButton(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), this::onDirectionalButtonClick);
         }
+
+        updateAll();
     }
 
     /**
@@ -159,6 +161,15 @@ public class WindowField extends AbstractWindowSkeleton
         Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()));
     }
 
+    private void updateAll()
+    {
+        updateFarmField();
+        updateElementStates();
+        updateOwner();
+        updateSeed();
+        updateButtons();
+    }
+
     /**
      * Sends a message to the server to update the seed of the field.
      *
@@ -173,32 +184,6 @@ public class WindowField extends AbstractWindowSkeleton
 
             farmField.setSeed(stack);
         }
-    }
-
-    /**
-     * Get the current colony, if any, from the tile entity.
-     *
-     * @return the colony view, if exists.
-     */
-    @Nullable
-    private IColonyView getCurrentColony()
-    {
-        if (tileEntityScarecrow.getCurrentColony() instanceof IColonyView colonyView)
-        {
-            return colonyView;
-        }
-        return null;
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-        updateFarmField();
-        updateElementStates();
-        updateOwner();
-        updateSeed();
-        updateButtons();
     }
 
     /**
@@ -320,6 +305,21 @@ public class WindowField extends AbstractWindowSkeleton
     }
 
     /**
+     * Get the current colony, if any, from the tile entity.
+     *
+     * @return the colony view, if exists.
+     */
+    @Nullable
+    private IColonyView getCurrentColony()
+    {
+        if (tileEntityScarecrow.getCurrentColony() instanceof IColonyView colonyView)
+        {
+            return colonyView;
+        }
+        return null;
+    }
+
+    /**
      * Get translation keys for the different directional buttons.
      *
      * @param direction the direction.
@@ -337,5 +337,12 @@ public class WindowField extends AbstractWindowSkeleton
             case 3, -1 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_LEFT;
             default -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST;
         };
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        updateAll();
     }
 }
