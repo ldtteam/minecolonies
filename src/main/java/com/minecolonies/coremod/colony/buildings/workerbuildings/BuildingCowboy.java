@@ -9,16 +9,17 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,6 +96,45 @@ public class BuildingCowboy extends AbstractBuilding
             return false;
         }
         return super.canEat(stack);
+    }
+
+    /**
+     * Cow (and Mooshroom) herding module
+     */
+    public static class HerdingModule extends AnimalHerdingModule
+    {
+        public HerdingModule()
+        {
+            super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
+
+            if (animal instanceof MushroomCow)
+            {
+                recipes.add(new GenericRecipe(null,
+                        new ItemStack(Items.MUSHROOM_STEW),                                                 // output
+                        Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
+                        Collections.emptyList(),                                                            // extra output
+                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
+                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+            }
+            else if (animal instanceof Cow)
+            {
+                recipes.add(new GenericRecipe(null,
+                        new ItemStack(Items.MILK_BUCKET),                                                   // output
+                        Collections.emptyList(),                                                            // alt output
+                        Collections.emptyList(),                                                            // extra output
+                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
+                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+            }
+
+            return recipes;
+        }
     }
 
     /**
@@ -175,27 +215,6 @@ public class BuildingCowboy extends AbstractBuilding
         public void onStewed()
         {
             ++this.currentStew;
-        }
-
-        @NotNull
-        @Override
-        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
-        {
-            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
-
-            final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "",
-                    new ItemStack(Items.MILK_BUCKET), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BUCKET)));
-            recipes.add(GenericRecipe.of(milk, null));
-
-            final GenericRecipe stew = new GenericRecipe(null,
-                    new ItemStack(Items.MUSHROOM_STEW),                                                 // output
-                    Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
-                    Collections.emptyList(),                                                            // extra output
-                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
-                    1, Blocks.AIR, null, ToolType.NONE, Collections.emptyList(), 1);
-            recipes.add(stew);
-
-            return recipes;
         }
     }
 }

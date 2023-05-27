@@ -5,14 +5,16 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BeekeeperCollectionSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -245,15 +248,20 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         @NotNull
         @Override
-        public List<LootTableAnalyzer.LootDrop> getExpectedLoot(@NotNull final Animal animal)
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
         {
-            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot(animal));
-            if (animal instanceof Bee)
-            {
-                drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEYCOMB, 3)), 1, 0, false));
-                drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEY_BOTTLE)), 1, 0, false));
-            }
-            return drops;
+            final List<IGenericRecipe> recipes = new ArrayList<>(); // we don't kill the bees so don't use the default
+
+            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                    0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
+
+            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
+                    Collections.emptyList(), Collections.emptyList(),
+                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
+                    0, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+
+            return recipes;
         }
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -120,6 +121,29 @@ public final class RecipeAnalyzer
         }
 
         return animals;
+    }
+
+    /**
+     * Find "recipes" from a particular animal herding module.
+     *
+     * @param animals all possible animals (from {@link #createAnimals})
+     * @param module  the herding module
+     * @return recipes for that module
+     */
+    public static List<IGenericRecipe> findRecipes(@NotNull final List<Animal> animals,
+                                                   @NotNull final AnimalHerdingModule module)
+    {
+        final List<IGenericRecipe> recipes = new ArrayList<>();
+
+        for (final Animal animal : animals)
+        {
+            if (module.isCompatible(animal))
+            {
+                recipes.addAll(module.getRecipesForDisplayPurposesOnly(animal));
+            }
+        }
+
+        return recipes;
     }
 
     private RecipeAnalyzer()
