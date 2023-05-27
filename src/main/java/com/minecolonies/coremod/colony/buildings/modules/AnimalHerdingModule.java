@@ -3,10 +3,14 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -65,16 +69,42 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     }
 
     /**
-     * Returns a list of expected loot from farming the animals.
-     * Can be overridden if something other than just killing the animals happens.
-     * This should *not* be used to actually generate loot; it's just informative.
+     * Gets a list of loot tables that should be available for drop
+     * analysis.  This is not intended for actually generating loot,
+     * just for display purposes such as in JEI (e.g. via {@link #getRecipesForDisplayPurposesOnly}).
      *
      * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
-     * @return The list of expected loot.
+     * @return The list of loot table ids
      */
     @NotNull
-    public List<LootTableAnalyzer.LootDrop> getExpectedLoot(@NotNull final Animal animal)
+    public List<ResourceLocation> getLootTables(@NotNull final Animal animal)
     {
-        return CustomRecipeManager.getInstance().getLootDrops(animal.getLootTable());
+        return Collections.singletonList(animal.getLootTable());
+    }
+
+    /**
+     * Get a list of "recipes" for items obtainable by herding the given animal.  This can include loot drops
+     * for killing the animal as well as anything else acquired through other means.
+     *
+     * These are purely for JEI display purposes and don't have to represent actual crafting recipes.
+     *
+     * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
+     * @return the list of additional display recipes.
+     */
+    @NotNull
+    public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
+    {
+        return Collections.singletonList(new GenericRecipe(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()),
+                ItemStack.EMPTY,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.singletonList(getBreedingItems()),
+                0,
+                Blocks.AIR,
+                animal.getLootTable(),
+                ToolType.AXE,
+                animal,
+                Collections.emptyList(),
+                0));
     }
 }

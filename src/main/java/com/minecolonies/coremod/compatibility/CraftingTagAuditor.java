@@ -12,11 +12,13 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.coremod.colony.crafting.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.LevelResource;
@@ -30,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -171,11 +172,13 @@ public class CraftingTagAuditor
     {
         final Map<CraftingType, List<IGenericRecipe>> vanillaRecipesMap =
                 RecipeAnalyzer.buildVanillaRecipesMap(server.getRecipeManager(), server.overworld());
+        final List<Animal> animals = RecipeAnalyzer.createAnimals(server.overworld());
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
                 .sorted(Comparator.comparing(m -> m instanceof SimpleCraftingModule).reversed())
-                .collect(Collectors.toList());  // sort the simple modules first (2x2 crafting, personal only)
-        final Map<ItemStorage, Map<ICraftingBuildingModule, List<IGenericRecipe>>> craftingMap = new HashMap<>();
+                .toList();  // sort the simple modules first (2x2 crafting, personal only)
+        final List<AnimalHerdingModule> herders = getHerdingModules();
+        final Map<ItemStorage, Map<Object, List<IGenericRecipe>>> craftingMap = new HashMap<>();
 
         // initially map every vanilla craftable
         for (final List<IGenericRecipe> recipeList : vanillaRecipesMap.values())
@@ -199,19 +202,34 @@ public class CraftingTagAuditor
                 add(customRecipeManager, craftingMap, crafter, recipe);
             }
         }
+        for (final AnimalHerdingModule herder : herders)
+        {
+            writer.write(',');
+            writer.write(herder.getHerdingJob().getJobRegistryEntry().getKey().getPath());
+
+            final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(animals, herder);
+            for (final IGenericRecipe recipe : recipes)
+            {
+                add(customRecipeManager, craftingMap, herder, recipe);
+            }
+        }
         writer.newLine();
 
         for (final ItemStack item : getAllItems())
         {
             writeItemData(writer, item);
 
-            final Map<ICraftingBuildingModule, List<IGenericRecipe>> crafterMap =
+            final Map<Object, List<IGenericRecipe>> crafterMap =
                     craftingMap.getOrDefault(new ItemStorage(item, true, false), Collections.emptyMap());
 
             writeCrafterValue(writer, crafterMap, null);
             for (final ICraftingBuildingModule crafter : crafters)
             {
                 writeCrafterValue(writer, crafterMap, crafter);
+            }
+            for (final AnimalHerdingModule herder : herders)
+            {
+                writeCrafterValue(writer, crafterMap, herder);
             }
             writer.newLine();
         }
@@ -225,7 +243,7 @@ public class CraftingTagAuditor
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
                 .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER.get()))
-                .collect(Collectors.toList());
+                .toList();
 
         writer.write("type,");
         writeItemHeaders(writer);
@@ -246,7 +264,7 @@ public class CraftingTagAuditor
                     .distinct()
                     .sorted(Comparator.comparing(s -> ForgeRegistries.ITEMS.getKey(s.getItem()).toString()))
                     .map(ItemStorage::getItemStack)
-                    .collect(Collectors.toList());
+                    .toList();
             for (final ItemStack skin : allSkins)
             {
                 if (first)
@@ -330,8 +348,8 @@ public class CraftingTagAuditor
     }
 
     private static void writeCrafterValue(@NotNull final BufferedWriter writer,
-                                          @NotNull final Map<ICraftingBuildingModule, List<IGenericRecipe>> crafterMap,
-                                          @Nullable final ICraftingBuildingModule crafter) throws IOException
+                                          @NotNull final Map<Object, List<IGenericRecipe>> crafterMap,
+                                          @Nullable final Object crafter) throws IOException
     {
         writer.write(',');
 
@@ -343,8 +361,8 @@ public class CraftingTagAuditor
     }
 
     private static void add(@NotNull final CustomRecipeManager customRecipeManager,
-                            @NotNull final Map<ItemStorage, Map<ICraftingBuildingModule, List<IGenericRecipe>>> craftingMap,
-                            @Nullable final ICraftingBuildingModule crafter,
+                            @NotNull final Map<ItemStorage, Map<Object, List<IGenericRecipe>>> craftingMap,
+                            @Nullable final Object crafter,
                             @NotNull final IGenericRecipe recipe)
     {
         for (final ItemStack stack : recipe.getAllMultiOutputs())
@@ -364,8 +382,8 @@ public class CraftingTagAuditor
         }
     }
 
-    private static void add(@NotNull final Map<ItemStorage, Map<ICraftingBuildingModule, List<IGenericRecipe>>> craftingMap,
-                            @Nullable final ICraftingBuildingModule crafter,
+    private static void add(@NotNull final Map<ItemStorage, Map<Object, List<IGenericRecipe>>> craftingMap,
+                            @Nullable final Object crafter,
                             @NotNull final IGenericRecipe recipe,
                             @NotNull final ItemStack stack)
     {
@@ -385,9 +403,29 @@ public class CraftingTagAuditor
             {
                 final IBuildingModule module = producer.get();
 
-                if (module instanceof ICraftingBuildingModule)
+                if (module instanceof ICraftingBuildingModule crafting)
                 {
-                    modules.add((ICraftingBuildingModule) module);
+                    modules.add(crafting);
+                }
+            }
+        }
+
+        return modules;
+    }
+
+    private static List<AnimalHerdingModule> getHerdingModules()
+    {
+        final List<AnimalHerdingModule> modules = new ArrayList<>();
+
+        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
+        {
+            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
+            {
+                final IBuildingModule module = producer.get();
+
+                if (module instanceof AnimalHerdingModule herding)
+                {
+                    modules.add(herding);
                 }
             }
         }

@@ -64,7 +64,6 @@ public class JEIPlugin implements IModPlugin
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
-            final Map<JobEntry, HerderRecipeCategory> herdingCategories = new HashMap<>();
 
             for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
@@ -78,36 +77,25 @@ public class JEIPlugin implements IModPlugin
                         GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
                         if (category == null)
                         {
-                            category = new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper);
+                            category = new GenericRecipeCategory(building, job, guiHelper, modIdHelper);
                             craftingCategories.put(job.getJobRegistryEntry(), category);
                         }
-                        else
-                        {
-                            category.addModule(crafting);
-                        }
+                        category.addModule(crafting);
                     }
                 }
-
-                if (module instanceof final AnimalHerdingModule herding)
+                else if (module instanceof final AnimalHerdingModule herding)
                 {
                     final IJob<?> job = herding.getHerdingJob();
-                    HerderRecipeCategory category = herdingCategories.get(job.getJobRegistryEntry());
+                    GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
                     if (category == null)
                     {
-                        category = new HerderRecipeCategory(building, job, herding, guiHelper);
-                        herdingCategories.put(job.getJobRegistryEntry(), category);
+                        category = new GenericRecipeCategory(building, job, guiHelper, modIdHelper);
+                        craftingCategories.put(job.getJobRegistryEntry(), category);
                     }
-                    else
-                    {
-                        category.addModule(herding);
-                    }
+                    category.addModule(herding);
                 }
             }
 
-            for (final HerderRecipeCategory category : herdingCategories.values())
-            {
-                registerCategory(registration, category);
-            }
             for (final GenericRecipeCategory category : craftingCategories.values())
             {
                 registerCategory(registration, category);

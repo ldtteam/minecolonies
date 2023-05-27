@@ -277,11 +277,11 @@ public class CustomRecipeManager
                     {
                         if (herding.isCompatible(animal))
                         {
-                            lootIds.add(animal.getLootTable());
+                            lootIds.addAll(herding.getLootTables(animal));
                         }
                     }
                 }
-                if (module instanceof ICraftingBuildingModule crafting)
+                else if (module instanceof ICraftingBuildingModule crafting)
                 {
                     lootIds.addAll(crafting.getAdditionalLootTables());
                 }
