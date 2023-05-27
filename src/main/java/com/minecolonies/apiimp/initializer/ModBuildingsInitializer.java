@@ -198,7 +198,6 @@ public final class ModBuildingsInitializer
                                                                                      .with(BuildingCowboy.STEWING_AMOUNT, new IntSetting(1))
                                                                                      .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1)), () -> SettingsModuleView::new)
                                 .addBuildingModuleProducer(BuildingCowboy.HerdingModule::new)
-                                .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
                                 .createBuildingEntry());
 
         ModBuildings.crusher = DEFERRED_REGISTER.register(ModBuildings.CRUSHER_ID, () -> new BuildingEntry.Builder()
