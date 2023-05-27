@@ -96,7 +96,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         {
             --milkCoolDown;
         }
-        else if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToMilk() && result.equals(START_WORKING))
+        else if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToMilk() && result.equals(START_WORKING))
         {
             return COWBOY_MILK;
         }
@@ -105,7 +105,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         {
             --stewCoolDown;
         }
-        else if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToStew() && result.equals(START_WORKING))
+        else if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToStew() && result.equals(START_WORKING))
         {
             return COWBOY_STEW;
         }
@@ -118,12 +118,12 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
-        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToMilk() &&
+        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToMilk() &&
                 !searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow)).isEmpty())
         {
             list.add(new ItemStack(Items.BUCKET));
         }
-        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).canTryToStew() &&
+        if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToStew() &&
                 !searchForAnimals(a -> a instanceof MushroomCow).isEmpty())
         {
             list.add(new ItemStack(Items.BOWL));
@@ -168,7 +168,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         {
             if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.MILK_BUCKET)))
             {
-                building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).onMilked();
+                building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onMilked();
                 worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.MILK_BUCKET)));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
@@ -223,7 +223,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             {
                 if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()))
                 {
-                    building.getFirstModuleOccurance(BuildingCowboy.MilkingModule.class).onStewed();
+                    building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
                     worker.getCitizenItemHandler().removeHeldItem();
                     equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(fakePlayer.getMainHandItem()));
                     InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));

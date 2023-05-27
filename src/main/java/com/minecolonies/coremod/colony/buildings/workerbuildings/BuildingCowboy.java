@@ -2,13 +2,13 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
@@ -103,8 +103,12 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Cow (and Mooshroom) herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule
+    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IPersistentModule
     {
+        private int currentMilk;
+        private int currentStew;
+        private int currentMilkDays;
+
         public HerdingModule()
         {
             super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
@@ -137,28 +141,10 @@ public class BuildingCowboy extends AbstractBuilding
 
             return recipes;
         }
-    }
-
-    /**
-     * Custom crafting module to indicate that we produce milk buckets (and soup, given mooshrooms).
-     * (This is just for JEI and does not mean they're crafted on demand... although that could be changed.)
-     */
-    public static class MilkingModule extends AbstractCraftingBuildingModule.Custom implements IBuildingEventsModule
-    {
-        private int currentMilk;
-        private int currentStew;
-        private int currentMilkDays;
-
-        public MilkingModule()
-        {
-            super(ModJobs.cowboy.get());
-        }
 
         @Override
         public void serializeNBT(@NotNull CompoundTag compound)
         {
-            super.serializeNBT(compound);
-
             compound.putInt("milkValue", currentMilk);
             compound.putInt("stewValue", currentStew);
             compound.putInt("milkDays", currentMilkDays);
@@ -167,8 +153,6 @@ public class BuildingCowboy extends AbstractBuilding
         @Override
         public void deserializeNBT(CompoundTag compound)
         {
-            super.deserializeNBT(compound);
-
             this.currentMilk = compound.getInt("milkValue");
             this.currentStew = compound.getInt("stewValue");
             this.currentMilkDays = compound.getInt("milkDays");
