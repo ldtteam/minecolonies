@@ -141,13 +141,6 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
             colonyQuest.getColony().getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
         }
 
-        /*
-         *   "com.minecolonies.coremod.questobjectives.buildbuilding": "I am still waiting for you to build %d level %d %s!",
-         *   "com.minecolonies.coremod.questobjectives.buildbuilding.existing": "I am still waiting for you to reach level %d for %d %s!",
-         *   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative": "I am still waiting for you to build or upgrade %d levels of %s!",
-         *   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!"
-         */
-
         return new BuildingProgressInstance(false);
     }
 
