@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "pack-format": 1,
+  "desc": "Ray hasn't send me a description yet",
+  "authors": [
+    "Raycoms",
+    "John Reiher",
+    "SomeAddons",
+    "Thodor12"
+  ],
+  "mods": [
+    "structurize",
+    "minecolonies"
+  ],
+  "name": "Colonial",
+  "icon": ""
+}
