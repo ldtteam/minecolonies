@@ -9,6 +9,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -27,18 +29,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
  * Abstract class for all Citizen Herder AIs
  */
-public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B extends AbstractBuilding, T extends Animal> extends AbstractEntityAIInteract<J, B>
+public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B>
 {
     /**
      * How many animals per hut level the worker should max have.
@@ -49,6 +53,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * Amount of animals needed to bread.
      */
     private static final int NUM_OF_ANIMALS_TO_BREED = 2;
+
+    /**
+     * Request this many sets of breeding items at once, to reduce courier workload.
+     */
+    private static final int EXTRA_BREEDING_ITEMS_REQUEST = 8;
 
     /**
      * Butchering attack damage.
@@ -80,12 +89,27 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * New born age.
      */
-    private static final double MAX_ENTITY_AGE = -24000.0;
+    private static final double MAX_ENTITY_AGE = AgeableMob.BABY_START_AGE;
 
     /**
      * Xp per action, like breed feed butcher
      */
     protected static final double XP_PER_ACTION = 0.5;
+
+    /**
+     * The current herding module we're working on
+     */
+    @Nullable protected AnimalHerdingModule current_module;
+
+    /**
+     * Selected breeding partners
+     */
+    private final List<Animal> animalsToBreed = new ArrayList<>();
+
+    /**
+     * Prevents retrying breeding too quickly if last attempt failed
+     */
+    private int breedTimeOut = 0;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -122,7 +146,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (building.getSetting(AbstractBuilding.BREEDING).getValue() ||
                 building.getSetting(AbstractBuilding.FEEDING).getValue())
         {
-            list.add(getRequestBreedingItems());
+            for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
+            {
+                list.addAll(getRequestBreedingItems(module));
+            }
         }
         return list;
     }
@@ -160,48 +187,56 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        final List<T> animals = new ArrayList<>(searchForAnimals());
-
-        if (animals.isEmpty())
+        for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
         {
-            return DECIDE;
-        }
-
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
-
-        int numOfBreedableAnimals = 0;
-        int numOfFeedableAnimals = 0;
-        for (final Animal entity : animals)
-        {
-            if (isBreedAble(entity))
+            final List<? extends Animal> animals = searchForAnimals(module::isCompatible);
+            if (animals.isEmpty())
             {
-                numOfBreedableAnimals++;
+                continue;
             }
-            else if (MAX_ENTITY_AGE / entity.getAge() <= 1 + getSecondarySkillLevel()/100.0)
+
+            current_module = module;
+            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
+
+            int numOfBreedableAnimals = 0;
+            int numOfFeedableAnimals = 0;
+            for (final Animal entity : animals)
             {
-                numOfFeedableAnimals++;
+                if (isBreedAble(entity))
+                {
+                    numOfBreedableAnimals++;
+                }
+                else if (isFeedAble(entity))
+                {
+                    numOfFeedableAnimals++;
+                }
+            }
+
+            final boolean hasBreedingItem =
+                    InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()),
+                            (ItemStack stack) -> ItemStackUtils.compareItemStackListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
+
+            if (!searchForItemsInArea().isEmpty())
+            {
+                return HERDER_PICKUP;
+            }
+            else if (maxAnimals(animals))
+            {
+                return HERDER_BUTCHER;
+            }
+            else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem && breedTimeOut == 0)
+            {
+                return HERDER_BREED;
+            }
+            else if (canFeedChildren() && numOfFeedableAnimals > 0 && hasBreedingItem)
+            {
+                return HERDER_FEED;
             }
         }
 
-        final boolean hasBreedingItem =
-          InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()),
-            (ItemStack stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, getBreedingItem())) > 1;
-
-        if (!searchForItemsInArea().isEmpty())
+        if (breedTimeOut > 0)
         {
-            return HERDER_PICKUP;
-        }
-        else if (maxAnimals(animals))
-        {
-            return HERDER_BUTCHER;
-        }
-        else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
-        {
-            return HERDER_BREED;
-        }
-        else if (canFeedChildren() && numOfFeedableAnimals > 0 && hasBreedingItem)
-        {
-            return HERDER_FEED;
+            --breedTimeOut;
         }
         return START_WORKING;
     }
@@ -214,7 +249,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean isBreedAble(final Animal entity)
     {
-        return entity.getAge() == 0 && entity.canFallInLove();
+        return entity.getAge() == 0 && (entity.isInLove() || entity.canFallInLove());
+    }
+
+    /**
+     * Checks if we can feed this entity
+     *
+     * @param entity to check
+     * @return true if feed able
+     */
+    protected boolean isFeedAble(final Animal entity)
+    {
+        return entity.isBaby() && MAX_ENTITY_AGE / entity.getAge() <= 1 + getSecondarySkillLevel()/100.0;
     }
 
     /**
@@ -258,6 +304,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private IAIState prepareForHerding()
     {
+        if (current_module == null)
+        {
+            return DECIDE;
+        }
+
         for (final ToolType tool : getExtraToolsNeeded())
         {
             if (checkForToolOrWeapon(tool))
@@ -269,8 +320,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (building.getSetting(AbstractBuilding.BREEDING).getValue() ||
                 building.getSetting(AbstractBuilding.FEEDING).getValue())
         {
-            final ItemStack breedingItem = getBreedingItem();
-            checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
+            for (final ItemStack breedingItem : current_module.getBreedingItems())
+            {
+                checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getCount() * EXTRA_BREEDING_ITEMS_REQUEST, breedingItem.getCount());
+            }
         }
 
         for (final ItemStack item : getExtraItemsNeeded())
@@ -288,7 +341,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected IAIState butcherAnimals()
     {
-        final List<T> animals = new ArrayList<>(searchForAnimals());
+        if (current_module == null)
+        {
+            return DECIDE;
+        }
+
+        final List<? extends Animal> animals = searchForAnimals(current_module::isCompatible);
 
         if (!maxAnimals(animals))
         {
@@ -329,43 +387,76 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected IAIState breedAnimals()
     {
-        final List<? extends T> animals = searchForAnimals();
+        if (current_module == null)
+        {
+            worker.getCitizenItemHandler().removeHeldItem();
+            return DECIDE;
+        }
 
-        final Animal animalOne = animals
-                                         .stream()
-                                         .filter(this::isBreedAble)
-                                         .findAny()
-                                         .orElse(null);
+        if (breedTwoAnimals())
+        {
+            return getState();
+        }
+
+        final Predicate<Animal> predicate = ((Predicate<Animal>) current_module::isCompatible).and(this::isBreedAble);
+        final List<? extends Animal> breedables = new ArrayList<>(searchForAnimals(predicate));
+        Collections.shuffle(breedables);
+
+        final Animal animalOne = breedables.stream().findAny().orElse(null);
 
         if (animalOne == null)
         {
+            worker.getCitizenItemHandler().removeHeldItem();
+            breedTimeOut = 15;
             return DECIDE;
         }
 
-        final Animal animalTwo = animals.stream().filter(animal ->
+        final int oldAnimalOneLove = animalOne.getInLoveTime();
+        animalOne.setInLoveTime(5);
+
+        final Animal animalTwo = breedables.stream().filter(animal ->
           {
-              final float range = animal.distanceTo(animalOne);
-              final boolean isAnimalOne = animalOne.equals(animal);
-              return isBreedAble(animal) && range <= DISTANCE_TO_BREED && !isAnimalOne;
+              if (animalOne.equals(animal) || animal.distanceTo(animalOne) > DISTANCE_TO_BREED)
+              {
+                  return false;
+              }
+
+              final int oldLove = animal.getInLoveTime();
+              animal.setInLoveTime(5);
+              final boolean canMate = animalOne.canMate(animal);
+              animal.setInLoveTime(oldLove);
+
+              return canMate;
           }
         ).findAny().orElse(null);
 
+        animalOne.setInLoveTime(oldAnimalOneLove);
+
         if (animalTwo == null)
         {
+            worker.getCitizenItemHandler().removeHeldItem();
+            breedTimeOut = 5;
             return DECIDE;
         }
 
-        if (!equipItem(InteractionHand.MAIN_HAND, getBreedingItem()))
+        if (!equipItem(InteractionHand.MAIN_HAND, current_module.getBreedingItems()))
         {
+            worker.getCitizenItemHandler().removeHeldItem();
             return START_WORKING;
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
-        breedTwoAnimals(animalOne, animalTwo);
-        worker.decreaseSaturationForContinuousAction();
+        animalsToBreed.add(animalOne);
+        animalsToBreed.add(animalTwo);
+
+        if (breedTwoAnimals())
+        {
+            return getState();
+        }
+
         worker.getCitizenItemHandler().removeHeldItem();
-        return DECIDE;
+        return IDLE;
     }
 
     /**
@@ -375,20 +466,20 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected IAIState feedAnimals()
     {
-        final List<? extends T> animals = searchForAnimals();
+        if (current_module == null)
+        {
+            return DECIDE;
+        }
 
-        final Animal animalOne = animals
-                                         .stream()
-                                         .filter(entity -> entity.isBaby() && MAX_ENTITY_AGE / entity.getAge() <= 1 + getSecondarySkillLevel()/100.0)
-                                         .findAny()
-                                         .orElse(null);
+        final Predicate<Animal> predicate = ((Predicate<Animal>) current_module::isCompatible).and(this::isFeedAble);
+        final Animal animalOne = searchForAnimals(predicate).stream().findAny().orElse(null);
 
         if (animalOne == null)
         {
             return DECIDE;
         }
 
-        if (!equipItem(InteractionHand.MAIN_HAND, getBreedingItem()))
+        if (!equipItem(InteractionHand.MAIN_HAND, current_module.getBreedingItems()))
         {
             return START_WORKING;
         }
@@ -400,7 +491,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             // Values taken from vanilla.
             animalOne.ageUp((int)((float)(-animalOne.getAge() / 20) * 0.1F), true);
             worker.swing(InteractionHand.MAIN_HAND);
-            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
+            worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             animalOne.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
             worker.getCitizenItemHandler().removeHeldItem();
@@ -434,11 +525,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Find animals in area.
      *
-     * @return the {@link List} of animals in the area.
+     * @param predicate true if the animal is interesting.
+     * @return a {@link Stream} of animals in the area.
      */
-    public List<? extends T> searchForAnimals()
+    public List<? extends Animal> searchForAnimals(final Predicate<Animal> predicate)
     {
-        return WorldUtil.getEntitiesWithinBuilding(world, getAnimalClass(), building, null);
+        return WorldUtil.getEntitiesWithinBuilding(world, Animal.class, building, predicate);
     }
 
     public int getMaxAnimalMultiplier()
@@ -455,13 +547,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         return WorldUtil.getEntitiesWithinBuilding(world, ItemEntity.class, building, null);
     }
-
-    /**
-     * Get the Animal's class from the none Abstract.
-     *
-     * @return the class of the animal to work with.
-     */
-    public abstract Class<T> getAnimalClass();
 
     /**
      * Lets the herder walk to the animal.
@@ -484,26 +569,32 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     /**
      * Breed two animals together!
-     *
-     * @param animalOne the first {@link Animal} to breed.
-     * @param animalTwo the second {@link Animal} to breed.
+     * @return true if still working on it
      */
-    private void breedTwoAnimals(final Animal animalOne, final Animal animalTwo)
+    private boolean breedTwoAnimals()
     {
-        final List<Animal> animalsToBreed = new ArrayList<>();
-        animalsToBreed.add(animalOne);
-        animalsToBreed.add(animalTwo);
-
-        for (final Animal animal : animalsToBreed)
+        for (final Iterator<Animal> it = animalsToBreed.iterator(); it.hasNext(); )
         {
-            if (!animal.isInLove() && !walkingToAnimal(animal))
+            final Animal animal = it.next();
+            if (animal.isInLove() || animal.isDeadOrDying())
+            {
+                it.remove();
+            }
+            else if (walkingToAnimal(animal))
+            {
+                break;
+            }
+            else
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
+                worker.getMainHandItem().shrink(1);
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
+                worker.decreaseSaturationForAction();
+                it.remove();
             }
         }
+        return !animalsToBreed.isEmpty();
     }
 
     /**
@@ -512,10 +603,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param allAnimals the list of animals.
      * @return if amount of animals is over max.
      */
-    public boolean maxAnimals(final List<T> allAnimals)
+    public boolean maxAnimals(final List<? extends Animal> allAnimals)
     {
-        final List<T> animals = allAnimals.stream()
-                                  .filter(animalToButcher -> !animalToButcher.isBaby()).collect(Collectors.toList());
+        final List<? extends Animal> animals = allAnimals.stream()
+                .filter(animalToButcher -> !animalToButcher.isBaby()).toList();
         if (animals.isEmpty())
         {
             return false;
@@ -565,17 +656,21 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Sets the {@link ItemStack} as held item or returns false.
      *
-     * @param itemStack the {@link ItemStack} to equip.
-     * @param hand      the hand to equip it in.
+     * @param itemStacks the list of {@link ItemStack}s to equip one of.
+     * @param hand       the hand to equip it in.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final InteractionHand hand, final ItemStack itemStack)
+    public boolean equipItem(final InteractionHand hand, final List<ItemStack> itemStacks)
     {
-        if (checkIfRequestForItemExistOrCreateAsync(itemStack))
+        for (final ItemStack itemStack : itemStacks)
         {
-            worker.getCitizenItemHandler().setHeldItem(hand, getItemSlot(itemStack.getItem()));
-            return true;
+            if (checkIfRequestForItemExistOrCreateAsync(itemStack))
+            {
+                worker.getCitizenItemHandler().setHeldItem(hand, getItemSlot(itemStack.getItem()));
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -620,19 +715,22 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Gets an ItemStack of breedingItem for requesting, requests multiple items to decrease work for delivery man
      *
-     * @return the BreedingItem stack.
+     * @param module the herding module.
+     * @return the BreedingItem stacks.
      */
-    public ItemStack getRequestBreedingItems()
+    public List<ItemStack> getRequestBreedingItems(final AnimalHerdingModule module)
     {
-        final ItemStack breedingItem = getBreedingItem().copy();
-        ItemStackUtils.setSize(breedingItem, breedingItem.getCount() * 8); // means that we can breed 8 animals before requesting again.
-        return breedingItem;
-    }
+        final List<ItemStack> breedingItems = new ArrayList<>();
 
-    /**
-     * Get breeding item for animal.
-     *
-     * @return the {@link Item} needed for breeding the animal.
-     */
-    public abstract ItemStack getBreedingItem();
+        // TODO: currently this will request some of all items, when really we should be happy with enough of *any* of
+        //       these items ... but right now it doesn't matter anyway since these are currently all single item lists.
+        for (final ItemStack stack : module.getBreedingItems())
+        {
+            final ItemStack requestable = stack.copy();
+            ItemStackUtils.setSize(requestable, stack.getCount() * EXTRA_BREEDING_ITEMS_REQUEST);
+            breedingItems.add(requestable);
+        }
+
+        return breedingItems;
+    }
 }

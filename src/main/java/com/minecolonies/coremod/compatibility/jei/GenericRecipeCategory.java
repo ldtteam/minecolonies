@@ -6,10 +6,12 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
 import com.mojang.blaze3d.vertex.PoseStack;
+import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -22,6 +24,8 @@ import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,26 +45,29 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 {
     public GenericRecipeCategory(@NotNull final BuildingEntry building,
                                  @NotNull final IJob<?> job,
-                                 @NotNull final ICraftingBuildingModule crafting,
-                                 @NotNull final IGuiHelper guiHelper,
+                                  @NotNull final IGuiHelper guiHelper,
                                  @NotNull final IModIdHelper modIdHelper)
     {
-        super(job, createRecipeType(crafting), getCatalyst(building), guiHelper);
+        super(job, createRecipeType(job), getCatalyst(building), guiHelper);
 
-        this.building = building;
-        this.crafting.add(crafting);
         this.arrow = guiHelper.createDrawable(TEXTURE, 20, 121, 24, 18);
         this.modIdHelper = modIdHelper;
+        this.animalTimer = guiHelper.createTickTimer(200, 359, false);
 
         outputSlotX = CITIZEN_X + CITIZEN_W + 2 + (30 - this.slot.getWidth()) / 2;
         outputSlotY = CITIZEN_Y + CITIZEN_H + 1 - this.slot.getHeight();
     }
 
-    @NotNull private final BuildingEntry building;
     @NotNull private final List<ICraftingBuildingModule> crafting = new ArrayList<>();
+    @NotNull private final List<AnimalHerdingModule> herding = new ArrayList<>();
     @NotNull private final IDrawableStatic arrow;
     @NotNull private final IModIdHelper modIdHelper;
+    @NotNull private final ITickTimer animalTimer;
 
+    private static final int ANIMAL_W  = (WIDTH - CITIZEN_W) / 2;
+    private static final int ANIMAL_H = CITIZEN_H - 10;
+    private static final int ANIMAL_X = CITIZEN_X + CITIZEN_W + (WIDTH - CITIZEN_X - CITIZEN_W - ANIMAL_W) / 2;
+    private static final int ANIMAL_Y = CITIZEN_Y - 20;
     private static final int LOOT_SLOTS_X = CITIZEN_X + CITIZEN_W + 4;
     private static final int LOOT_SLOTS_W = WIDTH - LOOT_SLOTS_X;
     private static final int INPUT_SLOT_X = CITIZEN_X + CITIZEN_W + 32;
@@ -72,11 +79,15 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     {
         this.crafting.add(module);
     }
+    public void addModule(@NotNull final AnimalHerdingModule module)
+    {
+        this.herding.add(module);
+    }
 
     @NotNull
-    private static RecipeType<IGenericRecipe> createRecipeType(@NotNull final ICraftingBuildingModule crafting)
+    private static RecipeType<IGenericRecipe> createRecipeType(@NotNull final IJob<?> job)
     {
-        final ResourceLocation uid = Objects.requireNonNull(crafting.getUid());
+        final ResourceLocation uid = job.getJobRegistryEntry().getKey();
         return RecipeType.create(uid.getNamespace(), uid.getPath(), IGenericRecipe.class);
     }
 
@@ -108,7 +119,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     {
         final ResourceLocation id = recipe.getRecipeId();
 
-        addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y - 20, false);
+        addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y - 20, true);
 
         int x = outputSlotX;
         int y = outputSlotY;
@@ -178,6 +189,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
         final ResourceLocation id = recipe.getRecipeId();
 
+        addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y - 20, true);
+
         int x = LOOT_SLOTS_X;
         int y = CITIZEN_Y;
 
@@ -191,7 +204,6 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 x += this.slot.getWidth() + 2;
             }
         }
-        addToolSlot(builder, recipe.getRequiredTool(), x, y, false);
 
         boolean showLootTooltip = true;
         if (drops.isEmpty())
@@ -259,6 +271,22 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             final BlockState block = recipe.getIntermediate().defaultBlockState();
             RenderHelper.renderBlock(stack, block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
         }
+
+        final LivingEntity animal = recipe.getRequiredEntity();
+        if (animal != null)
+        {
+            final float scale = ANIMAL_H / 2.4f;
+            final int animal_cx = ANIMAL_X + (ANIMAL_W / 2);
+            final int animal_cy = ANIMAL_Y + (ANIMAL_H / 2);
+            final int animal_by = ANIMAL_Y + ANIMAL_H;
+            final int offsetY = 16;
+            final float yaw = animalTimer.getValue();
+            final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
+            final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
+            RenderHelper.scissor(stack, ANIMAL_X, ANIMAL_Y, ANIMAL_W, ANIMAL_H);
+            RenderHelper.renderEntity(stack, animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
+            RenderHelper.stopScissor();
+        }
     }
 
     @Override
@@ -291,12 +319,17 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull
-    public List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
+    public List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                            @NotNull final List<Animal> animals)
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();
         for (final ICraftingBuildingModule module : this.crafting)
         {
             recipes.addAll(RecipeAnalyzer.findRecipes(vanilla, module));
+        }
+        for (final AnimalHerdingModule module : this.herding)
+        {
+            recipes.addAll(RecipeAnalyzer.findRecipes(animals, module));
         }
 
         return recipes.stream()

@@ -1,24 +1,30 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -44,9 +50,19 @@ public class BuildingCowboy extends AbstractBuilding
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * Milking setting.
+     * Milking amount setting.
      */
-    public static final ISettingKey<BoolSetting> MILKING  = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "milking"));
+    public static final ISettingKey<IntSetting> MILKING_AMOUNT  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_amount"));
+
+    /**
+     * Stewing amount setting.
+     */
+    public static final ISettingKey<IntSetting> STEWING_AMOUNT = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "stewing_amount"));
+
+    /**
+     * Milking days setting.
+     */
+    public static final ISettingKey<IntSetting> MILKING_DAYS  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_days"));
 
     /**
      * Instantiates the building.
@@ -83,27 +99,106 @@ public class BuildingCowboy extends AbstractBuilding
     }
 
     /**
-     * Custom crafting module to indicate that we produce milk buckets.
-     * (This is just for JEI and does not mean they're crafted on demand... although that could be changed.)
+     * Cow (and Mooshroom) herding module
      */
-    public static class MilkingModule extends AbstractCraftingBuildingModule.Custom
+    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IPersistentModule
     {
-        public MilkingModule()
+        private int currentMilk;
+        private int currentStew;
+        private int currentMilkDays;
+
+        public HerdingModule()
         {
-            super(ModJobs.cowboy.get());
+            super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
         }
 
         @NotNull
         @Override
-        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
         {
-            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "",
-                    new ItemStack(Items.MILK_BUCKET), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BUCKET)));
-            recipes.add(GenericRecipe.of(milk, null));
+            if (animal instanceof MushroomCow)
+            {
+                recipes.add(new GenericRecipe(null,
+                        new ItemStack(Items.MUSHROOM_STEW),                                                 // output
+                        Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
+                        Collections.emptyList(),                                                            // extra output
+                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
+                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+            }
+            else if (animal instanceof Cow)
+            {
+                recipes.add(new GenericRecipe(null,
+                        new ItemStack(Items.MILK_BUCKET),                                                   // output
+                        Collections.emptyList(),                                                            // alt output
+                        Collections.emptyList(),                                                            // extra output
+                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
+                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+            }
 
             return recipes;
+        }
+
+        @Override
+        public void serializeNBT(@NotNull CompoundTag compound)
+        {
+            compound.putInt("milkValue", currentMilk);
+            compound.putInt("stewValue", currentStew);
+            compound.putInt("milkDays", currentMilkDays);
+        }
+
+        @Override
+        public void deserializeNBT(CompoundTag compound)
+        {
+            this.currentMilk = compound.getInt("milkValue");
+            this.currentStew = compound.getInt("stewValue");
+            this.currentMilkDays = compound.getInt("milkDays");
+        }
+
+        @Override
+        public void onWakeUp()
+        {
+            ++this.currentMilkDays;
+
+            if (this.currentMilkDays >= getBuilding().getSetting(MILKING_DAYS).getValue())
+            {
+                this.currentMilk = 0;
+                this.currentStew = 0;
+                this.currentMilkDays = 0;
+            }
+        }
+
+        /**
+         * @return true if the cowboy should be allowed to try to milk (not yet reached limit)
+         */
+        public boolean canTryToMilk()
+        {
+            return this.currentMilk < getBuilding().getSetting(MILKING_AMOUNT).getValue();
+        }
+
+        /**
+         * @return true if the cowboy should be allowed to try to collect stew (not yet reached limit)
+         */
+        public boolean canTryToStew()
+        {
+            return this.currentStew < getBuilding().getSetting(STEWING_AMOUNT).getValue();
+        }
+
+        /**
+         * Called to record successful milking.
+         */
+        public void onMilked()
+        {
+            ++this.currentMilk;
+        }
+
+        /**
+         * Called to record successful stewing.
+         */
+        public void onStewed()
+        {
+            ++this.currentStew;
         }
     }
 }

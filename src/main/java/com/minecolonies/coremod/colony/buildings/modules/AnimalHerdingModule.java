@@ -3,32 +3,35 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
- * Currently this module is only used to provide some metadata for JEI, but
- * in the future it could be accessed by animal herding AI too.
+ * Provides some basic definitions used by the animal herding AI (and JEI).
  */
 public class AnimalHerdingModule extends AbstractBuildingModule
 {
     private final JobEntry jobEntry;
-    private final EntityType<?> animalType;
+    private final Predicate<Animal> animalPredicate;
     private final ItemStack breedingItem;
 
     public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
-                               @NotNull final EntityType<?> animalType,
+                               @NotNull final Predicate<Animal> animalPredicate,
                                @NotNull final ItemStack breedingItem)
     {
         this.jobEntry = jobEntry;
-        this.animalType = animalType;
+        this.animalPredicate = animalPredicate;
         this.breedingItem = breedingItem;
     }
 
@@ -44,14 +47,14 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     }
 
     /**
-     * Gets the animal type managed by this herder.
+     * Check if this module handles the particular animal.
      *
-     * @return The animal entity type.
+     * @param animal the animal to check.
+     * @return true if so.
      */
-    @NotNull
-    public EntityType<?> getAnimalType()
+    public boolean isCompatible(@NotNull final Animal animal)
     {
-        return animalType;
+        return animalPredicate.test(animal);
     }
 
     /**
@@ -66,26 +69,42 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     }
 
     /**
-     * The loot table for killing the animal.
+     * Gets a list of loot tables that should be available for drop
+     * analysis.  This is not intended for actually generating loot,
+     * just for display purposes such as in JEI (e.g. via {@link #getRecipesForDisplayPurposesOnly}).
      *
-     * @return The resource location of the loot table.
+     * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
+     * @return The list of loot table ids
      */
     @NotNull
-    public ResourceLocation getDefaultLootTable()
+    public List<ResourceLocation> getLootTables(@NotNull final Animal animal)
     {
-        return getAnimalType().getDefaultLootTable();
+        return Collections.singletonList(animal.getLootTable());
     }
 
     /**
-     * Returns a list of expected loot from farming the animals.
-     * Can be overridden if something other than just killing the animals happens.
-     * This should *not* be used to actually generate loot; it's just informative.
+     * Get a list of "recipes" for items obtainable by herding the given animal.  This can include loot drops
+     * for killing the animal as well as anything else acquired through other means.
      *
-     * @return The list of expected loot.
+     * These are purely for JEI display purposes and don't have to represent actual crafting recipes.
+     *
+     * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
+     * @return the list of additional display recipes.
      */
     @NotNull
-    public List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+    public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
     {
-        return CustomRecipeManager.getInstance().getLootDrops(getDefaultLootTable());
+        return Collections.singletonList(new GenericRecipe(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()),
+                ItemStack.EMPTY,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.singletonList(getBreedingItems()),
+                0,
+                Blocks.AIR,
+                animal.getLootTable(),
+                ToolType.AXE,
+                animal,
+                Collections.emptyList(),
+                0));
     }
 }

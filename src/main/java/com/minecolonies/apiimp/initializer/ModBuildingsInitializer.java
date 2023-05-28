@@ -22,7 +22,9 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,7 +32,7 @@ import net.minecraftforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_HOSTILES;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
@@ -192,9 +194,10 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                      .with(AbstractBuilding.FEEDING, new BoolSetting(true))
-                                                                                     .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
-                                .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy.get(), EntityType.COW, new ItemStack(Items.WHEAT, 2)))
-                                .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
+                                                                                     .with(BuildingCowboy.MILKING_AMOUNT, new IntSetting(1))
+                                                                                     .with(BuildingCowboy.STEWING_AMOUNT, new IntSetting(1))
+                                                                                     .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1)), () -> SettingsModuleView::new)
+                                .addBuildingModuleProducer(BuildingCowboy.HerdingModule::new)
                                 .createBuildingEntry());
 
         ModBuildings.crusher = DEFERRED_REGISTER.register(ModBuildings.CRUSHER_ID, () -> new BuildingEntry.Builder()
@@ -410,7 +413,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                           .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
-                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder.get(), EntityType.PIG, new ItemStack(Items.CARROT, 2)))
+                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry());
 
         ModBuildings.townHall = DEFERRED_REGISTER.register(ModBuildings.TOWNHALL_ID, () -> new BuildingEntry.Builder()
@@ -586,7 +589,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                           .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
-                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), EntityType.RABBIT, new ItemStack(Items.CARROT, 2)))
+                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry());
 
         //todo we want two here, one custom for the concrete placement, and one crafting for the normal crafting of the powder.
