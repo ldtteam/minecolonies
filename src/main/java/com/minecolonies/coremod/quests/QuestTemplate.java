@@ -28,7 +28,7 @@ public class QuestTemplate implements IQuestTemplate
     /**
      * List of quest triggers assigned to this quest data including the trigger order.
      */
-    private final Function<IColony, List<ITriggerReturnData>> questTriggerList;
+    private final Function<IColony, List<ITriggerReturnData<?>>> questTriggerList;
 
     private final List<IQuestObjectiveTemplate> objectives;
 
@@ -57,7 +57,7 @@ public class QuestTemplate implements IQuestTemplate
      */
     public QuestTemplate(final ResourceLocation questID, final Component name,
       final List<ResourceLocation> parents,
-      final int maxOccurrence, final Function<IColony, List<ITriggerReturnData>> questTriggerList, final List<IQuestObjectiveTemplate> questObjectives, final int questTimeout, final List<IQuestRewardTemplate> questRewards)
+      final int maxOccurrence, final Function<IColony, List<ITriggerReturnData<?>>> questTriggerList, final List<IQuestObjectiveTemplate> questObjectives, final int questTimeout, final List<IQuestRewardTemplate> questRewards)
     {
         this.questID = questID;
         this.name = name;
@@ -72,8 +72,8 @@ public class QuestTemplate implements IQuestTemplate
     @Override
     public IQuestInstance attemptStart(final IColony colony)
     {
-        final List<ITriggerReturnData> triggerReturnData = questTriggerList.apply(colony);
-        return triggerReturnData == null ? null : new QuestInstance(questID, colony, triggerReturnData);
+        final List<ITriggerReturnData<?>> triggerReturnData = questTriggerList.apply(colony);
+        return (triggerReturnData == null || triggerReturnData.isEmpty()) ? null : new QuestInstance(questID, colony, triggerReturnData);
     }
 
     @Override

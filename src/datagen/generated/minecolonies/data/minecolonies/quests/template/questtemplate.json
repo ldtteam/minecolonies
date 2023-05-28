@@ -107,7 +107,18 @@
       "type": "minecolonies:killentity",
       "details": {
         "entity-type": "minecraft:skeleton",
+        "next-objective": 6,
         "qty": 10,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:builder",
+        "count-existing": false,
+        "lvl": 3,
+        "qty": 1,
         "target": 0
       }
     }

@@ -243,17 +243,17 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     }
 
     // Unused yet
-    private static Function<IColony, List<ITriggerReturnData>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTriggerTemplate> triggers)
+    private static Function<IColony, List<ITriggerReturnData<?>>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTriggerTemplate> triggers)
     {
         // Default and.
         if (order.isEmpty())
         {
             return colony -> {
-                final List<ITriggerReturnData> returnList = new ArrayList<>();
+                final List<ITriggerReturnData<?>> returnList = new ArrayList<>();
 
                 for (final IQuestTriggerTemplate trigger: triggers)
                 {
-                    ITriggerReturnData returnData = trigger.canTriggerQuest(questId, colony);
+                    ITriggerReturnData<?> returnData = trigger.canTriggerQuest(questId, colony);
                     if (returnData.isPositive())
                     {
                         returnList.add(returnData);
@@ -305,7 +305,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             triggerMap.put(String.valueOf(i+1), triggers.get(i));
         }
 
-        return colony -> evaluate(colony, triggerMap, new ArrayList<>(values), new ArrayList<>());
+        return colony -> evaluate(colony, triggerMap, new ArrayList<>(values), new ArrayList<>(), true);
     }
 
     /**
@@ -315,52 +315,61 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      * @param data split string data
      * @return predicate from data
      */
-    private static List<ITriggerReturnData> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final List<String> data, final List<ITriggerReturnData> lastReturnData)
+    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final List<String> data, final List<ITriggerReturnData<?>> lastReturnData, final boolean recursive)
     {
+        // first we evaluate all and handle negation
+        // then find deepest brace open, solve deepest brace open
+        // then recursive until they are gone
+        // substitute deepest brace open with its result
+        if (data.isEmpty())
+        {
+            return lastReturnData;
+        }
+
         final String current = data.get(0);
         data.remove(0);
         switch (current)
         {
             case OR:
                 //
-                return lastReturnData != null ? lastReturnData : evaluate(colony, triggerMap, data, lastReturnData);
+                return lastReturnData != null ? lastReturnData : evaluate(colony, triggerMap, data, lastReturnData, recursive);
             case AND:
-                return lastReturnData == null ? null : evaluate(colony, triggerMap, data, lastReturnData);
+                return lastReturnData == null ? null : evaluate(colony, triggerMap, data, lastReturnData, recursive);
             case NOT:
-                return evaluate(colony, triggerMap, data, lastReturnData) == null ? lastReturnData : null;
+                return evaluate(colony, triggerMap, data, lastReturnData, false) == null ? evaluate(colony, triggerMap, data, lastReturnData, true) : null;
             case BRACE_OPEN:
-                List<ITriggerReturnData> currentReturnData = lastReturnData;
-                List<ITriggerReturnData> result = evaluate(colony, triggerMap, data, new ArrayList<>());
+                List<ITriggerReturnData<?>> currentReturnData = lastReturnData;
+                List<ITriggerReturnData<?>> result = evaluate(colony, triggerMap, data, new ArrayList<>(), recursive);
                 if (result == null)
                 {
-                    return evaluate(colony, triggerMap, data, result);
+                    return evaluate(colony, triggerMap, data, null, recursive);
                 }
 
                 result.addAll(currentReturnData);
-                return evaluate(colony, triggerMap, data, result);
+                return evaluate(colony, triggerMap, data, result, recursive);
             case BRACE_CLOSE:
                 return lastReturnData;
             case EMPTY:
-                return evaluate(colony, triggerMap, data, lastReturnData);
+                return evaluate(colony, triggerMap, data, lastReturnData, recursive);
             default:
             {
                 final IQuestTriggerTemplate trigger = triggerMap.get(current);
-                final ITriggerReturnData returnData = trigger.canTriggerQuest(colony);
+                final ITriggerReturnData<?> returnData = trigger.canTriggerQuest(colony);
                 if (returnData.isPositive())
                 {
                     if (lastReturnData == null)
                     {
-                        final List<ITriggerReturnData> newReturnData = new ArrayList<>();
+                        final List<ITriggerReturnData<?>> newReturnData = new ArrayList<>();
                         newReturnData.add(returnData);
-                        return evaluate(colony, triggerMap, data, newReturnData);
+                        return recursive ? evaluate(colony, triggerMap, data, newReturnData, recursive) : newReturnData;
                     }
                     else
                     {
                         lastReturnData.add(returnData);
-                        return evaluate(colony, triggerMap, data, lastReturnData);
+                        return recursive ? evaluate(colony, triggerMap, data, lastReturnData, recursive) : lastReturnData;
                     }
                 }
-                return evaluate(colony, triggerMap, data, null);
+                return recursive ? evaluate(colony, triggerMap, data, null, recursive) : null;
             }
         }
     }

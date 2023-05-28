@@ -955,7 +955,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                     final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getIndex());
                     if (objective instanceof IBuildingUpgradeObjectiveTemplate)
                     {
-                        ((IBuildingUpgradeObjectiveTemplate) objective).onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, buildings.values());
+                        ((IBuildingUpgradeObjectiveTemplate) objective).onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
                     }
                 }
             }

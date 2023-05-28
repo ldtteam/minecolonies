@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.quests.objectives;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_FINISHED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
@@ -129,10 +129,10 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     {
         super.startObjective(colonyQuest);
 
-        if (checkForFulfillment(colonyQuest))
+        if (checkForFulfillment(colonyQuest, new BuildingProgressInstance(false)))
         {
             // Already detect as finished!
-            return new BuildingBuildingProgressInstance(true);
+            return colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
         }
 
         if (colonyQuest.getColony() instanceof Colony)
@@ -148,20 +148,14 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
          *   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!"
          */
 
-        //todo on start here, we want to check if its fulfilled already, then we dont even have to start it.
-        return new BuildingBuildingProgressInstance();
-    }
-
-    private boolean checkForFulfillment(final IQuestInstance colonyQuest)
-    {
-
+        return new BuildingProgressInstance(false);
     }
 
     @Nullable
     @Override
     public IObjectiveInstance createObjectiveInstance()
     {
-        return new BuildingBuildingProgressInstance();
+        return new BuildingProgressInstance(false);
     }
 
     @Override
@@ -184,18 +178,67 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     }
 
     @Override
-    public void onBuildingUpgrade(final IObjectiveInstance progressData, final IQuestInstance colonyQuest, final ImmutableCollection<IBuilding> buildingList)
+    public void onBuildingUpgrade(final IObjectiveInstance progressData, final IQuestInstance colonyQuest, final int level)
     {
         if (progressData.isFulfilled())
         {
             return;
         }
 
-        ((BuildingBuildingProgressInstance) progressData).currentProgress++;
-        if (progressData.isFulfilled())
+        if (qty > 0)
+        {
+            if (level >= lvl)
+            {
+                ((BuildingProgressInstance) progressData).currentProgress++;
+            }
+        }
+        else
+        {
+            ((BuildingProgressInstance) progressData).currentProgress++;
+        }
+
+        if (checkForFulfillment(colonyQuest, ((BuildingProgressInstance) progressData)))
         {
             cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
+        }
+    }
+
+    private boolean checkForFulfillment(final IQuestInstance colonyQuest, final BuildingProgressInstance buildingBuildingProgressInstance)
+    {
+        if (countExisting)
+        {
+            if (qty > 0)
+            {
+                int count = 0;
+                for (final IBuilding building : colonyQuest.getColony().getBuildingManager().getBuildings().values())
+                {
+                    if (building.getBuildingType() == buildingEntry)
+                    {
+                        if (building.getBuildingLevel() >= lvl)
+                        {
+                            count++;
+                        }
+                    }
+                }
+                return count > qty;
+            }
+            else
+            {
+                int count = 0;
+                for (final IBuilding building : colonyQuest.getColony().getBuildingManager().getBuildings().values())
+                {
+                    if (building.getBuildingType() == buildingEntry)
+                    {
+                        count+= building.getBuildingLevel();
+                    }
+                }
+                return count > lvl;
+            }
+        }
+        else
+        {
+            return buildingBuildingProgressInstance.currentProgress > qty;
         }
     }
 
@@ -207,23 +250,43 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         {
             // Only serverside cleanup.
             colonyQuest.getColony().getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
-            //todo on start here, we want to check if its fulfilled already, then we dont even have to start it.
+            final @Nullable IObjectiveInstance objInstance = colonyQuest.getCurrentObjectiveInstance();
+            if (objInstance instanceof BuildingProgressInstance)
+            {
+                if (checkForFulfillment(colonyQuest, (BuildingProgressInstance) objInstance))
+                {
+                    ((BuildingProgressInstance) objInstance).finished = true;
+                    cleanupListener(colonyQuest);
+                    colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
+                }
+            }
         }
     }
 
     /**
      * Progress data of this objective.
      */
-    public class BuildingBuildingProgressInstance implements IObjectiveInstance
+    public class BuildingProgressInstance implements IObjectiveInstance
     {
+        /**
+         * Whether all requirements were fulfilled.
+         */
+        private boolean finished;
+
+        /**
+         * Obj progress.
+         */
         private int currentProgress = 0;
+
+        public BuildingProgressInstance(final boolean finished)
+        {
+            this.finished = true;
+        }
 
         @Override
         public boolean isFulfilled()
         {
-            //todo adjust!
-
-            return currentProgress >= qty;
+            return finished;
         }
 
         @Override
@@ -231,19 +294,23 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         {
             final CompoundTag compoundTag = new CompoundTag();
             compoundTag.putInt(TAG_QUANTITY, currentProgress);
+            compoundTag.putBoolean(TAG_FINISHED, finished);
+
             return compoundTag;
         }
 
         @Override
         public int getMissingQuantity()
         {
-            return qty > currentProgress ? qty - currentProgress : 0;
+            // Noop
+            return 0;
         }
 
         @Override
         public void deserializeNBT(final CompoundTag nbt)
         {
             this.currentProgress = nbt.getInt(TAG_QUANTITY);
+            this.finished = nbt.getBoolean(TAG_FINISHED);
         }
     }
 }
