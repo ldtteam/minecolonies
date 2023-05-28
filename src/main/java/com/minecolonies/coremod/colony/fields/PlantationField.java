@@ -76,7 +76,7 @@ public class PlantationField extends AbstractField
     public boolean isValidPlacement()
     {
         BlockState blockState = getColony().getWorld().getBlockState(getPosition());
-        // TODO: 1.20, remove `blockHutPlantation` from valid blocks
+        // TODO: future, remove `blockHutPlantation` from valid blocks
         return blockState.is(ModBlocks.blockHutPlantation) || blockState.is(ModBlocks.blockPlantationField);
     }
 

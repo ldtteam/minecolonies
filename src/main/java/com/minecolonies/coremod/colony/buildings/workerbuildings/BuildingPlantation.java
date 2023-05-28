@@ -55,7 +55,7 @@ public class BuildingPlantation extends AbstractBuilding
     private static final String PLANTATION = "plantation";
 
     /**
-     * TODO: 1.20
+     * TODO: future
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      * Whether field migration from the old system to the new system should occur.
@@ -90,7 +90,7 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     /**
-     * TODO: 1.20
+     * TODO: future
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      */
@@ -105,7 +105,7 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     /**
-     * TODO: 1.20
+     * TODO: future
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      * <p>
@@ -185,7 +185,7 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     /**
-     * TODO: 1.20
+     * TODO: future
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      */
