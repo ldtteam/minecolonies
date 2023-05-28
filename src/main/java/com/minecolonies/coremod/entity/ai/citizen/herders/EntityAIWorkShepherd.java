@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
@@ -16,10 +15,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +29,8 @@ import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
  */
-public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd, Sheep>
+public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd>
 {
-    /**
-     * Max amount of animals per Hut Level.
-     */
-    private static final int MAX_ANIMALS_PER_LEVEL = 2;
-
     /**
      * Constants used for sheep dying calculations.
      */
@@ -75,26 +68,11 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     }
 
     @Override
-    public ItemStack getBreedingItem()
-    {
-        final ItemStack stack = new ItemStack(Items.WHEAT);
-        stack.setCount(2);
-        return stack;
-    }
-
-    @Override
-    public int getMaxAnimalMultiplier()
-    {
-        return MAX_ANIMALS_PER_LEVEL;
-    }
-
-    @Override
     public IAIState decideWhatToDo()
     {
         final IAIState result = super.decideWhatToDo();
 
-        final List<Sheep> animals = new ArrayList<>(searchForAnimals());
-        final Sheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
+        final Sheep shearingSheep = findShearableSheep();
 
         if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
@@ -112,10 +90,14 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         return Math.max(1.0, getSecondarySkillLevel() / 10.0);
     }
 
-    @Override
-    public Class<Sheep> getAnimalClass()
+    /**
+     * @return a shearable {@link Sheep} or null.
+     */
+    @Nullable
+    private Sheep findShearableSheep()
     {
-        return Sheep.class;
+        return searchForAnimals(a -> a instanceof Sheep sheepie && !sheepie.isSheared() && !sheepie.isBaby())
+                .stream().map(a -> (Sheep) a).findAny().orElse(null);
     }
 
     /**
@@ -127,9 +109,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     {
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
-        final List<? extends Sheep> sheeps = searchForAnimals();
+        final Sheep sheep = findShearableSheep();
 
-        if (sheeps.isEmpty())
+        if (sheep == null)
         {
             return DECIDE;
         }
@@ -139,9 +121,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             return PREPARING;
         }
 
-        final Sheep sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
-
-        if (worker.getMainHandItem() != null && sheep != null)
+        if (worker.getMainHandItem() != null)
         {
             if (walkingToAnimal(sheep))
             {

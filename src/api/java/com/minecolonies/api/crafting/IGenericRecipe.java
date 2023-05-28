@@ -2,10 +2,11 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -126,6 +127,14 @@ public interface IGenericRecipe
      */
     @NotNull
     IToolType getRequiredTool();
+
+    /**
+     * Gets a creature required to produce this recipe, if any.
+     *
+     * @return The required creature.
+     */
+    @Nullable
+    LivingEntity getRequiredEntity();
 
     /**
      * Gets some human-readable restrictions on when this recipe is valid.

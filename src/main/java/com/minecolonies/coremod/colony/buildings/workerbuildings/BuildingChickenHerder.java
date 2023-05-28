@@ -2,13 +2,17 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
-import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -60,15 +64,19 @@ public class BuildingChickenHerder extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.chickenHerder.get(), EntityType.CHICKEN, new ItemStack(Items.WHEAT_SEEDS, 2));
+            super(ModJobs.chickenHerder.get(), a -> a instanceof Chicken, new ItemStack(Items.WHEAT_SEEDS, 2));
         }
 
+        @NotNull
         @Override
-        public @NotNull List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
         {
-            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
-            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.EGG)), 1, 0, false));
-            return drops;
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
+
+            recipes.add(new GenericRecipe(null, new ItemStack(Items.EGG), Collections.emptyList(), Collections.emptyList(),
+                    Collections.emptyList(), 0, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+
+            return recipes;
         }
     }
 }
