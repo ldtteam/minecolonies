@@ -13,7 +13,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
@@ -149,7 +148,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return PLANTATION_PICK_FIELD;
         }
 
-        IPlantationModule planterModule = currentPlantationField.getPlantationFieldType().getModule();
+        IPlantationModule planterModule = currentPlantationField.getModule();
         if (currentWorkingPosition == null)
         {
             currentWorkingPosition = planterModule.getNextWorkingPosition(currentPlantationField);
@@ -157,7 +156,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (currentWorkingPosition != null)
         {
-            AbstractPlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
+            IPlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
             if (result.getModuleState().hasPerformedAction())
             {
                 currentFieldActionCount++;
@@ -177,7 +176,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 currentFieldActionCount = 0;
             }
 
-            return result.getModuleState() == AbstractPlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? IDLE : PLANTATION_WORK_FIELD;
+            return result.getModuleState() == IPlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? IDLE : PLANTATION_WORK_FIELD;
         }
 
         return PLANTATION_PICK_FIELD;
@@ -228,7 +227,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return super.getActionsDoneUntilDumping();
         }
 
-        return currentPlantationField.getPlantationFieldType().getModule().getActionLimit();
+        return currentPlantationField.getModule().getActionLimit();
     }
 
     @Override
@@ -256,7 +255,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (!holdEfficientTool(world.getBlockState(blockPos), blockPos))
         {
-            return AbstractPlantationModule.PlanterMineBlockResult.NO_TOOL;
+            return IPlantationModule.PlanterMineBlockResult.NO_TOOL;
         }
 
         if (mineResult)
@@ -269,7 +268,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
 
-        return mineResult ? AbstractPlantationModule.PlanterMineBlockResult.MINED : AbstractPlantationModule.PlanterMineBlockResult.MINING;
+        return mineResult ? IPlantationModule.PlanterMineBlockResult.MINED : IPlantationModule.PlanterMineBlockResult.MINING;
     }
 
     @Override

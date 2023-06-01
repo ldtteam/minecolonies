@@ -1,26 +1,23 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
+import com.minecolonies.api.colony.fields.modules.AbstractFieldModule;
 import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Base class for planter modules that determines how the AI should work specific fields.
  */
-public abstract class AbstractPlantationModule implements IPlantationModule
+public abstract class AbstractPlantationModule extends AbstractFieldModule implements IPlantationModule
 {
     /**
      * The default maximum amount of plants the field can have.
@@ -90,17 +87,9 @@ public abstract class AbstractPlantationModule implements IPlantationModule
     }
 
     @Override
-    public abstract PlanterAIModuleResult workField(
-      @NotNull IField field,
-      @NotNull BasicPlanterAI planterAI,
-      @NotNull AbstractEntityCitizen worker,
-      @NotNull BlockPos workPosition,
-      @NotNull FakePlayer fakePlayer);
-
-    @Override
     public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
     {
-        return workingPositions.stream().distinct().limit(getMaxPlants()).collect(Collectors.toList());
+        return workingPositions.stream().distinct().limit(getMaxPlants()).toList();
     }
 
     @Override
@@ -165,5 +154,28 @@ public abstract class AbstractPlantationModule implements IPlantationModule
             case MINING -> PlanterAIModuleResult.CLEARING;
             case MINED -> PlanterAIModuleResult.CLEARED;
         };
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return fieldTag.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final AbstractPlantationModule that = (AbstractPlantationModule) o;
+
+        return fieldTag.equals(that.fieldTag);
     }
 }

@@ -59,9 +59,9 @@ public class FarmField extends AbstractField
      *
      * @param colony the colony this field belongs to.
      */
-    public FarmField(final IColony colony, final BlockPos position)
+    public FarmField(final IColony colony, final FieldRegistries.FieldEntry fieldType, final BlockPos position)
     {
-        super(colony, position);
+        super(colony, fieldType, position);
         this.maxRadius = MAX_RANGE;
     }
 

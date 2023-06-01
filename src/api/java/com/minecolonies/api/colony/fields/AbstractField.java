@@ -2,13 +2,20 @@ package com.minecolonies.api.colony.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.modules.ModuleContainerHandlers;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 
@@ -19,19 +26,24 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 public abstract class AbstractField implements IField
 {
     /**
+     * Set of field modules this field has.
+     */
+    private final List<IFieldModule> modules = new ArrayList<>();
+
+    /**
      * Colony owning the field.
      */
     private final IColony colony;
 
     /**
+     * The type of the field.
+     */
+    private final FieldRegistries.FieldEntry fieldType;
+
+    /**
      * The position of the field.
      */
     private final BlockPos position;
-
-    /**
-     * The type of the field.
-     */
-    private FieldRegistries.FieldEntry fieldType = null;
 
     /**
      * Building id of the building owning the field.
@@ -42,24 +54,66 @@ public abstract class AbstractField implements IField
     /**
      * Constructor used in NBT deserialization.
      *
-     * @param colony the colony this field belongs to.
+     * @param colony    the colony this field belongs to.
+     * @param fieldType the type of field.
+     * @param position  the position of the field.
      */
-    protected AbstractField(@NotNull IColony colony, @NotNull BlockPos position)
+    protected AbstractField(final @NotNull IColony colony, final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
     {
         this.colony = colony;
+        this.fieldType = fieldType;
         this.position = position;
+    }
+
+    @Override
+    public boolean hasModule(final Class<? extends IFieldModule> clazz)
+    {
+        return ModuleContainerHandlers.hasModule(modules, clazz);
+    }
+
+    @NotNull
+    @Override
+    public <T extends IFieldModule> T getFirstModuleOccurance(final Class<T> clazz)
+    {
+        return ModuleContainerHandlers.getFirstModuleOccurance(modules,
+          clazz,
+          "The module of class: " + clazz.toString() + "should never be null! Field:" + getFieldType().getRegistryName() + " pos:" + getPosition());
+    }
+
+    @NotNull
+    @Override
+    public <T extends IFieldModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
+    {
+        return ModuleContainerHandlers.getFirstOptionalModuleOccurance(modules, clazz);
+    }
+
+    @NotNull
+    @Override
+    public <T extends IFieldModule> List<T> getModules(final Class<T> clazz)
+    {
+        return ModuleContainerHandlers.getModules(modules, clazz);
+    }
+
+    @NotNull
+    @Override
+    public <T extends IFieldModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    {
+        return ModuleContainerHandlers.getModuleMatching(modules,
+          clazz,
+          modulePredicate,
+          "no matching module for Field:" + getFieldType().getRegistryName() + " pos:" + getPosition().toShortString());
+    }
+
+    @Override
+    public void registerModule(@NotNull final IFieldModule module)
+    {
+        this.modules.add(module);
     }
 
     @Override
     public final @NotNull FieldRegistries.FieldEntry getFieldType()
     {
         return fieldType;
-    }
-
-    @Override
-    public final void setFieldType(final FieldRegistries.@NotNull FieldEntry fieldType)
-    {
-        this.fieldType = fieldType;
     }
 
     @Override

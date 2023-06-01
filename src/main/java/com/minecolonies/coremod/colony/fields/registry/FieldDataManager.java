@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,13 +51,23 @@ public class FieldDataManager implements IFieldDataManager
     }
 
     @Override
-    public IField createFromBuffer(final @NotNull IColony colony, final @NotNull FriendlyByteBuf buf)
+    public IField fromBuffer(final @NotNull IColony colony, final @NotNull FriendlyByteBuf buf)
     {
         final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
         final BlockPos position = buf.readBlockPos();
         final IField field = fieldType.produceField(colony, position);
         field.deserialize(buf);
         return field;
+    }
+
+    @Override
+    public FriendlyByteBuf toBuffer(final @NotNull IField field)
+    {
+        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeRegistryId(FieldRegistries.getFieldRegistry(), field.getFieldType());
+        buf.writeBlockPos(field.getPosition());
+        field.serialize(buf);
+        return buf;
     }
 
     @Override

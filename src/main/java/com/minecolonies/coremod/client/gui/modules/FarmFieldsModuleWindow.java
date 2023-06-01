@@ -166,8 +166,6 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
                 final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
-                final boolean canAddField = moduleView.canAssignField(field);
-
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.translatable(distance + "m"));
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
 
@@ -190,7 +188,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
                     {
                         assignButton.setText(Component.translatable(APPROVE).withStyle(ChatFormatting.GREEN));
 
-                        if (!canAddField)
+                        if (!moduleView.canAssignField(field))
                         {
                             assignButton.disable();
 

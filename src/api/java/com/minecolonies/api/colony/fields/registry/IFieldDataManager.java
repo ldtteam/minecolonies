@@ -45,10 +45,28 @@ public interface IFieldDataManager
      */
     IField createFrom(@NotNull final IColony colony, @NotNull final BlockPos position, @NotNull final ResourceLocation fieldName);
 
-    IField createFromBuffer(@NotNull final IColony colony, @NotNull final FriendlyByteBuf buf);
+    /**
+     * Generate a field instance back from a byte buffer.
+     *
+     * @param colony the colony this field is in.
+     * @param buf    the byte buffer data.
+     * @return the field instance.
+     */
+    IField fromBuffer(@NotNull final IColony colony, @NotNull final FriendlyByteBuf buf);
 
     /**
-     * @param field
+     * Generate a byte buffer from a field instance.
+     *
+     * @param field the field instance.
+     * @return the byte buffer.
+     */
+    FriendlyByteBuf toBuffer(@NotNull final IField field);
+
+    /**
+     * Generate NBT compound data for a given field instance.
+     *
+     * @param field the field instance.
+     * @return the NBT data.
      */
     CompoundTag createCompound(@NotNull final IField field);
 }

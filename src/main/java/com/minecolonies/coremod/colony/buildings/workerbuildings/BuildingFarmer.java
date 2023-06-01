@@ -163,17 +163,11 @@ public class BuildingFarmer extends AbstractBuilding
         @Override
         public @NotNull List<IField> getFields()
         {
-            return building.getColony().getBuildingManager().getFields(FieldRegistries.farmField.get()).stream().toList();
+            return building.getColony().getBuildingManager().getFields(field -> field.getFieldType().equals(FieldRegistries.farmField.get())).stream().toList();
         }
 
         @Override
-        protected @NotNull List<IField> getFreeFields(final IColony colony)
-        {
-            return colony.getBuildingManager().getFreeFields(FieldRegistries.farmField.get());
-        }
-
-        @Override
-        public boolean canAddField(final IField field)
+        public boolean canAssignFieldOverride(final IField field)
         {
             return true;
         }
@@ -192,15 +186,15 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        public boolean canAssignField(final IField field)
+        public boolean canAssignFieldOverride(final IField field)
         {
             return true;
         }
 
         @Override
-        public FieldRegistries.FieldEntry getExpectedFieldType()
+        protected List<IField> getFieldsInColony()
         {
-            return FieldRegistries.farmField.get();
+            return getColony().getFields(field -> field.getFieldType().equals(FieldRegistries.farmField.get()));
         }
     }
 

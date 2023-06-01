@@ -2,7 +2,9 @@ package com.minecolonies.api.colony.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.modules.IModuleContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface for field instances.
  */
-public interface IField
+public interface IField extends IModuleContainer<IFieldModule>
 {
     /**
      * Return the field type for this field.
@@ -20,13 +22,6 @@ public interface IField
      * @return the field registry entry.
      */
     @NotNull FieldRegistries.FieldEntry getFieldType();
-
-    /**
-     * Set the field type for this current field instance.
-     *
-     * @param fieldType the field type for this field.
-     */
-    void setFieldType(@NotNull FieldRegistries.FieldEntry fieldType);
 
     /**
      * Gets the position of the field.

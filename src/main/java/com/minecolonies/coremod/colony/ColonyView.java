@@ -1002,18 +1002,17 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public @NotNull Collection<IField> getFields(final FieldRegistries.FieldEntry type)
+    public @NotNull List<IField> getFields(final Predicate<IField> matcher)
     {
         return fields.stream()
-                 .filter(f -> f.getFieldType().getRegistryName().equals(type.getRegistryName()))
+                 .filter(matcher)
                  .toList();
     }
 
     @Override
-    public @Nullable IField getField(final FieldRegistries.FieldEntry type, final Predicate<IField> matcher)
+    public @Nullable IField getField(final Predicate<IField> matcher)
     {
-        return getFields(type).stream()
-                 .filter(matcher)
+        return getFields(matcher).stream()
                  .findFirst()
                  .orElse(null);
     }

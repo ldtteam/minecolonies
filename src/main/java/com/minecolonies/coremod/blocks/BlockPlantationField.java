@@ -4,8 +4,6 @@ import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
-import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
@@ -187,14 +185,16 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                for (PlantationFieldRegistries.FieldEntry plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes())
+                for (FieldRegistries.FieldEntry plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes())
                 {
-                    IPlantationModule plantationModule = plantationFieldType.getModule();
-                    final List<BlockPos> workingPositions =
-                      plantationModule.getValidWorkingPositions(worldIn, tileEntityPlantationField.getWorkingPositions(plantationModule.getWorkTag()));
-                    if (!workingPositions.isEmpty())
+                    final PlantationField plantationField = PlantationField.create(plantationFieldType, colony, pos);
+
+                    final List<BlockPos> workingPositions = tileEntityPlantationField.getWorkingPositions(plantationField.getModule().getWorkTag());
+                    final List<BlockPos> validPositions = plantationField.getModule().getValidWorkingPositions(worldIn, workingPositions);
+                    if (!validPositions.isEmpty())
                     {
-                        colony.getBuildingManager().addOrUpdateField(PlantationField.create(colony, pos, plantationFieldType, workingPositions));
+                        plantationField.setWorkingPositions(validPositions);
+                        colony.getBuildingManager().addField(plantationField);
                         colony.getBuildingManager().addLeisureSite(pos);
                     }
                 }
@@ -231,13 +231,9 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
                 if (blockEntity instanceof TileEntityPlantationField plantationField)
                 {
-                    for (PlantationFieldRegistries.FieldEntry plantationFieldType : plantationField.getPlantationFieldTypes())
+                    for (FieldRegistries.FieldEntry plantationFieldType : plantationField.getPlantationFieldTypes())
                     {
-                        colony.getBuildingManager().removeField(FieldRegistries.plantationField.get(),
-                          field -> field.getPosition().equals(pos) &&
-                                     field instanceof PlantationField otherPlantationField &&
-                                     otherPlantationField.getPlantationFieldType()
-                                       .equals(plantationFieldType));
+                        colony.getBuildingManager().removeField(field -> field.getFieldType().equals(plantationFieldType) && field.getPosition().equals(pos));
                         colony.getBuildingManager().removeLeisureSite(pos);
                     }
                 }

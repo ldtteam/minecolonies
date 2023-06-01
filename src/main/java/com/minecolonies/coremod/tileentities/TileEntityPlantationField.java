@@ -3,7 +3,8 @@ package com.minecolonies.coremod.tileentities;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.fields.plantation.registry.PlantationFieldRegistries;
+import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
@@ -87,7 +89,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
-    public Set<PlantationFieldRegistries.FieldEntry> getPlantationFieldTypes()
+    public Set<FieldRegistries.FieldEntry> getPlantationFieldTypes()
     {
         return tagPosMap.values().stream()
                  .flatMap(Collection::stream)
@@ -156,10 +158,17 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         return this.mirror;
     }
 
-    private PlantationFieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
+    private FieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
     {
-        return PlantationFieldRegistries.getPlantationFieldRegistry().getValues().stream()
-                 .filter(f -> f.getModule().getFieldTag().equals(fieldTag))
+        return FieldRegistries.getFieldRegistry().getValues().stream()
+                 .filter(fieldEntry -> {
+                     List<IPlantationModule> modules = fieldEntry.getFieldModuleProducers().stream().map(Supplier::get)
+                                                         .filter(IPlantationModule.class::isInstance)
+                                                         .map(m -> (IPlantationModule) m)
+                                                         .toList();
+
+                     return modules.stream().anyMatch(module -> module.getFieldTag().equals(fieldTag));
+                 })
                  .findFirst()
                  .orElse(null);
     }

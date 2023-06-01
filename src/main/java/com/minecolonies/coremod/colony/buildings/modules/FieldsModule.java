@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.fields.IField;
@@ -14,11 +12,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Abstract class to list all fields (assigned) to a building.
  */
-public abstract class FieldsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, IBuildingModule
+public abstract class FieldsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingModule
 {
     /**
      * NBT tag to store assign manually.
@@ -110,6 +109,17 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     }
 
     /**
+     * Returns list of owned fields.
+     *
+     * @return a list of field objects.
+     */
+    @NotNull
+    public final List<IField> getOwnedFields()
+    {
+        return getFields().stream().filter(f -> building.getID().equals(f.getBuildingId())).toList();
+    }
+
+    /**
      * Returns list of fields.
      *
      * @return a list of field objects.
@@ -124,7 +134,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     {
         if (!shouldAssignManually)
         {
-            for (IField field : getFreeFields(building.getColony()))
+            for (IField field : getFreeFields())
             {
                 assignField(field);
             }
@@ -132,13 +142,14 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     }
 
     /**
-     * Getter to obtain all free fields in the colony.
+     * Returns list of free fields.
      *
-     * @param colony the current colony.
-     * @return all free fields or empty list.
+     * @return a list of field objects.
      */
-    @NotNull
-    protected abstract List<IField> getFreeFields(IColony colony);
+    public final List<IField> getFreeFields()
+    {
+        return getFields().stream().filter(field -> !field.isTaken()).toList();
+    }
 
     /**
      * Method called to assign a field to the building.
@@ -147,43 +158,33 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void assignField(final IField field)
     {
-        if (checkFieldCount(getOwnedFields().size(), getMaxFieldCount()) && canAddField(field))
+        if (canAssignField(field))
         {
-            field.setBuilding(building.getID());
-            markDirty();
+            building.getColony().getBuildingManager().getField(otherField -> otherField.equals(field)).ifPresent(f -> {
+                f.setBuilding(building.getID());
+                markDirty();
+            });
         }
     }
 
     /**
-     * Checks if the amount of fields is lower than the maximum allowed fields.
-     *
-     * @param amountOfFields the amount of fields.
-     * @param maxFieldCount  the maximum amount of fields.
-     * @return true if so.
-     */
-    public static boolean checkFieldCount(int amountOfFields, int maxFieldCount)
-    {
-        return amountOfFields < maxFieldCount;
-    }
-
-    /**
-     * Returns list of fields.
-     *
-     * @return a list of field objects.
-     */
-    @NotNull
-    public final List<IField> getOwnedFields()
-    {
-        return getFields().stream().filter(f -> building.getID().equals(f.getBuildingId())).toList();
-    }
-
-    /**
-     * Check if a field can be added to the building.
+     * Check to see if a new field can be assigned to the worker.
      *
      * @param field the field which is being added.
-     * @return true if the field can be added.
+     * @return true if so.
      */
-    public abstract boolean canAddField(IField field);
+    public final boolean canAssignField(IField field)
+    {
+        return getOwnedFields().size() < getMaxFieldCount() && canAssignFieldOverride(field);
+    }
+
+    /**
+     * Additional checks to see if this field can be assigned to the building.
+     *
+     * @param field the field which is being added.
+     * @return true if so.
+     */
+    protected abstract boolean canAssignFieldOverride(IField field);
 
     /**
      * Getter for the assign manually.
@@ -222,13 +223,16 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void freeField(final IField field)
     {
-        field.resetOwningBuilding();
-        markDirty();
+        Optional<IField> existingFieldOpt = building.getColony().getBuildingManager().getField(otherField -> otherField.equals(field));
+        existingFieldOpt.ifPresent(existingField -> {
+            existingField.resetOwningBuilding();
+            markDirty();
 
-        if (Objects.equals(currentField, field))
-        {
-            resetCurrentField();
-        }
+            if (Objects.equals(currentField, existingField))
+            {
+                resetCurrentField();
+            }
+        });
     }
 
     /**

@@ -3,9 +3,7 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -82,7 +80,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      */
     public void assignField(final IField field)
     {
-        if (buildingView != null && FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount) && canAssignField(field))
+        if (buildingView != null && canAssignField(field))
         {
             Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, true));
 
@@ -95,6 +93,17 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     /**
+     * Check to see if a new field can be assigned to the worker.
+     *
+     * @param field the field which is being added.
+     * @return true if so.
+     */
+    public final boolean canAssignField(IField field)
+    {
+        return getOwnedFields().size() < maxFieldCount && canAssignFieldOverride(field);
+    }
+
+    /**
      * Getter of all owned fields.
      *
      * @return an unmodifiable list.
@@ -102,7 +111,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     @NotNull
     public List<IField> getOwnedFields()
     {
-        return getColony().getFields(getExpectedFieldType()).stream()
+        return getFields().stream()
                  .filter(field -> buildingView.getID().equals(field.getBuildingId()))
                  .distinct()
                  .sorted(new FieldsComparator(buildingView))
@@ -110,19 +119,12 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     /**
-     * Check to see if a new field can be assigned to the worker.
+     * Additional checks to see if this field can be assigned to the building.
      *
      * @param field the field which is being added.
      * @return true if so.
      */
-    public abstract boolean canAssignField(IField field);
-
-    /**
-     * Get the class type which is expected for the fields to have.
-     *
-     * @return the field type.
-     */
-    public abstract FieldRegistries.FieldEntry getExpectedFieldType();
+    protected abstract boolean canAssignFieldOverride(IField field);
 
     /**
      * Getter of all fields that are either free, or taken by the current building.
@@ -132,12 +134,19 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     @NotNull
     public List<IField> getFields()
     {
-        return getColony().getFields(getExpectedFieldType()).stream()
+        return getFieldsInColony().stream()
                  .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
                  .distinct()
                  .sorted(new FieldsComparator(buildingView))
                  .toList();
     }
+
+    /**
+     * Obtains the list of fields from the colony.
+     *
+     * @return the list of field instances.
+     */
+    protected abstract List<IField> getFieldsInColony();
 
     /**
      * Free a field from the current worker.
@@ -167,7 +176,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     @Nullable
     public MutableComponent getFieldWarningTooltip(IField field)
     {
-        if (!FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount))
+        if (getOwnedFields().size() >= maxFieldCount)
         {
             return Component.translatable(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }

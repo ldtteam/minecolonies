@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -52,7 +51,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.MathUtils.RANDOM;
@@ -146,7 +144,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 final IField field = IFieldDataManager.getInstance().createFrom(colony, fieldCompound);
                 if (field != null)
                 {
-                    addOrUpdateField(field);
+                    addField(field);
                 }
             }
         }
@@ -317,7 +315,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement()))
             {
-                removeField(field.getFieldType(), f -> f.equals(field));
+                removeField(f -> f.equals(field));
             }
         }
 
@@ -913,51 +911,34 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public @NotNull List<IField> getFields(FieldRegistries.FieldEntry type)
+    public @NotNull List<IField> getFields(Predicate<IField> matcher)
     {
-        return getFieldsStream(type).toList();
-    }
-
-    private Stream<IField> getFieldsStream(FieldRegistries.FieldEntry type)
-    {
-        return fields.stream().filter(field -> field.getFieldType().equals(type));
-    }
-
-    @Override
-    public @Nullable IField getField(FieldRegistries.FieldEntry type, Predicate<IField> matcher)
-    {
-        return getFieldsStream(type)
+        return fields.stream()
                  .filter(matcher)
-                 .findFirst()
-                 .orElse(null);
+                 .toList();
     }
 
     @Override
-    public @NotNull List<IField> getFreeFields(FieldRegistries.FieldEntry type)
+    public Optional<IField> getField(Predicate<IField> matcher)
     {
-        return getFieldsStream(type).filter(field -> !field.isTaken()).toList();
+        return getFields(matcher)
+                 .stream()
+                 .findFirst();
     }
 
     @Override
-    public void addOrUpdateField(IField field)
+    public boolean addField(IField field)
     {
-        fields.remove(field);
-        fields.add(field);
-
-        for (IBuilding building : buildings.values())
+        if (fields.add(field))
         {
-            final FieldsModule fieldsModule = building.getFirstOptionalModuleOccurance(FieldsModule.class).orElse(null);
-            if (fieldsModule != null && field.equals(fieldsModule.getCurrentField()))
-            {
-                fieldsModule.resetCurrentField();
-            }
+            markFieldsDirty();
+            return true;
         }
-
-        markFieldsDirty();
+        return false;
     }
 
     @Override
-    public void removeField(FieldRegistries.FieldEntry type, Predicate<IField> matcher)
+    public void removeField(Predicate<IField> matcher)
     {
         final List<IField> fieldsToRemove = fields.stream()
                                               .filter(matcher)
@@ -970,8 +951,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             fields.remove(field);
             Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(field));
+            markFieldsDirty();
         }
-
-        markFieldsDirty();
     }
 }

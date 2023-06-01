@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.fields.plantation;
 
 import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Interface for planter modules that determines how the AI should work specific fields.
  */
-public interface IPlantationModule
+public interface IPlantationModule extends IFieldModule
 {
     /**
      * Get the field tag property.
@@ -118,6 +119,16 @@ public interface IPlantationModule
      * @return the tool to work on this module.
      */
     ToolType getRequiredTool();
+
+    /**
+     * Hashcode implementation for this field.
+     */
+    int hashCode();
+
+    /**
+     * Equals implementation for this field.
+     */
+    boolean equals(Object other);
 
     /**
      * Enum containing possible states obtained from a mining result.

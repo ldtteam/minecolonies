@@ -294,19 +294,18 @@ public interface IColonyView extends IColony
     /**
      * Get all fields.
      *
-     * @param type the field type.
+     * @param matcher the field matcher predicate.
      * @return a collection of fields.
      */
-    @NotNull Collection<IField> getFields(FieldRegistries.FieldEntry type);
+    @NotNull List<IField> getFields(Predicate<IField> matcher);
 
     /**
      * Get a specific field.
      *
-     * @param type    the field type.
      * @param matcher the field matcher predicate.
      * @return a field instance, or null.
      */
-    @Nullable IField getField(FieldRegistries.FieldEntry type, Predicate<IField> matcher);
+    @Nullable IField getField(Predicate<IField> matcher);
 
     /**
      * Update a players permissions.

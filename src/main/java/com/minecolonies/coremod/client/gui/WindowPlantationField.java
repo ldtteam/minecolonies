@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * The window shown when clicking on plantation fields blocks.
@@ -78,7 +80,8 @@ public class WindowPlantationField extends AbstractWindowSkeleton
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.tileEntityPlantationField = tileEntityPlantationField;
         this.plants = tileEntityPlantationField.getPlantationFieldTypes().stream()
-                        .map(fieldType -> new ItemStack(fieldType.getModule().getItem()))
+                        .flatMap(f -> f.getFieldModuleProducers().stream().map(Supplier::get).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
+                        .map(fieldType -> new ItemStack(fieldType.getItem()))
                         .toList();
 
         registerButton(BUTTON_REPAIR_ID, this::repairField);

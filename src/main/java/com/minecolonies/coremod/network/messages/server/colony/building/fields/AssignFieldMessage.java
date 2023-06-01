@@ -47,15 +47,14 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         super(building);
         this.assign = assign;
-        this.fieldData = new FriendlyByteBuf(Unpooled.buffer());
-        field.serialize(fieldData);
+        this.fieldData = IFieldDataManager.getInstance().toBuffer(field);
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBoolean(assign);
-        buf.writeBytes(buf);
+        buf.writeBytes(fieldData);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final IField field = IFieldDataManager.getInstance().createFromBuffer(colony, fieldData);
+        final IField field = IFieldDataManager.getInstance().fromBuffer(colony, fieldData);
         if (assign)
         {
             building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.assignField(field));
