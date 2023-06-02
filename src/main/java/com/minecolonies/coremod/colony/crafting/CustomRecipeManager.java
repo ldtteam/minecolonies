@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
@@ -272,9 +273,16 @@ public class CustomRecipeManager
     {
         for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet())
         {
-            for (final CustomRecipe recipe : CustomRecipe.parseTemplate(templateEntry.getKey(), templateEntry.getValue()))
+            try
             {
-                addRecipe(recipe);
+                for (final CustomRecipe recipe : CustomRecipe.parseTemplate(templateEntry.getKey(), templateEntry.getValue()))
+                {
+                    addRecipe(recipe);
+                }
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error parsing crafterrecipe template " + templateEntry.getKey().toString(), e);
             }
         }
 
