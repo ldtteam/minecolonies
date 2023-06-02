@@ -1,0 +1,24 @@
+{
+  "type": "recipe-template",
+  "tag": "minecraft:logs",
+  "filter": [ "_log" ],
+  "recipe": {
+    "crafter": "lumberjack_custom",
+    "inputs": [
+      {
+        "item": "[NS]:[PATH]"
+      }
+    ],
+    "result": "[NS]:stripped_[PATH]",
+    "alternate-output": [
+      {
+        "item": "[NS]:[PATH:_log=_wood]"
+      },
+      {
+        "item": "[NS]:stripped_[PATH:_log=_wood]"
+      }
+    ],
+    "intermediate": "minecraft:air",
+    "tool": "axe"
+  }
+}
