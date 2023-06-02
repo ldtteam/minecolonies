@@ -14,7 +14,11 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -25,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.COUNT_PROP;
 import static com.minecolonies.api.util.constant.NbtTagConstants.ITEM_PROP;
@@ -55,6 +61,10 @@ public class CustomRecipe
      */
     public static final String RECIPE_TYPE_RECIPE_MULT_IN = "recipe-multi-in";
 
+    /**
+     * The recipe template type
+     */
+    public static final String RECIPE_TYPE_TEMPLATE = "recipe-template";
 
     /**
      * The remove type
@@ -135,6 +145,16 @@ public class CustomRecipe
      * The property name to enable tooltip display (and transmission to the client).
      */
     public static final String RECIPE_SHOW_TOOLTIP = "show-tooltip";
+
+    /**
+     * The property name for a recipe template tag.
+     */
+    public static final String RECIPE_TAG = "tag";
+
+    /**
+     * The property name for a recipe template filter.
+     */
+    public static final String RECIPE_FILTER = "filter";
 
     /**
      * The crafter name for this instance, defaults to 'unknown'
@@ -354,6 +374,133 @@ public class CustomRecipe
         }
 
         return recipe;
+    }
+
+    /**
+     * Parse a recipe template into a list of recipes.  See {@link ItemStackUtils#parseIdTemplate}
+     * for details on the template replacement format.
+     *
+     * @param baseId       the base recipe path
+     * @param templateJson the recipe template
+     * @return a list of recipes for items discovered from the template
+     */
+    @NotNull
+    public static List<CustomRecipe> parseTemplate(@NotNull final ResourceLocation baseId,
+                                                   @NotNull final JsonObject templateJson)
+    {
+        final List<CustomRecipe> recipes = new ArrayList<>();
+
+        final ResourceLocation tagId = new ResourceLocation(GsonHelper.getAsString(templateJson, RECIPE_TAG));
+        final JsonObject baseRecipeJson = GsonHelper.getAsJsonObject(templateJson, RECIPE_TYPE_RECIPE);
+
+        final Predicate<ResourceLocation> filter;
+        if (templateJson.has(RECIPE_FILTER))
+        {
+            final JsonElement filterJson = templateJson.get(RECIPE_FILTER);
+            if (filterJson.isJsonArray())
+            {
+                final List<String> strings = StreamSupport.stream(filterJson.getAsJsonArray().spliterator(), false)
+                        .map(JsonElement::getAsString).toList();
+                filter = id -> strings.stream().anyMatch(f -> id.toString().contains(f));
+            }
+            else
+            {
+                final String filterString = filterJson.getAsString();
+                filter = id -> id.toString().contains(filterString);
+            }
+        }
+        else
+        {
+            filter = id -> true;
+        }
+
+        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, tagId)))
+        {
+            final ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+            if (!filter.test(itemId)) { continue; }
+
+            final ResourceLocation recipeId = new ResourceLocation(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
+            final JsonObject recipeJson = populateTemplate(baseRecipeJson, itemId);
+            if (recipeJson != null)
+            {
+                recipes.add(parse(recipeId, recipeJson));
+            }
+        }
+
+        return recipes;
+    }
+
+    @Nullable
+    private static JsonObject populateTemplate(@NotNull final JsonObject baseRecipeJson,
+                                               @NotNull final ResourceLocation itemId)
+    {
+        final JsonObject recipeJson = baseRecipeJson.deepCopy();
+
+        if (recipeJson.has(RECIPE_INPUTS_PROP))
+        {
+            for (final JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    if (!populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId))
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        if (!populateTemplateItem(recipeJson, RECIPE_RESULT_PROP, itemId))
+        {
+            return null;
+        }
+
+        if (recipeJson.has(RECIPE_SECONDARY_PROP))
+        {
+            for (final JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    if (!populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId))
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        if (recipeJson.has(RECIPE_ALTERNATE_PROP))
+        {
+            for (final JsonElement e : recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    if (!populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId))
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        return recipeJson;
+    }
+
+    private static boolean populateTemplateItem(@NotNull final JsonObject obj,
+                                                @NotNull final String prop,
+                                                @NotNull final ResourceLocation itemId)
+    {
+        if (obj.has(prop))
+        {
+            final String name = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, prop), itemId);
+            if (name == null)
+            {
+                return false;
+            }
+            obj.addProperty(prop, name);
+        }
+
+        return true;
     }
 
     /**

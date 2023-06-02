@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.crafting;
 
+import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -58,6 +59,11 @@ public class CustomRecipeManager
      */
     private final Map<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootTables = new HashMap<>();
 
+    /**
+     * The collection of recipe templates, pending tag loading.
+     */
+    private final Map<ResourceLocation, JsonObject> recipeTemplates = new HashMap<>();
+
     private CustomRecipeManager()
     {
     }
@@ -113,6 +119,17 @@ public class CustomRecipeManager
     }
 
     /**
+     * Temporarily stores a recipe template while waiting for the tags to finish loading.
+     * @param id           the resource id of the template.
+     * @param templateJson the template content.
+     */
+    public void addRecipeTemplate(@NotNull final ResourceLocation id,
+                                  @NotNull final JsonObject templateJson)
+    {
+        recipeTemplates.put(id, templateJson);
+    }
+
+    /**
      * Reset the entire recipe map.
      * Should be run on Data Pack Reloads, to avoid transferring settings from another world.
      */
@@ -122,6 +139,7 @@ public class CustomRecipeManager
         recipeMap.clear();
         lootTables.clear();
         removedRecipes.clear();
+        recipeTemplates.clear();
     }
 
     /**
@@ -243,6 +261,24 @@ public class CustomRecipeManager
 
             removedRecipes.clear();
         }
+    }
+
+    /**
+     * Resolve the {@link #recipeTemplates} into actual recipes.
+     *
+     * Must be called server-side-only after tags have been loaded and before we sync to client.
+     */
+    public void resolveTemplates()
+    {
+        for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet())
+        {
+            for (final CustomRecipe recipe : CustomRecipe.parseTemplate(templateEntry.getKey(), templateEntry.getValue()))
+            {
+                addRecipe(recipe);
+            }
+        }
+
+        recipeTemplates.clear();
     }
 
     /**
