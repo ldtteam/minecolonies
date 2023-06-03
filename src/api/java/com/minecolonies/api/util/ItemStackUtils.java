@@ -1035,15 +1035,15 @@ public final class ItemStackUtils
      *
      * @param value      the value to parse
      * @param baseItemId the base item id to use to fill in the components
-     * @return the resulting value, if it's a valid item; or {@code null} otherwise
+     * @return a tuple of (boolean, result), where the boolean is false if result didn't resolve to a valid item
      */
-    @Nullable
-    public static String parseIdTemplate(@Nullable final String value,
-                                         @NotNull final ResourceLocation baseItemId)
+    @NotNull
+    public static Tuple<Boolean, String> parseIdTemplate(@Nullable final String value,
+                                                         @NotNull final ResourceLocation baseItemId)
     {
         if (value == null)
         {
-            return null;
+            return new Tuple<>(false, null);
         }
 
         final int nbtIndex = value.indexOf('{');
@@ -1059,12 +1059,8 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        if (ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemId)))
-        {
-            return itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : "");
-        }
-
-        return null;
+        return new Tuple<>(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemId)),
+                itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
     }
 
     /**

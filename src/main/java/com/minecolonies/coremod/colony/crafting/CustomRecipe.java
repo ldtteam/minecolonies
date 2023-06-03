@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,6 +12,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -414,13 +417,15 @@ public class CustomRecipe
             filter = id -> true;
         }
 
+        final boolean logStatus = IMinecoloniesAPI.getInstance().getConfig().getServer().auditCraftingTags.get();
+
         for (final Item item : ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, tagId)))
         {
             final ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
             if (!filter.test(itemId)) { continue; }
 
             final ResourceLocation recipeId = new ResourceLocation(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
-            final JsonObject recipeJson = populateTemplate(baseRecipeJson, itemId);
+            final JsonObject recipeJson = populateTemplate(baseId, baseRecipeJson, itemId, logStatus);
             if (recipeJson != null)
             {
                 recipes.add(parse(recipeId, recipeJson));
@@ -431,8 +436,10 @@ public class CustomRecipe
     }
 
     @Nullable
-    private static JsonObject populateTemplate(@NotNull final JsonObject baseRecipeJson,
-                                               @NotNull final ResourceLocation itemId)
+    private static JsonObject populateTemplate(@NotNull final ResourceLocation templateId,
+                                               @NotNull final JsonObject baseRecipeJson,
+                                               @NotNull final ResourceLocation itemId,
+                                               final boolean logStatus)
     {
         final JsonObject recipeJson = baseRecipeJson.deepCopy();
 
@@ -442,16 +449,28 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    if (!populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId))
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    if (Boolean.FALSE.equals(result.getA()))
                     {
+                        if (logStatus)
+                        {
+                            Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                                    templateId, itemId, RECIPE_INPUTS_PROP, result.getB());
+                        }
                         return null;
                     }
                 }
             }
         }
 
-        if (!populateTemplateItem(recipeJson, RECIPE_RESULT_PROP, itemId))
+        final Tuple<Boolean, String> output = populateTemplateItem(recipeJson, RECIPE_RESULT_PROP, itemId);
+        if (Boolean.FALSE.equals(output.getA()))
         {
+            if (logStatus)
+            {
+                Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                        templateId, itemId, RECIPE_RESULT_PROP, output.getB());
+            }
             return null;
         }
 
@@ -461,8 +480,14 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    if (!populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId))
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    if (Boolean.FALSE.equals(result.getA()))
                     {
+                        if (logStatus)
+                        {
+                            Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                                    templateId, itemId, RECIPE_SECONDARY_PROP, result.getB());
+                        }
                         return null;
                     }
                 }
@@ -475,32 +500,39 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    if (!populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId))
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    if (Boolean.FALSE.equals(result.getA()))
                     {
+                        if (logStatus)
+                        {
+                            Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                                    templateId, itemId, RECIPE_ALTERNATE_PROP, result.getB());
+                        }
                         return null;
                     }
                 }
             }
         }
 
+        if (logStatus)
+        {
+            Log.getLogger().info("Template {} with {}: success", templateId, itemId);
+        }
         return recipeJson;
     }
 
-    private static boolean populateTemplateItem(@NotNull final JsonObject obj,
-                                                @NotNull final String prop,
-                                                @NotNull final ResourceLocation itemId)
+    private static Tuple<Boolean, String> populateTemplateItem(@NotNull final JsonObject obj,
+                                                               @NotNull final String prop,
+                                                               @NotNull final ResourceLocation itemId)
     {
         if (obj.has(prop))
         {
-            final String name = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, prop), itemId);
-            if (name == null)
-            {
-                return false;
-            }
-            obj.addProperty(prop, name);
+            final Tuple<Boolean, String> result = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, prop), itemId);
+            obj.addProperty(prop, result.getB());
+            return result;
         }
 
-        return true;
+        return new Tuple<>(true, null);
     }
 
     /**
