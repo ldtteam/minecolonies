@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -147,10 +146,10 @@ public class EntityAICitizenChild extends Goal
         // Timer used for delays on actions
         if (actionTimer > 0)
         {
-            actionTimer -= MineColonies.getConfig().getServer().updateRate.get();
+            actionTimer -= stateMachine.getTickRate();
         }
 
-        aiActiveTime += MineColonies.getConfig().getServer().updateRate.get() * (child.getCitizenJobHandler().getColonyJob() instanceof JobPupil ? 2 : 1);
+        aiActiveTime += stateMachine.getTickRate() * (child.getCitizenJobHandler().getColonyJob() instanceof JobPupil ? 2 : 1);
 
         return false;
     }
