@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -467,7 +468,7 @@ public class CustomRecipe
                     {
                         if (logStatus)
                         {
-                            Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                            Log.getLogger().error("Template {} with {}: rejecting {} {}",
                                     templateId, itemId, RECIPE_INPUTS_PROP, result.getB());
                         }
                         return null;
@@ -481,7 +482,7 @@ public class CustomRecipe
         {
             if (logStatus)
             {
-                Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                Log.getLogger().error("Template {} with {}: rejecting {} {}",
                         templateId, itemId, RECIPE_RESULT_PROP, output.getB());
             }
             return null;
@@ -498,7 +499,7 @@ public class CustomRecipe
                     {
                         if (logStatus)
                         {
-                            Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                            Log.getLogger().error("Template {} with {}: rejecting {} {}",
                                     templateId, itemId, RECIPE_SECONDARY_PROP, result.getB());
                         }
                         return null;
@@ -509,8 +510,9 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_ALTERNATE_PROP))
         {
-            for (final JsonElement e : recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray())
+            for (final Iterator<JsonElement> iterator = recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray().iterator(); iterator.hasNext(); )
             {
+                final JsonElement e = iterator.next();
                 if (e.isJsonObject())
                 {
                     final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
@@ -518,13 +520,21 @@ public class CustomRecipe
                     {
                         if (logStatus)
                         {
-                            Log.getLogger().warn("Template {} with {}: rejecting {} {}",
+                            Log.getLogger().warn("Template {} with {}: ignoring {} {}",
                                     templateId, itemId, RECIPE_ALTERNATE_PROP, result.getB());
                         }
-                        return null;
+
+                        iterator.remove();
                     }
                 }
             }
+        }
+
+        if (!recipeJson.has(RECIPE_RESULT_PROP) && !recipeJson.has(RECIPE_LOOTTABLE_PROP) &&
+                (!recipeJson.has(RECIPE_ALTERNATE_PROP) || recipeJson.getAsJsonArray(RECIPE_ALTERNATE_PROP).isEmpty()))
+        {
+            Log.getLogger().error("Template {} with {}: rejecting, no outputs", templateId, itemId);
+            return null;
         }
 
         if (logStatus)

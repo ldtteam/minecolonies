@@ -12,8 +12,10 @@
         "item": "[NS]:[PATH]"
       }
     ],
-    "result": "[NS]:stripped_[PATH]",
     "alternate-output": [
+      {
+        "item": "[NS]:stripped_[PATH]"
+      },
       {
         "item": "[NS]:[PATH:_log=_wood]"
       },

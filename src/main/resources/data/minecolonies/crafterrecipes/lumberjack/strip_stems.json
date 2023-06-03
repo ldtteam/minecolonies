@@ -12,13 +12,21 @@
         "item": "[NS]:[PATH]"
       }
     ],
-    "result": "[NS]:stripped_[PATH]",
     "alternate-output": [
+      {
+        "item": "[NS]:stripped_[PATH]"
+      },
       {
         "item": "[NS]:[PATH:_stem=_hyphae]"
       },
       {
         "item": "[NS]:stripped_[PATH:_stem=_hyphae]"
+      },
+      {
+        "item": "[NS]:[PATH:_stem=_wood]"
+      },
+      {
+        "item": "[NS]:stripped_[PATH:_stem=_wood]"
       }
     ],
     "intermediate": "minecraft:air",
