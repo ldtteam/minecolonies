@@ -1,7 +1,10 @@
 {
   "type": "recipe-template",
   "tag": "minecraft:logs",
-  "filter": [ "_stem" ],
+  "filter": {
+    "include": "_stem",
+    "exclude": "stripped_"
+  },
   "recipe": {
     "crafter": "lumberjack_custom",
     "inputs": [

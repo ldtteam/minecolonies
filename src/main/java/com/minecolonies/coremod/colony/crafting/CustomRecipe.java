@@ -397,24 +397,16 @@ public class CustomRecipe
         final JsonObject baseRecipeJson = GsonHelper.getAsJsonObject(templateJson, RECIPE_TYPE_RECIPE);
 
         final Predicate<ResourceLocation> filter;
-        if (templateJson.has(RECIPE_FILTER))
+        final JsonElement filterJson = templateJson.get(RECIPE_FILTER);
+        if (filterJson != null && filterJson.isJsonObject())
         {
-            final JsonElement filterJson = templateJson.get(RECIPE_FILTER);
-            if (filterJson.isJsonArray())
-            {
-                final List<String> strings = StreamSupport.stream(filterJson.getAsJsonArray().spliterator(), false)
-                        .map(JsonElement::getAsString).toList();
-                filter = id -> strings.stream().anyMatch(f -> id.toString().contains(f));
-            }
-            else
-            {
-                final String filterString = filterJson.getAsString();
-                filter = id -> id.toString().contains(filterString);
-            }
+            final Predicate<ResourceLocation> include = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("include"), true);
+            final Predicate<ResourceLocation> exclude = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("exclude"), false);
+            filter = id -> include.test(id) && !exclude.test(id);
         }
         else
         {
-            filter = id -> true;
+            filter = parseArrayOrStringFilter(filterJson, true);
         }
 
         final boolean logStatus = IMinecoloniesAPI.getInstance().getConfig().getServer().auditCraftingTags.get();
@@ -433,6 +425,27 @@ public class CustomRecipe
         }
 
         return recipes;
+    }
+
+    @NotNull
+    private static Predicate<ResourceLocation> parseArrayOrStringFilter(@Nullable final JsonElement filterJson,
+                                                                        final boolean defaultResult)
+    {
+        if (filterJson == null)
+        {
+            return id -> defaultResult;
+        }
+        else if (filterJson.isJsonArray())
+        {
+            final List<String> strings = StreamSupport.stream(filterJson.getAsJsonArray().spliterator(), false)
+                    .map(JsonElement::getAsString).toList();
+            return id -> strings.stream().anyMatch(f -> id.toString().contains(f));
+        }
+        else
+        {
+            final String filterString = filterJson.getAsString();
+            return id -> id.toString().contains(filterString);
+        }
     }
 
     @Nullable
