@@ -12,16 +12,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.MineColonies;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
@@ -61,7 +58,6 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
-        stateMachine.setTickRate(MineColonies.getConfig().getServer().updateRate.get());
     }
 
     /**
@@ -216,5 +212,15 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         worker.setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+    }
+
+    /**
+     * Sets the delay to next execution for the currently executed transition
+     *
+     * @param ticksToNextUpdate
+     */
+    public void setCurrentDelay(final int ticksToNextUpdate)
+    {
+        stateMachine.setCurrentDelay(ticksToNextUpdate);
     }
 }

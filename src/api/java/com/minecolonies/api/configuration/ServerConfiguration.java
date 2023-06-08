@@ -32,7 +32,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
     public final ForgeConfigSpec.IntValue     allowGlobalNameChanges;
     public final ForgeConfigSpec.BooleanValue holidayFeatures;
-    public final ForgeConfigSpec.IntValue     updateRate;
     public final ForgeConfigSpec.IntValue     dirtFromCompost;
     public final ForgeConfigSpec.IntValue     luckyBlockChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
@@ -167,7 +166,6 @@ public class ServerConfiguration extends AbstractConfiguration
         sendEnteringLeavingMessages = defineBoolean(builder, "sendenteringleavingmessages", true);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
