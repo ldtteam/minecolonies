@@ -34,4 +34,11 @@ public interface ITickRateStateMachine<S extends IState> extends IStateMachine<I
      * @param tickRate the tick rate to set.
      */
     void setTickRate(final int tickRate);
+
+    /**
+     * Sets the delay to next execution for the currently executed transition
+     *
+     * @param ticksToNext
+     */
+    void setCurrentDelay(int ticksToNext);
 }
