@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -144,7 +145,7 @@ public class Tree
     public Tree(@NotNull final Level world, @NotNull final BlockPos log, @Nullable final IColony colony)
     {
         final BlockState block = BlockPosUtil.getBlockState(world, log);
-        if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock()))
+        if (block.is(ModTags.tree) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock()))
         {
             isTree = true;
             woodBlocks = new LinkedList<>();
@@ -297,6 +298,12 @@ public class Tree
         NonNullList<ItemStack> list = NonNullList.create();
         BlockState state = world.getBlockState(position);
 
+        if (state.is(Blocks.MANGROVE_LEAVES))
+        {
+            list.add(new ItemStack(Items.MANGROVE_PROPAGULE));
+            return list;
+        }
+
         for (int i = 1; i < 100; i++)
         {
             list.addAll(state.getDrops(new LootContext.Builder(world)
@@ -351,7 +358,7 @@ public class Tree
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
-        if (!state.is(BlockTags.LOGS) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
+        if (!state.is(ModTags.tree) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
         {
             return false;
         }
@@ -420,7 +427,7 @@ public class Tree
                 {
                     final BlockPos temp = log.offset(x, y, z);
                     final BlockState block = world.getBlockState(temp);
-                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock())) && !woodenBlocks.contains(temp))
+                    if ((block.is(ModTags.tree) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock())) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -444,17 +451,18 @@ public class Tree
         boolean checkedLeaves = false;
         int leafCount = 0;
         int dynamicBonusY = 0;
+        final BlockState blockState = world.getBlockState(pos);
         // Additional leaf search range for dynamic trees, as we start from the baselog
-        if (Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
+        if (blockState.is(ModTags.mangroveTree) || Compatibility.isDynamicBlock(blockState.getBlock()))
         {
-            dynamicBonusY = 10;
+            dynamicBonusY = 8;
         }
 
         for (int dx = -1; dx <= 1; dx++)
         {
             for (int dz = -1; dz <= 1; dz++)
             {
-                for (int dy = -3; dy <= 1 + dynamicBonusY; dy++)
+                for (int dy = -3; dy <= 3 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.offset(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || world.getBlockState(leafPos).is(BlockTags.WART_BLOCKS))
@@ -640,6 +648,22 @@ public class Tree
                 stumpLocations.add(pos);
             }
         }
+
+        // todo: for the sake of generic-ness this could check for adjacency rather than just special-casing,
+        //       though that's harder if someone decides to make a tree bigger than 2x2.
+        if (stumpLocations.size() > 1 && sapling.is(Items.MANGROVE_PROPAGULE))
+        {
+            BlockPos.MutableBlockPos acc = BlockPos.ZERO.mutable();
+            for (final BlockPos stump : stumpLocations)
+            {
+                acc = acc.move(stump);
+            }
+
+            final BlockPos mean = new BlockPos(acc.getX() / stumpLocations.size(),
+                    acc.getY() / stumpLocations.size(), acc.getZ() / stumpLocations.size());
+            stumpLocations.clear();
+            stumpLocations.add(mean);
+        }
     }
 
     /**
@@ -662,7 +686,7 @@ public class Tree
         }
 
         // Check if the new log fits the Tree's base log type
-        if (!world.getBlockState(log).getBlock().equals(world.getBlockState(location).getBlock()))
+        if (!isBlockPartOfSameTree(world.getBlockState(log), world.getBlockState(location)))
         {
             return;
         }
@@ -705,13 +729,30 @@ public class Tree
                 {
                     final BlockPos temp = log.offset(x, y, z);
                     final BlockState block = BlockPosUtil.getBlockState(world, temp);
-                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock())))
+                    if ((block.is(ModTags.tree) || Compatibility.isSlimeBlock(block.getBlock())))
                     {
                         addAndSearch(world, temp, colony);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Check if this is a log in the same tree type.
+     * @param existingBlock the current block in the tree.
+     * @param newBlock      block to check.
+     * @return true if this is the same type of tree; false if it's something different.
+     */
+    private boolean isBlockPartOfSameTree(@NotNull final BlockState existingBlock,
+                                          @NotNull final BlockState newBlock)
+    {
+        if (existingBlock.is(ModTags.mangroveTree))
+        {
+            return newBlock.is(ModTags.mangroveTree);
+        }
+
+        return existingBlock.getBlock().equals(newBlock.getBlock());
     }
 
     /**

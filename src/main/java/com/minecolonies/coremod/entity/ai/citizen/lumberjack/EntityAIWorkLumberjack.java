@@ -477,6 +477,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (building.shouldRestrict() && !BlockPosUtil.isInArea(building.getStartRestriction(), building.getEndRestriction(), job.getTree().getLocation()))
         {
             job.setTree(null);
+            pathResult = null;
             return START_WORKING;
         }
 
@@ -506,6 +507,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             else
             {
                 job.setTree(null);
+                pathResult = null;
                 checkedInHut = false;
             }
 
@@ -627,10 +629,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveToWithPassable(world,
               AbstractPathJob.prepareStart(worker),
-              workAt,
+              workFrom,
               SEARCH_RANGE,
               worker,
-              this::isPassable), workAt, 1.0d, true);
+              this::isPassable), workFrom, 1.0d, true);
         }
 
         return false;
@@ -763,6 +765,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (plantSapling(job.getTree().getLocation()))
         {
             job.setTree(null);
+            pathResult = null;
             checkedInHut = false;
         }
     }
