@@ -21,9 +21,9 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
     private int tickRate;
 
     /**
-     * The random offset for Ticks, so that AITargets get more distributed activations on server ticks
+     * Amount of ticks until next update, counts down
      */
-    private final int tickOffset;
+    private int ticksToUpdate = 0;
 
     /**
      * The variant used upon creation of the AITarget to uniformly distribute the Tick offset Static variable counter that changes with each AITarget creation and affects the next
@@ -53,7 +53,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
         this.tickRate = Math.max(this.tickRate, 1);
 
         // Calculate offSet % tickRate already to not have redundant calculations later
-        this.tickOffset = tickOffsetVariant % this.tickRate;
+        this.ticksToUpdate = tickOffsetVariant % this.tickRate;
         // Increase variant for next AITarget and reset variant at a certain point
         tickOffsetVariant++;
         if (tickOffsetVariant >= MAX_TICKRATE_VARIANT)
@@ -81,7 +81,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
         this.tickRate = Math.max(this.tickRate, 1);
 
         // Calculate offSet % tickRate already to not have redundant calculations later
-        this.tickOffset = tickOffsetVariant % this.tickRate;
+        this.ticksToUpdate = tickOffsetVariant % this.tickRate;
         // Increase variant for next AITarget and reset variant at a certain point
         tickOffsetVariant++;
         if (tickOffsetVariant >= MAX_TICKRATE_VARIANT)
@@ -118,8 +118,14 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @return random
      */
     @Override
-    public int getTickOffset()
+    public int countdownTicksToUpdate()
     {
-        return tickOffset;
+        return --ticksToUpdate;
+    }
+
+    @Override
+    public void setTicksToUpdate(final int ticksToUpdate)
+    {
+        this.ticksToUpdate = ticksToUpdate;
     }
 }
