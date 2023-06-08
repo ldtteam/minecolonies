@@ -700,6 +700,8 @@ public final class NbtTagConstants
     public static final String TAG_QUEST_INDEX = "questindex";
     public static final String TAG_OBJECTIVE = "objective";
     public static final String TAG_PLAYER = "player";
+    public static final String TAG_UNLOCKED = "unlockedquests";
+    public static final String TAG_REPUTATION = "questreputation";
 
     public static final String TAG_MODIFIER_TYPE = "modifier";
     public static final String TAG_WEIGHT = "weight";

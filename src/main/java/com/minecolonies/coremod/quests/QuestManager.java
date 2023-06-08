@@ -35,6 +35,16 @@ public class QuestManager implements IQuestManager
     private final Map<ResourceLocation, IQuestInstance> inProgressQuests = new HashMap<>();
 
     /**
+     * Unlocked quest requirements.
+     */
+    private final List<ResourceLocation> unlockedQuests = new ArrayList<>();
+
+    /**
+     * Quest reputation.
+     */
+    private double questReputation = 0;
+
+    /**
      * This manager's colony
      */
     private final IColony colony;
@@ -55,6 +65,18 @@ public class QuestManager implements IQuestManager
         this.inProgressQuests.put(questID, quest);
         this.availableQuests.remove(questID);
         return true;
+    }
+
+    @Override
+    public void alterReputation(final double difference)
+    {
+        this.questReputation += difference;
+    }
+
+    @Override
+    public double getReputation()
+    {
+        return this.questReputation;
     }
 
     @Override
@@ -149,26 +171,38 @@ public class QuestManager implements IQuestManager
     }
 
     @Override
+    public void unlockQuest(final ResourceLocation questId)
+    {
+        this.unlockedQuests.add(questId);
+    }
+
+    @Override
+    public boolean isUnlocked(final ResourceLocation questId)
+    {
+        return this.unlockedQuests.contains(questId);
+    }
+
+    @Override
     public CompoundTag serializeNBT()
     {
         final CompoundTag managerCompound = new CompoundTag();
 
         final ListTag availableListTag = new ListTag();
-        for (Map.Entry<ResourceLocation, IQuestInstance> available : availableQuests.entrySet())
+        for (final Map.Entry<ResourceLocation, IQuestInstance> available : availableQuests.entrySet())
         {
             availableListTag.add(available.getValue().serializeNBT());
         }
         managerCompound.put(TAG_AVAILABLE, availableListTag);
 
         final ListTag inProgressListTag = new ListTag();
-        for (Map.Entry<ResourceLocation, IQuestInstance> inProgress : inProgressQuests.entrySet())
+        for (final Map.Entry<ResourceLocation, IQuestInstance> inProgress : inProgressQuests.entrySet())
         {
             inProgressListTag.add(inProgress.getValue().serializeNBT());
         }
         managerCompound.put(TAG_IN_PROGRESS, inProgressListTag);
 
         final ListTag finishedListTag = new ListTag();
-        for (Map.Entry<ResourceLocation, Integer> finished : finishedQuests.entrySet())
+        for (final Map.Entry<ResourceLocation, Integer> finished : finishedQuests.entrySet())
         {
             final CompoundTag finishedTag = new CompoundTag();
             finishedTag.putString(TAG_ID, finished.getKey().toString());
@@ -176,6 +210,16 @@ public class QuestManager implements IQuestManager
             finishedListTag.add(finishedTag);
         }
         managerCompound.put(TAG_FINISHED, finishedListTag);
+
+        final ListTag unlockedListTag = new ListTag();
+        for (final ResourceLocation unlocked : unlockedQuests)
+        {
+            final CompoundTag unlockedTag = new CompoundTag();
+            unlockedTag.putString(TAG_ID, unlocked.toString());
+            unlockedListTag.add(unlockedTag);
+        }
+        managerCompound.put(TAG_UNLOCKED, unlockedListTag);
+        managerCompound.putDouble(TAG_REPUTATION, questReputation);
 
         return managerCompound;
     }
@@ -216,5 +260,13 @@ public class QuestManager implements IQuestManager
         {
             this.finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));
         }
+
+        this.unlockedQuests.clear();
+        final ListTag unlockedListTag = nbt.getList(TAG_UNLOCKED, Tag.TAG_COMPOUND);
+        for (final Tag element : unlockedListTag)
+        {
+            this.unlockedQuests.add(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)));
+        }
+        this.questReputation = nbt.getDouble(TAG_REPUTATION);
     }
 }

@@ -182,6 +182,11 @@ public class Colony implements IColony
     private final IStatisticsManager statisticManager = new StatisticsManager(this);
 
     /**
+     * Reputation manager of the colony.
+     */
+    private final IStatisticsManager reputationManager = new StatisticsManager(this);
+
+    /**
      * Quest manager for this colony
      */
     private IQuestManager questManager;

@@ -4,7 +4,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 100000000000
+      "rarity": 0
     },
     {
       "type": "minecolonies:state",
@@ -37,10 +37,17 @@
           }
         }
       }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "qty": 0.5
+    },
+    {
+      "type": "minecolonies:unlock"
     }
   ],
   "max-occurrences": 20,
-  "triggerOrder": "(1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)",
+  "triggerOrder": "((1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)) && 5 && 6",
   "objectives": [
     {
       "type": "minecolonies:dialogue",
@@ -119,7 +126,6 @@
     },
     {
       "type": "minecolonies:breakblock",
-      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
       "details": {
         "target": 0,
         "block": "minecraft:dirt",
@@ -128,11 +134,32 @@
       }
     },
     {
+      "type": "minecolonies:placeblock",
+      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
+      "details": {
+        "target": 0,
+        "block": "minecraft:dirt",
+        "qty": 10,
+        "next-objective": 5
+      }
+    },
+    {
       "type": "minecolonies:killentity",
       "details": {
         "target": 0,
         "entity-type": "minecraft:skeleton",
-        "qty": 10
+        "qty": 10,
+        "next-objective": 6
+      }
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "target": 0,
+        "type": "minecolonies:builder",
+        "lvl": 3,
+        "qty": 1,
+        "count-existing": false
       }
     }
   ],
@@ -178,6 +205,18 @@
         "target": 0,
         "qty": 1,
         "days": 7
+      }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "details": {
+        "qty": 0.5
+      }
+    },
+    {
+      "type": "minecolonies:unlockquest",
+      "details": {
+        "id": "minecolonies:questtemplate"
       }
     }
   ]

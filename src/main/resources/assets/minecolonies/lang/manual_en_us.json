@@ -2398,10 +2398,16 @@
   "com.minecolonies.coremod.questobjectives.answer.later": "Sorry, be right back!",
   "com.minecolonies.coremod.questobjectives.answer.cancel": "I don't have time for this!",
   "com.minecolonies.coremod.questobjectives.breakblock": "I am still waiting for you to mine $d %s!",
+  "com.minecolonies.coremod.questobjectives.placeblock": "I am still waiting for you to place $d %s!",
+
   "com.minecolonies.coremod.questobjectives.delivery.waiting": "I am still waiting for %s!",
   "com.minecolonies.coremod.questobjectives.delivery.waiting.cancel": "I don't have any of it!",
   "com.minecolonies.coremod.questobjectives.delivery.ready": "Oh hey, you brought %s; can I have it?",
   "com.minecolonies.coremod.questobjectives.delivery.ready.give": "Yes, here you are!",
   "com.minecolonies.coremod.questobjectives.delivery.ready.later": "No, wait!",
-  "com.minecolonies.coremod.questobjectives.kill": "I am still waiting for you to kill $d %s!"
+  "com.minecolonies.coremod.questobjectives.kill": "I am still waiting for you to kill $d %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding": "I am still waiting for you to build %d level %d %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.existing": "I am still waiting for you to reach level %d for %d %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative": "I am still waiting for you to build or upgrade %d levels of %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!"
 }
