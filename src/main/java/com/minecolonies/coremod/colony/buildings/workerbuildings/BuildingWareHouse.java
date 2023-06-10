@@ -16,18 +16,13 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.*;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-
-import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Class of the warehouse building.
@@ -153,6 +148,26 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
           getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
+    }
+
+    @Override
+    public void onColonyTick(IColony colony)
+    {
+        super.onColonyTick(colony);
+
+        rebalanceCurrentRequests();
+    }
+
+    private void rebalanceCurrentRequests()
+    {
+        for (final IRequestResolver<?> resolver : getResolvers())
+        {
+            if (resolver instanceof DeliverymenRequestResolver<?> dman)
+            {
+                dman.rebalanceCurrentRequests(getColony().getRequestManager());
+                return;
+            }
+        }
     }
 
     /**
