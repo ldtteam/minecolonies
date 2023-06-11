@@ -1,10 +1,8 @@
 {
-  "type": "ars_nouveau:dungeon_loot",
-  "common_chance": 0.3,
-  "common_rolls": 3,
+  "type": "minecolonies:supplyship_loot",
   "conditions": [
     {
-      "condition": "minecraft:alternative",
+      "condition": "minecraft:any_of",
       "terms": [
         {
           "condition": "forge:loot_table_id",
@@ -44,9 +42,5 @@
         }
       ]
     }
-  ],
-  "rare_chance": 0.1,
-  "rare_rolls": 1,
-  "uncommon_chance": 0.2,
-  "uncommon_rolls": 2
+  ]
 }

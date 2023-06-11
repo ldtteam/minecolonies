@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializ
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
+import com.minecolonies.coremod.loot.SupplyLoot;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.coremod.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.coremod.placementhandlers.main.SurvivalHandler;
@@ -88,6 +89,7 @@ public class MineColonies
         ModInteractionsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModLootConditions.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        SupplyLoot.GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(FMLJavaModLoadingContext.get().getModEventBus());

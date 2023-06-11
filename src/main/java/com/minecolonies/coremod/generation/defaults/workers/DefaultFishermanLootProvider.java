@@ -18,8 +18,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
-import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -77,7 +76,7 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                 .withPool(LootPool.lootPool()
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
-                                .when(new AllOfCondition.Builder(
+                                .when(new AnyOfCondition.Builder(
                                         EntityInBiomeTag.of(BiomeTags.IS_OCEAN),
                                         ResearchUnlocked.effect(ResearchConstants.FISH_TREASURE)
                                 )))

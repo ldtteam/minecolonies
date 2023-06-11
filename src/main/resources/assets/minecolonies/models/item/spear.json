@@ -1,6 +1,6 @@
 {
   "parent":"forge:item/default",
-  "loader":"forge:separate-perspective",
+  "loader":"forge:separate_transforms",
   "base": {
     "parent": "minecolonies:item/spear_in_hand",
     "textures": {

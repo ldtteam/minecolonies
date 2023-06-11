@@ -14,7 +14,7 @@
           "type": "minecraft:loot_table",
           "conditions": [
             {
-              "condition": "minecraft:alternative",
+              "condition": "minecraft:any_of",
               "terms": [
                 {
                   "condition": "minecolonies:entity_in_biome_tag",

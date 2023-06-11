@@ -90,7 +90,7 @@ public final class LootTableAnalyzer
                     .filter(entry ->
                     {
                         final String type = GsonHelper.getAsString(entry.getAsJsonObject(), "type");
-                        return type.equals("minecraft:empty") || type.equals("minecraft:item") || type.equals("minecraft:tag") || type.equals("minecraft:loot_table") || type.equals("minecraft:alternatives");
+                        return type.equals("minecraft:empty") || type.equals("minecraft:item") || type.equals("minecraft:tag") || type.equals("minecraft:loot_table") || type.equals("minecraft:any_of");
                     })
                     .mapToInt(entry -> GsonHelper.getAsInt(entry.getAsJsonObject(), "weight", 1))
                     .sum();
@@ -154,7 +154,7 @@ public final class LootTableAnalyzer
                     drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability(), drop.getQuality() + quality, drop.getConditional() || conditional));
                 }
             }
-            case "minecraft:alternatives" -> {
+            case "minecraft:any_of" -> {
                 final JsonArray children = GsonHelper.getAsJsonArray(entryJson, "children", new JsonArray());
                 // currently, the only one of these we're dealing with is "silk touch or not", so we'll just find the
                 // first one that doesn't have conditions and call it a day, at least for now... (or failing that, just the last)

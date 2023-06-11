@@ -34,7 +34,6 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapab
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
-import com.minecolonies.coremod.loot.SupplyLoot;
 import com.minecolonies.coremod.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
@@ -100,17 +99,6 @@ public class EventHandler
      * Player position map for watching chunk entries
      */
     private static Map<UUID, ChunkPos> playerPositions = new HashMap<>();
-
-    /**
-     * Adds our custom loot tables to vanilla tables.
-     *
-     * @param event the event.
-     */
-    @SubscribeEvent
-    public static void onLootTableLoad(LootTableLoadEvent event)
-    {
-        SupplyLoot.getInstance().addLootToEvent(event);
-    }
 
     @SubscribeEvent
     public static void onCommandsRegister(final RegisterCommandsEvent event)
