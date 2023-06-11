@@ -18,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -44,6 +46,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE
  */
 public final class LootTableAnalyzer
 {
+    private static final Gson GSON = Deserializers.createLootTableSerializer().create();
+
     private LootTableAnalyzer() { }
 
     public static List<LootDrop> toDrops(@NotNull final LootDataManager lootTableManager,
@@ -57,7 +61,7 @@ public final class LootTableAnalyzer
     {
         try
         {
-            final JsonObject lootTableJson = new LootTable.Serializer().serialize(lootTable, lootTable.getClass(), new Jso).getAsJsonObject();
+            final JsonObject lootTableJson = GSON.toJsonTree(lootTable).getAsJsonObject();
             return toDrops(lootTableManager, lootTableJson);
         }
         catch (final JsonParseException ex)

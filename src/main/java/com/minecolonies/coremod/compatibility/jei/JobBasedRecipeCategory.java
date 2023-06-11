@@ -223,14 +223,13 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         for (final FormattedText line : this.description)
         {
             final int x = 0;
-            stack.drawString(mc.font, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor());
+            stack.drawString(mc.font, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor(), false);
             y += mc.font.lineHeight + 2;
         }
 
         for (final InfoBlock block : this.infoBlocksCache.getUnchecked(recipe))
         {
-            //todo mirality
-            //stack.drawShadow(mc.font, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor());
+            stack.drawString(mc.font, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor(), true);
         }
     }
 
