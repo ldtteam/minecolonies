@@ -128,6 +128,14 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.DEEPSLATE_TILE_STAIRS)
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICKS);
 
+        tag(ModTags.mangroveTree)
+                .add(Blocks.MANGROVE_LOG)
+                .add(Blocks.MANGROVE_ROOTS);
+
+        tag(ModTags.tree)
+                .addTag(BlockTags.LOGS)
+                .addTag(ModTags.mangroveTree);
+
         tag(ModTags.colonyProtectionException)
                 .addOptional(new ResourceLocation("waystones:waystone"))
                 .addOptional(new ResourceLocation("waystones:sandy_waystone"))

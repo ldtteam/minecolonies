@@ -6,6 +6,7 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.quests.objectives.IBreakBlockObjectiveTemplate;
 import com.minecolonies.coremod.quests.objectives.IKillEntityObjectiveTemplate;
+import com.minecolonies.coremod.quests.objectives.IPlaceBlockObjectiveTemplate;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
@@ -35,6 +36,11 @@ public class QuestObjectiveEventHandler
      * Entity kill objective tracker.
      */
     private static final Map<EntityType<?>, Map<UUID, IQuestInstance>> entityKillObjectives = new HashMap<>();
+
+    /**
+     * Place block objective tracker.
+     */
+    private static final Map<Block, Map<UUID, IQuestInstance>> placeBlockObjectives = new HashMap<>();
 
     /**
      * BlockEvent.BreakEvent handler.
@@ -87,13 +93,43 @@ public class QuestObjectiveEventHandler
     }
 
     /**
-     * Add an objective listener to this event handler.
+     * BlockEvent.Place handler.
+     *
+     * @param event BlockEvent.BreakEvent
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void on(final BlockEvent.EntityPlaceEvent event)
+    {
+        final LevelAccessor world = event.getLevel();
+        if (world.isClientSide() || !(event.getEntity() instanceof Player))
+        {
+            return;
+        }
+
+        final Block block =  event.getPlacedBlock().getBlock();
+        if (placeBlockObjectives.containsKey(block) && placeBlockObjectives.get(block).containsKey(event.getEntity().getUUID()))
+        {
+            final IQuestInstance colonyQuest = placeBlockObjectives.get(block).get(event.getEntity().getUUID());
+            final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getIndex());
+            if (objective instanceof IPlaceBlockObjectiveTemplate)
+            {
+                ((IPlaceBlockObjectiveTemplate) objective).onBlockPlace(colonyQuest.getCurrentObjectiveInstance(), colonyQuest, (Player) event.getEntity());
+            }
+            else
+            {
+                placeBlockObjectives.get(block).remove(event.getEntity().getUUID());
+            }
+        }
+    }
+
+    /**
+     * Add an objective listener for block mining to this event handler.
      *
      * @param blockToMine    the block that we listen for.
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void addQuestObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest)
+    public static void addQuestMineObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest)
     {
         final Map<UUID, IQuestInstance> currentMap = breakBlockObjectives.getOrDefault(blockToMine, new HashMap<>());
         currentMap.put(assignedPlayer, colonyQuest);
@@ -107,9 +143,35 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void removeQuestObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest)
+    public static void removeQuestMineObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest)
     {
         breakBlockObjectives.getOrDefault(blockToMine, new HashMap<>()).remove(assignedPlayer);
+    }
+
+    /**
+     * Add an objective listener for block placement to this event handler.
+     *
+     * @param blockToPlace    the block that we listen for.
+     * @param assignedPlayer the player we check for.
+     * @param colonyQuest    the colony quest it is related to.
+     */
+    public static void addQuestPlaceObjectiveListener(final Block blockToPlace, final UUID assignedPlayer, final IQuestInstance colonyQuest)
+    {
+        final Map<UUID, IQuestInstance> currentMap = placeBlockObjectives.getOrDefault(blockToPlace, new HashMap<>());
+        currentMap.put(assignedPlayer, colonyQuest);
+        placeBlockObjectives.put(blockToPlace, currentMap);
+    }
+
+    /**
+     * Remove an objective listener for block placement to this event handler.
+     *
+     * @param blockToPlace    the block that we listen for.
+     * @param assignedPlayer the player we check for.
+     * @param colonyQuest    the colony quest it is related to.
+     */
+    public static void removeQuestPlaceBlockObjectiveListener(final Block blockToPlace, final UUID assignedPlayer, final IQuestInstance colonyQuest)
+    {
+        placeBlockObjectives.getOrDefault(blockToPlace, new HashMap<>()).remove(assignedPlayer);
     }
 
     /**
@@ -119,7 +181,7 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void addQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
+    public static void addKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
     {
         final Map<UUID, IQuestInstance> currentMap = entityKillObjectives.getOrDefault(entityToKill, new HashMap<>());
         currentMap.put(assignedPlayer, colonyQuest);
@@ -133,7 +195,7 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void removeQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
+    public static void removeKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
     {
         entityKillObjectives.getOrDefault(entityToKill, new HashMap<>()).remove(assignedPlayer);
     }

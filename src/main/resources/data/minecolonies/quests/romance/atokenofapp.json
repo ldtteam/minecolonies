@@ -1,7 +1,7 @@
 {
   "name": "A Token of Appreciation",
   "parents": [
-    "aromanticgesture"
+    "minecolonies:aromanticgesture"
   ],
   "max-occurrences": 1,
   "triggers": [

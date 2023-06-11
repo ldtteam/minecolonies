@@ -89,7 +89,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
         return new EntityKillProgressInstance();
     }
@@ -116,7 +116,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.removeQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.removeKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
@@ -131,6 +131,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         ((EntityKillProgressInstance) killProgressData).currentProgress++;
         if (killProgressData.isFulfilled())
         {
+            cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(player, nextObjective);
         }
     }
@@ -142,7 +143,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 

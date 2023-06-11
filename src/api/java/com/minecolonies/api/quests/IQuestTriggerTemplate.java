@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.*;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Quest triggers are used to check if a colony fulfills certain conditions for a quest to be made available.
@@ -14,9 +15,21 @@ public interface IQuestTriggerTemplate
 {
     /**
      * Check if the quest trigger condition is fulfilled.
+     * @param colony the colony the quest is in.
      * @return true if so.
      */
     ITriggerReturnData canTriggerQuest(final IColony colony);
+
+    /**
+     * Check if the quest trigger condition is fulfilled.
+     * @param questId the quest to try to trigger.
+     * @param colony the colony the quest is in.
+     * @return true if so.
+     */
+    default ITriggerReturnData canTriggerQuest(final ResourceLocation questId, final IColony colony)
+    {
+        return canTriggerQuest(colony);
+    }
 
     /**
      * Match a nbt tag and a json element tag.
