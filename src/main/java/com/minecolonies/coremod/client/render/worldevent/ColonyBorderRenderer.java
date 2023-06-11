@@ -309,7 +309,7 @@ public class ColonyBorderRenderer
             return null;
         }
         // create bytebuffer copy since buffer builder uses slice
-        final VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
+        final VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
         vertexBuffer.bind();
         vertexBuffer.upload(renderedBuffer);
         VertexBuffer.unbind();
