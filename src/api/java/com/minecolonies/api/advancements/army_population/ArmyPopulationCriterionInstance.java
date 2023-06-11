@@ -2,10 +2,7 @@ package com.minecolonies.api.advancements.army_population;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.SerializationContext;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +20,7 @@ public class ArmyPopulationCriterionInstance extends AbstractCriterionTriggerIns
      */
     public ArmyPopulationCriterionInstance(final int populationCount)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), ContextAwarePredicate.ANY);
 
         this.populationCount = populationCount;
     }

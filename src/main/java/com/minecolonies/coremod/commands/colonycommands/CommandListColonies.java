@@ -92,12 +92,12 @@ public class CommandListColonies implements IMCCommand
         }
 
         final Component headerLine = Component.literal(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
-        context.getSource().sendSuccess(headerLine, true);
+        context.getSource().sendSuccess(() -> headerLine, true);
 
 
         for (final IColony colony : coloniesPage)
         {
-            context.getSource().sendSuccess(Component.literal(String.format(
+            context.getSource().sendSuccess(() -> Component.literal(String.format(
               ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
               String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
@@ -106,7 +106,7 @@ public class CommandListColonies implements IMCCommand
             teleport.setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
 
-            context.getSource().sendSuccess(teleport, true);
+            context.getSource().sendSuccess(() -> teleport, true);
         }
 
         final Component prevButton = Component.literal(PREV_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
@@ -119,7 +119,7 @@ public class CommandListColonies implements IMCCommand
         final MutableComponent beginLine = Component.literal(PAGE_LINE);
         final MutableComponent endLine = Component.literal(PAGE_LINE);
         context.getSource()
-          .sendSuccess(beginLine.append(prevButton).append(Component.literal(PAGE_LINE_DIVIDER)).append(nextButton).append(endLine), true);
+          .sendSuccess(() -> beginLine.append(prevButton).append(Component.literal(PAGE_LINE_DIVIDER)).append(nextButton).append(endLine), true);
         return 1;
     }
 

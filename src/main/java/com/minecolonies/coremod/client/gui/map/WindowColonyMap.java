@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui.map;
 
+import com.ldtteam.blockui.BOScreen;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder;
@@ -326,7 +327,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             AbstractTextBuilder.TooltipBuilder tooltip = PaneBuilders.tooltipBuilder();
             tooltip.hoverPane(uiBuilding)
-              .append(window.getScreen().getTooltipFromItem(item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
+              .append(BOScreen.getTooltipFromItem(mc, item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
               .appendNL(Component.literal("Coordinates: " + buildingView.getID().getX() + "X, " + buildingView.getID().getZ() + "Z"))
               .appendNL(Component.literal("Citizens: " + buildingView.getAllAssignedCitizens().size()));
 

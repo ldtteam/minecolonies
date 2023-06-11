@@ -4,8 +4,8 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstruct
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -13,6 +13,8 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
@@ -44,7 +46,15 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     public BlockConstructionTape()
     {
-        super(Properties.of(Material.REPLACEABLE_PLANT).strength(0.0f).noCollission().noLootTable());
+        super(Properties.of()
+                .mapColor(MapColor.PLANT)
+                .sound(SoundType.WOOD)
+                .replaceable()
+                .pushReaction(PushReaction.DESTROY)
+                .ignitedByLava()
+                .isRedstoneConductor((state, getter, pos) -> false)
+                .forceSolidOff()
+                .strength(0.0f).noCollission().noLootTable());
 
         this.shapes = makeShapes(2, 2, 16, 0, 16);
 

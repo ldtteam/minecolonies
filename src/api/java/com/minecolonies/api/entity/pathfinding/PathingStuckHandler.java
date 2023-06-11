@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.pathfinding;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
@@ -232,7 +233,7 @@ public class PathingStuckHandler implements IStuckHandler
     private void completeStuckAction(final AbstractAdvancedPathNavigate navigator)
     {
         final BlockPos desired = navigator.getDesiredPos();
-        final Level world = navigator.getOurEntity().level;
+        final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
         if (canTeleportGoal)
@@ -433,7 +434,7 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void placeLadders(final AbstractAdvancedPathNavigate navigator)
     {
-        final Level world = navigator.getOurEntity().level;
+        final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
         BlockPos entityPos = BlockPos.containing(entity.position());
@@ -455,7 +456,7 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void placeLeaves(final AbstractAdvancedPathNavigate navigator)
     {
-        final Level world = navigator.getOurEntity().level;
+        final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
         final Direction badFacing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getDesiredPos()).getOpposite();
@@ -501,7 +502,7 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void breakBlocks(final AbstractAdvancedPathNavigate navigator)
     {
-        final Level world = navigator.getOurEntity().level;
+        final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
         final Direction facing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getDesiredPos());
@@ -523,7 +524,7 @@ public class PathingStuckHandler implements IStuckHandler
             for (final Direction dir : HORIZONTAL_DIRS)
             {
                 final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
-                if (world.getBlockState(pos.relative(dir)).getMaterial().isSolid() && Blocks.LADDER.canSurvive(toPlace, world, pos))
+                if (BlockUtils.canBlockFloatInAir(world.getBlockState(pos.relative(dir))) && Blocks.LADDER.canSurvive(toPlace, world, pos))
                 {
                     world.setBlockAndUpdate(pos, toPlace);
                     break;

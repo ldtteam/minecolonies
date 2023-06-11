@@ -56,7 +56,7 @@ public class CommandRaidAll implements IMCOPCommand
             {
                 colony.getRaiderManager().raiderEvent(raidType);
             }
-            context.getSource().sendSuccess(Component.translatable(COMMAND_RAID_TONIGHT_WARNING), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_RAID_TONIGHT_WARNING), true);
             return 1;
         }
         else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
@@ -65,7 +65,7 @@ public class CommandRaidAll implements IMCOPCommand
             {
                 colony.getRaiderManager().setRaidNextNight(true, raidType);
             }
-            context.getSource().sendSuccess(Component.translatable(COMMAND_RAID_TONIGHT_WARNING), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_RAID_TONIGHT_WARNING), true);
             return 1;
         }
         return 0;

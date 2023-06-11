@@ -4,6 +4,7 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -257,7 +258,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState()) || isDecoItem(info.getBlockInfo()
                       .getState()
                       .getBlock()))),
                   false);
@@ -279,7 +280,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
                       .getState()
                       .getBlock()))),
                   false);

@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
@@ -538,8 +539,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         else
                         {
                             // Generate loot for this mob, with all the right modifiers
-                            LootContext context = this.getLootContext();
-                            LootTable loot = world.getServer().getLootTables().get(mob.getLootTable());
+                            LootParams context = this.getLootContext();
+                            LootTable loot = world.getServer().getLootData().getLootTable(mob.getLootTable());
                             List<ItemStack> mobLoot = loot.getRandomItems(context);
                             job.addProcessedResultsList(mobLoot);
 
@@ -571,8 +572,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
                         for (int i = 0; i < currStack.getCount() && !tool.isEmpty(); i++)
                         {
-                            LootContext context = this.getLootContext();
-                            LootTable loot = world.getServer().getLootTables().get(block.getLootTable());
+                            LootParams context = this.getLootContext();
+                            LootTable loot = world.getServer().getLootData().getLootTable(block.getLootTable());
                             List<ItemStack> mobLoot = loot.getRandomItems(context);
 
                             job.addProcessedResultsList(mobLoot);
@@ -884,7 +885,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 if (citizenData.getInventory().isFull())
                 {
                     InventoryUtils.spawnItemStack(
-                      worker.level,
+                      worker.level(),
                       worker.getX(),
                       worker.getY(),
                       worker.getZ(),

@@ -7,6 +7,7 @@ import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
+import com.minecolonies.coremod.generation.DatagenLootTableManager;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -17,7 +18,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -44,10 +44,10 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
 {
     public static final String SIFTER = ModJobs.SIFTER_ID.getPath();
     private final Map<Item, List<SifterMeshDetails>> inputs = new HashMap<>();
-    private final LootTables lootTableManager;
+    private final DatagenLootTableManager            lootTableManager;
 
     public DefaultSifterCraftingProvider(@NotNull final PackOutput packOutput,
-                                         @NotNull final LootTables lootTableManager)
+                                         @NotNull final DatagenLootTableManager lootTableManager)
     {
         super(packOutput);
         this.lootTableManager = lootTableManager;

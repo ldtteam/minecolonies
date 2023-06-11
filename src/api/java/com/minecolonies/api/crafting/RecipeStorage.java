@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -518,7 +519,7 @@ public class RecipeStorage implements IRecipeStorage
      * @return copy of the crafted items if successful, null on failure
      */
     @Override
-    public List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers, boolean doInsert)
+    public List<ItemStack> fullfillRecipeAndCopy(final LootParams context, final List<IItemHandler> handlers, boolean doInsert)
     {
         if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
@@ -608,7 +609,7 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private List<ItemStack> insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context, boolean doInsert)
+    private List<ItemStack> insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootParams context, boolean doInsert)
     {
         final List<ItemStack> resultStacks = new ArrayList<>();
         final List<ItemStack> secondaryStacks = new ArrayList<>();
@@ -631,7 +632,7 @@ public class RecipeStorage implements IRecipeStorage
 
         if (loot == null && lootTable != null)
         {
-            loot = context.getLevel().getServer().getLootTables().get(lootTable);
+            loot = context.getLevel().getServer().getLootData().getLootTable(lootTable);
         }
 
         if(loot != null && context != null)

@@ -88,7 +88,7 @@ public class BuildingFarmer extends AbstractBuilding
                 if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
                 {
                     final ItemStack seedStack = ((ScarecrowTileEntity) scareCrow).getSeed();
-                    toKeep.put(seedStack::sameItem, new Tuple<>(64, true));
+                    toKeep.put(stack -> ItemStack.isSameItem(seedStack, stack), new Tuple<>(64, true));
                 }
             }
         }

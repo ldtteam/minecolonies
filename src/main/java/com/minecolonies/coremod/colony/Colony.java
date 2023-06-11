@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -1174,7 +1175,7 @@ public class Colony implements IColony
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
                           ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                            || (world.isEmptyBlock(entry.getKey().below()) && !entry.getValue().getMaterial().isSolid()))
+                            || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.canBlockFloatInAir(entry.getValue())))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();

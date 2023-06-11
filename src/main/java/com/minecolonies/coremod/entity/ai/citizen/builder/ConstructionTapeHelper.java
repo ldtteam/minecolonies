@@ -146,7 +146,7 @@ public final class ConstructionTapeHelper
             final BlockState state = world.getBlockState(tempTarget);
             final BlockState upState = world.getBlockState(tempTarget.above());
 
-            if (state.canOcclude() && !upState.canOcclude() && (upState.getMaterial().isReplaceable() || upState.isAir()))
+            if (state.canOcclude() && !upState.canOcclude() && (upState.canBeReplaced() || upState.isAir()))
             {
                 return tempTarget.above();
             }

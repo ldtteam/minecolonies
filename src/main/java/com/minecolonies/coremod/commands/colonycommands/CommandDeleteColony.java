@@ -35,7 +35,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     {
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 
@@ -44,7 +44,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -52,7 +52,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
 
         BackUpHelper.backupColonyData();
         IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getLevel().dimension());
-        context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_DELETE_SUCCESS, colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_DELETE_SUCCESS, colony.getName()), true);
         return 1;
     }
 

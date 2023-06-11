@@ -32,13 +32,13 @@ public class CommandSetDeletable implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         colony.setCanBeAutoDeleted(BoolArgumentType.getBool(context, DELETEABLE_ARG));
         context.getSource()
-          .sendSuccess(Component.translatable(COMMAND_COLONY_DELETABLE_SUCCESS, colonyID, BoolArgumentType.getBool(context, DELETEABLE_ARG)), true);
+          .sendSuccess(() -> Component.translatable(COMMAND_COLONY_DELETABLE_SUCCESS, colonyID, BoolArgumentType.getBool(context, DELETEABLE_ARG)), true);
         return 1;
     }
 

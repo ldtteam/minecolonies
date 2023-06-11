@@ -32,7 +32,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -49,7 +49,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
             colony.getPermissions().addPlayer(((Player) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
         }
 
-        context.getSource().sendSuccess(Component.translatable(COMMAND_OWNER_CHANGE_SUCCESS, "[abandoned]", colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_OWNER_CHANGE_SUCCESS, "[abandoned]", colony.getName()), true);
         return 1;
     }
 

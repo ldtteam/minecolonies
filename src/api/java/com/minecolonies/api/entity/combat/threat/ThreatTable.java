@@ -175,7 +175,7 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
             }
         }
 
-        if (Math.abs(owner.level.getGameTime() - current.getLastSeen()) > MAX_TRACKING_TICKS || !current.getEntity().isAlive())
+        if (Math.abs(owner.level().getGameTime() - current.getLastSeen()) > MAX_TRACKING_TICKS || !current.getEntity().isAlive())
         {
             removeCurrentTarget();
             return getTarget();

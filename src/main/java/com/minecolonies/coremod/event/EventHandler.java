@@ -399,7 +399,7 @@ public class EventHandler
                 final ItemStack stack = player.getInventory().getItem(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
-                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getLevel(), new EntityLocation(player.getUUID()));
+                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.level, new EntityLocation(player.getUUID()));
                 }
             }
         }

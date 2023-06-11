@@ -313,7 +313,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean replaceWithSolidBlock(final BlockState blockState)
     {
-        return !blockState.getMaterial().isSolid() || structureAI.shallReplaceSolidSubstitutionBlock(blockState.getBlock(), blockState);
+        return !BlockUtils.canBlockFloatInAir(blockState) || structureAI.shallReplaceSolidSubstitutionBlock(blockState.getBlock(), blockState);
     }
 
     @Override

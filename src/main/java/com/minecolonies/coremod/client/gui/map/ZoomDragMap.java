@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.client.gui.map;
 
+import com.ldtteam.blockui.BOGuiGraphics;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -142,8 +144,9 @@ public class ZoomDragMap extends View
     }
 
     @Override
-    public void drawSelf(final PoseStack ms, final double mx, final double my)
+    public void drawSelf(final BOGuiGraphics target, final double mx, final double my)
     {
+        final PoseStack ms = target.pose();
         scissorsStart(ms, contentWidth, contentHeight);
 
         ms.pushPose();
@@ -151,15 +154,16 @@ public class ZoomDragMap extends View
         ms.translate((1 - scale) * x, (1 - scale) * y, 0.0d);
         final float renderScale = (float) Mth.clamp(scale, 0.26219988382999904, 6d);
         ms.scale(renderScale, renderScale, 1.0f);
-        super.drawSelf(ms, calcRelativeX(mx), calcRelativeY(my));
+        super.drawSelf(target, calcRelativeX(mx), calcRelativeY(my));
 
         ms.popPose();
-        scissorsEnd(ms);
+        scissorsEnd(target);
     }
 
     @Override
-    public void drawSelfLast(final PoseStack ms, final double mx, final double my)
+    public void drawSelfLast(final BOGuiGraphics target, final double mx, final double my)
     {
+        final PoseStack ms = target.pose();
         scissorsStart(ms, contentWidth, contentHeight);
 
         ms.pushPose();
@@ -167,10 +171,10 @@ public class ZoomDragMap extends View
         ms.translate((1 - scale) * x, (1 - scale) * y, 0.0d);
         final float renderScale = (float) Mth.clamp(scale, 0.26219988382999904, 6d);
         ms.scale(renderScale, renderScale, 1.0f);
-        super.drawSelfLast(ms, calcRelativeX(mx), calcRelativeY(my));
+        super.drawSelfLast(target, calcRelativeX(mx), calcRelativeY(my));
         ms.popPose();
 
-        scissorsEnd(ms);
+        scissorsEnd(target);
     }
 
     private void setScrollY(final double offset)

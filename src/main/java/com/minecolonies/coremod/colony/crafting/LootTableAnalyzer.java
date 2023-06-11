@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.colony.crafting;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.generation.DatagenLootTableManager;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,12 +18,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -47,18 +46,18 @@ public final class LootTableAnalyzer
 {
     private LootTableAnalyzer() { }
 
-    public static List<LootDrop> toDrops(@NotNull final LootTables lootTableManager,
+    public static List<LootDrop> toDrops(@NotNull final LootDataManager lootTableManager,
                                          @NotNull final ResourceLocation lootTableId)
     {
-        return toDrops(lootTableManager, lootTableManager.get(lootTableId));
+        return toDrops(lootTableManager, lootTableManager.getLootTable(lootTableId));
     }
 
-    public static List<LootDrop> toDrops(@Nullable final LootTables lootTableManager,
+    public static List<LootDrop> toDrops(@Nullable final LootDataManager lootTableManager,
                                          @NotNull final LootTable lootTable)
     {
         try
         {
-            final JsonObject lootTableJson = LootTables.serialize(lootTable).getAsJsonObject();
+            final JsonObject lootTableJson = new LootTable.Serializer().serialize(lootTable, lootTable.getClass(), new Jso).getAsJsonObject();
             return toDrops(lootTableManager, lootTableJson);
         }
         catch (final JsonParseException ex)
@@ -69,7 +68,7 @@ public final class LootTableAnalyzer
         }
     }
 
-    public static List<LootDrop> toDrops(@Nullable final LootTables lootTableManager,
+    public static List<LootDrop> toDrops(@Nullable final LootDataManager lootTableManager,
                                          @NotNull final JsonObject lootTableJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
@@ -109,7 +108,7 @@ public final class LootTableAnalyzer
     }
 
     @NotNull
-    private static List<LootDrop> entryToDrops(@Nullable final LootTables lootTableManager,
+    private static List<LootDrop> entryToDrops(@Nullable final LootDataManager lootTableManager,
                                                @NotNull final JsonObject entryJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
@@ -167,7 +166,7 @@ public final class LootTableAnalyzer
     }
 
     @NotNull
-    private static List<LootDrop> expandAdventureToken(@NotNull final LootTables lootTableManager,
+    private static List<LootDrop> expandAdventureToken(@NotNull final LootDataManager lootTableManager,
                                                        @NotNull final ItemStack token)
     {
         if (token.hasTag())

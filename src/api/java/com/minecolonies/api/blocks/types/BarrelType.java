@@ -1,20 +1,19 @@
 package com.minecolonies.api.blocks.types;
 
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
 public enum BarrelType implements StringRepresentable
 {
-    ZERO(0, "0perc", MaterialColor.WOOD),
-    TWENTY(1, "20perc", MaterialColor.WOOD),
-    FORTY(2, "40perc", MaterialColor.WOOD),
-    SIXTY(3, "60perc", MaterialColor.WOOD),
-    EIGHTY(4, "80perc", MaterialColor.WOOD),
-    HUNDRED(5, "100perc", MaterialColor.WOOD),
-    WORKING(6, "working", MaterialColor.WOOD),
-    DONE(7, "done", MaterialColor.WOOD),
-    ;
+    ZERO(0, "0perc", MapColor.WOOD),
+    TWENTY(1, "20perc", MapColor.WOOD),
+    FORTY(2, "40perc", MapColor.WOOD),
+    SIXTY(3, "60perc", MapColor.WOOD),
+    EIGHTY(4, "80perc", MapColor.WOOD),
+    HUNDRED(5, "100perc", MapColor.WOOD),
+    WORKING(6, "working", MapColor.WOOD),
+    DONE(7, "done", MapColor.WOOD);
 
     private static final BarrelType[] META_LOOKUP = new BarrelType[values().length];
     static
@@ -28,7 +27,7 @@ public enum BarrelType implements StringRepresentable
     private final String name;
     private final String unlocalizedName;
 
-    private final MaterialColor mapColor;
+    private final MapColor mapColor;
 
     /***
      * Constructor for the BarrelType
@@ -36,7 +35,7 @@ public enum BarrelType implements StringRepresentable
      * @param nameIn the name
      * @param mapColorIn the color
      */
-    BarrelType(final int metaIn, final String nameIn, final MaterialColor mapColorIn)
+    BarrelType(final int metaIn, final String nameIn, final MapColor mapColorIn)
     {
         this(metaIn, nameIn, nameIn, mapColorIn);
     }
@@ -48,7 +47,7 @@ public enum BarrelType implements StringRepresentable
      * @param unlocalizedNameIn the unlocalized name
      * @param mapColorIn the color
      */
-    BarrelType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MaterialColor mapColorIn)
+    BarrelType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
     {
         this.meta = metaIn;
         this.name = nameIn;
@@ -86,7 +85,7 @@ public enum BarrelType implements StringRepresentable
      * Returns the color that represents the entry on the map
      * @return the color
      */
-    public MaterialColor getMaterialColor()
+    public MapColor getMaterialColor()
     {
         return this.mapColor;
     }

@@ -370,7 +370,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
      */
     public Level getWorldObj()
     {
-        return playerInventory.player.level;
+        return playerInventory.player.level();
     }
 
     /**

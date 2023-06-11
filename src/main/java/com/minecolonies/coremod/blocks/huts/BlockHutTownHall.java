@@ -21,12 +21,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Component;
@@ -51,7 +52,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 {
     public BlockHutTownHall()
     {
-        super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE));
+        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
     }
 
     /**

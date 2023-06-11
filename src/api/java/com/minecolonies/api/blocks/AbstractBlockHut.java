@@ -44,15 +44,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -135,7 +132,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
+        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
         this.name = getHutName();
     }
@@ -143,10 +140,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter world, @NotNull final BlockPos pos)
     {
-        final IBuilding building = IColonyManager.getInstance().getBuilding(player.level, pos);
-        if (building != null && !building.getChildren().isEmpty() && (player.level.getGameTime() - lastBreakTickWarn) < 100)
+        final IBuilding building = IColonyManager.getInstance().getBuilding(player.level(), pos);
+        if (building != null && !building.getChildren().isEmpty() && (player.level().getGameTime() - lastBreakTickWarn) < 100)
         {
-            lastBreakTickWarn = player.level.getGameTime();
+            lastBreakTickWarn = player.level().getGameTime();
             MessageUtils.format(HUT_BREAK_WARNING_CHILD_BUILDINGS).sendTo(player);
         }
 
@@ -544,7 +541,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     private boolean canPaste(final Block anchor, final Player player, final BlockPos pos)
     {
-        final IColony colony = IColonyManager.getInstance().getIColony(player.level, pos);
+        final IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
 
         if (colony == null)
         {
@@ -554,7 +551,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             }
 
             //  Not in a colony
-            if (IColonyManager.getInstance().getIColonyByOwner(player.level, player) == null)
+            if (IColonyManager.getInstance().getIColonyByOwner(player.level(), player) == null)
             {
                 MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT).sendTo(player);
             }

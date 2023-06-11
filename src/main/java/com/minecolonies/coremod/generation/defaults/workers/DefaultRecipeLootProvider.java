@@ -39,13 +39,11 @@ public class DefaultRecipeLootProvider extends SimpleLootTableProvider
     {
         registrar.register(LOOT_TABLE_BOTTLE, LootContextParamSets.ALL_PARAMS, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .name(LOOT_TABLE_BOTTLE.toString())
                         .add(EmptyLootItem.emptyItem().setWeight(100).setQuality(-1))
                         .add(LootItem.lootTableItem(Items.GLASS_BOTTLE).setWeight(0).setQuality(1))));
 
         registrar.register(LOOT_TABLE_GRAVEL, LootContextParamSets.ALL_PARAMS, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .name(LOOT_TABLE_GRAVEL.toString())
                         .add(EmptyLootItem.emptyItem().setWeight(90))
                         .add(LootItem.lootTableItem(Items.FLINT).setWeight(10))));
     }

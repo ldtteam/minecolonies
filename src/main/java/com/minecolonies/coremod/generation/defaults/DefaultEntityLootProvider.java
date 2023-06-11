@@ -147,7 +147,6 @@ public class DefaultEntityLootProvider extends SimpleLootTableProvider
         final ResourceLocation lootName = new ResourceLocation(entityId.getNamespace(), "entities/" + entityId.getPath());
 
         final LootPool.Builder pool = LootPool.lootPool()
-                .name(entityId.toString())
                 .setRolls(ConstantValue.exactly(1));
         builder.accept(pool);
 

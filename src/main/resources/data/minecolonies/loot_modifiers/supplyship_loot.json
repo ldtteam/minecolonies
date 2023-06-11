@@ -1,0 +1,52 @@
+{
+  "type": "ars_nouveau:dungeon_loot",
+  "common_chance": 0.3,
+  "common_rolls": 3,
+  "conditions": [
+    {
+      "condition": "minecraft:alternative",
+      "terms": [
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/underwater_ruin_small"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/underwater_ruin_big"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/buried_treasure"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/shipwreck_map"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/shipwreck_supply"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/shipwreck_treasure"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_fisher"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_armorer"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_temple"
+        }
+      ]
+    }
+  ],
+  "rare_chance": 0.1,
+  "rare_rolls": 1,
+  "uncommon_chance": 0.2,
+  "uncommon_rolls": 2
+}

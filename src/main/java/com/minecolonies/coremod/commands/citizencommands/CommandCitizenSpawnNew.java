@@ -32,12 +32,12 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         context.getSource()
-          .sendSuccess(Component.translatable(COMMAND_CITIZEN_SPAWN_SUCCESS,
+          .sendSuccess(() -> Component.translatable(COMMAND_CITIZEN_SPAWN_SUCCESS,
             colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true).getName()), true);
         return 1;
     }

@@ -80,9 +80,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
         final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
 
-        keepX.put(stackLadder::sameItem, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackTorch::sameItem, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackCobble::sameItem, new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> ItemStack.isSameItem(stackLadder, stack), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> ItemStack.isSameItem(stackTorch, stack), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> ItemStack.isSameItem(stackCobble, stack), new Tuple<>(STACKSIZE, true));
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));

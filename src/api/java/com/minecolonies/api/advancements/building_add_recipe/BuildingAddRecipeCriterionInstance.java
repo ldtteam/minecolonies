@@ -22,7 +22,7 @@ public class BuildingAddRecipeCriterionInstance extends AbstractCriterionTrigger
      */
     public BuildingAddRecipeCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), ContextAwarePredicate.ANY);
     }
 
     /**
@@ -31,7 +31,7 @@ public class BuildingAddRecipeCriterionInstance extends AbstractCriterionTrigger
      */
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), ContextAwarePredicate.ANY);
 
         this.outputItemPredicates = outputItemPredicates;
     }
@@ -43,7 +43,7 @@ public class BuildingAddRecipeCriterionInstance extends AbstractCriterionTrigger
      */
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates, final int craftingSize)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), ContextAwarePredicate.ANY);
 
         this.outputItemPredicates = outputItemPredicates;
         this.craftingSize = craftingSize;

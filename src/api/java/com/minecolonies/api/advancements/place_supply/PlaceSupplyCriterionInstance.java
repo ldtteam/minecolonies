@@ -2,6 +2,7 @@ package com.minecolonies.api.advancements.place_supply;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,6 +13,6 @@ public class PlaceSupplyCriterionInstance extends AbstractCriterionTriggerInstan
 {
     public PlaceSupplyCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), ContextAwarePredicate.ANY);
     }
 }

@@ -6,6 +6,7 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -247,7 +248,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid()
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
                                                                                  || isDecoItem(info.getBlockInfo().getState().getBlock())
                                                                                  || pos.getY()  < worldPos.getY())),
                   false);
@@ -278,7 +279,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (info.getBlockInfo().getState().getMaterial().isSolid()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
                                                                                  && !isDecoItem(info.getBlockInfo().getState().getBlock()))
                                                                                  || pos.getY() > worldPos.getY())),
                   false);
@@ -343,7 +344,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
             final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
-            if (currentWorldPos.getY() < worker.getLevel().getMinBuildHeight() + 5)
+            if (currentWorldPos.getY() < worker.level.getMinBuildHeight() + 5)
             {
                 building.setProgressPos(null, null);
                 return COMPLETE_BUILD;
@@ -393,7 +394,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid()
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
                                                                                  || isDecoItem(info.getBlockInfo().getState().getBlock())
                                                                                  || pos.getY()  < worldPos.getY())),
                   false);
@@ -435,7 +436,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
                       .getState()
                       .getBlock())  || pos.getY() > worldPos.getY())),
                   false);

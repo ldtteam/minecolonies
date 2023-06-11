@@ -4,8 +4,6 @@ import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,8 +24,6 @@ import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Represents the common functions of both the wall and floor colony flag banner blocks
@@ -40,7 +37,8 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     {
         super(
             DyeColor.WHITE,
-            Properties.of(Material.WOOD)
+            Properties.of().mapColor(MapColor.WOOD)
+              .sound(SoundType.WOOD)
                 .noCollission()
                 .strength(1F)
                 .sound(SoundType.WOOD)

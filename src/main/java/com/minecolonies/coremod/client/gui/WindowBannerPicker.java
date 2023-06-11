@@ -6,6 +6,7 @@ import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -183,7 +184,7 @@ public class WindowBannerPicker extends Screen
                 pressed -> layers.remove(activeLayer), DEFAULT_NARRATION)
         {
             @Override
-            public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+            public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
             {
                 this.active = activeLayer < layers.size() && activeLayer != 0; // TODO: port this last vital condition
                 super.render(stack, mouseX, mouseY, partialTicks);
@@ -270,7 +271,7 @@ public class WindowBannerPicker extends Screen
     }
 
     @Override
-    public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+    public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
     {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
@@ -286,13 +287,12 @@ public class WindowBannerPicker extends Screen
             int trackY = (int) (center(this.height, PATTERN_ROWS, PATTERN_HEIGHT, 0, PATTERN_MARGIN)
                                 + this.scrollRow * (trackHeight / (float)(scrollRows + PATTERN_ROWS)));
 
-            fill(stack, trackX+2, trackY, trackX+6, trackY+ (int) barHeight, 0xBBFFFFFF);
+            stack.fill(trackX+2, trackY, trackX+6, trackY+ (int) barHeight, 0xBBFFFFFF);
         }
 
 
         // Render the instructions
-        this.drawCenteredString(stack,
-                this.font,
+        stack.drawCenteredString(this.font,
                 Component.translatable("com.minecolonies.coremod.gui.flag.choose").getString(),
                 this.width /2,
                 16,
@@ -454,13 +454,13 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void render(final PoseStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
+        public void render(final GuiGraphics stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.active = this.layer <= layers.size();
             super.render(stack, p_render_1_, p_render_2_, p_render_3_);
 
             if (activeLayer == this.layer)
-                fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x66DD99FF);
+                stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x66DD99FF);
         }
     }
 
@@ -498,7 +498,7 @@ public class WindowBannerPicker extends Screen
         public void onPress() { setLayer(this.pattern, colors.getSelected()); }
 
         @Override
-        public void render(final PoseStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
+        public void render(final GuiGraphics stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.visible = scrollRow * PATTERN_COLUMNS <= this.index && this.index < PATTERN_COLUMNS * (scrollRow + PATTERN_ROWS);
             this.active = activeLayer != 0;
@@ -522,18 +522,18 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void renderWidget(final PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
+        public void renderWidget(final GuiGraphics stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
         {
             if (this.visible)
             {
                 if (this.isHovered && this.active)
-                    fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);
+                    stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);
 
                 if (activeLayer < layers.size() && layers.get(activeLayer).getFirst() == this.pattern)
-                    fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xFFDD88FF);
+                    stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xFFDD88FF);
 
                 else
-                    fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x33888888);
+                    stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x33888888);
             }
         }
     }

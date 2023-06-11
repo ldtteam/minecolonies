@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -32,8 +33,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -306,7 +307,7 @@ public class Tree
 
         for (int i = 1; i < 100; i++)
         {
-            list.addAll(state.getDrops(new LootContext.Builder(world)
+            list.addAll(state.getDrops(new LootParams.Builder(world)
                                          .withParameter(LootContextParams.TOOL,
                                            new ItemStack(Items.WOODEN_AXE)).withLuck(100)
                                          .withParameter(LootContextParams.ORIGIN, new Vec3(position.getX(), position.getY(), position.getZ()))));
@@ -377,7 +378,7 @@ public class Tree
         final BlockPos basePos = baseAndTOp.getA();
 
         //Make sure tree is on solid ground and tree is not build above cobblestone.
-        return world.getBlockState(basePos.below()).getMaterial().isSolid()
+        return BlockUtils.canBlockFloatInAir(world.getBlockState(basePos.below()))
                  && world.getBlockState(basePos.below()).getBlock() != Blocks.COBBLESTONE
                  && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getB(), treesToNotCut);
     }
@@ -465,7 +466,7 @@ public class Tree
                 for (int dy = -3; dy <= 3 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.offset(dx, dy, dz);
-                    if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || world.getBlockState(leafPos).is(BlockTags.WART_BLOCKS))
+                    if (world.getBlockState(leafPos).is(BlockTags.LEAVES) || world.getBlockState(leafPos).is(BlockTags.WART_BLOCKS))
                     {
                         if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
                         {
@@ -588,7 +589,7 @@ public class Tree
      */
     private void checkTree(@NotNull final Level world, @NotNull final BlockPos topLog)
     {
-        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getMaterial().isSolid())
+        if (!BlockUtils.canBlockFloatInAir(world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ()))))
         {
             return;
         }
@@ -600,7 +601,7 @@ public class Tree
                 for (int y = -1; y <= 1; y++)
                 {
                     final BlockPos leaf = new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z);
-                    if (world.getBlockState(leaf).getMaterial().equals(Material.LEAVES))
+                    if (world.getBlockState(leaf).is(BlockTags.LEAVES))
                     {
                         if (world.getBlockState(leaf).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
                         {
@@ -787,7 +788,7 @@ public class Tree
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS)
+                    if (world.getBlockState(leaf).is(BlockTags.LEAVES) || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS)
                           || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         if (!world.getBlockState(leaf).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))

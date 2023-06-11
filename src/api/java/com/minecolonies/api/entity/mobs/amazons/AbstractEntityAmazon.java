@@ -37,7 +37,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && level.random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }

@@ -9,18 +9,21 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
@@ -132,11 +135,11 @@ public final class ShipBasedRaiderUtils
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final Level world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
-        final List<Material> allowedShipMaterials = Lists.newArrayList(Material.WATER, Material.ICE, Material.WATER_PLANT);
+        final List<Predicate<BlockState>> allowedShipMaterials = Lists.newArrayList(BlockBehaviour.BlockStateBase::liquid, state -> state.is(BlockTags.ICE), state -> !state.blocksMotion());
 
         if (MineColonies.getConfig().getServer().skyRaiders.get())
         {
-            allowedShipMaterials.add(Material.AIR);
+            allowedShipMaterials.add(BlockBehaviour.BlockStateBase::isAir);
         }
 
         return isSurfaceAreaMostlyMaterial(allowedShipMaterials, world, pos.getY(),
@@ -157,7 +160,7 @@ public final class ShipBasedRaiderUtils
      * @return true if enough water surface blocks are found
      */
     public static boolean isSurfaceAreaMostlyMaterial(
-      @NotNull final List<Material> materials,
+      @NotNull final List<Predicate<BlockState>> materials,
       @NotNull final Level world,
       final int baseY, @NotNull final BlockPos from,
       @NotNull final BlockPos to,
@@ -187,9 +190,18 @@ public final class ShipBasedRaiderUtils
         {
             for (int z = 0; z < zDist; z++)
             {
+                final BlockState state = world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY, from.getZ() + (z * zDir)));
+                boolean suitableBlock = false;
+                for (final Predicate<BlockState> pred : materials)
+                {
+                    if (!pred.test(state))
+                    {
+                        suitableBlock = true;
+                        break;
+                    }
+                }
                 // Count surface waterblocks
-                if (!materials.contains(world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY, from.getZ() + (z * zDir))).getMaterial())
-                      || !world.isEmptyBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
+                if (!suitableBlock || !world.isEmptyBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
@@ -233,8 +245,8 @@ public final class ShipBasedRaiderUtils
               startPos,
               3,
               30,
-              (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
-                pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR);
+              (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && world.getBlockState(
+                pos.above()).isAir() && world.getBlockState(pos.above(2)).isAir());
         }
 
         BlockPos diff = colony.getCenter().subtract(startPos);
@@ -310,7 +322,7 @@ public final class ShipBasedRaiderUtils
         {
             final BlockPos point = path.getNode(i).asBlockPos();
             if (lastPoint.distManhattan(point) > spacing
-                  && world.getBlockState(point).getMaterial() == Material.AIR)
+                  && world.getBlockState(point).isAir())
             {
                 wayPoints.add(point);
                 lastPoint = point;

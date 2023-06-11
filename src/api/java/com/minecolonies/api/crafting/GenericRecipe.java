@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -272,7 +273,7 @@ public class GenericRecipe implements IGenericRecipe
         if (recipe instanceof CraftingRecipe)
         {
             final List<Ingredient> inputs = recipe.getIngredients();
-            final CraftingContainer inv = new CraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
+            final CraftingContainer inv = new TransientCraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
             {
                 @Override
                 public @NotNull ItemStack quickMoveStack(final @NotNull Player player, final int slot)

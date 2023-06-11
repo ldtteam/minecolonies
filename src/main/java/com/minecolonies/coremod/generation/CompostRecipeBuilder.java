@@ -50,7 +50,7 @@ public class CompostRecipeBuilder
         {
             inputsJson.add(input.toJson());
         }
-        final Ingredient merged = CraftingHelper.getIngredient(inputsJson);
+        final Ingredient merged = CraftingHelper.getIngredient(inputsJson, true);
         consumer.accept(new Result(id, merged, this.strength));
     }
 

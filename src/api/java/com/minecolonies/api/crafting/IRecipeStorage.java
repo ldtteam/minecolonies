@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -88,7 +89,7 @@ public interface IRecipeStorage
         return fullfillRecipe(world, Arrays.asList(inventories));
     }
 
-    default boolean fullFillRecipe(@NotNull final LootContext context, @NotNull final IItemHandler... inventories)
+    default boolean fullFillRecipe(@NotNull final LootParams context, @NotNull final IItemHandler... inventories)
     {
         return fullfillRecipe(context, Arrays.asList(inventories));
     }
@@ -99,7 +100,7 @@ public interface IRecipeStorage
      * @param handlers the handlers to use.
      * @return true if successful.
      */
-    default boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers)
+    default boolean fullfillRecipe(final LootParams context, final List<IItemHandler> handlers)
     {
         return fullfillRecipeAndCopy(context, handlers, true) != null;
     }
@@ -123,7 +124,7 @@ public interface IRecipeStorage
      * @return copy of the crafted items if successful, null on failure
      */
     @Nullable
-    List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers, boolean doInsert);
+    List<ItemStack> fullfillRecipeAndCopy(final LootParams context, final List<IItemHandler> handlers, boolean doInsert);
 
     /**
      * Check for space, remove items, and insert crafted items.
@@ -134,7 +135,7 @@ public interface IRecipeStorage
     @Nullable
     default List<ItemStack> fullfillRecipeAndCopy(final Level world, final List<IItemHandler> handlers, boolean doInsert)
     {
-        return fullfillRecipeAndCopy((new LootContext.Builder((ServerLevel) world)).create(LootContextParamSets.EMPTY), handlers, doInsert);
+        return fullfillRecipeAndCopy((new LootParams.Builder((ServerLevel) world)).create(LootContextParamSets.EMPTY), handlers, doInsert);
     }
 
     /**

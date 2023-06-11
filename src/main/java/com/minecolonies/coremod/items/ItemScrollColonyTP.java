@@ -7,7 +7,6 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.network.chat.*;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,7 +63,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
                   player.blockPosition().relative(dir, 10),
                   5,
                   5,
-                  (predWorld, predPos) -> predWorld.getBlockState(predPos).getMaterial() == Material.AIR && predWorld.getBlockState(predPos.above()).getMaterial() == Material.AIR);
+                  (predWorld, predPos) -> predWorld.getBlockState(predPos).isAir() && predWorld.getBlockState(predPos.above()).isAir());
                 if (pos != null)
                 {
                     break;

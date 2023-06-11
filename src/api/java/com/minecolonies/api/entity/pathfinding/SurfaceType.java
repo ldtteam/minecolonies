@@ -3,6 +3,7 @@ package com.minecolonies.api.entity.pathfinding;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
@@ -82,7 +83,7 @@ public enum SurfaceType
             return SurfaceType.DROPABLE;
         }
 
-        if ((blockState.getMaterial().isSolid() && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
+        if ((BlockUtils.canBlockFloatInAir(blockState) && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
                && (shape.max(Direction.Axis.Z) - shape.min(Direction.Axis.Z)) > 0.75)
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
               || block instanceof FloatingCarpetBlock

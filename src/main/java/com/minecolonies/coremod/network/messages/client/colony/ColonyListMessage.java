@@ -80,7 +80,7 @@ public class ColonyListMessage implements IMessage
         }
         else if (ctxIn.getSender() != null)
         {
-            Network.getNetwork().sendToPlayer(new ColonyListMessage(IColonyManager.getInstance().getColonies(ctxIn.getSender().getLevel())), ctxIn.getSender());
+            Network.getNetwork().sendToPlayer(new ColonyListMessage(IColonyManager.getInstance().getColonies(ctxIn.getSender().level)), ctxIn.getSender());
         }
     }
 

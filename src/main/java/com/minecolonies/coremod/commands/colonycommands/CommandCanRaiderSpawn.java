@@ -32,7 +32,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -40,7 +40,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
 
         colony.getRaiderManager().setCanHaveRaiderEvents(canHaveBarbEvents);
         colony.markDirty();
-        context.getSource().sendSuccess(Component.translatable(COMMAND_CAN_RAIDER_SPAWN_SUCCESS, colony.getName(), canHaveBarbEvents), true);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_CAN_RAIDER_SPAWN_SUCCESS, colony.getName(), canHaveBarbEvents), true);
         return 1;
     }
 

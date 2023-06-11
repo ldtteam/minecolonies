@@ -30,7 +30,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
     {
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get())
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 
@@ -39,7 +39,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -56,12 +56,12 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
         if (context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
         {
             // could not find player with given name.
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
             return 0;
         }
         colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
 
-        context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_OFFICER_ADD_SUCCESS, profile.getName(), colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_OFFICER_ADD_SUCCESS, profile.getName(), colony.getName()), true);
         return 1;
     }
 

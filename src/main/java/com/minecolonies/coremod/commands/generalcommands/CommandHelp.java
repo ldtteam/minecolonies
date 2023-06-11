@@ -32,10 +32,10 @@ public class CommandHelp implements IMCCommand
             return 0;
         }
 
-        context.getSource().sendSuccess(Component.translatable(COMMAND_HELP_INFO_WIKI), true);
-        context.getSource().sendSuccess(((MutableComponent) ForgeHooks.newChatWithLinks(wikiUrl)).append(Component.literal("\n")), true);
-        context.getSource().sendSuccess(Component.translatable(COMMAND_HELP_INFO_DISCORD), true);
-        context.getSource().sendSuccess(ForgeHooks.newChatWithLinks(discordUrl), true);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_HELP_INFO_WIKI), true);
+        context.getSource().sendSuccess(() -> ((MutableComponent) ForgeHooks.newChatWithLinks(wikiUrl)).append(Component.literal("\n")), true);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_HELP_INFO_DISCORD), true);
+        context.getSource().sendSuccess(() -> ForgeHooks.newChatWithLinks(discordUrl), true);
 
         return 1;
     }

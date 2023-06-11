@@ -264,8 +264,7 @@ public class EntityAISleep extends Goal
                               && !state.getValue(BedBlock.OCCUPIED)
                               && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                               && !isBedOccupied(hut, pos)
-                              && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.getMaterial()
-                          .isSolid()))
+                              && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.isSolid()))
                         {
                             usedBed = pos;
                             setBedOccupied(true);

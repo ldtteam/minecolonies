@@ -57,19 +57,19 @@ public class CommandRaid implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
         {
             colony.getRaiderManager().raiderEvent(raidType);
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_SUCCESS, colony.getName()), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_SUCCESS, colony.getName()), true);
         }
         else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
         {
             colony.getRaiderManager().setRaidNextNight(true, raidType);
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_RAID_TONIGHT_SUCCESS, colony.getName()), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_TONIGHT_SUCCESS, colony.getName()), true);
         }
         return 1;
     }

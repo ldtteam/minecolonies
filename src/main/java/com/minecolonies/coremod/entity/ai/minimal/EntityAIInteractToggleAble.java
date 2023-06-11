@@ -114,7 +114,7 @@ public class EntityAIInteractToggleAble extends Goal
     public boolean canUse()
     {
         // Reactive check for detected collisions
-        if (this.entity.horizontalCollision || entity.verticalCollision && !entity.isOnGround())
+        if (this.entity.horizontalCollision || entity.verticalCollision && !entity.onGround())
         {
             return checkPath();
         }

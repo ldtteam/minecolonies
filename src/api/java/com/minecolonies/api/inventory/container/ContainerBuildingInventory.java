@@ -63,7 +63,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
     {
         super(ModContainers.buildingInv.get(), windowId);
 
-        tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.level.getBlockEntity(pos);
+        tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.level().getBlockEntity(pos);
         this.buildingInventory = tileEntityColonyBuilding.getInventory();
         final int size = buildingInventory.getSlots();
         this.inventorySize = size / INVENTORY_COLUMNS;
@@ -87,9 +87,9 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
                           public void set(final ItemStack stack)
                           {
                               super.set(stack);
-                              if (!inv.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
+                              if (!inv.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level);
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
                                   final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                                   if (building != null)
                                   {

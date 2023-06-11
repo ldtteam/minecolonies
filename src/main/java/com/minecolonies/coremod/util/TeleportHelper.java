@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.MessageUtils;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
@@ -95,7 +94,7 @@ public final class TeleportHelper
     public static void surfaceTeleport(@NotNull final ServerPlayer player)
     {
         BlockPos position = BlockPos.containing(player.getX(), 250, player.getZ()); //start at current position
-        final ServerLevel world = player.getLevel();
+        final ServerLevel world = (ServerLevel) player.level;
 
         position = BlockPosUtil.findLand(position, world);
 
@@ -154,7 +153,7 @@ public final class TeleportHelper
           position,
           5,
           5,
-          (predWorld, predPos) -> predWorld.getBlockState(predPos).getMaterial() == Material.AIR && predWorld.getBlockState(predPos.above()).getMaterial() == Material.AIR);
+          (predWorld, predPos) -> predWorld.getBlockState(predPos).isAir() && predWorld.getBlockState(predPos.above()).isAir());
 
         if (position == null)
         {

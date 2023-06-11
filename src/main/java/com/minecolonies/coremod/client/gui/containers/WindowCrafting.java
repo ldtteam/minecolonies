@@ -10,11 +10,9 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -173,32 +171,31 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
     {
-        this.font.draw(stack, Component.translatable("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        stack.drawString(this.font, Component.translatable("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        final ResourceLocation texture;
         if (completeCrafting)
         {
-            RenderSystem.setShaderTexture(0, CRAFTING_TABLE_GUI_TEXTURES3X3);
+            texture = CRAFTING_TABLE_GUI_TEXTURES3X3;
         }
         else
         {
-            RenderSystem.setShaderTexture(0, CRAFTING_TABLE_GUI_TEXTURES);
+            texture = CRAFTING_TABLE_GUI_TEXTURES;
         }
-        this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        stack.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);

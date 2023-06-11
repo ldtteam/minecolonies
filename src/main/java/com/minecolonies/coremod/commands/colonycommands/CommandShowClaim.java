@@ -54,7 +54,8 @@ public class CommandShowClaim implements IMCOPCommand
             return 0;
         }
 
-        context.getSource().sendSuccess(buildClaimCommandResult(cap, pos, level), true);
+        final BlockPos finalPos = pos;
+        context.getSource().sendSuccess(() -> buildClaimCommandResult(cap, finalPos, level), true);
         return 1;
     }
 

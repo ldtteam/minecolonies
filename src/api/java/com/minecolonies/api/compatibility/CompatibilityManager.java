@@ -16,7 +16,9 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -625,10 +627,11 @@ public class CompatibilityManager implements ICompatibilityManager
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
         final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();
+        final Registry<CreativeModeTab> registry = level.registryAccess().registryOrThrow(Registries.CREATIVE_MODE_TAB);
 
         for (CreativeModeTab tab : CreativeModeTabs.allTabs())
         {
-            if (tab != CreativeModeTabs.SEARCH && tab != CreativeModeTabs.HOTBAR)
+            if (tab != registry.get(CreativeModeTabs.SEARCH) && tab != registry.get(CreativeModeTabs.HOTBAR))
             {
                 final Collection<ItemStack> stacks;
                 if (tab.getDisplayItems().isEmpty())

@@ -39,7 +39,7 @@ public class FMLEventHandler
             Network.getNetwork().sendToPlayer(new ServerUUIDMessage(), (ServerPlayer) event.getEntity());
 
             // This automatically reloads the owner of the colony if failed.
-            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayer) event.getEntity()).getLevel(), event.getEntity());
+            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayer) event.getEntity()).level, event.getEntity());
             //ColonyManager.syncAllColoniesAchievements();
         }
     }

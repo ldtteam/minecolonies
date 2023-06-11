@@ -43,7 +43,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? Level.OVERWORLD : context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -51,7 +51,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
 
         if (citizenData == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_FOUND), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_FOUND), true);
             return 0;
         }
 
@@ -59,7 +59,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
 
         if (!optionalEntityCitizen.isPresent())
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_LOADED), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_LOADED), true);
             return 0;
         }
 

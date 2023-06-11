@@ -21,9 +21,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,10 +33,8 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -219,7 +217,7 @@ public final class WorkerUtil
             }
         }
 
-        if ((required < 0 && target.getMaterial() == Material.WOOD)
+        if (required < 0
               || target.getBlock() instanceof GlazedTerracottaBlock)
         {
             return 0;
@@ -310,10 +308,15 @@ public final class WorkerUtil
                 final BlockState BlockState = world.getBlockState(levelSignPos);
                 final SignBlockEntity teLevelSign = (SignBlockEntity) te;
 
-                teLevelSign.setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId));
-                teLevelSign.setMessage(1, Component.literal("Y: " + (level.getDepth() + 1)));
-                teLevelSign.setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()));
-                teLevelSign.setMessage(3, Component.literal(""));
+                teLevelSign.setText(new SignText().setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId)), true);
+                teLevelSign.setText(new SignText().setMessage(1, Component.literal("Y: " + (level.getDepth() + 1))), true);
+                teLevelSign.setText(new SignText().setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes())), true);
+                teLevelSign.setText(new SignText().setMessage(3, Component.literal("")), true);
+
+                teLevelSign.setText(new SignText().setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId)), false);
+                teLevelSign.setText(new SignText().setMessage(1, Component.literal("Y: " + (level.getDepth() + 1))), false);
+                teLevelSign.setText(new SignText().setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes())), false);
+                teLevelSign.setText(new SignText().setMessage(3, Component.literal("")), false);
 
                 teLevelSign.setChanged();
                 world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);

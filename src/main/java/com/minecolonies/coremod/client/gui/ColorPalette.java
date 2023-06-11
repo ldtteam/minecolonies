@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -81,7 +81,7 @@ public class ColorPalette
         }
 
         @Override
-        public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
         {
             this.active = selected != this.color;
 
@@ -89,7 +89,7 @@ public class ColorPalette
         }
 
         @Override
-        public void renderWidget(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        public void renderWidget(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
         {
             int color = this.color.getTextColor();
             boolean pressed = selected == this.color;
@@ -126,10 +126,10 @@ public class ColorPalette
          * @param r the right offset
          * @param color the color to fill with, without alpha
          */
-        private void fillButton(final PoseStack stack, int t, int l, int b, int r, int color)
+        private void fillButton(final GuiGraphics stack, int t, int l, int b, int r, int color)
         {
             color += 255 << 24;
-            fill(stack,
+            stack.fill(
                     this.getX()+l, this.getY()+t,
                     this.getX()+this.width-r, this.getY()+this.height-b,
                     color

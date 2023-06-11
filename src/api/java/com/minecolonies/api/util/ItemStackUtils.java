@@ -459,20 +459,6 @@ public final class ItemStackUtils
         return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
     }
 
-    /**
-     * Check if an itemStack is a decorative item for the decoration step of the structure placement.
-     *
-     * @param stack the itemStack to test.
-     * @return true if so.
-     */
-    public static boolean isDecoration(final ItemStack stack)
-    {
-        final Item item = stack.getItem();
-        return item == Items.ITEM_FRAME
-                 || item == Items.ARMOR_STAND
-                 || !Block.byItem(item).defaultBlockState().getMaterial().isSolid();
-    }
-
     /*
     private static int getToolLevel(final String material)
     {

@@ -246,7 +246,7 @@ public class MessageUtils
             for (Player player : players)
             {
                 MutableComponent fullComponent = rootComponent.copy();
-                if (alwaysShowColony || !colony.isCoordInColony(player.level, player.blockPosition()))
+                if (alwaysShowColony || !colony.isCoordInColony(player.level(), player.blockPosition()))
                 {
                     fullComponent = Component.literal("[" + colony.getName() + "] ").append(rootComponent);
                 }

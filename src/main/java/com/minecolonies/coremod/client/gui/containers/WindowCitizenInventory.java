@@ -2,10 +2,8 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.constant.Constants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -69,7 +67,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     }
 
     @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
@@ -79,24 +77,21 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
     {
-        this.font.draw(stack, this.menu.getDisplayName(), 8, 6, 4210752);
-        this.font.draw(stack, this.playerInventoryTitle.getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
+        stack.drawString(this.font, this.menu.getDisplayName(), 8, 6, 4210752);
+        stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void renderBg(@NotNull final PoseStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(@NotNull final GuiGraphics stack, float partialTicks, int mouseX, int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXT);
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
-        blit(stack, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-        blit(stack, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
+        stack.blit(TEXT, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+        stack.blit(TEXT, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
           TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
     }
 }

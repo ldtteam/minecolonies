@@ -23,6 +23,7 @@ import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -259,7 +260,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @Override
     public void draw(@NotNull final IGenericRecipe recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final PoseStack stack,
+                     @NotNull final GuiGraphics stack,
                      final double mouseX, final double mouseY)
     {
         super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
@@ -272,7 +273,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         if (recipe.getIntermediate() != Blocks.AIR)
         {
             final BlockState block = recipe.getIntermediate().defaultBlockState();
-            RenderHelper.renderBlock(stack, block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
+            RenderHelper.renderBlock(stack.pose(), block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
         }
 
         final LivingEntity animal = recipe.getRequiredEntity();
@@ -287,7 +288,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
             final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
             Lighting.setupForFlatItems();
-            UiRenderMacros.drawEntity(stack, animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
+            UiRenderMacros.drawEntity(stack.pose(), animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
             Lighting.setupFor3DItems();
         }
     }

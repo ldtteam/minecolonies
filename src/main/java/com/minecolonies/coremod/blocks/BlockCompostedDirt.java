@@ -7,10 +7,10 @@ import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -37,7 +37,7 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
      */
     public BlockCompostedDirt()
     {
-        super(Properties.of(Material.DIRT).strength(BLOCK_HARDNESS, RESISTANCE).sound(SoundType.GRAVEL));
+        super(Properties.of().mapColor(MapColor.DIRT).sound(SoundType.ROOTED_DIRT).strength(BLOCK_HARDNESS, RESISTANCE).sound(SoundType.GRAVEL));
     }
 
     @Override

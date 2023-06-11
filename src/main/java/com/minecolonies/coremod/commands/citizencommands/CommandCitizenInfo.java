@@ -43,7 +43,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? Level.OVERWORLD : context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -51,7 +51,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
 
         if (citizenData == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_FOUND), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_FOUND), true);
             return 0;
         }
 
@@ -59,33 +59,33 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
 
         if (!optionalEntityCitizen.isPresent())
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_LOADED), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_LOADED), true);
             return 0;
         }
 
-        context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO, citizenData.getId(), citizenData.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO, citizenData.getId(), citizenData.getName()), true);
 
         final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
         final BlockPos citizenPosition = entityCitizen.blockPosition();
         context.getSource()
-          .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, citizenPosition.getX(), citizenPosition.getY(), citizenPosition.getZ()), true);
+          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, citizenPosition.getX(), citizenPosition.getY(), citizenPosition.getZ()), true);
         final BlockPos homePosition = entityCitizen.getRestrictCenter();
         context.getSource()
-          .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()), true);
+          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()), true);
 
         if (entityCitizen.getCitizenColonyHandler().getWorkBuilding() == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_WORKING_POSITION), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_WORKING_POSITION), true);
         }
         else
         {
             final BlockPos workingPosition = entityCitizen.getCitizenColonyHandler().getWorkBuilding().getPosition();
             context.getSource()
-              .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_WORKING_POSITION, workingPosition.getX(), workingPosition.getY(), workingPosition.getZ()), true);
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_WORKING_POSITION, workingPosition.getX(), workingPosition.getY(), workingPosition.getZ()), true);
         }
 
-        context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HEALTH, entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
+        context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HEALTH, entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
 
         Object[] skills =
           new Object[] {citizenData.getCitizenSkillHandler().getSkills().get(Skill.Athletics).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Dexterity).getA(),
@@ -94,22 +94,22 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             citizenData.getCitizenSkillHandler().getSkills().get(Skill.Adaptability).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Focus).getA(),
             citizenData.getCitizenSkillHandler().getSkills().get(Skill.Creativity).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Knowledge).getA(),
             citizenData.getCitizenSkillHandler().getSkills().get(Skill.Intelligence).getA()};
-        context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_SKILLS, skills), true);
+        context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_SKILLS, skills), true);
 
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_JOB), true);
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_ACTIVITY), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_JOB), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_ACTIVITY), true);
         }
         else if (entityCitizen.getCitizenColonyHandler().getWorkBuilding() != null && entityCitizen.getCitizenColonyHandler()
                                                                                         .getWorkBuilding()
                                                                                         .hasModule(WorkerBuildingModule.class))
         {
             context.getSource()
-              .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_JOB,
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_JOB,
                 entityCitizen.getCitizenColonyHandler().getWorkBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).getJobEntry().getTranslationKey()), true);
             context.getSource()
-              .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_ACTIVITY,
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_ACTIVITY,
                 entityCitizen.getDesiredActivity(),
                 entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
                 entityCitizen.goalSelector.getRunningGoals().findFirst().get().getGoal().toString()), true);

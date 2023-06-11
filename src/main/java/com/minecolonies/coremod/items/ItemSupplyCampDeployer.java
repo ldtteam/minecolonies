@@ -4,6 +4,7 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
@@ -133,7 +134,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             {
                 checkIfSolidAndNotInColony(world, new BlockPos(x, groundLevel, z), placementErrorList, placer);
 
-                if (world.getBlockState(new BlockPos(x, groundLevel + 1, z)).getMaterial().isSolid())
+                if (BlockUtils.canBlockFloatInAir(world.getBlockState(new BlockPos(x, groundLevel + 1, z))))
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY(), z));
                     placementErrorList.add(placementError);
@@ -154,7 +155,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     private static void checkIfSolidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer)
     {
-        final boolean isSolid = world.getBlockState(pos).getMaterial().isSolid();
+        final boolean isSolid = BlockUtils.canBlockFloatInAir(world.getBlockState(pos));
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isSolid)
         {

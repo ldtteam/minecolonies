@@ -193,7 +193,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public InteractionResult interactAt(final Player player, final Vec3 vec, final InteractionHand hand)
     {
-        if (!player.level.isClientSide())
+        if (!player.level().isClientSide())
         {
             SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.INTERACTION, this.getCitizenData());
         }
@@ -742,14 +742,14 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             list.add(new Pair<>(EquipmentSlot.LEGS, getItemBySlot(EquipmentSlot.LEGS)));
             list.add(new Pair<>(EquipmentSlot.OFFHAND, getItemBySlot(EquipmentSlot.OFFHAND)));
             list.add(new Pair<>(EquipmentSlot.MAINHAND, getItemBySlot(EquipmentSlot.MAINHAND)));
-            ((ServerLevel) this.level).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
+            ((ServerLevel) this.level()).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
         }
     }
 
     @Override
     public void setItemSlot(final EquipmentSlot slot, @NotNull final ItemStack newItem)
     {
-        if (!level.isClientSide)
+        if (!level().isClientSide)
         {
             final ItemStack previous = getItemBySlot(slot);
             if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true))

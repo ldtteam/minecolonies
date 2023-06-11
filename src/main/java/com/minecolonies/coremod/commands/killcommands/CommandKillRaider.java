@@ -43,7 +43,7 @@ public class CommandKillRaider implements IMCOPCommand
                 entitiesKilled++;
             }
         });
-        context.getSource().sendSuccess(Component.literal(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(() -> Component.literal(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

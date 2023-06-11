@@ -163,7 +163,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
               || curBlock instanceof IBuilderUndestroyable
               || curBlock == Blocks.BEDROCK)
         {
-            if (curBlockState.getMaterial().isLiquid())
+            if (curBlockState.liquid())
             {
                 world.removeBlock(blockToMine, false);
             }

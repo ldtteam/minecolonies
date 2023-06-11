@@ -325,7 +325,7 @@ public class EntityAISickTask extends Goal
         {
             for (final ItemStack cure : disease.getCure())
             {
-                final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.sameItem(cure));
+                final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> ItemStack.isSameItem(cure, stack));
                 if (slot != -1)
                 {
                     citizenData.getInventory().extractItem(slot, 1, false);
@@ -500,7 +500,7 @@ public class EntityAISickTask extends Goal
         final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
         for (final ItemStack cure : disease.getCure())
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.sameItem(cure));
+            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> ItemStack.isSameItem(cure, stack));
             if (slot == -1)
             {
                 if (citizen.getCitizenDiseaseHandler().isSick())

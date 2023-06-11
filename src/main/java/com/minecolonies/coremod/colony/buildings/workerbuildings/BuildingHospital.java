@@ -228,7 +228,7 @@ public class BuildingHospital extends AbstractBuilding
                     final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
                     for (final ItemStack cure : disease.getCure())
                     {
-                        if (cure.sameItem(stack))
+                        if (ItemStack.isSameItem(cure, stack))
                         {
                             return true;
                         }
@@ -341,7 +341,7 @@ public class BuildingHospital extends AbstractBuilding
         {
             for (final ItemStack cure : disease.getCure())
             {
-                if (cure.sameItem(stack))
+                if (ItemStack.isSameItem(cure, stack))
                 {
                     return false;
                 }

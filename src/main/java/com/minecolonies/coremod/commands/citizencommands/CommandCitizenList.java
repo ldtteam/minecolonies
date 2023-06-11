@@ -62,7 +62,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -83,7 +83,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
 
         final List<ICitizenData> citizensPage = getCitizensOnPage(citizens, citizenCount, pageStartIndex, pageStopIndex);
         final Component headerLine = Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_TOP, page, pageCount);
-        context.getSource().sendSuccess(headerLine, true);
+        context.getSource().sendSuccess(() -> headerLine, true);
 
         drawCitizens(context, citizensPage);
         drawPageSwitcher(context, page, citizenCount, halfPage, colony.getID());
@@ -110,7 +110,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
     {
         for (final ICitizenData citizen : citizensPage)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_CITIZEN_INFO, citizen.getId(), citizen.getName())
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_CITIZEN_INFO, citizen.getId(), citizen.getName())
                                               .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                 String.format(COMMAND_CITIZEN_INFO_SUGGESTED, citizen.getColony().getID(), citizen.getId())))), true);
 
@@ -118,7 +118,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
             {
                 final BlockPos position = entityCitizen.blockPosition();
                 context.getSource()
-                  .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, position.getX(), position.getY(), position.getZ()), true);
+                  .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, position.getX(), position.getY(), position.getZ()), true);
             });
         }
     }
@@ -149,7 +149,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final MutableComponent beginLine = Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);
         final MutableComponent endLine = Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);
 
-        context.getSource().sendSuccess(beginLine.append(prevButton)
+        context.getSource().sendSuccess(() -> beginLine.append(prevButton)
                                           .append(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_STYLE))
                                           .append(nextButton)
                                           .append(endLine), true);

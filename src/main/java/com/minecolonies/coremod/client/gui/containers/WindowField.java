@@ -7,17 +7,15 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.FieldPlotResizeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
@@ -116,14 +114,14 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     }
 
     @Override
-    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            this.font.draw(stack, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            stack.drawString(this.font, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
         }
 
-        this.font.draw(stack, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        stack.drawString(this.font, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
         for (Renderable widget : this.renderables)
         {
@@ -142,7 +140,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                         .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
                     );
 
-                    WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX-100, mouseY-20);
+                    stack.renderTooltip(this.font, Language.getInstance().getVisualOrder(lines), mouseX-100, mouseY-20);
                     break;
                 }
             }
@@ -157,18 +155,15 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
      * @param mouseY       the mouseY position.
      */
     @Override
-    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
         final int marginHorizontal = (width - imageWidth) / 2;
         final int marginVertical = (height - imageHeight) / 2;
-        blit(stack, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
+        stack.blit(TEXTURE, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
@@ -269,23 +264,18 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         }
 
         @Override
-        public void renderWidget(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        public void renderWidget(@NotNull final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
         {
             Minecraft minecraft = Minecraft.getInstance();
             Font fontrenderer = minecraft.font;
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-            RenderSystem.setShaderTexture(0, TEXTURE);
 
             int i = this.getYImage(this.isHovered);
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.blit(stack, this.getX(), this.getY(), getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
+            stack.blit(TEXTURE, this.getX(), this.getY(), getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
             int j = getFGColor();
-            drawCenteredString(stack,
-              fontrenderer, this.getMessage(),
+            stack.drawCenteredString(minecraft.font, this.getMessage(),
               this.getX() + this.width / 2 + getTextOffset(Direction.Axis.X),
               this.getY() + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
               j | Mth.ceil(this.alpha * 255.0F) << 24

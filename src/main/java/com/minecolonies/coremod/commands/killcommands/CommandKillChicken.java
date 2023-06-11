@@ -27,7 +27,7 @@ public class CommandKillChicken implements IMCOPCommand
             entity.remove(Entity.RemovalReason.DISCARDED);
             entitiesKilled++;
         });
-        context.getSource().sendSuccess(Component.literal(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(() -> Component.literal(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

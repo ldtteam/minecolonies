@@ -41,7 +41,6 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -322,8 +321,8 @@ public class RaidManager implements IRaiderManager
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
-            if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
-                  && colony.getWorld().getBlockState(targetSpawnPoint.below()).getMaterial() == Material.AIR)
+            if (colony.getWorld().getBlockState(targetSpawnPoint).isAir()
+                  && colony.getWorld().getBlockState(targetSpawnPoint.below()).isAir())
             {
                 raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
             }
@@ -550,7 +549,8 @@ public class RaidManager implements IRaiderManager
     /**
      * Check if the spawn position is within another colony
      *
-     * @param pos
+     * @param x the x param
+     * @param z the z param.
      * @return
      */
     private boolean isOtherColony(final int x, final int z)

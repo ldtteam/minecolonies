@@ -7,7 +7,6 @@ import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -68,7 +67,7 @@ public abstract class SimpleLootTableProvider extends LootTableProvider
     protected void validate(@NotNull final Map<ResourceLocation, LootTable> map,
                             @NotNull final ValidationContext validationtracker)
     {
-        map.forEach((id, table) -> LootTables.validate(validationtracker, id, table));
+        map.forEach((id, table) -> table.validate(validationtracker));
     }
 
     @FunctionalInterface

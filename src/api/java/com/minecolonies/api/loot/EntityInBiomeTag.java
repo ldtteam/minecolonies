@@ -53,9 +53,9 @@ public class EntityInBiomeTag implements LootItemCondition
         }
 
         final Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
-        if (entity != null && entity.level != null)
+        if (entity != null && entity.level() != null)
         {
-            return entity.level.getBiome(entity.blockPosition()).is(tag);
+            return entity.level().getBiome(entity.blockPosition()).is(tag);
         }
 
         return false;

@@ -23,7 +23,7 @@ public class CommandRSResetAll implements IMCOPCommand
         {
             colony.getRequestManager().reset();
         }
-        context.getSource().sendSuccess(Component.translatable(COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS), true);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS), true);
 
         return 1;
     }

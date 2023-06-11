@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -112,7 +113,7 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
     @Override
     public void draw(@NotNull final ToolUsage recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final PoseStack stack,
+                     @NotNull final GuiGraphics stack,
                      final double mouseX, final double mouseY)
     {
         final Minecraft mc = Minecraft.getInstance();
@@ -121,19 +122,16 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
         final int y = HEIGHT - (36 + (lines.size() * mc.font.lineHeight)) / 2 - 1;
         for (int i = 0; i < lines.size(); ++i)
         {
-            mc.font.draw(stack, Language.getInstance().getVisualOrder(lines.get(i)), 2, y + (i * mc.font.lineHeight), 0);
+            stack.drawString(mc.font, Language.getInstance().getVisualOrder(lines.get(i)), 2, y + (i * mc.font.lineHeight), 0);
         }
 
-        final float scale = 0.5F;
-        stack.pushPose();
-        stack.scale(scale, scale, 1.0F);
+        final int scale = 2;
         int x = SLOT_X;
         for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
         {
             final Component text = Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction", i);
-            mc.font.draw(stack, text, (x + (18 - mc.font.width(text)*scale) / 2F) / scale, 1 / scale, 0);
+            stack.drawString(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0);
             x += 18;
         }
-        stack.popPose();
     }
 }

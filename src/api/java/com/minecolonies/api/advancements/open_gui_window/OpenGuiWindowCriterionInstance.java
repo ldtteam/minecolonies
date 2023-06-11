@@ -2,10 +2,7 @@ package com.minecolonies.api.advancements.open_gui_window;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.SerializationContext;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +16,7 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
 
     public OpenGuiWindowCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), ContextAwarePredicate.ANY);
     }
 
     /**
@@ -28,7 +25,7 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
      */
     public OpenGuiWindowCriterionInstance(final String windowResource)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), ContextAwarePredicate.ANY);
 
         this.windowResource = windowResource;
     }

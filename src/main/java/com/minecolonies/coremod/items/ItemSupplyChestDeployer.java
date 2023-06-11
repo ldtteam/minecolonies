@@ -3,6 +3,7 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
@@ -171,7 +172,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                     {
                         checkFluidAndNotInColony(world, new BlockPos(x, y, z), placementErrorList, placer);
                     }
-                    else if (world.getBlockState(new BlockPos(x, y, z)).getMaterial().isSolid())
+                    else if (BlockUtils.canBlockFloatInAir(world.getBlockState(new BlockPos(x, y, z))))
                     {
                         final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z));
                         placementErrorList.add(placementError);

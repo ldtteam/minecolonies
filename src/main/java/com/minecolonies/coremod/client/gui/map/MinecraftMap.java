@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.gui.map;
 
+import com.ldtteam.blockui.BOGuiGraphics;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 /**
@@ -51,7 +51,7 @@ public class MinecraftMap extends Pane implements AutoCloseable
         {
             for (int x = 0; x < 128; ++x)
             {
-                texture.getPixels().setPixelRGBA(x, y, MaterialColor.getColorFromPackedId(mapData.colors[x + y * 128]));
+                texture.getPixels().setPixelRGBA(x, y, MapColor.getColorFromPackedId(mapData.colors[x + y * 128]));
             }
         }
 
@@ -66,11 +66,11 @@ public class MinecraftMap extends Pane implements AutoCloseable
      * @param my Mouse y (relative to parent)
      */
     @Override
-    public void drawSelf(final PoseStack ms, final double mx, final double my)
+    public void drawSelf(final BOGuiGraphics ms, final double mx, final double my)
     {
         if (textureResLoc != null)
         {
-            blit(ms, textureResLoc, x, y, width, height);
+            blit(ms.pose(), textureResLoc, x, y, width, height);
         }
     }
 

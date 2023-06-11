@@ -32,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
@@ -217,7 +218,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     {
         super.playAmbientSound();
         final SoundEvent soundevent = this.getAmbientSound();
-        if (soundevent != null && level.random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
@@ -226,7 +227,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean removeWhenFarAway(final double distanceToClosestPlayer)
     {
-        return shouldDespawn() || (level != null && level.isAreaLoaded(this.blockPosition(), 3) && getColony() == null);
+        return shouldDespawn() || (level() != null && level().isAreaLoaded(this.blockPosition(), 3) && getColony() == null);
     }
 
     /**
@@ -243,7 +244,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
      */
     private boolean shouldDespawn()
     {
-        return worldTimeAtSpawn != 0 && (level.getGameTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
+        return worldTimeAtSpawn != 0 && (level().getGameTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
     }
 
     @NotNull
@@ -374,7 +375,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
-                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level));
+                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level()));
             }
         }
 
@@ -410,7 +411,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             collisionCounter--;
         }
 
-        if (level.isClientSide)
+        if (level().isClientSide)
         {
             super.aiStep();
             return;
@@ -420,12 +421,12 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
         {
             if (worldTimeAtSpawn == 0)
             {
-                worldTimeAtSpawn = level.getGameTime();
+                worldTimeAtSpawn = level().getGameTime();
             }
 
             if (shouldDespawn())
             {
-                this.die(level.damageSources().source(DamageSourceKeys.DESPAWN));
+                this.die(level().damageSources().source(DamageSourceKeys.DESPAWN));
                 this.remove(RemovalReason.DISCARDED);
                 return;
             }
@@ -478,7 +479,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public void remove(RemovalReason reason)
     {
-        if (!level.isClientSide && colony != null && eventID > 0)
+        if (!level().isClientSide && colony != null && eventID > 0)
         {
             colony.getEventManager().unregisterEntity(this, eventID);
         }
@@ -514,7 +515,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     public void die(@NotNull final DamageSource cause)
     {
         super.die(cause);
-        if (!level.isClientSide && getColony() != null)
+        if (!level().isClientSide && getColony() != null)
         {
             getColony().getEventManager().onEntityDeath(this, eventID);
         }
@@ -528,7 +529,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }
 
-        if (damageSource.typeHolder().is(DamageTypes.OUT_OF_WORLD))
+        if (damageSource.typeHolder().is(DamageTypes.FELL_OUT_OF_WORLD))
         {
             return super.hurt(damageSource, damage);
         }
@@ -549,7 +550,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
                 return false;
             }
         }
-        else if (!level.isClientSide())
+        else if (!level().isClientSide())
         {
             final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
             if (event instanceof IColonyCampFireRaidEvent)
@@ -562,7 +563,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             {
                 if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
                 {
-                    source.hurt(level.damageSources().thorns(this), damage * 0.5f);
+                    source.hurt(level().damageSources().thorns(this), damage * 0.5f);
                 }
 
                 final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage.get(), ((Player) source).getMainHandItem());
@@ -659,7 +660,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
 
         if (difficulty >= TEAM_DIFFICULTY)
         {
-            level.getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
+            level().getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
         }
 
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth);
@@ -673,12 +674,12 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
      */
     private PlayerTeam checkOrCreateTeam()
     {
-        if (this.level.getScoreboard().getPlayerTeam(getTeamName()) == null)
+        if (this.level().getScoreboard().getPlayerTeam(getTeamName()) == null)
         {
-            this.level.getScoreboard().addPlayerTeam(getTeamName());
-            this.level.getScoreboard().getPlayerTeam(getTeamName()).setAllowFriendlyFire(false);
+            this.level().getScoreboard().addPlayerTeam(getTeamName());
+            this.level().getScoreboard().getPlayerTeam(getTeamName()).setAllowFriendlyFire(false);
         }
-        return this.level.getScoreboard().getPlayerTeam(getTeamName());
+        return this.level().getScoreboard().getPlayerTeam(getTeamName());
     }
 
     /**

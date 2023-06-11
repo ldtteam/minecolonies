@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -25,6 +24,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -80,7 +80,7 @@ public abstract class AbstractBlockGate extends DoorBlock
 
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
-        super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion(), BlockSetType.IRON);
+        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(hardness, hardness * 5).noOcclusion(), BlockSetType.IRON);
         registerDefaultState(defaultBlockState());
         this.name = name;
         this.maxWidth = maxWidth;
@@ -91,16 +91,9 @@ public abstract class AbstractBlockGate extends DoorBlock
     @Override
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit)
     {
-        if (this.material == Material.METAL)
-        {
-            return InteractionResult.PASS;
-        }
-        else
-        {
-            toggleGate(worldIn, pos, state.getValue(FACING).getClockWise());
-            worldIn.levelEvent(player, state.getValue(OPEN) ? 1005 : 1011, pos, 0);
-            return InteractionResult.SUCCESS;
-        }
+        toggleGate(worldIn, pos, state.getValue(FACING).getClockWise());
+        worldIn.levelEvent(player, state.getValue(OPEN) ? 1005 : 1011, pos, 0);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

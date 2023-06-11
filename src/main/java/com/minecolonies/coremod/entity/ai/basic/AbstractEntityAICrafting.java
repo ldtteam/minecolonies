@@ -31,7 +31,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -478,13 +478,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
         worker.swing(worker.getUsedItemHand());
 
-        final BlockState blockState = worker.level.getBlockState(blockPos);
+        final BlockState blockState = worker.level().getBlockState(blockPos);
         final BlockPos vector = blockPos.subtract(worker.blockPosition());
         final Direction facing = Direction.getNearest(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
         Network.getNetwork().sendToPosition(
           new BlockParticleEffectMessage(blockPos, blockState, facing.ordinal()),
-          new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, worker.level.dimension()));
+          new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, worker.level().dimension()));
 
         job.playSound(blockPos, (EntityCitizen) worker);
     }
@@ -547,7 +547,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      * get the LootContextBuilder for 
      * @return the LootContext to use for crafting
      */
-    protected LootContext getLootContext()
+    protected LootParams getLootContext()
     {
         return getLootContext(false);
     }
@@ -557,7 +557,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      * @param includeKiller true for killer-based parameters
      * @return the LootContext to use for crafting
      */
-    protected LootContext getLootContext(boolean includeKiller)
+    protected LootParams getLootContext(boolean includeKiller)
     {
         if(playerDamageSource == null)
         {
@@ -565,11 +565,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             playerDamageSource = world.damageSources().playerAttack(fp);
         }
 
-        LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) this.world))
+        LootParams.Builder builder =  (new LootParams.Builder((ServerLevel) this.world))
         .withParameter(LootContextParams.ORIGIN, worker.position())
         .withParameter(LootContextParams.THIS_ENTITY, worker)
         .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
-        .withRandom(worker.getRandom())
         .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
 
         if(includeKiller)

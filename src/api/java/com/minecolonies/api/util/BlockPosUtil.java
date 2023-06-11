@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.BiPredicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -59,15 +58,15 @@ public final class BlockPosUtil
      * Selects a solid position with air above
      */
     public static final BiPredicate<BlockGetter, BlockPos> SOLID_AIR_POS_SELECTOR = (world, pos) -> {
-        return (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
-          pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR;
+        return (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && world.getBlockState(
+          pos.above()).isAir() && world.getBlockState(pos.above(2)).isAir();
     };
 
     /**
      * Selects a double air position
      */
     public static final BiPredicate<BlockGetter, BlockPos> DOUBLE_AIR_POS_SELECTOR = (world, pos) -> {
-        return world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.above(1)).getMaterial() == Material.AIR;
+        return world.getBlockState(pos).isAir() && world.getBlockState(pos.above(1)).isAir();
     };
 
     private BlockPosUtil()
@@ -142,8 +141,8 @@ public final class BlockPosUtil
         BlockPos pos = null;
         while (pos == null
                  || !WorldUtil.isEntityBlockLoaded(world, pos)
-                 || world.getBlockState(pos).getMaterial().isLiquid()
-                 || !world.getBlockState(pos.below()).getMaterial().isSolid()
+                 || world.getBlockState(pos).liquid()
+                 || !BlockUtils.canBlockFloatInAir(world.getBlockState(pos.below()))
                  || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
         {
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
@@ -316,8 +315,8 @@ public final class BlockPosUtil
     public static boolean isPositionSafe(@NotNull final Level sender, final BlockPos blockPos)
     {
         return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
-                 && !sender.getBlockState(blockPos).getMaterial().isLiquid()
-                 && !sender.getBlockState(blockPos.below()).getMaterial().isLiquid()
+                 && !sender.getBlockState(blockPos).liquid()
+                 && !sender.getBlockState(blockPos.below()).liquid()
                  && sender.getWorldBorder().isWithinBounds(blockPos);
     }
 
@@ -354,7 +353,7 @@ public final class BlockPosUtil
             mid = (bot + top) / 2;
         }
 
-        if (world.getBlockState(tempPos).getMaterial().isSolid())
+        if (BlockUtils.canBlockFloatInAir(world.getBlockState(tempPos)))
         {
             return foundland.above();
         }
@@ -523,7 +522,7 @@ public final class BlockPosUtil
      */
     public static List<ItemStack> getBlockDrops(@NotNull final Level world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack, final LivingEntity entity)
     {
-        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerLevel) world)
+        return world.getBlockState(coords).getDrops(new LootParams.Builder((ServerLevel) world)
                                                       .withLuck(fortune)
                                                       .withOptionalParameter(LootContextParams.BLOCK_ENTITY, world.getBlockEntity(coords))
                                                       .withParameter(LootContextParams.ORIGIN, entity.position())
@@ -892,7 +891,7 @@ public final class BlockPosUtil
     public static BlockPos findSpawnPosAround(final Level worldReader, final BlockPos start)
     {
         return findAround(worldReader, start, 1, 1,
-          (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.above()).getMaterial() == Material.AIR);
+          (world, pos) -> world.getBlockState(pos).isAir() && world.getBlockState(pos.above()).isAir());
     }
 
     /**

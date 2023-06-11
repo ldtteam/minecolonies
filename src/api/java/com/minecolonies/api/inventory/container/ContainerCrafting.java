@@ -4,13 +4,8 @@ import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.ResultContainer;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.Container;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ResultSlot;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -103,17 +98,17 @@ public class ContainerCrafting extends AbstractContainerMenu
     {
         super(ModContainers.craftingGrid.get(), windowId);
         this.moduleId = moduleId;
-        this.world = inv.player.level;
+        this.world = inv.player.level();
         this.inv = inv;
         this.complete = complete;
         this.pos = pos;
         if (complete)
         {
-            craftMatrix = new CraftingContainer(this, 3, 3);
+            craftMatrix = new TransientCraftingContainer(this, 3, 3);
         }
         else
         {
-            craftMatrix = new CraftingContainer(this, 2, 2);
+            craftMatrix = new TransientCraftingContainer(this, 2, 2);
         }
 
         this.craftResultSlot = this.addSlot(new ResultSlot(inv.player, this.craftMatrix, craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)

@@ -217,7 +217,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
         if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.BOWL))) && !walkingToAnimal(mooshroom))
         {
-            final FakePlayer fakePlayer = FakePlayerFactory.getMinecraft((ServerLevel) worker.getLevel());
+            final FakePlayer fakePlayer = FakePlayerFactory.getMinecraft((ServerLevel) worker.level);
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOWL));
             if (mooshroom.mobInteract(fakePlayer, InteractionHand.MAIN_HAND).equals(InteractionResult.CONSUME))
             {

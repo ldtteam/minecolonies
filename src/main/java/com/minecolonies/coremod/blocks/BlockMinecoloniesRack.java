@@ -8,22 +8,22 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.TileEntityRack;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -38,26 +38,34 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Block for the shelves of the warehouse.
  */
 public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack>
 {
+    /**
+     * Normal translation we use.
+     */
+    private static final  Long2ObjectMap<Direction> BY_NORMAL      = Arrays.stream(Direction.values()).collect(Collectors.toMap((p_235679_) -> {
+        return (new BlockPos(p_235679_.getNormal())).asLong();
+    }, (p_235675_) -> {
+        return p_235675_;
+    }, (p_235670_, p_235671_) -> {
+        throw new IllegalArgumentException("Duplicate keys");
+    }, Long2ObjectOpenHashMap::new));
 
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 10.0F;
+    private static final float                     BLOCK_HARDNESS = 10.0F;
 
     /**
      * This blocks name.
@@ -76,7 +84,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
     public BlockMinecoloniesRack()
     {
-        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, RackType.DEFAULT));
     }
 
@@ -185,9 +193,9 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
                 return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
             }
             // If its not a double variant and the new neighbor is neither, then connect.
-            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.hasProperty(VARIANT) && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(Direction.fromNormal(pos2.subtract(pos1)).getOpposite()))
+            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.hasProperty(VARIANT) && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(BY_NORMAL.get(((pos2.subtract(pos1)).asLong())).getOpposite()))
             {
-                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, Direction.fromNormal(pos2.subtract(pos1)));
+                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, BY_NORMAL.get(pos2.subtract(pos1).asLong()));
             }
         }
         return super.updateShape(state, dir, state2, level, pos1, pos2);
@@ -246,7 +254,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public List<ItemStack> getDrops(final BlockState state, final LootContext.Builder builder)
+    public List<ItemStack> getDrops(final BlockState state, final LootParams.Builder builder)
     {
         final List<ItemStack> drops = new ArrayList<>();
         drops.add(new ItemStack(this, 1));

@@ -89,7 +89,7 @@ public class SupplyLoot
     {
         if (MineColonies.getConfig().getCommon().generateSupplyLoot.get() && lootTables.containsKey(event.getName()))
         {
-            event.getTable().addPool(LootPool.lootPool().add(LootTableReference.lootTableReference(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());
+            //event.getTable().addPool(LootPool.lootPool().add(LootTableReference.lootTableReference(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());
         }
     }
 }

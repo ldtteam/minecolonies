@@ -1,12 +1,12 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -141,7 +141,7 @@ public final class EntityUtils
                 return false;
             }
         }
-        return world.getBlockState(groundPosition).getMaterial().isSolid();
+        return !world.getBlockState(groundPosition).blocksMotion();
     }
 
     /**
@@ -155,9 +155,8 @@ public final class EntityUtils
      */
     public static boolean solidOrLiquid(@NotNull final Level world, @NotNull final BlockPos blockPos)
     {
-        final Material material = world.getBlockState(blockPos).getMaterial();
-        return material.isSolid()
-                 || material.isLiquid();
+        final BlockState state = world.getBlockState(blockPos);
+        return state.liquid() || BlockUtils.canBlockFloatInAir(state);
     }
 
     /**
@@ -187,7 +186,7 @@ public final class EntityUtils
         for (int dy = 0; dy < height; dy++)
         {
             final BlockState state = world.getBlockState(pos.above(dy));
-            if (!state.is(ModTags.validSpawn) && state.getMaterial().blocksMotion())
+            if (!state.is(ModTags.validSpawn) && state.blocksMotion())
             {
                 return false;
             }
@@ -333,6 +332,6 @@ public final class EntityUtils
      */
     public static boolean isFlying(final LivingEntity target)
     {
-        return target != null && (target.hasImpulse || !target.isOnGround()) && target.fallDistance <= 0.1f && target.level.isEmptyBlock(target.blockPosition().below(2));
+        return target != null && (target.hasImpulse || !target.onGround()) && target.fallDistance <= 0.1f && target.level().isEmptyBlock(target.blockPosition().below(2));
     }
 }

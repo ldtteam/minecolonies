@@ -38,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
@@ -447,7 +448,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         final BlockState curBlockState = world.getBlockState(position);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if ((curBlockState.getMaterial().isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock)) || curBlockState.getMaterial().isLiquid())
+        if ((curBlockState.isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock)) || curBlockState.liquid())
         {
             if (depth < 0)
             {
@@ -878,7 +879,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final double chance = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
 
         final NonNullList<ItemStack> drops = NonNullList.create();
-        state.getDrops(new LootContext.Builder((ServerLevel) world).withLuck(fortune)
+        state.getDrops(new LootParams.Builder((ServerLevel) world).withLuck(fortune)
                          .withLuck(fortune)
                          .withParameter(LootContextParams.ORIGIN, worker.position())
                          .withParameter(LootContextParams.TOOL, tool)

@@ -6,14 +6,15 @@ import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -49,7 +50,7 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
 
     public BlockMinecoloniesNamedGrave()
     {
-        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noLootTable());
+        super(Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noLootTable());
         final BlockState bs = this.defaultBlockState();
         this.registerDefaultState(bs.setValue(FACING, Direction.NORTH));
     }

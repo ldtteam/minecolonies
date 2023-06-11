@@ -73,9 +73,9 @@ public class ContainerRack extends AbstractContainerMenu
     {
         super(ModContainers.rackInv.get(), windowId);
 
-        final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.level.getBlockEntity(rack);
+        final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.level().getBlockEntity(rack);
         // TODO: bug, what if neighbor is actually bp.ZERO? (unlikely to happen)
-        final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.level.getBlockEntity(neighbor);
+        final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.level().getBlockEntity(neighbor);
 
         if (neighborRack != null)
         {
@@ -148,7 +148,7 @@ public class ContainerRack extends AbstractContainerMenu
     @Override
     public void clicked(int slotId, int dragType, @NotNull ClickType clickTypeIn, Player player)
     {
-        if (player.level.isClientSide || slotId >= inventory.getSlots() || slotId < 0)
+        if (player.level().isClientSide || slotId >= inventory.getSlots() || slotId < 0)
         {
             super.clicked(slotId, dragType, clickTypeIn, player);
             return;

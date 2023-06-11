@@ -86,7 +86,7 @@ public class MinecoloniesMinecart extends Minecart
             flag = !isPowered;
         }
 
-        RailShape railshape = ((BaseRailBlock) state.getBlock()).getRailDirection(state, this.level, pos, this);
+        RailShape railshape = ((BaseRailBlock) state.getBlock()).getRailDirection(state, this.level(), pos, this);
         switch (railshape)
         {
             case ASCENDING_EAST:
@@ -192,7 +192,7 @@ public class MinecoloniesMinecart extends Minecart
 
         if (shouldDoRailFunctions())
         {
-            ((BaseRailBlock) state.getBlock()).onMinecartPass(state, level, pos, this);
+            ((BaseRailBlock) state.getBlock()).onMinecartPass(state, level(), pos, this);
         }
 
         if (isPowered && shouldDoRailFunctions())
@@ -249,7 +249,7 @@ public class MinecoloniesMinecart extends Minecart
 
     private boolean isNormalCube(BlockPos pos)
     {
-        return this.level.getBlockState(pos).isRedstoneConductor(this.level, pos);
+        return this.level().getBlockState(pos).isRedstoneConductor(this.level(), pos);
     }
 
     private static Pair<Vec3i, Vec3i> getShapeMatrix(RailShape p_226573_0_)
@@ -312,9 +312,9 @@ public class MinecoloniesMinecart extends Minecart
             this.setDamage(this.getDamage() - 1.0F);
         }
 
-        this.checkOutOfWorld();
+        this.checkBelowWorld();
         this.handleNetherPortal();
-        if (this.level.isClientSide)
+        if (this.level().isClientSide)
         {
             if (this.lSteps > 0)
             {
@@ -345,13 +345,13 @@ public class MinecoloniesMinecart extends Minecart
             int k = Mth.floor(this.getX());
             int i = Mth.floor(this.getY());
             int j = Mth.floor(this.getZ());
-            if (this.level.getBlockState(new BlockPos(k, i - 1, j)).is(BlockTags.RAILS))
+            if (this.level().getBlockState(new BlockPos(k, i - 1, j)).is(BlockTags.RAILS))
             {
                 --i;
             }
 
             BlockPos blockpos = new BlockPos(k, i, j);
-            BlockState blockstate = this.level.getBlockState(blockpos);
+            BlockState blockstate = this.level().getBlockState(blockpos);
             if (canUseRail() && BaseRailBlock.isRail(blockstate))
             {
                 this.moveAlongTrack(blockpos, blockstate);

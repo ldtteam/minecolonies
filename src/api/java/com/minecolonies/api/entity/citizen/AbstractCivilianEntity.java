@@ -112,7 +112,7 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public void tick()
     {
         super.tick();
-        if (level.isClientSide)
+        if (level().isClientSide)
         {
             soundManager.tick();
         }
@@ -135,13 +135,13 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
      */
     public void onPlayerCollide(final Player player)
     {
-        if (player.level.getGameTime() > nextPlayerCollisionTime)
+        if (player.level().getGameTime() > nextPlayerCollisionTime)
         {
-            nextPlayerCollisionTime = player.level.getGameTime() + TICKS_SECOND * 15;
+            nextPlayerCollisionTime = player.level().getGameTime() + TICKS_SECOND * 15;
             getNavigation().stop();
             getLookControl().setLookAt(player);
 
-            playSoundAtCivilian(level, blockPosition(), SUCCESS, getCivilianData());
+            playSoundAtCivilian(level(), blockPosition(), SUCCESS, getCivilianData());
         }
     }
 

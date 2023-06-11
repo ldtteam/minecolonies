@@ -21,11 +21,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -43,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
+public class NewBobberEntity extends Projectile implements IEntityAdditionalSpawnData
 {
     private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.INT);
     public  static final int                    XP_PER_CATCH       = 2;
@@ -73,7 +77,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      * @param type entity type.
      * @param world world to spawn it in.
      */
-    public NewBobberEntity(final EntityType<?> type, final Level world)
+    public NewBobberEntity(final EntityType<? extends Projectile> type, final Level world)
     {
         super(type, world);
         this.noCulling = true;
@@ -247,7 +251,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                     this.checkCollision();
                 }
 
-                if (!this.inGround && !this.onGround && !this.horizontalCollision)
+                if (!this.inGround && !this.onGround() && !this.horizontalCollision)
                 {
                     ++this.ticksInAir;
                 }
@@ -323,7 +327,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
     }
 
-    private void updateRotation()
+    @Override
+    protected void updateRotation()
     {
         final Vec3 vec = this.getDeltaMovement();
         final float f = Mth.sqrt((float) vec.horizontalDistanceSqr());
@@ -357,20 +362,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     private void checkCollision()
     {
-        final HitResult raytraceresult = ProjectileUtil.getHitResult(this,
-          (entity) -> !entity.isSpectator() && (entity.isPickable() || entity instanceof ItemEntity) && (entity != this.angler || this.ticksInAir >= 5));
-        if (raytraceresult.getType() != HitResult.Type.MISS)
-        {
-            if (raytraceresult.getType() == HitResult.Type.ENTITY)
-            {
-                this.caughtEntity = ((EntityHitResult) raytraceresult).getEntity();
-                this.setHookedEntity();
-            }
-            else
-            {
-                this.inGround = true;
-            }
-        }
+        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+        if (hitresult.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) this.onHit(hitresult);
     }
 
     private void setHookedEntity()
@@ -418,7 +411,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 final double d0 = this.getX() + (double) (f1 * (float) this.ticksCatchableDelay * 0.1F);
                 final double d1 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 final double d2 = this.getZ() + (double) (f2 * (float) this.ticksCatchableDelay * 0.1F);
-                if (serverworld.getBlockState(new BlockPos((int) d0, (int) d1 - 1, (int) d2)).getMaterial() == net.minecraft.world.level.material.Material.WATER)
+                if (serverworld.getBlockState(new BlockPos((int) d0, (int) d1 - 1, (int) d2)).is(Blocks.WATER))
                 {
                     if (this.random.nextFloat() < 0.15F)
                     {
@@ -485,7 +478,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 final double d4 = this.getX() + (double) (Mth.sin(f6) * f7 * 0.1F);
                 final double d5 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 final double d6 = this.getZ() + (double) (Mth.cos(f6) * f7 * 0.1F);
-                if (serverworld.getBlockState(BlockPos.containing(d4, d5 - 1.0D, d6)).getMaterial() == net.minecraft.world.level.material.Material.WATER)
+                if (serverworld.getBlockState(BlockPos.containing(d4, d5 - 1.0D, d6)).is(Blocks.WATER))
                 {
                     serverworld.sendParticles(ParticleTypes.SPLASH, d4, d5, d6, 2 + this.random.nextInt(2), (double) 0.1F, 0.0D, (double) 0.1F, 0.0D);
                 }
@@ -519,15 +512,14 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             }
             else if (this.ticksCatchable > 0)
             {
-                LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerLevel)this.level))
+                LootParams.Builder lootcontext$builder = (new LootParams.Builder((ServerLevel)this.level))
                                                             .withParameter(LootContextParams.ORIGIN, this.position())
                                                             .withParameter(LootContextParams.TOOL, this.getAngler().getMainHandItem())
                                                             .withParameter(LootContextParams.THIS_ENTITY, this)
-                                                            .withRandom(this.random)
                                                             .withLuck((float)this.luck);
 
                 lootcontext$builder.withParameter(LootContextParams.KILLER_ENTITY, this.angler).withParameter(LootContextParams.THIS_ENTITY, this);
-                final LootTable loottable = this.level.getServer().getLootTables().get(ModLootTables.FISHING);
+                final LootTable loottable = this.level.getServer().getLootData().getLootTable(ModLootTables.FISHING);
                 final List<ItemStack> list = loottable.getRandomItems(lootcontext$builder.create(LootContextParamSets.FISHING));
 
                 for (final ItemStack itemstack : list)

@@ -70,7 +70,7 @@ public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDe
                 return super.canEat(stack);
             }
             final IRequestable request = currentTask.getRequest();
-            if (request instanceof Delivery && ((Delivery) request).getStack().sameItem(stack))
+            if (request instanceof Delivery && ItemStack.isSameItem(((Delivery) request).getStack(), stack))
             {
                 return false;
             }

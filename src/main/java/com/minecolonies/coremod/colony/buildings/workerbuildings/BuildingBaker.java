@@ -144,7 +144,7 @@ public class BuildingBaker extends AbstractBuilding
                 for (final ItemStorage itemStorage : storage.getCleanedInput())
                 {
                     final ItemStack stack = itemStorage.getItemStack();
-                    map.put(stack::sameItem, new Tuple<>(RECIPE_INPUT_HOLD, false));
+                    map.put(testStack -> ItemStack.isSameItem(stack, testStack), new Tuple<>(RECIPE_INPUT_HOLD, false));
                 }
             }
 

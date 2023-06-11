@@ -42,31 +42,31 @@ public class CommandColonyInfo implements IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_DISABLED_IN_CONFIG), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 
         final BlockPos position = colony.getCenter();
-        context.getSource().sendSuccess(Component.literal(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.literal(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
         final String mayor = colony.getPermissions().getOwnerName();
-        context.getSource().sendSuccess(Component.literal(MAYOR_TEXT + mayor), true);
+        context.getSource().sendSuccess(() -> Component.literal(MAYOR_TEXT + mayor), true);
         context.getSource()
-          .sendSuccess(Component.literal(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
+          .sendSuccess(() -> Component.literal(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
         context.getSource()
-          .sendSuccess(Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
+          .sendSuccess(() -> Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
             ChatFormatting.GREEN)), true);
-        context.getSource().sendSuccess(Component.literal(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
-        context.getSource().sendSuccess(Component.literal(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
+        context.getSource().sendSuccess(() -> Component.literal(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
+        context.getSource().sendSuccess(() -> Component.literal(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
 
         if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
-            context.getSource().sendSuccess(Component.literal(CANNOT_BE_RAIDED), true);
+            context.getSource().sendSuccess(() -> Component.literal(CANNOT_BE_RAIDED), true);
         }
 
         return 1;

@@ -34,7 +34,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
@@ -646,7 +645,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private Boolean isPassable(final BlockState blockState)
     {
-        return blockState.getMaterial() == Material.LEAVES;
+        return blockState.is(BlockTags.LEAVES);
     }
 
     /**
@@ -950,7 +949,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else
         {
-            return job.getTree().getSapling().sameItem(stack);
+            return ItemStack.isSameItem(job.getTree().getSapling(), stack);
         }
     }
 

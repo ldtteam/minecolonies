@@ -2,6 +2,7 @@ package com.minecolonies.api.advancements.undertaker_totem;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,6 +13,6 @@ public class UndertakerTotemCriterionInstance extends AbstractCriterionTriggerIn
 {
     public UndertakerTotemCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_UNDERTAKER_TOTEM), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_UNDERTAKER_TOTEM), ContextAwarePredicate.ANY);
     }
 }

@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -130,16 +131,13 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, CRAFTING_FURNACE);
-        this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        stack.blit(CRAFTING_FURNACE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);

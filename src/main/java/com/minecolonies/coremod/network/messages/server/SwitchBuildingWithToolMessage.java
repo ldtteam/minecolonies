@@ -77,7 +77,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
         int buildToolSlot = -1;
         for (int i = 0; i < 9; i++)
         {
-            if (player.getInventory().getItem(i).sameItem(stack))
+            if (ItemStack.isSameItem(player.getInventory().getItem(i), stack))
             {
                 stackSlot = i;
             }

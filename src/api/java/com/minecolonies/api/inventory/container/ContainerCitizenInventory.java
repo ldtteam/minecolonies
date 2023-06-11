@@ -62,13 +62,13 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         this.playerInventory = inv;
 
         final IColony colony;
-        if (inv.player.level.isClientSide)
+        if (inv.player.level().isClientSide)
         {
-            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.level.dimension());
+            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.level().dimension());
         }
         else
         {
-            colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level);
+            colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
         }
 
         if (colony == null)
@@ -80,7 +80,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         final InventoryCitizen inventory;
         final BlockPos workBuilding;
 
-        if (inv.player.level.isClientSide)
+        if (inv.player.level().isClientSide)
         {
             final ICitizenDataView data = ((IColonyView) colony).getCitizen(citizenId);
             inventory = data.getInventory();
@@ -125,9 +125,9 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                           @Override
                           public void set(@NotNull final ItemStack stack)
                           {
-                              if (workBuilding != null && !playerInventory.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
+                              if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level);
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
                                   final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
                                   final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 

@@ -16,6 +16,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -100,13 +101,13 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
     @Override
     public void draw(@NotNull final CompostRecipe recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final PoseStack stack,
+                     @NotNull final GuiGraphics stack,
                      final double mouseX, final double mouseY)
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
         final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
                 .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
                 .setValue(AbstractBlockBarrel.VARIANT, type);
-        RenderHelper.renderBlock(stack, barrel, 40, 20, 100, -30F, 20F, 25F);
+        RenderHelper.renderBlock(stack.pose(), barrel, 40, 20, 100, -30F, 20F, 25F);
     }
 }

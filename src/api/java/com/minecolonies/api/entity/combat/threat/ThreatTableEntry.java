@@ -27,7 +27,7 @@ public class ThreatTableEntry
     public ThreatTableEntry(final LivingEntity entity)
     {
         this.entity = Objects.requireNonNull(entity);
-        this.lastSeen = entity.level.getGameTime();
+        this.lastSeen = entity.level().getGameTime();
     }
 
     /**
@@ -41,7 +41,7 @@ public class ThreatTableEntry
         }
 
         this.threat = Math.max(0, this.threat + threat);
-        lastSeen = entity.level.getGameTime();
+        lastSeen = entity.level().getGameTime();
     }
 
     /**

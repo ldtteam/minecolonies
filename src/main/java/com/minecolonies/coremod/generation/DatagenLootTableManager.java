@@ -8,9 +8,8 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Deserializers;
+import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.world.level.storage.loot.PredicateManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ import java.util.Map;
  * This is a LootTableManager that's populated on-demand during datagen, so that we
  * can look up other tables for {@link com.minecolonies.coremod.colony.crafting.LootTableAnalyzer}.
  */
-public class DatagenLootTableManager extends LootTables
+public class DatagenLootTableManager extends LootDataManager
 {
     private static final Gson GSON = Deserializers.createLootTableSerializer().create();
     private final ExistingFileHelper               existingFileHelper;
@@ -35,27 +34,26 @@ public class DatagenLootTableManager extends LootTables
 
     public DatagenLootTableManager(@NotNull final ExistingFileHelper existingFileHelper)
     {
-        super(new PredicateManager());  // in theory we should load these too; in practice vanilla doesn't seem to use it
-
+        super();  // in theory we should load these too; in practice vanilla doesn't seem to use it
         this.existingFileHelper = existingFileHelper;
     }
 
     @NotNull
     @Override
-    public LootTable get(@NotNull final ResourceLocation location)
+    public LootTable getLootTable(@NotNull final ResourceLocation location)
     {
         final LootTable table = this.tables.get(location);
         if (table != null) return table;
 
         try
         {
-            final Resource resource = existingFileHelper.getResource(getPreparedPath(location), PackType.SERVER_DATA);
+            final Resource resource = existingFileHelper.getResource(location, PackType.SERVER_DATA);
             try (final InputStream inputstream = resource.open();
                  final Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
             )
             {
                 final JsonElement jsonobject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
-                final LootTable loottable = ForgeHooks.loadLootTable(GSON, location, jsonobject, false, this);
+                final LootTable loottable = ForgeHooks.loadLootTable(GSON, location, jsonobject, false);
                 if (loottable != null)
                 {
                     this.tables.put(location, loottable);

@@ -668,7 +668,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                   .append(Component.literal(" - "))
                   .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getDescription()));
                 if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-                  stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount()))
+                  stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount()))
                 {
                     hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
                 }
@@ -799,7 +799,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final ItemStorage is = costList.get(i);
             undoCostIcons[i] = new ItemIcon();
             if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-              stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount())
+              stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount())
             {
                 missingItems.add(is);
             }
@@ -967,7 +967,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
             view.addChild(icon);
             if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-              stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(storage.getItemStack())) < storage.getAmount()))
+              stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, storage.getItemStack())) < storage.getAmount()))
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(Component.translatable("com.minecolonies.coremod.research.limit.requirement",
                   storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_UNFULFILLED).build();

@@ -489,8 +489,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_BUILDING_SHAFT;
         }
 
-        if ((!mineBlock(nextCobble, safeStand) && !world.getBlockState(nextCobble).getMaterial().isReplaceable())
-              || (!mineBlock(nextLadder, safeStand) && !world.getBlockState(nextLadder).getMaterial().isReplaceable()))
+        if ((!mineBlock(nextCobble, safeStand) && !world.getBlockState(nextCobble).canBeReplaced())
+              || (!mineBlock(nextLadder, safeStand) && !world.getBlockState(nextLadder).canBeReplaced()))
         {
             //waiting until blocks are mined
             return state;
@@ -733,7 +733,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private boolean secureBlock(@NotNull final BlockPos curBlock, @NotNull final BlockPos safeStand)
     {
-        if ((!getBlockState(curBlock).getMaterial().blocksMotion() && getBlock(curBlock) != Blocks.TORCH)
+        if ((!getBlockState(curBlock).blocksMotion() && getBlock(curBlock) != Blocks.TORCH)
               || IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(curBlock)))
         {
             if (!mineBlock(curBlock, safeStand))

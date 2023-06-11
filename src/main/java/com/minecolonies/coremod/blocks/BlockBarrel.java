@@ -6,10 +6,8 @@ import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +15,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,8 +30,6 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements EntityBlock
@@ -52,7 +49,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
 
     public BlockBarrel()
     {
-        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(AbstractBlockBarrel.FACING, Direction.NORTH).setValue(VARIANT, BarrelType.ZERO));
     }
 

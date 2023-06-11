@@ -68,7 +68,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         if (arg < 3)
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
             return 0;
         }
 
@@ -112,18 +112,19 @@ public class CommandPruneWorld implements IMCOPCommand
                 {
                     if (!currentRegion.delete())
                     {
-                        context.getSource().sendSuccess(Component.literal("Could not delete file:" + currentRegion.getPath()), true);
+                        context.getSource().sendSuccess(() -> Component.literal("Could not delete file:" + currentRegion.getPath()), true);
                     }
                     else
                     {
                         deleteCount++;
-                        context.getSource().sendSuccess(Component.literal("Deleted file:" + currentRegion.getPath()), true);
+                        context.getSource().sendSuccess(() -> Component.literal("Deleted file:" + currentRegion.getPath()), true);
                     }
                 }
             }
         }
 
-        context.getSource().sendSuccess(Component.literal("Successfully deleted " + deleteCount + " regions!"), true);
+        final int finalCount = deleteCount;
+        context.getSource().sendSuccess(() -> Component.literal("Successfully deleted " + finalCount + " regions!"), true);
         return 0;
     }
 

@@ -26,7 +26,7 @@ public class CommandKillSheep implements IMCOPCommand
             entity.remove(Entity.RemovalReason.KILLED);
             entitiesKilled++;
         });
-        context.getSource().sendSuccess(Component.literal(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(() -> Component.literal(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

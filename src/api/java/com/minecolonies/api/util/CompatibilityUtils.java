@@ -26,7 +26,7 @@ public final class CompatibilityUtils
      */
     public static Level getWorldFromEntity(final Entity entity)
     {
-        return entity.level;
+        return entity.level();
     }
 
     public static Level getWorldFromCitizen(final AbstractEntityCitizen baseEntityCitizen)

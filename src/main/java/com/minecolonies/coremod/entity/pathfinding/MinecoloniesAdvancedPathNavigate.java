@@ -287,7 +287,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 Vec3 vector3d = this.getTempMobPos();
                 Vec3 vector3d1 = this.path.getNextEntityPos(this.mob);
-                if (vector3d.y > vector3d1.y && !this.mob.isOnGround() && Mth.floor(vector3d.x) == Mth.floor(vector3d1.x) && Mth.floor(vector3d.z) == Mth.floor(vector3d1.z))
+                if (vector3d.y > vector3d1.y && !this.mob.onGround() && Mth.floor(vector3d.x) == Mth.floor(vector3d1.x) && Mth.floor(vector3d.z) == Mth.floor(vector3d1.z))
                 {
                     this.path.advance();
                 }

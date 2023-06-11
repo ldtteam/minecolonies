@@ -16,7 +16,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -249,7 +249,7 @@ public class CustomRecipeManager
      * Analyses and builds an approximate list of possible loot drops from registered recipes.
      * @param lootTableManager the loot table manager
      */
-    public void buildLootData(@NotNull final LootTables lootTableManager,
+    public void buildLootData(@NotNull final LootDataManager lootTableManager,
                               @NotNull final Level level)
     {
         final List<Animal> animals = RecipeAnalyzer.createAnimals(level);

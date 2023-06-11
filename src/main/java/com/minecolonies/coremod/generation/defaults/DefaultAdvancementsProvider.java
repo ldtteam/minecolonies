@@ -22,7 +22,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.WindowConstants;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.PlacedBlockTrigger;
+import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
@@ -284,8 +284,8 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
         final Advancement postAndStash = Advancement.Builder.advancement()
                 .parent(buildDeliveryPerson)
                 .display(make(FrameType.TASK, ModBlocks.blockPostBox, "post_and_stash"))
-                .addCriterion("postbox", PlacedBlockTrigger.TriggerInstance.placedBlock(ModBlocks.blockPostBox))
-                .addCriterion("stash", PlacedBlockTrigger.TriggerInstance.placedBlock(ModBlocks.blockStash))
+                .addCriterion("postbox", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockPostBox))
+                .addCriterion("stash", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockStash))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "post_and_stash"), fileHelper);
 
         // --- education ---

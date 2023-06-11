@@ -22,11 +22,11 @@ public class CommandBackup implements IMCOPCommand
         BackUpHelper.lastBackupTime = 0;
         if (BackUpHelper.backupColonyData())
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_BACKUP_SUCCESS), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_BACKUP_SUCCESS), true);
         }
         else
         {
-            context.getSource().sendSuccess(Component.translatable(COMMAND_BACKUP_FAILED), true);
+            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_BACKUP_FAILED), true);
         }
         return 1;
     }

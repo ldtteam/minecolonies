@@ -18,9 +18,11 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.predicates.AlternativeLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
+import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondition;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -52,18 +54,19 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
     protected void validate(@NotNull final Map<ResourceLocation, LootTable> map,
                             @NotNull final ValidationContext validationtracker)
     {
-        final ValidationContext newTracker = new ValidationContext(LootContextParamSets.ALL_PARAMS,
-                conditionId -> null,
-                lootId ->
+        ValidationContext newTracker = new ValidationContext(LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
+            @Nullable
+            public <T> T getElement(@NotNull LootDataId<T> id) {
+                if (id.location().equals(BuiltInLootTables.FISHING_FISH) ||
+                      id.location().equals(BuiltInLootTables.FISHING_JUNK) ||
+                      id.location().equals(BuiltInLootTables.FISHING_TREASURE))
                 {
-                    if (lootId.equals(BuiltInLootTables.FISHING_FISH) ||
-                        lootId.equals(BuiltInLootTables.FISHING_JUNK) ||
-                        lootId.equals(BuiltInLootTables.FISHING_TREASURE))
-                    {
-                        return LootTable.lootTable().build();
-                    }
-                    return validationtracker.resolveLootTable(lootId);
-                });
+                    return (T) map.get(id.location());
+                }
+                return null;
+            }
+        });
+
 
         super.validate(map, newTracker);
     }
@@ -74,7 +77,7 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                 .withPool(LootPool.lootPool()
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
-                                .when(new AlternativeLootItemCondition.Builder(
+                                .when(new AllOfCondition.Builder(
                                         EntityInBiomeTag.of(BiomeTags.IS_OCEAN),
                                         ResearchUnlocked.effect(ResearchConstants.FISH_TREASURE)
                                 )))

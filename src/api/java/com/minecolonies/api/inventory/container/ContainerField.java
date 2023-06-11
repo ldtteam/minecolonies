@@ -69,7 +69,7 @@ public class ContainerField extends AbstractContainerMenu
     {
         super(ModContainers.field.get(), windowId);
 
-        final Level world = playerInventory.player.level;
+        final Level world = playerInventory.player.level();
 
         if (world.getBlockState(pos).getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
         {

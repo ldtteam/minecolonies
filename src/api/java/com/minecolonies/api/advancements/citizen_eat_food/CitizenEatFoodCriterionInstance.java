@@ -17,7 +17,7 @@ public class CitizenEatFoodCriterionInstance extends AbstractCriterionTriggerIns
 
     public CitizenEatFoodCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), ContextAwarePredicate.ANY);
     }
 
     /**
@@ -26,7 +26,7 @@ public class CitizenEatFoodCriterionInstance extends AbstractCriterionTriggerIns
      */
     public CitizenEatFoodCriterionInstance(final ItemPredicate[] itemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.Composite.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), ContextAwarePredicate.ANY);
 
         this.itemPredicates = itemPredicates;
     }

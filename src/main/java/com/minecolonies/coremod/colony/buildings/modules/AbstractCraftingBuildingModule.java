@@ -45,6 +45,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -747,11 +748,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
         final AbstractEntityCitizen worker = data.getEntity().get();
 
-        LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) building.getColony().getWorld())
+        LootParams.Builder builder =  (new LootParams.Builder((ServerLevel) building.getColony().getWorld())
                                           .withParameter(LootContextParams.ORIGIN, worker.position())
                                           .withParameter(LootContextParams.THIS_ENTITY, worker)
                                           .withParameter(LootContextParams.TOOL, getCraftingTool(worker))
-                                          .withRandom(worker.getRandom())
                                           .withLuck(getCraftingLuck(worker)));
 
         return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);

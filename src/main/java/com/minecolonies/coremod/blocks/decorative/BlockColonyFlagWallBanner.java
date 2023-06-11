@@ -50,7 +50,7 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos)
     {
-        return worldIn.getBlockState(pos.relative(state.getValue(HORIZONTAL_FACING).getOpposite())).getMaterial().isSolid();
+        return worldIn.getBlockState(pos.relative(state.getValue(HORIZONTAL_FACING).getOpposite())).isSolid();
     }
 
     @Override

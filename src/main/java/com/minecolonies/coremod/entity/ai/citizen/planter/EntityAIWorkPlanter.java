@@ -99,7 +99,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         final ItemStack currentStack = new ItemStack(plantableSoilPos.getCombination().getItem());
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), stack -> ItemStack.isSameItem(currentStack, stack));
         if (plantInInv <= 0)
         {
             return START_WORKING;
@@ -221,8 +221,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 return START_WORKING;
             }
 
-            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
-            final int plantInBuilding = InventoryUtils.getCountFromBuilding(building, itemStack -> itemStack.sameItem(currentStack));
+            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), stack -> ItemStack.isSameItem(currentStack, stack));
+            final int plantInBuilding = InventoryUtils.getCountFromBuilding(building, stack -> ItemStack.isSameItem(currentStack, stack));
             if (plantInInv + plantInBuilding <= 0)
             {
                 requestPlantable(currentItem);
@@ -231,7 +231,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
             if (plantInInv == 0 && plantInBuilding > 0)
             {
-                needsCurrently = new Tuple<>(itemStack -> itemStack.sameItem(currentStack), Math.min(plantInBuilding, PLANT_TO_REQUEST));
+                needsCurrently = new Tuple<>(stack -> ItemStack.isSameItem(currentStack, stack), Math.min(plantInBuilding, PLANT_TO_REQUEST));
                 return GATHERING_REQUIRED_MATERIALS;
             }
 

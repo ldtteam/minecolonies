@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -31,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -306,9 +308,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             return FISHERMAN_SEARCHING_WATER;
         }
 
-        if (world.getBlockState(worker.blockPosition()).getMaterial().isLiquid())
+        if (world.getBlockState(worker.blockPosition()).liquid())
         {
-            if (!world.getBlockState(job.getWater().getB()).getMaterial().isSolid() && world.getBlockState(job.getWater().getB().below()).getMaterial().isLiquid())
+            if (!BlockUtils.canBlockFloatInAir(world.getBlockState(job.getWater().getB())) && world.getBlockState(job.getWater().getB().below()).liquid())
             {
                 job.removeFromPonds(job.getWater());
                 job.setWater(null);
@@ -523,7 +525,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.isOnGround() || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround() || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
     }
 
     /**
@@ -638,15 +640,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void generateBonusLoot()
     {
-        final LootContext context = (new LootContext.Builder((ServerLevel) this.world))
+        final LootParams context = (new LootParams.Builder((ServerLevel) this.world))
                 .withParameter(LootContextParams.ORIGIN, entityFishHook.position())
                 .withParameter(LootContextParams.THIS_ENTITY, entityFishHook)
                 .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
                 .withParameter(LootContextParams.KILLER_ENTITY, worker)
-                .withRandom(worker.getRandom())
                 .withLuck((float) getPrimarySkillLevel())
                 .create(LootContextParamSets.FISHING);
-        final LootTable bonusLoot = this.world.getServer().getLootTables().get(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.building.getBuildingLevel(), new ResourceLocation("")));
+        final LootTable bonusLoot = this.world.getServer().getLootData().getLootTable(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.building.getBuildingLevel(), new ResourceLocation("")));
         final List<ItemStack> loot = bonusLoot.getRandomItems(context);
 
         for (final ItemStack itemstack : loot)

@@ -19,7 +19,7 @@ public class CommandLoadAllBackups implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         BackUpHelper.loadAllBackups();
-        context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
         return 1;
     }
 

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -268,8 +268,8 @@ public class GraveManager implements IGraveManager
                 {
                     firstValidPosition = BlockPosUtil.findAround(world, pos, 16, 1,
                       (blockAccess, current) ->
-                        blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
-                          blockAccess.getBlockState(current.below()).getMaterial().isSolid());
+                        blockAccess.getBlockState(current).isAir() &&
+                          BlockUtils.canBlockFloatInAir(blockAccess.getBlockState(current.below())));
                     break;
                 }
             }
@@ -283,8 +283,8 @@ public class GraveManager implements IGraveManager
         {
             firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
               (blockAccess, current) ->
-                blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
-                  blockAccess.getBlockState(current.below()).getMaterial().isSolid());
+                blockAccess.getBlockState(current).isAir() &&
+                  BlockUtils.canBlockFloatInAir(blockAccess.getBlockState(current.below())));
         }
 
 

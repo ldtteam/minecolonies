@@ -4,18 +4,15 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
-import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -135,22 +132,19 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
     }
 
     @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }
 
-    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, BREWING_STAND_LOCATION);
-        this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        stack.blit(BREWING_STAND_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
         int l = Mth.clamp((20 - 1) / 20, 0, 18);
         if (l > 0) {
-            this.blit(stack, mouseX + 60, mouseY + 44, 176, 29, l, 4);
+            stack.blit(BREWING_STAND_LOCATION, mouseX + 60, mouseY + 44, 176, 29, l, 4);
         }
     }
 }

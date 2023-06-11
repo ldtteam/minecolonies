@@ -35,6 +35,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
@@ -201,7 +202,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @Override
     public void draw(@NotNull final T recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final PoseStack stack,
+                     @NotNull final GuiGraphics stack,
                      final double mouseX, final double mouseY)
     {
         final float scale = CITIZEN_H / 2.4f;
@@ -214,7 +215,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
         final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
         Lighting.setupForFlatItems();
-        UiRenderMacros.drawEntity(stack, citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
+        UiRenderMacros.drawEntity(stack.pose(), citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
         Lighting.setupFor3DItems();
 
         int y = 0;
@@ -222,13 +223,14 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         for (final FormattedText line : this.description)
         {
             final int x = 0;
-            mc.font.draw(stack, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor());
+            stack.drawString(mc.font, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor());
             y += mc.font.lineHeight + 2;
         }
 
         for (final InfoBlock block : this.infoBlocksCache.getUnchecked(recipe))
         {
-            mc.font.drawShadow(stack, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor());
+            //todo mirality
+            //stack.drawShadow(mc.font, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor());
         }
     }
 

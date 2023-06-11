@@ -96,6 +96,7 @@ public class MineColonies
         ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FACTOR.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FMLJavaModLoadingContext.get().getModEventBus());
 
+        ModCreativeTabs.TAB_REG.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         ModEnchantInitializer.init();
 

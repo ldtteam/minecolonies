@@ -39,7 +39,7 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos)
     {
-        return worldIn.getBlockState(pos.below()).getMaterial().isSolid();
+        return worldIn.getBlockState(pos.below()).isSolid();
     }
 
     @Override

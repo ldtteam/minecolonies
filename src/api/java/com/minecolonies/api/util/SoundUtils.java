@@ -189,7 +189,7 @@ public final class SoundUtils
               position.getZ(),
               (float) VOLUME * 2,
               (float) 1.0,
-              player.level.random.nextLong()));
+              player.level().random.nextLong()));
         }
     }
 
@@ -209,7 +209,7 @@ public final class SoundUtils
               position.getZ(),
               (float) VOLUME * 2,
               (float) 0.3,
-              player.level.random.nextLong()));
+              player.level().random.nextLong()));
         }
     }
 
@@ -324,6 +324,6 @@ public final class SoundUtils
           playerEntity.getZ(),
           16.0F * volume,
           pitch,
-          playerEntity.level.random.nextLong()));
+          playerEntity.level().random.nextLong()));
     }
 }

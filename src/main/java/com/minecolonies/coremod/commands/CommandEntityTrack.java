@@ -45,20 +45,20 @@ public class CommandEntityTrack implements IMCColonyOfficerCommand
             final Collection<? extends Entity> entities = EntityArgument.getEntities(context, "entity");
             if (entities.isEmpty())
             {
-                context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_NOT_FOUND), true);
+                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_NOT_FOUND), true);
                 return 0;
             }
 
             final Entity entity = entities.iterator().next();
             if (AbstractPathJob.trackingMap.getOrDefault((Player) sender, UUID.randomUUID()).equals(entity.getUUID()))
             {
-                context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
+                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
                 AbstractPathJob.trackingMap.remove((Player) sender);
                 Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
             }
             else
             {
-                context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
+                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
                 AbstractPathJob.trackingMap.put((Player) sender, entity.getUUID());
             }
             return 1;

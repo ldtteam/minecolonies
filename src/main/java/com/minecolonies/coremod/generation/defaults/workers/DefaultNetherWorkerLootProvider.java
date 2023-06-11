@@ -6,6 +6,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
+import com.minecolonies.coremod.generation.DatagenLootTableManager;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -15,9 +16,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -46,11 +47,11 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     public static final String NETHERWORKER = ModJobs.NETHERWORKER_ID.getPath();
     private static final int MAX_BUILDING_LEVEL = 5;
 
-    private final LootTables lootTableManager;
+    private final DatagenLootTableManager         lootTableManager;
     private final List<LootTable.Builder> levels;
 
     public DefaultNetherWorkerLootProvider(@NotNull final PackOutput packOutput,
-                                           @NotNull final LootTables lootTableManager)
+                                           @NotNull final DatagenLootTableManager lootTableManager)
     {
         super(packOutput);
         this.lootTableManager = lootTableManager;
@@ -74,7 +75,6 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     private LootPool.Builder createBlocksPool(final int buildingLevel)
     {
         final LootPool.Builder blocks = new LootPool.Builder()
-                .name("blocks")
                 .setRolls(UniformGenerator.between(3, 10))
                 .setBonusRolls(UniformGenerator.between(0.3F, 0.3F));
 
@@ -173,7 +173,6 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     private LootPool.Builder createMobsPool(final int buildingLevel)
     {
         final LootPool.Builder mobs = new LootPool.Builder()
-                .name("mobs")
                 .setRolls(UniformGenerator.between(2, 6))
                 .setBonusRolls(UniformGenerator.between(0.1F, 0.1F));
 

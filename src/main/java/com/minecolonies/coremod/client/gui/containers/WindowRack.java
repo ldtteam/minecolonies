@@ -4,10 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.constant.Constants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -102,32 +100,30 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final PoseStack stack, int mouseX, int mouseY)
+    protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY)
     {
-        this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.font.draw(stack, this.playerInventoryTitle.getString(), 8.0F, (float) (this.imageHeight - 94), 4210752);
+        stack.drawString(this.font, this.title.getString(), 8, 6, 4210752);
+        stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - 94), 4210752);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, getCorrectTextureForSlots(inventoryRows));
+        final ResourceLocation loc = getCorrectTextureForSlots(inventoryRows);
 
         if (inventoryRows <= GOOD_SIZE)
         {
             final int rowsHeight = this.inventoryRows * PLAYER_INVENTORY_OFFSET_EACH + PLAYER_INVENTORY_OFFSET_EACH - 1;
-            blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, rowsHeight, TEXTURE_SIZE, TEXTURE_SIZE);
-            blit(stack, this.leftPos, this.topPos + rowsHeight, 0,
+            stack.blit(loc, this.leftPos, this.topPos, 0, 0, this.imageWidth, rowsHeight, TEXTURE_SIZE, TEXTURE_SIZE);
+            stack.blit(loc, this.leftPos, this.topPos + rowsHeight, 0,
               TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
         else
         {
-             blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, TEXTURE_SIZE, TEXTURE_SIZE);
+            stack.blit(loc, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, TEXTURE_SIZE, TEXTURE_SIZE);
         }
     }
 
@@ -150,7 +146,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
     }
 
     @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
