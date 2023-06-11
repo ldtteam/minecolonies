@@ -122,7 +122,7 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
         final int y = HEIGHT - (36 + (lines.size() * mc.font.lineHeight)) / 2 - 1;
         for (int i = 0; i < lines.size(); ++i)
         {
-            stack.drawString(mc.font, Language.getInstance().getVisualOrder(lines.get(i)), 2, y + (i * mc.font.lineHeight), 0);
+            stack.drawString(mc.font, Language.getInstance().getVisualOrder(lines.get(i)), 2, y + (i * mc.font.lineHeight), 0, false);
         }
 
         final int scale = 2;
@@ -130,7 +130,7 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
         for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
         {
             final Component text = Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction", i);
-            stack.drawString(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0);
+            stack.drawString(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0, false);
             x += 18;
         }
     }

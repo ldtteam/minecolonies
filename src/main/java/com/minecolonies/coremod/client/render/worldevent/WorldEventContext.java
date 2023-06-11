@@ -27,6 +27,7 @@ public class WorldEventContext
         // singleton
     }
 
+    RenderLevelStageEvent stageEvent;
     BufferSource bufferSource;
     PoseStack poseStack;
     float partialTicks;
@@ -43,6 +44,7 @@ public class WorldEventContext
 
     public void renderWorldLastEvent(final RenderLevelStageEvent event)
     {
+        stageEvent = event;
         bufferSource = WorldRenderMacros.getBufferSource();
         poseStack = event.getPoseStack();
         partialTicks = event.getPartialTick();

@@ -105,8 +105,8 @@ public class WindowGrave extends AbstractContainerScreen<ContainerGrave>
     @Override
     protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY)
     {
-        stack.drawString(this.font, this.title.getString(), 8, 6, 4210752);
-        stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 4210752);
+        stack.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
+        stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 4210752, false);
     }
 
     /**

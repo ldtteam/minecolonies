@@ -173,7 +173,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     @Override
     protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
     {
-        stack.drawString(this.font, Component.translatable("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        stack.drawString(this.font, Component.translatable("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR, false);
     }
 
     /**

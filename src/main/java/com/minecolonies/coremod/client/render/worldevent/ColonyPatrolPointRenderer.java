@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.StructureClientHandler;
+import com.ldtteam.structurize.client.BlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.minecolonies.api.colony.IColonyManager;
@@ -79,10 +79,7 @@ public class ColonyPatrolPointRenderer
 
         if (guardTowerView instanceof AbstractBuildingGuards.View guardTower)
         {
-            StructureClientHandler.renderStructureAtPosList(partolPointTemplate,
-                ctx.partialTicks,
-                guardTower.getPatrolTargets(),
-                ctx.poseStack);
+            BlueprintHandler.getInstance().drawAtListOfPositions(partolPointTemplate, guardTower.getPatrolTargets(), ctx.stageEvent);
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.StructureClientHandler;
+import com.ldtteam.structurize.client.BlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
@@ -69,12 +69,8 @@ public class ColonyWaypointRenderer
                 return;
             }
 
-            StructureClientHandler.renderStructureAtPosList(
-              RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
-                    : wayPointTemplate,
-                ctx.partialTicks,
-                new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),
-                ctx.poseStack);
+            BlueprintHandler.getInstance().drawAtListOfPositions(RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
+              : wayPointTemplate, new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()), ctx.stageEvent);
         }
     }
 }

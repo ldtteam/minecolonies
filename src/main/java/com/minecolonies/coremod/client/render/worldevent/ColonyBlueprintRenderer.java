@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.StructureClientHandler;
+import com.ldtteam.structurize.client.BlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
@@ -119,7 +119,7 @@ public class ColonyBlueprintRenderer
             final BlockPos position = entry.getKey();
             if (buildingData.blueprint != null && buildingData.blueprint.getBlueprint() != null)
             {
-                StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
+                BlueprintHandler.getInstance().draw(buildingData.blueprint, position, ctx.stageEvent);
             }
         }
     }

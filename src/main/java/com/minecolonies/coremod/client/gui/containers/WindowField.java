@@ -118,10 +118,9 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            stack.drawString(this.font, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            stack.drawString(this.font, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */, false);
         }
-
-        stack.drawString(this.font, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        stack.drawString(this.font, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR, false);
 
         for (Renderable widget : this.renderables)
         {
