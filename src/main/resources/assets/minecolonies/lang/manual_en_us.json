@@ -836,7 +836,7 @@
   "item.minecolonies.clipboard": "Clipboard",
 
   "com.minecolonies.coremod.item.clipboard.needcolony": "No colony set (sneak + use the clipboard on the Town Hall)",
-  "com.minecolonies.coremod.item.clipboard.registered": "Noting requests on the clipboard from %s.",
+  "com.minecolonies.coremod.item.clipboard.registered": "Nothing requests on the clipboard from %s.",
   "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak + use the scroll on the Builder's Hut)",
   "com.minecolonies.coremod.item.scroll.registered": "Linked resources for Builder's Hut at %s.",
   "com.minecolonies.coremod.item.scroll.wrong_building": "Cannot link resource scroll to %s at %s",
