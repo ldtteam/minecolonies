@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
+import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 
@@ -115,7 +115,7 @@ public final class ShipBasedRaiderUtils
         final Level world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
-        final Blueprint blueprint = StructurePacks.getBlueprint(DEFAULT_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
+        final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
         return canPlaceShipAt(spawnPoint, blueprint, world) || canPlaceShipAt(spawnPoint.below(), blueprint, world);
