@@ -297,7 +297,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     private void validateParent()
     {
         final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
-        if (building != null && (building.getID().equals(getID()) || building.hasParent()))
+        if (building == null || building.getID().equals(getID()) || building.hasParent())
         {
             parentSchematic = BlockPos.ZERO;
         }
