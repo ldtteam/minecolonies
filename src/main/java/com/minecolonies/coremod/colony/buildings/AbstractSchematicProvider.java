@@ -277,8 +277,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public BlockPos getParent()
     {
-        validateParent();
-        return parentSchematic;
+        return isParentValid(parentSchematic) ? parentSchematic : BlockPos.ZERO;
     }
 
     @Override
@@ -290,17 +289,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void setParent(final BlockPos pos)
     {
-        parentSchematic = pos;
-        validateParent();
+        if (isParentValid(pos))
+        {
+            parentSchematic = pos;
+        }
     }
 
-    private void validateParent()
+    private boolean isParentValid(BlockPos position)
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
-        if (building == null || building.getID().equals(getID()) || building.hasParent())
-        {
-            parentSchematic = BlockPos.ZERO;
-        }
+        final IBuilding building = colony.getBuildingManager().getBuilding(position);
+        return building != null && !building.getID().equals(getID()) && !building.hasParent();
     }
 
     @Override
