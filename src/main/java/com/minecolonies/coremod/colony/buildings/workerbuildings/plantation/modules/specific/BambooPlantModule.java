@@ -5,8 +5,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modu
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.BambooBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
 
@@ -24,6 +26,11 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
      * The minimum height bamboo can grow to.
      */
     private static final int MIN_HEIGHT = 6;
+
+    /**
+     * The maximum height twisting vines can grow to.
+     */
+    private static final int MAX_HEIGHT = BambooBlock.MAX_HEIGHT;
 
     /**
      * Default constructor.
@@ -47,6 +54,12 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
     protected int getMinimumPlantLength()
     {
         return MIN_HEIGHT;
+    }
+
+    @Override
+    protected @Nullable Integer getMaximumPlantLength()
+    {
+        return MAX_HEIGHT;
     }
 
     @Override

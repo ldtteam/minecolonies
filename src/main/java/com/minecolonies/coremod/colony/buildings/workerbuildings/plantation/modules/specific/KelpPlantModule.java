@@ -10,8 +10,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SEA;
 
@@ -33,10 +34,11 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
      * The minimum height kelp can grow to.
      */
     private static final int MIN_HEIGHT = 2;
+
     /**
      * The maximum height kelp can grow to.
      */
-    private static final int MAX_HEIGHT = 25;
+    private static final int MAX_HEIGHT = GrowingPlantHeadBlock.MAX_AGE;
 
     /**
      * Default constructor.
@@ -56,7 +58,7 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
         // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
         // that the AI can actually walk to.
         Level world = field.getColony().getWorld();
-        for (int i = 0; i < MAX_HEIGHT + 1; i++)
+        for (int i = 0; i < getMaximumPlantLength() + 1; i++)
         {
             if (world.getBlockState(workPosition.above(i)).isAir())
             {
@@ -87,7 +89,7 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected @Nullable Integer getMaximumPlantLength()
+    protected @NotNull Integer getMaximumPlantLength()
     {
         return MAX_HEIGHT;
     }

@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
     /**
      * The maximum height twisting vines can grow to.
      */
-    private static final int MAX_HEIGHT = 25;
+    private static final int MAX_HEIGHT = GrowingPlantHeadBlock.MAX_AGE;
 
     /**
      * Default constructor.
