@@ -67,18 +67,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
     Set<BlockPos> getChildren();
 
     /**
-     * Add a child building position
-     * @param pos
-     */
-    void addChild(BlockPos pos);
-
-    /**
-     * Remove a child building position
-     * @param pos
-     */
-    void removeChild(BlockPos pos);
-
-    /**
      * Returns the rotation of the current building.
      *
      * @return integer value of the rotation.

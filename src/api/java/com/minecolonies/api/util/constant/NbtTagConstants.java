@@ -131,11 +131,6 @@ public final class NbtTagConstants
     public static final String TAG_PARENT_SCHEM = "parent";
 
     /**
-     * The tag to store a list of child positions of a building
-     */
-    public static final String TAG_CHILD_SCHEM = "children";
-
-    /**
      * The tag to store the rotation of the building.
      */
     public static final String TAG_ROTATION = "rotation";
