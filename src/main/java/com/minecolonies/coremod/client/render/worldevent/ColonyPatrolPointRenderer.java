@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
+import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
@@ -57,7 +57,7 @@ public class ColonyPatrolPointRenderer
 
         if (pendingTemplate == null && partolPointTemplate == null)
         {
-            pendingTemplate = StructurePacks.getBlueprintFuture(DEFAULT_STYLE, "infrastructure/misc/patrolpoint.blueprint");
+            pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/patrolpoint.blueprint");
             return;
         }
         else if (pendingTemplate != null && pendingTemplate.isDone())
