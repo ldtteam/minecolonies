@@ -269,7 +269,7 @@ public class GraveManager implements IGraveManager
                     firstValidPosition = BlockPosUtil.findAround(world, pos, 16, 1,
                       (blockAccess, current) ->
                         blockAccess.getBlockState(current).isAir() &&
-                          BlockUtils.canBlockFloatInAir(blockAccess.getBlockState(current.below())));
+                          BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
                     break;
                 }
             }
@@ -284,7 +284,7 @@ public class GraveManager implements IGraveManager
             firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
               (blockAccess, current) ->
                 blockAccess.getBlockState(current).isAir() &&
-                  BlockUtils.canBlockFloatInAir(blockAccess.getBlockState(current.below())));
+                  BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
         }
 
 

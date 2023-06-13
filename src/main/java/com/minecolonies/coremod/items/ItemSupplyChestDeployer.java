@@ -172,7 +172,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                     {
                         checkFluidAndNotInColony(world, new BlockPos(x, y, z), placementErrorList, placer);
                     }
-                    else if (BlockUtils.canBlockFloatInAir(world.getBlockState(new BlockPos(x, y, z))))
+                    else if (BlockUtils.isAnySolid(world.getBlockState(new BlockPos(x, y, z))))
                     {
                         final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z));
                         placementErrorList.add(placementError);

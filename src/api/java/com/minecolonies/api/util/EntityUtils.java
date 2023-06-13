@@ -156,7 +156,7 @@ public final class EntityUtils
     public static boolean solidOrLiquid(@NotNull final Level world, @NotNull final BlockPos blockPos)
     {
         final BlockState state = world.getBlockState(blockPos);
-        return state.liquid() || BlockUtils.canBlockFloatInAir(state);
+        return state.liquid() || BlockUtils.isAnySolid(state);
     }
 
     /**

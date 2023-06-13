@@ -378,7 +378,7 @@ public class Tree
         final BlockPos basePos = baseAndTOp.getA();
 
         //Make sure tree is on solid ground and tree is not build above cobblestone.
-        return BlockUtils.canBlockFloatInAir(world.getBlockState(basePos.below()))
+        return BlockUtils.isAnySolid(world.getBlockState(basePos.below()))
                  && world.getBlockState(basePos.below()).getBlock() != Blocks.COBBLESTONE
                  && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getB(), treesToNotCut);
     }
@@ -589,7 +589,7 @@ public class Tree
      */
     private void checkTree(@NotNull final Level world, @NotNull final BlockPos topLog)
     {
-        if (!BlockUtils.canBlockFloatInAir(world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ()))))
+        if (!BlockUtils.isAnySolid(world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ()))))
         {
             return;
         }

@@ -142,7 +142,7 @@ public final class BlockPosUtil
         while (pos == null
                  || !WorldUtil.isEntityBlockLoaded(world, pos)
                  || world.getBlockState(pos).liquid()
-                 || !BlockUtils.canBlockFloatInAir(world.getBlockState(pos.below()))
+                 || !BlockUtils.isAnySolid(world.getBlockState(pos.below()))
                  || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
         {
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
@@ -353,7 +353,7 @@ public final class BlockPosUtil
             mid = (bot + top) / 2;
         }
 
-        if (BlockUtils.canBlockFloatInAir(world.getBlockState(tempPos)))
+        if (BlockUtils.isAnySolid(world.getBlockState(tempPos)))
         {
             return foundland.above();
         }

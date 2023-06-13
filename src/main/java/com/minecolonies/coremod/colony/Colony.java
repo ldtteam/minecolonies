@@ -1175,7 +1175,7 @@ public class Colony implements IColony
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
                           ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                            || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.canBlockFloatInAir(entry.getValue())))
+                            || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue())))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();

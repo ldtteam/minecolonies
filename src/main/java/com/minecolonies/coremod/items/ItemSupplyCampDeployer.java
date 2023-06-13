@@ -134,7 +134,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             {
                 checkIfSolidAndNotInColony(world, new BlockPos(x, groundLevel, z), placementErrorList, placer);
 
-                if (BlockUtils.canBlockFloatInAir(world.getBlockState(new BlockPos(x, groundLevel + 1, z))))
+                if (BlockUtils.isAnySolid(world.getBlockState(new BlockPos(x, groundLevel + 1, z))))
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY(), z));
                     placementErrorList.add(placementError);
@@ -155,7 +155,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     private static void checkIfSolidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer)
     {
-        final boolean isSolid = BlockUtils.canBlockFloatInAir(world.getBlockState(pos));
+        final boolean isSolid = BlockUtils.isAnySolid(world.getBlockState(pos));
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isSolid)
         {

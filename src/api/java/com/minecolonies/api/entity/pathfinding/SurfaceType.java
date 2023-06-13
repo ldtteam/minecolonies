@@ -83,7 +83,7 @@ public enum SurfaceType
             return SurfaceType.DROPABLE;
         }
 
-        if ((BlockUtils.canBlockFloatInAir(blockState) && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
+        if ((BlockUtils.isAnySolid(blockState) && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
                && (shape.max(Direction.Axis.Z) - shape.min(Direction.Axis.Z)) > 0.75)
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
               || block instanceof FloatingCarpetBlock

@@ -248,7 +248,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
                                                                                  || isDecoItem(info.getBlockInfo().getState().getBlock())
                                                                                  || pos.getY()  < worldPos.getY())),
                   false);
@@ -279,7 +279,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.isAnySolid(info.getBlockInfo().getState())
                                                                                  && !isDecoItem(info.getBlockInfo().getState().getBlock()))
                                                                                  || pos.getY() > worldPos.getY())),
                   false);
@@ -394,7 +394,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
                                                                                  || isDecoItem(info.getBlockInfo().getState().getBlock())
                                                                                  || pos.getY()  < worldPos.getY())),
                   false);
@@ -436,7 +436,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
                       .getState()
                       .getBlock())  || pos.getY() > worldPos.getY())),
                   false);

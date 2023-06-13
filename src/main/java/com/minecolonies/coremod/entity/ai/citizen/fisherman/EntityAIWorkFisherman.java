@@ -310,7 +310,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
 
         if (world.getBlockState(worker.blockPosition()).liquid())
         {
-            if (!BlockUtils.canBlockFloatInAir(world.getBlockState(job.getWater().getB())) && world.getBlockState(job.getWater().getB().below()).liquid())
+            if (!BlockUtils.isAnySolid(world.getBlockState(job.getWater().getB())) && world.getBlockState(job.getWater().getB().below()).liquid())
             {
                 job.removeFromPonds(job.getWater());
                 job.setWater(null);
