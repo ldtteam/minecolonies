@@ -2,7 +2,7 @@
   "texture": "b3876290-654d-4103-9e16-44e779e36c00",
   "citizensuffix": "_d",
   "name": "Luz Noceda",
-  "chance": 0.5,
+  "chance": 0.001,
   "storylangkey": "com.minecolonies.coremod.gui.chat.jmwarrior",
   "recruitcost": "minecraft:ender_eye",
   "recruitcostcount": 1,
