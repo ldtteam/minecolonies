@@ -4,6 +4,9 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.OpenPlantationFieldBuildWindowMessage;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -39,7 +42,22 @@ public class PlantationFieldPlacementHandler implements ISurvivalBlueprintHandle
     public boolean canHandle(final Blueprint blueprint, final ClientLevel level, final Player player, final BlockPos pos, final PlacementSettings placementSettings)
     {
         BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        return blockState.is(ModBlocks.blockPlantationField);
+        if (!blockState.is(ModBlocks.blockPlantationField))
+        {
+            return false;
+        }
+
+        final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(level, pos);
+        if (colonyView == null)
+        {
+            return false;
+        }
+        if (!colonyView.getPermissions().hasPermission(player, Action.PLACE_HUTS))
+        {
+            return false;
+        }
+
+        return colonyView.isCoordInColony(level, pos);
     }
 
     @Override
