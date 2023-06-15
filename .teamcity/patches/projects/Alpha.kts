@@ -31,7 +31,7 @@ changeProject(RelativeId("Alpha")) {
             param("env.Version.Suffix", "-ALPHA")
         }
         update {
-            param("env.Version.Suffix", "-DETA")
+            param("env.Version.Suffix", "-BETA")
         }
         expect {
             text("env.crowdinKey", "credentialsJSON:ce949f49-133c-4bb1-83d7-257c570d43aa", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
