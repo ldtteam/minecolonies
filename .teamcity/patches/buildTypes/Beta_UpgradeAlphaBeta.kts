@@ -32,5 +32,11 @@ changeBuildType(RelativeId("Beta_UpgradeAlphaBeta")) {
         update {
             param("Target.Branch", "release")
         }
+        expect {
+            param("VCS.Branches", "+:refs/heads/testing/(*)")
+        }
+        update {
+            param("VCS.Branches", "+:refs/heads/release/(*)")
+        }
     }
 }
