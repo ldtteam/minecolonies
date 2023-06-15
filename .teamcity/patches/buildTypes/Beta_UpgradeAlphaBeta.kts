@@ -26,5 +26,11 @@ changeBuildType(RelativeId("Beta_UpgradeAlphaBeta")) {
         update {
             param("Default.Branch", "version/%Current Minecraft Version%")
         }
+        expect {
+            param("Target.Branch", "testing")
+        }
+        update {
+            param("Target.Branch", "release")
+        }
     }
 }
