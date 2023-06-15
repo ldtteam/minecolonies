@@ -37,6 +37,10 @@ changeBuildType(RelativeId("Alpha_Release")) {
     }
     steps {
         items.removeAt(0)
+        check(stepsOrder == arrayListOf("RUNNER_85", "RUNNER_9")) {
+            "Unexpected build steps order: $stepsOrder"
+        }
+        stepsOrder = arrayListOf("RUNNER_9")
     }
 
     features {

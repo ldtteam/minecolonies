@@ -44,6 +44,10 @@ changeBuildType(RelativeId("Release_Release")) {
                 -u 0
             """.trimIndent()
         }
+        check(stepsOrder == arrayListOf("RUNNER_85", "RUNNER_9")) {
+            "Unexpected build steps order: $stepsOrder"
+        }
+        stepsOrder = arrayListOf("RUNNER_9")
     }
 
     features {
