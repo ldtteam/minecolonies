@@ -50,4 +50,7 @@ changeBuildType(RelativeId("Alpha_Release")) {
             }
         }
     }
+
+    expectDisabledSettings()
+    updateDisabledSettings("RUNNER_85")
 }
