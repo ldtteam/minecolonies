@@ -18,4 +18,13 @@ changeBuildType(RelativeId("Beta_UpgradeAlphaBeta")) {
         "Unexpected description: '$description'"
     }
     description = "Upgrades the current Beta to Release."
+
+    params {
+        expect {
+            param("Default.Branch", "testing/%Current Minecraft Version%")
+        }
+        update {
+            param("Default.Branch", "version/%Current Minecraft Version%")
+        }
+    }
 }
