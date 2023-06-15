@@ -70,13 +70,13 @@ public class QuestInstance implements IQuestInstance
      * @param colony the colony it belongs to.
      * @param triggerReturnData the trigger return data that made this quest available.
      */
-    protected QuestInstance(final ResourceLocation questTemplateID, final IColony colony, final List<ITriggerReturnData> triggerReturnData)
+    protected QuestInstance(final ResourceLocation questTemplateID, final IColony colony, final List<ITriggerReturnData<?>> triggerReturnData)
     {
         this.colony = colony;
         this.questTemplateID = questTemplateID;
         this.assignmentStart = colony.getDay();
 
-        for (final ITriggerReturnData data : triggerReturnData)
+        for (final ITriggerReturnData<?> data : triggerReturnData)
         {
             if (data.getContent() instanceof IQuestGiver && questGiver == Integer.MIN_VALUE)
             {
@@ -198,7 +198,7 @@ public class QuestInstance implements IQuestInstance
     }
 
     @Override
-    public void advanceObjective(final Player player, final int nextObjective)
+    public IObjectiveInstance advanceObjective(final Player player, final int nextObjective)
     {
         final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
 
@@ -213,7 +213,7 @@ public class QuestInstance implements IQuestInstance
         if (nextObjective == -1)
         {
             this.onCompletion();
-            return;
+            return null;
         }
 
         if (this.objectiveProgress == 0)
@@ -224,9 +224,10 @@ public class QuestInstance implements IQuestInstance
         if (this.objectiveProgress >= questData.getObjectiveCount())
         {
             this.onCompletion();
-            return;
+            return null;
         }
         currentObjectiveInstance = questData.getObjective(this.objectiveProgress).startObjective(this);
+        return currentObjectiveInstance;
     }
 
     @Override

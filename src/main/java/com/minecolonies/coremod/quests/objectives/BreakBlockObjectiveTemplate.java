@@ -91,7 +91,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
         return new BlockMiningProgressInstance();
     }
@@ -118,7 +118,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.removeQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.removeQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
@@ -133,6 +133,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         ((BlockMiningProgressInstance) blockMiningProgressData).currentProgress++;
         if (blockMiningProgressData.isFulfilled())
         {
+            cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(player, nextObjective);
         }
     }
@@ -144,7 +145,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            QuestObjectiveEventHandler.addQuestObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
+            QuestObjectiveEventHandler.addQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 

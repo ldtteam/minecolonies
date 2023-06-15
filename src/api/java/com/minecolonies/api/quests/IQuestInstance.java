@@ -58,8 +58,9 @@ public interface IQuestInstance extends INBTSerializable<CompoundTag>
      * Advance the quest objective to this id.
      * @param player the player advancing this objective.
      * @param nextObjective the id to advance it to.
+     * @return the next objective instance.
      */
-    void advanceObjective(final Player player, int nextObjective);
+    IObjectiveInstance advanceObjective(final Player player, int nextObjective);
 
     /**
      * On question completion call.

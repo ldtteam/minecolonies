@@ -38,6 +38,6 @@ public class RandomQuestTriggerTemplate implements IQuestTriggerTemplate
     @Override
     public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
-        return new BooleanTriggerReturnData(colony.getWorld().random.nextInt(oneInChance) <= 1);
+        return new BooleanTriggerReturnData(oneInChance > 0 && colony.getWorld().random.nextInt(oneInChance) < 1);
     }
 }

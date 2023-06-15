@@ -40,7 +40,9 @@ public final class Constants
     public static final int    PARAMS_LOCAL_RESEARCH            = 3;
     public static final int    PARAMS_CUSTOM_RECIPE             = 8;
     public static final int    PARAMS_CUSTOM_RECIPE_MGR         = 13;
-    public static final String DEFAULT_STYLE                    = "Minecolonies Original";
+    public static final String DEFAULT_STYLE                    = "Colonial";
+    public static final String STORAGE_STYLE                    = "Minecolonies Original";
+
     public static final String ORES                             = "ores";
     public static final double HALF_BLOCK                       = 0.5D;
     public static final double SLIGHTLY_UP                      = 0.1D;

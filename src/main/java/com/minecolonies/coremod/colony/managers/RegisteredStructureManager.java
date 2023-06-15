@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -14,6 +15,9 @@ import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
@@ -34,6 +38,7 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildin
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveFieldViewMessage;
+import com.minecolonies.coremod.quests.objectives.IBuildingUpgradeObjectiveTemplate;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -60,6 +65,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DU
 
 public class RegisteredStructureManager implements IRegisteredStructureManager
 {
+    /**
+     * Mine block objective tracker.
+     */
+    private static final Map<BuildingEntry, List<IQuestInstance>> buildBuildingObjectives = new HashMap<>();
+
     /**
      * List of building in the colony.
      */
@@ -907,7 +917,32 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             colony.getCitizenManager().calculateMaxCitizens();
             markBuildingsDirty();
+            if (buildBuildingObjectives.containsKey(building.getBuildingType()))
+            {
+                for (final IQuestInstance instance : buildBuildingObjectives.get(building.getBuildingType()))
+                {
+                    final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getIndex());
+                    if (objective instanceof IBuildingUpgradeObjectiveTemplate)
+                    {
+                        ((IBuildingUpgradeObjectiveTemplate) objective).onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
+                    }
+                }
+            }
         }
+    }
+
+    @Override
+    public void trackBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
+    {
+        final List<IQuestInstance> currentMap = buildBuildingObjectives.getOrDefault(buildingEntry, new ArrayList<>());
+        currentMap.add(colonyQuest);
+        buildBuildingObjectives.put(buildingEntry, currentMap);
+    }
+
+    @Override
+    public void stopTrackingBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
+    {
+        buildBuildingObjectives.getOrDefault(buildingEntry, new ArrayList<>()).remove(colonyQuest);
     }
 
     @Override
