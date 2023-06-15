@@ -23,7 +23,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     /**
      * The rate the statemachine currently ticks at. Sets the amount of ticks - 1 which are skipped.
      */
-    private int tickRate = 0;
+    private int tickRate = 1;
 
     /**
      * The counter for the statemachine's tickrate.
@@ -67,7 +67,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     @Override
     public void tick()
     {
-        if (tickRateCounter > 0)
+        if (tickRateCounter > 1)
         {
             tickRateCounter--;
             return;
