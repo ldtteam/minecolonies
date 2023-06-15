@@ -36,14 +36,7 @@ changeBuildType(RelativeId("Release_Release")) {
         }
     }
     steps {
-        update<GradleBuildStep>(0) {
-            id = "RUNNER_9"
-            clearConditions()
-            dockerRunParameters = """
-                -v /opt/buildagent/gradle:/home/gradle/.gradle
-                -u 0
-            """.trimIndent()
-        }
+        items.removeAt(0)
         check(stepsOrder == arrayListOf("RUNNER_85", "RUNNER_9")) {
             "Unexpected build steps order: $stepsOrder"
         }
