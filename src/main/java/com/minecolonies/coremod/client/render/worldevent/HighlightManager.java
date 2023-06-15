@@ -3,13 +3,10 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import net.minecraft.world.phys.AABB;
+
+import java.util.*;
 
 public class HighlightManager
 {
@@ -46,14 +43,13 @@ public class HighlightManager
                 }
 
                 final MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-                WorldRenderMacros.renderLineBox(buffer.getBuffer(
-                    WorldRenderMacros.GLINT_LINES_WITH_WIDTH), ctx.poseStack, boxRenderData.pos, boxRenderData.argbColor, 0.025f);
+                ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, buffer, new AABB(boxRenderData.pos), 0.025f, boxRenderData.argbColor, true);
                 if (!boxRenderData.text.isEmpty())
                 {
                    WorldRenderMacros.renderDebugText(boxRenderData.pos, boxRenderData.text, ctx.poseStack, true, 3, buffer);
                 }
+                ColonyWorldRenderMacros.endRenderLineBox(buffer);
                 buffer.endBatch();
-
             }
 
             if (boxes.isEmpty())

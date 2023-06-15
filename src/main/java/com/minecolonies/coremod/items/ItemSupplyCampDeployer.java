@@ -135,7 +135,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
                 if (world.getBlockState(new BlockPos(x, groundLevel + 1, z)).getMaterial().isSolid())
                 {
-                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY(), z));
+                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, groundLevel + 1, z));
                     placementErrorList.add(placementError);
                 }
             }
