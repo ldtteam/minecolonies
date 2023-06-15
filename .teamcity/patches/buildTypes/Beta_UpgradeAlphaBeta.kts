@@ -13,4 +13,9 @@ changeBuildType(RelativeId("Beta_UpgradeAlphaBeta")) {
         "Unexpected name: '$name'"
     }
     name = "Upgrade - Beta -> Release"
+
+    check(description == "Upgrades the current Alpha to Beta.") {
+        "Unexpected description: '$description'"
+    }
+    description = "Upgrades the current Beta to Release."
 }
