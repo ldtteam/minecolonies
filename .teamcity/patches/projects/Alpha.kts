@@ -22,6 +22,12 @@ changeProject(RelativeId("Alpha")) {
 
     params {
         expect {
+            param("env.CURSERELEASETYPE", "alpha")
+        }
+        update {
+            param("env.CURSERELEASETYPE", "beta")
+        }
+        expect {
             param("env.Version.Suffix", "-ALPHA")
         }
         update {
