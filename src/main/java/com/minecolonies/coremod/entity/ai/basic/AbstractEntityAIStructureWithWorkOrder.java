@@ -56,6 +56,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     protected enum RequestStage
     {
         SOLID,
+        WEAK_SOLID,
         DECO,
         ENTITIES
     }
@@ -258,9 +259,29 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState()) || isDecoItem(info.getBlockInfo()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState()) || isDecoItem(info.getBlockInfo()
                       .getState()
                       .getBlock()))),
+                  false);
+                requestProgress = result.getIteratorPos();
+
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    building.addNeededResource(stack, stack.getCount());
+                }
+
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestState = RequestStage.WEAK_SOLID;
+                }
+                return false;
+
+            case WEAK_SOLID:
+                result = placer.executeStructureStep(world,
+                  null,
+                  requestProgress,
+                  StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -274,13 +295,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     requestState = RequestStage.DECO;
                 }
                 return false;
+
             case DECO:
                 result = placer.executeStructureStep(world,
                   null,
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
                       .getState()
                       .getBlock()))),
                   false);
