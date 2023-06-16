@@ -127,6 +127,14 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     }
 
     /**
+     * When cancel is clicked.
+     */
+    private void cancelClicked()
+    {
+        close();
+    }
+
+    /**
      * On confirm button.
      */
     private void buildClicked()
@@ -170,13 +178,5 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             controller.getRotation(),
             controller.getMirror(),
             builder)).open();
-    }
-
-    /**
-     * When cancel is clicked.
-     */
-    private void cancelClicked()
-    {
-        close();
     }
 }
