@@ -136,13 +136,6 @@ public interface IRegisteredStructureManager
     ITownHall getTownHall();
 
     /**
-     * Set the townhall building.
-     *
-     * @param building the building to set.
-     */
-    void setTownHall(@Nullable final ITownHall building);
-
-    /**
      * Get the maximum level among built mystical sites
      *
      * @return the max level among all mystical sites or zero if no mystical site built
@@ -244,6 +237,13 @@ public interface IRegisteredStructureManager
      * @param newLevel      the level of it.
      */
     void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
+
+    /**
+     * Set the townhall building.
+     *
+     * @param building the building to set.
+     */
+    void setTownHall(@Nullable final ITownHall building);
 
     /**
      * Removes a warehouse from the BuildingManager

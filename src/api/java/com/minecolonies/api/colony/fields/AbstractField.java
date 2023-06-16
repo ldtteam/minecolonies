@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
-import com.minecolonies.api.colony.modules.ModuleContainerHandlers;
+import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -68,14 +68,14 @@ public abstract class AbstractField implements IField
     @Override
     public boolean hasModule(final Class<? extends IFieldModule> clazz)
     {
-        return ModuleContainerHandlers.hasModule(modules, clazz);
+        return ModuleContainerUtils.hasModule(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IFieldModule> T getFirstModuleOccurance(final Class<T> clazz)
     {
-        return ModuleContainerHandlers.getFirstModuleOccurance(modules,
+        return ModuleContainerUtils.getFirstModuleOccurance(modules,
           clazz,
           "The module of class: " + clazz.toString() + "should never be null! Field:" + getFieldType().getRegistryName() + " pos:" + getPosition());
     }
@@ -84,21 +84,21 @@ public abstract class AbstractField implements IField
     @Override
     public <T extends IFieldModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
     {
-        return ModuleContainerHandlers.getFirstOptionalModuleOccurance(modules, clazz);
+        return ModuleContainerUtils.getFirstOptionalModuleOccurance(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IFieldModule> List<T> getModules(final Class<T> clazz)
     {
-        return ModuleContainerHandlers.getModules(modules, clazz);
+        return ModuleContainerUtils.getModules(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IFieldModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        return ModuleContainerHandlers.getModuleMatching(modules,
+        return ModuleContainerUtils.getModuleMatching(modules,
           clazz,
           modulePredicate,
           "no matching module for Field:" + getFieldType().getRegistryName() + " pos:" + getPosition().toShortString());

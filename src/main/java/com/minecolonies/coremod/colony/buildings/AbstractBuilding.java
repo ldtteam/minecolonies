@@ -17,7 +17,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.modules.ModuleContainerHandlers;
+import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -176,14 +176,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return ModuleContainerHandlers.hasModule(modules, clazz);
+        return ModuleContainerUtils.hasModule(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getFirstModuleOccurance(final Class<T> clazz)
     {
-        return ModuleContainerHandlers.getFirstModuleOccurance(modules,
+        return ModuleContainerUtils.getFirstModuleOccurance(modules,
           clazz,
           "The module of class: " + clazz.toString() + "should never be null! Building:" + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
     }
@@ -192,14 +192,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
     {
-        return ModuleContainerHandlers.getFirstOptionalModuleOccurance(modules, clazz);
+        return ModuleContainerUtils.getFirstOptionalModuleOccurance(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        return ModuleContainerHandlers.getModuleMatching(modules,
+        return ModuleContainerUtils.getModuleMatching(modules,
           clazz,
           modulePredicate,
           "no matching module for Building:" + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
@@ -209,7 +209,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public <T extends IBuildingModule> List<T> getModules(final Class<T> clazz)
     {
-        return ModuleContainerHandlers.getModules(modules, clazz);
+        return ModuleContainerUtils.getModules(modules, clazz);
     }
 
     @Override
