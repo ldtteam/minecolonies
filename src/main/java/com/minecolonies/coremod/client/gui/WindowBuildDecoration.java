@@ -66,6 +66,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final List<Tuple<String, BlockPos>> builders = new ArrayList<>();
 
     /**
+     * Pack meta of the deco.
+     */
+    private final String packMeta;
+
+    /**
      * Path of the blueprint in the pack.
      */
     private final String path;
@@ -81,16 +86,6 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final boolean mirror;
 
     /**
-     * Contains all resources needed for a certain build.
-     */
-    private final Map<String, ItemStorage> resources = new HashMap<>();
-
-    /**
-     * The position of the decoration anchor
-     */
-    private final BlockPos structurePos;
-
-    /**
      * A function that will supply the message, given the position of the requested builder, if any.
      */
     private final Function<BlockPos, IMessage> buildRequestMessage;
@@ -99,6 +94,16 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      * Drop down list for builders.
      */
     private DropDownList buildersDropDownList;
+
+    /**
+     * Contains all resources needed for a certain build.
+     */
+    private final Map<String, ItemStorage> resources = new HashMap<>();
+
+    /**
+     * The position of the decoration anchor
+     */
+    private final BlockPos structurePos;
 
     /**
      * The blueprint future of this.
@@ -117,6 +122,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
       Function<BlockPos, IMessage> buildRequestMessage)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
+        this.packMeta = packMeta;
         this.path = path;
         this.structurePos = pos;
 
@@ -139,21 +145,18 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         this.buildRequestMessage = buildRequestMessage;
     }
 
-    private void confirmedBuild()
-    {
-        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0
-                                   ? BlockPos.ZERO
-                                   : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-
-        Network.getNetwork().sendToServer(buildRequestMessage.apply(builder));
-        close();
-    }
-
     @Override
     public void onOpened()
     {
         super.onOpened();
         updateBuilders();
+        updateResources();
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
         updateResources();
     }
 
@@ -182,6 +185,33 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                           .collect(Collectors.toList()));
 
         initBuilderNavigation();
+    }
+
+    /**
+     * Initialise the builder setup..
+     */
+    private void initBuilderNavigation()
+    {
+        buildersDropDownList = findPaneOfTypeByID(DROPDOWN_BUILDER_ID, DropDownList.class);
+        buildersDropDownList.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return builders.size();
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                if (index >= 0 && index < builders.size())
+                {
+                    return builders.get(index).getA();
+                }
+                return "";
+            }
+        });
+        buildersDropDownList.setSelectedIndex(0);
     }
 
     /**
@@ -238,33 +268,6 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             // Noop
         }
-    }
-
-    /**
-     * Initialise the builder setup.
-     */
-    private void initBuilderNavigation()
-    {
-        buildersDropDownList = findPaneOfTypeByID(DROPDOWN_BUILDER_ID, DropDownList.class);
-        buildersDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return builders.size();
-            }
-
-            @Override
-            public String getLabel(final int index)
-            {
-                if (index >= 0 && index < builders.size())
-                {
-                    return builders.get(index).getA();
-                }
-                return "";
-            }
-        });
-        buildersDropDownList.setSelectedIndex(0);
     }
 
     /**
@@ -336,10 +339,13 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         });
     }
 
-    @Override
-    public void onUpdate()
+    private void confirmedBuild()
     {
-        super.onUpdate();
-        updateResources();
+        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0
+                                   ? BlockPos.ZERO
+                                   : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+
+        Network.getNetwork().sendToServer(buildRequestMessage.apply(builder));
+        close();
     }
 }
