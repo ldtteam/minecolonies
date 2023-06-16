@@ -592,6 +592,7 @@
   "com.minecolonies.coremod.gui.workerhuts.fields.plantcount": "%d/%d types of plants",
   "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount.reached": "You already reached the limit of fields.",
   "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research": "You do not have the required research to assign this field to the plantation.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.farmer.noseed": "Field has no seed set",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached": "You already reached the limit of concurrent plants.",

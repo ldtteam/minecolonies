@@ -135,6 +135,7 @@ public class FarmField extends AbstractField
      *
      * @return the current seed.
      */
+    @NotNull
     public ItemStack getSeed()
     {
         seed.setCount(1);

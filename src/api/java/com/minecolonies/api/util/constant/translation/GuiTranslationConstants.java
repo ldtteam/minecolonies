@@ -25,6 +25,8 @@ public class GuiTranslationConstants
     public static final String FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT     = "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached";
     @NonNls
     public static final String FIELD_LIST_PLANTATION_RESEARCH_REQUIRED = "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research";
+    @NonNls
+    public static final String FIELD_LIST_FARMER_NO_SEED               = "com.minecolonies.coremod.gui.workerhuts.fields.farmer.noseed";
 
     // Field UI
     @NonNls

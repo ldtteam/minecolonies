@@ -20,6 +20,8 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.coremod.colony.fields.FarmField;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +38,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_FARMER_NO_SEED;
 
 /**
  * Class which handles the farmer building.
@@ -82,7 +86,7 @@ public class BuildingFarmer extends AbstractBuilding
      * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
      * method to hold some stacks back.
      *
-     * @return a list of objects which should be kept.
+     * @return a map of objects which should be kept.
      */
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
@@ -169,7 +173,7 @@ public class BuildingFarmer extends AbstractBuilding
         @Override
         public boolean canAssignFieldOverride(final IField field)
         {
-            return true;
+            return field instanceof FarmField farmField && !farmField.getSeed().isEmpty();
         }
     }
 
@@ -188,13 +192,30 @@ public class BuildingFarmer extends AbstractBuilding
         @Override
         public boolean canAssignFieldOverride(final IField field)
         {
-            return true;
+            return field instanceof FarmField farmField && !farmField.getSeed().isEmpty();
         }
 
         @Override
         protected List<IField> getFieldsInColony()
         {
             return getColony().getFields(field -> field.getFieldType().equals(FieldRegistries.farmField.get()));
+        }
+
+        @Override
+        public @Nullable MutableComponent getFieldWarningTooltip(final IField field)
+        {
+            MutableComponent result = super.getFieldWarningTooltip(field);
+            if (result != null)
+            {
+                return result;
+            }
+
+            if (field instanceof FarmField farmField && farmField.getSeed().isEmpty())
+            {
+                return Component.translatable(FIELD_LIST_FARMER_NO_SEED);
+            }
+
+            return null;
         }
     }
 
