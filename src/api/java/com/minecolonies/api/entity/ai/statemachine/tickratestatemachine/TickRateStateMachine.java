@@ -67,7 +67,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     @Override
     public void tick()
     {
-        if (tickRateCounter > 0)
+        if (tickRateCounter > 1)
         {
             tickRateCounter--;
             return;

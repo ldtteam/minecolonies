@@ -2,6 +2,8 @@ package patches.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.vcsLabeling
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.GradleBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2019_2.ui.*
 
 /*
@@ -10,6 +12,37 @@ To apply the patch, change the buildType with id = 'Alpha_Release'
 accordingly, and delete the patch script.
 */
 changeBuildType(RelativeId("Alpha_Release")) {
+    expectSteps {
+        gradle {
+            name = "Compile"
+            id = "RUNNER_9"
+            tasks = "build createChangelog curseforge publish"
+            buildFile = "build.gradle"
+            enableStacktrace = true
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+        }
+    }
+    steps {
+        items.removeAt(0)
+        check(stepsOrder == arrayListOf("RUNNER_85", "RUNNER_9")) {
+            "Unexpected build steps order: $stepsOrder"
+        }
+        stepsOrder = arrayListOf("RUNNER_9")
+    }
+
     features {
         remove {
             vcsLabeling {
@@ -21,4 +54,7 @@ changeBuildType(RelativeId("Alpha_Release")) {
             }
         }
     }
+
+    expectDisabledSettings()
+    updateDisabledSettings("RUNNER_85")
 }

@@ -25,25 +25,22 @@ changeBuildType(RelativeId("Release_Release")) {
                 -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
                 -u 0
             """.trimIndent()
-            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
-            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
             param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
-            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
             param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
         }
     }
     steps {
-        update<GradleBuildStep>(0) {
-            id = "RUNNER_9"
-            clearConditions()
-            dockerRunParameters = """
-                -v /opt/buildagent/gradle:/home/gradle/.gradle
-                -u 0
-            """.trimIndent()
+        items.removeAt(0)
+        check(stepsOrder == arrayListOf("RUNNER_85", "RUNNER_9")) {
+            "Unexpected build steps order: $stepsOrder"
         }
+        stepsOrder = arrayListOf("RUNNER_9")
     }
 
     features {

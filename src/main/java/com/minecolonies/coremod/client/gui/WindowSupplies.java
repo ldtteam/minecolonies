@@ -182,7 +182,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                   .setPos(error.getPos())
                   .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
                   .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
-                  .setColor(0xFF0000));
+                  .setColor(0x80FF0000));
             }
         }
     }
