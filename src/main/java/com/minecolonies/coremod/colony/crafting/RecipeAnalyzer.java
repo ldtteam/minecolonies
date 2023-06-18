@@ -85,7 +85,8 @@ public final class RecipeAnalyzer
             {
                 // this is a multi-output recipe; assume it replaces a bunch of vanilla
                 // recipes we already added above
-                recipes.removeIf(r -> ItemStackUtils.compareItemStacksIgnoreStackSize(recipeStorage.getPrimaryOutput(), r.getPrimaryOutput()));
+                recipes.removeIf(r -> ItemStackUtils.isNotEmpty(r.getPrimaryOutput()) &&
+                        ItemStackUtils.compareItemStacksIgnoreStackSize(recipeStorage.getPrimaryOutput(), r.getPrimaryOutput()));
                 recipes.removeIf(r -> recipeStorage.getAlternateOutputs().stream()
                         .anyMatch(s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, r.getPrimaryOutput())));
             }

@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
@@ -46,6 +47,11 @@ import static com.minecolonies.api.util.constant.Constants.*;
  */
 public final class ItemStackUtils
 {
+    /**
+     * Pattern for {@link #parseIdTemplate}.
+     */
+    private static final Pattern TEMPLATE_PATH_PATTERN = Pattern.compile("\\[PATH(?::([^=]*)=([^]]*))?]");
+
     /**
      * Variable representing the empty itemstack in 1.10. Used for easy updating to 1.11
      */
@@ -1007,6 +1013,45 @@ public final class ItemStackUtils
             Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
         }
         return stack;
+    }
+
+    /**
+     * Parses an item string (formatted for {@link #idToItemStack}) that may
+     * contain replaceable template components:
+     *
+     * <pre>
+     *     [NS]           => {@code baseItemId.getNamespace()}
+     *     [PATH]         => {@code baseItemId.getPath()}
+     *     [PATH:foo=bar] => {@code baseItemId.getPath()} but with "foo" replaced with "bar"</pre>
+     *
+     * @param value      the value to parse
+     * @param baseItemId the base item id to use to fill in the components
+     * @return a tuple of (boolean, result), where the boolean is false if result didn't resolve to a valid item
+     */
+    @NotNull
+    public static Tuple<Boolean, String> parseIdTemplate(@Nullable final String value,
+                                                         @NotNull final ResourceLocation baseItemId)
+    {
+        if (value == null)
+        {
+            return new Tuple<>(false, null);
+        }
+
+        final int nbtIndex = value.indexOf('{');
+        String itemId = nbtIndex < 0 ? value : value.substring(0, nbtIndex);
+
+        itemId = itemId.replace("[NS]", baseItemId.getNamespace());
+        itemId = TEMPLATE_PATH_PATTERN.matcher(itemId).replaceAll(m ->
+        {
+            if (m.group(1) != null && m.group(2) != null)
+            {
+                return baseItemId.getPath().replace(m.group(1), m.group(2));
+            }
+            return baseItemId.getPath();
+        });
+
+        return new Tuple<>(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemId)),
+                itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
     }
 
     /**
