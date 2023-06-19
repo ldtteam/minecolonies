@@ -1,15 +1,30 @@
 {
   "type": "recipe",
+  "additional-output": [
+    {
+      "item": "minecraft:netherite_upgrade_smithing_template"
+    }
+  ],
   "crafter": "blacksmith_crafting",
   "inputs": [
     {
       "item": "minecraft:diamond_shovel"
     },
     {
+      "item": "minecraft:netherite_upgrade_smithing_template"
+    },
+    {
       "item": "minecraft:netherite_ingot"
+    },
+    {
+      "count": 7,
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:netherrack"
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 5,
+  "min-building-level": 4,
   "result": "minecraft:netherite_shovel"
 }

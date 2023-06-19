@@ -3,8 +3,10 @@
     "#minecolonies:mechanic_product",
     "#minecraft:wooden_slabs",
     "#minecraft:wooden_stairs",
+    "#minecraft:trim_templates",
     "minecraft:lectern",
     "minecraft:piston",
+    "minecraft:netherite_upgrade_smithing_template",
     "domum_ornamentum:paper_extra",
     "domum_ornamentum:white_paper_extra"
   ]

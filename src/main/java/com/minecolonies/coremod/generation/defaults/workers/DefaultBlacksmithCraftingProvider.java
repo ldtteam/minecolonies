@@ -13,6 +13,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -79,9 +80,13 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(BLACKSMITH, MODULE_CRAFTING,
                         ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input)),
-                        new ItemStorage(new ItemStack(Items.NETHERITE_INGOT))))
+                        new ItemStorage(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)),
+                        new ItemStorage(new ItemStack(Items.NETHERITE_INGOT)),
+                        new ItemStorage(new ItemStack(Items.DIAMOND, 7)),
+                        new ItemStorage(new ItemStack(Items.NETHERRACK))))
                 .result(new ItemStack(output))
-                .minBuildingLevel(5)
+                .secondaryOutputs(Collections.singletonList(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)))
+                .minBuildingLevel(4)
                 .build(consumer);
     }
 }
