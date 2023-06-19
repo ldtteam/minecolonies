@@ -1862,6 +1862,7 @@
   "com.minecolonies.coremod.dist.blocks": "%d blocks",
   "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!",
   "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s",
+  "com.minecolonies.coremod.request.crafting.display.short": "%d * Recipe:",
 
   "com.minecolonies.coremod.item.sugary.bread.gui": "Boosts speed and removes poison effect",
   "com.minecolonies.coremod.item.milky.bread.gui": "Removes potion effects",
