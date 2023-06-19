@@ -141,7 +141,8 @@ public final class EntityUtils
                 return false;
             }
         }
-        return !world.getBlockState(groundPosition).blocksMotion();
+
+        return BlockUtils.isAnySolid(world.getBlockState(groundPosition));
     }
 
     /**
