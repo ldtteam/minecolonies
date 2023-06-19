@@ -417,7 +417,7 @@ public final class StandardRequests
         @Override
         public MutableComponent getDisplayPrefix()
         {
-            return new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, new TextComponent(String.valueOf(getRequest().getMinCount())));
+            return new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY_SHORT, Component.literal(String.valueOf(getRequest().getMinCount())));
         }
 
         @Override

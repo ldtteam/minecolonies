@@ -591,16 +591,20 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                   recipe.getPrimaryOutput(),
                   Blocks.AIR);
 
-                replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
+                if (isRecipeCompatibleWithCraftingModule(token))
+                {
+                    replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
-                // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
-                Component jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
-                MessageUtils.format(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                    jobComponent,
-                    recipe.getPrimaryOutput().getHoverName(),
-                    reducedItem.getItemStack().getHoverName(),
-                    citizen.getName()
-                ).sendTo(building.getColony()).forAllPlayers();
+                    // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
+                    Component jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
+                    MessageUtils.format(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                      jobComponent,
+                      recipe.getPrimaryOutput().getHoverName(),
+                      reducedItem.getItemStack().getHoverName(),
+                      citizen.getName()
+                    ).sendTo(building.getColony()).forAllPlayers();
+                }
             }
         }
     }
