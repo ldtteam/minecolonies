@@ -17,9 +17,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -412,7 +411,7 @@ public class CustomRecipe
 
         final boolean logStatus = IMinecoloniesAPI.getInstance().getConfig().getServer().auditCraftingTags.get();
 
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, tagId)))
+        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.create(tagId)))
         {
             final ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
             if (!filter.test(itemId)) { continue; }

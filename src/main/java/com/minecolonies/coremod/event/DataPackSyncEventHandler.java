@@ -50,10 +50,10 @@ public class DataPackSyncEventHandler
          */
         private static void discoverCompatLists(@NotNull final MinecraftServer server)
         {
-            FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager());
+            FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().resolveTemplates();
-            CustomRecipeManager.getInstance().buildLootData(server.getLootTables(), server.overworld());
+            CustomRecipeManager.getInstance().buildLootData(server.getLootData(), server.overworld());
         }
 
         /**
