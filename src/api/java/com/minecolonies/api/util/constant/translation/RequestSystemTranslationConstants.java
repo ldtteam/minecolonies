@@ -38,6 +38,8 @@ public class RequestSystemTranslationConstants
     @NonNls
     public static final String REQUEST_SYSTEM_CRAFTING_DISPLAY       = "com.minecolonies.coremod.request.crafting.display";
     @NonNls
+    public static final String REQUEST_SYSTEM_CRAFTING_DISPLAY_SHORT       = "com.minecolonies.coremod.request.crafting.display.short";
+    @NonNls
     public static final String REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW = "com.minecolonies.coremod.request.toolow";
 
     @NonNls
