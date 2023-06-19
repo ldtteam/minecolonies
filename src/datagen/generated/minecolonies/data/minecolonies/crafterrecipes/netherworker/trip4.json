@@ -2,10 +2,22 @@
   "type": "recipe",
   "additional-output": [
     {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    },
+    {
       "item": "minecraft:netherrack"
     },
     {
       "item": "minecraft:nether_quartz_ore"
+    },
+    {
+      "item": "minecraft:porkchop"
     },
     {
       "item": "minecraft:soul_sand"
@@ -21,6 +33,9 @@
     },
     {
       "item": "minecraft:soul_soil"
+    },
+    {
+      "item": "minecraft:leather"
     },
     {
       "item": "minecraft:glowstone"
@@ -53,7 +68,31 @@
       "item": "minecraft:blackstone"
     },
     {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    },
+    {
       "item": "minecraft:nether_wart"
+    },
+    {
+      "item": "minecraft:magma_cream"
+    },
+    {
+      "item": "minecraft:pearlescent_froglight"
+    },
+    {
+      "item": "minecraft:verdant_froglight"
+    },
+    {
+      "item": "minecraft:ochre_froglight"
+    },
+    {
+      "item": "minecraft:blaze_rod"
     }
   ],
   "crafter": "netherworker_custom",

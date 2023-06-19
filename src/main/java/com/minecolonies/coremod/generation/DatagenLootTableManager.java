@@ -47,7 +47,7 @@ public class DatagenLootTableManager extends LootDataManager
 
         try
         {
-            final Resource resource = existingFileHelper.getResource(location, PackType.SERVER_DATA);
+            final Resource resource = existingFileHelper.getResource(location, PackType.SERVER_DATA, ".json", "loot_tables");
             try (final InputStream inputstream = resource.open();
                  final Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
             )
