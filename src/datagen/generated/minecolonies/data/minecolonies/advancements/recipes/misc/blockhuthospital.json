@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhuthospital"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

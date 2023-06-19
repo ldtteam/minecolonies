@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutnetherworker"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

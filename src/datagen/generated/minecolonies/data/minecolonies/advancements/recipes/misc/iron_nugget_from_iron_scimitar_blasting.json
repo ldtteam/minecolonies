@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:iron_nugget_from_iron_scimitar_blasting"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

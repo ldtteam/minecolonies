@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutfarmer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

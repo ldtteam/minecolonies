@@ -28,5 +28,6 @@
     [
       "builder_request"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

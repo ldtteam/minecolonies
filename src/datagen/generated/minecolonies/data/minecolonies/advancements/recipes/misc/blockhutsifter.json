@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutsifter"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

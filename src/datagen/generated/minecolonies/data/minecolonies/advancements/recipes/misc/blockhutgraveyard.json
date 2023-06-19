@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutgraveyard"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -33,5 +33,6 @@
     "recipes": [
       "minecolonies:colony_banner"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

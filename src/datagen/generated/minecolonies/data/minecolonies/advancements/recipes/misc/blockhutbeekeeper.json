@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutbeekeeper"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

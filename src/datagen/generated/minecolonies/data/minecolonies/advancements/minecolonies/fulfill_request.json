@@ -36,5 +36,6 @@
       "click_gui_button_fulfill",
       "click_request_button_fulfill"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

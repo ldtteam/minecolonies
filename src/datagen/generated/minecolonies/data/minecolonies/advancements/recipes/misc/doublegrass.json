@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:doublegrass"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

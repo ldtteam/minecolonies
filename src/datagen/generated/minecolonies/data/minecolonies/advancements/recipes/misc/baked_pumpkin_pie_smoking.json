@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:baked_pumpkin_pie_smoking"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

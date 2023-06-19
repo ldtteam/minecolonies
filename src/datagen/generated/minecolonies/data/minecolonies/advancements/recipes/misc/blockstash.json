@@ -33,5 +33,6 @@
     "recipes": [
       "minecolonies:blockstash"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

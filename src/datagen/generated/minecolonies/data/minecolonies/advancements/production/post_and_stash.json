@@ -3,13 +3,23 @@
   "criteria": {
     "postbox": {
       "conditions": {
-        "block": "minecolonies:blockpostbox"
+        "location": [
+          {
+            "block": "minecolonies:blockpostbox",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
       },
       "trigger": "minecraft:placed_block"
     },
     "stash": {
       "conditions": {
-        "block": "minecolonies:blockstash"
+        "location": [
+          {
+            "block": "minecolonies:blockstash",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
       },
       "trigger": "minecraft:placed_block"
     }
@@ -36,5 +46,6 @@
     [
       "stash"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

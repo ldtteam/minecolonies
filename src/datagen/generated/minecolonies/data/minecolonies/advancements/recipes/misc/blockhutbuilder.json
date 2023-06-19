@@ -33,5 +33,6 @@
     "recipes": [
       "minecolonies:blockhutbuilder"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

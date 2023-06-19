@@ -28,5 +28,6 @@
     [
       "delivery_person"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

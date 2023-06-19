@@ -67,8 +67,8 @@
           "weight": 30
         }
       ],
-      "name": "minecolonies:pharao",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:entities/pharao"
 }

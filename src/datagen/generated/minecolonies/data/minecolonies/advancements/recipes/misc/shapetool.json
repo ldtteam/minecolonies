@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:shapetool"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

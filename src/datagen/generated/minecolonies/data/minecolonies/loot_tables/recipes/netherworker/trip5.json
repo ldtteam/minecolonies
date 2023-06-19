@@ -311,7 +311,6 @@
           "name": "minecraft:ancient_debris"
         }
       ],
-      "name": "blocks",
       "rolls": {
         "type": "minecraft:uniform",
         "max": 10.0,
@@ -398,12 +397,12 @@
           "weight": 100
         }
       ],
-      "name": "mobs",
       "rolls": {
         "type": "minecraft:uniform",
         "max": 6.0,
         "min": 2.0
       }
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:recipes/netherworker/trip5"
 }

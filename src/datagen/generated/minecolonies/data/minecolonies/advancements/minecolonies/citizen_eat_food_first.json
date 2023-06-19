@@ -25,5 +25,6 @@
     [
       "citizen_eat_anything"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

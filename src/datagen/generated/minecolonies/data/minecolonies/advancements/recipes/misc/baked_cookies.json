@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:baked_cookies"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

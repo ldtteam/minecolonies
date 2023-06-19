@@ -38,5 +38,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecraft:blocks/gray_wall_banner"
 }

@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutfletcher"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutstonemason"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

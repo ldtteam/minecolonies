@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutcrusher"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

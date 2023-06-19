@@ -32,8 +32,8 @@
           "weight": 3
         }
       ],
-      "name": "minecolonies:barbarian",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:entities/barbarian"
 }

@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutplantation"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

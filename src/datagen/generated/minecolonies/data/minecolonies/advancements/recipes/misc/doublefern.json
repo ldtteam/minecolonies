@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:doublefern"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

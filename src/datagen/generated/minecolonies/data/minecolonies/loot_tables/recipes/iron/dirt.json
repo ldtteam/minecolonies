@@ -63,5 +63,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:recipes/iron/dirt"
 }

@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:chainmailleggings"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

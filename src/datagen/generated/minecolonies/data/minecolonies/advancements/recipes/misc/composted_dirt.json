@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:composted_dirt"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

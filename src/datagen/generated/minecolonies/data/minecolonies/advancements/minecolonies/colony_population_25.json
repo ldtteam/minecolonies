@@ -27,5 +27,6 @@
     [
       "population_25"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

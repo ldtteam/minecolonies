@@ -28,5 +28,6 @@
     "recipes": [
       "minecolonies:supplycampdeployer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

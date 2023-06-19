@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutarchery"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

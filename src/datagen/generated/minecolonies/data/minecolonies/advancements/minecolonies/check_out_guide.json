@@ -28,5 +28,6 @@
     [
       "click_gui_button_close"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

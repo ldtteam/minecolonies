@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:barrel_block"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

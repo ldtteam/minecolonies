@@ -33,5 +33,6 @@
     [
       "citizen_eat_rotten_flesh"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }
