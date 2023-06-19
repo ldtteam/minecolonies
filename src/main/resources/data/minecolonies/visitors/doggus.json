@@ -2,7 +2,7 @@
   "texture": "857c129f-68c9-4463-a3c2-c7bf56954dff",
   "citizensuffix": "_b",
   "name": "Doggus",
-  "chance": 0.5,
+  "chance": 0.001,
   "storylangkey": "com.minecolonies.coremod.gui.chat.doggus",
   "recruitcost": "minecraft:diamond_pickaxe",
   "recruitcostcount": 1,
