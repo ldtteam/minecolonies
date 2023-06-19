@@ -20,8 +20,7 @@ public final class ModCreativeTabs
 {
     public static final DeferredRegister<CreativeModeTab> TAB_REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> GENERAL = TAB_REG.register("general", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).withTabsBefore(
-      CreativeModeTabs.SEARCH).icon(() -> new ItemStack(ModBlocks.blockHutTownHall)).title(Component.literal("Minecolonies")).displayItems((config, output) -> {
+    public static final RegistryObject<CreativeModeTab> GENERAL = TAB_REG.register("general", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(() -> new ItemStack(ModBlocks.blockHutTownHall)).title(Component.literal("Minecolonies")).displayItems((config, output) -> {
         for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
         {
             output.accept(hut);
