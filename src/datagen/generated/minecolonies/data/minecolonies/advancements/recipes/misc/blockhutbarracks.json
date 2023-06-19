@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutbarracks"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

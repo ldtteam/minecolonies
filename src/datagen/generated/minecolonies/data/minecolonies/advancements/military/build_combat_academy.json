@@ -28,5 +28,6 @@
     [
       "combat_academy"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

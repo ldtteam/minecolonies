@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:clipboard"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

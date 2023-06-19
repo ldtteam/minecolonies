@@ -33,5 +33,6 @@
     "recipes": [
       "minecolonies:blockhutwarehouse"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

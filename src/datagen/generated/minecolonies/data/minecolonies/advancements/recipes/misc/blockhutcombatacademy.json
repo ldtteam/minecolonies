@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutcombatacademy"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

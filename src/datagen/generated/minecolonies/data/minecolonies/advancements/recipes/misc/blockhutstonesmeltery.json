@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutstonesmeltery"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

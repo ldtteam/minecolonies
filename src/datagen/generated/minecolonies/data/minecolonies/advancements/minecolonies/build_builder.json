@@ -28,5 +28,6 @@
     [
       "builders_hut"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

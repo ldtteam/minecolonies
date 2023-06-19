@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutlibrary"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

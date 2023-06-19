@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhuttavern"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

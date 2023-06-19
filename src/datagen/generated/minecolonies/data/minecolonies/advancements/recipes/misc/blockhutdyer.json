@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutdyer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

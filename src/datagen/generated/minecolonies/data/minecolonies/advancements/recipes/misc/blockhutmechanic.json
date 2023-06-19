@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutmechanic"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

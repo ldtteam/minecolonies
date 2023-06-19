@@ -34,5 +34,6 @@
     [
       "add_recipe_torch"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

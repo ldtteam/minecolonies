@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:baked_cake_smoking"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

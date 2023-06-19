@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutchickenherder"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

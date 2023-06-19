@@ -28,5 +28,6 @@
     [
       "farmer"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

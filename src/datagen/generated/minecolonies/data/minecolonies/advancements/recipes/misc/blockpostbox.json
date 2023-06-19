@@ -33,5 +33,6 @@
     "recipes": [
       "minecolonies:blockpostbox"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -114,5 +114,6 @@
     [
       "add_recipe_acacia_door"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

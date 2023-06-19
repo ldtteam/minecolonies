@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutguardtower"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

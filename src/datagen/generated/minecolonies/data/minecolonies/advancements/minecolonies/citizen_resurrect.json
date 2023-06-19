@@ -25,5 +25,6 @@
     [
       "resurrected"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

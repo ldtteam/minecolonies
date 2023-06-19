@@ -28,5 +28,6 @@
     "recipes": [
       "minecolonies:blockconstructiontape"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

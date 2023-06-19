@@ -400,7 +400,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .addTag(ItemTags.WOODEN_SLABS)
           .addTag(ItemTags.WOODEN_STAIRS)
-          .add(Items.LECTERN, Items.PISTON)
+          .addTag(ItemTags.TRIM_TEMPLATES)
+          .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
           .add(paperExtras);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))

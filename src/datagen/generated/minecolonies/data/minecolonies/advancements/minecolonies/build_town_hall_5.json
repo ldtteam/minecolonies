@@ -28,5 +28,6 @@
     [
       "town_hall"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

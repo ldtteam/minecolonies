@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:chainmailhelmet"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

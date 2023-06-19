@@ -25,5 +25,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:recipes/flint/soul_sand"
 }

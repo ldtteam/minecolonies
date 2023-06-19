@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:mediumquarry"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

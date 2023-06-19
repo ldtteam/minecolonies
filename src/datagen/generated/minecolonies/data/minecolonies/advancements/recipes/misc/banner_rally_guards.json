@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:banner_rally_guards"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

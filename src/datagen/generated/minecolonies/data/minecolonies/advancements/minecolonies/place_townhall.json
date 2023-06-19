@@ -27,5 +27,6 @@
     [
       "build_tool_place_town_hall"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

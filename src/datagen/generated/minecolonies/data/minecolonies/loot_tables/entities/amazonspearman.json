@@ -18,8 +18,8 @@
           "weight": 5
         }
       ],
-      "name": "minecolonies:amazonspearman",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:entities/amazonspearman"
 }

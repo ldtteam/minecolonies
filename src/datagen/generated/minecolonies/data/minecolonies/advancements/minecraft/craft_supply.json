@@ -25,5 +25,6 @@
     [
       "supply_ship"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

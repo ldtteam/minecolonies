@@ -30,5 +30,6 @@
     "recipes": [
       "minecolonies:chainmailboots"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

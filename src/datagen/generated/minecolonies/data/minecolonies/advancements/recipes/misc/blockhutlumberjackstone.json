@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutlumberjackstone"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

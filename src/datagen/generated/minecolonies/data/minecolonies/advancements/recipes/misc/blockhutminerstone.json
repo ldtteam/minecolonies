@@ -35,5 +35,6 @@
     "recipes": [
       "minecolonies:blockhutminerstone"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -18,8 +18,8 @@
           "weight": 5
         }
       ],
-      "name": "minecolonies:archerbarbarian",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "minecolonies:entities/archerbarbarian"
 }
