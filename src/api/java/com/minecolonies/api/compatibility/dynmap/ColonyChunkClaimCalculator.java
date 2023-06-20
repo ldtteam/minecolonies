@@ -46,7 +46,7 @@ public class ColonyChunkClaimCalculator
     private static void getProtectionArea(final IColony colony, Set<ChunkPos> claimedChunks)
     {
         ChunkPos protectionAreaCenterChunk = new ChunkPos(colony.getCenter());
-        Integer protectionAreaRadius = IMinecoloniesAPI.getInstance().getConfig().getServer().initialColonySize.get();
+        int protectionAreaRadius = IMinecoloniesAPI.getInstance().getConfig().getServer().initialColonySize.get();
         for (int i = -protectionAreaRadius; i <= protectionAreaRadius; i++)
         {
             for (int j = -protectionAreaRadius; j <= protectionAreaRadius; j++)
