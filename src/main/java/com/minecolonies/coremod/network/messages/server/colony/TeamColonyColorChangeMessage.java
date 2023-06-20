@@ -2,9 +2,10 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,5 +66,10 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         colony.setColonyColor(ChatFormatting.values()[colorOrdinal]);
+
+        if (isLogicalServer)
+        {
+            Compatibility.updateColonyTeamColor(colony);
+        }
     }
 }

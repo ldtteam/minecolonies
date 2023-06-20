@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
+import com.minecolonies.api.compatibility.dynmap.DynmapCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
@@ -960,6 +961,11 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
+        if (ModList.get().isLoaded("dynmap"))
+        {
+            Compatibility.dynmapCompat = new DynmapCompat();
+        }
+        Compatibility.dynmapCompat.registerIntegration();
     }
 
     /**
