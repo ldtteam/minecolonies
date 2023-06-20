@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -58,6 +59,11 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
         if (ctxIn.getSender() != null)
         {
             Network.getNetwork().sendToEveryone(this);
+        }
+
+        if (isLogicalServer)
+        {
+            Compatibility.updateColonyName(colony);
         }
     }
 }
