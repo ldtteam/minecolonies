@@ -187,7 +187,7 @@ public final class EntityUtils
         for (int dy = 0; dy < height; dy++)
         {
             final BlockState state = world.getBlockState(pos.above(dy));
-            if (!state.is(ModTags.validSpawn) && state.blocksMotion())
+            if (!state.is(ModTags.validSpawn) && BlockUtils.isAnySolid(state))
             {
                 return false;
             }
