@@ -134,7 +134,7 @@ public class GenericRecipe implements IGenericRecipe
     {
         this.id = id;
         this.output = output;
-        this.allMultiOutputs = Stream.concat(Stream.of(output), altOutputs.stream()).toList();
+        this.allMultiOutputs = Stream.concat(Stream.of(output), altOutputs.stream()).filter(ItemStackUtils::isNotEmpty).toList();
         this.additionalOutputs = Collections.unmodifiableList(additionalOutputs);
         this.inputs = Collections.unmodifiableList(inputs);
         this.gridSize = gridSize;

@@ -1,0 +1,35 @@
+{
+  "type": "recipe-template",
+  "tag": "minecraft:logs",
+  "filter": {
+    "include": "_stem",
+    "exclude": "stripped_"
+  },
+  "recipe": {
+    "crafter": "lumberjack_custom",
+    "inputs": [
+      {
+        "item": "[NS]:[PATH]"
+      }
+    ],
+    "alternate-output": [
+      {
+        "item": "[NS]:stripped_[PATH]"
+      },
+      {
+        "item": "[NS]:[PATH:_stem=_hyphae]"
+      },
+      {
+        "item": "[NS]:stripped_[PATH:_stem=_hyphae]"
+      },
+      {
+        "item": "[NS]:[PATH:_stem=_wood]"
+      },
+      {
+        "item": "[NS]:stripped_[PATH:_stem=_wood]"
+      }
+    ],
+    "intermediate": "minecraft:air",
+    "tool": "axe"
+  }
+}
