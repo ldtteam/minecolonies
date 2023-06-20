@@ -1,7 +1,6 @@
 package com.minecolonies.api.compatibility.dynmap.area;
 
 import javax.annotation.Nonnull;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +9,10 @@ import java.util.List;
  */
 public class ColonyArea
 {
-    private final List<Point2D.Double> points;
+    private final List<Point> points;
 
-    private Point2D.Double secondLast;
-    private Point2D.Double last;
+    private Point secondLast;
+    private Point last;
 
     /**
      * Default constructor.
@@ -33,11 +32,11 @@ public class ColonyArea
      */
     public void addPoint(double x, double z)
     {
-        Point2D.Double newPoint = new Point2D.Double(x, z);
+        Point newPoint = new Point(x, z);
 
         // If the current X or Z values match at least 2 items back, we remove the last (middle of the comparison) item
         // from the deque for simplification.
-        if ((last != null && secondLast != null) && ((last.x == x && secondLast.x == x) || (last.y == z && secondLast.y == z)))
+        if ((last != null && secondLast != null) && ((last.x() == x && secondLast.x() == x) || (last.z() == z && secondLast.z() == z)))
         {
             this.points.remove(this.points.size() - 1);
         }
@@ -46,7 +45,7 @@ public class ColonyArea
 
         if (last != null)
         {
-            secondLast = new Point2D.Double(last.x, last.y);
+            secondLast = new Point(last.x(), last.z());
         }
         last = newPoint;
     }
@@ -68,10 +67,10 @@ public class ColonyArea
 
         int areaPointIndex = 0;
         int holePointIndex = 0;
-        for (Point2D.Double point : points)
+        for (Point point : points)
         {
             holePointIndex = 0;
-            for (Point2D.Double holePoint : hole.points)
+            for (Point holePoint : hole.points)
             {
                 double distance = point.distance(holePoint);
                 if (distance < minimumDistance || minimumDistance == -1)
@@ -92,15 +91,15 @@ public class ColonyArea
     {
         if (selectedAreaPointIndex >= 0 && selectedHolePointIndex >= 0)
         {
-            ArrayList<Point2D.Double> newPoints = new ArrayList<>();
+            ArrayList<Point> newPoints = new ArrayList<>();
 
             // We need to intersect the area with the hole at the selected points.
             int currentPosition = selectedHolePointIndex;
             boolean round = false;
             while (!round)
             {
-                Point2D.Double point = hole.points.get(currentPosition);
-                newPoints.add(new Point2D.Double(point.x, point.y));
+                Point point = hole.points.get(currentPosition);
+                newPoints.add(new Point(point.x(), point.z()));
 
                 currentPosition++;
                 if (currentPosition >= hole.points.size())
@@ -110,15 +109,15 @@ public class ColonyArea
 
                 if (currentPosition == selectedHolePointIndex)
                 {
-                    Point2D.Double initialPoint = hole.points.get(currentPosition);
-                    newPoints.add(new Point2D.Double(initialPoint.x, initialPoint.y));
+                    Point initialPoint = hole.points.get(currentPosition);
+                    newPoints.add(new Point(initialPoint.x(), initialPoint.z()));
                     round = true;
                 }
             }
 
             // Add the selected area point at the end of the list again in order to return the line back to the original area
-            Point2D.Double areaPoint = this.points.get(selectedAreaPointIndex);
-            newPoints.add(new Point2D.Double(areaPoint.x, areaPoint.y));
+            Point areaPoint = this.points.get(selectedAreaPointIndex);
+            newPoints.add(new Point(areaPoint.x(), areaPoint.z()));
 
             this.points.addAll(selectedAreaPointIndex + 1, newPoints);
         }
@@ -129,7 +128,7 @@ public class ColonyArea
      */
     public void close()
     {
-        this.points.add(new Point2D.Double(this.points.get(0).x, this.points.get(0).y));
+        this.points.add(new Point(this.points.get(0).x(), this.points.get(0).z()));
     }
 
     /**
@@ -139,7 +138,7 @@ public class ColonyArea
      */
     public double[] toXArray()
     {
-        return points.stream().mapToDouble(i -> i.x).toArray();
+        return points.stream().mapToDouble(Point::x).toArray();
     }
 
     /**
@@ -149,6 +148,6 @@ public class ColonyArea
      */
     public double[] toZArray()
     {
-        return points.stream().mapToDouble(i -> i.y).toArray();
+        return points.stream().mapToDouble(Point::z).toArray();
     }
 }
