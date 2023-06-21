@@ -9,15 +9,15 @@ package com.minecolonies.api.compatibility.dynmap.area;
 public record Point(double x, double z)
 {
     /**
-     * Obtain the distance between this point and another point.
+     * Obtain the square of the distance between this point and another point.
      *
      * @param other the other point.
-     * @return the distance between the two points.
+     * @return the square of the distance between the two points.
      */
-    public double distance(Point other)
+    public double distanceSq(Point other)
     {
         double px = other.x() - this.x();
         double py = other.z() - this.z();
-        return Math.sqrt(px * px + py * py);
+        return px * px + py * py;
     }
 }
