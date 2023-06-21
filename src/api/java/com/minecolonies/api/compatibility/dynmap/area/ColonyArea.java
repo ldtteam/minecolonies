@@ -61,7 +61,7 @@ public class ColonyArea
     public void addHole(@Nonnull final ColonyArea hole)
     {
         // Find the closest distance between any point of the current area and the hole.
-        double minimumDistance = -1d;
+        double minimumDistance = Double.MAX_VALUE;
         int selectedAreaPointIndex = -1;
         int selectedHolePointIndex = -1;
 
@@ -72,8 +72,8 @@ public class ColonyArea
             holePointIndex = 0;
             for (Point holePoint : hole.points)
             {
-                double distance = point.distance(holePoint);
-                if (distance < minimumDistance || minimumDistance == -1)
+                double distance = point.distanceSq(holePoint);
+                if (distance < minimumDistance)
                 {
                     minimumDistance = distance;
                     selectedAreaPointIndex = areaPointIndex;
