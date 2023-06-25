@@ -181,7 +181,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return getState();
         }
 
-        if (currentRecipeStorage != null && InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> !isPartOfRecipe(stack, currentRecipeStorage)))
+        if (currentRecipeStorage != null && hasTooManyExternalItemsInInv(currentRecipeStorage))
         {
             return INVENTORY_FULL;
         }
@@ -192,6 +192,24 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         return GET_RECIPE;
+    }
+
+    private boolean hasTooManyExternalItemsInInv(final IRecipeStorage currentRecipeStorage)
+    {
+        int count = 0;
+        for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
+        {
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+            if (!stack.isEmpty() && !isPartOfRecipe(stack, currentRecipeStorage))
+            {
+                count++;
+                if (count > 3)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -205,6 +223,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()))
         {
             return true;
+        }
+
+        for (final ItemStack input : currentRecipeStorage.getCraftingToolsAndSecondaryOutputs())
+        {
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(input, stack))
+            {
+                return true;
+            }
         }
 
         for (final ItemStorage input : currentRecipeStorage.getCleanedInput())
@@ -245,6 +271,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
         }
+
+        if (hasTooManyExternalItemsInInv(currentRecipeStorage))
+        {
+            currentRecipeStorage = null;
+            return INVENTORY_FULL;
+        }
+
         if (currentRecipeStorage.getRequiredTool() != ToolType.NONE)
         {
             if (checkForToolOrWeapon(currentRecipeStorage.getRequiredTool()))
