@@ -23,15 +23,15 @@ import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FurnaceBlock;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +44,8 @@ import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FUEL;
 
 /**
  * Crafts furnace stone related block when needed.
@@ -434,7 +435,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
                 if (fullResult || (!furnace.isLit() && countInResultSlot > 0 && isEmpty(furnace.getItem(SMELTABLE_SLOT))))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -458,7 +458,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
                 if (!furnace.getItem(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getAllowedFuel(), furnace.getItem(FUEL_SLOT), false, false))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -514,8 +513,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private IAIState retrieveSmeltableFromFurnace()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-
         if (walkTo == null || currentRequest == null)
         {
             return START_WORKING;
@@ -573,8 +570,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private IAIState retrieveUsedFuel()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-
         if (walkTo == null)
         {
             return START_WORKING;
@@ -837,7 +832,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (furnacePosWithUsedFuel != null)
         {
             walkTo = furnacePosWithUsedFuel;
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_USED_FUEL_FROM_FURNACE;
         }
 
@@ -845,7 +839,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (posOfOven != null)
         {
             walkTo = posOfOven;
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 

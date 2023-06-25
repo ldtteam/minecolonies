@@ -20,27 +20,25 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,9 +135,7 @@ public final class WorkerUtil
         {
             //If not moving the try setting the point where the entity should move to
             if (worker.getNavigation().isDone() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
-            {
-                worker.getCitizenStatusHandler().setStatus(Status.PATHFINDING_ERROR);
-            }
+            {}
             return false;
         }
         return true;

@@ -51,4 +51,21 @@ public interface ICitizenDiseaseHandler
      * Called when two citizens collide.
      */
     void onCollission(@NotNull final AbstractEntityCitizen citizen);
+
+    /**
+     * True when the citizen needs to go to a hospital because its hurt
+     * @return
+     */
+    boolean isHurt();
+
+    /**
+     * Whether the citizen sleeps at a hospital
+     * @return
+     */
+    boolean sleepsAtHospital();
+
+    /**
+     * Enables sleeping at the hospital
+     */
+    void setSleepsAtHospital();
 }

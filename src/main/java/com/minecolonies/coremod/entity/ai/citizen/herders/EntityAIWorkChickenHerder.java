@@ -4,11 +4,9 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import com.minecolonies.coremod.util.NamedDamageSource;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
@@ -61,7 +59,6 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     @Override
     protected void butcherAnimal(@Nullable final Animal animal)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
             worker.swing(InteractionHand.MAIN_HAND);

@@ -419,7 +419,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState doShaftMining()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.mining"));
 
         minerWorkingLocation = getNextBlockInShaftToMine();
         if (minerWorkingLocation == null)

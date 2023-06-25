@@ -579,19 +579,6 @@ public enum AIWorkerState implements IAIState
     ENCHANT(false),
 
     /*
-### Avoid-AI ###
-     */
-
-    /**
-     * Checking it the Avoid AI should start.
-     */
-    SAFE(true),
-
-    NEED_RUN(true),
-
-    RUNNING(true),
-
-    /*
 ### Healer ###
    */
     REQUEST_CURE(true),

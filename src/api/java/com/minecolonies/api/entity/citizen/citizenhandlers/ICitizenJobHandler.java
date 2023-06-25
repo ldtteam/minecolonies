@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.ITickingStateAI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,4 +45,8 @@ public interface ICitizenJobHandler
      * @return true if so.
      */
     boolean shouldRunAvoidance();
+
+    void setWorkAI(ITickingStateAI workAI);
+
+    ITickingStateAI getWorkAI();
 }

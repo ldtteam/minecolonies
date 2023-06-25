@@ -17,8 +17,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestDeliveryObjective;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
@@ -29,7 +29,6 @@ import com.minecolonies.coremod.colony.interactionhandling.QuestDeliveryInteract
 import com.minecolonies.coremod.colony.interactionhandling.QuestDialogueInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenMournHandler;
@@ -359,7 +358,7 @@ public class CitizenData implements ICitizenData
     /**
      * Returns a random element in a list.
      *
-     * @param rand  Random object.
+     * @param rand Random object.
      * @param list Array to select from.
      * @return Random element from array.
      */
@@ -535,7 +534,7 @@ public class CitizenData implements ICitizenData
     /**
      * Generates a random name from a set of names.
      *
-     * @param rand Random object.
+     * @param rand   Random object.
      * @param female the gender
      * @param colony the colony.
      * @return Name of the citizen.
@@ -640,7 +639,7 @@ public class CitizenData implements ICitizenData
         {
             if (nameFile.parts == 3)
             {
-                middleInitial = firstParentNameSplit[eastern? 0 : firstParentNameSplit.length - 1].substring(0, 1);
+                middleInitial = firstParentNameSplit[eastern ? 0 : firstParentNameSplit.length - 1].substring(0, 1);
                 lastName = secondParentNameSplit[eastern ? 0 : secondParentNameSplit.length - 1];
             }
             else
@@ -707,7 +706,8 @@ public class CitizenData implements ICitizenData
     @Override
     public boolean isRelatedTo(final ICitizenData data)
     {
-        return siblings.contains(data.getId()) || children.contains(data.getId()) || partner == data.getId() || parents.getA().equals(data.getName()) || parents.getB().equals(data.getName());
+        return siblings.contains(data.getId()) || children.contains(data.getId()) || partner == data.getId() || parents.getA().equals(data.getName()) || parents.getB()
+          .equals(data.getName());
     }
 
     @Override
@@ -849,14 +849,6 @@ public class CitizenData implements ICitizenData
             }
             else if (job != null)
             {
-                getEntity().ifPresent(entityCitizen -> {
-                    entityCitizen.getTasks()
-                      .availableGoals.stream()
-                      .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
-                      .findFirst()
-                      .ifPresent(e -> entityCitizen.getTasks().removeGoal(e));
-                });
-
                 //  No place of employment, get rid of our job
                 setJob(null);
                 colony.getWorkManager().clearWorkForCitizen(this);
@@ -1340,8 +1332,8 @@ public class CitizenData implements ICitizenData
                 {
                     final ServerCitizenInteraction handler =
                       (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
-                                                   .getInteractionResponseHandlerDataManager()
-                                                   .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                        .getInteractionResponseHandlerDataManager()
+                        .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                     citizenChatOptions.put(handler.getId(), handler);
                 }
                 catch (final Exception ex)
@@ -1597,7 +1589,9 @@ public class CitizenData implements ICitizenData
             AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
 
             final AttributeModifier healthModLevel =
-              new AttributeModifier(HEALTH_BOOST.toString(), colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST), AttributeModifier.Operation.ADDITION);
+              new AttributeModifier(HEALTH_BOOST.toString(),
+                colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST),
+                AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }
@@ -1623,6 +1617,8 @@ public class CitizenData implements ICitizenData
               Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
+
+        decreaseSaturation(workBuilding == null || workBuilding.getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, workBuilding.getBuildingLevel())) * 2);
     }
 
     @Override
