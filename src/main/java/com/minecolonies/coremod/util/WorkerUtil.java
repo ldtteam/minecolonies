@@ -179,20 +179,20 @@ public final class WorkerUtil
 
         String toolName = "";
 
-            if (blockHardness > 0f)
+        if (blockHardness > 0f)
+        {
+            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
             {
-                for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+                if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
-                    if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
+                    if (tool.getB().isCorrectToolForDrops(state))
                     {
-                        if (tool.getB().isCorrectToolForDrops(state))
-                        {
-                            toolName = tool.getA().getName();
-                            break;
-                        }
+                        toolName = tool.getA().getName();
+                        break;
                     }
                 }
             }
+        }
 
         final IToolType toolType = ToolType.getToolType(toolName);
         return toolType;
