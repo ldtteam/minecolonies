@@ -32,15 +32,6 @@ gradle.projectsEvaluated {
         options.compilerArgs << "-Xmaxerrs" << "1000"
     }
 }
-repositories{
-    maven {
-        url "https://www.cursemaven.com"
-    }
-}
-
-dependencies {
-    implementation fg.deobf("curse.maven:spark-361579:3875647")
-}
 
 minecraft.runs.all {
     lazyToken('minecraft_classpath') {
