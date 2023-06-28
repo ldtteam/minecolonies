@@ -9,10 +9,10 @@
             label="$(com.minecolonies.coremod.gui.townhall.build)"/>
     <button id="rename" size="120 19" pos="113 107"
             label="$(com.minecolonies.coremod.gui.townhall.rename)"/>
-    <buttonimage id="patreon" size="120 19" pos="113 130" source="minecolonies:textures/gui/patreonwidget.png"
-            label="$(com.minecolonies.coremod.gui.townhall.patreon)" tooltip="$(com.minecolonies.coremod.gui.townhall.patreon.hover)"/>
-    <button id="mercenaries" size="120 19" pos="113 153"
+    <button id="mercenaries" size="120 19" pos="113 130"
             label="$(com.minecolonies.coremod.gui.townhall.mercenary)"/>
+    <buttonimage id="patreon" size="120 19" pos="113 153" source="minecolonies:textures/gui/patreonwidget.png"
+                 label="$(com.minecolonies.coremod.gui.townhall.patreon)" tooltip="$(com.minecolonies.coremod.gui.townhall.patreon.hover)"/>
     <button id="map" size="120 19" pos="113 186"
             label="$(com.minecolonies.coremod.gui.townHall.map)"/>
 
