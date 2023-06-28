@@ -296,10 +296,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     @Override
     public AI getWorkerAI()
     {
-        final AbstractEntityCitizen entityCitizen = citizen.getEntity().get();
-        if (entityCitizen != null)
+        if (citizen.getEntity().isPresent())
         {
-            return (AI) entityCitizen.getCitizenJobHandler().getWorkAI();
+            return (AI) citizen.getEntity().get().getCitizenJobHandler().getWorkAI();
         }
 
         return null;
