@@ -41,6 +41,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
@@ -250,6 +251,13 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(FEMALE_ALCHEMIST, FemaleAlchemistModel::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
+    {
+        event.register(ModItems.clipboard, new ClipBoardDecorator());
     }
 
     @OnlyIn(Dist.CLIENT)
