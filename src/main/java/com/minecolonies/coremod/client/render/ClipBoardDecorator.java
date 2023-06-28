@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -72,12 +74,15 @@ public class ClipBoardDecorator implements IItemDecorator
                         final Set<IToken<?>> requestTokens = new HashSet<>();
                         requestTokens.addAll(resolver.getAllAssignedRequests());
                         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
-
+                        final PoseStack ps = graphics.pose();
+                        ps.pushPose();
+                        ps.translate(0, 0, 500);
                         graphics.drawCenteredString(font,
                           Component.literal(requestTokens.size() - asyncRequest.size() + ""),
-                          xOffset + 17,
+                          xOffset + 15,
                           yOffset - 2,
-                          0xFF0000 | (255 << 24));
+                          0xFF4500 | (255 << 24));
+                        ps.popPose();
                         return true;
                     }
                 }
