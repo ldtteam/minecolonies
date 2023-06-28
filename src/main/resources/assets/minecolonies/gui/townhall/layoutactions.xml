@@ -5,12 +5,12 @@
            label="$(com.minecolonies.coremod.gui.townhall.currtownhallname)"/>
     <label size="148 11" id="name" color="black" pos="100 35"/>
 
-    <button id="build" size="120 19" pos="113 107"
+    <button id="build" size="120 19" pos="113 84"
             label="$(com.minecolonies.coremod.gui.townhall.build)"/>
-    <!--        <button id="changeSpec" size="120 19" pos="38 153"
-                        label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/> -->
-    <button id="rename" size="120 19" pos="113 130"
+    <button id="rename" size="120 19" pos="113 107"
             label="$(com.minecolonies.coremod.gui.townhall.rename)"/>
+    <buttonimage id="patreon" size="120 19" pos="113 130" source="minecolonies:textures/gui/patreonwidget.png"
+            label="$(com.minecolonies.coremod.gui.townhall.patreon)" tooltip="$(com.minecolonies.coremod.gui.townhall.patreon.hover)"/>
     <button id="mercenaries" size="120 19" pos="113 153"
             label="$(com.minecolonies.coremod.gui.townhall.mercenary)"/>
     <button id="map" size="120 19" pos="113 186"

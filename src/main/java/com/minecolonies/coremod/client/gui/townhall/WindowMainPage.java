@@ -12,7 +12,9 @@ import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.network.chat.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,8 +63,23 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
+        registerButton(BUTTON_PATREON, this::patreonClicked);
 
         registerButton(BUTTON_TP, this::teleportToColony);
+    }
+
+    /**
+     * On Patreon button clicked. Open website link to patreon.
+     */
+    private void patreonClicked()
+    {
+        Minecraft.getInstance().setScreen(new ConfirmLinkScreen((check) -> {
+            if (check) {
+                Util.getPlatform().openUri("https://www.patreon.com/Minecolonies");
+            }
+
+            Minecraft.getInstance().setScreen(this.screen);
+        }, "https://www.patreon.com/Minecolonies", true));
     }
 
     /**
