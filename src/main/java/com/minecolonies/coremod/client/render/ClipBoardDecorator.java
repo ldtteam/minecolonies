@@ -74,16 +74,20 @@ public class ClipBoardDecorator implements IItemDecorator
                         final Set<IToken<?>> requestTokens = new HashSet<>();
                         requestTokens.addAll(resolver.getAllAssignedRequests());
                         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
-                        final PoseStack ps = graphics.pose();
-                        ps.pushPose();
-                        ps.translate(0, 0, 500);
-                        graphics.drawCenteredString(font,
-                          Component.literal(requestTokens.size() - asyncRequest.size() + ""),
-                          xOffset + 15,
-                          yOffset - 2,
-                          0xFF4500 | (255 << 24));
-                        ps.popPose();
-                        return true;
+
+                        if (requestTokens.size() - asyncRequest.size() > 0)
+                        {
+                            final PoseStack ps = graphics.pose();
+                            ps.pushPose();
+                            ps.translate(0, 0, 500);
+                            graphics.drawCenteredString(font,
+                              Component.literal(requestTokens.size() - asyncRequest.size() + ""),
+                              xOffset + 15,
+                              yOffset - 2,
+                              0xFF4500 | (255 << 24));
+                            ps.popPose();
+                            return true;
+                        }
                     }
                 }
             }
