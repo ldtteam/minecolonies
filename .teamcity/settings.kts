@@ -60,11 +60,13 @@ project {
             }
         }
     }
-    subProjectsOrder = arrayListOf(RelativeId("Release"), RelativeId("UpgradeBetaRelease"), RelativeId("Beta"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
+    subProjectsOrder = arrayListOf(RelativeId("Release"), RelativeId("UpgradeBetaRelease"), RelativeId("Beta"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
 
     subProject(Release)
     subProject(UpgradeBetaRelease)
     subProject(Beta)
+    subProject(UpgradeAlphaBeta)
+    subProject(Alpha)
     subProject(OfficialPublications)
     subProject(Branches)
     subProject(PullRequests_2)
@@ -383,6 +385,14 @@ object PullRequests_2_CommonBuildCounter : BuildType({
     templates(AbsoluteId("LetSDevTogether_CommonBuildCounter"))
     name = "Common Build Counter"
     description = "Defines version numbers uniquely over all Pull Request builds"
+})
+
+
+object UpgradeAlphaBeta : Project({
+    name = "Upgrade - Alpha -> Beta"
+    description = "Updates the current alpha to beta."
+
+    buildType(Beta_UpgradeAlphaBeta)
 })
 
 object UpgradeBetaRelease : Project({
