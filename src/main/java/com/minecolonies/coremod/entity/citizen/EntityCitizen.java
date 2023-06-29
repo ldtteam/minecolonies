@@ -1687,7 +1687,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.avoiding"));
 
         // Environmental damage
-        if (!(attacker instanceof LivingEntity))
+        if (!(attacker instanceof LivingEntity) &&
+              !(getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) || getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
         {
             if (moveAwayPath == null || !moveAwayPath.isInProgress())
             {
