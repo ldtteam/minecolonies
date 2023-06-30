@@ -41,21 +41,21 @@ MineColonies crashes every time? Have a suggestion? Found a bug? Create an issue
 
 ## For Developers
 
-### Adding MineColonies as Maven Dependecy
+### Adding MineColonies as a dependency
 
 In Forge, add the following to your `build.gradle`:
 
 ```gradle
 repositories {
-    	maven { url 'https://ldtteam.jfrog.io/ldtteam/modding' }
+    maven { url 'https://ldtteam.jfrog.io/ldtteam/modding' }
 }
 
 dependencies {
-    	implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-	implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
-	implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-	implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-	implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 }
 ```
 
