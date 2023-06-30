@@ -2,10 +2,14 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
@@ -181,20 +185,20 @@ public final class WorkerUtil
 
         String toolName = "";
 
-            if (blockHardness > 0f)
+        if (blockHardness > 0f)
+        {
+            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
             {
-                for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+                if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
-                    if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
+                    if (tool.getB().isCorrectToolForDrops(state))
                     {
-                        if (tool.getB().isCorrectToolForDrops(state))
-                        {
-                            toolName = tool.getA().getName();
-                            break;
-                        }
+                        toolName = tool.getA().getName();
+                        break;
                     }
                 }
             }
+        }
 
         final IToolType toolType = ToolType.getToolType(toolName);
         return toolType;
@@ -368,5 +372,62 @@ public final class WorkerUtil
         {
             return pos.getY() + 1;
         }
+    }
+
+
+    /**
+     * Check if there are too many items (i.e. more than 3) unrelated to the current recipe.
+     *
+     * @param currentRecipeStorage the reciep to compare it to.
+     * @param inv the inventory to check in.
+     * @return true if so.
+     */
+    public static boolean hasTooManyExternalItemsInInv(final IRecipeStorage currentRecipeStorage, final @NotNull InventoryCitizen inv)
+    {
+        int count = 0;
+        for (int i = 0; i < inv.getSlots(); i++)
+        {
+            final ItemStack stack = inv.getStackInSlot(i);
+            if (!stack.isEmpty() && !isPartOfRecipe(stack, currentRecipeStorage))
+            {
+                count++;
+                if (count > 3)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if stack is part of the recipe.
+     * @param stack the stack to check.
+     * @param currentRecipeStorage the recipe to compare.
+     * @return true if so.
+     */
+    public static boolean isPartOfRecipe(final ItemStack stack, final IRecipeStorage currentRecipeStorage)
+    {
+        if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()))
+        {
+            return true;
+        }
+
+        for (final ItemStack input : currentRecipeStorage.getCraftingToolsAndSecondaryOutputs())
+        {
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(input, stack))
+            {
+                return true;
+            }
+        }
+
+        for (final ItemStorage input : currentRecipeStorage.getCleanedInput())
+        {
+            if (input.equals(new ItemStorage(stack)))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
