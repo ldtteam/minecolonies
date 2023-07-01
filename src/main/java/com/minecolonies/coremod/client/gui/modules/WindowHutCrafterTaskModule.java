@@ -98,6 +98,10 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                     {
                         parent = tempParent;
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
 
                 if (parent == null)
