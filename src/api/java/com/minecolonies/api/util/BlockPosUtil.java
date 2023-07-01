@@ -812,6 +812,14 @@ public final class BlockPosUtil
             return start;
         }
 
+        for (Direction direction : Direction.Plane.HORIZONTAL)
+        {
+            if (predicate.test(world, start.relative(direction)))
+            {
+                return start.relative(direction);
+            }
+        }
+
         BlockPos temp;
         int y = 0;
         int y_offset = 1;
