@@ -1688,7 +1688,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         // Environmental damage
         if (!(attacker instanceof LivingEntity) &&
-              !(getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) || getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+              (!(getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) || getCitizenJobHandler().getColonyJob().canAIBeInterrupted()))
         {
             if (moveAwayPath == null || !moveAwayPath.isInProgress())
             {
