@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -52,7 +53,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
         this.citizen = citizen;
-        this.interactions = citizen.getOrderedInteractions();
+        this.interactions = new ArrayList<>(citizen.getOrderedInteractions());
     }
 
     /**
@@ -62,6 +63,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
     public void onOpened()
     {
         super.onOpened();
+        interactions.removeIf(interaction -> !interaction.isVisible(Minecraft.getInstance().level));
         setupInteraction();
     }
 

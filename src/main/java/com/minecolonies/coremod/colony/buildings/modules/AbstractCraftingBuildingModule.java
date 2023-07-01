@@ -594,7 +594,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
                 if (isRecipeCompatibleWithCraftingModule(token))
                 {
-                    replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+                    replaceRecipe(recipe.getToken(), token);
 
                     // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
                     Component jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();

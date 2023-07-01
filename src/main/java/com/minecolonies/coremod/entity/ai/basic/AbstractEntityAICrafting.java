@@ -11,6 +11,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.*;
@@ -46,6 +47,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
+import static com.minecolonies.coremod.util.WorkerUtil.hasTooManyExternalItemsInInv;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -180,7 +182,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return getState();
         }
 
-        if (currentRecipeStorage != null && InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> !isPartOfRecipe(stack, currentRecipeStorage)))
+        if (currentRecipeStorage != null && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
         {
             return INVENTORY_FULL;
         }
@@ -191,29 +193,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         return GET_RECIPE;
-    }
-
-    /**
-     * Check if stack is part of the recipe.
-     * @param stack the stack to check.
-     * @param currentRecipeStorage the recipe to compare.
-     * @return true if so.
-     */
-    private boolean isPartOfRecipe(final ItemStack stack, final IRecipeStorage currentRecipeStorage)
-    {
-        if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()))
-        {
-            return true;
-        }
-
-        for (final ItemStorage input : currentRecipeStorage.getCleanedInput())
-        {
-            if (input.equals(new ItemStorage(stack)))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -243,6 +222,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             job.finishRequest(false);
             incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
+        }
+        if (hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
+        {
+            currentRecipeStorage = null;
+            return INVENTORY_FULL;
         }
 
         currentRequest = currentTask;
