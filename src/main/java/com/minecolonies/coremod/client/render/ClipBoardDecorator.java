@@ -54,7 +54,7 @@ public class ClipBoardDecorator implements IItemDecorator
 
                 if (colonyView != null)
                 {
-                    final List<IToken<?>> asyncRequest = new ArrayList<>();
+                    final Set<IToken<?>> asyncRequest = new HashSet<>();
                     for (final ICitizenDataView view : colonyView.getCitizens().values())
                     {
                         if (view.getJobView() != null)
@@ -73,14 +73,22 @@ public class ClipBoardDecorator implements IItemDecorator
                         requestTokens.addAll(resolver.getAllAssignedRequests());
                         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-                        if (requestTokens.size() - asyncRequest.size() > 0)
+                        int count = 0;
+                        for (final IToken<?> reqId : requestTokens)
+                        {
+                            if (!asyncRequest.contains(reqId))
+                            {
+                                count++;
+                            }
+                        }
+
+                        if (count > 0)
                         {
                             final PoseStack ps = new PoseStack();
-
                             ps.pushPose();
                             ps.translate(0, 0, 500);
                             GuiComponent.drawCenteredString(ps, font,
-                              Component.literal(requestTokens.size() - asyncRequest.size() + ""),
+                              Component.literal(count + ""),
                               xOffset + 15,
                               yOffset - 2,
                               0xFF4500 | (255 << 24));
