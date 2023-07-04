@@ -92,6 +92,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     private DamageSource playerDamageSource;
 
     /**
+     * Already dumped during this iteration.
+     */
+    private boolean dumped = false;
+
+    /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
      * actions :-)
      *
@@ -184,8 +189,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return getState();
         }
 
-        if (currentRecipeStorage != null && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
+        if (currentRecipeStorage != null && !dumped && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
         {
+            dumped = true;
             return INVENTORY_FULL;
         }
 
@@ -226,8 +232,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return START_WORKING;
         }
 
-        if (hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
+        if (!dumped && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
         {
+            dumped = true;
             currentRecipeStorage = null;
             return INVENTORY_FULL;
         }
@@ -514,6 +521,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         job.setCraftCounter(0);
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
         worker.setItemInHand(InteractionHand.OFF_HAND, ItemStackUtils.EMPTY);
+        dumped = false;
     }
 
     @Override
@@ -529,9 +537,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }
             currentRequest = null;
+            resetValues();
         }
-
-        resetValues();
+        
         return super.afterDump();
     }
 
