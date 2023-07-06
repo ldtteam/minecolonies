@@ -132,7 +132,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 {
                     // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
                     // mixing equation: alpha | red part | green part 
-                    final int color = 0x40000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
+                    final int color = 0x80000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
                         | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
                     HighlightManager.addRenderBox("inventoryHighlight",
                       new HighlightManager.TimedBoxRenderData().setPos(blockPos)
