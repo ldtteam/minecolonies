@@ -21,6 +21,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,24 +63,21 @@ public class SupplyLoot extends LootModifier
         this.camp = camp;
     }
 
+    @NotNull
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext lootContext)
     {
-        if (MineColonies.getConfig().getCommon().generateSupplyLoot.get())
+        if (MineColonies.getConfig().getCommon().generateSupplyLoot.get() && !lootContext.getQueriedLootTableId().getNamespace().equals(MOD_ID))
         {
             if (camp)
             {
                 LootTable stingerLootTable = lootContext.getLevel().getServer().getLootData().getLootTable(SUPPLY_CAMP_LT);
-                ObjectArrayList<ItemStack> newItems = new ObjectArrayList<>();
-                stingerLootTable.getRandomItems(lootContext, newItems::add);
-                generatedLoot.addAll(newItems);
+                stingerLootTable.getRandomItemsRaw(lootContext, generatedLoot::add);
             }
             else
             {
                 LootTable stingerLootTable = lootContext.getLevel().getServer().getLootData().getLootTable(SUPPLY_SHIP_LT);
-                ObjectArrayList<ItemStack> newItems = new ObjectArrayList<>();
-                stingerLootTable.getRandomItems(lootContext, newItems::add);
-                generatedLoot.addAll(newItems);
+                stingerLootTable.getRandomItemsRaw(lootContext, generatedLoot::add);
             }
         }
         return generatedLoot;
