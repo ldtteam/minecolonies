@@ -7,8 +7,6 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.Log;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,10 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.IItemDecorator;
 
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.coremod.items.ItemClipboard.TAG_COLONY;
@@ -49,10 +44,7 @@ public class ClipBoardDecorator implements IItemDecorator
             if (compoundTag != null)
             {
                 final int colonyId = compoundTag.getInt(TAG_COLONY);
-                if (colonyView == null || colonyId != colonyView.getID())
-                {
-                    colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
-                }
+                colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
 
                 if (colonyView != null)
                 {
@@ -90,7 +82,7 @@ public class ClipBoardDecorator implements IItemDecorator
                             ps.pushPose();
                             ps.translate(0, 0, 500);
                             graphics.drawCenteredString(font,
-                              Component.literal(count+ ""),
+                              Component.literal(count + ""),
                               xOffset + 15,
                               yOffset - 2,
                               0xFF4500 | (255 << 24));
