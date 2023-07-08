@@ -357,7 +357,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(building.getColony(), this);
+        Screen window = new WindowBannerPicker(building.getColony(), this, isFeatureUnlocked);
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(window));
     }
 
