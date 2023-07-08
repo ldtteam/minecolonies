@@ -1,17 +1,18 @@
 package com.minecolonies.api.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Registering of sound events for our colony.
  */
 public final class ModBannerPatterns
 {
-    public static final DeferredRegister<BannerPattern> BANNER_PATTERNS = DeferredRegister.create(Registries.BANNER_PATTERN, Constants.MOD_ID);
+    public static final DeferredRegister<BannerPattern> BANNER_PATTERNS = DeferredRegister.create(Registry.BANNER_PATTERN_REGISTRY, Constants.MOD_ID);
 
     /**
      * Private constructor to hide the implicit public one.
