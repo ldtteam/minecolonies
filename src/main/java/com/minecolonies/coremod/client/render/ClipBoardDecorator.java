@@ -16,10 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.IItemDecorator;
 
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.coremod.items.ItemClipboard.TAG_COLONY;
@@ -47,10 +44,7 @@ public class ClipBoardDecorator implements IItemDecorator
             if (compoundTag != null)
             {
                 final int colonyId = compoundTag.getInt(TAG_COLONY);
-                if (colonyView == null || colonyId != colonyView.getID())
-                {
-                    colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
-                }
+                colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
 
                 if (colonyView != null)
                 {
