@@ -1,6 +1,5 @@
 package com.minecolonies.api.items;
 
-import com.minecolonies.api.sounds.*;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
@@ -36,5 +35,6 @@ public final class ModBannerPatterns
         BANNER_PATTERNS.register("lion", () -> new BannerPattern("lin"));
         BANNER_PATTERNS.register("tower", () -> new BannerPattern("twr"));
         BANNER_PATTERNS.register("bear", () -> new BannerPattern("ber"));
+        BANNER_PATTERNS.register("fleur", () -> new BannerPattern("flr"));
     }
 }
