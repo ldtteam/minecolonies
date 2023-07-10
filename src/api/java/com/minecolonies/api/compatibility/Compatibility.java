@@ -2,17 +2,16 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
-import com.minecolonies.api.compatibility.tinkers.SlimeTreeProxy;
-import com.minecolonies.api.compatibility.tinkers.TinkersToolProxy;
+import com.minecolonies.api.compatibility.tinkers.*;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
-    public static IBeehiveCompat   beeHiveCompat      = new IBeehiveCompat() {};
+    public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
@@ -117,7 +116,6 @@ public final class Compatibility
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
-     *
      * @param stack the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
