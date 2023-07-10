@@ -4,8 +4,6 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.*;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.Item;
@@ -171,7 +169,7 @@ public final class Compatibility
      *
      * @return damageType
      */
-    public static ResourceKey<DamageType> getDynamicTreeDamage()
+    public static String getDynamicTreeDamage()
     {
         return dynamicTreesCompat.getDynamicTreeDamage();
     }

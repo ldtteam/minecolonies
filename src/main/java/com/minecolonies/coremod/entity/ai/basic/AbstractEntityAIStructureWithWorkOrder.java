@@ -21,6 +21,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
@@ -402,7 +403,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             switch (wo.getWorkOrderType())
             {
                 case BUILD:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent(wo.getLocation(), workOrderName));
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
                     worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_BUILT);
                     break;
                 case UPGRADE:
