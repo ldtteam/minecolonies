@@ -12,6 +12,15 @@ To apply the patch, change the root project
 accordingly, and delete the patch script.
 */
 changeProject(DslContext.projectId) {
+    params {
+        expect {
+            param("env.Version.Minor", "0")
+        }
+        update {
+            param("env.Version.Minor", "1")
+        }
+    }
+
     features {
         val feature1 = find<GitHubIssueTracker> {
             githubIssues {

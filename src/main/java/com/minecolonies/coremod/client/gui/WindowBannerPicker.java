@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
@@ -117,10 +119,11 @@ public class WindowBannerPicker extends Screen
     private int scrollRow = 0;
 
     /**
-     * @param colony the colony to make the flag for
-     * @param hallWindow the calling town hall window to return to
+     * @param colony            the colony to make the flag for
+     * @param hallWindow        the calling town hall window to return to
+     * @param isFeatureUnlocked
      */
-    public WindowBannerPicker(IColonyView colony, AbstractWindowTownHall hallWindow)
+    public WindowBannerPicker(IColonyView colony, AbstractWindowTownHall hallWindow, final AtomicBoolean isFeatureUnlocked)
     {
         super(Component.literal("Flag"));
 
@@ -139,6 +142,10 @@ public class WindowBannerPicker extends Screen
         }
         this.patterns = new LinkedList<>(Registry.BANNER_PATTERN.holders().collect(Collectors.toList()));
         this.patterns.removeAll(exclusion);
+        if (!isFeatureUnlocked.get())
+        {
+            this.patterns.removeIf(key -> key.unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID));
+        }
 
         // Fetch the patterns as a List and not ListNBT
         this.layers = BannerBlockEntity.createPatterns(DyeColor.WHITE, colony.getColonyFlag());
