@@ -83,7 +83,7 @@ object Alpha : Project({
         param("Current Minecraft Version", "main")
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
-        param("env.CURSERELEASETYPE", "alpha")
+        param("env.CURSERELEASETYPE", "beta")
         param("env.Version.Suffix", "-ALPHA")
     }
 })
