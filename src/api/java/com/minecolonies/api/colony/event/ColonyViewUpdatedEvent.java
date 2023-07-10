@@ -19,7 +19,7 @@ public class ColonyViewUpdatedEvent extends AbstractColonyEvent
     }
 
     @Override
-    public IColonyView getColony()
+    public @NotNull IColonyView getColony()
     {
         return (IColonyView) super.getColony();
     }

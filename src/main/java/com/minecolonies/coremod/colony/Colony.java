@@ -1784,6 +1784,7 @@ public class Colony implements IColony
      *
      * @return the ChatFormatting enum color.
      */
+    @Override
     public ChatFormatting getTeamColonyColor()
     {
         return colonyTeamColor;

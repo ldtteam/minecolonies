@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
+import com.minecolonies.api.colony.managers.events.ColonyManagerLoadedEvent;
+import com.minecolonies.api.colony.managers.events.ColonyManagerUnloadedEvent;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -681,6 +683,8 @@ public final class ColonyManager implements IColonyManager
             {
                 c.onWorldLoad(world);
             }
+
+            MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
         }
     }
 
@@ -718,6 +722,8 @@ public final class ColonyManager implements IColonyManager
             {
                 BackUpHelper.backupColonyData();
             }
+
+            MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
         }
     }
 
