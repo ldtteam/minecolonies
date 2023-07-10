@@ -11,8 +11,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
@@ -47,6 +49,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_PA
 import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
+import static com.minecolonies.coremod.util.WorkerUtil.hasTooManyExternalItemsInInv;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -87,6 +90,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      * Player damage source.
      */
     private DamageSource playerDamageSource;
+
+    /**
+     * Already dumped during this iteration.
+     */
+    private boolean dumped = false;
 
     /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
@@ -181,8 +189,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return getState();
         }
 
-        if (currentRecipeStorage != null && InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> !isPartOfRecipe(stack, currentRecipeStorage)))
+        if (currentRecipeStorage != null && !dumped && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
         {
+            dumped = true;
             return INVENTORY_FULL;
         }
 
@@ -192,29 +201,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         return GET_RECIPE;
-    }
-
-    /**
-     * Check if stack is part of the recipe.
-     * @param stack the stack to check.
-     * @param currentRecipeStorage the recipe to compare.
-     * @return true if so.
-     */
-    private boolean isPartOfRecipe(final ItemStack stack, final IRecipeStorage currentRecipeStorage)
-    {
-        if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()))
-        {
-            return true;
-        }
-
-        for (final ItemStorage input : currentRecipeStorage.getCleanedInput())
-        {
-            if (input.equals(new ItemStorage(stack)))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -245,6 +231,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
         }
+
+        if (!dumped && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
+        {
+            dumped = true;
+            currentRecipeStorage = null;
+            return INVENTORY_FULL;
+        }
+
         if (currentRecipeStorage.getRequiredTool() != ToolType.NONE)
         {
             if (checkForToolOrWeapon(currentRecipeStorage.getRequiredTool()))
@@ -527,6 +521,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         job.setCraftCounter(0);
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
         worker.setItemInHand(InteractionHand.OFF_HAND, ItemStackUtils.EMPTY);
+        dumped = false;
     }
 
     @Override
@@ -542,9 +537,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }
             currentRequest = null;
+            resetValues();
         }
-
-        resetValues();
+        
         return super.afterDump();
     }
 
