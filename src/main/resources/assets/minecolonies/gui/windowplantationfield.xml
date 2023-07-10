@@ -13,7 +13,7 @@
            label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.plants)"/>
 
     <list id="plants" size="138 32" pos="30 45">
-        <box size="130 32" linewidth="0">
+        <view size="130 32">
             <box size="24 24" pos="4 4">
                 <itemicon id="icon1" size="16 16" pos="4 4"/>
             </box>
@@ -26,7 +26,7 @@
             <box size="24 24" pos="100 4">
                 <itemicon id="icon4" size="16 16" pos="4 4"/>
             </box>
-        </box>
+        </view>
     </list>
 
     <buttonimage id="repair" size="130 17" pos="30 90" textcolor="black"
