@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.client;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.colony.event.ColonyCreatedEvent;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -175,7 +176,7 @@ public class CreateColonyMessage implements IMessage
 
                 if (isLogicalServer)
                 {
-                    Compatibility.colonyCreated(createdColony);
+                    MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
                 }
             }
             return;

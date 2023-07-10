@@ -13,10 +13,6 @@ repositories {
         name "Rei"
         url "https://maven.shedaniel.me/"
     }
-    maven {
-        name "Dynmap"
-        url = "https://repo.mikeprimm.com/"
-    }
 }
 
 dependencies {
@@ -65,8 +61,6 @@ dependencies {
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
          runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}-forge")
     }
-
-    apiCompileOnly fg.deobf("us.dynmap:DynmapCoreAPI:${project.dynmapApiVersion}")
     // replace "compileOnly" with "library" when you want to include it for testing
     // compileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
     // compileOnly fg.deobf("slimeknights.mantle:Mantle:${project.exactMinecraftVersion}-${project.mantleVersion}")

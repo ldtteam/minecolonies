@@ -1,8 +1,6 @@
 package com.minecolonies.api.compatibility;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
-import com.minecolonies.api.compatibility.dynmap.DynmapProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeProxy;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolProxy;
@@ -38,7 +36,6 @@ public final class Compatibility
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
-    public static DynmapProxy      dynmapCompat       = new DynmapProxy();
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
@@ -300,73 +297,5 @@ public final class Compatibility
     public static List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
     {
         return beeHiveCompat.getCombsFromHive(pos, world, amount);
-    }
-
-    /**
-     * Registers the Dynmap integration
-     */
-    public static void registerDynmap()
-    {
-        dynmapCompat.registerIntegration();
-    }
-
-    /**
-     * Called whenever a colony it's name is changed.
-     *
-     * @param colony The colony.
-     */
-    public static void updateColonyName(final IColony colony)
-    {
-        dynmapCompat.updateColonyName(colony);
-    }
-
-    /**
-     * Called whenever a colony it's team color is changed.
-     *
-     * @param colony The colony.
-     */
-    public static void updateColonyTeamColor(final IColony colony)
-    {
-        dynmapCompat.updateColonyTeamColor(colony);
-    }
-
-    /**
-     * Called whenever a colony it's borders change (due to building (de)construction)
-     *
-     * @param colony The colony.
-     */
-    public static void updateColonyBorders(final IColony colony)
-    {
-        dynmapCompat.updateColonyBorders(colony);
-    }
-
-    /**
-     * Called whenever a colony it's amount of citizens changes (includes citizen born, tavern hired, resurrected from death and death itself).
-     *
-     * @param colony The colony.
-     */
-    public static void updateColonyCitizenCount(final IColony colony)
-    {
-        dynmapCompat.updateColonyCitizenCount(colony);
-    }
-
-    /**
-     * Called whenever a new colony is created.
-     *
-     * @param colony The colony.
-     */
-    public static void colonyCreated(final IColony colony)
-    {
-        dynmapCompat.updateColonyCreated(colony);
-    }
-
-    /**
-     * Called whenever a colony is about to get deleted.
-     *
-     * @param colony The colony which is about to get deleted.
-     */
-    public static void colonyDeleted(final IColony colony)
-    {
-        dynmapCompat.updateColonyDeleted(colony);
     }
 }

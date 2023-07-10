@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractColonyEvent extends Event
 {
+    /**
+     * The colony this event was called in.
+     */
+    @NotNull
     private final IColony colony;
 
     /**
@@ -25,6 +29,7 @@ public abstract class AbstractColonyEvent extends Event
     /**
      * Gets the colony related to the event.
      */
+    @NotNull
     public IColony getColony()
     {
         return colony;

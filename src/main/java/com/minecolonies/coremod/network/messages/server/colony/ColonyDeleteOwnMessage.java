@@ -2,11 +2,12 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.colony.event.ColonyDeletedEvent;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +56,7 @@ public class ColonyDeleteOwnMessage implements IMessage
 
             if (isLogicalServer)
             {
-                Compatibility.colonyDeleted(colony);
+                MinecraftForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
             }
         }
         else

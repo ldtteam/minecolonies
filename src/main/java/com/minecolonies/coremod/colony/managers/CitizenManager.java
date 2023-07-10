@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICitizenDataManager;
-import com.minecolonies.api.colony.ICivilianData;
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.citizens.event.CitizenAddedEvent;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -17,6 +14,7 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -38,6 +36,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -320,9 +319,6 @@ public class CitizenManager implements ICitizenManager
         final CitizenData citizenData = new CitizenData(topCitizenId, colony);
         citizenData.initForNewCivilian();
         citizens.put(citizenData.getId(), citizenData);
-
-        Compatibility.updateColonyCitizenCount(colony);
-
         return citizenData;
     }
 
@@ -350,7 +346,7 @@ public class CitizenManager implements ICitizenManager
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
 
-        Compatibility.updateColonyCitizenCount(colony);
+        MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
 
         return citizenData;
     }
@@ -385,8 +381,6 @@ public class CitizenManager implements ICitizenManager
         calculateMaxCitizens();
         markDirty();
         colony.markDirty();
-
-        Compatibility.updateColonyCitizenCount(colony);
     }
 
     @Override
@@ -497,9 +491,9 @@ public class CitizenManager implements ICitizenManager
     @Override
     public double maxCitizensFromResearch()
     {
-        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
-            final double max = 25 + colony.getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP);
+            final int max = Math.max(CitizenConstants.CITIZEN_LIMIT_DEFAULT, (int) colony.getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP));
             return Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
         }
         else
@@ -601,6 +595,8 @@ public class CitizenManager implements ICitizenManager
                 }
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
+
+                MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
 
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));
