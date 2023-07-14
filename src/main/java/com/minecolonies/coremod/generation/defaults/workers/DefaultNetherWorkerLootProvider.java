@@ -26,7 +26,6 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -248,6 +247,24 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
         CustomRecipeProvider.CustomRecipeBuilder.create(NETHERWORKER, MODULE_CUSTOM, "lava")
                 .inputs(Collections.singletonList(new ItemStorage(new ItemStack(Items.BUCKET))))
                 .result(new ItemStack(Items.LAVA_BUCKET))
+                .build(consumer);
+
+        // and some froglights, because why not
+        frogLight(consumer, Items.OCHRE_FROGLIGHT, Items.MAGMA_BLOCK);
+        frogLight(consumer, Items.PEARLESCENT_FROGLIGHT, Items.LILY_PAD);
+        frogLight(consumer, Items.VERDANT_FROGLIGHT, Items.SNOW_BLOCK);
+    }
+
+    private void frogLight(@NotNull final Consumer<FinishedRecipe> consumer,
+                           @NotNull final Item frogLight,
+                           @NotNull final Item flavour)
+    {
+        CustomRecipeProvider.CustomRecipeBuilder.create(NETHERWORKER, MODULE_CUSTOM, ForgeRegistries.ITEMS.getKey(frogLight).getPath())
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.SLIME_BLOCK)),
+                        new ItemStorage(new ItemStack(Items.MAGMA_CREAM)),
+                        new ItemStorage(new ItemStack(flavour, 4))))
+                .result(new ItemStack(frogLight))
+                .minBuildingLevel(3)
                 .build(consumer);
     }
 

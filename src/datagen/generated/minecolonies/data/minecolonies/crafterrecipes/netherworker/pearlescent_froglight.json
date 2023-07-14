@@ -1,0 +1,19 @@
+{
+  "type": "recipe",
+  "crafter": "netherworker_custom",
+  "inputs": [
+    {
+      "item": "minecraft:slime_block"
+    },
+    {
+      "item": "minecraft:magma_cream"
+    },
+    {
+      "count": 4,
+      "item": "minecraft:lily_pad"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "result": "minecraft:pearlescent_froglight"
+}
