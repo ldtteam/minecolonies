@@ -81,6 +81,7 @@ public final class LootTableAnalyzer
         final JsonArray pools = GsonHelper.getAsJsonArray(lootTableJson, "pools");
         for (final JsonElement pool : pools)
         {
+            final float rolls = processNumber(pool.getAsJsonObject().get("rolls"), 1.0f);
             final JsonArray entries = GsonHelper.getAsJsonArray(pool.getAsJsonObject(), "entries", new JsonArray());
             final float totalWeight = StreamSupport.stream(entries.spliterator(), false)
                     .filter(entry ->
@@ -98,7 +99,7 @@ public final class LootTableAnalyzer
                 final List<LootDrop> entryDrops = entryToDrops(lootTableManager, entryJson);
                 for (final LootDrop drop : entryDrops)
                 {
-                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality(), drop.getConditional()));
+                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight) * rolls, drop.getQuality(), drop.getConditional()));
                 }
             }
         }
