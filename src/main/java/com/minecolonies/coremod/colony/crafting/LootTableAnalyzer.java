@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -120,7 +119,9 @@ public final class LootTableAnalyzer
                 final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(entryJson, "name")));
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 float modifier = 1.0F;
-                final boolean conditional = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
+                final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
+                final boolean conditional = conditions.size() > 0;
+                if (conditionsSeemImpossible(conditions)) { break; }
                 ItemStack stack = new ItemStack(item);
                 if (entryJson.has("functions"))
                 {
@@ -145,7 +146,9 @@ public final class LootTableAnalyzer
                 final ResourceLocation table = new ResourceLocation(GsonHelper.getAsString(entryJson, "name"));
                 final List<LootDrop> tableDrops = toDrops(lootTableManager, table);
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
-                final boolean conditional = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
+                final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
+                final boolean conditional = conditions.size() > 0;
+                if (conditionsSeemImpossible(conditions)) { break; }
                 for (final LootDrop drop : tableDrops)
                 {
                     drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability(), drop.getQuality() + quality, drop.getConditional() || conditional));
@@ -164,6 +167,20 @@ public final class LootTableAnalyzer
             }
         }
         return drops;
+    }
+
+    private static boolean conditionsSeemImpossible(@NotNull final JsonArray conditions)
+    {
+        for (final JsonElement condition : conditions)
+        {
+            final String json = condition.toString();
+            if (json.contains("damage_source_properties") && !json.contains("minecraft:inverted"))
+            {
+                // very unlikely that colonists would match any specific damage sources (disables froglights)
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
