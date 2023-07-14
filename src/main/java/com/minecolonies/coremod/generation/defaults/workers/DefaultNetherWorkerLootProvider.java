@@ -250,8 +250,8 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
                 .build(consumer);
 
         // and some froglights, because why not
-        frogLight(consumer, Items.OCHRE_FROGLIGHT, Items.MAGMA_BLOCK);
-        frogLight(consumer, Items.PEARLESCENT_FROGLIGHT, Items.LILY_PAD);
+        frogLight(consumer, Items.OCHRE_FROGLIGHT, Items.LILY_PAD);
+        frogLight(consumer, Items.PEARLESCENT_FROGLIGHT, Items.MAGMA_BLOCK);
         frogLight(consumer, Items.VERDANT_FROGLIGHT, Items.SNOW_BLOCK);
     }
 
