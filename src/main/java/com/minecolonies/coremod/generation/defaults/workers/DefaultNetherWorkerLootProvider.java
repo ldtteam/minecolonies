@@ -26,7 +26,6 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -147,6 +146,15 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
             blocks.add(LootItem.lootTableItem(Items.WARPED_STEM)
                     .setWeight(5)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))));
+
+            blocks.add(LootItem.lootTableItem(Items.OCHRE_FROGLIGHT)
+                    .setWeight(2));
+
+            blocks.add(LootItem.lootTableItem(Items.PEARLESCENT_FROGLIGHT)
+                    .setWeight(1));
+
+            blocks.add(LootItem.lootTableItem(Items.VERDANT_FROGLIGHT)
+                    .setWeight(1));
         }
 
         if (buildingLevel >= 4)
