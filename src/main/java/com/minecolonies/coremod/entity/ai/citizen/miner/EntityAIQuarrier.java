@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -42,6 +43,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -51,7 +53,8 @@ import static com.minecolonies.api.util.constant.CitizenConstants.PROGRESS_MULTI
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_MINED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_MINED;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.QUARRY_MINER_FINISHED_QUARRY;
+import static com.minecolonies.api.util.constant.TranslationConstants.QUARRY_MINER_NO_QUARRY;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.RECALC;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_PICKAXE;
@@ -138,12 +141,53 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 return IDLE;
             }
 
-            final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), "infrastructure/mineshafts/" + quarry.getSchematicName() + "shaft1.blueprint", quarry.getSchematicName() + "shaft1", quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+            final Tuple<String, String> shaft = getShaftPath(quarry);
+            final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
         }
 
         return super.loadRequirements();
+    }
+
+    private Tuple<String, String> getShaftPath(@NotNull final IBuilding quarry)
+    {
+        String path = "infrastructure/mineshafts/" + quarry.getSchematicName() + "shaft1.blueprint";
+
+        final AbstractTileEntityColonyBuilding tileEntity = quarry.getTileEntity();
+        if (tileEntity != null)
+        {
+            path = quarry.getBlueprintPath().replace('\\', '/')
+                    .replace("1.blueprint", "shaft1.blueprint");
+            if (!path.endsWith("shaft1.blueprint"))
+            {
+                path = path.replace(".blueprint", "shaft.blueprint");
+            }
+
+            for (final String tag : tileEntity.getPositionedTags().getOrDefault(BlockPos.ZERO, Collections.emptyList()))
+            {
+                if (tag.startsWith("shaft="))
+                {
+                    if (tag.contains("/"))
+                    {
+                        path = tag.substring(6);
+                    }
+                    else
+                    {
+                        path = path.substring(0, path.lastIndexOf('/') + 1) + tag.substring(6);
+                    }
+                }
+                break;
+            }
+
+            if (!path.endsWith(".blueprint"))
+            {
+                path += ".blueprint";
+            }
+        }
+
+        final String name = path.substring(path.lastIndexOf('/') + 1).replace(".blueprint", "");
+        return new Tuple<>(path, name);
     }
 
     @Override
