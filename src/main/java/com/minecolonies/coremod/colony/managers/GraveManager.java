@@ -266,7 +266,7 @@ public class GraveManager implements IGraveManager
             {
                 if (world.getBlockState(pos.above(i)).getBlock() instanceof AirBlock)
                 {
-                    firstValidPosition = BlockPosUtil.findAround(world, pos, 16, 1,
+                    firstValidPosition = BlockPosUtil.findAround(world, pos, 1, 16,
                       (blockAccess, current) ->
                         blockAccess.getBlockState(current).isAir() &&
                           BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
