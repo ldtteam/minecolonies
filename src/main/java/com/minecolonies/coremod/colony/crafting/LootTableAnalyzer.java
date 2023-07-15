@@ -99,7 +99,7 @@ public final class LootTableAnalyzer
                 final List<LootDrop> entryDrops = entryToDrops(lootTableManager, entryJson);
                 for (final LootDrop drop : entryDrops)
                 {
-                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight) * rolls, drop.getQuality(), drop.getConditional()));
+                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight) * rolls, drop.getQuality() * rolls, drop.getConditional()));
                 }
             }
         }
