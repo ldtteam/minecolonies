@@ -108,12 +108,6 @@ object Beta_Release : BuildType({
             tasks = "build createChangelog curseforge publish"
             buildFile = "build.gradle"
             enableStacktrace = true
-            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
-            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = """
-                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
-                -u 0
-            """.trimIndent()
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
             param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
@@ -182,12 +176,6 @@ object Release_Release : BuildType({
             tasks = "build createChangelog curseforge publish"
             buildFile = "build.gradle"
             enableStacktrace = true
-            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
-            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = """
-                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
-                -u 0
-            """.trimIndent()
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
             param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
@@ -263,9 +251,6 @@ object Branches_Build : BuildType({
             buildFile = "build.gradle"
             gradleParams = "-x test"
             enableStacktrace = true
-            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
-            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = "-v /opt/buildagent/buildsystem/gradle:/home/gradle/.gradle -u 0"
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
             param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionNumberOfBuilds", "300")
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
