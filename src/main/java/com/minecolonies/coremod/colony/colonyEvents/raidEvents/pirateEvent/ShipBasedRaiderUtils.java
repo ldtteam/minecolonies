@@ -243,8 +243,8 @@ public final class ShipBasedRaiderUtils
         {
             return BlockPosUtil.findAround(colony.getWorld(),
               startPos,
-              3,
               30,
+              3,
               (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && world.getBlockState(
                 pos.above()).isAir() && world.getBlockState(pos.above(2)).isAir());
         }

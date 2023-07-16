@@ -453,13 +453,22 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
+        BlockPos worldSpawnPos = null;
         // 8 Tries
         for (int i = 0; i < 8; i++)
         {
             spawnPos = findSpawnPointInDirections(new BlockPos(closestBuilding.getX(), calcCenter.getY(), closestBuilding.getZ()), advanceTowards);
             if (spawnPos != null)
             {
-                break;
+                worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
+                  BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
+                  30,
+                  3,
+                  SOLID_AIR_POS_SELECTOR);
+                if (worldSpawnPos != null || MineColonies.getConfig().getServer().skyRaiders.get())
+                {
+                    break;
+                }
             }
         }
 
@@ -468,18 +477,12 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        BlockPos worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
-          BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
-          3,
-          30,
-          SOLID_AIR_POS_SELECTOR);
-
         if (worldSpawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
         {
             worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
               BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
-              10,
               15,
+              10,
               DOUBLE_AIR_POS_SELECTOR);
         }
 
@@ -498,7 +501,7 @@ public class RaidManager implements IRaiderManager
       final BlockPos advancePos)
     {
         BlockPos spawnPos = new BlockPos(start);
-        Vec3 tempPos = new Vec3(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
+        BlockPos tempPos = new BlockPos(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
 
         final int xDiff = Math.abs(start.getX() - advancePos.getX());
@@ -511,15 +514,15 @@ public class RaidManager implements IRaiderManager
         int validChunkCount = 0;
         for (int i = 0; i < 10; i++)
         {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), BlockPos.containing(tempPos)))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
             {
-                tempPos = tempPos.add(16 * xzRatio.x, 0, 16 * xzRatio.z);
+                tempPos = tempPos.offset((int) (16 * xzRatio.x), 0, (int) (16 * xzRatio.z));
 
-                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), BlockPos.containing(tempPos)))
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
                 {
-                    if (isValidSpawnPoint(buildings, BlockPos.containing(tempPos)) && !isOtherColony((int) tempPos.x, (int) tempPos.z))
+                    if (isValidSpawnPoint(buildings, tempPos) && !isOtherColony(tempPos.getX(), tempPos.getZ()))
                     {
-                        spawnPos = BlockPos.containing(tempPos);
+                        spawnPos = tempPos;
                         validChunkCount++;
                         if (validChunkCount > 5)
                         {
