@@ -1,0 +1,10 @@
+{
+  "texture": "d61495f6-cb1d-4604-ae00-e80313faa7c1",
+  "citizensuffix": "_d",
+  "name": "Arston",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.arston",
+  "recruitcost": "minecraft:iron_axe",
+  "recruitcostcount": 3,
+  "gender": "male"
+}
