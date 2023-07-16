@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.entity.EntityTypeTest;
 
 public class CommandKillMonster implements IMCOPCommand
 {
@@ -21,9 +22,9 @@ public class CommandKillMonster implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getLevel().getEntities().getAll().forEach(entity ->
+        context.getSource().getLevel().getEntities(EntityTypeTest.forClass(Monster.class), (e) -> true).forEach(entity ->
         {
-            if (entity instanceof Monster)
+            if (entity != null)
             {
                 entity.remove(Entity.RemovalReason.DISCARDED);
                 entitiesKilled++;
