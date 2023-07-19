@@ -4,12 +4,17 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -21,6 +26,11 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * NBT tag to store assign manually.
      */
     private static final String TAG_ASSIGN_MANUALLY = "assign";
+
+    /**
+     * A map of fields, along with their unix timestamp of when they can next be checked again.
+     */
+    private final Map<IField, Instant> checkedFields = new HashMap<>();
 
     /**
      * The field the citizen is currently working on.
@@ -92,10 +102,12 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             return currentField;
         }
 
-        for (IField field : getOwnedFields())
+        Instant now = Instant.now();
+        for (IField field : getOwnedFields().stream().collect(CollectorUtils.toShuffledList()))
         {
-            if (!field.equals(currentField))
+            if (!checkedFields.containsKey(field) || now.isAfter(checkedFields.get(field)))
             {
+                checkedFields.remove(field);
                 currentField = field;
                 return field;
             }
@@ -229,6 +241,15 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void resetCurrentField()
     {
+        if (currentField != null)
+        {
+            checkedFields.put(currentField, Instant.now().plus(getFieldCheckTimeoutSeconds(), ChronoUnit.SECONDS));
+        }
         currentField = null;
     }
+
+    /**
+     * Get the timeout for fields to be allowed to be checked again.
+     */
+    protected abstract int getFieldCheckTimeoutSeconds();
 }

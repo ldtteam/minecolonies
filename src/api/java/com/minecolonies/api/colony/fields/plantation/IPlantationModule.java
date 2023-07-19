@@ -211,7 +211,7 @@ public interface IPlantationModule extends IFieldModule
         /**
          * Simplest action, indicating no work was needed on the given position.
          */
-        public static final PlantationModuleResult.Builder NONE = new PlantationModuleResult.Builder().pickNewPosition();
+        public static final PlantationModuleResult.Builder NONE = new PlantationModuleResult.Builder().pickNewField();
 
         /**
          * The original plantation module.

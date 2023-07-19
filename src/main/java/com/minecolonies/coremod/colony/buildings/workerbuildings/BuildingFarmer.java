@@ -175,6 +175,12 @@ public class BuildingFarmer extends AbstractBuilding
         {
             return field instanceof FarmField farmField && !farmField.getSeed().isEmpty();
         }
+
+        @Override
+        protected int getFieldCheckTimeoutSeconds()
+        {
+            return 60;
+        }
     }
 
     /**

@@ -168,17 +168,15 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         IPlantationModule planterModule = currentPlantationField.getModule();
         BlockPos position = planterModule.getNextWorkingPosition(world);
-        if (position != null)
+        if (position == null)
         {
-            IPlantationModule.PlantationModuleResult.Builder result = planterModule.decideFieldWork(world, position);
-            activeModuleResult = result.build(planterModule, position);
-            if (activeModuleResult.getAction() == IPlantationModule.ActionToPerform.NONE)
-            {
-                return IDLE;
-            }
-            return PLANTATION_WORK_FIELD;
+            resetActiveField();
+            return IDLE;
         }
-        return IDLE;
+
+        IPlantationModule.PlantationModuleResult.Builder result = planterModule.decideFieldWork(world, position);
+        activeModuleResult = result.build(planterModule, position);
+        return PLANTATION_WORK_FIELD;
     }
 
     /**
@@ -205,26 +203,28 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (isFinished)
         {
+            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+
             if (activeModuleResult.getAction().increasesActionCount())
             {
                 currentFieldActionCount++;
                 incrementActionsDoneAndDecSaturation();
             }
 
-            if (activeModuleResult.shouldResetCurrentField() || currentFieldActionCount >= planterModule.getActionLimit())
-            {
-                // In certain scenarios the module may request to immediately release the current field, disregarding whether the next tick still has work or not.
-                // Alternatively, if the maximum action count is reached, the field must be reset as well.
-                FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
-                fieldsModule.resetCurrentField();
-                currentFieldActionCount = 0;
-
-                return PLANTATION_PICK_FIELD;
-            }
+            IAIState result = PLANTATION_WORK_FIELD;
             if (activeModuleResult.shouldResetWorkingPosition())
             {
-                return PLANTATION_DECIDE_FIELD_WORK;
+                result = PLANTATION_DECIDE_FIELD_WORK;
             }
+            if (activeModuleResult.shouldResetCurrentField() || currentFieldActionCount >= planterModule.getActionLimit())
+            {
+                resetActiveField();
+
+                result = PLANTATION_PICK_FIELD;
+            }
+
+            activeModuleResult = null;
+            return result;
         }
 
         return PLANTATION_WORK_FIELD;
@@ -239,6 +239,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return field;
         }
         return null;
+    }
+
+    private void resetActiveField()
+    {
+        FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
+        fieldsModule.resetCurrentField();
+        currentFieldActionCount = 0;
     }
 
     /**
@@ -326,7 +333,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 }
             }
 
-            return false;
+            return mineResult;
         }
         return true;
     }
@@ -336,7 +343,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     {
         worker.setRenderMetadata(getState() == CRAFT
                                    || getState() == PLANTATION_WORK_FIELD
-                                   || getState() == PLANTATION_MOVE_TO_FIELD ? RENDER_META_WORKING : "");
+                                   || getState() == PLANTATION_DECIDE_FIELD_WORK ? RENDER_META_WORKING : "");
     }
 
     @Override
@@ -354,7 +361,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        if (getState() != PLANTATION_WORK_FIELD)
+        if (getState() != PLANTATION_DECIDE_FIELD_WORK && getState() != PLANTATION_WORK_FIELD)
         {
             return super.getActionsDoneUntilDumping();
         }

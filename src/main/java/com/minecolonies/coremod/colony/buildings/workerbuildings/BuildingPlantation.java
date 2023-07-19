@@ -267,6 +267,12 @@ public class BuildingPlantation extends AbstractBuilding
             return getCurrentPlantsPlusField(field) <= getMaxConcurrentPlants() && hasRequiredResearchForField(field);
         }
 
+        @Override
+        protected int getFieldCheckTimeoutSeconds()
+        {
+            return 60;
+        }
+
         /**
          * Getter of the worked plants.
          *
