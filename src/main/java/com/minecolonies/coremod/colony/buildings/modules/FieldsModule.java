@@ -155,10 +155,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     {
         if (canAssignField(field))
         {
-            building.getColony().getBuildingManager().getField(otherField -> otherField.equals(field)).ifPresent(f -> {
-                f.setBuilding(building.getID());
-                markDirty();
-            });
+            field.setBuilding(building.getID());
         }
     }
 
@@ -218,15 +215,13 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void freeField(final IField field)
     {
-        building.getColony().getBuildingManager().getField(otherField -> otherField.equals(field)).ifPresent(existingField -> {
-            existingField.resetOwningBuilding();
-            markDirty();
+        field.resetOwningBuilding();
+        markDirty();
 
-            if (Objects.equals(currentField, existingField))
-            {
-                resetCurrentField();
-            }
-        });
+        if (Objects.equals(currentField, field))
+        {
+            resetCurrentField();
+        }
     }
 
     /**

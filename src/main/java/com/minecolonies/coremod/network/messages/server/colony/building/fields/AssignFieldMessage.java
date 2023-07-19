@@ -69,15 +69,17 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final IField field = IFieldDataManager.getInstance().fromBuffer(colony, fieldData);
-        if (assign)
-        {
-            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.assignField(field));
-        }
-        else
-        {
-            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.freeField(field));
-        }
+        final IField parsedField = IFieldDataManager.getInstance().fromBuffer(colony, fieldData);
+        building.getColony().getBuildingManager().getField(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
+            if (assign)
+            {
+                building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.assignField(field));
+            }
+            else
+            {
+                building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.freeField(field));
+            }
+        });
     }
 }
 
