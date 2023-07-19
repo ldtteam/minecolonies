@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
+import com.minecolonies.coremod.colony.fields.registry.FieldDataManager;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
 {
-
     /**
      * The field to (un)assign.
      */
@@ -47,7 +46,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         super(building);
         this.assign = assign;
-        this.fieldData = IFieldDataManager.getInstance().toBuffer(field);
+        this.fieldData = FieldDataManager.fieldToBuffer(field);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final IField parsedField = IFieldDataManager.getInstance().fromBuffer(fieldData);
+        final IField parsedField = FieldDataManager.bufferToField(fieldData);
         colony.getBuildingManager().getField(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
             if (assign)
             {

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.fields.registry;
 
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
-import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import io.netty.buffer.Unpooled;
@@ -15,19 +14,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The field manager class responsible for creating field instances from NBT data, etc.
  */
-public class FieldDataManager implements IFieldDataManager
+public final class FieldDataManager
 {
     private static final String TAG_FIELD_NAME     = "name";
     private static final String TAG_FIELD_POSITION = "position";
     private static final String TAG_FIELD_DATA     = "data";
 
-    @Override
-    public IField createFrom(final @NotNull CompoundTag compound)
+    public static IField compoundToField(final @NotNull CompoundTag compound)
     {
         ResourceLocation fieldName = new ResourceLocation(compound.getString(TAG_FIELD_NAME));
         BlockPos position = BlockPosUtil.read(compound, TAG_FIELD_POSITION);
 
-        IField field = createFrom(position, fieldName);
+        IField field = resourceLocationToField(fieldName, position);
         if (field != null)
         {
             field.deserializeNBT(compound.getCompound(TAG_FIELD_DATA));
@@ -35,8 +33,7 @@ public class FieldDataManager implements IFieldDataManager
         return field;
     }
 
-    @Override
-    public IField createFrom(final @NotNull BlockPos position, final @NotNull ResourceLocation fieldName)
+    public static IField resourceLocationToField(final @NotNull ResourceLocation fieldName, final @NotNull BlockPos position)
     {
         final FieldRegistries.FieldEntry fieldEntry = FieldRegistries.getFieldRegistry().getValue(fieldName);
 
@@ -49,8 +46,7 @@ public class FieldDataManager implements IFieldDataManager
         return fieldEntry.produceField(position);
     }
 
-    @Override
-    public IField fromBuffer(final @NotNull FriendlyByteBuf buf)
+    public static IField bufferToField(final @NotNull FriendlyByteBuf buf)
     {
         final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
         final BlockPos position = buf.readBlockPos();
@@ -59,8 +55,7 @@ public class FieldDataManager implements IFieldDataManager
         return field;
     }
 
-    @Override
-    public FriendlyByteBuf toBuffer(final @NotNull IField field)
+    public static FriendlyByteBuf fieldToBuffer(final @NotNull IField field)
     {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeRegistryId(FieldRegistries.getFieldRegistry(), field.getFieldType());
@@ -69,8 +64,7 @@ public class FieldDataManager implements IFieldDataManager
         return buf;
     }
 
-    @Override
-    public CompoundTag createCompound(final @NotNull IField field)
+    public static CompoundTag fieldToCompound(final @NotNull IField field)
     {
         final CompoundTag compound = new CompoundTag();
         compound.putString(TAG_FIELD_NAME, field.getFieldType().getRegistryName().toString());

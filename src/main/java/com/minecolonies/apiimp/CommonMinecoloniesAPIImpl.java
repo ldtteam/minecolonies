@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
-import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
@@ -33,7 +32,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
-import com.minecolonies.coremod.colony.fields.registry.FieldDataManager;
 import com.minecolonies.coremod.colony.interactionhandling.registry.InteractionResponseHandlerManager;
 import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
@@ -58,7 +56,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<BuildingEntry>                           buildingRegistry;
     private        IForgeRegistry<FieldRegistries.FieldEntry>              fieldRegistry;
     private final  IBuildingDataManager                                    buildingDataManager    = new BuildingDataManager();
-    private final  IFieldDataManager                                       fieldDataManager       = new FieldDataManager();
     private final  IJobDataManager                                         jobDataManager         = new JobDataManager();
     private final  IGuardTypeDataManager                                   guardTypeDataManager   = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
     private        IForgeRegistry<JobEntry>                                jobRegistry;
@@ -112,13 +109,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IBuildingDataManager getBuildingDataManager()
     {
         return buildingDataManager;
-    }
-
-    @Override
-    @NotNull
-    public IFieldDataManager getFieldDataManager()
-    {
-        return fieldDataManager;
     }
 
     @Override

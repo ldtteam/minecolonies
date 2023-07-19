@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestInstance;
@@ -33,6 +32,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarrack
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.fields.registry.FieldDataManager;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
@@ -151,7 +151,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             for (int i = 0; i < fieldsTagList.size(); ++i)
             {
                 final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-                final IField field = IFieldDataManager.getInstance().createFrom(fieldCompound);
+                final IField field = FieldDataManager.compoundToField(fieldCompound);
                 if (field != null)
                 {
                     addField(field);
@@ -253,7 +253,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         // Fields
         compound.put(TAG_FIELDS, fields.stream()
-                                   .map(IFieldDataManager.getInstance()::createCompound)
+                                   .map(FieldDataManager::fieldToCompound)
                                    .collect(NBTUtils.toListNBT()));
 
         // Leisure sites
