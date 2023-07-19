@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.core.BlockPos;
@@ -43,31 +42,14 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public KelpPlantModule(final String fieldTag, final String workTag, final Item item)
+    public KelpPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
     {
-        super(fieldTag, workTag, item);
-    }
-
-    @Override
-    protected boolean walkToWorkPosition(final BasicPlanterAI planterAI, final IField field, final BlockPos workPosition)
-    {
-        // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
-        // that the AI can actually walk to.
-        Level world = field.getColony().getWorld();
-        for (int i = 0; i < getMaximumPlantLength() + 1; i++)
-        {
-            if (world.getBlockState(workPosition.above(i)).isAir())
-            {
-                return super.walkToWorkPosition(planterAI, field, workPosition.above(i));
-            }
-        }
-
-        // This position is not reachable, return false, so we don't end up in a walking loop.
-        return false;
+        super(field, fieldTag, workTag, item);
     }
 
     @Override
@@ -92,6 +74,23 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     protected @NotNull Integer getMaximumPlantLength()
     {
         return MAX_HEIGHT;
+    }
+
+    @Override
+    public BlockPos getPositionToWalkTo(final BlockPos workingPosition)
+    {
+        // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
+        // that the AI can actually walk to.
+        Level world = field.getColony().getWorld();
+        for (int i = 0; i < getMaximumPlantLength() + 1; i++)
+        {
+            if (world.getBlockState(workingPosition.above(i)).isAir())
+            {
+                return workingPosition.above(i);
+            }
+        }
+
+        return workingPosition;
     }
 
     @Override

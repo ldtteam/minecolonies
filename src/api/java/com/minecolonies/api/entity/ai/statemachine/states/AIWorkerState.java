@@ -616,6 +616,7 @@ public enum AIWorkerState implements IAIState
      */
     PLANTATION_PICK_FIELD(true),
     PLANTATION_MOVE_TO_FIELD(true),
+    PLANTATION_DECIDE_FIELD_WORK(true),
     PLANTATION_WORK_FIELD(true),
 
     /*

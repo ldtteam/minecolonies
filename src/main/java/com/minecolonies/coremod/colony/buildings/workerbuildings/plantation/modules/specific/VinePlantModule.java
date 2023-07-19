@@ -31,13 +31,14 @@ public class VinePlantModule extends PercentageHarvestPlantModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public VinePlantModule(final String fieldTag, final String workTag, final Item item)
+    public VinePlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
     {
-        super(fieldTag, workTag, item);
+        super(field, fieldTag, workTag, item);
     }
 
     @Override
@@ -47,20 +48,20 @@ public class VinePlantModule extends PercentageHarvestPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public BlockState getPlantingBlockState(final BlockPos workPosition, final BlockState blockState)
     {
-        return ToolType.SHEARS;
-    }
-
-    @Override
-    protected BlockState generatePlantingBlockState(final IField field, final BlockPos workPosition, final BlockState blockState)
-    {
-        return super.generatePlantingBlockState(field, workPosition, blockState)
+        return blockState
                  .setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.above(), Direction.DOWN)))
                  .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.north(), Direction.SOUTH)))
                  .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.south(), Direction.NORTH)))
                  .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.west(), Direction.EAST)))
                  .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.east(), Direction.WEST)));
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.SHEARS;
     }
 
     @Override

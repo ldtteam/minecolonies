@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
@@ -23,13 +24,14 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public GlowBerriesPlantModule(final String fieldTag, final String workTag, final Item item)
+    public GlowBerriesPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
     {
-        super(fieldTag, workTag, item);
+        super(field, fieldTag, workTag, item);
     }
 
     @Override

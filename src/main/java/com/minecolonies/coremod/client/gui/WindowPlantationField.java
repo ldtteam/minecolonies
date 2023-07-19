@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * The window shown when clicking on plantation fields blocks.
@@ -80,7 +79,7 @@ public class WindowPlantationField extends AbstractWindowSkeleton
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.tileEntityPlantationField = tileEntityPlantationField;
         this.plants = tileEntityPlantationField.getPlantationFieldTypes().stream()
-                        .flatMap(f -> f.getFieldModuleProducers().stream().map(Supplier::get).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
+                        .flatMap(f -> f.getFieldModuleProducers().stream().map(m -> m.apply(null)).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
                         .map(fieldType -> new ItemStack(fieldType.getItem()))
                         .toList();
 

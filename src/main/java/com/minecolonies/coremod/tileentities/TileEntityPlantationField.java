@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
@@ -36,6 +35,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class TileEntityPlantationField extends AbstractTileEntityPlantationField
 {
+    /**
+     * Cached result for {@link TileEntityPlantationField#getWorkingPositions(String)} ()}.
+     */
+    private final Map<String, List<BlockPos>> workingPositions = new HashMap<>();
+
     /**
      * The schematic name of the placeholder block.
      */
@@ -78,6 +82,11 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     private IColony currentColony;
 
     /**
+     * Cached result for {@link TileEntityPlantationField#getPlantationFieldTypes()}.
+     */
+    private Set<FieldRegistries.FieldEntry> plantationFieldTypes;
+
+    /**
      * Default constructor.
      *
      * @param pos   The positions this tile entity is at.
@@ -91,22 +100,27 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     @Override
     public Set<FieldRegistries.FieldEntry> getPlantationFieldTypes()
     {
-        return tagPosMap.values().stream()
-                 .flatMap(Collection::stream)
-                 .map(this::getPlantationFieldEntryFromFieldTag)
-                 .filter(Objects::nonNull)
-                 .collect(Collectors.toSet());
+        if (plantationFieldTypes == null)
+        {
+            plantationFieldTypes = tagPosMap.values().stream()
+                                     .flatMap(Collection::stream)
+                                     .map(this::getPlantationFieldEntryFromFieldTag)
+                                     .filter(Objects::nonNull)
+                                     .collect(Collectors.toSet());
+        }
+        return plantationFieldTypes;
     }
 
     @Override
     public List<BlockPos> getWorkingPositions(final String tag)
     {
-        return tagPosMap.entrySet().stream()
-                 .filter(f -> f.getValue().contains(tag))
-                 .distinct()
-                 .map(Map.Entry::getKey)
-                 .map(worldPosition::offset)
-                 .toList();
+        workingPositions.computeIfAbsent(tag, newTag -> tagPosMap.entrySet().stream()
+                                                          .filter(f -> f.getValue().contains(newTag))
+                                                          .distinct()
+                                                          .map(Map.Entry::getKey)
+                                                          .map(worldPosition::offset)
+                                                          .toList());
+        return workingPositions.get(tag);
     }
 
     @Override
@@ -162,7 +176,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         return FieldRegistries.getFieldRegistry().getValues().stream()
                  .filter(fieldEntry -> {
-                     List<IPlantationModule> modules = fieldEntry.getFieldModuleProducers().stream().map(Supplier::get)
+                     List<IPlantationModule> modules = fieldEntry.getFieldModuleProducers().stream().map(m -> m.apply(null))
                                                          .filter(IPlantationModule.class::isInstance)
                                                          .map(m -> (IPlantationModule) m)
                                                          .toList();

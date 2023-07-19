@@ -23,55 +23,55 @@ public final class ModFieldsInitializer
 
         FieldRegistries.plantationSugarCaneField = createEntry(FieldRegistries.PLANTATION_SUGAR_CANE_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new SugarCanePlantModule("sugar_field", "sugar", Items.SUGAR_CANE)));
+                       .addFieldModuleProducer(field -> new SugarCanePlantModule(field,"sugar_field", "sugar", Items.SUGAR_CANE)));
 
         FieldRegistries.plantationCactusField = createEntry(FieldRegistries.PLANTATION_CACTUS_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new CactusPlantModule("cactus_field", "cactus", Items.CACTUS)));
+                       .addFieldModuleProducer(field -> new CactusPlantModule(field,"cactus_field", "cactus", Items.CACTUS)));
 
         FieldRegistries.plantationBambooField = createEntry(FieldRegistries.PLANTATION_BAMBOO_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new BambooPlantModule("bamboo_field", "bamboo", Items.BAMBOO)));
+                       .addFieldModuleProducer(field -> new BambooPlantModule(field,"bamboo_field", "bamboo", Items.BAMBOO)));
 
         FieldRegistries.plantationCocoaBeansField = createEntry(FieldRegistries.PLANTATION_COCOA_BEANS_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new CocoaPlantModule("cocoa_field", "cocoa", Items.COCOA_BEANS)));
+                       .addFieldModuleProducer(field -> new CocoaPlantModule(field,"cocoa_field", "cocoa", Items.COCOA_BEANS)));
 
         FieldRegistries.plantationVinesField = createEntry(FieldRegistries.PLANTATION_VINES_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new VinePlantModule("vine_field", "vine", Items.VINE)));
+                       .addFieldModuleProducer(field -> new VinePlantModule(field,"vine_field", "vine", Items.VINE)));
 
         FieldRegistries.plantationKelpField = createEntry(FieldRegistries.PLANTATION_KELP_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new KelpPlantModule("kelp_field", "kelp", Items.KELP)));
+                       .addFieldModuleProducer(field -> new KelpPlantModule(field,"kelp_field", "kelp", Items.KELP)));
 
         FieldRegistries.plantationSeagrassField = createEntry(FieldRegistries.PLANTATION_SEAGRASS_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new SeagrassPlantModule("seagrass_field", "seagrass", Items.SEAGRASS)));
+                       .addFieldModuleProducer(field -> new SeagrassPlantModule(field,"seagrass_field", "seagrass", Items.SEAGRASS)));
 
         FieldRegistries.plantationSeaPicklesField = createEntry(FieldRegistries.PLANTATION_SEA_PICKLES_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new SeapicklePlantModule("seapickle_field", "seapickle", Items.SEA_PICKLE)));
+                       .addFieldModuleProducer(field -> new SeapicklePlantModule(field,"seapickle_field", "seapickle", Items.SEA_PICKLE)));
 
         FieldRegistries.plantationGlowberriesField = createEntry(FieldRegistries.PLANTATION_GLOWBERRIES_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new GlowBerriesPlantModule("glowb_field", "glowb_vine", Items.GLOW_BERRIES)));
+                       .addFieldModuleProducer(field -> new GlowBerriesPlantModule(field,"glowb_field", "glowb_vine", Items.GLOW_BERRIES)));
 
         FieldRegistries.plantationWeepingVinesField = createEntry(FieldRegistries.PLANTATION_WEEPING_VINES_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new WeepingVinesPlantModule("weepv_field", "weepv_vine", Items.WEEPING_VINES)));
+                       .addFieldModuleProducer(field -> new WeepingVinesPlantModule(field,"weepv_field", "weepv_vine", Items.WEEPING_VINES)));
 
         FieldRegistries.plantationTwistingVinesField = createEntry(FieldRegistries.PLANTATION_TWISTING_VINES_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new TwistingVinesPlantModule("twistv_field", "twistv_vine", Items.TWISTING_VINES)));
+                       .addFieldModuleProducer(field -> new TwistingVinesPlantModule(field,"twistv_field", "twistv_vine", Items.TWISTING_VINES)));
 
         FieldRegistries.plantationCrimsonPlantsField = createEntry(FieldRegistries.PLANTATION_CRIMSON_PLANTS_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new CrimsonPlantsPlantModule("crimsonp_field", "crimsonp_ground", Items.CRIMSON_FUNGUS)));
+                       .addFieldModuleProducer(field -> new CrimsonPlantsPlantModule(field,"crimsonp_field", "crimsonp_ground", Items.CRIMSON_FUNGUS)));
 
         FieldRegistries.plantationWarpedPlantsField = createEntry(FieldRegistries.PLANTATION_WARPED_PLANTS_FIELD_ID,
           builder -> builder.setFieldProducer(PlantationField::new)
-                       .addFieldModuleProducer(() -> new WarpedPlantsPlantModule("warpedp_field", "warpedp_ground", Items.WARPED_FUNGUS)));
+                       .addFieldModuleProducer(field -> new WarpedPlantsPlantModule(field,"warpedp_field", "warpedp_ground", Items.WARPED_FUNGUS)));
     }
     private ModFieldsInitializer()
     {

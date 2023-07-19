@@ -1,7 +1,8 @@
-package com.minecolonies.api.colony.fields;
+package com.minecolonies.coremod.colony.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.modules.ModuleContainerUtils;
@@ -155,7 +156,7 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public final int getDistance(final IBuildingView building)
+    public final int getSqDistance(final IBuildingView building)
     {
         return (int) Math.sqrt(BlockPosUtil.getDistanceSquared(position, building.getPosition()));
     }

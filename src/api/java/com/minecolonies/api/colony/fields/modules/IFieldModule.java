@@ -13,12 +13,4 @@ public interface IFieldModule
      * @return the field.
      */
     IField getField();
-
-    /**
-     * Set the field of the module.
-     *
-     * @param field the field to set.
-     * @return the module itself.
-     */
-    IFieldModule setField(final IField field);
 }

@@ -1,15 +1,15 @@
 package com.minecolonies.api.colony.fields.plantation;
 
-import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.FakePlayer;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,27 +60,17 @@ public interface IPlantationModule extends IFieldModule
     /**
      * Core function for the planter module, is responsible for telling the AI what to do on the specific field.
      *
-     * @param field        the field reference to fetch data from.
-     * @param planterAI    the AI class of the planter so basic instructions can be ordered to it.
-     * @param worker       the worker entity working on the plantation.
-     * @param workPosition the position that has been chosen for work.
-     * @param fakePlayer   a fake player class to use.
+     * @param workingPosition the position that has been chosen for work.
      * @return a basic enum state telling the planter AI what the AI should be doing next.
      */
-    PlanterAIModuleResult workField(
-      @NotNull IField field,
-      @NotNull BasicPlanterAI planterAI,
-      @NotNull AbstractEntityCitizen worker,
-      @NotNull BlockPos workPosition,
-      @NotNull FakePlayer fakePlayer);
+    PlantationModuleResult.Builder decideFieldWork(@NotNull BlockPos workingPosition);
 
     /**
      * Obtains the next working position for the given field, if any.
      *
-     * @param field the field instance.
      * @return the next position to work on, or null.
      */
-    @Nullable BlockPos getNextWorkingPosition(IField field);
+    @Nullable BlockPos getNextWorkingPosition();
 
     /**
      * Get a list of actual valid working positions, based on the tags read from the plantation field.
@@ -92,19 +82,43 @@ public interface IPlantationModule extends IFieldModule
     List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions);
 
     /**
-     * Get whether a field needs work or not.
-     *
-     * @param field the field instance.
-     * @return whether the field needs work.
-     */
-    boolean needsWork(IField field);
-
-    /**
      * Returns the maximum amount of actions that can be performed on a field, before the planter must forcefully switch to a new field.
      *
      * @return the maximum of actions the planter can perform on the field per cycle.
      */
     int getActionLimit();
+
+    /**
+     * Returns which items are considered valid bonemeal items.
+     * Defaults to an empty list. (Most modules should not need any bonemeal).
+     */
+    List<Item> getValidBonemeal();
+
+    /**
+     * Determines where the planter should walk to, in order to most effectively work on the given working position.
+     * Defaults to the same block.
+     *
+     * @return the position for the planter to walk to.
+     */
+    BlockPos getPositionToWalkTo(BlockPos workingPosition);
+
+    /**
+     * Generate a block state for a new plant.
+     *
+     * @param workPosition the position that has been chosen for work.
+     * @param blockState   the default block state for the block.
+     */
+    BlockState getPlantingBlockState(BlockPos workPosition, BlockState blockState);
+
+    /**
+     * Logic for applying bonemeal to the working position.
+     *
+     * @param worker       the worker entity working on the plantation.
+     * @param workPosition the position that has been chosen for work.
+     * @param stackInSlot  the item stack to use for the planting.
+     * @param fakePlayer   a fake player class to use.
+     */
+    void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer);
 
     /**
      * Returns a list of items that are mandatory for this module to function.
@@ -131,95 +145,6 @@ public interface IPlantationModule extends IFieldModule
     boolean equals(Object other);
 
     /**
-     * Enum containing possible states obtained from a mining result.
-     */
-    enum PlanterAIModuleState
-    {
-        /**
-         * Something is wrong in the planter AI module, request to reset the AI back to decision state.
-         */
-        INVALID(false),
-        /**
-         * The planter had to do nothing on this position.
-         */
-        NONE(false),
-        /**
-         * The planter is moving to it's working position.
-         */
-        MOVING(false),
-        /**
-         * The planter requires certain items in order to continue operating.
-         */
-        REQUIRES_ITEMS(false),
-        /**
-         * The planter is harvesting a plant.
-         */
-        HARVESTING(false),
-        /**
-         * The planter has harvested a plant.
-         */
-        HARVESTED(true),
-        /**
-         * The planter is planting a plant.
-         */
-        PLANTING(false),
-        /**
-         * The planter has planted a plant.
-         */
-        PLANTED(true),
-        /**
-         * The planter is clearing a working position.
-         */
-        CLEARING(false),
-        /**
-         * The planter has cleared a block working position.
-         */
-        CLEARED(true);
-
-        /**
-         * Whether the module state represents a performed action.
-         */
-        private final boolean isAction;
-
-        /**
-         * Default constructor
-         */
-        PlanterAIModuleState(final boolean isAction)
-        {
-            this.isAction = isAction;
-        }
-
-        /**
-         * Whether the module state represents a performed action.
-         *
-         * @return true if so
-         */
-        public boolean hasPerformedAction()
-        {
-            return isAction;
-        }
-    }
-
-    /**
-     * Enum containing possible states obtained from a mining result.
-     */
-    enum PlanterMineBlockResult
-    {
-        /**
-         * The planter doesn't have the tool to mine the defined block.
-         */
-        NO_TOOL,
-        /**
-         * The planter is busy mining the block.
-         */
-        MINING,
-        /**
-         * The planter has fully mined the block.
-         */
-        MINED
-    }
-
-    /**
      * Enum containing the reset state of the result state.
      */
     enum PlanterAIModuleResultResetState
@@ -239,64 +164,70 @@ public interface IPlantationModule extends IFieldModule
     }
 
     /**
+     * The different actions this module is able to perform.
+     */
+    enum ActionToPerform
+    {
+        NONE(false),
+        PLANT(true),
+        BONEMEAL(true),
+        HARVEST(true),
+        CLEAR(false);
+
+        /**
+         * Whether this action increases the action counter for the field.
+         */
+        private final boolean increasesActionCount;
+
+        /**
+         * Default constructor.
+         */
+        ActionToPerform(final boolean increasesActionCount)
+        {
+            this.increasesActionCount = increasesActionCount;
+        }
+
+        /**
+         * Whether this action increases the action counter for the field.
+         *
+         * @return true if so.
+         */
+        public boolean increasesActionCount()
+        {
+            return increasesActionCount;
+        }
+    }
+
+    /**
      * Class containing possible states that the planter AI can be in.
      */
-    class PlanterAIModuleResult
+    class PlantationModuleResult
     {
         /**
-         * Something is wrong in the planter AI module, request to reset the AI back to decision state.
+         * Simplest action, indicating no work was needed on the given position.
          */
-        public static final PlanterAIModuleResult INVALID = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, PlanterAIModuleResultResetState.FIELD);
+        public static final PlantationModuleResult.Builder NONE = new PlantationModuleResult.Builder().pickNewPosition();
 
         /**
-         * The planter had to do nothing on this position.
+         * The original plantation module.
          */
-        public static final PlanterAIModuleResult NONE = new PlanterAIModuleResult(PlanterAIModuleState.NONE, PlanterAIModuleResultResetState.FIELD);
+        private final IPlantationModule module;
 
         /**
-         * The planter is moving to it's working position.
+         * The working position where the planter was told to perform work.
          */
-        public static final PlanterAIModuleResult MOVING = new PlanterAIModuleResult(PlanterAIModuleState.MOVING, PlanterAIModuleResultResetState.NONE);
+        private final BlockPos workingPosition;
 
         /**
-         * The planter requires certain items in order to continue operating.
+         * The action for the planter to perform.
          */
-        public static final PlanterAIModuleResult REQUIRES_ITEMS = new PlanterAIModuleResult(PlanterAIModuleState.REQUIRES_ITEMS, PlanterAIModuleResultResetState.NONE);
+        private final ActionToPerform action;
 
         /**
-         * The planter is harvesting a plant.
+         * The position to actually perform the action on.
          */
-        public static final PlanterAIModuleResult HARVESTING = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTING, PlanterAIModuleResultResetState.NONE);
-
-        /**
-         * The planter has harvested a plant.
-         */
-        public static final PlanterAIModuleResult HARVESTED = new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, PlanterAIModuleResultResetState.POSITION);
-
-        /**
-         * The planter is planting a plant.
-         */
-        public static final PlanterAIModuleResult PLANTING = new PlanterAIModuleResult(PlanterAIModuleState.PLANTING, PlanterAIModuleResultResetState.NONE);
-
-        /**
-         * The planter has planted a plant.
-         */
-        public static final PlanterAIModuleResult PLANTED = new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, PlanterAIModuleResultResetState.POSITION);
-
-        /**
-         * The planter is clearing a working position.
-         */
-        public static final PlanterAIModuleResult CLEARING = new PlanterAIModuleResult(PlanterAIModuleState.CLEARING, PlanterAIModuleResultResetState.NONE);
-
-        /**
-         * The planter has cleared a block working position.
-         */
-        public static final PlanterAIModuleResult CLEARED = new PlanterAIModuleResult(PlanterAIModuleState.CLEARED, PlanterAIModuleResultResetState.POSITION);
-
-        /**
-         * The state to transition to.
-         */
-        private final PlanterAIModuleState moduleState;
+        @Nullable
+        private final BlockPos actionPosition;
 
         /**
          * The reset state of the result.
@@ -306,23 +237,64 @@ public interface IPlantationModule extends IFieldModule
         /**
          * Default constructor.
          *
-         * @param moduleState the module state.
-         * @param resetState  the reset state.
+         * @param module          the plantation module.
+         * @param workingPosition the working position.
+         * @param action          the action to perform on this position.
+         * @param actionPosition  the position to actually perform the action on.
+         * @param resetState      the reset state.
          */
-        public PlanterAIModuleResult(final PlanterAIModuleState moduleState, final PlanterAIModuleResultResetState resetState)
+        private PlantationModuleResult(
+          final IPlantationModule module,
+          final BlockPos workingPosition,
+          final ActionToPerform action,
+          final @Nullable BlockPos actionPosition,
+          final PlanterAIModuleResultResetState resetState)
         {
-            this.moduleState = moduleState;
+            this.module = module;
+            this.workingPosition = workingPosition;
+            this.action = action;
+            this.actionPosition = actionPosition;
             this.resetState = resetState;
         }
 
         /**
-         * Get the module state.
+         * Get the plantation module this result was generated from.
          *
-         * @return the module state.
+         * @return the plantation module.
          */
-        public PlanterAIModuleState getModuleState()
+        public IPlantationModule getModule()
         {
-            return moduleState;
+            return module;
+        }
+
+        /**
+         * Get the working position.
+         *
+         * @return the working position.
+         */
+        public BlockPos getWorkingPosition()
+        {
+            return workingPosition;
+        }
+
+        /**
+         * What kind of action to perform.
+         *
+         * @return the action type.
+         */
+        public ActionToPerform getAction()
+        {
+            return action;
+        }
+
+        /**
+         * Get the position to actually perform the action on.
+         *
+         * @return the position to actually perform the action on.
+         */
+        public @Nullable BlockPos getActionPosition()
+        {
+            return actionPosition;
         }
 
         /**
@@ -343,6 +315,121 @@ public interface IPlantationModule extends IFieldModule
         public boolean shouldResetCurrentField()
         {
             return resetState == PlanterAIModuleResultResetState.FIELD;
+        }
+
+        /**
+         * Builder class for the {@link PlantationModuleResult}.
+         */
+        public static class Builder
+        {
+            /**
+             * The action for the planter to perform.
+             */
+            private ActionToPerform action;
+
+            /**
+             * The position to work perform the action on.
+             */
+            @Nullable
+            private BlockPos actionPosition;
+
+            /**
+             * The reset state of the result.
+             */
+            private PlanterAIModuleResultResetState resetState;
+
+            /**
+             * Default constructor.
+             */
+            public Builder()
+            {
+                action = ActionToPerform.NONE;
+                resetState = PlanterAIModuleResultResetState.NONE;
+            }
+
+            /**
+             * Tell the planter he should go to a new field after this work is finished.
+             *
+             * @return the builder instance for chaining.
+             */
+            public Builder pickNewField()
+            {
+                resetState = PlanterAIModuleResultResetState.FIELD;
+                return this;
+            }
+
+            /**
+             * Tell the planter he should go to a new position on the same field after this work is finished.
+             *
+             * @return the builder instance for chaining.
+             */
+            public Builder pickNewPosition()
+            {
+                resetState = PlanterAIModuleResultResetState.POSITION;
+                return this;
+            }
+
+            /**
+             * Tell the planter he should plant the given item on the position.
+             *
+             * @param position the position where to plant on.
+             * @return the builder instance for chaining.
+             */
+            public Builder plant(BlockPos position)
+            {
+                action = ActionToPerform.PLANT;
+                actionPosition = position;
+                return this;
+            }
+
+            /**
+             * Tell the planter he should use bonemeal on the given position.
+             *
+             * @param position the position where to use bonemeal on.
+             * @return the builder instance for chaining.
+             */
+            public Builder bonemeal(BlockPos position)
+            {
+                action = ActionToPerform.BONEMEAL;
+                actionPosition = position;
+                return this;
+            }
+
+            /**
+             * Tell the planter he should harvest an item at the given position.
+             *
+             * @param position the position where to harvest the plant from.
+             * @return the builder instance for chaining.
+             */
+            public Builder harvest(BlockPos position)
+            {
+                action = ActionToPerform.HARVEST;
+                actionPosition = position;
+                return this;
+            }
+
+            /**
+             * Tell the planter he should clear an obstructed work position.
+             *
+             * @param position the position to clear.
+             * @return the builder instance for chaining.
+             */
+            public Builder clear(BlockPos position)
+            {
+                action = ActionToPerform.CLEAR;
+                actionPosition = position;
+                return this;
+            }
+
+            /**
+             * Finishes the construction of the result.
+             *
+             * @return the result instance.
+             */
+            public PlantationModuleResult build(IPlantationModule module, BlockPos workingPosition)
+            {
+                return new PlantationModuleResult(module, workingPosition, action, actionPosition, resetState);
+            }
         }
     }
 }

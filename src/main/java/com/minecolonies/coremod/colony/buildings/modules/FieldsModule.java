@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Abstract class to list all fields (assigned) to a building.
@@ -89,17 +87,14 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     @Nullable
     public IField getFieldToWorkOn()
     {
-        if (currentField != null && currentField.needsWork())
+        if (currentField != null)
         {
             return currentField;
         }
 
-        final List<IField> randomizedFields = getOwnedFields().stream()
-                                                .filter(field -> !field.equals(currentField))
-                                                .collect(CollectorUtils.toShuffledList());
-        for (final IField field : randomizedFields)
+        for (IField field : getOwnedFields())
         {
-            if (field.needsWork())
+            if (!field.equals(currentField))
             {
                 currentField = field;
                 return field;
@@ -223,8 +218,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public void freeField(final IField field)
     {
-        Optional<IField> existingFieldOpt = building.getColony().getBuildingManager().getField(otherField -> otherField.equals(field));
-        existingFieldOpt.ifPresent(existingField -> {
+        building.getColony().getBuildingManager().getField(otherField -> otherField.equals(field)).ifPresent(existingField -> {
             existingField.resetOwningBuilding();
             markDirty();
 

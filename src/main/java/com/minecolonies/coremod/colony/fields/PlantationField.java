@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.fields;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.AbstractField;
 import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -49,12 +48,6 @@ public class PlantationField extends AbstractField
     public static PlantationField create(final FieldRegistries.FieldEntry fieldEntry, final IColony colony, final BlockPos position)
     {
         return (PlantationField) fieldEntry.produceField(colony, position);
-    }
-
-    @Override
-    public boolean needsWork()
-    {
-        return getFirstModuleOccurance(IPlantationModule.class).needsWork(this);
     }
 
     @Override

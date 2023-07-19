@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
@@ -34,13 +35,14 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public SeagrassPlantModule(final String fieldTag, final String workTag, final Item item)
+    public SeagrassPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
     {
-        super(fieldTag, workTag, item);
+        super(field, fieldTag, workTag, item);
     }
 
     @Override
@@ -56,7 +58,13 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    protected @NonNull List<Item> getValidBonemeal()
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.getFluidState().is(Fluids.WATER) && (blockState.getBlock() == Blocks.SEAGRASS || blockState.getBlock() == Blocks.TALL_SEAGRASS);
+    }
+
+    @Override
+    public @NonNull List<Item> getValidBonemeal()
     {
         // Only base minecraft bonemeal has water growing capabilities.
         // Compost (by design) should not inherit this functionality.
@@ -64,15 +72,9 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    protected void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
+    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
     {
         BoneMealItem.growWaterPlant(stackInSlot, worker.getLevel(), workPosition.above(), Direction.UP);
         BoneMealItem.addGrowthParticles(worker.getLevel(), workPosition.above(), 1);
-    }
-
-    @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
-        return blockState.getFluidState().is(Fluids.WATER) && (blockState.getBlock() == Blocks.SEAGRASS || blockState.getBlock() == Blocks.TALL_SEAGRASS);
     }
 }

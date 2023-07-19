@@ -161,7 +161,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final IField field = moduleView.getFields().get(index);
-                final String distance = Integer.toString(field.getDistance(buildingView));
+                final String distance = Integer.toString(field.getSqDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.translatable(distance + "m"));

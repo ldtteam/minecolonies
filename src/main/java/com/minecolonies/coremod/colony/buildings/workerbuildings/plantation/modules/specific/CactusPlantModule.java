@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.world.item.Item;
@@ -20,13 +21,14 @@ public class CactusPlantModule extends UpwardsGrowingPlantModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public CactusPlantModule(final String fieldTag, final String workTag, final Item item)
+    public CactusPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
     {
-        super(fieldTag, workTag, item);
+        super(field, fieldTag, workTag, item);
     }
 
     @Override

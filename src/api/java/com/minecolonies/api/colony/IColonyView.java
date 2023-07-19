@@ -274,20 +274,20 @@ public interface IColonyView extends IColony
     IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
 
     /**
-     * Update a ColonyView's fields given a network data ColonyView update packet. This uses a full-replacement - fields do not get updated and are instead overwritten.
+     * Add or update a ColonyView's fields given a network data ColonyView update packet.
      *
      * @param type     the field type.
      * @param position the field position.
-     * @param buf     buffer containing field information.
+     * @param buf      buffer containing field information.
      */
     void handleColonyFieldViewMessage(@NotNull FieldRegistries.FieldEntry type, @NotNull BlockPos position, @NotNull FriendlyByteBuf buf);
 
     /**
-     * Update a ColonyView's fields given a network data ColonyView update packet. Removing the passed field instance.
+     * Removes a ColonyView's fields given a data ColonyView update packet.
      *
      * @param type     the field type.
      * @param position the field position.
-     * @param buf     buffer containing field information.
+     * @param buf      buffer containing field information.
      */
     void handleColonyRemoveFieldViewMessage(@NotNull FieldRegistries.FieldEntry type, @NotNull BlockPos position, @NotNull FriendlyByteBuf buf);
 

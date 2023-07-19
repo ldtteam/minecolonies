@@ -218,7 +218,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
         {
             if (field1.isTaken() && field2.isTaken())
             {
-                return field1.getDistance(assignedBuilding) - field2.getDistance(assignedBuilding);
+                return field1.getSqDistance(assignedBuilding) - field2.getSqDistance(assignedBuilding);
             }
             else if (field1.isTaken())
             {
@@ -229,7 +229,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
                 return 1;
             }
 
-            return field1.getDistance(assignedBuilding) - field2.getDistance(assignedBuilding);
+            return field1.getSqDistance(assignedBuilding) - field2.getSqDistance(assignedBuilding);
         }
     }
 }

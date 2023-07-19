@@ -32,13 +32,14 @@ public class CocoaPlantModule extends TreeSidePlantModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public CocoaPlantModule(final String fieldTag, final String workTag, final Item item)
+    public CocoaPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
     {
-        super(fieldTag, workTag, item);
+        super(field, fieldTag, workTag, item);
     }
 
     @Override
@@ -48,13 +49,7 @@ public class CocoaPlantModule extends TreeSidePlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
-    {
-        return ToolType.AXE;
-    }
-
-    @Override
-    protected BlockState generatePlantingBlockState(final IField field, final BlockPos workPosition, final BlockState blockState)
+    public BlockState getPlantingBlockState(final BlockPos workPosition, final BlockState blockState)
     {
         return Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
                  .filter(position -> field.getColony().getWorld().getBlockState(position).getBlock() == Blocks.JUNGLE_LOG)
@@ -62,6 +57,12 @@ public class CocoaPlantModule extends TreeSidePlantModule
                  .findFirst()
                  .map(direction -> blockState.setValue(HorizontalDirectionalBlock.FACING, direction))
                  .orElse(blockState);
+    }
+
+    @Override
+    public ToolType getRequiredTool()
+    {
+        return ToolType.AXE;
     }
 
     @Override

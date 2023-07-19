@@ -33,7 +33,7 @@ public interface IField extends IModuleContainer<IFieldModule>
     /**
      * Getter for the colony of the field.
      *
-     * @return the int id.
+     * @return the colony reference.
      */
     IColony getColony();
 
@@ -64,19 +64,12 @@ public interface IField extends IModuleContainer<IFieldModule>
     boolean isTaken();
 
     /**
-     * Checks if the field needs work.
-     *
-     * @return true if so.
-     */
-    boolean needsWork();
-
-    /**
      * Get the distance to a building.
      *
      * @param building the building to get the distance to.
      * @return the distance
      */
-    int getDistance(IBuildingView building);
+    int getSqDistance(IBuildingView building);
 
     /**
      * Stores the NBT data of the field.

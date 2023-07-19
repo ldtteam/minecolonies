@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
@@ -451,7 +450,7 @@ public class BuildingPlantation extends AbstractBuilding
             for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry().getValues())
             {
                 type.getFieldModuleProducers().stream()
-                  .map(Supplier::get)
+                  .map(m -> m.apply(null))
                   .filter(IPlantationModule.class::isInstance)
                   .map(m -> (IPlantationModule) m)
                   .findFirst()

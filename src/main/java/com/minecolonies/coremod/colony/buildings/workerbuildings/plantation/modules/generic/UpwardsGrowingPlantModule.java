@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,103 +39,67 @@ public abstract class UpwardsGrowingPlantModule extends AbstractPlantationModule
     /**
      * Default constructor.
      *
+     * @param field    the field instance this module is working on.
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
     protected UpwardsGrowingPlantModule(
+      final IField field,
       final String fieldTag,
       final String workTag,
       final Item item)
     {
-        super(fieldTag, workTag, item);
+        super(field, fieldTag, workTag, item);
         this.random = new Random();
     }
 
     @Override
-    public PlanterAIModuleResult workField(
-      final @NotNull IField field,
-      final @NotNull BasicPlanterAI planterAI,
-      final @NotNull AbstractEntityCitizen worker,
-      final @NotNull BlockPos workPosition,
-      final @NotNull FakePlayer fakePlayer)
+    public PlantationModuleResult.Builder decideFieldWork(final @NotNull BlockPos workingPosition)
     {
-        if (walkToWorkPosition(planterAI, field, workPosition.above()))
-        {
-            return PlanterAIModuleResult.MOVING;
-        }
-
-        PlanterAIModuleState action = decideWorkAction(field, workPosition, false);
+        ActionToPerform action = decideWorkAction(workingPosition, false);
         return switch (action)
         {
-            case NONE -> PlanterAIModuleResult.NONE;
-            case HARVESTING ->
-                // Tell the AI to mine a block, if we're harvesting we need to mine 1 block off the ground (2 high).
-              getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.above(2), true));
-            case PLANTING ->
-            {
-                if (planterAI.planterPlaceBlock(workPosition.above(), getItem(), getPlantsToRequest()))
-                {
-                    yield PlanterAIModuleResult.PLANTED;
-                }
-                yield PlanterAIModuleResult.REQUIRES_ITEMS;
-            }
-            case CLEARING ->
-                // Tell the AI to mine a block, if we're clearing an obstacle we need to clear the item at the position directly above (1 high).
-              getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition.above(), false));
-            default -> PlanterAIModuleResult.INVALID;
+            case HARVEST -> new PlantationModuleResult.Builder()
+                              .harvest(workingPosition.above(2))
+                              .pickNewPosition();
+            case PLANT -> new PlantationModuleResult.Builder()
+                            .plant(workingPosition.above())
+                            .pickNewPosition();
+            case CLEAR -> new PlantationModuleResult.Builder()
+                            .clear(workingPosition.above())
+                            .pickNewPosition();
+            default -> PlantationModuleResult.NONE;
         };
-    }
-
-    /**
-     * Logic to walk to a work position.
-     * Default implementation, walk to any adjacent block which is free.
-     *
-     * @param planterAI    the AI class of the planter so instructions can be ordered to it.
-     * @param field        the field class.
-     * @param workPosition the position that has been chosen for work.
-     * @return true if
-     */
-    protected boolean walkToWorkPosition(final BasicPlanterAI planterAI, final IField field, final BlockPos workPosition)
-    {
-        // If an empty adjacent position was found, we move to that position directly,
-        // else we move to the work position itself and let entity pathing figure out how to get there (within the default range).
-        Level world = field.getColony().getWorld();
-        final BlockPos walkPosition = Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
-                                        .filter(pos -> world.getBlockState(pos).isAir())
-                                        .findFirst()
-                                        .orElse(workPosition);
-        return planterAI.planterWalkToBlock(walkPosition);
     }
 
     /**
      * Responsible for deciding what action the AI is going to perform on a specific field position
      * depending on the state of the working position.
      *
-     * @param field               the field to check for.
      * @param plantingPosition    the specific position to check for.
      * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
-     * @return the {@link PlanterAIModuleResult} that the AI is going to perform.
+     * @return the {@link PlantationModuleResult} that the AI is going to perform.
      */
-    private PlanterAIModuleState decideWorkAction(IField field, BlockPos plantingPosition, boolean enablePercentChance)
+    private ActionToPerform decideWorkAction(BlockPos plantingPosition, boolean enablePercentChance)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.above());
         if (isValidPlantingBlock(blockState))
         {
-            return PlanterAIModuleState.PLANTING;
+            return ActionToPerform.PLANT;
         }
 
         if (isValidClearingBlock(blockState))
         {
-            return PlanterAIModuleState.CLEARING;
+            return ActionToPerform.CLEAR;
         }
 
         if (canHarvest(field, plantingPosition, enablePercentChance))
         {
-            return PlanterAIModuleState.HARVESTING;
+            return ActionToPerform.HARVEST;
         }
 
-        return PlanterAIModuleState.NONE;
+        return ActionToPerform.NONE;
     }
 
     /**
@@ -232,11 +193,11 @@ public abstract class UpwardsGrowingPlantModule extends AbstractPlantationModule
     }
 
     @Override
-    public BlockPos getNextWorkingPosition(IField field)
+    public BlockPos getNextWorkingPosition()
     {
-        for (BlockPos position : getWorkingPositions(field))
+        for (BlockPos position : getWorkingPositions())
         {
-            if (decideWorkAction(field, position, true) != PlanterAIModuleState.NONE)
+            if (decideWorkAction(position, true) != ActionToPerform.NONE)
             {
                 return position;
             }
@@ -246,14 +207,24 @@ public abstract class UpwardsGrowingPlantModule extends AbstractPlantationModule
     }
 
     @Override
+    public int getActionLimit()
+    {
+        return 10;
+    }
+
+    @Override
     public List<ItemStack> getRequiredItemsForOperation()
     {
         return List.of(new ItemStack(getItem()));
     }
 
     @Override
-    public int getActionLimit()
+    public BlockPos getPositionToWalkTo(final BlockPos workingPosition)
     {
-        return 10;
+        Level world = field.getColony().getWorld();
+        return Stream.of(workingPosition.north(), workingPosition.south(), workingPosition.west(), workingPosition.east())
+                 .filter(pos -> world.getBlockState(pos).isAir())
+                 .findFirst()
+                 .orElse(workingPosition);
     }
 }

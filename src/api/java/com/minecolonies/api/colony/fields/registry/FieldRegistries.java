@@ -15,7 +15,7 @@ import org.apache.commons.lang3.function.TriFunction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * Registry implementation for field instances.
@@ -73,7 +73,7 @@ public class FieldRegistries
     {
         private final ResourceLocation                                   registryName;
         private final TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer;
-        private final List<Supplier<IFieldModule>>                       fieldModuleProducers;
+        private final List<Function<IField, IFieldModule>>               fieldModuleProducers;
 
         /**
          * Default internal constructor.
@@ -81,7 +81,7 @@ public class FieldRegistries
         private FieldEntry(
           final ResourceLocation registryName,
           final TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer,
-          final List<Supplier<IFieldModule>> fieldModuleProducers)
+          final List<Function<IField, IFieldModule>> fieldModuleProducers)
         {
             this.registryName = registryName;
             this.fieldProducer = fieldProducer;
@@ -98,9 +98,9 @@ public class FieldRegistries
         public IField produceField(final IColony colony, final BlockPos position)
         {
             final IField field = fieldProducer.apply(colony, this, position);
-            for (final Supplier<IFieldModule> module : fieldModuleProducers)
+            for (final Function<IField, IFieldModule> moduleProducer : fieldModuleProducers)
             {
-                field.registerModule(module.get().setField(field));
+                field.registerModule(moduleProducer.apply(field));
             }
             return field;
         }
@@ -110,7 +110,7 @@ public class FieldRegistries
          *
          * @return a list of all the field module producers.
          */
-        public List<Supplier<IFieldModule>> getFieldModuleProducers()
+        public List<Function<IField, IFieldModule>> getFieldModuleProducers()
         {
             return Collections.unmodifiableList(fieldModuleProducers);
         }
@@ -153,7 +153,7 @@ public class FieldRegistries
          */
         public static class Builder
         {
-            private final List<Supplier<IFieldModule>>                       fieldModuleProducers = new ArrayList<>();
+            private final List<Function<IField, IFieldModule>>               fieldModuleProducers = new ArrayList<>();
             private       ResourceLocation                                   registryName;
             private       TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer;
 
@@ -187,7 +187,7 @@ public class FieldRegistries
              * @param moduleProducer the module producer.
              * @return the builder again.
              */
-            public FieldEntry.Builder addFieldModuleProducer(final Supplier<IFieldModule> moduleProducer)
+            public FieldEntry.Builder addFieldModuleProducer(final Function<IField, IFieldModule> moduleProducer)
             {
                 fieldModuleProducers.add(moduleProducer);
                 return this;

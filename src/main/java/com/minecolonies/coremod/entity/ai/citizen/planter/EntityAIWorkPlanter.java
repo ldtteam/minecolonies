@@ -2,15 +2,15 @@ package com.minecolonies.coremod.entity.ai.citizen.planter;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.BasicPlanterAI;
 import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.fields.PlantationField;
@@ -20,13 +20,13 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.UnaryOperator;
+import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
@@ -35,23 +35,27 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FI
 /**
  * Planter AI class.
  */
-public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation> implements BasicPlanterAI
+public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation>
 {
+    /**
+     * The amount of bonemeal the worker should have at any time.
+     */
+    protected static final int BONEMEAL_TO_KEEP = 16;
+
     /**
      * Xp per harvesting block
      */
     private static final double XP_PER_HARVEST = 1;
 
     /**
-     * The current position on the field the planter is working at.
-     */
-    @Nullable
-    private BlockPos currentWorkingPosition;
-
-    /**
      * The amount of actions performed on the current field.
      */
     private int currentFieldActionCount = 0;
+
+    /**
+     * The active result object.
+     */
+    private IPlantationModule.PlantationModuleResult activeModuleResult = null;
 
     /**
      * Constructor for the planter.
@@ -62,13 +66,28 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     {
         super(job);
         super.registerTargets(
-          new AITarget(PREPARING, () -> PLANTATION_PICK_FIELD, STANDARD_DELAY),
+          new AITarget(PREPARING, this::prepare, STANDARD_DELAY),
           new AITarget(PLANTATION_PICK_FIELD, this::pickField, TICKS_20),
           new AITarget(PLANTATION_MOVE_TO_FIELD, this::moveToField, TICKS_20),
-          new AITarget(PLANTATION_WORK_FIELD, this::workField, TICKS_20 * 3));
+          new AITarget(PLANTATION_DECIDE_FIELD_WORK, this::decideFieldWork, TICKS_20),
+          new AITarget(PLANTATION_WORK_FIELD, this::workField, TICKS_20));
         worker.setCanPickUpLoot(true);
     }
 
+    private IAIState prepare()
+    {
+        if (activeModuleResult != null)
+        {
+            return PLANTATION_WORK_FIELD;
+        }
+        return PLANTATION_PICK_FIELD;
+    }
+
+    /**
+     * Start the AI off by picking a field which to move towards.
+     *
+     * @return next state to go to.
+     */
     private IAIState pickField()
     {
         worker.getCitizenData().setIdleAtJob(true);
@@ -101,7 +120,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             // where he thinks his working position is still on another field.
             if (lastField != fieldToWork)
             {
-                currentWorkingPosition = null;
                 currentFieldActionCount = 0;
             }
 
@@ -132,15 +150,15 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getState();
         }
 
-        return PLANTATION_WORK_FIELD;
+        return PLANTATION_DECIDE_FIELD_WORK;
     }
 
     /**
-     * Start moving the AI towards a specific field to start working on said field.
+     * Start moving the AI towards a specific field and decide what to do on this field.
      *
      * @return next state to go to.
      */
-    private IAIState workField()
+    private IAIState decideFieldWork()
     {
         PlantationField currentPlantationField = getCurrentField();
         if (currentPlantationField == null)
@@ -149,37 +167,67 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         IPlantationModule planterModule = currentPlantationField.getModule();
-        if (currentWorkingPosition == null)
+        BlockPos position = planterModule.getNextWorkingPosition();
+        if (position != null)
         {
-            currentWorkingPosition = planterModule.getNextWorkingPosition(currentPlantationField);
+            IPlantationModule.PlantationModuleResult.Builder result = planterModule.decideFieldWork(position);
+            activeModuleResult = result.build(planterModule, position);
+            if (activeModuleResult.getAction() == IPlantationModule.ActionToPerform.NONE)
+            {
+                return IDLE;
+            }
+            return PLANTATION_WORK_FIELD;
+        }
+        return IDLE;
+    }
+
+    /**
+     * Start moving the AI towards a specific field and decide what to do on this field.
+     *
+     * @return next state to go to.
+     */
+    private IAIState workField()
+    {
+        IPlantationModule planterModule = activeModuleResult.getModule();
+        if (walkToBlock(planterModule.getPositionToWalkTo(activeModuleResult.getActionPosition())))
+        {
+            return PLANTATION_WORK_FIELD;
         }
 
-        if (currentWorkingPosition != null)
+        boolean isFinished = switch (activeModuleResult.getAction())
         {
-            IPlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
-            if (result.getModuleState().hasPerformedAction())
+            case NONE -> true;
+            case PLANT -> handlePlantingAction();
+            case BONEMEAL -> handleBonemealAction();
+            case HARVEST -> handleMiningAction(true);
+            case CLEAR -> handleMiningAction(false);
+        };
+
+        if (isFinished)
+        {
+            if (activeModuleResult.getAction().increasesActionCount())
             {
                 currentFieldActionCount++;
                 incrementActionsDoneAndDecSaturation();
             }
 
-            if (result.shouldResetWorkingPosition())
-            {
-                currentWorkingPosition = null;
-            }
-            if (result.shouldResetCurrentField() || currentFieldActionCount >= planterModule.getActionLimit())
+            if (activeModuleResult.shouldResetCurrentField() || currentFieldActionCount >= planterModule.getActionLimit())
             {
                 // In certain scenarios the module may request to immediately release the current field, disregarding whether the next tick still has work or not.
                 // Alternatively, if the maximum action count is reached, the field must be reset as well.
                 FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
                 fieldsModule.resetCurrentField();
                 currentFieldActionCount = 0;
-            }
 
-            return result.getModuleState() == IPlantationModule.PlanterAIModuleState.REQUIRES_ITEMS ? IDLE : PLANTATION_WORK_FIELD;
+                return PLANTATION_PICK_FIELD;
+            }
+            if (activeModuleResult.shouldResetWorkingPosition())
+            {
+                return PLANTATION_DECIDE_FIELD_WORK;
+            }
         }
 
-        return PLANTATION_PICK_FIELD;
+        return PLANTATION_WORK_FIELD;
     }
 
     @Nullable
@@ -191,6 +239,96 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return field;
         }
         return null;
+    }
+
+    /**
+     * Handles actions for planting an item on the ground.
+     *
+     * @return true if the item was planted, false is the worker is still busy planting (either doing the animation or requesting the item).
+     */
+    private boolean handlePlantingAction()
+    {
+        if (!Objects.isNull(activeModuleResult.getActionPosition()))
+        {
+            IPlantationModule planterModule = activeModuleResult.getModule();
+
+            ItemStack currentStack = new ItemStack(planterModule.getItem());
+            if (!checkIfRequestForItemExistOrCreateAsync(currentStack, planterModule.getPlantsToRequest(), planterModule.getPlantsToRequest()))
+            {
+                return false;
+            }
+
+            worker.setItemInHand(InteractionHand.MAIN_HAND, currentStack);
+
+            BlockState blockState = planterModule.getPlantingBlockState(activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
+            if (world.setBlockAndUpdate(activeModuleResult.getActionPosition(), blockState))
+            {
+                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);
+                worker.getCitizenItemHandler().removeHeldItem();
+                return true;
+            }
+
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Handles actions for using bonemeal on the ground.
+     *
+     * @return true if bonemeal was used, false if planter has no bonemeal and needs to request some.
+     */
+    private boolean handleBonemealAction()
+    {
+        if (!Objects.isNull(activeModuleResult.getActionPosition()))
+        {
+            IPlantationModule planterModule = activeModuleResult.getModule();
+
+            List<ItemStack> bonemeal = planterModule.getValidBonemeal().stream().map(ItemStack::new).toList();
+            if (!checkIfRequestForItemExistOrCreate(new StackList(bonemeal,
+              RequestSystemTranslationConstants.REQUEST_TYPE_FERTILIZER,
+              BONEMEAL_TO_KEEP * 4,
+              BONEMEAL_TO_KEEP)))
+            {
+                return false;
+            }
+
+            final int boneMealSlot =
+              InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> planterModule.getValidBonemeal().contains(stack.getItem()));
+            final ItemStack stackInSlot = worker.getInventoryCitizen().getStackInSlot(boneMealSlot);
+            planterModule.applyBonemeal(worker, activeModuleResult.getActionPosition(), stackInSlot, getFakePlayer());
+        }
+        return true;
+    }
+
+    /**
+     * Handles actions for harvesting/clearing plants/blocks.
+     *
+     * @return true if the item was harvested, false is the worker is still busy harvesting (either doing the animation or requesting the tools).
+     */
+    private boolean handleMiningAction(boolean isHarvest)
+    {
+        if (!Objects.isNull(activeModuleResult.getActionPosition()))
+        {
+            if (!holdEfficientTool(world.getBlockState(activeModuleResult.getActionPosition()), activeModuleResult.getActionPosition()))
+            {
+                return false;
+            }
+
+            boolean mineResult = mineBlock(activeModuleResult.getActionPosition());
+            if (mineResult)
+            {
+                worker.getCitizenItemHandler().pickupItems();
+
+                if (isHarvest)
+                {
+                    worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
+                }
+            }
+
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -208,7 +346,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (state == IDLE)
         {
-            return PLANTATION_PICK_FIELD;
+            return PREPARING;
         }
         return state;
     }
@@ -234,73 +372,5 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     public Class<BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
-    }
-
-    @Override
-    public boolean planterWalkToBlock(final BlockPos blockPos)
-    {
-        return planterWalkToBlock(blockPos, CitizenConstants.DEFAULT_RANGE_FOR_DELAY);
-    }
-
-    @Override
-    public boolean planterWalkToBlock(final BlockPos blockPos, final int range)
-    {
-        return walkToBlock(blockPos, range);
-    }
-
-    @Override
-    public IPlantationModule.PlanterMineBlockResult planterMineBlock(final BlockPos blockPos, boolean isHarvest)
-    {
-        boolean mineResult = mineBlock(blockPos);
-
-        if (!holdEfficientTool(world.getBlockState(blockPos), blockPos))
-        {
-            return IPlantationModule.PlanterMineBlockResult.NO_TOOL;
-        }
-
-        if (mineResult)
-        {
-            worker.getCitizenItemHandler().pickupItems();
-
-            if (isHarvest)
-            {
-                worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
-            }
-        }
-
-        return mineResult ? IPlantationModule.PlanterMineBlockResult.MINED : IPlantationModule.PlanterMineBlockResult.MINING;
-    }
-
-    @Override
-    public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest)
-    {
-        return planterPlaceBlock(blockToPlaceAt, item, numberToRequest, t -> t);
-    }
-
-    @Override
-    public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest, UnaryOperator<BlockState> blockStateModifier)
-    {
-        ItemStack currentStack = new ItemStack(item);
-        if (!checkIfRequestForItemExistOrCreateAsync(currentStack, numberToRequest, numberToRequest, true))
-        {
-            return false;
-        }
-
-        worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
-
-        if (world.setBlockAndUpdate(blockToPlaceAt, blockStateModifier.apply(BlockUtils.getBlockStateFromStack(currentStack))))
-        {
-            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);
-            worker.getCitizenItemHandler().removeHeldItem();
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean requestItems(final IDeliverable deliverable)
-    {
-        return this.checkIfRequestForItemExistOrCreate(deliverable);
     }
 }
