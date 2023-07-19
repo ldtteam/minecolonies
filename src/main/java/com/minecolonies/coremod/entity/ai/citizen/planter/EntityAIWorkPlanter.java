@@ -167,10 +167,10 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         IPlantationModule planterModule = currentPlantationField.getModule();
-        BlockPos position = planterModule.getNextWorkingPosition();
+        BlockPos position = planterModule.getNextWorkingPosition(world);
         if (position != null)
         {
-            IPlantationModule.PlantationModuleResult.Builder result = planterModule.decideFieldWork(position);
+            IPlantationModule.PlantationModuleResult.Builder result = planterModule.decideFieldWork(world, position);
             activeModuleResult = result.build(planterModule, position);
             if (activeModuleResult.getAction() == IPlantationModule.ActionToPerform.NONE)
             {
@@ -189,7 +189,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private IAIState workField()
     {
         IPlantationModule planterModule = activeModuleResult.getModule();
-        if (walkToBlock(planterModule.getPositionToWalkTo(activeModuleResult.getActionPosition())))
+        if (walkToBlock(planterModule.getPositionToWalkTo(world, activeModuleResult.getActionPosition())))
         {
             return PLANTATION_WORK_FIELD;
         }
@@ -260,7 +260,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
             worker.setItemInHand(InteractionHand.MAIN_HAND, currentStack);
 
-            BlockState blockState = planterModule.getPlantingBlockState(activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
+            BlockState blockState = planterModule.getPlantingBlockState(world, activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
             if (world.setBlockAndUpdate(activeModuleResult.getActionPosition(), blockState))
             {
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);

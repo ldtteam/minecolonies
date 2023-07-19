@@ -56,29 +56,29 @@ public class FarmField extends AbstractField
     /**
      * Constructor used in NBT deserialization.
      *
-     * @param colony the colony this field belongs to.
+     * @param fieldType the type of field.
+     * @param position  the position of the field.
      */
-    public FarmField(final IColony colony, final FieldRegistries.FieldEntry fieldType, final BlockPos position)
+    public FarmField(final FieldRegistries.FieldEntry fieldType, final BlockPos position)
     {
-        super(colony, fieldType, position);
+        super(fieldType, position);
         this.maxRadius = MAX_RANGE;
     }
 
     /**
      * Constructor to create new instances
      *
-     * @param colony   the colony it is created in.
      * @param position the position it is placed in.
      */
-    public static FarmField create(final IColony colony, final BlockPos position)
+    public static FarmField create(final BlockPos position)
     {
-        return (FarmField) FieldRegistries.farmField.get().produceField(colony, position);
+        return (FarmField) FieldRegistries.farmField.get().produceField(position);
     }
 
     @Override
-    public boolean isValidPlacement()
+    public boolean isValidPlacement(final IColony colony)
     {
-        BlockState blockState = getColony().getWorld().getBlockState(getPosition());
+        BlockState blockState = colony.getWorld().getBlockState(getPosition());
         return blockState.is(ModBlocks.blockScarecrow);
     }
 

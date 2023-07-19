@@ -117,13 +117,13 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
     }
 
     @Override
-    public BlockPos getPositionToWalkTo(final BlockPos workingPosition)
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
     {
         return workingPosition;
     }
 
     @Override
-    public BlockState getPlantingBlockState(BlockPos workPosition, BlockState blockState)
+    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
     {
         return blockState;
     }

@@ -95,7 +95,7 @@ public class BuildingPlantation extends AbstractBuilding
      */
     private void updateField(FieldRegistries.FieldEntry type)
     {
-        final PlantationField plantationField = PlantationField.create(type, colony, getPosition());
+        final PlantationField plantationField = PlantationField.create(type, getPosition());
         final List<BlockPos> workingPositions =
           plantationField.getModule().getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(plantationField.getModule().getWorkTag()));
         if (workingPositions.isEmpty())

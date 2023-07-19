@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.client.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.fields.IField;
@@ -59,13 +60,14 @@ public class ColonyViewRemoveFieldViewMessage implements IMessage
     /**
      * Creates a message to handle colony views.
      *
-     * @param field field to add or update a view.
+     * @param colony the colony this field is in.
+     * @param field  field to add or update a view.
      */
-    public ColonyViewRemoveFieldViewMessage(@NotNull final IField field)
+    public ColonyViewRemoveFieldViewMessage(@NotNull final IColony colony, @NotNull final IField field)
     {
         super();
-        this.colonyId = field.getColony().getID();
-        this.dimension = field.getColony().getDimension();
+        this.colonyId = colony.getID();
+        this.dimension = colony.getDimension();
         this.type = field.getFieldType();
         this.position = field.getPosition();
         this.fieldData = new FriendlyByteBuf(Unpooled.buffer());

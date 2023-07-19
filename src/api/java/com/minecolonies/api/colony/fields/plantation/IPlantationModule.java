@@ -60,17 +60,19 @@ public interface IPlantationModule extends IFieldModule
     /**
      * Core function for the planter module, is responsible for telling the AI what to do on the specific field.
      *
+     * @param world           the world reference that can be used for block state lookups.
      * @param workingPosition the position that has been chosen for work.
      * @return a basic enum state telling the planter AI what the AI should be doing next.
      */
-    PlantationModuleResult.Builder decideFieldWork(@NotNull BlockPos workingPosition);
+    PlantationModuleResult.Builder decideFieldWork(Level world, @NotNull BlockPos workingPosition);
 
     /**
      * Obtains the next working position for the given field, if any.
      *
+     * @param world the world reference that can be used for block state lookups.
      * @return the next position to work on, or null.
      */
-    @Nullable BlockPos getNextWorkingPosition();
+    @Nullable BlockPos getNextWorkingPosition(Level world);
 
     /**
      * Get a list of actual valid working positions, based on the tags read from the plantation field.
@@ -98,17 +100,20 @@ public interface IPlantationModule extends IFieldModule
      * Determines where the planter should walk to, in order to most effectively work on the given working position.
      * Defaults to the same block.
      *
+     * @param world           the world reference that can be used for block state lookups.
+     * @param workingPosition the original working position.
      * @return the position for the planter to walk to.
      */
-    BlockPos getPositionToWalkTo(BlockPos workingPosition);
+    BlockPos getPositionToWalkTo(Level world, BlockPos workingPosition);
 
     /**
      * Generate a block state for a new plant.
      *
+     * @param world        the world reference that can be used for block state lookups.
      * @param workPosition the position that has been chosen for work.
      * @param blockState   the default block state for the block.
      */
-    BlockState getPlantingBlockState(BlockPos workPosition, BlockState blockState);
+    BlockState getPlantingBlockState(Level world, BlockPos workPosition, BlockState blockState);
 
     /**
      * Logic for applying bonemeal to the working position.

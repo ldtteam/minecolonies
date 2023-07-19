@@ -10,6 +10,7 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SeaPickleBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,12 +50,12 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(final @NotNull BlockPos workPosition)
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workPosition)
     {
         // Sea pickles do not work entirely the same as regular bonemeal fields,
         // because they actually require having manually planted the pickles and then continue to grow them
         // by applying additional bonemeal.
-        BlockState state = field.getColony().getWorld().getBlockState(workPosition.above());
+        BlockState state = world.getBlockState(workPosition.above());
         if (state.getBlock().equals(Blocks.WATER))
         {
             return new PlantationModuleResult.Builder()
@@ -63,7 +64,7 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
         }
         else
         {
-            return super.decideFieldWork(workPosition);
+            return super.decideFieldWork(world, workPosition);
         }
     }
 

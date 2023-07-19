@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,14 +49,14 @@ public class VinePlantModule extends PercentageHarvestPlantModule
     }
 
     @Override
-    public BlockState getPlantingBlockState(final BlockPos workPosition, final BlockState blockState)
+    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
     {
         return blockState
-                 .setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.above(), Direction.DOWN)))
-                 .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.north(), Direction.SOUTH)))
-                 .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.south(), Direction.NORTH)))
-                 .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.west(), Direction.EAST)))
-                 .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(field.getColony().getWorld(), workPosition.east(), Direction.WEST)));
+                 .setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.above(), Direction.DOWN)))
+                 .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.north(), Direction.SOUTH)))
+                 .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.south(), Direction.NORTH)))
+                 .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.west(), Direction.EAST)))
+                 .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.east(), Direction.WEST)));
     }
 
     @Override

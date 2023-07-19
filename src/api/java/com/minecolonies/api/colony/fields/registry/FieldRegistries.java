@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.fields.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,11 +9,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -71,16 +70,16 @@ public class FieldRegistries
      */
     public static class FieldEntry
     {
-        private final ResourceLocation                                   registryName;
-        private final TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer;
-        private final List<Function<IField, IFieldModule>>               fieldModuleProducers;
+        private final ResourceLocation                         registryName;
+        private final BiFunction<FieldEntry, BlockPos, IField> fieldProducer;
+        private final List<Function<IField, IFieldModule>>     fieldModuleProducers;
 
         /**
          * Default internal constructor.
          */
         private FieldEntry(
           final ResourceLocation registryName,
-          final TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer,
+          final BiFunction<FieldEntry, BlockPos, IField> fieldProducer,
           final List<Function<IField, IFieldModule>> fieldModuleProducers)
         {
             this.registryName = registryName;
@@ -91,13 +90,12 @@ public class FieldRegistries
         /**
          * Produces a field instance based on a colony and block pos.
          *
-         * @param colony   the colony the field is in.
          * @param position the position the field is at.
          * @return the field instance.
          */
-        public IField produceField(final IColony colony, final BlockPos position)
+        public IField produceField(final BlockPos position)
         {
-            final IField field = fieldProducer.apply(colony, this, position);
+            final IField field = fieldProducer.apply(this, position);
             for (final Function<IField, IFieldModule> moduleProducer : fieldModuleProducers)
             {
                 field.registerModule(moduleProducer.apply(field));
@@ -153,9 +151,9 @@ public class FieldRegistries
          */
         public static class Builder
         {
-            private final List<Function<IField, IFieldModule>>               fieldModuleProducers = new ArrayList<>();
-            private       ResourceLocation                                   registryName;
-            private       TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer;
+            private final List<Function<IField, IFieldModule>>     fieldModuleProducers = new ArrayList<>();
+            private       ResourceLocation                         registryName;
+            private       BiFunction<FieldEntry, BlockPos, IField> fieldProducer;
 
             /**
              * Sets the registry name for the new field entry.
@@ -170,12 +168,12 @@ public class FieldRegistries
             }
 
             /**
-             * Sets the callback that is used to create the {@link IField} from the {@link IColony} and its position in the world.
+             * Sets the callback that is used to create the {@link IField} from its position in the world.
              *
              * @param fieldProducer The callback used to create the {@link IField}.
              * @return The builder.
              */
-            public FieldEntry.Builder setFieldProducer(final TriFunction<IColony, FieldEntry, BlockPos, IField> fieldProducer)
+            public FieldEntry.Builder setFieldProducer(final BiFunction<FieldEntry, BlockPos, IField> fieldProducer)
             {
                 this.fieldProducer = fieldProducer;
                 return this;

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.fields.registry;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.fields.registry.IFieldDataManager;
@@ -23,12 +22,12 @@ public class FieldDataManager implements IFieldDataManager
     private static final String TAG_FIELD_DATA     = "data";
 
     @Override
-    public IField createFrom(final @NotNull IColony colony, final @NotNull CompoundTag compound)
+    public IField createFrom(final @NotNull CompoundTag compound)
     {
         ResourceLocation fieldName = new ResourceLocation(compound.getString(TAG_FIELD_NAME));
         BlockPos position = BlockPosUtil.read(compound, TAG_FIELD_POSITION);
 
-        IField field = createFrom(colony, position, fieldName);
+        IField field = createFrom(position, fieldName);
         if (field != null)
         {
             field.deserializeNBT(compound.getCompound(TAG_FIELD_DATA));
@@ -37,7 +36,7 @@ public class FieldDataManager implements IFieldDataManager
     }
 
     @Override
-    public IField createFrom(final @NotNull IColony colony, final @NotNull BlockPos position, final @NotNull ResourceLocation fieldName)
+    public IField createFrom(final @NotNull BlockPos position, final @NotNull ResourceLocation fieldName)
     {
         final FieldRegistries.FieldEntry fieldEntry = FieldRegistries.getFieldRegistry().getValue(fieldName);
 
@@ -47,15 +46,15 @@ public class FieldDataManager implements IFieldDataManager
             return null;
         }
 
-        return fieldEntry.produceField(colony, position);
+        return fieldEntry.produceField(position);
     }
 
     @Override
-    public IField fromBuffer(final @NotNull IColony colony, final @NotNull FriendlyByteBuf buf)
+    public IField fromBuffer(final @NotNull FriendlyByteBuf buf)
     {
         final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
         final BlockPos position = buf.readBlockPos();
-        final IField field = fieldType.produceField(colony, position);
+        final IField field = fieldType.produceField(position);
         field.deserialize(buf);
         return field;
     }

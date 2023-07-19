@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,9 +55,9 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(final @NotNull BlockPos workingPosition)
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition)
     {
-        ActionToPerform action = decideWorkAction(workingPosition);
+        ActionToPerform action = decideWorkAction(world, workingPosition);
         return switch (action)
         {
             case HARVEST -> new PlantationModuleResult.Builder()
@@ -75,12 +73,13 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     /**
      * Responsible for deciding what action the AI is going to perform on the field.
      *
+     * @param world        the world reference that can be used for block state lookups.
      * @param workPosition the position that has been chosen for work.
      * @return the {@link PlantationModuleResult} that the AI is going to perform.
      */
-    private ActionToPerform decideWorkAction(BlockPos workPosition)
+    private ActionToPerform decideWorkAction(Level world, BlockPos workPosition)
     {
-        BlockState blockState = field.getColony().getWorld().getBlockState(workPosition.above());
+        BlockState blockState = world.getBlockState(workPosition.above());
         if (isValidHarvestBlock(blockState))
         {
             return ActionToPerform.HARVEST;
@@ -119,10 +118,10 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     }
 
     @Override
-    public @Nullable BlockPos getNextWorkingPosition()
+    public @Nullable BlockPos getNextWorkingPosition(Level world)
     {
         // If there is anything to harvest, return the first position where a non-air block is present.
-        BlockPos positionToHarvest = getPositionToHarvest();
+        BlockPos positionToHarvest = getPositionToHarvest(world);
         if (positionToHarvest != null)
         {
             return positionToHarvest;
@@ -148,13 +147,14 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * Get the first position which is harvestable on the ground.
      * Defaults to return any non-air position.
      *
+     * @param world the world reference that can be used for block state lookups.
      * @return the position to harvest or null if no position needs harvesting.
      */
     @Nullable
-    private BlockPos getPositionToHarvest()
+    private BlockPos getPositionToHarvest(Level world)
     {
         return getWorkingPositions().stream()
-                 .filter(pos -> isValidHarvestBlock(field.getColony().getWorld().getBlockState(pos.above())))
+                 .filter(pos -> isValidHarvestBlock(world.getBlockState(pos.above())))
                  .findFirst()
                  .orElse(null);
     }

@@ -31,13 +31,6 @@ public interface IField extends IModuleContainer<IFieldModule>
     @NotNull BlockPos getPosition();
 
     /**
-     * Getter for the colony of the field.
-     *
-     * @return the colony reference.
-     */
-    IColony getColony();
-
-    /**
      * Getter for the owning building of the field.
      *
      * @return the id or null.
@@ -100,9 +93,10 @@ public interface IField extends IModuleContainer<IFieldModule>
     /**
      * Condition to check whether this field instance is currently properly placed down.
      *
+     * @param colony the colony this field is in.
      * @return true if the field is correctly placed at the current position.
      */
-    boolean isValidPlacement();
+    boolean isValidPlacement(IColony colony);
 
     /**
      * Hashcode implementation for this field.

@@ -29,31 +29,29 @@ public class PlantationField extends AbstractField
     /**
      * Constructor used in NBT deserialization.
      *
-     * @param colony    the colony this field belongs to.
      * @param fieldType the type of field.
      * @param position  the position of the field.
      */
-    public PlantationField(final @NotNull IColony colony, final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
+    public PlantationField(final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
     {
-        super(colony, fieldType, position);
+        super(fieldType, position);
     }
 
     /**
      * Constructor to create new instances
      *
      * @param fieldEntry the type of field we want to produce.
-     * @param colony     the colony it is created in.
      * @param position   the position it is placed in.
      */
-    public static PlantationField create(final FieldRegistries.FieldEntry fieldEntry, final IColony colony, final BlockPos position)
+    public static PlantationField create(final FieldRegistries.FieldEntry fieldEntry, final BlockPos position)
     {
-        return (PlantationField) fieldEntry.produceField(colony, position);
+        return (PlantationField) fieldEntry.produceField(position);
     }
 
     @Override
-    public boolean isValidPlacement()
+    public boolean isValidPlacement(final IColony colony)
     {
-        BlockState blockState = getColony().getWorld().getBlockState(getPosition());
+        BlockState blockState = colony.getWorld().getBlockState(getPosition());
         // TODO: future, remove `blockHutPlantation` from valid blocks
         return blockState.is(ModBlocks.blockHutPlantation) || blockState.is(ModBlocks.blockPlantationField);
     }

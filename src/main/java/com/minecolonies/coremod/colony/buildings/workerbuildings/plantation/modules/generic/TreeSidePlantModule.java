@@ -48,9 +48,9 @@ public abstract class TreeSidePlantModule extends AbstractPlantationModule
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(@NotNull final BlockPos workingPosition)
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition)
     {
-        ActionToPerform action = decideWorkAction(workingPosition);
+        ActionToPerform action = decideWorkAction(world, workingPosition);
         return switch (action)
         {
             case HARVEST -> new PlantationModuleResult.Builder()
@@ -70,12 +70,13 @@ public abstract class TreeSidePlantModule extends AbstractPlantationModule
      * Responsible for deciding what action the AI is going to perform on a specific field position
      * depending on the state of the working position.
      *
+     * @param world            the world reference that can be used for block state lookups.
      * @param plantingPosition the specific position to check for.
      * @return the {@link PlantationModuleResult} that the AI is going to perform.
      */
-    private ActionToPerform decideWorkAction(BlockPos plantingPosition)
+    private ActionToPerform decideWorkAction(final Level world, final BlockPos plantingPosition)
     {
-        BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition);
+        BlockState blockState = world.getBlockState(plantingPosition);
         if (isValidPlantingBlock(blockState))
         {
             return ActionToPerform.PLANT;
@@ -126,11 +127,11 @@ public abstract class TreeSidePlantModule extends AbstractPlantationModule
     protected abstract boolean isValidHarvestBlock(BlockState blockState);
 
     @Override
-    public @Nullable BlockPos getNextWorkingPosition()
+    public @Nullable BlockPos getNextWorkingPosition(final Level world)
     {
         for (BlockPos position : getWorkingPositions())
         {
-            if (decideWorkAction(position) != ActionToPerform.NONE)
+            if (decideWorkAction(world, position) != ActionToPerform.NONE)
             {
                 return position;
             }
@@ -169,9 +170,8 @@ public abstract class TreeSidePlantModule extends AbstractPlantationModule
     }
 
     @Override
-    public BlockPos getPositionToWalkTo(final BlockPos workingPosition)
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
     {
-        Level world = field.getColony().getWorld();
         return Stream.of(workingPosition.north(), workingPosition.south(), workingPosition.west(), workingPosition.east())
                  .filter(pos -> world.getBlockState(pos).isAir())
                  .findFirst()

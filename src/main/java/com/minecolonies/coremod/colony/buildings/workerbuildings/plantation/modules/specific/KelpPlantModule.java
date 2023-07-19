@@ -77,11 +77,10 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public BlockPos getPositionToWalkTo(final BlockPos workingPosition)
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
     {
         // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
         // that the AI can actually walk to.
-        Level world = field.getColony().getWorld();
         for (int i = 0; i < getMaximumPlantLength() + 1; i++)
         {
             if (world.getBlockState(workingPosition.above(i)).isAir())

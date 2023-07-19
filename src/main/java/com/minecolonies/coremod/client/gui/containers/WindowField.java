@@ -254,7 +254,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        ICitizen citizen = farmField.getColony().getCitizen(citizenId);
+        ICitizen citizen = colonyView.getCitizen(citizenId);
         if (citizen == null)
         {
             return;

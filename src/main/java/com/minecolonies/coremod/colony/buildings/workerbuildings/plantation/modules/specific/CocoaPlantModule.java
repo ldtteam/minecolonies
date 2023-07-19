@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CocoaBlock;
@@ -49,10 +50,10 @@ public class CocoaPlantModule extends TreeSidePlantModule
     }
 
     @Override
-    public BlockState getPlantingBlockState(final BlockPos workPosition, final BlockState blockState)
+    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
     {
         return Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
-                 .filter(position -> field.getColony().getWorld().getBlockState(position).getBlock() == Blocks.JUNGLE_LOG)
+                 .filter(position -> world.getBlockState(position).getBlock() == Blocks.JUNGLE_LOG)
                  .map(position -> Optional.ofNullable(Direction.fromNormal(position.subtract(workPosition))).orElse(Direction.NORTH))
                  .findFirst()
                  .map(direction -> blockState.setValue(HorizontalDirectionalBlock.FACING, direction))

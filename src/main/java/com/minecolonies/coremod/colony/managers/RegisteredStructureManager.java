@@ -151,7 +151,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             for (int i = 0; i < fieldsTagList.size(); ++i)
             {
                 final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-                final IField field = IFieldDataManager.getInstance().createFrom(colony, fieldCompound);
+                final IField field = IFieldDataManager.getInstance().createFrom(fieldCompound);
                 if (field != null)
                 {
                     addField(field);
@@ -323,7 +323,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         for (final IField field : fields)
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement()))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement(colony)))
             {
                 removeField(f -> f.equals(field));
             }
@@ -875,7 +875,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             players.addAll(newSubscribers);
             for (final IField field : fields)
             {
-                players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(field), player));
+                players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(colony, field), player));
             }
         }
     }
@@ -985,7 +985,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (IField field : fieldsToRemove)
         {
             fields.remove(field);
-            Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(field));
+            Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(colony, field));
             markFieldsDirty();
         }
     }

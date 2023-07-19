@@ -1102,7 +1102,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void handleColonyFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
     {
-        final IField fieldView = type.produceField(this, position);
+        final IField fieldView = type.produceField(position);
         fieldView.deserialize(buf);
         fields.remove(fieldView);
         fields.add(fieldView);
@@ -1111,7 +1111,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void handleColonyRemoveFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
     {
-        final IField field = type.produceField(this, position);
+        final IField field = type.produceField(position);
         field.deserialize(buf);
         fields.remove(field);
     }

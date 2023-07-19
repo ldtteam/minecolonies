@@ -55,9 +55,9 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(final @NotNull BlockPos workingPosition)
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition)
     {
-        ActionToPerform action = decideWorkAction(workingPosition, false);
+        ActionToPerform action = decideWorkAction(world, workingPosition, false);
         return switch (action)
         {
             case HARVEST -> new PlantationModuleResult.Builder()
@@ -77,13 +77,14 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
      * Responsible for deciding what action the AI is going to perform on a specific field position
      * depending on the state of the working position.
      *
+     * @param world               the world reference that can be used for block state lookups.
      * @param plantingPosition    the specific position to check for.
      * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
      * @return the {@link PlantationModuleResult} that the AI is going to perform.
      */
-    private ActionToPerform decideWorkAction(BlockPos plantingPosition, boolean enablePercentChance)
+    private ActionToPerform decideWorkAction(final Level world, final BlockPos plantingPosition, final boolean enablePercentChance)
     {
-        BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.below());
+        BlockState blockState = world.getBlockState(plantingPosition.below());
         if (isValidPlantingBlock(blockState))
         {
             return ActionToPerform.PLANT;
@@ -94,7 +95,7 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
             return ActionToPerform.CLEAR;
         }
 
-        if (canHarvest(field, plantingPosition, enablePercentChance))
+        if (canHarvest(world, plantingPosition, enablePercentChance))
         {
             return ActionToPerform.HARVEST;
         }
@@ -128,12 +129,12 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
     /**
      * Checks if the provided block at the given location is harvestable.
      *
-     * @param field               the field to check for.
+     * @param world               the world reference that can be used for block state lookups.
      * @param plantingPosition    the specific position to check for.
      * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
      * @return true if plant is harvestable.
      */
-    private boolean canHarvest(IField field, BlockPos plantingPosition, boolean enablePercentChance)
+    private boolean canHarvest(Level world, BlockPos plantingPosition, boolean enablePercentChance)
     {
         int minimumPlantLength = getMinimumPlantLength();
         Integer maximumPlantLength = getMaximumPlantLength();
@@ -143,7 +144,7 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
             float currentHeight = 0;
             for (int height = minimumPlantLength; height <= maximumPlantLength; height++)
             {
-                BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.below(height));
+                BlockState blockState = world.getBlockState(plantingPosition.below(height));
                 if (!isValidHarvestBlock(blockState))
                 {
                     break;
@@ -156,7 +157,7 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
         }
         else
         {
-            BlockState blockAtMinHeight = field.getColony().getWorld().getBlockState(plantingPosition.below(minimumPlantLength));
+            BlockState blockAtMinHeight = world.getBlockState(plantingPosition.below(minimumPlantLength));
             return isValidHarvestBlock(blockAtMinHeight);
         }
     }
@@ -193,11 +194,11 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
     }
 
     @Override
-    public BlockPos getNextWorkingPosition()
+    public BlockPos getNextWorkingPosition(final Level world)
     {
         for (BlockPos position : getWorkingPositions())
         {
-            if (decideWorkAction(position, true) != ActionToPerform.NONE)
+            if (decideWorkAction(world, position, true) != ActionToPerform.NONE)
             {
                 return position;
             }
@@ -219,9 +220,8 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
     }
 
     @Override
-    public BlockPos getPositionToWalkTo(final BlockPos workingPosition)
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
     {
-        Level world = field.getColony().getWorld();
         return Stream.of(workingPosition.north(), workingPosition.south(), workingPosition.west(), workingPosition.east())
                  .filter(pos -> world.getBlockState(pos).isAir())
                  .findFirst()

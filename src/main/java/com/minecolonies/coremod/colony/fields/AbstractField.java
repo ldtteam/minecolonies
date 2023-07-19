@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.fields;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
@@ -32,11 +31,6 @@ public abstract class AbstractField implements IField
     private final List<IFieldModule> modules = new ArrayList<>();
 
     /**
-     * Colony owning the field.
-     */
-    private final IColony colony;
-
-    /**
      * The type of the field.
      */
     private final FieldRegistries.FieldEntry fieldType;
@@ -55,13 +49,11 @@ public abstract class AbstractField implements IField
     /**
      * Constructor used in NBT deserialization.
      *
-     * @param colony    the colony this field belongs to.
      * @param fieldType the type of field.
      * @param position  the position of the field.
      */
-    protected AbstractField(final @NotNull IColony colony, final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
+    protected AbstractField(final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
     {
-        this.colony = colony;
         this.fieldType = fieldType;
         this.position = position;
     }
@@ -122,12 +114,6 @@ public abstract class AbstractField implements IField
     public final BlockPos getPosition()
     {
         return position;
-    }
-
-    @Override
-    public final IColony getColony()
-    {
-        return colony;
     }
 
     @Override
