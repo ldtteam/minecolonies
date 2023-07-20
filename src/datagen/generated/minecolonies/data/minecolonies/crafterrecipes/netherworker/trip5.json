@@ -80,19 +80,19 @@
       "item": "minecraft:nether_wart"
     },
     {
+      "item": "minecraft:ochre_froglight"
+    },
+    {
       "item": "minecraft:magma_cream"
+    },
+    {
+      "item": "minecraft:blaze_rod"
     },
     {
       "item": "minecraft:pearlescent_froglight"
     },
     {
       "item": "minecraft:verdant_froglight"
-    },
-    {
-      "item": "minecraft:ochre_froglight"
-    },
-    {
-      "item": "minecraft:blaze_rod"
     },
     {
       "item": "minecraft:ancient_debris"

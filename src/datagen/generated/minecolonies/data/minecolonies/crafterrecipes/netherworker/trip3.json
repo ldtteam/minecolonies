@@ -74,6 +74,9 @@
       "item": "minecraft:ender_pearl"
     },
     {
+      "item": "minecraft:ochre_froglight"
+    },
+    {
       "item": "minecraft:magma_cream"
     },
     {
@@ -81,9 +84,6 @@
     },
     {
       "item": "minecraft:verdant_froglight"
-    },
-    {
-      "item": "minecraft:ochre_froglight"
     },
     {
       "item": "minecraft:blaze_rod"

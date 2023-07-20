@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -113,11 +114,18 @@ public final class RecipeAnalyzer
         {
             if (entityType.getCategory() != MobCategory.CREATURE) { continue; }
 
-            // sadly there doesn't seem to be a better way to discover the actual classes for each type, because Java
-            final Entity entity = entityType.create(level);
-            if (entity instanceof Animal animal)
+            try
             {
-                animals.add(animal);
+                // sadly there doesn't seem to be a better way to discover the actual classes for each type, because Java
+                final Entity entity = entityType.create(level);
+                if (entity instanceof Animal animal)
+                {
+                    animals.add(animal);
+                }
+            }
+            catch (final Exception ex)
+            {
+                Log.getLogger().error("Couldnt analyze animal", ex);
             }
         }
 
