@@ -262,6 +262,19 @@
           ],
           "name": "minecraft:warped_stem",
           "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:ochre_froglight",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:pearlescent_froglight"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:verdant_froglight"
         }
       ],
       "name": "blocks",
