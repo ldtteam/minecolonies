@@ -31,6 +31,9 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      */
     private static final String ID = "minecolonies:gui/analyzer/windowanalyze.xml";
 
+    /**
+     * Xml ID's for analyzer/analyzedisplay.xml
+     */
     private static final String BUTTON_SELECTION_LEFT   = "selectleft";
     private static final String BUTTON_SELECTION_RIGHT  = "selectright";
     private static final String BUTTON_SELECT_SCHEMATIC = "selectschematic";
@@ -48,18 +51,22 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     private static final String LIST_ENTRY_LABEL        = "resourceName";
     private static final String LIST_ENTRY_COUNT        = "resourceCount";
 
-    public static  Map<Blueprint, SchemAnalyzerUtil.SchematicAnalyzationResult> analyzationResults       = new LinkedHashMap<>();
-    private static List<SchemAnalyzerUtil.SchematicAnalyzationResult>           sortedAnalyzationResults = new ArrayList<>();
-    private static SchemAnalyzerUtil.SchematicAnalyzationResult                 selectedLeft             = null;
-    private static SchemAnalyzerUtil.SchematicAnalyzationResult                 selectedRight            = null;
-
-    // Left side shows old select
-    // Right side shows old selected, or switches to new tool selection on usage, tool triggers the switch
-    // If right side old == tool selection, rescan tool selection on opening to ensure up to date, remove old result add new switch to new
+    /**
+     * Cached analyzed blueprints
+     */
+    public static Map<Blueprint, SchemAnalyzerUtil.SchematicAnalyzationResult> analyzationResults = new LinkedHashMap<>();
 
     /**
-     * Constructor for when the player wants to scan something.
+     * Sorted list of the analyzation results, for UI purposes to scroll through
      */
+    private static List<SchemAnalyzerUtil.SchematicAnalyzationResult> sortedAnalyzationResults = new ArrayList<>();
+
+    /**
+     * Current selection for left/right schematic result display
+     */
+    private static SchemAnalyzerUtil.SchematicAnalyzationResult selectedLeft  = null;
+    private static SchemAnalyzerUtil.SchematicAnalyzationResult selectedRight = null;
+
     public WindowSchematicAnalyzer()
     {
         super(ID);
@@ -83,9 +90,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
             switchSelection(b, true);
         });
 
-        registerButton(BUTTON_SHOW_RES, b -> {
-            showResourcesFor(b);
-        });
+        registerButton(BUTTON_SHOW_RES, this::showResourcesFor);
 
         if (ItemScanAnalyzer.blueprint != null)
         {
@@ -95,12 +100,11 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 
         sortAnalyzationResults();
 
-        for (int i = 0; i < sortedAnalyzationResults.size(); i++)
+        for (SchemAnalyzerUtil.SchematicAnalyzationResult sortedAnalyzationResult : sortedAnalyzationResults)
         {
-
-            if (sortedAnalyzationResults.get(i).blueprint.equals(ItemScanAnalyzer.blueprint))
+            if (sortedAnalyzationResult.blueprint.equals(ItemScanAnalyzer.blueprint))
             {
-                selectedRight = sortedAnalyzationResults.get(i);
+                selectedRight = sortedAnalyzationResult;
                 ItemScanAnalyzer.blueprint = null;
                 break;
             }
@@ -155,7 +159,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     }
 
     /**
-     * Get the left box
+     * Get the left result display box
      *
      * @return
      */
@@ -165,7 +169,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     }
 
     /**
-     * Get the right box
+     * Get the right result display box
      *
      * @return
      */
@@ -175,7 +179,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     }
 
     /**
-     * Find the right/left side box for the given pane
+     * Find the right/left side result display box for the given pane
      *
      * @param context
      * @return
