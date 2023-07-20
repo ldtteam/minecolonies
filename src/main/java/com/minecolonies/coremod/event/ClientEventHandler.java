@@ -18,6 +18,7 @@ import com.minecolonies.coremod.client.render.worldevent.ColonyBorderRenderer;
 import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.util.SchemAnalyzerUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -133,9 +134,14 @@ public class ClientEventHandler
         if(event.getItemStack().getItem() instanceof BlockItem)
         {
             final BlockItem blockItem = (BlockItem) event.getItemStack().getItem();
-            if(blockItem.getBlock() instanceof AbstractBlockHut)
+            if (blockItem.getBlock() instanceof AbstractBlockHut)
             {
                 handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
+            }
+
+            if (event.getEntity().isCreative() && Minecraft.getInstance().options.advancedItemTooltips)
+            {
+                event.getToolTip().add(Component.literal("mctier:" + SchemAnalyzerUtil.getBlockTier(blockItem.getBlock())));
             }
         }
     }
