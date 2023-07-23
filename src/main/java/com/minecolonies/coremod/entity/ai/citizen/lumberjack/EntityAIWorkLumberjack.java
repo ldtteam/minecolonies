@@ -22,7 +22,6 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPas
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -312,8 +311,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (building.shouldRestrict())
         {
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.gathering"));
-
             if (getItemsForPickUp() == null)
             {
                 // search for interesting items in our restriction zone, if we ran out of trees
@@ -354,7 +351,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (job.getTree() == null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.searchingtree"));
 
             return findTree();
         }
@@ -471,7 +467,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState chopTree()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.chopping"));
         final boolean shouldBreakLeaves = building.shouldDefoliate() || job.getTree().isNetherTree();
 
         if (building.shouldRestrict() && !BlockPosUtil.isInArea(building.getStartRestriction(), building.getEndRestriction(), job.getTree().getLocation()))
@@ -797,8 +792,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return true;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.planting"));
-
         final int saplingSlot = findSaplingSlot();
 
         if (saplingSlot != -1)
@@ -961,7 +954,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState gathering()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.gathering"));
 
         if (getItemsForPickUp() == null)
         {

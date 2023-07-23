@@ -16,10 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.IItemDecorator;
 
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.coremod.items.ItemClipboard.TAG_COLONY;
@@ -47,14 +44,11 @@ public class ClipBoardDecorator implements IItemDecorator
             if (compoundTag != null)
             {
                 final int colonyId = compoundTag.getInt(TAG_COLONY);
-                if (colonyView == null || colonyId != colonyView.getID())
-                {
-                    colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
-                }
+                colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
 
                 if (colonyView != null)
                 {
-                    final List<IToken<?>> asyncRequest = new ArrayList<>();
+                    final Set<IToken<?>> asyncRequest = new HashSet<>();
                     for (final ICitizenDataView view : colonyView.getCitizens().values())
                     {
                         if (view.getJobView() != null)
@@ -73,14 +67,22 @@ public class ClipBoardDecorator implements IItemDecorator
                         requestTokens.addAll(resolver.getAllAssignedRequests());
                         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-                        if (requestTokens.size() - asyncRequest.size() > 0)
+                        int count = 0;
+                        for (final IToken<?> reqId : requestTokens)
+                        {
+                            if (!asyncRequest.contains(reqId))
+                            {
+                                count++;
+                            }
+                        }
+
+                        if (count > 0)
                         {
                             final PoseStack ps = new PoseStack();
-
                             ps.pushPose();
                             ps.translate(0, 0, 500);
                             GuiComponent.drawCenteredString(ps, font,
-                              Component.literal(requestTokens.size() - asyncRequest.size() + ""),
+                              Component.literal(count + ""),
                               xOffset + 15,
                               yOffset - 2,
                               0xFF4500 | (255 << 24));

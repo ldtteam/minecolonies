@@ -7,13 +7,11 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -196,7 +194,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             }
 
             current_module = module;
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
             int numOfBreedableAnimals = 0;
             int numOfFeedableAnimals = 0;
@@ -289,7 +286,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             return getState();
@@ -445,8 +441,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return START_WORKING;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
-
         animalsToBreed.add(animalOne);
         animalsToBreed.add(animalTwo);
 
@@ -483,8 +477,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             return START_WORKING;
         }
-
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_FEEDING));
 
         if (!walkingToAnimal(animalOne))
         {
@@ -558,7 +550,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (animal != null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
             return walkToBlock(new BlockPos(animal.position()));
         }
         else
@@ -692,7 +683,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected void butcherAnimal(@Nullable final Animal animal)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
             worker.swing(InteractionHand.MAIN_HAND);

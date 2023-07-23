@@ -48,7 +48,6 @@ import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING;
 
 /**
  * Crafts brewing recipes.
@@ -649,7 +648,6 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
                 if (brewingStand.brewTime <= 0 && countInResultSlot > 0 && isEmpty(brewingStand.getItem(INGREDIENT_SLOT)))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -704,8 +702,6 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
      */
     private IAIState retrieveBrewableFromBrewingStand()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-
         if (walkTo == null || currentRequest == null)
         {
             return START_WORKING;
@@ -775,8 +771,6 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
      */
     private IAIState retrieveUsedFuel()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-
         if (walkTo == null)
         {
             return START_WORKING;
@@ -1054,7 +1048,6 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         if (posOfOven != null)
         {
             walkTo = posOfOven;
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD;
         }
 
