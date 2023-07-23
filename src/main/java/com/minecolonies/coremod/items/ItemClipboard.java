@@ -32,7 +32,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
     /**
      * Tag of the colony.
      */
-    private static final String TAG_COLONY = "colony";
+    public static final String TAG_COLONY = "colony";
 
     /**
      * Sets the name, creative tab, and registers the Clipboard item.

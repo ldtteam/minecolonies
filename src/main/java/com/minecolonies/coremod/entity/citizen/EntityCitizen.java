@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.citizens.event.CitizenRemovedEvent;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -92,6 +94,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -1499,7 +1502,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private void performMoveAway(@Nullable final Entity attacker)
     {
         // Environmental damage
-        if (!(attacker instanceof LivingEntity))
+        if (!(attacker instanceof LivingEntity) &&
+              (!(getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) || getCitizenJobHandler().getColonyJob().canAIBeInterrupted()))
         {
             if (moveAwayPath == null || !moveAwayPath.isInProgress())
             {
@@ -1645,6 +1649,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             final String deathCause =
               Component.literal(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
+
+            MinecraftForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
         }
         super.die(damageSource);
     }
