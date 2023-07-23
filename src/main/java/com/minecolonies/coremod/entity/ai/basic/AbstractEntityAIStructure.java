@@ -37,8 +37,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -55,7 +53,10 @@ import net.minecraftforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
@@ -348,8 +349,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             return INVENTORY_FULL;
         }
-
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.building"));
 
         checkForExtraBuildingActions();
 
@@ -815,8 +814,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     @Override
     public void fillItemsList()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.gathering"));
-
         if (!structurePlacer.getB().hasBluePrint())
         {
             return;
@@ -891,7 +888,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.waitingForBuild"));
             return false;
         }
         return true;

@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -15,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MASKS;
 import static com.minecolonies.api.research.util.ResearchConstants.VACCINES;
-import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
-import static com.minecolonies.api.util.constant.CitizenConstants.TAG_IMMUNITY;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_HEALED;
 
@@ -59,6 +59,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Special immunity time after being cured.
      */
     private int immunityTicks = 0;
+
+    /**
+     * Whether the citizen sleeps at the hostpital
+     */
+    private boolean sleepsAtHospital = false;
 
     /**
      * The initial citizen count
@@ -131,6 +136,12 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
+    public boolean isHurt()
+    {
+        return !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() < SEEK_DOCTOR_HEALTH && citizen.getCitizenData().getSaturation() > LOW_SATURATION;
+    }
+
+    @Override
     public boolean isSick()
     {
         return !disease.isEmpty();
@@ -164,6 +175,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     public void cure()
     {
         this.disease = "";
+        sleepsAtHospital = false;
         if (citizen.getCitizenSleepHandler().isAsleep())
         {
             citizen.stopSleeping();
@@ -186,5 +198,17 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
             citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED);
         }
+    }
+
+    @Override
+    public boolean sleepsAtHospital()
+    {
+        return sleepsAtHospital;
+    }
+
+    @Override
+    public void setSleepsAtHospital()
+    {
+        sleepsAtHospital = true;
     }
 }

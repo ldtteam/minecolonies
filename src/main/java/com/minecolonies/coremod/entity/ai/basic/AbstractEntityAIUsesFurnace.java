@@ -19,14 +19,14 @@ import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FurnaceBlock;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,8 +37,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
+import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FUEL;
 
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
@@ -139,7 +139,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                       || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN
                       || (countInResultSlot > 0 && countInInputSlot == 0))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -164,7 +163,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
 
                 if (!furnace.getItem(FUEL_SLOT).isEmpty() && !module.isItemInList(new ItemStorage(furnace.getItem(FUEL_SLOT))))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -209,8 +207,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return getState();
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
-
         final IAIState nextState = checkForImportantJobs();
         if (nextState != START_WORKING)
         {
@@ -221,7 +217,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         if (posOfUsedFuelOven != null)
         {
             walkTo = posOfUsedFuelOven;
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_USED_FUEL_FROM_FURNACE;
         }
 
@@ -229,7 +224,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         if (posOfOven != null)
         {
             walkTo = posOfOven;
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
@@ -358,7 +352,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     protected IAIState checkForAdditionalJobs()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         return START_WORKING;
     }
 
@@ -392,8 +385,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     private IAIState retrieveSmeltableFromFurnace()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-
         if (walkTo == null)
         {
             return START_WORKING;
@@ -427,8 +418,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     private IAIState retrieveUsedFuel()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
-
         if (walkTo == null)
         {
             return START_WORKING;

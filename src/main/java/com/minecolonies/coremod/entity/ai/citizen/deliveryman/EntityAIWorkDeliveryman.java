@@ -28,12 +28,12 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -158,7 +158,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         worker.getCitizenData().setVisibleStatus(DELIVERING);
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.gathering"));
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
         if (pickupTarget != BlockPos.ZERO && !worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
@@ -292,8 +291,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState dump()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.dumping"));
-
         if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
         {
             setDelay(WALK_DELAY);
@@ -334,7 +331,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         worker.getCitizenData().setVisibleStatus(DELIVERING);
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.delivering"));
 
         final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
         if (!targetBuildingLocation.isReachableFromLocation(worker.getLocation()))
