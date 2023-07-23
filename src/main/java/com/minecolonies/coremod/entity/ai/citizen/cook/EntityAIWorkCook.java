@@ -15,19 +15,18 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
+import static com.minecolonies.api.util.constant.CitizenConstants.AVERAGE_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.FOOD_SERVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FOOD;
@@ -176,8 +176,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private IAIState serveFoodToCitizen()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
-
         if (citizenToServe.isEmpty() && playerToServe.isEmpty())
         {
             return START_WORKING;
@@ -305,7 +303,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final List<AbstractEntityCitizen> citizenList = WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, building, null)
                                                           .stream()
                                                           .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook)
-                                                                           && cit.shouldBeFed()
+                                                                           && shouldBeFed(cit)
                                                                            && !InventoryUtils.hasItemInItemHandler(cit.getItemHandlerCitizen(), stack -> CAN_EAT.test(stack) && canEat(stack, cit)))
                                                           .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
                                                           .collect(Collectors.toList());
@@ -360,6 +358,16 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
 
         return START_WORKING;
+    }
+
+    /**
+     * Check if the citizen can be fed.
+     *
+     * @return true if so.
+     */
+    private boolean shouldBeFed(AbstractEntityCitizen citizen)
+    {
+        return citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !citizen.getCitizenData().justAte();
     }
 
     /**

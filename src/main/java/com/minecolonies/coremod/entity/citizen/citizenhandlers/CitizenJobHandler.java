@@ -4,18 +4,13 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenJobHandler;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_MODEL;
 
@@ -28,6 +23,11 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * The citizen assigned to this manager.
      */
     private final AbstractEntityCitizen citizen;
+
+    /**
+     * The job's work AI
+     */
+    private ITickingStateAI workAI = null;
 
     /**
      * Constructor for the experience handler.
@@ -100,24 +100,9 @@ public class CitizenJobHandler implements ICitizenJobHandler
         //  Model
         setModelDependingOnJob(job);
 
-        //  AI Tasks
-        for (@NotNull final WrappedGoal task : new ArrayList<>(citizen.getTasks().availableGoals))
-        {
-            if (task.getGoal() instanceof AbstractAISkeleton)
-            {
-                citizen.getTasks().removeGoal(task.getGoal());
-            }
-        }
-
-        citizen.getCitizenData().setIdleAtJob(false);
-
         if (job != null)
         {
-            job.addWorkerAIToTaskList(citizen.getTasks());
-            if (citizen.getTicksExisted() > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getDesiredActivity() == DesiredActivity.WORK)
-            {
-                BlockPosUtil.tryMoveBaseCitizenEntityToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getPosition());
-            }
+            job.createAI();
 
             // Calculate the number of guards for some advancements
             if (job instanceof AbstractJobGuard)
@@ -165,5 +150,17 @@ public class CitizenJobHandler implements ICitizenJobHandler
     public boolean shouldRunAvoidance()
     {
         return getColonyJob() == null || getColonyJob().allowsAvoidance();
+    }
+
+    @Override
+    public void setWorkAI(final ITickingStateAI workAI)
+    {
+        this.workAI = workAI;
+    }
+
+    @Override
+    public ITickingStateAI getWorkAI()
+    {
+        return workAI;
     }
 }
