@@ -2,9 +2,11 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +60,11 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
         if (ctxIn.getSender() != null)
         {
             Network.getNetwork().sendToEveryone(this);
+        }
+
+        if (isLogicalServer)
+        {
+            MinecraftForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));
         }
     }
 }

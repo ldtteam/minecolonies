@@ -1,6 +1,7 @@
 package com.minecolonies.api.configuration;
 
 import com.minecolonies.api.colony.permissions.Explosions;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Arrays;
@@ -158,7 +159,7 @@ public class ServerConfiguration extends AbstractConfiguration
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 4, 500);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 4, CitizenConstants.CITIZEN_LIMIT_MAX);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
         blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);

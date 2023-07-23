@@ -7,6 +7,7 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.event.BuildingConstructionEvent;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -32,6 +33,7 @@ import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -423,6 +425,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (wo instanceof WorkOrderBuilding)
             {
                 final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                MinecraftForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
                 switch (wo.getWorkOrderType())
                 {
                     case BUILD:
