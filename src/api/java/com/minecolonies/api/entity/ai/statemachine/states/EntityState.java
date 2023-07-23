@@ -1,5 +1,8 @@
 package com.minecolonies.api.entity.ai.statemachine.states;
 
+/**
+ * States of entity loading/activity
+ */
 public enum EntityState implements IState
 {
     // Initial state, entity is loading/data is missing or not present

@@ -4,7 +4,6 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
@@ -134,8 +133,10 @@ public final class WorkerUtil
         if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
         {
             //If not moving the try setting the point where the entity should move to
-            if (worker.getNavigation().isDone() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
-            {}
+            if (worker.getNavigation().isDone())
+            {
+                EntityUtils.tryMoveLivingToXYZ(worker, x, y, z);
+            }
             return false;
         }
         return true;

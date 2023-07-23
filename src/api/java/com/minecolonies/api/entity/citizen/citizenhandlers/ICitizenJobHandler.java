@@ -46,7 +46,17 @@ public interface ICitizenJobHandler
      */
     boolean shouldRunAvoidance();
 
+    /**
+     * Sets the work AI used in this job
+     *
+     * @param workAI
+     */
     void setWorkAI(ITickingStateAI workAI);
 
+    /**
+     * Get the AI running for this job
+     *
+     * @return
+     */
     ITickingStateAI getWorkAI();
 }

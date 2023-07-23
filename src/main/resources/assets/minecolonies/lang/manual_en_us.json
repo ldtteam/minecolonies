@@ -413,7 +413,7 @@
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2Job: §fUnemployed",
   "com.minecolonies.command.citizeninfo.health": "§2Health: §f%s §2Max Health: §f%s",
-  "com.minecolonies.command.citizeninfo.activity": "§2Desired activity: §f%s §2Current Activity: §f%s §2Task: §f%s",
+  "com.minecolonies.command.citizeninfo.activity": "§2Citizen state: §f%s §2Job: §f%s §2Jobstate: §f%s",
   "com.minecolonies.command.citizeninfo.noactivity": "§4No activity is being desired or executed!",
   "com.minecolonies.command.citizeninfo.homepos": "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s",
   "com.minecolonies.command.citizeninfo.workpos": "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s",
