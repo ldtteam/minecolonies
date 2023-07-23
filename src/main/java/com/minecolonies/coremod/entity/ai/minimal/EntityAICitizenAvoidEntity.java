@@ -244,7 +244,10 @@ public class EntityAICitizenAvoidEntity implements IStateAI
     public void reset()
     {
         safeTime = 0;
-        citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
+        if (startingPos != null)
+        {
+            citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
+        }
         closestLivingEntity = null;
         moveAwayPath = null;
         startingPos = null;
