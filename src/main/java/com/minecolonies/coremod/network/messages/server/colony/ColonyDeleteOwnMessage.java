@@ -2,15 +2,18 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.event.ColonyDeletedEvent;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.FriendlyByteBuf;
 import com.minecolonies.api.util.MessageUtils;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_DELETE_SUCCESS;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_NOT_FOUND;
 
 /**
  * Message for deleting an owned colony
@@ -50,6 +53,11 @@ public class ColonyDeleteOwnMessage implements IMessage
         {
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());
             MessageUtils.format(MESSAGE_INFO_COLONY_DELETE_SUCCESS).sendTo(player);
+
+            if (isLogicalServer)
+            {
+                MinecraftForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
+            }
         }
         else
         {

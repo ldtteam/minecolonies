@@ -6,6 +6,7 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.event.BuildingConstructionEvent;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -31,17 +32,15 @@ import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_BUILT;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_UPGRADED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_REPAIRED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BUILD_REMOVED;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -400,6 +399,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (wo instanceof WorkOrderBuilding)
             {
                 final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                MinecraftForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
                 switch (wo.getWorkOrderType())
                 {
                     case BUILD:
