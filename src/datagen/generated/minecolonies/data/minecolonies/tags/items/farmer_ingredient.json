@@ -1,5 +1,7 @@
 {
   "values": [
-    "minecraft:hay_block"
+    "minecraft:hay_block",
+    "minecraft:grass",
+    "minecraft:fern"
   ]
 }
