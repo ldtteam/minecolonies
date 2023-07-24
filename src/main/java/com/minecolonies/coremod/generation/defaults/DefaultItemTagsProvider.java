@@ -396,6 +396,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ItemTags.WOODEN_SLABS)
                 .addTag(ItemTags.WOODEN_STAIRS)
                 .add(Items.LECTERN, Items.PISTON)
+                .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
                 .add(paperExtras);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
