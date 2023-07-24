@@ -224,7 +224,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.DYES);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER))
-                .add(Items.HAY_BLOCK);
+                .add(Items.HAY_BLOCK)
+                .add(Items.GRASS)
+                .add(Items.FERN);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FARMER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FARMER))
                 .add(Items.HAY_BLOCK)
