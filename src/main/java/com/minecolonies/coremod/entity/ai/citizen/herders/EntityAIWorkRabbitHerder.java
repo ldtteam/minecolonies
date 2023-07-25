@@ -3,8 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingRabbitHutch;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.animal.Animal;
