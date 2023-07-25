@@ -1561,7 +1561,7 @@
   "com.minecolonies.coremod.jei.concretemixer": "Crafts concrete powder and concrete. Can't learn other recipes.",
   "com.minecolonies.coremod.jei.cook": "The restaurant's cook will cook various food items until they are edible.",
   "com.minecolonies.coremod.jei.cookassistant": "At level 3, the restaurant can hire an assistant to craft additional food recipes.",
-  "com.minecolonies.coremod.jei.crusher": "Crushes blocks into base forms. Each building can only do one of these at a time.",
+  "com.minecolonies.coremod.jei.crusher": "Crushes blocks into base forms, either on demand or setting one to do daily.",
   "com.minecolonies.coremod.jei.dyer": "Crafts dyes and anything that uses dye as a component.",
   "com.minecolonies.coremod.jei.enchanter": "Crafts enchanted books and scrolls.",
   "com.minecolonies.coremod.jei.farmer": "In addition to tending fields, the farmer can craft things with hay, seeds, or dirt.",

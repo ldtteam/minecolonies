@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+      "item": "minecraft:quartz_block"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "not-research-id": "minecolonies:effects/crushing11unlock",
+  "result": "minecraft:quartz"
+}

@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+      "item": "minecraft:prismarine_brick_stairs"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/crushingadvancedunlock",
+  "result": "minecraft:prismarine_shard"
+}

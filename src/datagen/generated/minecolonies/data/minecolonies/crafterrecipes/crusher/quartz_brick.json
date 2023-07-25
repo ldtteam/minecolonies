@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+      "item": "minecraft:quartz_bricks"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/crushingadvancedunlock",
+  "result": "minecraft:quartz"
+}

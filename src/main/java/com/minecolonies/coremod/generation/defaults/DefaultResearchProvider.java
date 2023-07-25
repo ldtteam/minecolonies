@@ -109,6 +109,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
         effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Magic Potions to unlock new Abilities"));
         effects.add(new ResearchEffect(CRUSHING_11).setTranslatedName("Crusher Recipes Cost -50%"));
+        effects.add(new ResearchEffect(CRUSHING_ADV).setTranslatedName("Unlocks Advanced Crushing Options"));
         effects.add(new ResearchEffect(KNIGHT_TAUNT).setTranslatedName("Knights Force Mobs to Target Them"));
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
         effects.add(new ResearchEffect(ARROW_PIERCE).setTranslatedName("Archers Gain Piercing II"));
@@ -1385,22 +1386,33 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addItemCost(Items.STONE, 64)
                                        .addEffect(ModBuildings.crusher.get().getBuildingBlock(), 1)
                                        .addToList(r);
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/gildedhammer"), TECH).setParentResearch(rockingRoll)
+        final Research gildedHammer = new Research(new ResourceLocation(Constants.MOD_ID, "technology/gildedhammer"), TECH).setParentResearch(rockingRoll)
           .setTranslatedName("Gilded Hammer")
           .setTranslatedSubtitle("When in doubt, cover in shiny stuff.")
           .setIcon(Items.GOLD_BLOCK)
-          .addBuildingRequirement("crusher", 3)
+          .addBuildingRequirement(ModBuildings.CRUSHER_ID, 3)
           .addItemCost(Items.GRAVEL, 64)
           .addItemCost(Items.SAND, 64)
           .addItemCost(Items.CLAY, 64)
           .addEffect(CRUSHING_11, 1)
           .addToList(r);
 
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/crystalhammer"), TECH).setParentResearch(gildedHammer)
+                .setTranslatedName("Crystal Hammer")
+                .setTranslatedSubtitle("Delicate materials require additional care.")
+                .setIcon(Items.PRISMARINE_SHARD)
+                .addBuildingRequirement(ModBuildings.STONE_MASON_ID, 3)
+                .addItemCost(Items.PRISMARINE_SHARD, 16)
+                .addItemCost(Items.ENDER_PEARL, 8)
+                .addItemCost(Items.DIAMOND_BLOCK, 1)
+                .addEffect(CRUSHING_ADV, 1)
+                .addToList(r);
+
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/depthknowledge"), TECH).setParentResearch(rockingRoll)
           .setTranslatedName("Knowledge of the Depth")
           .setTranslatedSubtitle("Gotta go deep for that one.")
           .setIcon(Items.COBBLED_DEEPSLATE)
-          .addBuildingRequirement("crusher", 3)
+          .addBuildingRequirement(ModBuildings.CRUSHER_ID, 3)
           .addItemCost(Items.DEEPSLATE, 64)
           .addEffect(THE_DEPTHS, 1)
           .addToList(r);
@@ -1410,7 +1422,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedSubtitle("Not something you want to get mixed up in.")
           .setSortOrder(2)
           .setIcon(ModBlocks.blockHutConcreteMixer.asItem())
-          .addBuildingRequirement("crusher", 1)
+          .addBuildingRequirement(ModBuildings.CRUSHER_ID, 1)
           .addItemCost(Items.WHITE_CONCRETE, 32)
           .addEffect(ModBuildings.concreteMixer.get().getBuildingBlock(), 1)
           .addToList(r);

@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/crushingadvancedunlock": 1
+    }
+  ],
+  "icon": "minecraft:prismarine_shard",
+  "parentResearch": "minecolonies:technology/gildedhammer",
+  "requirements": [
+    {
+      "building": "stonemason",
+      "level": 3
+    },
+    {
+      "item": "minecraft:prismarine_shard",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:ender_pearl",
+      "quantity": 8
+    },
+    {
+      "item": "minecraft:diamond_block",
+      "quantity": 1
+    }
+  ],
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.technology.crystalhammer.subtitle"
+}

@@ -135,6 +135,7 @@ public final class ResearchConstants
 
     //Unlock Ability modifiers.
     public static final ResourceLocation CRUSHING_11       = new ResourceLocation(Constants.MOD_ID, "effects/crushing11unlock");
+    public static final ResourceLocation CRUSHING_ADV      = new ResourceLocation(Constants.MOD_ID, "effects/crushingadvancedunlock");
     public static final ResourceLocation ARCHER_USE_ARROWS = new ResourceLocation(Constants.MOD_ID, "effects/consumearrowsunlock");
     public static final ResourceLocation KNIGHT_TAUNT      = new ResourceLocation(Constants.MOD_ID, "effects/knighttauntmobsunlock");
     public static final ResourceLocation FIRE_RES          = new ResourceLocation(Constants.MOD_ID, "effects/minerfireresunlock");

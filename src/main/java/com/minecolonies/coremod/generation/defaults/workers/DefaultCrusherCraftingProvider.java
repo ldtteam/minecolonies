@@ -40,6 +40,8 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
         final Rule noGildedHammer = builder -> builder.maxResearchId(ResearchConstants.CRUSHING_11);
         final Rule withGildedHammer = builder -> builder.minResearchId(ResearchConstants.CRUSHING_11);
         final Rule withTheDepths = builder -> builder.minResearchId(ResearchConstants.THE_DEPTHS);
+        final Rule noCrystalHammer = builder -> builder.maxResearchId(ResearchConstants.CRUSHING_ADV);
+        final Rule withCrystalHammer = builder -> builder.minResearchId(ResearchConstants.CRUSHING_ADV);
         final Rule gravelLoot = builder -> builder.lootTable(DefaultRecipeLootProvider.LOOT_TABLE_GRAVEL);
 
         crush(consumer, "bonemeal1", new ItemStack(Items.BONE), new ItemStack(Items.BONE_MEAL, 3), noGildedHammer);
@@ -59,6 +61,20 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
         crush(consumer, "cobble", new ItemStack(Items.TUFF, 2), new ItemStack(Items.COBBLESTONE), withTheDepths);
         crush(consumer, "tuff", new ItemStack(Items.COBBLED_DEEPSLATE, 2), new ItemStack(Items.TUFF), withTheDepths);
         // sadly you can't (yet) combine two required researches, so these two don't respect Gilded Hammer
+
+        crush(consumer, "prismarine1", new ItemStack(Items.PRISMARINE, 4), new ItemStack(Items.PRISMARINE_SHARD), noGildedHammer);
+        crush(consumer, "prismarine2", new ItemStack(Items.PRISMARINE, 2), new ItemStack(Items.PRISMARINE_SHARD), withGildedHammer, noCrystalHammer);
+        crush(consumer, "prismarine3", new ItemStack(Items.PRISMARINE), new ItemStack(Items.PRISMARINE_SHARD), withCrystalHammer);
+        crush(consumer, "prismarine_brick", new ItemStack(Items.PRISMARINE_BRICKS), new ItemStack(Items.PRISMARINE_SHARD), withCrystalHammer);
+        crush(consumer, "prismarine_stair", new ItemStack(Items.PRISMARINE_STAIRS), new ItemStack(Items.PRISMARINE_SHARD), withCrystalHammer);              // usually 4:6, but I'm mean
+        crush(consumer, "prismarine_brick_stair", new ItemStack(Items.PRISMARINE_BRICK_STAIRS), new ItemStack(Items.PRISMARINE_SHARD), withCrystalHammer);  // usually 4:6, but I'm mean
+
+        crush(consumer, "quartz1", new ItemStack(Items.QUARTZ_BLOCK), new ItemStack(Items.QUARTZ), noGildedHammer);
+        crush(consumer, "quartz2", new ItemStack(Items.QUARTZ_BLOCK), new ItemStack(Items.QUARTZ, 2), withGildedHammer, noCrystalHammer);
+        crush(consumer, "quartz3", new ItemStack(Items.QUARTZ_BLOCK), new ItemStack(Items.QUARTZ, 4), withCrystalHammer);
+        crush(consumer, "quartz_brick", new ItemStack(Items.QUARTZ_BRICKS), new ItemStack(Items.QUARTZ), withCrystalHammer);
+        crush(consumer, "quartz_stair", new ItemStack(Items.QUARTZ_STAIRS), new ItemStack(Items.QUARTZ), withCrystalHammer);                    // usually 4:6, but I'm mean
+        crush(consumer, "smooth_quartz_stair", new ItemStack(Items.SMOOTH_QUARTZ_STAIRS), new ItemStack(Items.QUARTZ), withCrystalHammer);      // usually 4:6, but I'm mean
     }
 
     private void crush(@NotNull final Consumer<FinishedRecipe> consumer,

@@ -1,0 +1,14 @@
+{
+  "type": "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+      "count": 2,
+      "item": "minecraft:prismarine"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "not-research-id": "minecolonies:effects/crushingadvancedunlock",
+  "research-id": "minecolonies:effects/crushing11unlock",
+  "result": "minecraft:prismarine_shard"
+}
