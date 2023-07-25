@@ -9,13 +9,14 @@ import com.minecolonies.api.util.constant.translation.CommandTranslationConstant
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -110,9 +111,9 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
                 entityCitizen.getCitizenColonyHandler().getWorkBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).getJobEntry().getTranslationKey()), true);
             context.getSource()
               .sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_ACTIVITY,
-                entityCitizen.getDesiredActivity(),
+                ((EntityCitizen) entityCitizen).getCitizenAI().getState(),
                 entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
-                entityCitizen.goalSelector.getRunningGoals().findFirst().get().getGoal().toString()), true);
+                entityCitizen.getCitizenJobHandler().getWorkAI().getState()), true);
         }
 
         return 1;

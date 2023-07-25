@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingRabbitHutch;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -55,7 +55,6 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
     @Override
     protected void butcherAnimal(@Nullable final Animal animal)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
             worker.swing(InteractionHand.MAIN_HAND);

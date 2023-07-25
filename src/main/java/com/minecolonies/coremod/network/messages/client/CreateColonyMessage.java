@@ -3,22 +3,20 @@ package com.minecolonies.coremod.network.messages.client;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.colony.event.ColonyCreatedEvent;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.ChatFormatting;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -162,7 +160,7 @@ public class CreateColonyMessage implements IMessage
 
         if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
         {
-            MessageUtils.format( MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
+            MessageUtils.format(MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
             return;
         }
 
@@ -170,9 +168,17 @@ public class CreateColonyMessage implements IMessage
 
         if (ownedColony == null)
         {
-            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
-            IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-            MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
+            IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
+            if (createdColony != null)
+            {
+                createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+                MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
+
+                if (isLogicalServer)
+                {
+                    MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
+                }
+            }
             return;
         }
 

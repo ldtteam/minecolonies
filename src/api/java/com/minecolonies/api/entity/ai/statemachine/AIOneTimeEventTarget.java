@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingOneTimeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * One time usage AITarget, unregisters itself after usage
  */
-public class AIOneTimeEventTarget extends TickingOneTimeEvent<IAIState>
+public class AIOneTimeEventTarget<S extends IState> extends TickingOneTimeEvent<S>
 {
     /**
      * Event to trigger a one time transition.
@@ -19,7 +19,7 @@ public class AIOneTimeEventTarget extends TickingOneTimeEvent<IAIState>
      * @param predicate which has to be true to execute
      * @param action    Supplier for the state to transition into
      */
-    public AIOneTimeEventTarget(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<IAIState> action)
+    public AIOneTimeEventTarget(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<S> action)
     {
         super(AIBlockingEventType.EVENT, predicate, action, 1);
     }
@@ -30,7 +30,7 @@ public class AIOneTimeEventTarget extends TickingOneTimeEvent<IAIState>
      * @param predicate which has to be true to execute
      * @param state     state to transition into
      */
-    public AIOneTimeEventTarget(@NotNull final BooleanSupplier predicate, @NotNull final IAIState state)
+    public AIOneTimeEventTarget(@NotNull final BooleanSupplier predicate, @NotNull final S state)
     {
         super(AIBlockingEventType.EVENT, predicate, () -> state, 1);
     }
@@ -40,7 +40,7 @@ public class AIOneTimeEventTarget extends TickingOneTimeEvent<IAIState>
      *
      * @param action Supplier for the state to transition into
      */
-    public AIOneTimeEventTarget(@NotNull final Supplier<IAIState> action)
+    public AIOneTimeEventTarget(@NotNull final Supplier<S> action)
     {
         super(AIBlockingEventType.EVENT, () -> true, action, 1);
     }
@@ -50,7 +50,7 @@ public class AIOneTimeEventTarget extends TickingOneTimeEvent<IAIState>
      *
      * @param state state to transition into
      */
-    public AIOneTimeEventTarget(@NotNull final IAIState state)
+    public AIOneTimeEventTarget(@NotNull final S state)
     {
         super(AIBlockingEventType.EVENT, () -> true, () -> state, 1);
     }

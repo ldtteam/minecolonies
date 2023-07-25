@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescrip
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -86,14 +87,14 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final int citizensSize = building.getColony().getCitizens().size();
         final int citizensCap;
 
-        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
-            citizensCap = (int) (Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(),
-              25 + this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP)));
+            final int max = Math.max(CitizenConstants.CITIZEN_LIMIT_DEFAULT, (int) this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP));
+            citizensCap = Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
         }
         else
         {
-              citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
+            citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
         }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);

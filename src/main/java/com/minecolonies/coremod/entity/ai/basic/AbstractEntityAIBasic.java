@@ -71,7 +71,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.WORKER_AI_EXCEPTION;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 /**
@@ -282,8 +283,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private IAIState getNeededItem()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-
         if (needsCurrently == null)
         {
             return getStateAfterPickUp();
@@ -533,29 +532,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected IAIState waitForRequests()
     {
         delay = DELAY_RECHECK;
-        updateWorkerStatusFromRequests();
         return lookForRequests();
-    }
-
-    private void updateWorkerStatusFromRequests()
-    {
-        if (!building.hasWorkerOpenRequests(worker.getCitizenData().getId()) && !building.hasCitizenCompletedRequests(worker.getCitizenData()))
-        {
-            worker.getCitizenStatusHandler().setLatestStatus();
-            return;
-        }
-
-        Collection<IRequest<?>> requests = building.getCompletedRequests(worker.getCitizenData());
-        if (requests.isEmpty())
-        {
-            requests = building.getOpenRequests(worker.getCitizenData().getId());
-        }
-
-        if (!requests.isEmpty())
-        {
-            worker.getCitizenStatusHandler()
-              .setLatestStatus(Component.translatable("com.minecolonies.coremod.status.waiting"), requests.iterator().next().getShortDisplayString());
-        }
     }
 
     /**

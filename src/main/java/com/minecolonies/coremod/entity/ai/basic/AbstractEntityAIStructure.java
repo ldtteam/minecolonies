@@ -351,8 +351,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return INVENTORY_FULL;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.building"));
-
         checkForExtraBuildingActions();
 
         // some things to do first! then we go to the actual phase!
@@ -817,8 +815,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     @Override
     public void fillItemsList()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.gathering"));
-
         if (!structurePlacer.getB().hasBluePrint())
         {
             return;
@@ -893,7 +889,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.waitingForBuild"));
             return false;
         }
         return true;

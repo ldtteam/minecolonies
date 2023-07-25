@@ -491,7 +491,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 {
                     case FARMER_HOE ->
                     {
-                        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.hoeing"));
                         if (!hoeIfAble(position, farmField))
                         {
                             return getState();
@@ -499,7 +498,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     }
                     case FARMER_PLANT ->
                     {
-                        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.planting"));
                         if (!tryToPlant(farmField, position))
                         {
                             return PREPARING;
@@ -507,7 +505,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     }
                     case FARMER_HARVEST ->
                     {
-                        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.harvesting"));
                         if (!harvestIfAble(position))
                         {
                             return getState();

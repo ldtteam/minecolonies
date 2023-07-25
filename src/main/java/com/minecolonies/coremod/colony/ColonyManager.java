@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
+import com.minecolonies.api.colony.managers.events.ColonyManagerLoadedEvent;
+import com.minecolonies.api.colony.managers.events.ColonyManagerUnloadedEvent;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -81,13 +83,13 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
+    public IColony createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
-            return;
+            return null;
         }
 
         final IColony colony = cap.createColony(w, pos);
@@ -104,10 +106,11 @@ public final class ColonyManager implements IColonyManager
         if (colony.getWorld() == null)
         {
             Log.getLogger().error("Unable to claim chunks because of the missing world in the colony, please report this to the mod authors!", new Exception());
-            return;
+            return null;
         }
 
         ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
+        return colony;
     }
 
     @Override
@@ -678,6 +681,8 @@ public final class ColonyManager implements IColonyManager
             {
                 c.onWorldLoad(world);
             }
+
+            MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
         }
     }
 
@@ -715,6 +720,8 @@ public final class ColonyManager implements IColonyManager
             {
                 BackUpHelper.backupColonyData();
             }
+
+            MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
         }
     }
 

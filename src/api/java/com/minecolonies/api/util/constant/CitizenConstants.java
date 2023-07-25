@@ -6,6 +6,31 @@ package com.minecolonies.api.util.constant;
 public final class CitizenConstants
 {
     /**
+     * The default limit of citizens, if no research is done yet.
+     */
+    public static final int CITIZEN_LIMIT_DEFAULT = 25;
+
+    /**
+     * The limit of citizens if the first increase research is done.
+     */
+    public static final int CITIZEN_LIMIT_OUTPOST = 50;
+
+    /**
+     * The limit of citizens if the second increase research is done.
+     */
+    public static final int CITIZEN_LIMIT_HAMLET = 100;
+
+    /**
+     * The limit of citizens if the third increase research is done.
+     */
+    public static final int CITIZEN_LIMIT_VILLAGE = 150;
+
+    /**
+     * The limit of citizens if the last increase research is done, this is absolute limit of citizens, including config file.
+     */
+    public static final int CITIZEN_LIMIT_MAX = 500;
+
+    /**
      * Base movement speed of every citizen.
      */
     public static final double BASE_MOVEMENT_SPEED = 0.3D;
@@ -241,5 +266,5 @@ public final class CitizenConstants
     /**
      * Disabled timer.
      */
-    public static final int DISABLED         = -1;
+    public static final int DISABLED = -1;
 }

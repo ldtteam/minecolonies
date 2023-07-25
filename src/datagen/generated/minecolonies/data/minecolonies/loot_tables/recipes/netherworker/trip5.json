@@ -265,6 +265,19 @@
         },
         {
           "type": "minecraft:item",
+          "name": "minecraft:ochre_froglight",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:pearlescent_froglight"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:verdant_froglight"
+        },
+        {
+          "type": "minecraft:item",
           "functions": [
             {
               "add": false,

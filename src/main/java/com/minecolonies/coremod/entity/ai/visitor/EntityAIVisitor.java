@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.entity.ai.minimal;
+package com.minecolonies.coremod.entity.ai.visitor;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.ai.statemachine.states.EntityState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -14,20 +15,15 @@ import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumSet;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI for visitors, they do sometimes nap on their place, sit on their place, randomly walk around inside building outline
  */
-public class EntityAIVisitor extends Goal
+public class EntityAIVisitor implements IState
 {
     /**
      * Update interval during combat
@@ -81,7 +77,12 @@ public class EntityAIVisitor extends Goal
     {
         super();
         this.citizen = (VisitorCitizen) entity;
+
         stateMachine = new TickRateStateMachine<>(VisitorState.INIT, this::onException);
+        entity.getEntityStateController().addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, () -> {
+            stateMachine.tick();
+            return false;
+        }, () -> null, 1));
 
         stateMachine.addTransition(new TickingTransition<>(VisitorState.INIT, this::isEntityLoaded, () -> VisitorState.IDLE, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.IDLE, () -> true, this::decide, 50));
@@ -93,7 +94,6 @@ public class EntityAIVisitor extends Goal
         stateMachine.addTransition(new TickingTransition<>(VisitorState.IDLE, this::reduceTime, stateMachine::getState, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.WANDERING, this::reduceTime, stateMachine::getState, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.SITTING, this::reduceTime, stateMachine::getState, 50));
-        setFlags(EnumSet.of(Flag.JUMP));
     }
 
     /**
@@ -279,25 +279,6 @@ public class EntityAIVisitor extends Goal
     }
 
     /**
-     * Returns whether the Goal should begin execution of avoiding.
-     */
-    @Override
-    public boolean canUse()
-    {
-        return true;
-    }
-
-    /**
-     * Returns whether an in-progress Goal should continue executing.
-     */
-    @Override
-    public boolean canContinueToUse()
-    {
-        stateMachine.tick();
-        return true;
-    }
-
-    /**
      * Resets saved data of internal logic
      */
     private void resetLogic()
@@ -308,7 +289,6 @@ public class EntityAIVisitor extends Goal
     /**
      * Resets the task.
      */
-    @Override
     public void stop()
     {
         stateMachine.reset();

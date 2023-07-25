@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
@@ -19,7 +17,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
-import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
+import com.minecolonies.coremod.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
@@ -51,7 +49,8 @@ import org.jetbrains.annotations.Nullable;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
@@ -67,22 +66,18 @@ public class VisitorCitizen extends AbstractEntityCitizen
     private ICitizenExperienceHandler citizenExperienceHandler;
 
     /**
-     * The citizen status handler.
-     */
-    private ICitizenStatusHandler citizenStatusHandler;
-    /**
      * It's citizen Id.
      */
-    private int                   citizenId = 0;
+    private int          citizenId = 0;
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
-    private IWalkToProxy          proxy;
+    private IWalkToProxy proxy;
     /**
      * Reference to the data representation inside the colony.
      */
     @Nullable
-    private ICitizenData          citizenData;
+    private ICitizenData citizenData;
 
     /**
      * The citizen chat handler.
@@ -112,11 +107,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     private ICitizenSleepHandler citizenSleepHandler;
 
     /**
-     * Whether the citizen is currently running away
-     */
-    private boolean currentlyFleeing = false;
-
-    /**
      * Citizen data view.
      */
     private ICitizenDataView citizenDataView;
@@ -139,7 +129,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.citizenChatHandler = new CitizenChatHandler(this);
-        this.citizenStatusHandler = new CitizenStatusHandler(this);
         this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new VisitorColonyHandler(this);
@@ -163,7 +152,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtPlayerGoal(this, LivingEntity.class, WATCH_CLOSEST));
-        this.goalSelector.addGoal(++priority, new EntityAIVisitor(this));
+        new EntityAIVisitor(this);
     }
 
     @Override
@@ -179,7 +168,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if ( !( damageSource.getEntity() instanceof EntityCitizen ) && super.hurt(damageSource, damage))
+        if (!(damageSource.getEntity() instanceof EntityCitizen) && super.hurt(damageSource, damage))
         {
             if (damageSource.getEntity() instanceof LivingEntity && damage > 1.01f)
             {
@@ -287,13 +276,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         }
     }
 
-    @NotNull
-    @Override
-    public DesiredActivity getDesiredActivity()
-    {
-        return DesiredActivity.IDLE;
-    }
-
     @Override
     public void setCitizensize(@NotNull final float width, @NotNull final float height)
     {
@@ -376,12 +358,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenStatusHandler getCitizenStatusHandler()
-    {
-        return citizenStatusHandler;
-    }
-
-    @Override
     public ICitizenItemHandler getCitizenItemHandler()
     {
         return citizenItemHandler;
@@ -436,24 +412,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public boolean isOkayToEat()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean shouldBeFed()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isIdlingAtJob()
-    {
-        return false;
-    }
-
-    @Override
     public float getRotationYaw()
     {
         return getYRot();
@@ -502,21 +460,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public boolean isCurrentlyFleeing()
-    {
-        return currentlyFleeing;
-    }
-
-    @Override
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
 
-    }
-
-    @Override
-    public void setFleeingState(final boolean fleeing)
-    {
-        currentlyFleeing = fleeing;
     }
 
     @Nullable
@@ -676,7 +622,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
-        compound.putInt(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
         if (citizenColonyHandler.getColony() != null && citizenData != null)
         {
             compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
@@ -691,7 +636,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     {
         super.readAdditionalSaveData(compound);
 
-        citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
 

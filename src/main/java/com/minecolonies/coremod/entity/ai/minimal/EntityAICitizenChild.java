@@ -1,29 +1,25 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
-import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
@@ -33,7 +29,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_IN
 /**
  * AI which controls child behaviour and growing.
  */
-public class EntityAICitizenChild extends Goal
+public class EntityAICitizenChild implements IStateAI
 {
 
     /**
@@ -41,7 +37,6 @@ public class EntityAICitizenChild extends Goal
      */
     public enum State implements IAIState
     {
-        IDLE,
         BORED,
         PLAYING,
         VISITING,
@@ -56,8 +51,6 @@ public class EntityAICitizenChild extends Goal
 
     protected final EntityCitizen child;
     private final   Random        rand = new Random();
-
-    private final ITickRateStateMachine<IAIState> stateMachine;
 
     /**
      * Timer for actions/between actions
@@ -113,45 +106,13 @@ public class EntityAICitizenChild extends Goal
     {
         super();
         this.child = citizen;
-        super.setFlags(EnumSet.of(Goal.Flag.MOVE));
-        stateMachine = new TickRateStateMachine<>(State.IDLE, this::handleAIException);
-        stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::updateTimers, stateMachine::getState, 1));
-        stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.EVENT, this::tryGrowUp, () -> State.IDLE, 500));
 
-        stateMachine.addTransition(new AITarget(State.IDLE, this::searchEntityToFollow, () -> State.FOLLOWING, 150));
-        stateMachine.addTransition(new AITarget(State.IDLE, this::isReadyForActivity, () -> State.VISITING, 300));
+        citizen.getCitizenAI().addTransition(new AITarget(CitizenAIState.IDLE, this::isReadyForActivity, () -> State.VISITING, 200));
+        citizen.getCitizenAI().addTransition(new AIEventTarget(AIBlockingEventType.EVENT, this::tryGrowUp, () -> citizen.getCitizenAI().getState(), 500));
+        citizen.getCitizenAI().addTransition(new AITarget(CitizenAIState.IDLE, this::searchEntityToFollow, () -> State.FOLLOWING, 200));
 
-        stateMachine.addTransition(new AITarget(State.FOLLOWING, this::followingEntity, 20));
-        stateMachine.addTransition(new AITarget(State.VISITING, this::visitHuts, 120));
-    }
-
-    /**
-     * Exception handler for the statemachine
-     *
-     * @param ex the exception to handle
-     */
-    private void handleAIException(final RuntimeException ex)
-    {
-        stateMachine.reset();
-        Log.getLogger().warn("EntityAICitizenChild Child: " + child.getName() + " threw an exception:", ex);
-    }
-
-    /**
-     * Updates all timers
-     *
-     * @return false
-     */
-    private boolean updateTimers()
-    {
-        // Timer used for delays on actions
-        if (actionTimer > 0)
-        {
-            actionTimer -= stateMachine.getTickRate();
-        }
-
-        aiActiveTime += stateMachine.getTickRate() * (child.getCitizenJobHandler().getColonyJob() instanceof JobPupil ? 2 : 1);
-
-        return false;
+        citizen.getCitizenAI().addTransition(new AITarget(State.FOLLOWING, this::followingEntity, 20));
+        citizen.getCitizenAI().addTransition(new AITarget(State.VISITING, this::visitHuts, 120));
     }
 
     /**
@@ -161,7 +122,17 @@ public class EntityAICitizenChild extends Goal
      */
     private boolean isReadyForActivity()
     {
-        return actionTimer <= 0;
+        if (actionTimer > 0)
+        {
+            actionTimer -= 100;
+        }
+
+        if (canUse() && actionTimer <= 0 && rand.nextInt(10) == 0)
+        {
+            setDelayForNextAction();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -216,15 +187,16 @@ public class EntityAICitizenChild extends Goal
      *
      * @return the next ai state to go into
      */
-    private IAIState followingEntity()
+    private IState followingEntity()
     {
+        actionTimer -= 20;
         if (actionTimer <= 0 || followTarget.get() == null)
         {
             // run back to start position
             child.getNavigation().moveToXYZ(followStart.getX(), followStart.getY(), followStart.getZ(), 1.0d);
 
             setDelayForNextAction();
-            return State.IDLE;
+            return CitizenAIState.IDLE;
         }
 
         child.getNavigation().moveToLivingEntity(followTarget.get(), 1.0d);
@@ -236,7 +208,7 @@ public class EntityAICitizenChild extends Goal
      *
      * @return the next ai state to go into
      */
-    private IAIState visitHuts()
+    private IState visitHuts()
     {
         // Find a hut to visit
         if (visitingPath == null && child.getCitizenColonyHandler().getColony() != null)
@@ -257,6 +229,7 @@ public class EntityAICitizenChild extends Goal
             visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
         }
 
+        actionTimer -= 120;
         // Visiting
         if (actionTimer > 0)
         {
@@ -274,7 +247,7 @@ public class EntityAICitizenChild extends Goal
         visitHutPos = null;
         setDelayForNextAction();
 
-        return State.IDLE;
+        return CitizenAIState.IDLE;
     }
 
     /**
@@ -284,6 +257,11 @@ public class EntityAICitizenChild extends Goal
      */
     private boolean tryGrowUp()
     {
+        if (!child.isBaby())
+        {
+            return false;
+        }
+
         if (child.getCitizenColonyHandler().getColony() != null)
         {
             if (child.getCitizenColonyHandler().getColony().useAdditionalChildTime(BONUS_TIME_COLONY))
@@ -294,11 +272,6 @@ public class EntityAICitizenChild extends Goal
 
         if (aiActiveTime >= MIN_ACTIVE_TIME)
         {
-            if (!child.isBaby())
-            {
-                return true;
-            }
-
             final double growthModifier = (1 + child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GROWTH));
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
@@ -323,24 +296,8 @@ public class EntityAICitizenChild extends Goal
     /**
      * {@inheritDoc} Returns whether the Goal should begin execution. True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
-    @Override
     public boolean canUse()
     {
         return child.isBaby() && child.getCitizenData() != null;
-    }
-
-    /**
-     * {@inheritDoc} Returns whether an in-progress Goal should continue executing.
-     */
-    @Override
-    public boolean canContinueToUse()
-    {
-        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isBaby() || child.getCitizenData() == null || child.getDesiredActivity() == DesiredActivity.MOURN)
-        {
-            return false;
-        }
-
-        stateMachine.tick();
-        return true;
     }
 }

@@ -9,6 +9,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.level.entity.EntityTypeTest;
 
 public class CommandKillRaider implements IMCOPCommand
 {
@@ -24,9 +26,9 @@ public class CommandKillRaider implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getLevel().getEntities().getAll().forEach(entity ->
+        context.getSource().getLevel().getEntities(EntityTypeTest.forClass(AbstractEntityMinecoloniesMob.class), (e) -> true).forEach(entity ->
         {
-            if (entity instanceof AbstractEntityMinecoloniesMob)
+            if (entity != null)
             {
                 final AbstractEntityMinecoloniesMob mob = (AbstractEntityMinecoloniesMob) entity;
                 mob.die(new DamageSource("despawn"));
