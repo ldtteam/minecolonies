@@ -1,10 +1,4 @@
 {
-	"parent": "minecolonies:block/blockrackfull",
-	"textures": {
-		"9": "block/emerald_block",
-		"10": "block/end_stone",
-		"11": "block/diorite",
-		"12": "block/crimson_stem",
-		"13": "block/crimson_stem_top"
-	}
+  "parent": "minecolonies:block/rack/blockrackfull_1",
+  "loader": "domum_ornamentum:materially_textured"
 }
