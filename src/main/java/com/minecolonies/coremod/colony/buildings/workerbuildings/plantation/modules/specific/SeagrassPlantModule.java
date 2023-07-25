@@ -52,6 +52,13 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
+    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
+    {
+        BoneMealItem.growWaterPlant(stackInSlot, worker.getLevel(), workPosition.above(), Direction.UP);
+        BoneMealItem.addGrowthParticles(worker.getLevel(), workPosition.above(), 1);
+    }
+
+    @Override
     public ToolType getRequiredTool()
     {
         return ToolType.NONE;
@@ -64,17 +71,16 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
+    protected boolean isValidBonemealLocation(final BlockState blockState)
+    {
+        return blockState.is(Blocks.WATER);
+    }
+
+    @Override
     public @NonNull List<Item> getValidBonemeal()
     {
         // Only base minecraft bonemeal has water growing capabilities.
         // Compost (by design) should not inherit this functionality.
         return List.of(Items.BONE_MEAL);
-    }
-
-    @Override
-    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
-    {
-        BoneMealItem.growWaterPlant(stackInSlot, worker.getLevel(), workPosition.above(), Direction.UP);
-        BoneMealItem.addGrowthParticles(worker.getLevel(), workPosition.above(), 1);
     }
 }

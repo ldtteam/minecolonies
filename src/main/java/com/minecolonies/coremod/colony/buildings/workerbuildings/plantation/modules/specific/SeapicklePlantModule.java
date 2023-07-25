@@ -80,14 +80,14 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    protected boolean isValidPlantingBlock(final BlockState blockState)
+    protected boolean isValidBonemealLocation(final BlockState blockState)
     {
         if (blockState.getBlock() instanceof SeaPickleBlock)
         {
             final Integer value = blockState.getValue(SeaPickleBlock.PICKLES);
             return value < SeaPickleBlock.MAX_PICKLES;
         }
-        return super.isValidPlantingBlock(blockState);
+        return super.isValidBonemealLocation(blockState);
     }
 
     @Override

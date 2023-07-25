@@ -29,7 +29,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     /**
      * The default percentage chance to be able to work on this field.
      */
-    protected static final int DEFAULT_PERCENTAGE_CHANCE = 10;
+    private static final int DEFAULT_PERCENTAGE_CHANCE = 50;
 
     /**
      * The internal random used to decide whether to work this field or not.
@@ -85,7 +85,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
             return ActionToPerform.HARVEST;
         }
 
-        if (isValidPlantingBlock(blockState))
+        if (isValidBonemealLocation(blockState))
         {
             return ActionToPerform.BONEMEAL;
         }
@@ -112,7 +112,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param blockState the block state.
      * @return whether the block can be planted.
      */
-    protected boolean isValidPlantingBlock(BlockState blockState)
+    protected boolean isValidBonemealLocation(BlockState blockState)
     {
         return blockState.isAir();
     }

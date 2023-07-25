@@ -22,7 +22,7 @@ public class WarpedPlantsPlantModule extends BoneMealedPlantModule
     /**
      * The chance a worker has to work on this field.
      */
-    private static final int CHANCE = 5;
+    private static final int CHANCE = 35;
 
     /**
      * The maximum amount of plants allowed on this field.

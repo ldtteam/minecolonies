@@ -16,6 +16,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -39,6 +41,7 @@ public class PlantationFieldPlacementHandler implements ISurvivalBlueprintHandle
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public boolean canHandle(final Blueprint blueprint, final ClientLevel level, final Player player, final BlockPos pos, final PlacementSettings placementSettings)
     {
         BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
