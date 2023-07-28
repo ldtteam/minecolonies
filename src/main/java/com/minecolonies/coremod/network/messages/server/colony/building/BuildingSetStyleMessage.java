@@ -54,17 +54,17 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.getBuildingLevel() > 0 && !building.isDeconstructed())
-        {
-            return;
-        }
-
         if (building instanceof BuildingTownHall)
         {
             colony.setStructurePack(structurePack);
         }
         else
         {
+            if (building.getBuildingLevel() > 0 && !building.isDeconstructed())
+            {
+                return;
+            }
+
             building.setStructurePack(structurePack);
         }
     }
