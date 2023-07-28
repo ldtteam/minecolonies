@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -54,18 +53,11 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building instanceof BuildingTownHall)
+        if (building.getBuildingLevel() > 0 && !building.isDeconstructed())
         {
-            colony.setStructurePack(structurePack);
+            return;
         }
-        else
-        {
-            if (building.getBuildingLevel() > 0 && !building.isDeconstructed())
-            {
-                return;
-            }
 
-            building.setStructurePack(structurePack);
-        }
+        building.setStructurePack(structurePack);
     }
 }
