@@ -100,9 +100,9 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         citizen.setPose(Pose.SLEEPING);
         citizen.getNavigation().stop();
-        citizen.setPos(((float) bedLocation.getX() + HALF_BLOCK),
-          (float) bedLocation.getY() + 0.8F,
-          ((float) bedLocation.getZ() + HALF_BLOCK));
+        citizen.setPos(((double) bedLocation.getX() + HALF_BLOCK),
+          (double) bedLocation.getY() + 0.6875D,
+          ((double) bedLocation.getZ() + HALF_BLOCK));
         citizen.setSleepingPos(bedLocation);
 
         citizen.setDeltaMovement(Vec3.ZERO);
