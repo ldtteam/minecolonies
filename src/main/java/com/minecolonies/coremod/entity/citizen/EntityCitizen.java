@@ -1061,18 +1061,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * Sets the size of the citizen entity
-     *
-     * @param width  Width
-     * @param height Height
-     */
-    @Override
-    public void setCitizensize(final @NotNull float width, final @NotNull float height)
-    {
-        this.dimensions = new EntityDimensions(width, height, false);
-    }
-
-    /**
      * Sets whether this entity is a child
      *
      * @param isChild boolean
