@@ -34,7 +34,7 @@ body:
     attributes:
       label: Minecraft Version
       description: Minecraft Version
-      options: [1.18, 1.19.2, 1.20.1]
+      options: [1.19.2, 1.20.1]
     validations:
       required: true
   - type: input
