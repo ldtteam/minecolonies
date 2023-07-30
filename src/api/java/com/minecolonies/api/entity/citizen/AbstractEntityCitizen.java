@@ -570,14 +570,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract IItemHandler getItemHandlerCitizen();
 
     /**
-     * Sets the size of the citizen entity
-     *
-     * @param width  Width
-     * @param height Height
-     */
-    public abstract void setCitizensize(@NotNull float width, @NotNull float height);
-
-    /**
      * Sets whether this entity is a child
      *
      * @param isChild boolean
