@@ -128,6 +128,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
         {
             safeTime = 0;
             startingPos = citizen.blockPosition();
+            performMoveAway();
             return RUNNING;
         }
 
