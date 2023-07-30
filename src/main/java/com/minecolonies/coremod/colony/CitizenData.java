@@ -472,6 +472,11 @@ public class CitizenData implements ICitizenData
         citizen.getEntityData().set(DATA_JOB, getJob() == null ? "" : getJob().getJobRegistryEntry().getKey().toString());
         citizen.getEntityData().set(DATA_STYLE, colony.getTextureStyleId());
 
+        if (getBedPos().equals(BlockPos.ZERO))
+        {
+            citizen.getCitizenSleepHandler().onWakeUp();
+        }
+
         // Safety check that ensure the citizen its job matches the work building job
         if (getJob() != null && workBuilding != null)
         {
