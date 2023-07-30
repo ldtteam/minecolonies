@@ -31,7 +31,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -58,7 +61,8 @@ import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleA
 /**
  * Visitor citizen entity
  */
-public class VisitorCitizen extends AbstractEntityCitizen
+public class
+VisitorCitizen extends AbstractEntityCitizen
 {
     /**
      * The citizen experience handler
@@ -274,12 +278,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         {
             citizenData.markDirty();
         }
-    }
-
-    @Override
-    public void setCitizensize(@NotNull final float width, @NotNull final float height)
-    {
-        this.dimensions = new EntityDimensions(width, height, false);
     }
 
     @Override

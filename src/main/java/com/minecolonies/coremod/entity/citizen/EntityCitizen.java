@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.citizens.event.CitizenRemovedEvent;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -1060,18 +1059,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * Sets the size of the citizen entity
-     *
-     * @param width  Width
-     * @param height Height
-     */
-    @Override
-    public void setCitizensize(final @NotNull float width, final @NotNull float height)
-    {
-        this.dimensions = new EntityDimensions(width, height, false);
-    }
-
-    /**
      * Sets whether this entity is a child
      *
      * @param isChild boolean
@@ -1082,7 +1069,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (isChild && !this.child)
         {
             new EntityAICitizenChild(this);
-            setCitizensize((float) CITIZEN_WIDTH / 2, (float) CITIZEN_HEIGHT / 2);
         }
         else
         {
@@ -1090,11 +1076,16 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
             }
-            setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
         this.child = isChild;
         this.getEntityData().set(DATA_IS_CHILD, isChild);
         markDirty();
+    }
+
+    @Override
+    public float getScale()
+    {
+        return child ? 0.5f * super.getScale() : super.getScale();
     }
 
     /**
@@ -1961,10 +1952,21 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
     /**
      * Get the AI controlling the citizens behaviour
+     *
      * @return
      */
     public ITickRateStateMachine<IState> getCitizenAI()
     {
         return citizenAI;
+    }
+
+    @Override
+    public boolean isSuppressingBounce()
+    {
+        if (citizenSleepHandler.isAsleep())
+        {
+            return true;
+        }
+        return super.isSuppressingBounce();
     }
 }
