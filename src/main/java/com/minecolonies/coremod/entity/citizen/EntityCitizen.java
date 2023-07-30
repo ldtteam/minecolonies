@@ -1512,19 +1512,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return;
         }
 
-        // Makes the avoidance AI take over.
-        citizenAI.addTransition(new AIOneTimeEventTarget<>(CitizenAIState.FLEE));
-
         if ((getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard))
         {
             // 30 Blocks range
             callForHelp(attacker, 900);
             return;
         }
-        else
-        {
-            callForHelp(attacker, MAX_GUARD_CALL_RANGE);
-        }
+
+        citizenAI.addTransition(new AIOneTimeEventTarget<>(CitizenAIState.FLEE));
+        callForHelp(attacker, MAX_GUARD_CALL_RANGE);
         if (moveAwayPath == null || !moveAwayPath.isInProgress())
         {
             moveAwayPath = this.getNavigation().moveAwayFromLivingEntity(attacker, 15, INITIAL_RUN_SPEED_AVOID);
