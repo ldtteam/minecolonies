@@ -52,7 +52,8 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && (this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
+        if (!isFull() && building.getBuildingLevel() > 0 && building.isBuilt() &&
+                (this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
