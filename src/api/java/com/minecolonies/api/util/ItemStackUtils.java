@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
@@ -398,7 +397,7 @@ public final class ItemStackUtils
             {
                 if (!itemStack.canPerformAction(action))
                 {
-                    break;
+                    return false;
                 }
             }
             return true;
