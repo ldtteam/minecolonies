@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.EntityState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
@@ -35,7 +34,6 @@ public class EntityAIVisitor implements IState
      */
     public enum VisitorState implements IState
     {
-        INIT,
         IDLE,
         SLEEPING,
         SITTING,
@@ -47,11 +45,6 @@ public class EntityAIVisitor implements IState
      * The visitor entity we are attached to.
      */
     private final VisitorCitizen citizen;
-
-    /**
-     * This AI's state changer.
-     */
-    private final ITickRateStateMachine<VisitorState> stateMachine;
 
     /**
      * The tavern building for the citizen
@@ -78,13 +71,8 @@ public class EntityAIVisitor implements IState
         super();
         this.citizen = (VisitorCitizen) entity;
 
-        stateMachine = new TickRateStateMachine<>(VisitorState.INIT, this::onException);
-        entity.getEntityStateController().addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, () -> {
-            stateMachine.tick();
-            return false;
-        }, () -> null, 1));
-
-        stateMachine.addTransition(new TickingTransition<>(VisitorState.INIT, this::isEntityLoaded, () -> VisitorState.IDLE, 50));
+        ITickRateStateMachine<IState> stateMachine = entity.getEntityStateController();
+        stateMachine.addTransition(new TickingTransition<>(EntityState.INIT, this::isEntityLoaded, () -> VisitorState.IDLE, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.IDLE, () -> true, this::decide, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.WANDERING, this::wander, () -> VisitorState.IDLE, 200));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.WANDERING, this::shouldFight, () -> VisitorState.COMBAT, 200));
@@ -291,7 +279,6 @@ public class EntityAIVisitor implements IState
      */
     public void stop()
     {
-        stateMachine.reset();
         resetLogic();
     }
 }
