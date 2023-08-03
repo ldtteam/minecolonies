@@ -22,6 +22,7 @@ import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.DiggerItem;
@@ -32,12 +33,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,8 +66,7 @@ public final class WorkerUtil
     /**
      * Placeholder text in a level sign.
      */
-    private static final String LEVEL_SIGN_TEXT      = "{\"text\":\"level_placeholder\"}";
-    private static final String LEVEL_SIGN_FIRST_ROW = "Text1";
+    private static final String LEVEL_SIGN_TEXT      = "level_placeholder";
 
     /**
      * List of tools to test blocks against, used for finding right tool.
@@ -278,10 +280,18 @@ public final class WorkerUtil
                     if (te != null)
                     {
                         final CompoundTag teData = te.getTileEntityData();
-                        if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
+                        final ResourceLocation teId = teData == null ? null : ResourceLocation.tryParse(teData.getString("id"));
+                        final BlockEntityType<?> teType = teId == null ? null : ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(teId);
+                        if (teType == BlockEntityType.SIGN || teType == BlockEntityType.HANGING_SIGN)
                         {
-                            // try to make an anchor in 0,0,0 instead of the middle of the structure
-                            return pos.subtract(structure.getPrimaryBlockOffset()).offset(localPos);
+                            if (BlockEntity.loadStatic(te.getPos(), te.getState(), te.getTileEntityData()) instanceof SignBlockEntity sign)
+                            {
+                                if (sign.getFrontText().getMessage(0, false).getString().equals(LEVEL_SIGN_TEXT))
+                                {
+                                    // try to make an anchor in 0,0,0 instead of the middle of the structure
+                                    return pos.subtract(structure.getPrimaryBlockOffset()).offset(localPos);
+                                }
+                            }
                         }
                     }
                 }
@@ -304,25 +314,21 @@ public final class WorkerUtil
 
         if (levelSignPos != null)
         {
-            final BlockEntity te = world.getBlockEntity(levelSignPos);
-
-            if (te instanceof SignBlockEntity)
+            if (world.getBlockEntity(levelSignPos) instanceof SignBlockEntity teLevelSign)
             {
-                final BlockState BlockState = world.getBlockState(levelSignPos);
-                final SignBlockEntity teLevelSign = (SignBlockEntity) te;
+                final BlockState blockState = world.getBlockState(levelSignPos);
 
-                teLevelSign.setText(new SignText().setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId)), true);
-                teLevelSign.setText(new SignText().setMessage(1, Component.literal("Y: " + (level.getDepth() + 1))), true);
-                teLevelSign.setText(new SignText().setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes())), true);
-                teLevelSign.setText(new SignText().setMessage(3, Component.literal("")), true);
+                final SignText text = new SignText()
+                    .setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId))
+                    .setMessage(1, Component.literal("Y: " + (level.getDepth() + 1)))
+                    .setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()))
+                    .setMessage(3, Component.literal(""));
 
-                teLevelSign.setText(new SignText().setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId)), false);
-                teLevelSign.setText(new SignText().setMessage(1, Component.literal("Y: " + (level.getDepth() + 1))), false);
-                teLevelSign.setText(new SignText().setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes())), false);
-                teLevelSign.setText(new SignText().setMessage(3, Component.literal("")), false);
+                teLevelSign.setText(text, true);
+                teLevelSign.setText(text, false);
 
                 teLevelSign.setChanged();
-                world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);
+                world.sendBlockUpdated(levelSignPos, blockState, blockState, 3);
             }
         }
     }
