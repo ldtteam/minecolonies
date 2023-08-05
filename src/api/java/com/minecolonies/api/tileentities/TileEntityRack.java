@@ -596,7 +596,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         final List<Map.Entry<ItemStorage, Integer>> list = content.entrySet().stream().sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue())).toList();
         for (final Map.Entry<ItemStorage,Integer> entry : list)
         {
-            // Need more solid checks!
             if (index < textureMapping.size()
                   && entry.getKey().getItemStack().getItem() instanceof BlockItem blockitem
                   && blockitem.getBlock().defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
