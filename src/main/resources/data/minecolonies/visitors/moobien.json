@@ -1,0 +1,10 @@
+{
+  "texture": "49a701f1-0ebb-4f20-8f70-961aeae28e89",
+  "citizensuffix": "_w",
+  "name": "Moobien",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.moobien",
+  "recruitcost": "minecraft:copper_block",
+  "recruitcostcount": 15,
+  "gender": "male"
+}
