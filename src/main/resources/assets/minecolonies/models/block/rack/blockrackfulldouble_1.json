@@ -1,0 +1,14 @@
+{
+	"parent": "minecolonies:block/blockrackfulldouble",
+	"textures": {
+      "0": "block/oak_planks",
+      "1": "block/stone",
+      "7": "block/bricks",
+      "10": "block/sand",
+      "11": "block/orange_wool",
+      "14": "block/dirt",
+      "15": "block/obsidian",
+      "16": "block/polished_andesite",
+      "17": "block/andesite"
+    }
+}

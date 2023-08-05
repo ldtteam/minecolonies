@@ -1,5 +1,9 @@
 package com.minecolonies.api.tileentities;
 
+import com.google.common.collect.ImmutableList;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
+import com.ldtteam.domumornamentum.client.model.properties.ModProperties;
+import com.ldtteam.domumornamentum.entity.block.IMateriallyTexturedBlockEntity;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
@@ -16,13 +20,19 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -32,9 +42,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -43,7 +53,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 /**
  * Tile entity for the warehouse shelves.
  */
-public class TileEntityRack extends AbstractTileEntityRack
+public class TileEntityRack extends AbstractTileEntityRack implements IMateriallyTexturedBlockEntity
 {
     /**
      * All Racks current version id
@@ -74,6 +84,24 @@ public class TileEntityRack extends AbstractTileEntityRack
      * Last optional we created.
      */
     private LazyOptional<IItemHandler> lastOptional;
+
+    /**
+     * Static texture mappings
+     */
+    private static final List<ResourceLocation> textureMapping = ImmutableList.<ResourceLocation>builder()
+        .add(new ResourceLocation("block/bricks"))
+        .add(new ResourceLocation("block/sand"))
+        .add(new ResourceLocation("block/orange_wool"))
+        .add(new ResourceLocation("block/dirt"))
+        .add(new ResourceLocation("block/obsidian"))
+        .add(new ResourceLocation("block/polished_andesite"))
+        .add(new ResourceLocation("block/andesite")).build();
+
+
+    /**
+     * Cached resmap.
+     */
+    private MaterialTextureData textureDataCache = new MaterialTextureData();
 
     /**
      * Create a new rack.
@@ -368,6 +396,11 @@ public class TileEntityRack extends AbstractTileEntityRack
         version = compound.getByte(TAG_VERSION);
 
         invalidateCap();
+
+        if (level != null && level.isClientSide)
+        {
+            refreshTextureCache();
+        }
     }
 
     @Override
@@ -544,5 +577,86 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
 
         lastOptional = null;
+    }
+
+    @Override
+    public void updateTextureDataWith(final MaterialTextureData materialTextureData)
+    {
+        // noop
+    }
+
+    /**
+     * Refresh the texture mapping.
+     */
+    private void refreshTextureCache()
+    {
+        final Map<ResourceLocation, Block> resMap = new HashMap<>();
+        boolean update = false;
+        int index = 0;
+        final List<Map.Entry<ItemStorage, Integer>> list = content.entrySet().stream().sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue())).toList();
+        for (final Map.Entry<ItemStorage,Integer> entry : list)
+        {
+            if (index < textureMapping.size()
+                  && entry.getKey().getItemStack().getItem() instanceof BlockItem blockitem
+                  && blockitem.getBlock().defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
+            {
+                final ResourceLocation resLoc = textureMapping.get(index);
+                resMap.put(resLoc, blockitem.getBlock());
+                if (this.textureDataCache == null || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(blockitem.getBlock()))
+                {
+                    update = true;
+                }
+                index++;
+            }
+        }
+
+        if (resMap.isEmpty())
+        {
+            for (int i = 0; i < content.size() && i < textureMapping.size(); i++)
+            {
+                final ResourceLocation resLoc = textureMapping.get(index);
+                resMap.put(resLoc, Blocks.BARREL);
+                if (this.textureDataCache == null || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(Blocks.BARREL))
+                {
+                    update = true;
+                }
+                index++;
+            }
+        }
+
+        for (int i = index; i < textureMapping.size(); i++)
+        {
+            final ResourceLocation resLoc = textureMapping.get(index);
+            resMap.put(resLoc, Blocks.AIR);
+            if (this.textureDataCache == null || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(Blocks.AIR))
+            {
+                update = true;
+            }
+        }
+
+        if (update)
+        {
+            this.textureDataCache = new MaterialTextureData(resMap);
+            this.requestModelDataUpdate();
+            if (level != null)
+            {
+                level.sendBlockUpdated(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState(), Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    @NotNull
+    @Override
+    public ModelData getModelData()
+    {
+        return ModelData.builder()
+                 .with(ModProperties.MATERIAL_TEXTURE_PROPERTY, textureDataCache)
+                 .build();
+    }
+
+    @Override
+    public @NotNull MaterialTextureData getTextureData()
+    {
+        return textureDataCache;
     }
 }

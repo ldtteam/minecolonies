@@ -1,13 +1,4 @@
 {
-	"parent": "minecolonies:block/blockrackfulldouble",
-	"textures": {
-		"7": "block/warped_planks",
-		"10": "block/red_sand",
-		"11": "block/basalt_side",
-		"12": "block/basalt_top",
-		"13": "block/red_terracotta",
-		"14": "block/green_wool",
-		"15": "block/obsidian",
-		"16": "block/yellow_concrete"
-	}
+  "parent": "minecolonies:block/rack/blockrackfulldouble_2",
+  "loader": "domum_ornamentum:materially_textured"
 }
