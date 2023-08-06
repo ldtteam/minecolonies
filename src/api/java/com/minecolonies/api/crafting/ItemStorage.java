@@ -35,6 +35,11 @@ public class ItemStorage
     private final boolean shouldIgnoreNBTValue;
 
     /**
+     * Damage value of the block.
+     */
+    private final int dmgValue;
+
+    /**
      * Amount of the storage.
      */
     private int amount;
@@ -52,6 +57,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
+        this.dmgValue = stack.getDamageValue();
     }
 
     /**
@@ -67,6 +73,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
         this.amount = ItemStackUtils.getSize(stack);
+        this.dmgValue = stack.getDamageValue();
     }
 
     /**
@@ -81,6 +88,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
+        this.dmgValue = stack.getDamageValue();
     }
 
     /**
@@ -94,6 +102,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
+        this.dmgValue = stack.getDamageValue();
     }
 
     /**
@@ -141,6 +150,7 @@ public class ItemStorage
             this.shouldIgnoreDamageValue = true;
             this.shouldIgnoreNBTValue = true;
         }
+        this.dmgValue = stack.getDamageValue();
     }
 
     /**
@@ -240,7 +250,7 @@ public class ItemStorage
         }
 
         final ItemStorage that = (ItemStorage) o;
-        return ItemStackUtils.compareItemStacksIgnoreStackSize(that.getItemStack(), this.getItemStack(), !(this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue), !(this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue));
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(that.getItemStack(), this.getItemStack(), !(this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue), !(this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue), true, this.dmgValue, that.dmgValue);
     }
 
     /**
@@ -272,7 +282,7 @@ public class ItemStorage
      */
     public int getDamageValue()
     {
-        return stack.getDamageValue();
+        return this.dmgValue;
     }
 
     /**
@@ -282,7 +292,7 @@ public class ItemStorage
      */
     public int getRemainingDurablityValue()
     {
-        return stack.getMaxDamage() - stack.getDamageValue();
+        return stack.getMaxDamage() - this.dmgValue;
     }
 
     /**
