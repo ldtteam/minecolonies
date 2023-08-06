@@ -1,13 +1,4 @@
 {
-	"parent": "minecolonies:block/blockrackfulldouble",
-	"textures": {
-		"7": "block/bricks",
-		"10": "block/sand",
-		"11": "block/jungle_log_top",
-		"12": "block/jungle_log_top",
-		"13": "block/magenta_terracotta",
-		"14": "block/dirt",
-		"15": "block/iron_block",
-		"16": "block/polished_andesite"
-	}
+  "parent": "minecolonies:block/rack/blockrackfulldouble_1",
+  "loader": "domum_ornamentum:materially_textured"
 }
