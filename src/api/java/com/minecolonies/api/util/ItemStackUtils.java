@@ -761,28 +761,6 @@ public final class ItemStackUtils
       final boolean matchNBT,
       final boolean min)
     {
-        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, min, Integer.MIN_VALUE, Integer.MIN_VALUE);
-    }
-
-    /**
-     * Method to compare to stacks, ignoring their stacksize.
-     *
-     * @param itemStack1  The left stack to compare.
-     * @param itemStack2  The right stack to compare.
-     * @param matchDamage Set to true to match damage data.
-     * @param matchNBT    Set to true to match nbt
-     * @param min         if the count of stack2 has to be at least the same as stack1.
-     * @return True when they are equal except the stacksize, false when not.
-     */
-    public static boolean compareItemStacksIgnoreStackSize(
-      final ItemStack itemStack1,
-      final ItemStack itemStack2,
-      final boolean matchDamage,
-      final boolean matchNBT,
-      final boolean min,
-      final int dmgValue1,
-      final int dmgValue2)
-    {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
             return true;
@@ -793,27 +771,8 @@ public final class ItemStackUtils
             return false;
         }
 
-        if (itemStack1.getItem() == itemStack2.getItem())
+        if (itemStack1.getItem() == itemStack2.getItem() && (!matchDamage || itemStack1.getDamageValue() == itemStack2.getDamageValue()))
         {
-            if (matchDamage)
-            {
-                int localDmgValue1 = dmgValue1;
-                int localDmgValue2 = dmgValue2;
-                if (localDmgValue1 == Integer.MIN_VALUE)
-                {
-                    localDmgValue1 = itemStack1.getDamageValue();
-                }
-                if (localDmgValue2 == Integer.MIN_VALUE)
-                {
-                    localDmgValue2 = itemStack2.getDamageValue();
-                }
-
-                if (localDmgValue1 != localDmgValue2)
-                {
-                    return false;
-                }
-            }
-
             if (!matchNBT)
             {
                 // Not comparing nbt
