@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * Class to render the scarecrow.
  */
 @OnlyIn(Dist.CLIENT)
-public class TileEntityScarecrowRenderer implements BlockEntityRenderer<AbstractScarecrowTileEntity>
+public class TileEntityScarecrowRenderer implements BlockEntityRenderer<AbstractTileEntityScarecrow>
 {
     /**
      * Offset to the block middle.
@@ -90,7 +90,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
 
     @Override
     public void render(
-      final AbstractScarecrowTileEntity te,
+      final AbstractTileEntityScarecrow te,
       final float partialTicks,
       final PoseStack matrixStack,
       @NotNull final MultiBufferSource iRenderTypeBuffer,
@@ -139,7 +139,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
      * @return the material.
      */
     @NotNull
-    private static Material getMaterial(@NotNull final AbstractScarecrowTileEntity tileEntity)
+    private static Material getMaterial(@NotNull final AbstractTileEntityScarecrow tileEntity)
     {
         if (tileEntity.getScarecrowType() == ScareCrowType.PUMPKINHEAD)
         {

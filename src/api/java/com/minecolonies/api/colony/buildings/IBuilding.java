@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.modules.IModuleContainer;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -36,60 +37,12 @@ import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
-public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester, ISchematicProvider
+public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
      */
     int WOOD_HUT_LEVEL = 0;
-
-    /**
-     * Check if the building has a particular module.
-     * @param clazz the class or interface of the module to check.
-     * @return true if so.
-     */
-    boolean hasModule(final Class<? extends IBuildingModule> clazz);
-
-    /**
-     * Get the first module with a particular class or interface.
-     * @param clazz the module's class or interface.
-     * @return the module or empty if not existent.
-     */
-    @NotNull
-    <T extends IBuildingModule> T getFirstModuleOccurance(Class<T> clazz);
-
-    /**
-     * Get the first module with a particular class or interface.
-     * @param clazz the module's class or interface.
-     * @return the module or empty if not existent.
-     */
-    @NotNull
-    <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(Class<T> clazz);
-
-    /**
-     * Get all modules with a particular class or interface.
-     * @param clazz the module's interface (or class, but prefer getModule in that case)
-     * @return the list of modules or empty if none match.
-     */
-    @NotNull
-    <T extends IBuildingModule> List<T> getModules(Class<T> clazz);
-
-    /**
-     * Get a module matching a certain predicate.
-     * @param clazz the class of the module.
-     * @param modulePredicate the predicate to match.
-     * @param <T> the module type.
-     * @return the first matching module.
-     * @throws IllegalArgumentException if your condition does not match any modules
-     */
-    @NotNull
-    <T extends IBuildingModule> T getModuleMatching(Class<T> clazz, Predicate<? super T> modulePredicate);
-
-    /**
-     * Register a specific module to the building.
-     * @param module the module to register.
-     */
-    void registerModule(@NotNull final IBuildingModule module);
 
     /**
      * Getter for the custom name of a building.

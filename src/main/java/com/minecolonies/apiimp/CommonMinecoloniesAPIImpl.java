@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
@@ -53,6 +54,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final  IMobAIRegistry                                          mobAIRegistry          = new MobAIRegistry();
     private final  IPathNavigateRegistry                                   pathNavigateRegistry   = new PathNavigateRegistry();
     private        IForgeRegistry<BuildingEntry>                           buildingRegistry;
+    private        IForgeRegistry<FieldRegistries.FieldEntry>              fieldRegistry;
     private final  IBuildingDataManager                                    buildingDataManager    = new BuildingDataManager();
     private final  IJobDataManager                                         jobDataManager         = new JobDataManager();
     private final  IGuardTypeDataManager                                   guardTypeDataManager   = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
@@ -114,6 +116,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<BuildingEntry> getBuildingRegistry()
     {
         return buildingRegistry;
+    }
+
+    @Override
+    @NotNull
+    public IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry()
+    {
+        return fieldRegistry;
     }
 
     @Override
@@ -190,6 +199,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .disableSaving()
                        .allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingRegistry = b);
+
+        event.create(new RegistryBuilder<FieldRegistries.FieldEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "fields"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving()
+                       .allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> fieldRegistry = b);
 
         event.create(new RegistryBuilder<JobEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))

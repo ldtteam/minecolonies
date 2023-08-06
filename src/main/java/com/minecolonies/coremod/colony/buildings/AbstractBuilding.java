@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -175,67 +176,40 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return true;
-            }
-        }
-        return false;
+        return ModuleContainerUtils.hasModule(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getFirstModuleOccurance(final Class<T> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return (T) module;
-            }
-        }
-
-        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null! Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString());
+        return ModuleContainerUtils.getFirstModuleOccurance(modules,
+          clazz,
+          "The module of class: " + clazz.toString() + "should never be null! Building:" + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return Optional.of((T) module);
-            }
-        }
-        return Optional.empty();
+        return ModuleContainerUtils.getFirstOptionalModuleOccurance(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module) && modulePredicate.test((T) module))
-            {
-                return (T) module;
-            }
-        }
-        throw new IllegalArgumentException("no matching module for Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString());
+        return ModuleContainerUtils.getModuleMatching(modules,
+          clazz,
+          modulePredicate,
+          "no matching module for Building:" + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> List<T> getModules(final Class<T> clazz)
     {
-        return this.modules.stream()
-          .filter(clazz::isInstance)
-          .map(c -> (T) c)
-          .collect(Collectors.toList());
+        return ModuleContainerUtils.getModules(modules, clazz);
     }
 
     @Override

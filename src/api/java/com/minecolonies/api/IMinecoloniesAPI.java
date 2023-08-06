@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResponseHandlerDataManager;
@@ -45,6 +46,8 @@ public interface IMinecoloniesAPI
     IBuildingDataManager getBuildingDataManager();
 
     IForgeRegistry<BuildingEntry> getBuildingRegistry();
+
+    IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry();
 
     IJobDataManager getJobDataManager();
 

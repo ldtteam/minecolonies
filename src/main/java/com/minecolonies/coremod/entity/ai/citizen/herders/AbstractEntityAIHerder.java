@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,8 +20,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -686,8 +683,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
             worker.swing(InteractionHand.MAIN_HAND);
-            final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) worker.getCommandSenderWorld());
-            final DamageSource ds = DamageSource.playerAttack(fp);
+            final DamageSource ds = DamageSource.playerAttack(getFakePlayer());
             animal.hurt(ds, (float) getButcheringAttackDamage());
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
         }

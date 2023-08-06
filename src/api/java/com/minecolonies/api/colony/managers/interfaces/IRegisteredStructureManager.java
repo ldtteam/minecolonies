@@ -6,22 +6,23 @@ import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -82,12 +83,14 @@ public interface IRegisteredStructureManager
 
     /**
      * Get the leisure site positions.
+     *
      * @return the list.
      */
     List<BlockPos> getLeisureSites();
 
     /**
      * Get the first building matching the conditions.
+     *
      * @param predicate the predicate matching the building.
      * @return the position or null.
      */
@@ -96,18 +99,21 @@ public interface IRegisteredStructureManager
 
     /**
      * Register a new leisure site.
+     *
      * @param pos the position of it.
      */
     void addLeisureSite(BlockPos pos);
 
     /**
      * Remove a leisure site.
+     *
      * @param pos the position of it.
      */
     void removeLeisureSite(BlockPos pos);
 
     /**
      * Get the closest warehouse relative to a position.
+     *
      * @param pos the position,.
      * @return the closest warehouse.
      */
@@ -165,35 +171,7 @@ public interface IRegisteredStructureManager
      * @param <B>        Building class.
      * @return the building with the specified id.
      */
-    @Nullable
-    <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
-
-    /**
-     * Getter for a unmodifiable version of the farmerFields list.
-     *
-     * @return list of fields and their id.
-     */
-    @NotNull
-    List<BlockPos> getFields();
-
-    /**
-     * Creates a field from a tile entity and adds it to the colony.
-     *
-     * @param tileEntity the scarecrow which contains the inventory.
-     * @param pos        Position where the field has been placed.
-     * @param world      the world of the field.
-     */
-    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final Level world);
-
-    /**
-     * Returns a field which has not been taken yet.
-     *
-     * @param owner id of the owner of the field.
-     * @param world the world it is in.
-     * @return a field if there is one available, else null.
-     */
-    @Nullable
-    AbstractScarecrowTileEntity getFreeField(final int owner, final Level world);
+    @Nullable <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
@@ -219,16 +197,9 @@ public interface IRegisteredStructureManager
     IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world);
 
     /**
-     * Removes a field from the farmerFields list.
-     *
-     * @param pos the position-id.
-     */
-    void removeField(final BlockPos pos);
-
-    /**
      * Calculate a good cook for a certain citizen.
      *
-     * @param citizen the citizen.
+     * @param citizen  the citizen.
      * @param building the type of building.
      * @return the Position of it.
      */
@@ -237,7 +208,7 @@ public interface IRegisteredStructureManager
     /**
      * Calculate a good building for a certain pos.
      *
-     * @param pos the pos.
+     * @param pos      the pos.
      * @param building the building class type.
      * @return the Position of it.
      */
@@ -261,8 +232,9 @@ public interface IRegisteredStructureManager
 
     /**
      * Event once a guard building changed at a certain level.
+     *
      * @param guardBuilding the guard building.
-     * @param newLevel the level of it.
+     * @param newLevel      the level of it.
      */
     void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
 
@@ -313,6 +285,7 @@ public interface IRegisteredStructureManager
 
     /**
      * Check if the chunk position it within of the building zone of the colony.
+     *
      * @param chunk the chunk to check
      * @return true if within.
      */
@@ -320,6 +293,7 @@ public interface IRegisteredStructureManager
 
     /**
      * Get a house with a spare bed.
+     *
      * @return the house or null.
      */
     IBuilding getHouseWithSpareBed();
@@ -334,6 +308,7 @@ public interface IRegisteredStructureManager
 
     /**
      * Get a random leisure site to go to.
+     *
      * @return the position of it.
      */
     BlockPos getRandomLeisureSite();
@@ -351,4 +326,36 @@ public interface IRegisteredStructureManager
      * @param colonyQuest the quest.
      */
     void stopTrackingBuildingLevelUp(@NotNull final BuildingEntry buildingEntry, @NotNull final IQuestInstance colonyQuest);
+
+    /**
+     * Get all the fields
+     *
+     * @param matcher the field matcher predicate.
+     * @return an unmodifiable collection of all fields.
+     */
+    @NotNull List<IField> getFields(Predicate<IField> matcher);
+
+    /**
+     * Get a specific field on the given location.
+     *
+     * @param matcher the field matcher predicate.
+     * @return the field, if any.
+     */
+    Optional<IField> getField(Predicate<IField> matcher);
+
+    /**
+     * Add a new field to the building manager.
+     * If an identical field already exists, this field won't be added.
+     *
+     * @param field the new field to add.
+     * @return true if the field was added.
+     */
+    boolean addField(IField field);
+
+    /**
+     * Remove a field from the field collection.
+     *
+     * @param matcher the field matcher predicate.
+     */
+    void removeField(Predicate<IField> matcher);
 }

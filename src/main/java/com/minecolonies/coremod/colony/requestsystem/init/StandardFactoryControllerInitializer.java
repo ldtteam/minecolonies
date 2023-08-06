@@ -84,7 +84,6 @@ public final class StandardFactoryControllerInitializer
 
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BoolSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.StringSettingsFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.PlantationSettingsFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BlockSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.IntSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.StringWithDescSettingsFactory());
