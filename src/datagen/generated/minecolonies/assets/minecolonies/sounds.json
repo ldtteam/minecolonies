@@ -84,24 +84,7 @@
       }
     ]
   },
-  "mob.alchemist.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.alchemist.female.greeting": {
+  "citizen.alchemist.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -1257,24 +1240,7 @@
       }
     ]
   },
-  "mob.alchemist.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.alchemist.male.greeting": {
+  "citizen.alchemist.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -2430,24 +2396,7 @@
       }
     ]
   },
-  "mob.archertraining.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.archertraining.female.greeting": {
+  "citizen.archertraining.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -3603,24 +3552,7 @@
       }
     ]
   },
-  "mob.archertraining.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.archertraining.male.greeting": {
+  "citizen.archertraining.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -4776,24 +4708,7 @@
       }
     ]
   },
-  "mob.baker.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.baker.female.greeting": {
+  "citizen.baker.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -5949,24 +5864,7 @@
       }
     ]
   },
-  "mob.baker.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.baker.male.greeting": {
+  "citizen.baker.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -7122,24 +7020,7 @@
       }
     ]
   },
-  "mob.beekeeper.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.beekeeper.female.greeting": {
+  "citizen.beekeeper.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -8295,24 +8176,7 @@
       }
     ]
   },
-  "mob.beekeeper.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.beekeeper.male.greeting": {
+  "citizen.beekeeper.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -9468,24 +9332,7 @@
       }
     ]
   },
-  "mob.blacksmith.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.blacksmith.female.greeting": {
+  "citizen.blacksmith.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -10641,24 +10488,7 @@
       }
     ]
   },
-  "mob.blacksmith.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.blacksmith.male.greeting": {
+  "citizen.blacksmith.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -11814,24 +11644,7 @@
       }
     ]
   },
-  "mob.builder.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.builder.female.greeting": {
+  "citizen.builder.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -12987,24 +12800,7 @@
       }
     ]
   },
-  "mob.builder.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.builder.male.greeting": {
+  "citizen.builder.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -14160,24 +13956,7 @@
       }
     ]
   },
-  "mob.chickenherder.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.chickenherder.female.greeting": {
+  "citizen.chickenherder.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -15333,24 +15112,7 @@
       }
     ]
   },
-  "mob.chickenherder.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.chickenherder.male.greeting": {
+  "citizen.chickenherder.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -15622,20 +15384,7 @@
       }
     ]
   },
-  "mob.child.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/child/laugh1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/child/laugh2",
-        "stream": false
-      }
-    ]
-  },
-  "mob.child.female.greeting": {
+  "citizen.chickenherder.male2.general": {
     "category": "neutral",
     "sounds": [
       {
@@ -15907,20 +15656,7 @@
       }
     ]
   },
-  "mob.child.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/child/laugh1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/child/laugh2",
-        "stream": false
-      }
-    ]
-  },
-  "mob.child.male.greeting": {
+  "citizen.chickenherder.male3.farewell": {
     "category": "neutral",
     "sounds": [
       {
@@ -16532,24 +16268,7 @@
       }
     ]
   },
-  "mob.citizen.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.citizen.female.greeting": {
+  "citizen.child.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -17705,24 +17424,7 @@
       }
     ]
   },
-  "mob.citizen.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.citizen.male.greeting": {
+  "citizen.child.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -18878,24 +18580,7 @@
       }
     ]
   },
-  "mob.combattraining.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.combattraining.female.greeting": {
+  "citizen.combattraining.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -20051,24 +19736,7 @@
       }
     ]
   },
-  "mob.combattraining.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.combattraining.male.greeting": {
+  "citizen.combattraining.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -21224,24 +20892,7 @@
       }
     ]
   },
-  "mob.composter.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.composter.female.greeting": {
+  "citizen.composter.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -22397,24 +22048,7 @@
       }
     ]
   },
-  "mob.composter.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.composter.male.greeting": {
+  "citizen.composter.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -23570,24 +23204,7 @@
       }
     ]
   },
-  "mob.concretemixer.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.concretemixer.female.greeting": {
+  "citizen.concretemixer.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -24743,24 +24360,7 @@
       }
     ]
   },
-  "mob.concretemixer.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.concretemixer.male.greeting": {
+  "citizen.concretemixer.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -25916,24 +25516,7 @@
       }
     ]
   },
-  "mob.cook.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.cook.female.greeting": {
+  "citizen.cook.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -27089,24 +26672,7 @@
       }
     ]
   },
-  "mob.cook.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.cook.male.greeting": {
+  "citizen.cook.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -28262,24 +27828,7 @@
       }
     ]
   },
-  "mob.cookassistant.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.cookassistant.female.greeting": {
+  "citizen.cookassistant.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -29435,24 +28984,7 @@
       }
     ]
   },
-  "mob.cookassistant.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.cookassistant.male.greeting": {
+  "citizen.cookassistant.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -30608,24 +30140,7 @@
       }
     ]
   },
-  "mob.cowboy.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.cowboy.female.greeting": {
+  "citizen.cowboy.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -31781,24 +31296,7 @@
       }
     ]
   },
-  "mob.cowboy.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.cowboy.male.greeting": {
+  "citizen.cowboy.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -32954,24 +32452,7 @@
       }
     ]
   },
-  "mob.crusher.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.crusher.female.greeting": {
+  "citizen.crusher.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -34127,24 +33608,7 @@
       }
     ]
   },
-  "mob.crusher.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.crusher.male.greeting": {
+  "citizen.crusher.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -35300,24 +34764,7 @@
       }
     ]
   },
-  "mob.deliveryman.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.deliveryman.female.greeting": {
+  "citizen.deliveryman.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -36473,24 +35920,7 @@
       }
     ]
   },
-  "mob.deliveryman.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.deliveryman.male.greeting": {
+  "citizen.deliveryman.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -37646,24 +37076,7 @@
       }
     ]
   },
-  "mob.druid.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.druid.female.greeting": {
+  "citizen.druid.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -38819,24 +38232,7 @@
       }
     ]
   },
-  "mob.druid.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.druid.male.greeting": {
+  "citizen.druid.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -39992,24 +39388,7 @@
       }
     ]
   },
-  "mob.dyer.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.dyer.female.greeting": {
+  "citizen.dyer.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -41165,24 +40544,7 @@
       }
     ]
   },
-  "mob.dyer.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.dyer.male.greeting": {
+  "citizen.dyer.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -42338,24 +41700,7 @@
       }
     ]
   },
-  "mob.enchanter.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.enchanter.female.greeting": {
+  "citizen.enchanter.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -43511,24 +42856,7 @@
       }
     ]
   },
-  "mob.enchanter.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.enchanter.male.greeting": {
+  "citizen.enchanter.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -44684,24 +44012,7 @@
       }
     ]
   },
-  "mob.farmer.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.farmer.female.greeting": {
+  "citizen.farmer.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -45857,24 +45168,7 @@
       }
     ]
   },
-  "mob.farmer.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.farmer.male.greeting": {
+  "citizen.farmer.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -47030,24 +46324,7 @@
       }
     ]
   },
-  "mob.fisherman.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.greeting": {
+  "citizen.fisherman.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -48203,24 +47480,7 @@
       }
     ]
   },
-  "mob.fisherman.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.male.greeting": {
+  "citizen.fisherman.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -49376,24 +48636,7 @@
       }
     ]
   },
-  "mob.fletcher.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fletcher.female.greeting": {
+  "citizen.fletcher.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -50549,24 +49792,7 @@
       }
     ]
   },
-  "mob.fletcher.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fletcher.male.greeting": {
+  "citizen.fletcher.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -51722,24 +50948,7 @@
       }
     ]
   },
-  "mob.florist.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.florist.female.greeting": {
+  "citizen.florist.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -52895,24 +52104,7 @@
       }
     ]
   },
-  "mob.florist.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.florist.male.greeting": {
+  "citizen.florist.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -54068,24 +53260,7 @@
       }
     ]
   },
-  "mob.glassblower.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.glassblower.female.greeting": {
+  "citizen.glassblower.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -55241,24 +54416,7 @@
       }
     ]
   },
-  "mob.glassblower.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.glassblower.male.greeting": {
+  "citizen.glassblower.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -56414,24 +55572,7 @@
       }
     ]
   },
-  "mob.healer.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.healer.female.greeting": {
+  "citizen.healer.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -57587,24 +56728,7 @@
       }
     ]
   },
-  "mob.healer.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.healer.male.greeting": {
+  "citizen.healer.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -58760,24 +57884,7 @@
       }
     ]
   },
-  "mob.knight.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.knight.female.greeting": {
+  "citizen.knight.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -59933,24 +59040,7 @@
       }
     ]
   },
-  "mob.knight.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.knight.male.greeting": {
+  "citizen.knight.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -61106,24 +60196,7 @@
       }
     ]
   },
-  "mob.lumberjack.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.lumberjack.female.greeting": {
+  "citizen.lumberjack.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -62279,24 +61352,7 @@
       }
     ]
   },
-  "mob.lumberjack.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.lumberjack.male.greeting": {
+  "citizen.lumberjack.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -63452,24 +62508,7 @@
       }
     ]
   },
-  "mob.mechanic.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.mechanic.female.greeting": {
+  "citizen.mechanic.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -64625,24 +63664,7 @@
       }
     ]
   },
-  "mob.mechanic.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.mechanic.male.greeting": {
+  "citizen.mechanic.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -65798,24 +64820,7 @@
       }
     ]
   },
-  "mob.miner.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.miner.female.greeting": {
+  "citizen.miner.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -66971,24 +65976,7 @@
       }
     ]
   },
-  "mob.miner.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.miner.male.greeting": {
+  "citizen.miner.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -68144,24 +67132,7 @@
       }
     ]
   },
-  "mob.netherworker.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.netherworker.female.greeting": {
+  "citizen.netherworker.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -69317,24 +68288,7 @@
       }
     ]
   },
-  "mob.netherworker.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.netherworker.male.greeting": {
+  "citizen.netherworker.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -70490,24 +69444,7 @@
       }
     ]
   },
-  "mob.planter.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.planter.female.greeting": {
+  "citizen.planter.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -71663,24 +70600,7 @@
       }
     ]
   },
-  "mob.planter.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.planter.male.greeting": {
+  "citizen.planter.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -72836,24 +71756,7 @@
       }
     ]
   },
-  "mob.pupil.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.pupil.female.greeting": {
+  "citizen.pupil.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -74009,24 +72912,7 @@
       }
     ]
   },
-  "mob.pupil.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.pupil.male.greeting": {
+  "citizen.pupil.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -75182,24 +74068,7 @@
       }
     ]
   },
-  "mob.quarrier.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.quarrier.female.greeting": {
+  "citizen.quarrier.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -76355,24 +75224,7 @@
       }
     ]
   },
-  "mob.quarrier.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.quarrier.male.greeting": {
+  "citizen.quarrier.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -77528,24 +76380,7 @@
       }
     ]
   },
-  "mob.rabbitherder.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.rabbitherder.female.greeting": {
+  "citizen.rabbitherder.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -78701,24 +77536,7 @@
       }
     ]
   },
-  "mob.rabbitherder.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.rabbitherder.male.greeting": {
+  "citizen.rabbitherder.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -79874,24 +78692,7 @@
       }
     ]
   },
-  "mob.ranger.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.ranger.female.greeting": {
+  "citizen.ranger.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -81047,24 +79848,7 @@
       }
     ]
   },
-  "mob.ranger.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.ranger.male.greeting": {
+  "citizen.ranger.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -82220,24 +81004,7 @@
       }
     ]
   },
-  "mob.researcher.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.researcher.female.greeting": {
+  "citizen.researcher.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -83393,24 +82160,7 @@
       }
     ]
   },
-  "mob.researcher.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.researcher.male.greeting": {
+  "citizen.researcher.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -84566,24 +83316,7 @@
       }
     ]
   },
-  "mob.sawmill.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.sawmill.female.greeting": {
+  "citizen.sawmill.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -85739,24 +84472,7 @@
       }
     ]
   },
-  "mob.sawmill.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.sawmill.male.greeting": {
+  "citizen.sawmill.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -86912,24 +85628,7 @@
       }
     ]
   },
-  "mob.shepherd.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.shepherd.female.greeting": {
+  "citizen.shepherd.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -88085,24 +86784,7 @@
       }
     ]
   },
-  "mob.shepherd.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.shepherd.male.greeting": {
+  "citizen.shepherd.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -89258,24 +87940,7 @@
       }
     ]
   },
-  "mob.sifter.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.sifter.female.greeting": {
+  "citizen.sifter.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -90431,24 +89096,7 @@
       }
     ]
   },
-  "mob.sifter.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.sifter.male.greeting": {
+  "citizen.sifter.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -91604,24 +90252,7 @@
       }
     ]
   },
-  "mob.smelter.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.smelter.female.greeting": {
+  "citizen.smelter.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -92777,24 +91408,7 @@
       }
     ]
   },
-  "mob.smelter.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.smelter.male.greeting": {
+  "citizen.smelter.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -93950,24 +92564,7 @@
       }
     ]
   },
-  "mob.stonemason.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.stonemason.female.greeting": {
+  "citizen.stonemason.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -95123,24 +93720,7 @@
       }
     ]
   },
-  "mob.stonemason.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.stonemason.male.greeting": {
+  "citizen.stonemason.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -96296,24 +94876,7 @@
       }
     ]
   },
-  "mob.stonesmeltery.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.stonesmeltery.female.greeting": {
+  "citizen.stonesmeltery.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -97469,24 +96032,7 @@
       }
     ]
   },
-  "mob.stonesmeltery.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.stonesmeltery.male.greeting": {
+  "citizen.stonesmeltery.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -98642,24 +97188,7 @@
       }
     ]
   },
-  "mob.student.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.student.female.greeting": {
+  "citizen.student.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -99815,24 +98344,7 @@
       }
     ]
   },
-  "mob.student.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.student.male.greeting": {
+  "citizen.student.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -100988,24 +99500,7 @@
       }
     ]
   },
-  "mob.swineherder.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.swineherder.female.greeting": {
+  "citizen.swineherder.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -102161,24 +100656,7 @@
       }
     ]
   },
-  "mob.swineherder.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.swineherder.male.greeting": {
+  "citizen.swineherder.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -103334,24 +101812,7 @@
       }
     ]
   },
-  "mob.teacher.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.teacher.female.greeting": {
+  "citizen.teacher.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -104507,24 +102968,7 @@
       }
     ]
   },
-  "mob.teacher.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.teacher.male.greeting": {
+  "citizen.teacher.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -105680,24 +104124,7 @@
       }
     ]
   },
-  "mob.undertaker.female.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.undertaker.female.greeting": {
+  "citizen.undertaker.female1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -106853,24 +105280,7 @@
       }
     ]
   },
-  "mob.undertaker.male.good_housing": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/male/say1",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say2",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/male/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.undertaker.male.greeting": {
+  "citizen.undertaker.male1.good_housing": {
     "category": "neutral",
     "sounds": [
       {
