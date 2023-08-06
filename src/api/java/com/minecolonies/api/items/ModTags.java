@@ -27,6 +27,8 @@ public class ModTags
     public static final TagKey<Item>  concretePowder  = ItemTags.create(TagConstants.CONCRETE_POWDER);
     public static final TagKey<Block> concreteBlock = BlockTags.create(TagConstants.CONCRETE_BLOCK);
     public static final TagKey<Block> pathingBlocks = BlockTags.create(TagConstants.PATHING_BLOCKS);
+    public static final TagKey<Block> mangroveTree = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
+    public static final TagKey<Block> tree = BlockTags.create(TagConstants.TREE_BLOCKS);
 
     public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
     public static final TagKey<Block> indestructible = BlockTags.create(TagConstants.INDESTRUCTIBLE);

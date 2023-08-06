@@ -35,6 +35,7 @@ public final class HappinessConstants
      * Storage tag for the handler.
      */
     public static final String TAG_HAPPINESS = "happinessHandler";
+    public static final String TAG_NEW_HAPPINESS = "newhappinesshandler";
 
     /**
      * Happiness modifiers
@@ -52,6 +53,7 @@ public final class HappinessConstants
     public static final String DEATH            = "death";
     public static final String RAIDWITHOUTDEATH = "raidwithoutdeath";
     public static final String SLEPTTONIGHT     = "slepttonight";
+    public static final String QUEST            = "quest";
 
     /**
      * Private constructor to hide implicit public one.

@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -66,7 +67,7 @@ public class GenericRecipe implements IGenericRecipe
                 .collect(Collectors.toList());
         return new GenericRecipe(storage.getRecipeSource(), storage.getPrimaryOutput(), storage.getAlternateOutputs(),
                 storage.getSecondaryOutputs(), inputs, storage.getGridSize(),
-                storage.getIntermediate(), storage.getLootTable(), storage.getRequiredTool(), restrictions, levelSort);
+                storage.getIntermediate(), storage.getLootTable(), storage.getRequiredTool(), null, restrictions, levelSort);
     }
 
     @Nullable
@@ -91,6 +92,7 @@ public class GenericRecipe implements IGenericRecipe
     private final Block intermediate;
     private final ResourceLocation lootTable;
     private final IToolType requiredTool;
+    private final LivingEntity requiredEntity;
     private final List<Component> restrictions;
     private final int levelSort;
 
@@ -113,6 +115,7 @@ public class GenericRecipe implements IGenericRecipe
         this.intermediate = intermediate;
         this.lootTable = lootTable;
         this.requiredTool = requiredTool;
+        this.requiredEntity = null;
         this.restrictions = Collections.unmodifiableList(restrictions);
         this.levelSort = levelSort;
     }
@@ -125,20 +128,20 @@ public class GenericRecipe implements IGenericRecipe
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
                          @NotNull final IToolType requiredTool,
+                         @Nullable final LivingEntity requiredEntity,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
         this.id = id;
         this.output = output;
-        this.allMultiOutputs = Collections.unmodifiableList(
-                Stream.concat(Stream.of(output),
-                    altOutputs.stream()).collect(Collectors.toList()));
+        this.allMultiOutputs = Stream.concat(Stream.of(output), altOutputs.stream()).filter(ItemStackUtils::isNotEmpty).toList();
         this.additionalOutputs = Collections.unmodifiableList(additionalOutputs);
         this.inputs = Collections.unmodifiableList(inputs);
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.lootTable = lootTable;
         this.requiredTool = requiredTool;
+        this.requiredEntity = requiredEntity;
         this.restrictions = Collections.unmodifiableList(restrictions);
         this.levelSort = levelSort;
     }
@@ -243,6 +246,12 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @Override
+    public @Nullable LivingEntity getRequiredEntity()
+    {
+        return this.requiredEntity;
+    }
+
+    @Override
     public String toString()
     {
         return "GenericRecipe{output=" + output +'}';
@@ -283,7 +292,7 @@ public class GenericRecipe implements IGenericRecipe
                 final ItemStack[] stacks = inputs.get(slot).getItems();
                 if (stacks.length > 0)
                 {
-                    inv.setItem(slot, stacks[0]);
+                    inv.setItem(slot, stacks[0].copy());
                 }
             }
             if (((CraftingRecipe) recipe).matches(inv, world))

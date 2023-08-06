@@ -1,6 +1,7 @@
 package com.minecolonies.api.configuration;
 
 import com.minecolonies.api.colony.permissions.Explosions;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Arrays;
@@ -32,7 +33,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
     public final ForgeConfigSpec.IntValue     allowGlobalNameChanges;
     public final ForgeConfigSpec.BooleanValue holidayFeatures;
-    public final ForgeConfigSpec.IntValue     updateRate;
     public final ForgeConfigSpec.IntValue     dirtFromCompost;
     public final ForgeConfigSpec.IntValue     luckyBlockChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
@@ -40,6 +40,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
+    public final ForgeConfigSpec.IntValue     loadtime;
     public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
     public final ForgeConfigSpec.IntValue     maxTreeSize;
@@ -138,7 +139,6 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue enableDebugLogging;
     public final ForgeConfigSpec.IntValue     maximalRetries;
     public final ForgeConfigSpec.IntValue     delayBetweenRetries;
     public final ForgeConfigSpec.BooleanValue creativeResolve;
@@ -159,7 +159,7 @@ public class ServerConfiguration extends AbstractConfiguration
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 4, 500);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 4, CitizenConstants.CITIZEN_LIMIT_MAX);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
         blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
@@ -168,7 +168,6 @@ public class ServerConfiguration extends AbstractConfiguration
         sendEnteringLeavingMessages = defineBoolean(builder, "sendenteringleavingmessages", true);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
@@ -176,6 +175,7 @@ public class ServerConfiguration extends AbstractConfiguration
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
+        loadtime = defineInteger(builder, "loadtime", 10,1,1440);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
@@ -303,7 +303,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "requestSystem");
 
-        enableDebugLogging = defineBoolean(builder, "enabledebuglogging", false);
         maximalRetries = defineInteger(builder, "maximalretries", 3, 1, 10);
         delayBetweenRetries = defineInteger(builder, "delaybetweenretries", 1200, 30, 10000);
         creativeResolve = defineBoolean(builder, "creativeresolve", false);

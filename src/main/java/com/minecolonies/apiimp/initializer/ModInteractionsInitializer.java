@@ -3,10 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
-import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
-import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -45,5 +42,15 @@ public final class ModInteractionsInitializer
                                                        .setResponseHandlerProducer(RecruitmentInteraction::new)
                                                        .setRegistryName(ModInteractionResponseHandlers.RECRUITMENT)
                                                        .createEntry());
+
+        ModInteractionResponseHandlers.quest = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.QUEST.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
+                                                      .setResponseHandlerProducer(QuestDialogueInteraction::new)
+                                                      .setRegistryName(ModInteractionResponseHandlers.QUEST)
+                                                      .createEntry());
+
+        ModInteractionResponseHandlers.questAction = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.QUEST_ACTION.getPath(), () -> new InteractionResponseHandlerEntry.Builder()
+                                                     .setResponseHandlerProducer(QuestDeliveryInteraction::new)
+                                                     .setRegistryName(ModInteractionResponseHandlers.QUEST_ACTION)
+                                                     .createEntry());
     }
 }

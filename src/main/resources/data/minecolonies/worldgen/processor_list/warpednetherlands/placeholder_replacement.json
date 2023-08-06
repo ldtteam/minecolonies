@@ -1,0 +1,70 @@
+{
+  "processors": [
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:netherrack"
+          },
+          "input_predicate": {
+            "block": "structurize:blocksolidsubstitution",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        },
+        {
+          "output_state": {
+            "Name": "minecraft:cobweb"
+          },
+          "input_predicate": {
+            "block": "minecraft:netherrack",
+            "probability": 0.08,
+            "predicate_type": "minecraft:random_block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        },
+        {
+          "output_state": {
+            "Name": "minecraft:cobweb"
+          },
+          "input_predicate": {
+            "block": "minecraft:netherrack",
+            "probability": 0.04,
+            "predicate_type": "minecraft:random_block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        },
+        {
+          "output_state": {
+            "Name": "minecraft:cobweb"
+          },
+          "input_predicate": {
+            "block": "minecraft:netherrack",
+            "probability": 0.02,
+            "predicate_type": "minecraft:random_block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
+    },
+    {
+      "blocks":[
+        {
+          "Name":"structurize:blocksubstitution"
+        },
+        {
+          "Name":"minecolonies:blockwaypoint"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
+    }  ]
+}

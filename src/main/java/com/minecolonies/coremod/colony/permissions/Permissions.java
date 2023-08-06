@@ -357,7 +357,7 @@ public class Permissions implements IPermissions
             final CompoundTag ownerCompound = ownerTagList.getCompound(i);
             @NotNull final UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             String name = "";
-            if (ownerCompound.getAllKeys().contains(TAG_NAME))
+            if (ownerCompound.contains(TAG_NAME))
             {
                 name = ownerCompound.getString(TAG_NAME);
             }

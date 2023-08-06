@@ -65,11 +65,11 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
             this.levels.add(new MinerLevel(levelTagList.getCompound(i)));
         }
 
-        if (compound.getAllKeys().contains(TAG_ACTIVE))
+        if (compound.contains(TAG_ACTIVE))
         {
             activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
         }
-        else if (compound.getAllKeys().contains(TAG_OLD))
+        else if (compound.contains(TAG_OLD))
         {
             oldNode = Node.createFromNBT(compound.getCompound(TAG_OLD));
         }

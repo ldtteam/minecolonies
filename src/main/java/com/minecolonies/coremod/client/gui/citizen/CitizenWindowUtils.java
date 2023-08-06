@@ -6,14 +6,13 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.constant.HappinessConstants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -41,12 +40,48 @@ import net.minecraft.network.chat.Component;
  */
 public class CitizenWindowUtils
 {
+    public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
+
     /**
      * Private con to hide public.
      */
     private CitizenWindowUtils()
     {
         // Intentionally left empty.
+    }
+
+    /**
+     * Enum for the available smileys.
+     */
+    private enum SmileyEnum
+    {
+        EMPTY(HAPPINESS_ICONS_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
+        HALF_RED(HAPPINESS_ICONS_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
+        RED(HAPPINESS_ICONS_LOCATION, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY);
+
+        public final int              X;
+        public final int              Y;
+        public final int happinessValue;
+        public final SmileyEnum prevSmiley;
+        public final SmileyEnum halfSmiley;
+        public       boolean isHalfSmiley = false;
+        public final ResourceLocation Image;
+
+        SmileyEnum(
+          final ResourceLocation heartImage, final int x, final int y, final int happinessValue,
+          final SmileyEnum halfSmiley, final SmileyEnum prevSmiley)
+        {
+            this.Image = heartImage;
+            this.X = x;
+            this.Y = y;
+            this.happinessValue = happinessValue;
+            this.halfSmiley = halfSmiley;
+            if (halfSmiley == null)
+            {
+                isHalfSmiley = true;
+            }
+            this.prevSmiley = prevSmiley;
+        }
     }
 
     /**
@@ -260,42 +295,88 @@ public class CitizenWindowUtils
     }
 
     /**
-     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
+     * Creates a Happiness bar according to the citizen maxHappiness and currentHappiness.
      *
      * @param citizen pointer to the citizen data view
-     * @param window  pointer to the current window
+     * @param happinessParView  pointer to the current bar view.
+     */
+    public static void createHappinessBar(final ICitizenDataView citizen, final View happinessParView)
+    {
+        int happiness = (int) citizen.getHappiness() * 2;
+        // Add Empty Smiley background
+        for (int i = 0; i < MAX_HEART_ICONS; i++)
+        {
+            addSmiley(happinessParView, i, SmileyEnum.EMPTY);
+        }
+
+        // Current Smiley we're filling
+        int smileyPos = 0;
+
+        // Order we're filling the smileys with from high to low
+        final List<SmileyEnum> heartList = new ArrayList<>();
+        heartList.add(SmileyEnum.RED);
+
+        // Iterate through hearts
+        for (final SmileyEnum smiley : heartList)
+        {
+            if (smiley.isHalfSmiley || smiley.prevSmiley == null)
+            {
+                continue;
+            }
+
+            // Add full Smiley
+            for (int i = smileyPos; i < MAX_HEART_ICONS && happiness > (smiley.prevSmiley.happinessValue * MAX_HEART_ICONS + 1); i++)
+            {
+                addSmiley(happinessParView, smileyPos, smiley);
+                happiness -= (smiley.happinessValue - smiley.prevSmiley.happinessValue);
+                smileyPos++;
+            }
+
+            // Add half Smiley
+            if (happiness % 2 == 1 && smileyPos < MAX_HEART_ICONS && smiley.halfSmiley != null && happiness > smiley.prevSmiley.happinessValue * MAX_HEART_ICONS)
+            {
+                addSmiley(happinessParView, smileyPos, smiley.prevSmiley);
+                addSmiley(happinessParView, smileyPos, smiley.halfSmiley);
+
+                happiness -= (smiley.halfSmiley.happinessValue - smiley.prevSmiley.happinessValue);
+                smileyPos++;
+            }
+            // Finished
+            if (smileyPos >= MAX_HEART_ICONS)
+            {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Adds a smiley to the happiness view at the given Position
+     *
+     * @param happinessBarView the happiness bar to add the heart to.
+     * @param happinessPos     the number of the smileys to add.
+     * @param smiley         the smiley to add.
+     */
+    private static void addSmiley(final View happinessBarView, final int happinessPos, final SmileyEnum smiley)
+    {
+        @NotNull final Image smileyImage = new Image();
+        smileyImage.setImage(smiley.Image, smiley.X, smiley.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+        smileyImage.setMapDimensions(9, 87);
+        smileyImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+        smileyImage.setPosition(happinessPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
+        happinessBarView.addChild(smileyImage);
+    }
+
+    /**
+     * General happiness bar setup.
+     * @param citizen citizen its for.
+     * @param window window its at.
      */
     public static void createHappinessBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        //Calculates how much percent of the next level has been completed. 
-        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
+        //Calculates how much percent of the next level has been completed.
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Text.class).setText(Component.literal(Integer.toString((int) citizen.getHappiness())));
-
-        @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT);
-        xpBar.setMapDimensions(256, 256);
-        xpBar.setSize(XP_BAR_WIDTH, XP_HEIGHT);
-        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
-        xpBar2.setMapDimensions(256, 256);
-        xpBar2.setSize(XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
-        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
-
-        if (experienceRatio > 0)
-        {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT);
-            xpBarFull.setMapDimensions(256, 256);
-            xpBarFull.setSize((int) experienceRatio, XP_HEIGHT);
-            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
-        }
+        createHappinessBar(citizen, window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class));
     }
 
     /**
@@ -331,8 +412,9 @@ public class CitizenWindowUtils
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
-            final double value = citizen.getHappinessHandler().getModifier(name).getFactor();
-
+            final double value = citizen.getHappinessHandler().getModifier(name).getFactor(null);
+            if (value == 1.0)
+                continue;
             final Image image = new Image();
             image.setSize(11, 11);
             image.setPosition(45, yPos);

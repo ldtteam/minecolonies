@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -175,67 +176,40 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return true;
-            }
-        }
-        return false;
+        return ModuleContainerUtils.hasModule(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getFirstModuleOccurance(final Class<T> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return (T) module;
-            }
-        }
-
-        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!");
+        return ModuleContainerUtils.getFirstModuleOccurance(modules,
+          clazz,
+          "The module of class: " + clazz.toString() + "should never be null! Building:" + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
-                return Optional.of((T) module);
-            }
-        }
-        return Optional.empty();
+        return ModuleContainerUtils.getFirstOptionalModuleOccurance(modules, clazz);
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        for (final IBuildingModule module : modules)
-        {
-            if (clazz.isInstance(module) && modulePredicate.test((T) module))
-            {
-                return (T) module;
-            }
-        }
-        throw new IllegalArgumentException("no matching module");
+        return ModuleContainerUtils.getModuleMatching(modules,
+          clazz,
+          modulePredicate,
+          "no matching module for Building:" + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> List<T> getModules(final Class<T> clazz)
     {
-        return this.modules.stream()
-          .filter(clazz::isInstance)
-          .map(c -> (T) c)
-          .collect(Collectors.toList());
+        return ModuleContainerUtils.getModules(modules, clazz);
     }
 
     @Override
@@ -352,7 +326,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         super.deserializeNBT(compound);
         loadRequestSystemFromNBT(compound);
-        if (compound.getAllKeys().contains(TAG_IS_BUILT))
+        if (compound.contains(TAG_IS_BUILT))
         {
             isBuilt = compound.getBoolean(TAG_IS_BUILT);
         }
@@ -360,7 +334,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             isBuilt = true;
         }
-        if (compound.getAllKeys().contains(TAG_CUSTOM_NAME))
+        if (compound.contains(TAG_CUSTOM_NAME))
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
@@ -922,7 +896,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!", new Exception());
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be! Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString(), new Exception());
                 Log.getLogger().error("Trying to restore order!");
 
                 final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING.get(), getPosition(), colony.getWorld().getBlockState(this.getPosition()));
@@ -1127,7 +1101,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return stack.getItem().getFoodProperties().getNutrition() >= getBuildingLevel();
+        return stack.getItem().getFoodProperties(stack, null).getNutrition() >= getBuildingLevel();
     }
 
     @Override
@@ -1290,7 +1264,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     private void loadRequestSystemFromNBT(final CompoundTag compound)
     {
-        if (compound.getAllKeys().contains(TAG_REQUESTOR_ID))
+        if (compound.contains(TAG_REQUESTOR_ID))
         {
             this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_REQUESTOR_ID));
         }
@@ -1299,7 +1273,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         }
 
-        if (compound.getAllKeys().contains(TAG_RS_BUILDING_DATASTORE))
+        if (compound.contains(TAG_RS_BUILDING_DATASTORE))
         {
             this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
         }
@@ -1806,7 +1780,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         catch (final Exception ex)
         {
-            Log.getLogger().error("Error during overruling", ex);
+            Log.getLogger().error("Error during overruling at Building:"+getBuildingType().getTranslationKey()+" pos:"+getID().toShortString(), ex);
             Log.getLogger().error(target.getId().toString() + " " + target.getState().name() + " " + target.getShortDisplayString().toString());
             return false;
         }

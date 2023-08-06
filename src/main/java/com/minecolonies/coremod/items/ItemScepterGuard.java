@@ -59,7 +59,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         final CompoundTag compound = scepter.getTag();
 
-        if (compound.getAllKeys().contains(TAG_LAST_POS))
+        if (compound.contains(TAG_LAST_POS))
         {
             final BlockPos lastPos = BlockPosUtil.read(compound, TAG_LAST_POS);
             if (lastPos.equals(ctx.getClickedPos()))
@@ -84,7 +84,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final CompoundTag compound, final Player playerIn)
     {
-        if (!compound.getAllKeys().contains(TAG_ID))
+        if (!compound.contains(TAG_ID))
         {
             return InteractionResult.FAIL;
         }
@@ -116,7 +116,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         else
         {
-            if (!compound.getAllKeys().contains(TAG_LAST_POS))
+            if (!compound.contains(TAG_LAST_POS))
             {
                 tower.resetPatrolTargets();
             }

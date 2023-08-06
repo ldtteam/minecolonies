@@ -130,7 +130,7 @@ public class BuildingGraveyard extends AbstractBuilding
     {
         super.deserializeNBT(compound);
 
-        if (compound.getAllKeys().contains(TAG_CURRENT_GRAVE))
+        if (compound.contains(TAG_CURRENT_GRAVE))
         {
             currentGrave = BlockPosUtil.read(compound, TAG_CURRENT_GRAVE);
         }

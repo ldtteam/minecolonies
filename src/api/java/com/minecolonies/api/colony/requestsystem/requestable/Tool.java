@@ -8,26 +8,16 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.ToolAction;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.*;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.FlintAndSteelItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.SwordItem;
 
 /**
  * Class used to represent tools inside the request system.
@@ -248,6 +238,16 @@ public class Tool implements IDeliverable
             set.add(ToolType.SWORD.getName());
         }
 
+        if (stack.canPerformAction(ToolActions.SHEARS_DIG))
+        {
+            set.add(ToolType.SHEARS.getName());
+        }
+
+        if (stack.canPerformAction(ToolActions.FISHING_ROD_CAST))
+        {
+            set.add(ToolType.FISHINGROD.getName());
+        }
+
         if (stack.getItem() instanceof BowItem)
         {
             set.add("bow");
@@ -255,18 +255,6 @@ public class Tool implements IDeliverable
         else if (stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
         {
             set.add("weapon");
-        }
-        else if (stack.getItem() instanceof HoeItem)
-        {
-            set.add(ToolType.HOE.getName());
-        }
-        else if (stack.getItem() instanceof FishingRodItem)
-        {
-            set.add("rod");
-        }
-        else if (stack.getItem() instanceof ShearsItem)
-        {
-            set.add("shears");
         }
         else if (stack.getItem() instanceof ShieldItem)
         {

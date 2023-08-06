@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
@@ -20,6 +21,7 @@ import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -32,8 +34,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.DETAILS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
@@ -340,8 +344,18 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     }
                 }
 
-                if(request instanceof StandardRequests.ItemTagRequest)
+                if (request instanceof IStackBasedTask)
                 {
+                    final ItemIcon icon = rowPane.findPaneOfTypeByID("detailIcon", ItemIcon.class);
+                    final ItemStack copyStack = ((IStackBasedTask) request).getTaskStack().copy();
+                    copyStack.setCount(((IStackBasedTask) request).getDisplayCount());
+                    icon.setItem(copyStack);
+                    icon.setVisible(true);
+                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(((IStackBasedTask) request).getDisplayPrefix().withStyle(ChatFormatting.BLACK));
+                }
+                else if(request instanceof StandardRequests.ItemTagRequest)
+                {
+                    rowPane.findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
                     if(!displayStacks.isEmpty())
                     {
                         rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(
@@ -350,9 +364,11 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")));
+                    rowPane.findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
+                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")).withStyle(ChatFormatting.BLACK));
                 }
 
+                PaneBuilders.tooltipBuilder().hoverPane(findPaneByID(REQUEST_DETAIL)).build().setText(Component.translatable(DETAILS));
                 if (!cancellable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();

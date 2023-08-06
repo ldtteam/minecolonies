@@ -1,21 +1,26 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
-import java.util.function.DoubleSupplier;
+import java.util.ArrayList;
+import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The time based happiness modifier. Over a time the buff/boost gets worse.
  */
-public class TimeBasedHappinessModifier extends StaticHappinessModifier
+public final class TimeBasedHappinessModifier extends AbstractHappinessModifier implements ITimeBasedHappinessModifier
 {
     /**
      * The time based factors.
      */
-    private final Tuple<Integer, Double>[] timeBasedFactor;
+    private Tuple<Integer, Double>[] timeBasedFactor;
 
     /**
      * The number of passed days.
@@ -30,16 +35,24 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
      * @param supplier        the supplier to get the factor.
      * @param timeBasedFactor tuples about the boost/buff factor over time.
      */
-    public TimeBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final Tuple<Integer, Double>[] timeBasedFactor)
+    public TimeBasedHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier, final Tuple<Integer, Double>...timeBasedFactor)
     {
         super(id, weight, supplier);
         this.timeBasedFactor = timeBasedFactor;
     }
 
-    @Override
-    public double getFactor()
+    /**
+     * Create an instance of the happiness modifier.
+     */
+    public TimeBasedHappinessModifier()
     {
-        final double baseFactor = super.getFactor();
+        super();
+    }
+
+    @Override
+    public double getFactor(final ICitizenData citizenData)
+    {
+        final double baseFactor = super.getFactor(citizenData);
 
         double factor = baseFactor;
         if (baseFactor < 1.0)
@@ -68,10 +81,9 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
     }
 
     @Override
-    public void dayEnd()
+    public void dayEnd(final ICitizenData data)
     {
-        super.dayEnd();
-        if (getFactor() < 1)
+        if (getFactor(data) < 1)
         {
             days++;
         }
@@ -86,12 +98,30 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
     {
         super.read(compoundNBT);
         this.days = compoundNBT.getInt(TAG_DAY);
+        final ListTag listTag = compoundNBT.getList(TAG_LIST, Constants.TAG_COMPOUND);
+        final List<Tuple<Integer, Double>> list = new ArrayList<>();
+        for (int i = 0; i < listTag.size(); i++)
+        {
+            final CompoundTag entryTag = listTag.getCompound(i);
+            list.add(new Tuple<>(entryTag.getInt(TAG_DAY), entryTag.getDouble(TAG_VALUE)));
+        }
+        this.timeBasedFactor = list.toArray(new Tuple[0]);
     }
 
     @Override
     public void write(final CompoundTag compoundNBT)
     {
         super.write(compoundNBT);
+        compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.TIME_PERIOD_MODIFIER.toString());
+
         compoundNBT.putInt(TAG_DAY, days);
+        final ListTag listTag = new ListTag();
+        for (final Tuple<Integer, Double> entry : timeBasedFactor)
+        {
+            final CompoundTag listEntry = new CompoundTag();
+            listEntry.putInt(TAG_DAY, entry.getA());
+            listEntry.putDouble(TAG_VALUE, entry.getB());
+        }
+        compoundNBT.put(TAG_LIST, listTag);
     }
 }

@@ -188,7 +188,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     private static void openWindow(CompoundTag compound, Player player, BlockPos warehousePos)
     {
-        if (compound.getAllKeys().contains(TAG_COLONY_ID) && compound.getAllKeys().contains(TAG_BUILDER))
+        if (compound.contains(TAG_COLONY_ID) && compound.contains(TAG_BUILDER))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);

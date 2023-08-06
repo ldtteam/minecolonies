@@ -1,0 +1,66 @@
+{
+  "name": "minecolonies:lostmesacity/roads",
+  "fallback": "minecolonies:lostmesacity/buildings",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:lostmesacity/poor_corner",
+        "processors": "minecolonies:lostmesacity/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:lostmesacity/poor_intersection",
+        "processors": "minecolonies:lostmesacity/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:lostmesacity/poor_straight",
+        "processors": "minecolonies:lostmesacity/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/poor_park",
+        "processors": "minecolonies:lostmesacity/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/fountain",
+        "processors": "minecolonies:lostmesacity/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/parkway",
+        "processors": "minecolonies:lostmesacity/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

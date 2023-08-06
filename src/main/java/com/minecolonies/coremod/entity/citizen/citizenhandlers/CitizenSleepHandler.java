@@ -10,24 +10,20 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.Optional;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_ASLEEP;
 import static com.minecolonies.api.research.util.ResearchConstants.WORK_LONGER;
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING;
 
 /**
@@ -102,11 +98,11 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return false;
         }
 
-        citizen.updatePose(Pose.SLEEPING);
+        citizen.setPose(Pose.SLEEPING);
         citizen.getNavigation().stop();
-        citizen.setPos(((float) bedLocation.getX() + HALF_BLOCK),
-          (float) bedLocation.getY() + 0.8F,
-          ((float) bedLocation.getZ() + HALF_BLOCK));
+        citizen.setPos(((double) bedLocation.getX() + HALF_BLOCK),
+          (double) bedLocation.getY() + 0.6875D,
+          ((double) bedLocation.getZ() + HALF_BLOCK));
         citizen.setSleepingPos(bedLocation);
 
         citizen.setDeltaMovement(Vec3.ZERO);
@@ -139,20 +135,20 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         notifyCitizenHandlersOfWakeUp();
 
         //Only do this if he really sleeps
-        if (!isAsleep())
+        if (isAsleep())
         {
-            return;
+            spawnCitizenFromBed();
         }
-        citizen.updatePose(Pose.STANDING);
+
+        citizen.setPose(Pose.STANDING);
         citizen.clearSleepingPos();
-        spawnCitizenFromBed();
+        setIsAsleep(false);
     }
 
     private void notifyCitizenHandlersOfWakeUp()
     {
         if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
         {
-            citizen.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.working"));
             citizen.getCitizenColonyHandler().getWorkBuilding().onWakeUp();
         }
         if (citizen.getCitizenJobHandler().getColonyJob() != null)

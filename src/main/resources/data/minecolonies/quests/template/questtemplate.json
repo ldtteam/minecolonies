@@ -1,0 +1,225 @@
+{
+  "name": "Name of the Quest",
+  "parents": [],
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 0
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:townhall",
+          "level": 3
+        }
+      }
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:guardtower",
+          "level": 3
+        },
+        "count": 3
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "female": true,
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "qty": 0.5
+    },
+    {
+      "type": "minecolonies:unlock"
+    }
+  ],
+  "max-occurrences": 20,
+  "triggerOrder": "6 && ((1 && 4) || (2 && 4 && 1) || (1 && 3 && 4)) && 5",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi, how are you?",
+      "options": [
+        {
+          "answer": "Im alright, and you?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Could you bring me an Apple? I'm really hungry!",
+            "options": [
+              {
+                "answer": "Sure!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Sorry, I don't have time right now!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              },
+              {
+                "answer": "We don't have any apples right now!",
+                "result": {
+                  "type": "minecolonies:cancel"
+                }
+              },
+              {
+                "answer": "Could I bring you a baked potato?",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Sure sounds good!",
+                  "options": [
+                    {
+                      "answer": "Be right back then!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I don't have time right now!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:apple",
+        "qty": 1,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:baked_potato",
+        "qty": 1,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:breakblock",
+      "details": {
+        "target": 0,
+        "block": "minecraft:dirt",
+        "qty": 10,
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:placeblock",
+      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
+      "details": {
+        "target": 0,
+        "block": "minecraft:dirt",
+        "qty": 10,
+        "next-objective": 5
+      }
+    },
+    {
+      "type": "minecolonies:killentity",
+      "details": {
+        "target": 0,
+        "entity-type": "minecraft:skeleton",
+        "qty": 10,
+        "next-objective": 6
+      }
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "target": 0,
+        "type": "minecolonies:builder",
+        "lvl": 3,
+        "qty": 1,
+        "count-existing": false
+      }
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:gold_ingot",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:skill",
+      "details": {
+        "target": 0,
+        "skill": "Strength",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:research",
+      "details": {
+        "id": "this"
+      }
+    },
+    {
+      "type": "minecolonies:raid",
+      "details": {
+        "change": -1
+      }
+    },
+    {
+      "type": "minecolonies:relationship",
+      "details": {
+        "target1": 0,
+        "target2": 1,
+        "type": "couple"
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    },
+    {
+      "type": "minecolonies:questreputation",
+      "details": {
+        "qty": 0.5
+      }
+    },
+    {
+      "type": "minecolonies:unlockquest",
+      "details": {
+        "id": "minecolonies:questtemplate"
+      }
+    }
+  ]
+}
+
+

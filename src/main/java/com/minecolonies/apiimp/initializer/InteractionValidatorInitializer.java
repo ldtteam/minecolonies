@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.happiness.ITimeBasedHappinessModifier;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -15,11 +16,10 @@ import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
@@ -36,7 +36,6 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class containing initializer for all the validator predicates.
@@ -101,32 +100,10 @@ public class InteractionValidatorInitializer
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_FREE_FIELDS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).getFirstModuleOccurance(FarmerFieldModule.class).hasNoFields());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && citizen.getWorkBuilding().getFirstModuleOccurance(FieldsModule.class).hasNoFields());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(INVALID_MINESHAFT),
           citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
-
-        InteractionValidatorRegistry.registerPosBasedPredicate(Component.translatable(NO_SEED_SET),
-          (citizen, pos) ->
-          {
-              if (citizen.getJob() instanceof JobFarmer)
-              {
-                  final IColony colony = citizen.getColony();
-                  if (colony != null)
-                  {
-                      final Level world = colony.getWorld();
-                      if (world != null)
-                      {
-                          final BlockEntity tileEntity = world.getBlockEntity(pos);
-                          if (tileEntity instanceof ScarecrowTileEntity)
-                          {
-                              return ((ScarecrowTileEntity) tileEntity).getSeed() == null;
-                          }
-                      }
-                  }
-              }
-              return false;
-          });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
           citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
@@ -261,26 +238,26 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic<?, ?>) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(DEMANDS + HOMELESSNESS),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS)).getDays() > DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HOMELESSNESS),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() > COMPLAIN_DAYS_WITHOUT_HOUSE
-                       && (citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS).getDays() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS)).getDays() > COMPLAIN_DAYS_WITHOUT_HOUSE
+                       && ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(HOMELESSNESS)).getDays() <= DEMANDS_DAYS_WITHOUT_HOUSE && citizen.getHomeBuilding() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(DEMANDS + UNEMPLOYMENT),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT)).getDays() > DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + UNEMPLOYMENT),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() > COMPLAIN_DAYS_WITHOUT_JOB
-                       && (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
+          citizen -> ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT)).getDays() > COMPLAIN_DAYS_WITHOUT_JOB
+                       && ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT)).getDays() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(DEMANDS + IDLEATJOB),
-          citizen -> citizen.getJob() != null && (citizen.getCitizenHappinessHandler()).getModifier(IDLEATJOB).getDays() > citizen.getJob().getIdleSeverity(true));
+          citizen -> citizen.getJob() != null && ((ITimeBasedHappinessModifier)(citizen.getCitizenHappinessHandler()).getModifier(IDLEATJOB)).getDays() > citizen.getJob().getIdleSeverity(true));
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + IDLEATJOB),
-          citizen -> citizen.getJob() != null && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() > citizen.getJob().getIdleSeverity(false)
-                       && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() <= citizen.getJob().getIdleSeverity(true));
+          citizen -> citizen.getJob() != null && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB)).getDays() > citizen.getJob().getIdleSeverity(false)
+                       && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB)).getDays() <= citizen.getJob().getIdleSeverity(true));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + SLEPTTONIGHT),
-          citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT).getDays() <= 0);
+          citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT)).getDays() <= 0);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper

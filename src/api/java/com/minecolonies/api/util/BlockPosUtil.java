@@ -94,7 +94,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Writes a chunk coordinate to a CompoundNBT, but only if not null.
+     * Writes a chunk coordinate to a CompoundTag, but only if not null.
      *
      * @param compound Compound to write to.
      * @param name     Name of the tag.
@@ -183,7 +183,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Reads chunk coordinates from a CompoundNBT, but returns null if zero or absent.
+     * Reads chunk coordinates from a CompoundTag, but returns null if zero or absent.
      *
      * @param compound Compound to read data from.
      * @param name     Tag name to read data from.
@@ -811,6 +811,14 @@ public final class BlockPosUtil
         if (predicate.test(world, start))
         {
             return start;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL)
+        {
+            if (predicate.test(world, start.relative(direction)))
+            {
+                return start.relative(direction);
+            }
         }
 
         BlockPos temp;

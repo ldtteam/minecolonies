@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -11,10 +10,12 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.FireworkUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
@@ -23,12 +24,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -96,11 +95,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * Parent schematic this is in
      */
     private BlockPos parentSchematic = BlockPos.ZERO;
-
-    /**
-     * Child schematics within this
-     */
-    private Set<BlockPos>     childSchematics = ImmutableSet.of();
 
     /**
      * Blueprint future for delayed info reading.
@@ -175,7 +169,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         compound.putBoolean(TAG_DECONSTRUCTED, isDeconstructed);
 
         BlockPosUtil.write(compound, TAG_PARENT_SCHEM, parentSchematic);
-        BlockPosUtil.writePosListToNBT(compound, TAG_CHILD_SCHEM, new ArrayList<>(childSchematics));
         return compound;
     }
 
@@ -188,7 +181,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.getAllKeys().contains(TAG_CORNER1) && compound.getAllKeys().contains(TAG_CORNER2))
+        if (compound.contains(TAG_CORNER1) && compound.contains(TAG_CORNER2))
         {
             setCorners(BlockPosUtil.read(compound, TAG_CORNER1), BlockPosUtil.read(compound, TAG_CORNER2));
         }
@@ -213,7 +206,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
 
         parentSchematic = BlockPosUtil.read(compound, TAG_PARENT_SCHEM);
-        childSchematics = ImmutableSet.copyOf(BlockPosUtil.readPosListFromNBT(compound, TAG_CHILD_SCHEM));
     }
 
     private void deserializerStructureInformationFrom(final CompoundTag compound)
@@ -285,16 +277,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public BlockPos getParent()
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
-        if (building != null)
-        {
-            if (!building.getChildren().contains(getID()))
-            {
-                building.addChild(getID());
-            }
-        }
-
-        return parentSchematic;
+        return isParentValid(parentSchematic) ? parentSchematic : BlockPos.ZERO;
     }
 
     @Override
@@ -306,53 +289,25 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void setParent(final BlockPos pos)
     {
-        if (!pos.equals(getID()))
+        if (isParentValid(pos))
         {
             parentSchematic = pos;
         }
     }
 
+    private boolean isParentValid(BlockPos position)
+    {
+        final IBuilding building = colony.getBuildingManager().getBuilding(position);
+        return building != null && !building.getID().equals(getID()) && !building.hasParent();
+    }
+
     @Override
     public Set<BlockPos> getChildren()
     {
-        // Validate childs existance
-        final IRegisteredStructureManager manager = colony.getBuildingManager();
-        List<BlockPos> toRemove = null;
-
-        for (final BlockPos pos : childSchematics)
-        {
-            if (manager.getBuilding(pos) == null)
-            {
-                if (toRemove == null)
-                {
-                    toRemove = new ArrayList<>();
-                }
-                toRemove.add(pos);
-            }
-        }
-
-        if (toRemove != null)
-        {
-            final Set<BlockPos> oldPositions = new HashSet<>(this.childSchematics);
-            oldPositions.removeAll(toRemove);
-            this.childSchematics = ImmutableSet.copyOf(oldPositions);
-        }
-
-        return childSchematics;
-    }
-
-    @Override
-    public void addChild(final BlockPos pos)
-    {
-        childSchematics = ImmutableSet.<BlockPos>builder().addAll(childSchematics).add(pos).build();
-    }
-
-    @Override
-    public void removeChild(final BlockPos pos)
-    {
-        final Set<BlockPos> oldPositions = new HashSet<>(childSchematics);
-        oldPositions.remove(pos);
-        childSchematics = ImmutableSet.copyOf(oldPositions);
+        return colony.getBuildingManager().getBuildings().values().stream()
+                 .filter(f -> f.getParent().equals(getID()))
+                 .map(ISchematicProvider::getID)
+                 .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -498,9 +453,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public String getStructurePack()
     {
-        if (parentSchematic != BlockPos.ZERO)
+        final BlockPos parent = getParent();
+        if (parent != BlockPos.ZERO)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
+            final IBuilding building = colony.getBuildingManager().getBuilding(parent);
             if (building != null)
             {
                 return building.getStructurePack();
@@ -599,7 +555,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 {
                     FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), level);
                 }
-                
+
                 setBuildingLevel(level);
                 onUpgradeComplete(level);
             }

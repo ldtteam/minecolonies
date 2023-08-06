@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
@@ -127,27 +128,23 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         // Create a new Request for items
         if (currentItems.isEmpty())
         {
-            // Default levelup
-            data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE, data);
-            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
-
             for (final StudyItem studyItem : building.getStudyItems())
             {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.getItem());
                 if (bSlot > -1)
                 {
-                    if (walkToBuilding())
-                    {
-                        setDelay(WALK_DELAY);
-                        return getState();
-                    }
-                    takeItemStackFromProvider(building, bSlot);
+                    needsCurrently = new Tuple<>(itemStack -> studyItem.getItem() == itemStack.getItem(), 10);
+                    return GATHERING_REQUIRED_MATERIALS;
                 }
                 else
                 {
                     checkIfRequestForItemExistOrCreateAsync(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
                 }
             }
+
+            // Default levelup
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE, data);
+            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
         }
         // Use random item
         else

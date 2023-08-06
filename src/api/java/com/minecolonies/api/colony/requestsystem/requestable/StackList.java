@@ -225,11 +225,11 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
-        final String desc = compound.getAllKeys().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : REQUEST_SYSTEM_STACK_LIST;
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final String desc = compound.contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : REQUEST_SYSTEM_STACK_LIST;
         int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
         int minCount = count;
-        if (compound.getAllKeys().contains(NBT_COUNT))
+        if (compound.contains(NBT_COUNT))
         {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);

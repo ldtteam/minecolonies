@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
@@ -36,8 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
@@ -64,7 +64,55 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     public EntityAIWorkSmelter(@NotNull final JobSmelter job)
     {
         super(job);
+        super.registerTargets(new AITarget(BREAK_ORES, this::breakOres, TICKS_SECOND));
         worker.setCanPickUpLoot(true);
+    }
+
+    /**
+     * Break down ores until they are finished.
+     * @return the next state to go to.
+     */
+    private IAIState breakOres()
+    {
+        final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
+        final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
+
+        if(currentRecipeStorage == null)
+        {
+            return IDLE;
+        }
+
+        final ItemStack inputItem = currentRecipeStorage.getCleanedInput().stream()
+                                      .map(ItemStorage::getItemStack)
+                                      .findFirst().orElse(ItemStack.EMPTY);
+
+        if(inputItem.isEmpty())
+        {
+            return IDLE;
+        }
+
+        WorkerUtil.faceBlock(building.getPosition(), worker);
+
+        if(!module.fullFillRecipe(currentRecipeStorage))
+        {
+            return IDLE;
+        }
+        else
+        {
+            worker.decreaseSaturationForContinuousAction();
+            worker.getCitizenExperienceHandler().addExperience(0.2);
+        }
+
+        Network.getNetwork()
+          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID()), worker);
+        Network.getNetwork()
+          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
+
+        worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
+        worker.swing(InteractionHand.MAIN_HAND);
+        SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
+
+        return getState();
     }
 
     @Override
@@ -97,6 +145,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IAIState checkForImportantJobs()
     {
+        if (!ItemStackUtils.isEmpty(worker.getMainHandItem()))
+        {
+            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        }
+
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
             return INVENTORY_FULL;
@@ -111,36 +164,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             return super.checkForImportantJobs();
         }
 
-        final ItemStack inputItem = currentRecipeStorage.getCleanedInput().stream()
-                .map(ItemStorage::getItemStack)
-                .findFirst().orElse(ItemStack.EMPTY);
-
-        if(inputItem.isEmpty())
-        {
-            return getState();
-        }
-
-        WorkerUtil.faceBlock(building.getPosition(), worker);
-
-        if(!module.fullFillRecipe(currentRecipeStorage))
-        {
-            return getState();
-        }
-        else
-        {
-            worker.decreaseSaturationForContinuousAction();
-            worker.getCitizenExperienceHandler().addExperience(0.2);
-        }
-
-        Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID()), worker);
-        Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
-        
-        worker.swing(InteractionHand.MAIN_HAND);
-        SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
-
-        return IDLE;
+        return BREAK_ORES;
     }
 
     /**

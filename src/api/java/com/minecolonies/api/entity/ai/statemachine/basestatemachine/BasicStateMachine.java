@@ -142,7 +142,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
         }
         catch (final RuntimeException e)
         {
-            Log.getLogger().warn("Condition check for transition " + transition + " threw an exception:", e);
+            Log.getLogger().warn("Condition check for state " + getState() + " threw an exception:", e);
             this.onException(e);
             return false;
         }
@@ -164,7 +164,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
         }
         catch (final RuntimeException e)
         {
-            Log.getLogger().warn("Statemachine for transition " + transition + " threw an exception:", e);
+            Log.getLogger().warn("Statemachine for state " + getState() + " threw an exception:", e);
             this.onException(e);
             return false;
         }

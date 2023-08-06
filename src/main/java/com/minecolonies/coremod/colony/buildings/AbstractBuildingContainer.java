@@ -82,11 +82,11 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             final CompoundTag containerCompound = containerTagList.getCompound(i);
             containerList.add(NbtUtils.readBlockPos(containerCompound));
         }
-        if (compound.getAllKeys().contains(TAG_PRIO))
+        if (compound.contains(TAG_PRIO))
         {
             this.unscaledPickUpPriority = compound.getInt(TAG_PRIO);
         }
-        if (compound.getAllKeys().contains(TAG_PRIO_STATE))
+        if (compound.contains(TAG_PRIO_STATE))
         {
             // This was the old int representation of Pickup:Never
             if (compound.getInt(TAG_PRIO_STATE) == 0)
@@ -157,16 +157,15 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         if (block instanceof AbstractBlockHut)
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityColonyBuilding)
+            if (entity instanceof TileEntityColonyBuilding buildingEntity)
             {
-                ((TileEntityColonyBuilding) entity).setStructurePack(StructurePacks.getStructurePack(this.getStructurePack()));
-                ((TileEntityColonyBuilding) entity).setMirror(isMirrored());
+                buildingEntity.setStructurePack(StructurePacks.getStructurePack(getStructurePack()));
+                buildingEntity.setMirror(isMirrored());
                 final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
-                    building.setStructurePack(this.getStructurePack());
+                    building.setStructurePack(getStructurePack());
                     building.setParent(getID());
-                    addChild(pos);
                 }
             }
         }
@@ -174,9 +173,9 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         {
             addContainerPosition(pos);
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack)
+            if (entity instanceof TileEntityRack rackEntity)
             {
-                ((TileEntityRack) entity).setBuildingPos(this.getID());
+                rackEntity.setBuildingPos(this.getID());
             }
         }
     }

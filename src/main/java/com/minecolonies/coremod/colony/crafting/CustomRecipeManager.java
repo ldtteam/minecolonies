@@ -1,19 +1,23 @@
 package com.minecolonies.coremod.colony.crafting;
 
+import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +59,11 @@ public class CustomRecipeManager
      * The collection of related loot table drops (for informational purposes, not loot gen).
      */
     private final Map<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootTables = new HashMap<>();
+
+    /**
+     * The collection of recipe templates, pending tag loading.
+     */
+    private final Map<ResourceLocation, JsonObject> recipeTemplates = new HashMap<>();
 
     private CustomRecipeManager()
     {
@@ -111,6 +120,17 @@ public class CustomRecipeManager
     }
 
     /**
+     * Temporarily stores a recipe template while waiting for the tags to finish loading.
+     * @param id           the resource id of the template.
+     * @param templateJson the template content.
+     */
+    public void addRecipeTemplate(@NotNull final ResourceLocation id,
+                                  @NotNull final JsonObject templateJson)
+    {
+        recipeTemplates.put(id, templateJson);
+    }
+
+    /**
      * Reset the entire recipe map.
      * Should be run on Data Pack Reloads, to avoid transferring settings from another world.
      */
@@ -120,6 +140,7 @@ public class CustomRecipeManager
         recipeMap.clear();
         lootTables.clear();
         removedRecipes.clear();
+        recipeTemplates.clear();
     }
 
     /**
@@ -244,11 +265,39 @@ public class CustomRecipeManager
     }
 
     /**
+     * Resolve the {@link #recipeTemplates} into actual recipes.
+     *
+     * Must be called server-side-only after tags have been loaded and before we sync to client.
+     */
+    public void resolveTemplates()
+    {
+        for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet())
+        {
+            try
+            {
+                for (final CustomRecipe recipe : CustomRecipe.parseTemplate(templateEntry.getKey(), templateEntry.getValue()))
+                {
+                    addRecipe(recipe);
+                }
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error parsing crafterrecipe template " + templateEntry.getKey().toString(), e);
+            }
+        }
+
+        recipeTemplates.clear();
+    }
+
+    /**
      * Analyses and builds an approximate list of possible loot drops from registered recipes.
      * @param lootTableManager the loot table manager
      */
-    public void buildLootData(@NotNull final LootTables lootTableManager)
+    public void buildLootData(@NotNull final LootTables lootTableManager,
+                              @NotNull final Level level)
     {
+        final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
+
         final List<ResourceLocation> lootIds = new ArrayList<>();
         for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values())
         {
@@ -268,9 +317,15 @@ public class CustomRecipeManager
             {
                 if (module instanceof AnimalHerdingModule herding)
                 {
-                    lootIds.add(herding.getDefaultLootTable());
+                    for (final Animal animal : animals)
+                    {
+                        if (herding.isCompatible(animal))
+                        {
+                            lootIds.addAll(herding.getLootTables(animal));
+                        }
+                    }
                 }
-                if (module instanceof ICraftingBuildingModule crafting)
+                else if (module instanceof ICraftingBuildingModule crafting)
                 {
                     lootIds.addAll(crafting.getAdditionalLootTables());
                 }

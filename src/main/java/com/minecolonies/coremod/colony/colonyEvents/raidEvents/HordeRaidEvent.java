@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
@@ -43,6 +45,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
+import static com.minecolonies.api.util.constant.HappinessConstants.RAIDWITHOUTDEATH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
@@ -477,7 +480,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
             if (colony.getRaiderManager().getLostCitizen() == 0)
             {
-                colony.getCitizenManager().updateModifier("raidwithoutdeath");
+                colony.getCitizenManager().injectModifier(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, new StaticHappinessSupplier(2.0), 3));
             }
         }
         else if (total > 0 && total <= SMALL_HORDE_SIZE)

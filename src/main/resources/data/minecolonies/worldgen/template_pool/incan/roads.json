@@ -1,0 +1,48 @@
+{
+  "name": "minecolonies:incan/roads",
+  "fallback": "minecolonies:incan/buildings",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:incan/pathlong",
+        "processors": "minecolonies:incan/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:incan/pathintersection",
+        "processors": "minecolonies:incan/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:incan/pathlong",
+        "processors": "minecolonies:incan/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:incan/pathshort",
+        "processors": "minecolonies:incan/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

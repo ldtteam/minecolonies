@@ -1,0 +1,46 @@
+{
+  "processors": [
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:netherrack"
+          },
+          "input_predicate": {
+            "block": "structurize:blocksolidsubstitution",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        },
+        {
+          "output_state": {
+            "Name": "minecraft:netherrack"
+          },
+          "input_predicate": {
+            "block": "minecraft:dirt",
+            "predicate_type": "minecraft:random_block_match",
+            "probability":0.15
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
+    },
+    {
+      "blocks":[
+        {
+          "Name":"structurize:blocksubstitution"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
+    },
+    {
+      "processor_type": "minecraft:block_age",
+      "mossiness": 0.15
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "name": "The Warehouse Manager",
+  "max-occurrences": 1,
+  "parents": [],
+  "triggers": [
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:warehouse",
+          "level": 1
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:deliveryman"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hey there! Have you heard of the clipboard? It's a tool that can help you keep track of all the requests in our colony. If you could bring me one, I would be forever grateful!",
+      "options": [
+        {
+          "answer": "Sure, I'll see what I can do!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "Sorry, I can't help you right now.",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I already know what it does!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecolonies:clipboard",
+        "qty": 1,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
+      "target": 0,
+      "text": "Great, you found a clipboard! To use it, simply shift-right click it on any hut block. This will give you an overview of all the requests in the colony. It's super handy, and I am so grateful that you were able to get one for me. Thank you!",
+      "options": [
+        {
+          "answer": "You're welcome!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:clipboard",
+        "qty": 1
+      }
+    }
+  ]
+}

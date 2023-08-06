@@ -2,34 +2,45 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.items.IBlockOverlayItem;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
-import net.minecraft.world.level.block.BeehiveBlock;
-import net.minecraft.world.entity.player.Player;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BeehiveBlock;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
-import net.minecraft.world.item.Item.Properties;
-
 /**
  * Beekeeper Scepter Item class. Used to give tasks to Beekeeper.
  */
-public class ItemScepterBeekeeper extends AbstractItemMinecolonies
+public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IBlockOverlayItem
 {
+    private static final int RED_OVERLAY = 0xFFFF0000;
+    private static final int YELLOW_OVERLAY = 0xFFFFFF00;
+
     /**
      * BeekeeperScepter constructor. Sets max stack to 1, like other tools.
      *
@@ -70,6 +81,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
                 MessageUtils.format(TOOL_BEEHIVE_SCEPTER_REMOVE_HIVE).sendTo(useContext.getPlayer());
                 building.removeHive(pos);
                 SoundUtils.playSoundForPlayer((ServerPlayer) player, SoundEvents.NOTE_BLOCK_BELL, (float) SoundUtils.VOLUME * 2, 0.5f);
+                Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), (ServerPlayer) player);
             }
             else
             {
@@ -78,6 +90,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
                     MessageUtils.format(TOOL_BEEHIVE_SCEPTER_ADD_HIVE).sendTo(useContext.getPlayer());
                     building.addHive(pos);
                     SoundUtils.playSuccessSound(player, player.blockPosition());
+                    Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), (ServerPlayer) player);
                 }
                 if (positions.size() >= building.getMaximumHives())
                 {
@@ -92,5 +105,30 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
         }
 
         return super.useOn(useContext);
+    }
+
+    @NotNull
+    @Override
+    public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
+    {
+        final CompoundTag compound = stack.getOrCreateTag();
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), world.dimension());
+        final BlockPos pos = BlockPosUtil.read(compound, TAG_POS);
+
+        if (colony != null && colony.getBuilding(pos) instanceof final BuildingBeekeeper.View hut)
+        {
+            final List<OverlayBox> overlays = new ArrayList<>();
+
+            overlays.add(new OverlayBox(new AABB(pos), RED_OVERLAY, 0.02f, true));
+
+            for (final BlockPos hive : hut.getHives())
+            {
+                overlays.add(new OverlayBox(new AABB(hive), YELLOW_OVERLAY, 0.04f, true));
+            }
+
+            return overlays;
+        }
+
+        return Collections.emptyList();
     }
 }

@@ -189,7 +189,7 @@ public interface IColonyManagerCapability
                     }
                 }
 
-                if (compound.getAllKeys().contains(TAG_COLONY_MANAGER))
+                if (compound.contains(TAG_COLONY_MANAGER))
                 {
                     IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
                 }

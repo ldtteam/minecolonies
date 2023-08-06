@@ -120,7 +120,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        if (compound.getAllKeys().contains(TAG_WORK_ORDER))
+        if (compound.contains(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInt(TAG_WORK_ORDER);
         }

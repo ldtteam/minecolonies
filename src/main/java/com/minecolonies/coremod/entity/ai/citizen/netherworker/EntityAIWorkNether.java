@@ -873,7 +873,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (slot > -1)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
-            final FoodProperties itemFood = stack.getItem().getFoodProperties();
+            final FoodProperties itemFood = stack.getItem().getFoodProperties(stack, worker);
             final double satIncrease =
               itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 

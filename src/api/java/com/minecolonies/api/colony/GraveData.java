@@ -96,9 +96,9 @@ public class GraveData implements IGraveData
     @Override
     public void read(CompoundTag compound)
     {
-        citizenDataNBT  = compound.getAllKeys().contains(TAG_CITIZEN_NBT) ? compound.getCompound(TAG_CITIZEN_NBT) : null;
-        citizenName     = compound.getAllKeys().contains(TAG_CITIZEN_NAME) ? compound.getString(TAG_CITIZEN_NAME) : null;
-        citizenJobName  = compound.getAllKeys().contains(TAG_CITIZEN_JOB_NAME) ? compound.getString(TAG_CITIZEN_JOB_NAME) : null;
+        citizenDataNBT  = compound.contains(TAG_CITIZEN_NBT) ? compound.getCompound(TAG_CITIZEN_NBT) : null;
+        citizenName     = compound.contains(TAG_CITIZEN_NAME) ? compound.getString(TAG_CITIZEN_NAME) : null;
+        citizenJobName  = compound.contains(TAG_CITIZEN_JOB_NAME) ? compound.getString(TAG_CITIZEN_JOB_NAME) : null;
     }
 
     @Override

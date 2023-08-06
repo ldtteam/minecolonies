@@ -3,13 +3,11 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
@@ -95,28 +93,6 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     public boolean isValid(final IColony colony)
     {
         return super.isValid(colony) && this.getStructurePath() != null && !this.getStructurePath().isEmpty();
-    }
-
-    /**
-     * Read the WorkOrder data from the CompoundTag.
-     *
-     * @param compound NBT Tag compound.
-     */
-    @Override
-    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
-    {
-        super.read(compound, manager);
-    }
-
-    /**
-     * Save the Work Order to an CompoundTag.
-     *
-     * @param compound NBT tag compound.
-     */
-    @Override
-    public void write(@NotNull final CompoundTag compound)
-    {
-        super.write(compound);
     }
 
     @Override

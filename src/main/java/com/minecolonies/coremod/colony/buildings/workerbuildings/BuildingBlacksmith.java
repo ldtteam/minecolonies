@@ -5,7 +5,9 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
@@ -83,12 +85,19 @@ public class BuildingBlacksmith extends AbstractBuilding
                 return false;
             }
             if (recipe.matchesOutput(OptionalPredicate.passIf(output ->
-                        output.getItem() instanceof DiggerItem ||
-                        output.getItem() instanceof SwordItem ||
-                        output.getItem() instanceof ArmorItem ||
-                        output.getItem() instanceof HoeItem ||
-                        output.getItem() instanceof ShieldItem ||
-                        Compatibility.isTinkersWeapon(output)))
+                                    ItemStackUtils.isTool(output, ToolType.AXE) ||
+                                    ItemStackUtils.isTool(output, ToolType.PICKAXE) ||
+                                    ItemStackUtils.isTool(output, ToolType.SHOVEL) ||
+                                    ItemStackUtils.isTool(output, ToolType.HOE) ||
+                                    ItemStackUtils.isTool(output, ToolType.SHEARS) ||
+                                    ItemStackUtils.isTool(output, ToolType.SWORD) ||
+                                    ItemStackUtils.isTool(output, ToolType.SHIELD) ||
+                                    ItemStackUtils.isTool(output, ToolType.HELMET) ||
+                                    ItemStackUtils.isTool(output, ToolType.CHESTPLATE) ||
+                                    ItemStackUtils.isTool(output, ToolType.LEGGINGS) ||
+                                    ItemStackUtils.isTool(output, ToolType.BOOTS) ||
+                                    // deliberately excluding FISHINGROD and FLINT_N_STEEL
+                                    Compatibility.isTinkersWeapon(output)))
                     .equals(Optional.of(true)))
             {
                 // allow any other tool/armor even if it uses an excluded ingredient

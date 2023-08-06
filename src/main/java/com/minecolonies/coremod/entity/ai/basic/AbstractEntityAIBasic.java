@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -38,18 +38,23 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -66,9 +71,9 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.WORKER_AI_EXCEPTION;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * This class provides basic ai functionality.
@@ -269,7 +274,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Retrieve a material from the building. For this go to the building if no position has been set. Then check for the chest with the required material and set the position and
+     * Retrieve a material from the building. For this check for the chest with the required material and set the position and
      * return.
      * <p>
      * If the position has been set navigate to it. On arrival transfer to inventory and return to StartWorking.
@@ -278,13 +283,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private IAIState getNeededItem()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
-
-        if (walkTo == null && walkToBuilding())
-        {
-            return getState();
-        }
-
         if (needsCurrently == null)
         {
             return getStateAfterPickUp();
@@ -534,29 +532,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected IAIState waitForRequests()
     {
         delay = DELAY_RECHECK;
-        updateWorkerStatusFromRequests();
         return lookForRequests();
-    }
-
-    private void updateWorkerStatusFromRequests()
-    {
-        if (!building.hasWorkerOpenRequests(worker.getCitizenData().getId()) && !building.hasCitizenCompletedRequests(worker.getCitizenData()))
-        {
-            worker.getCitizenStatusHandler().setLatestStatus();
-            return;
-        }
-
-        Collection<IRequest<?>> requests = building.getCompletedRequests(worker.getCitizenData());
-        if (requests.isEmpty())
-        {
-            requests = building.getOpenRequests(worker.getCitizenData().getId());
-        }
-
-        if (!requests.isEmpty())
-        {
-            worker.getCitizenStatusHandler()
-              .setLatestStatus(Component.translatable("com.minecolonies.coremod.status.waiting"), requests.iterator().next().getShortDisplayString());
-        }
     }
 
     /**
@@ -591,7 +567,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (!deliverableRequests.isEmpty())
             {
                 final IRequest<?> firstDeliverableRequest = deliverableRequests.get(0);
-                final IRequestResolver<?> resolver = building.getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                IRequestResolver<?> resolver = null;
+                try
+                {
+                    resolver = building.getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Resolver died for finished request. Oopsy. " +  worker.getCitizenData().getName() + " witnessed it.");
+                }
                 final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
 
                 if (walkToBlock(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
@@ -1160,6 +1144,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null));
+
+                if (getInventory().getHeldItemSlot(InteractionHand.MAIN_HAND) == slotAt)
+                {
+                    getInventory().setHeldItem(InteractionHand.MAIN_HAND, -1);
+                    worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                }
+                if (getInventory().getHeldItemSlot(InteractionHand.OFF_HAND) == slotAt)
+                {
+                    getInventory().setHeldItem(InteractionHand.OFF_HAND, -1);
+                    worker.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+                }
+
                 hasDumpedItems = true;
             }
         }
@@ -1772,5 +1768,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public int getExceptionTimer()
     {
         return exceptionTimer;
+    }
+
+    /**
+     * Obtains a fake player class which can be used inside the AI logic to utilize in requests that require a player instance when none is available.
+     *
+     * @return a fake player.
+     */
+    protected FakePlayer getFakePlayer()
+    {
+        IPermissions permissions = building.getColony().getPermissions();
+        return FakePlayerFactory.get((ServerLevel) world, new GameProfile(permissions.getOwner(), permissions.getOwnerName()));
     }
 }

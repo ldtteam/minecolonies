@@ -164,6 +164,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private ImmutableSet<ResourceLocation> monsters = ImmutableSet.of();
 
     /**
+     * List of all the items that can be used by the apiary.
+     */
+    private ImmutableSet<ItemStorage> flowers = ImmutableSet.of();
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -179,6 +184,8 @@ public class CompatibilityManager implements ICompatibilityManager
         oreBlocks.clear();
         smeltableOres.clear();
         plantables.clear();
+        flowers = ImmutableSet.of();
+
         food.clear();
         edibles.clear();
         fuel.clear();
@@ -206,6 +213,8 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverSaplings();
         discoverOres();
         discoverPlantables();
+        discoverFlowers();
+
         discoverFood();
         discoverFuel();
         discoverMobs();
@@ -230,6 +239,8 @@ public class CompatibilityManager implements ICompatibilityManager
         serializeBlockList(buf, oreBlocks);
         serializeItemStorageList(buf, smeltableOres);
         serializeItemStorageList(buf, plantables);
+        serializeItemStorageList(buf, flowers);
+
         serializeItemStorageList(buf, food);
         serializeItemStorageList(buf, edibles);
         serializeItemStorageList(buf, fuel);
@@ -256,6 +267,8 @@ public class CompatibilityManager implements ICompatibilityManager
         oreBlocks.addAll(deserializeBlockList(buf));
         smeltableOres.addAll(deserializeItemStorageList(buf));
         plantables.addAll(deserializeItemStorageList(buf));
+        flowers = ImmutableSet.copyOf(deserializeItemStorageList(buf));
+
         food.addAll(deserializeItemStorageList(buf));
         edibles.addAll(deserializeItemStorageList(buf));
         fuel.addAll(deserializeItemStorageList(buf));
@@ -264,6 +277,8 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Synchronized {} saplings", saplings.size());
         Log.getLogger().info("Synchronized {} ore blocks with {} smeltable ores", oreBlocks.size(), smeltableOres.size());
         Log.getLogger().info("Synchronized {} plantables", plantables.size());
+        Log.getLogger().info("Synchronized {} flowers", flowers.size());
+
         Log.getLogger().info("Synchronized {} food types with {} edible", food.size(), edibles.size());
         Log.getLogger().info("Synchronized {} fuel types", fuel.size());
         Log.getLogger().info("Synchronized {} monsters", monsters.size());
@@ -409,7 +424,7 @@ public class CompatibilityManager implements ICompatibilityManager
         final Set<ItemStorage> filteredEdibles = new HashSet<>();
         for (final ItemStorage storage : edibles)
         {
-            if ((storage.getItem().getFoodProperties() != null && storage.getItem().getFoodProperties().getNutrition() >= minNutrition))
+            if ((storage.getItemStack().getFoodProperties(null) != null && storage.getItemStack().getFoodProperties(null).getNutrition() >= minNutrition))
             {
                 filteredEdibles.add(storage);
             }
@@ -445,6 +460,13 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty()) Log.getLogger().error("getCopyOfPlantables when empty");
         return new HashSet<>(plantables);
+    }
+
+    @Override
+    public Set<ItemStorage> getImmutableFlowers()
+    {
+        if (flowers.isEmpty()) Log.getLogger().error("getImmutableFlowers when empty");
+        return flowers;
     }
 
     @Override
@@ -583,7 +605,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of all existing items, client side only.
+     * Create complete list of all existing items.
      */
     private void discoverAllItems()
     {
@@ -593,7 +615,15 @@ public class CompatibilityManager implements ICompatibilityManager
         for (final Item item : ForgeRegistries.ITEMS.getValues())
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            try
+            {
+                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().warn("Error populating items for " + ForgeRegistries.ITEMS.getKey(item) + "; using fallback", e);
+                list.add(new ItemStack(item));
+            }
             listBuilder.addAll(list);
 
             for (final ItemStack stack : list)
@@ -933,24 +963,24 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Gets all the possible flowers for the beekeeper.
-     * 
-     * @return a set of the flowers.
+     * Discover all the possible flowers for the beekeeper.
+     *
      */
-    public static Set<ItemStorage> getAllBeekeeperFlowers()
+    private void discoverFlowers()
     {
-        Set<ItemStorage> flowers = new HashSet<>();
-
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.FLOWERS))
+        if (flowers.isEmpty())
         {
-            final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
-            for (final ItemStack stack : list)
+            final HashSet<ItemStorage> tempFlowers = new HashSet<ItemStorage>();
+            for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.FLOWERS))
             {
-                flowers.add(new ItemStorage(stack));
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+                for (final ItemStack stack : list)
+                {
+                    tempFlowers.add(new ItemStorage(stack));
+                }
             }
+            flowers = ImmutableSet.copyOf(tempFlowers);
         }
-
-        return flowers;
     }
 }

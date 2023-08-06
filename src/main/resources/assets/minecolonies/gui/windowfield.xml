@@ -1,0 +1,28 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 130" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_short.png" size="190 130"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
+    <label size="130 11" pos="30 14" color="red" textalign="MIDDLE" label="$(block.minecolonies.blockhutfield)"/>
+
+    <label id="not-in-colony" size="164 11" pos="13 55" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.gui.workerhuts.fields.notincolony)"/>
+
+    <label id="current-farmer" size="164 11" pos="13 30" color="black"/>
+
+    <buttonimage id="select-seed" size="86 17" pos="13 72" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 label="$(com.minecolonies.coremod.gui.field.selectseed)"/>
+    <itemicon id="current-seed" size="16 16" pos="13 92"/>
+
+    <itemicon id="dir-center" size="16 16" pos="133 73" item="minecolonies:blockhutfield"/>
+    <buttonimage id="dir-resize-north" size="24 24" pos="129 45" textcolor="white" textalign="MIDDLE"
+                 imageoffset="48 0" imagesize="24 24" source="minecolonies:textures/gui/scarecrow.png"/>
+    <buttonimage id="dir-resize-south" size="24 24" pos="129 93" textcolor="white" textalign="MIDDLE"
+                 imageoffset="0 0" imagesize="24 24" source="minecolonies:textures/gui/scarecrow.png"/>
+    <buttonimage id="dir-resize-west" size="24 24" pos="105 69" textcolor="white" textalign="MIDDLE"
+                 imageoffset="24 0" imagesize="24 24" source="minecolonies:textures/gui/scarecrow.png"/>
+    <buttonimage id="dir-resize-east" size="24 24" pos="153 69" textcolor="white" textalign="MIDDLE"
+                 imageoffset="72 0" imagesize="24 24" source="minecolonies:textures/gui/scarecrow.png"/>
+</window>

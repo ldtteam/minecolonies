@@ -1,0 +1,33 @@
+{
+  "processors": [
+    {
+      "blocks":[
+        {
+          "Name":"structurize:blocksubstitution"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
+    },
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:terracotta"
+          },
+          "input_predicate": {
+            "block": "structurize:blocksolidsubstitution",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
+    },
+    {
+      "processor_type": "minecraft:block_age",
+      "mossiness": 0.15
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:plains",
+    "#forge:is_plains",
+    "minecraft:sunflower_plains",
+    "minecraft:snowy_plains",
+    "minecraft:forest",
+    "#minecraft:is_forest",
+    "minecraft:flower_forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_forest",
+    "minecraft:meadow",
+    "minecraft:jagged_peaks"
+  ]
+}

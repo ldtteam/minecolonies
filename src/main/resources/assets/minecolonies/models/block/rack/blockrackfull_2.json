@@ -1,0 +1,9 @@
+{
+	"parent": "minecolonies:block/blockrackfull",
+	"textures": {
+      "9": "block/bricks",
+      "10": "block/sand",
+      "11": "block/orange_wool",
+      "12": "block/dirt"
+    }
+}

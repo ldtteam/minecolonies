@@ -8,12 +8,14 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -28,6 +30,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.LIFE_COUNT_DIVIDER;
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
@@ -131,18 +134,20 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     @Override
     public void onOpened()
     {
-        final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
-        final Text description = PaneBuilders.textBuilder()
-            .style(ChatFormatting.getByCode('r'))
-            .style(ChatFormatting.getByCode('0'))
-            .append(request.getLongDisplayString())
-            .build();
-        description.setPosition(1, 1);
-        description.setSize(box.getWidth() - 2, AbstractTextElement.SIZE_FOR_UNLIMITED_ELEMENTS);
-
-        box.addChild(description);
-        box.setSize(box.getWidth(), description.getRenderedTextHeight() + 2);
-        description.setSize(box.getWidth() - 2, box.getHeight());
+        if (request instanceof IStackBasedTask)
+        {
+            final ItemIcon icon = findPaneOfTypeByID("detailIcon", ItemIcon.class);
+            final ItemStack copyStack = ((IStackBasedTask) request).getTaskStack().copy();
+            copyStack.setCount(((IStackBasedTask) request).getDisplayCount());
+            icon.setItem(copyStack);
+            icon.setVisible(true);
+            findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(((IStackBasedTask) request).getDisplayPrefix().withStyle(ChatFormatting.BLACK));
+        }
+        else
+        {
+            findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
+            findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getLongDisplayString().getString().replace("§f", "")).withStyle(ChatFormatting.BLACK));
+        }
 
         final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
 

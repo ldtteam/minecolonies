@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.client;
 
+import com.ldtteam.structurize.api.util.Log;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
@@ -60,7 +61,14 @@ public class UpdateClientWithCompatibilityMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().deserialize(this.buffer);
+        try
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().deserialize(this.buffer);
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().error("Failed to load compatibility manager", e);
+        }
         this.buffer.release();
     }
 }

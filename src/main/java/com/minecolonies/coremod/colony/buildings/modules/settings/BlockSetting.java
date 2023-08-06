@@ -120,7 +120,6 @@ public class BlockSetting implements ISetting
 
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
-          building,
           (stack) -> {
               final Item item = stack.getItem();
               if (!( item instanceof BlockItem ))
@@ -154,6 +153,15 @@ public class BlockSetting implements ISetting
     public void trigger()
     {
 
+    }
+
+    @Override
+    public void copyValue(final ISetting iSetting)
+    {
+        if (iSetting instanceof final BlockSetting other)
+        {
+            setValue(other.getValue());
+        }
     }
 
     /**

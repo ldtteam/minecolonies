@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,6 +28,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.coremod.colony.interactionhandling.StandardInteraction.INTERACTION_R_IGNORE;
+import static com.minecolonies.coremod.colony.interactionhandling.StandardInteraction.INTERACTION_R_REMIND;
 
 /**
  * The server side interaction response handler.
@@ -127,15 +128,26 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
+    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
+    {
+        final Component response = getPossibleResponses().get(responseId);
+        tryHandleIgnoreResponse(response, player);
+    }
+
+    /**
+     * Check if the response was an ignore response.
+     * @param response the response to compare.
+     * @param player the player that triggered it.
+     */
+    private void tryHandleIgnoreResponse(final Component response, final Player player)
     {
         if (response.getContents() instanceof TranslatableContents)
         {
-            if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
@@ -144,15 +156,17 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
+    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
+        final Component response = getPossibleResponses().get(responseId);
+        tryHandleIgnoreResponse(response, player);
+        if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), response));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), responseId));
         return true;
     }
 
@@ -194,5 +208,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     protected void loadValidator()
     {
         this.validator = InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validatorId);
+    }
+
+    @Override
+    public Component getId()
+    {
+        return getInquiry();
     }
 }

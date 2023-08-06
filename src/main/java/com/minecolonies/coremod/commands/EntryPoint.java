@@ -88,6 +88,7 @@ public class EntryPoint
           .addNode(new CommandBackup().build())
           .addNode(new CommandResetPlayerSupplies().build())
           .addNode(new CommandHelp().build())
+          .addNode(new ScanCommand().build())
           .addNode(new CommandPruneWorld().build());
 
         /*

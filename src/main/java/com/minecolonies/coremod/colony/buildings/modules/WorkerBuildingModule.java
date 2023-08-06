@@ -100,7 +100,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        if (compound.getAllKeys().contains(TAG_WORKER))
+        if (compound.contains(TAG_WORKER))
         {
             final ListTag workersTagList = compound.getList(TAG_WORKER, Tag.TAG_COMPOUND);
             for (int i = 0; i < workersTagList.size(); ++i)

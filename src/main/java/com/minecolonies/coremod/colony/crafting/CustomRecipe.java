@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,10 +12,16 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -23,8 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.COUNT_PROP;
 import static com.minecolonies.api.util.constant.NbtTagConstants.ITEM_PROP;
@@ -55,6 +65,10 @@ public class CustomRecipe
      */
     public static final String RECIPE_TYPE_RECIPE_MULT_IN = "recipe-multi-in";
 
+    /**
+     * The recipe template type
+     */
+    public static final String RECIPE_TYPE_TEMPLATE = "recipe-template";
 
     /**
      * The remove type
@@ -135,6 +149,16 @@ public class CustomRecipe
      * The property name to enable tooltip display (and transmission to the client).
      */
     public static final String RECIPE_SHOW_TOOLTIP = "show-tooltip";
+
+    /**
+     * The property name for a recipe template tag.
+     */
+    public static final String RECIPE_TAG = "tag";
+
+    /**
+     * The property name for a recipe template filter.
+     */
+    public static final String RECIPE_FILTER = "filter";
 
     /**
      * The crafter name for this instance, defaults to 'unknown'
@@ -354,6 +378,184 @@ public class CustomRecipe
         }
 
         return recipe;
+    }
+
+    /**
+     * Parse a recipe template into a list of recipes.  See {@link ItemStackUtils#parseIdTemplate}
+     * for details on the template replacement format.
+     *
+     * @param baseId       the base recipe path
+     * @param templateJson the recipe template
+     * @return a list of recipes for items discovered from the template
+     */
+    @NotNull
+    public static List<CustomRecipe> parseTemplate(@NotNull final ResourceLocation baseId,
+                                                   @NotNull final JsonObject templateJson)
+    {
+        final List<CustomRecipe> recipes = new ArrayList<>();
+
+        final ResourceLocation tagId = new ResourceLocation(GsonHelper.getAsString(templateJson, RECIPE_TAG));
+        final JsonObject baseRecipeJson = GsonHelper.getAsJsonObject(templateJson, RECIPE_TYPE_RECIPE);
+
+        final Predicate<ResourceLocation> filter;
+        final JsonElement filterJson = templateJson.get(RECIPE_FILTER);
+        if (filterJson != null && filterJson.isJsonObject())
+        {
+            final Predicate<ResourceLocation> include = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("include"), true);
+            final Predicate<ResourceLocation> exclude = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("exclude"), false);
+            filter = id -> include.test(id) && !exclude.test(id);
+        }
+        else
+        {
+            filter = parseArrayOrStringFilter(filterJson, true);
+        }
+
+        final boolean logStatus = IMinecoloniesAPI.getInstance().getConfig().getServer().auditCraftingTags.get();
+
+        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, tagId)))
+        {
+            final ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+            if (!filter.test(itemId)) { continue; }
+
+            final ResourceLocation recipeId = new ResourceLocation(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
+            final JsonObject recipeJson = populateTemplate(baseId, baseRecipeJson, itemId, logStatus);
+            if (recipeJson != null)
+            {
+                recipes.add(parse(recipeId, recipeJson));
+            }
+        }
+
+        return recipes;
+    }
+
+    @NotNull
+    private static Predicate<ResourceLocation> parseArrayOrStringFilter(@Nullable final JsonElement filterJson,
+                                                                        final boolean defaultResult)
+    {
+        if (filterJson == null)
+        {
+            return id -> defaultResult;
+        }
+        else if (filterJson.isJsonArray())
+        {
+            final List<String> strings = StreamSupport.stream(filterJson.getAsJsonArray().spliterator(), false)
+                    .map(JsonElement::getAsString).toList();
+            return id -> strings.stream().anyMatch(f -> id.toString().contains(f));
+        }
+        else
+        {
+            final String filterString = filterJson.getAsString();
+            return id -> id.toString().contains(filterString);
+        }
+    }
+
+    @Nullable
+    private static JsonObject populateTemplate(@NotNull final ResourceLocation templateId,
+                                               @NotNull final JsonObject baseRecipeJson,
+                                               @NotNull final ResourceLocation itemId,
+                                               final boolean logStatus)
+    {
+        final JsonObject recipeJson = baseRecipeJson.deepCopy();
+
+        if (recipeJson.has(RECIPE_INPUTS_PROP))
+        {
+            for (final JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    if (Boolean.FALSE.equals(result.getA()))
+                    {
+                        if (logStatus)
+                        {
+                            Log.getLogger().error("Template {} with {}: rejecting {} {}",
+                                    templateId, itemId, RECIPE_INPUTS_PROP, result.getB());
+                        }
+                        return null;
+                    }
+                }
+            }
+        }
+
+        final Tuple<Boolean, String> output = populateTemplateItem(recipeJson, RECIPE_RESULT_PROP, itemId);
+        if (Boolean.FALSE.equals(output.getA()))
+        {
+            if (logStatus)
+            {
+                Log.getLogger().error("Template {} with {}: rejecting {} {}",
+                        templateId, itemId, RECIPE_RESULT_PROP, output.getB());
+            }
+            return null;
+        }
+
+        if (recipeJson.has(RECIPE_SECONDARY_PROP))
+        {
+            for (final JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    if (Boolean.FALSE.equals(result.getA()))
+                    {
+                        if (logStatus)
+                        {
+                            Log.getLogger().error("Template {} with {}: rejecting {} {}",
+                                    templateId, itemId, RECIPE_SECONDARY_PROP, result.getB());
+                        }
+                        return null;
+                    }
+                }
+            }
+        }
+
+        if (recipeJson.has(RECIPE_ALTERNATE_PROP))
+        {
+            for (final Iterator<JsonElement> iterator = recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray().iterator(); iterator.hasNext(); )
+            {
+                final JsonElement e = iterator.next();
+                if (e.isJsonObject())
+                {
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    if (Boolean.FALSE.equals(result.getA()))
+                    {
+                        if (logStatus)
+                        {
+                            Log.getLogger().warn("Template {} with {}: ignoring {} {}",
+                                    templateId, itemId, RECIPE_ALTERNATE_PROP, result.getB());
+                        }
+
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+        if (!recipeJson.has(RECIPE_RESULT_PROP) && !recipeJson.has(RECIPE_LOOTTABLE_PROP) &&
+                (!recipeJson.has(RECIPE_ALTERNATE_PROP) || recipeJson.getAsJsonArray(RECIPE_ALTERNATE_PROP).isEmpty()))
+        {
+            Log.getLogger().error("Template {} with {}: rejecting, no outputs", templateId, itemId);
+            return null;
+        }
+
+        if (logStatus)
+        {
+            Log.getLogger().info("Template {} with {}: success", templateId, itemId);
+        }
+        return recipeJson;
+    }
+
+    private static Tuple<Boolean, String> populateTemplateItem(@NotNull final JsonObject obj,
+                                                               @NotNull final String prop,
+                                                               @NotNull final ResourceLocation itemId)
+    {
+        if (obj.has(prop))
+        {
+            final Tuple<Boolean, String> result = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, prop), itemId);
+            obj.addProperty(prop, result.getB());
+            return result;
+        }
+
+        return new Tuple<>(true, null);
     }
 
     /**

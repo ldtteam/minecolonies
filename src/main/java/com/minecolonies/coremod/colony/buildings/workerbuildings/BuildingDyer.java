@@ -137,7 +137,13 @@ public class BuildingDyer extends AbstractBuilding
                 return true;
             }
 
-            return IColonyManager.getInstance().getRecipeManager().getRecipe(token).getPrimaryOutput().getItem() == Items.WHITE_WOOL;
+            final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(token);
+            if (recipe == null)
+            {
+                return false;
+            }
+
+            return recipe.getPrimaryOutput().getItem() == Items.WHITE_WOOL;
         }
 
         @Override

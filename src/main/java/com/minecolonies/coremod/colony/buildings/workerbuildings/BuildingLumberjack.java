@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -19,11 +20,13 @@ import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.DynamicTreesSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
@@ -33,7 +36,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -154,7 +156,7 @@ public class BuildingLumberjack extends AbstractBuilding
     {
         super.deserializeNBT(compound);
 
-        if (compound.getAllKeys().contains(TAG_RESTRICT_START))
+        if (compound.contains(TAG_RESTRICT_START))
         {
             startRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
         }
@@ -163,7 +165,7 @@ public class BuildingLumberjack extends AbstractBuilding
             startRestriction = null;
         }
 
-        if (compound.getAllKeys().contains(TAG_RESTRICT_END))
+        if (compound.contains(TAG_RESTRICT_END))
         {
             endRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_END));
         }
@@ -245,6 +247,13 @@ public class BuildingLumberjack extends AbstractBuilding
     {
         this.startRestriction = startPosition;
         this.endRestriction = endPosition;
+
+        final boolean areaIsDefined = startPosition != null && endPosition != null;
+        if (getSetting(RESTRICT).getValue() != areaIsDefined)
+        {
+            getSetting(RESTRICT).trigger();
+        }
+        markDirty();
     }
 
     public BlockPos getStartRestriction()
@@ -341,6 +350,70 @@ public class BuildingLumberjack extends AbstractBuilding
     {
         super.onColonyTick(colony);
         bonemealFungi();
+    }
+
+    @Override
+    public void serializeToView(@NotNull FriendlyByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeBoolean(shouldRestrict());
+        if (startRestriction != null && endRestriction != null)
+        {
+            buf.writeBlockPos(startRestriction);
+            buf.writeBlockPos(endRestriction);
+        }
+        else
+        {
+            buf.writeBlockPos(BlockPos.ZERO);
+            buf.writeBlockPos(BlockPos.ZERO);
+        }
+    }
+
+    /**
+     * The client side representation of the building.
+     */
+    public static class View extends AbstractBuildingView
+    {
+        private boolean restrict;
+        private BlockPos startRestriction;
+        private BlockPos endRestriction;
+
+        /**
+         * Instantiates the view of the building.
+         *
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
+        public View(final IColonyView c, final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @Override
+        public void deserialize(@NotNull FriendlyByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            this.restrict = buf.readBoolean();
+            this.startRestriction = buf.readBlockPos();
+            this.endRestriction = buf.readBlockPos();
+        }
+
+        public boolean shouldRestrict()
+        {
+            return this.restrict;
+        }
+
+        public BlockPos getStartRestriction()
+        {
+            return this.startRestriction;
+        }
+
+        public BlockPos getEndRestriction()
+        {
+            return this.endRestriction;
+        }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.citizen.happiness.IHappinessModifier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -153,11 +154,11 @@ public interface ICitizenManager extends IEntityManager
     ICitizenData getRandomCitizen();
 
     /**
-     * Update a modifier for all citizens.
+     * Inject a modifier into all citizens
      *
-     * @param id the name of it.
+     * @param modifier the modifier.
      */
-    void updateModifier(final String id);
+    void injectModifier(final IHappinessModifier modifier);
 
     /**
      * Call this when citizens sleep

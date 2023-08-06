@@ -2984,7 +2984,7 @@ public class InventoryUtils
                 if (!ItemStackUtils.isEmpty(stack) && foodPredicate.test(stack))
                 {
                     // Found food
-                    final FoodProperties itemFood = stack.getItem().getFoodProperties();
+                    final FoodProperties itemFood = stack.getItem().getFoodProperties(stack, null);
                     if (itemFood == null)
                     {
                         continue;

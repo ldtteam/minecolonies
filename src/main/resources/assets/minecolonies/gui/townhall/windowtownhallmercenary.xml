@@ -2,7 +2,7 @@
         lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockui/blockui.xsd">
 
-    <image source="minecolonies:textures/gui/citizen/colonist_paper_sketch.png" pos="150 0" size="152 145"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" pos="150 0" size="152 145"/>
     <image size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="190 9"/>
     <image source="minecolonies:textures/gui/citizen/colonist_wax_male.png" pos="160 110" size="30 30"/>
     <image source="minecolonies:textures/items/moneygold.png" pos="170 60" size="20 20"/>

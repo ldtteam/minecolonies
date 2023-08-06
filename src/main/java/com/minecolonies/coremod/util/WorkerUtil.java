@@ -2,10 +2,13 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
@@ -16,27 +19,25 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,9 +133,9 @@ public final class WorkerUtil
         if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
         {
             //If not moving the try setting the point where the entity should move to
-            if (worker.getNavigation().isDone() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
+            if (worker.getNavigation().isDone())
             {
-                worker.getCitizenStatusHandler().setStatus(Status.PATHFINDING_ERROR);
+                EntityUtils.tryMoveLivingToXYZ(worker, x, y, z);
             }
             return false;
         }
@@ -181,20 +182,20 @@ public final class WorkerUtil
 
         String toolName = "";
 
-            if (blockHardness > 0f)
+        if (blockHardness > 0f)
+        {
+            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
             {
-                for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+                if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
-                    if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
+                    if (tool.getB().isCorrectToolForDrops(state))
                     {
-                        if (tool.getB().isCorrectToolForDrops(state))
-                        {
-                            toolName = tool.getA().getName();
-                            break;
-                        }
+                        toolName = tool.getA().getName();
+                        break;
                     }
                 }
             }
+        }
 
         final IToolType toolType = ToolType.getToolType(toolName);
         return toolType;
@@ -368,5 +369,62 @@ public final class WorkerUtil
         {
             return pos.getY() + 1;
         }
+    }
+
+
+    /**
+     * Check if there are too many items (i.e. more than 3) unrelated to the current recipe.
+     *
+     * @param currentRecipeStorage the reciep to compare it to.
+     * @param inv the inventory to check in.
+     * @return true if so.
+     */
+    public static boolean hasTooManyExternalItemsInInv(final IRecipeStorage currentRecipeStorage, final @NotNull InventoryCitizen inv)
+    {
+        int count = 0;
+        for (int i = 0; i < inv.getSlots(); i++)
+        {
+            final ItemStack stack = inv.getStackInSlot(i);
+            if (!stack.isEmpty() && !isPartOfRecipe(stack, currentRecipeStorage))
+            {
+                count++;
+                if (count > 3)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if stack is part of the recipe.
+     * @param stack the stack to check.
+     * @param currentRecipeStorage the recipe to compare.
+     * @return true if so.
+     */
+    public static boolean isPartOfRecipe(final ItemStack stack, final IRecipeStorage currentRecipeStorage)
+    {
+        if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()))
+        {
+            return true;
+        }
+
+        for (final ItemStack input : currentRecipeStorage.getCraftingToolsAndSecondaryOutputs())
+        {
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(input, stack))
+            {
+                return true;
+            }
+        }
+
+        for (final ItemStorage input : currentRecipeStorage.getCleanedInput())
+        {
+            if (input.equals(new ItemStorage(stack)))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -124,6 +124,13 @@ public interface ICompatibilityManager
     Set<ItemStorage> getCopyOfPlantables();
 
     /**
+     * Get a copy of the list of flowers.
+     *
+     * @return the list of flowers.
+     */
+    Set<ItemStorage> getImmutableFlowers();
+
+    /**
      * Get the set of all monsters.
      * @return the set.
      */

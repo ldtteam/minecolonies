@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
-import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -472,15 +471,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     protected IAIState startWorkingAtOwnBuilding()
     {
-        final ILocation rallyLocation = buildingGuards.getRallyLocation();
-        if ((rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted()) || (
-          buildingGuards.getTask().equals(GuardTaskSetting.PATROL_MINE) && buildingGuards.getMinePos() != null))
+        if (buildingGuards != null)
         {
-            return PREPARING;
+            buildingGuards.setTempNextPatrolPoint(buildingGuards.getPosition());
         }
-
-        // Walks to our building, only when not busy with another task
-        return super.startWorkingAtOwnBuilding();
+        return DECIDE;
     }
 
     /**
@@ -751,7 +746,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
+        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || worker.getLastHurtMob() != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
           .equals(GuardTaskSetting.FOLLOW))
         {
             return false;

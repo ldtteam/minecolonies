@@ -86,6 +86,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
         if (isLivingBuildingModule)
         {
             building.getFirstModuleOccurance(LivingBuildingModule.class).setHiringMode(mode);
+            building.getColony().getCitizenManager().calculateMaxCitizens();
         }
         else
         {

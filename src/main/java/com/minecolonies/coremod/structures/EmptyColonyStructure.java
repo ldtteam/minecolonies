@@ -11,11 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
-import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
-import net.minecraft.world.level.levelgen.structure.PostPlacementProcessor;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
-import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplier;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 

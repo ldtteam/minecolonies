@@ -1,17 +1,20 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.compatibility.CompatibilityManager;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BeekeeperCollectionSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
-import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -20,10 +23,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -118,6 +122,12 @@ public class BuildingBeekeeper extends AbstractBuilding
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
+
+        buf.writeVarInt(hives.size());
+        for (final BlockPos hive : hives)
+        {
+            buf.writeBlockPos(hive);
+        }
     }
 
     /**
@@ -171,6 +181,43 @@ public class BuildingBeekeeper extends AbstractBuilding
     }
 
     /**
+     * The client side representation of the building.
+     */
+    public static class View extends AbstractBuildingView
+    {
+        private Set<BlockPos> hives;
+
+        /**
+         * Instantiates the view of the building.
+         *
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
+        public View(final IColonyView c, final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @Override
+        public void deserialize(@NotNull FriendlyByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            final int hiveCount = buf.readVarInt();
+            this.hives = new HashSet<>();
+            for (int i = 0; i < hiveCount; ++i)
+            {
+                this.hives.add(buf.readBlockPos());
+            }
+        }
+
+        public Set<BlockPos> getHives()
+        {
+            return Collections.unmodifiableSet(new HashSet<>(hives));
+        }
+    }
+
+    /**
      * Bee herding module
      */
     public static class HerdingModule extends AnimalHerdingModule
@@ -182,7 +229,7 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.beekeeper.get(), EntityType.BEE, ItemStack.EMPTY);
+            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, ItemStack.EMPTY);
         }
 
         @NotNull
@@ -194,21 +241,27 @@ public class BuildingBeekeeper extends AbstractBuilding
                 // todo: if we use this in AI then it should use the item list module settings from the building instead.
             }
 
-            return CompatibilityManager.getAllBeekeeperFlowers().stream()
+            return IColonyManager.getInstance().getCompatibilityManager().getImmutableFlowers().stream()
               .map(flower -> new ItemStack(flower.getItem(), 2))
               .collect(Collectors.toList());
         }
 
         @NotNull
         @Override
-        public List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
         {
-            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
+            final List<IGenericRecipe> recipes = new ArrayList<>(); // we don't kill the bees so don't use the default
 
-            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEYCOMB, 3)), 1, 0, false));
-            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEY_BOTTLE)), 1, 0, false));
+            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
+                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
+                    0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
 
-            return drops;
+            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
+                    Collections.emptyList(), Collections.emptyList(),
+                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
+                    0, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+
+            return recipes;
         }
     }
 }

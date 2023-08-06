@@ -6,9 +6,12 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.compatibility.CraftingTagAuditor;
+import com.minecolonies.coremod.datalistener.QuestJsonListener;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithCompatibilityMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
@@ -45,11 +48,12 @@ public class DataPackSyncEventHandler
          *
          * @param server The server.
          */
-        private static void loadRecipes(@NotNull final MinecraftServer server)
+        private static void discoverCompatLists(@NotNull final MinecraftServer server)
         {
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager());
-            CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
+            CustomRecipeManager.getInstance().resolveTemplates();
+            CustomRecipeManager.getInstance().buildLootData(server.getLootTables(), server.overworld());
         }
 
         /**
@@ -64,6 +68,7 @@ public class DataPackSyncEventHandler
             Network.getNetwork().sendToPlayer(compatMsg, player);
             CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
+            QuestJsonListener.sendGlobalQuestPackets(player);
         }
 
         /**
@@ -78,23 +83,24 @@ public class DataPackSyncEventHandler
         {
             final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
             final MinecraftServer server = event.getPlayerList().getServer();
+            final GameProfile owner = server.getSingleplayerProfile();
 
             if (event.getPlayer() == null)
             {
                 // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
-                loadRecipes(server);
+                discoverCompatLists(server);
 
-                // and then finally update every player with the results (not needed for single player)
-                if (!server.isSingleplayer())
+                // and then finally update every player with the results
+                final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
+                for (final ServerPlayer player : event.getPlayerList().getPlayers())
                 {
-                    final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
-                    for (final ServerPlayer player : event.getPlayerList().getPlayers())
+                    if (player.getGameProfile() != owner)   // don't need to send them in SP, or LAN owner
                     {
                         sendPackets(player, compatMsg);
                     }
                 }
             }
-            else if (!server.isSingleplayer())
+            else if (event.getPlayer().getGameProfile() != owner)
             {
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(true));
             }
@@ -116,7 +122,7 @@ public class DataPackSyncEventHandler
         @SubscribeEvent
         public static void onServerStarted(@NotNull final ServerStartedEvent event)
         {
-            loadRecipes(event.getServer());
+            discoverCompatLists(event.getServer());
         }
     }
 
@@ -133,7 +139,10 @@ public class DataPackSyncEventHandler
         @SubscribeEvent
         public static void onRecipesLoaded(@NotNull final RecipesUpdatedEvent event)
         {
-            if (Minecraft.getInstance().hasSingleplayerServer())
+            final IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
+            final GameProfile owner = server == null ? null : server.getSingleplayerProfile();
+
+            if (owner != null && owner == Minecraft.getInstance().player.getGameProfile())
             {
                 // don't need to update on single player, this already happened "server-side".
                 return;

@@ -679,7 +679,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public RecipeStorage getClassicForMultiOutput(final Predicate<ItemStack> stackPredicate)
     {
-        if(stackPredicate.test(getPrimaryOutput()))
+        if(!getPrimaryOutput().isEmpty() && stackPredicate.test(getPrimaryOutput()))
         {
             return getClassicForMultiOutput(getPrimaryOutput());
         }

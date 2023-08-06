@@ -186,4 +186,13 @@ public class RecipeSetting implements ICraftingSetting
         final CraftingModuleView craftingModule = module.getBuildingView().getModuleViewMatching(CraftingModuleView.class, m -> m.getId().equals(craftingModuleId));
         return craftingModule != null && !craftingModule.getRecipes().isEmpty() ;
     }
+
+    @Override
+    public void copyValue(final ISetting iSetting)
+    {
+        if (iSetting instanceof final RecipeSetting other)
+        {
+            currentIndex = other.currentIndex;
+        }
+    }
 }

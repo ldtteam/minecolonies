@@ -116,7 +116,7 @@ public class FoodIngredient extends Ingredient
 
         private boolean matchesFood(@NotNull final ItemStack stack)
         {
-            @NotNull final FoodProperties food = Objects.requireNonNull(stack.getItem().getFoodProperties());
+            @NotNull final FoodProperties food = Objects.requireNonNull(stack.getItem().getFoodProperties(stack, null));
             return minHealing.map(healing -> food.getNutrition() >= healing).orElse(true) &&
                     maxHealing.map(healing -> food.getNutrition() < healing).orElse(true) &&
                     minSaturation.map(saturation -> food.getSaturationModifier() >= saturation).orElse(true) &&

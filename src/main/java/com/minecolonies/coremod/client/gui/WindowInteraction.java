@@ -7,13 +7,17 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
+import com.minecolonies.coremod.network.messages.server.colony.InteractionClose;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -52,7 +56,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
         this.citizen = citizen;
-        this.interactions = citizen.getOrderedInteractions();
+        this.interactions = new ArrayList<>(citizen.getOrderedInteractions());
     }
 
     /**
@@ -62,6 +66,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
     public void onOpened()
     {
         super.onOpened();
+        interactions.removeIf(interaction -> !interaction.isVisible(Minecraft.getInstance().level));
         setupInteraction();
     }
 
@@ -77,13 +82,15 @@ public class WindowInteraction extends AbstractWindowSkeleton
         }
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
+        handler.onOpened(Minecraft.getInstance().player);
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
+        group.getChildren().clear();
         int y = 0;
         int x = 0;
         final Text chatText = findPaneOfTypeByID(CHAT_LABEL_ID, Text.class);
         chatText.setTextAlignment(Alignment.TOP_LEFT);
         chatText.setAlignment(Alignment.TOP_LEFT);
-        chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry().getString()));
+        chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry(Minecraft.getInstance().player).getString()));
         int responseIndex = 1;
         for (final Component component : handler.getPossibleResponses())
         {
@@ -97,6 +104,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             button.setTextAlignment(Alignment.MIDDLE);
             button.setText(component);
             group.addChild(button);
+            button.setTextScale(Math.min(1, 20.0 / component.getString().length()));
 
             y += button.getHeight();
             if (y + button.getHeight() >= group.getHeight())
@@ -110,6 +118,17 @@ public class WindowInteraction extends AbstractWindowSkeleton
         handler.onWindowOpened(this, citizen);
     }
 
+    @Override
+    public void onClosed()
+    {
+        super.onClosed();
+        if (currentInteraction < interactions.size())
+        {
+            interactions.get(currentInteraction).onClosed();
+            Network.getNetwork().sendToServer(new InteractionClose(citizen.getColonyId(), citizen.getId(), mc.level.dimension(), interactions.get(currentInteraction).getInquiry()));
+        }
+    }
+
     /**
      * Called when a button in the citizen has been clicked.
      *
@@ -121,17 +140,19 @@ public class WindowInteraction extends AbstractWindowSkeleton
         if (!interactions.isEmpty())
         {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-            for (final Component component : handler.getPossibleResponses())
+            try
             {
-                if (component.getString().equals(button.getTextAsString()))
+                if (handler.onClientResponseTriggered(Integer.parseInt(button.getID().replace("response_", "")) - 1, Minecraft.getInstance().player, citizen, this))
                 {
-                    if (handler.onClientResponseTriggered(component, Minecraft.getInstance().player, citizen, this))
-                    {
-                        currentInteraction++;
-                        setupInteraction();
-                        return;
-                    }
+                    currentInteraction++;
+                    setupInteraction();
+                    return;
                 }
+                setupInteraction();
+            }
+            catch (final Exception ex)
+            {
+                Log.getLogger().warn("Wrong button id of interaction.", ex);
             }
         }
     }

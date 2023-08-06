@@ -24,11 +24,17 @@ body:
       options:
         - label: I checked the MineColonies Wiki and made sure my issue is not covered there. Or I was sent from discord to open an issue here.
           required: true
+  - type: checkboxes
+    attributes:
+      label: What were you playing at the time? Were you able to reproduce it in both settings?
+      options:
+        - label: Single Player
+        - label: Multi Player
   - type: dropdown
     attributes:
       label: Minecraft Version
       description: Minecraft Version
-      options: [1.16, 1.18]
+      options: [1.19.2, 1.20.1]
     validations:
       required: true
   - type: input

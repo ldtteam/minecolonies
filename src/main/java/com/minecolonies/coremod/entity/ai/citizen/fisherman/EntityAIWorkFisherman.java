@@ -27,7 +27,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
@@ -252,9 +251,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem() instanceof FishingRodItem)
+        return InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), ToolType.FISHINGROD, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())
                 && worker.getMainHandItem() != null
-                && !(worker.getMainHandItem().getItem() instanceof FishingRodItem);
+                && !ItemStackUtils.isTool(worker.getMainHandItem(), ToolType.FISHINGROD);
     }
 
     /**
@@ -268,7 +267,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             return FISHERMAN_SEARCHING_WATER;
         }
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.goingtopond"));
 
         if (walkToWater())
         {
@@ -335,7 +333,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private IAIState findWater()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.searchingwater"));
 
         //Reset executedRotations when fisherman searches a new Pond
         executedRotations = 0;
@@ -423,7 +420,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     @Nullable
     private IAIState doFishing()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.fishing"));
 
         @Nullable final IAIState notReadyState = isReadyToFish();
         if (notReadyState != null)

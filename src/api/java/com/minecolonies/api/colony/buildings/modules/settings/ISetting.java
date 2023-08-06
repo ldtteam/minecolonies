@@ -76,6 +76,12 @@ public interface ISetting
      */
     default void updateSetting(final ISetting iSetting)
     {
-
+        
     }
+
+    /**
+     * Copy value from another instance.
+     * @param iSetting the setting to copy from
+     */
+    void copyValue(final ISetting iSetting);
 }

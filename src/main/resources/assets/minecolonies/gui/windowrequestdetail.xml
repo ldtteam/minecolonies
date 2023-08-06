@@ -2,7 +2,7 @@
         lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
 
-    <image source="minecolonies:textures/gui/citizen/colonist_paper_sketch.png" size="100% 100%"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
 
     <label size="190 11" pos="0 13" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
 
@@ -13,7 +13,8 @@
     <label id="targetLocation" size="135 9" pos="40 40" color="black"/>
     <label id="resolver" size="135 9" pos="40 50" color="black"/>
 
-    <box id="requestDetail" size="175 40" pos="12 60" linewidth="0" color="black" />
+    <label id="shortDetail" size="170 40" pos="12 60" color="black"/>
+    <itemicon id="detailIcon" size="9 9" pos="80 75"/>
 
     <buttonimage id="back" size="37 16" pos="35 105" textcolor="black"
                  label="$(com.minecolonies.coremod.gui.back)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>

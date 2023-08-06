@@ -49,6 +49,9 @@
   "minecolonies.config.forceloadcolony": "Chunk Load Colony",
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.)",
 
+  "minecolonies.config.loadtime": "Colony chunk loading duration",
+  "minecolonies.config.loadtime.comment": "Set how long chunks stay loaded after player leaves, does not persist through restarts. Default: 10min",
+
   "minecolonies.config.colonyloadstrictness": "Colony Chunk Loading Strictness",
   "minecolonies.config.colonyloadstrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the fewer chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
 
@@ -68,10 +71,10 @@
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
   "item.minecolonies.scepterlumberjack": "Forest Tool",
-  "item.minecolonies.scepterlumberjack.usedend": "Position A set. Select Position B with a right-click or left-click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.usedstart": "Position B set. Select Position A with a left-click or right-click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
-  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
+  "item.minecolonies.scepterlumberjack.usedend": "Position A set. Select Position B with a right-click or discard tool when finished.",
+  "item.minecolonies.scepterlumberjack.usedstart": "Position B set. Select Position A with a left-click or discard tool when finished.",
+  "item.minecolonies.scepterlumberjack.restrictiontoobig": "A zone of %d blocks is too large. The maximum restricted volume for the Forester is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted zone set (x: %d to %d, y: %d to %d, z: %d to %d, total: %d blocks). The max size is %d blocks.",
 
   "minecolonies.config.maxtreesize": "Max Tree Size",
   "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
@@ -176,7 +179,7 @@
   "minecolonies.config.maxbarbariansize": "Max Raider Size",
   "minecolonies.config.maxbarbariansize.comment": "The max size of a raider horde.",
   "minecolonies.config.dobarbariansbreakthroughwalls": "Do Raiders Cross Obstacles",
-  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break, scale, and bridge obstacles.",
+  "minecolonies.config.dobarbariansbreakthroughwalls.comment": "Whether or not raiders can break through obstacles",
   "minecolonies.config.shouldraiderbreakdoors": "Do Raiders Break Doors",
   "minecolonies.config.shouldraiderbreakdoors.comment": "Whether or not raiders can break through doors.",
   "minecolonies.config.averagenumberofnightsbetweenraids": "Average Number of Nights Between Raids",
@@ -255,13 +258,14 @@
   "minecolonies.config.creativeresolve.comment": "Should the request system creatively resolve (if possible) when the player is required to resolve a request? This is a debugging tool and can take a very long time to resolve a request.",
   "minecolonies.config.canplayeruseresetcommand": "Can Players Use the Request System Reset Command",
   "minecolonies.config.canplayeruseresetcommand.comment": "Should players be allowed to use the /mc colony requestsystem-reset command?",
-  
+
   "minecolonies.config.default.boolean": "[Default: %b]",
   "minecolonies.config.default.int": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.long": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.double": "[Default: %f, min: %f, max: %f]",
 
   "block.minecolonies.blockhutfield": "Field",
+  "block.minecolonies.blockhutplantationfield": "Plantation Field",
   "block.minecolonies.gate_iron.name": "Iron Gate",
   "block.minecolonies.gate_iron": "Iron Gate",
   "block.minecolonies.gate_wood.name": "Wooden Gate",
@@ -410,7 +414,7 @@
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
   "com.minecolonies.command.citizeninfo.jobnull": "§2Job: §fUnemployed",
   "com.minecolonies.command.citizeninfo.health": "§2Health: §f%s §2Max Health: §f%s",
-  "com.minecolonies.command.citizeninfo.activity": "§2Desired activity: §f%s §2Current Activity: §f%s §2Task: §f%s",
+  "com.minecolonies.command.citizeninfo.activity": "§2Citizen state: §f%s §2Job: §f%s §2Jobstate: §f%s",
   "com.minecolonies.command.citizeninfo.noactivity": "§4No activity is being desired or executed!",
   "com.minecolonies.command.citizeninfo.homepos": "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s",
   "com.minecolonies.command.citizeninfo.workpos": "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s",
@@ -580,9 +584,18 @@
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
-  "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
+
+  "com.minecolonies.coremod.gui.workerhuts.fields": "Fields",
+  "com.minecolonies.coremod.gui.workerhuts.fields.notincolony": "Field is not inside a colony",
+  "com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode": "Assign fields to worker",
+  "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount": "%d/%d fields in use",
+  "com.minecolonies.coremod.gui.workerhuts.fields.plantcount": "%d/%d types of plants",
+  "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount.reached": "You already reached the limit of fields.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research": "You do not have the required research to assign this field to the plantation.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.farmer.noseed": "Field has no seed set",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached": "You already reached the limit of concurrent plants.",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
@@ -608,7 +621,6 @@
   "com.minecolonies.coremod.gui.workerhuts.knighttraineeassignbed": "%s became a knight in training. The %s at %s now has an open bed slot for a new citizen.",
 
   "com.minecolonies.coremod.gui.workerhuts.assignedbed": "%s became a/n %s. The %s at %s now has an open bed slot for a new citizen.",
-
 
   "com.minecolonies.coremod.gui.workerhuts.guardactions": "Guard Actions:",
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the Guard to the job:",
@@ -653,7 +665,7 @@
   "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request Pickup Now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a Mercenary took their %s!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A Mercenary just stole %s from a building!",
-  
+
   "com.minecolonies.coremod.gui.happiness.happinessmodifier": "Happiness Modifiers",
 
   "com.minecolonies.coremod.permission.no": "You do not have permission to do this in this colony!",
@@ -854,6 +866,7 @@
   "com.minecolonies.coremod.item.bannerrallyguards.gui.error": "Error modifying banner. Please try again.",
 
   "enchantment.minecolonies.raider_damage_enchant": "Raider's Bane",
+  "enchantment.minecolonies.raider_damage_enchant.desc": "Increases damage against MineColonies raiders.",
 
   "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
 
@@ -1084,6 +1097,7 @@
   "com.minecolonies.coremod.gui.hiringmode.default": "Default (colony override)",
   "com.minecolonies.coremod.gui.hiringmode.auto": "Automatic",
   "com.minecolonies.coremod.gui.hiringmode.manual": "Manual",
+  "com.minecolonies.coremod.gui.hiringmode.locked": "Locked (no kids)",
   "com.minecolonies.coremod.gui.name.toolong": "We reduced the string to \"%s\" since it exceeded the limit of 15 letters.",
 
   "block.minecolonies.decorationcontroller": "Decoration Controller",
@@ -1319,7 +1333,6 @@
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all my flowers are disabled!",
   "com.minecolonies.coremod.request.toolow": "I can't mine the %s at %d %d %d. You need to upgrade the building so I can use a tool with a higher mining level (or mine the block yourself).",
-  "entity.farmer.noseedset": "Please define the seed you want me to grow by placing it in the scarecrow!",
   "entity.farmer.nofreefields": "Place more fields to get me working.",
   "com.minecolonies.coremod.job.deliveryman.nowarehouse": "Please upgrade or build a Warehouse for me to work at.",
   "com.minecolonies.coremod.job.deliveryman.workerchestfull": "I can't deliver because of a full worker chest.",
@@ -1396,7 +1409,7 @@
   "com.minecolonies.coremod.info.miner.4": "As all workers do, Miners level up while working.\n At higher levels, the Miner's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling until you provide them with better housing.",
 
   "com.minecolonies.coremod.info.lumberjack.0.name": "Introduction",
-  "com.minecolonies.coremod.info.lumberjack.0": "The Forester is one of the production workers for your colony. Give them an axe and they'll cut down any trees around them. They'll also replant a sapling where the tree was if he has any.\n If you wish to apply restrictions on what trees they can or can't cut, take a look at the second page.\n Even cooler is the third page. Here you can tell the Forester to not replant saplings and tell them to be restricted to a certain area (selected with the tool given by the third button on the page).",
+  "com.minecolonies.coremod.info.lumberjack.0": "The Forester is one of the production workers for your colony. Give them an axe and they'll cut down any trees around them. They'll also replant a sapling where the tree was if he has any.\n If you wish to apply restrictions on what trees they can or can't cut, take a look at the second page.\n Even cooler is the third page. Here you can tell the Forester to not replant saplings and tell them to be restricted to a certain 3D box (selected with the tool given by the third button on the page).",
   "com.minecolonies.coremod.info.lumberjack.1.name": "Restrictions",
   "com.minecolonies.coremod.info.lumberjack.1": "Now let's cover restrictions:\n\n 1. Foresters unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 3. Diamond Tools\n   lvl 4-5. Enchanted Tools\n\n 2. Foresters are able to search for trees within 150 blocks of them (not their hut). While searching, they start with a 50 block range and then increase that range by 5 if they do not find a tree.",
   "com.minecolonies.coremod.info.lumberjack.2.name": "Tree Detection",
@@ -1545,6 +1558,7 @@
   "com.minecolonies.coremod.jei.chanceskill.tip": "§e%d%% base chance §a+ skill modifier",
   "com.minecolonies.coremod.jei.chancenegskill.tip": "§e%d%% base chance §c- skill modifier",
   "com.minecolonies.coremod.jei.conditions.tip": "§bSpecial conditions apply",
+  "com.minecolonies.coremod.jei.tools": "Colonist Tools and Armor",
   "com.minecolonies.coremod.jei.alchemist": "Brews potions; also gathers mistletoe and netherwart.",
   "com.minecolonies.coremod.jei.baker": "Bakes bread, and other things at higher levels. Can be taught extra recipes starting at level 3.",
   "com.minecolonies.coremod.jei.beekeeper": "Takes care of beehives, harvesting either honey or honeycomb.",
@@ -1684,6 +1698,7 @@
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
   "com.minecolonies.coremod.gui.townhall.happiness.health": "Health",
   "com.minecolonies.coremod.gui.townhall.happiness.idleatjob": "Idling as a Worker",
+  "com.minecolonies.coremod.gui.townhall.happiness.quest": "Quest",
 
   "com.minecolonies.coremod.gui.townhall.happiness.school": "Kids in School",
   "com.minecolonies.coremod.gui.townhall.happiness.security": "Guards in the Colony",
@@ -1700,6 +1715,7 @@
   "com.minecolonies.coremod.gui.townhall.happiness.desc.unemployment": "Increases happiness if colonists have a job, and for higher-level work buildings.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.health": "Decreases happiness if colonists are sick.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.idleatjob": "Decreases happiness if colonists are unable to work due to missing tools or farmer fields.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.quest": "Altered happiness because of quest participation.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.desc.school": "Increases happiness for child colonists if they are assigned to a school.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.security": "Increases happiness as more guards are employed at the colony.",
@@ -1828,6 +1844,9 @@
   "com.minecolonies.coremod.gui.field.to_right": "To your right",
   "com.minecolonies.coremod.gui.field.near": "Nearest to you",
   "com.minecolonies.coremod.gui.field.worker": "Farmer: %s",
+  "com.minecolonies.coremod.gui.field.selectseed": "Pick seed",
+  "com.minecolonies.coremod.gui.field.assignedfarmer": "Farmer: %s",
+  "com.minecolonies.coremod.gui.field.noassignedfarmer": "Farmer: No one",
 
   "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the chit-chat",
 
@@ -1852,6 +1871,7 @@
   "com.minecolonies.coremod.dist.blocks": "%d blocks",
   "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!",
   "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s",
+  "com.minecolonies.coremod.request.crafting.display.short": "%d * Recipe:",
 
   "com.minecolonies.coremod.item.sugary.bread.gui": "Boosts speed and removes poison effect",
   "com.minecolonies.coremod.item.milky.bread.gui": "Removes potion effects",
@@ -1986,7 +2006,9 @@
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
   "com.minecolonies.coremod.setting.minecolonies:feeding": "Feeding:",
-  "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
+  "com.minecolonies.coremod.setting.minecolonies:milking_amount": "Milk attempts:",
+  "com.minecolonies.coremod.setting.minecolonies:stewing_amount": "Stew attempts:",
+  "com.minecolonies.coremod.setting.minecolonies:milking_days": "per days:",
   "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:",
   "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:",
   "com.minecolonies.coremod.setting.minecolonies:useshears": "Use Shears:",
@@ -1997,7 +2019,7 @@
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.setting.minecolonies:defoliate": "Break Leaves:",
-  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by right-clicking one corner and left-clicking the opposite corner with the tool.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working zone (in 3D) by right-clicking one corner and left-clicking the opposite corner with the tool (allowing for height).",
   "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Right click positions to mark as guard or patrol points. Right-click the same position to close and discard.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
@@ -2052,6 +2074,7 @@
   "com.minecolonies.coremod.gui.townhall.picknamestyle": "Pick Naming Convention",
   "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
   "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
+  "com.minecolonies.coremod.gui.chat.arston": "I am Arston, former military advisor and general of the draconian army. I can offer my expertise to run and strengthen your army",
   "com.minecolonies.coremod.gui.chat.kedamono": "I am the Kedamono Dragon, I have traveled far and seek a fair place to reside. Do you have enough beds for me?",
   "com.minecolonies.coremod.gui.chat.hyrios": "I am Asuna, I have come here from Aincrad to defend your freedom!",
   "com.minecolonies.coremod.gui.chat.shashand": "I will always be there for you! Your reliable Shrine Maiden Fox, Caster, has now arrived!",
@@ -2067,6 +2090,9 @@
   "com.minecolonies.coremod.gui.chat.lion0101": "I will keep you healed!",
   "com.minecolonies.coremod.gui.chat.tobidoes": "I may look scary but I am more of a huggable Bear unless there are Jinchuriki or Spider-Men around but I am also a really good miner. Stick me anywhere, I am here to help Sempai",
   "com.minecolonies.coremod.gui.chat.nathan": "I am Nathan, I have come here from the Nether to start a new life.",
+  "com.minecolonies.coremod.gui.chat.jmwarrior": "Hi, I'm Luz! Child of the Human Realm and student of the Demon Realm! I've come in search far and wide for a place to inspire and provide my magical skills! Say, do you know how I got here? And have you seen any portal doors with a giant eye?",
+  "com.minecolonies.coremod.gui.chat.doggus": "Doggus, a passionate builder with a heart torn between creativity and perfectionism, stands at the precipice of their aspirations, yearning to construct masterpieces while battling inner doubts.",
+  "com.minecolonies.coremod.gui.chat.moobien": "Just a simple bloke from the deep south looking for somewhere to build",
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",
@@ -2255,7 +2281,7 @@
   "minecolonies:combattraining.skills.desc": "No skill-based bonuses.",
   "minecolonies:sawmill.skills.desc": "Affects recipe improvement chance and working speed.",
   "minecolonies:blacksmith.skills.desc": "Affects recipe improvement chance and working speed.",
-  "minecolonies:stonemason.skills.desc":"Affects recipe improvement chance and working speed.",
+  "minecolonies:stonemason.skills.desc": "Affects recipe improvement chance and working speed.",
   "minecolonies:stonesmeltery.skills.desc": "Affects working speed and smelting speed.",
   "minecolonies:crusher.skills.desc": "Affects working speed and chance to get sick.",
   "minecolonies:sifter.skills.desc": "Affects working speed and chance to obtain items.",
@@ -2343,9 +2369,12 @@
   "com.minecolonies.building.enchanter.desc": "Creates Enchantments and Scrolls out of Books. As Magical as Magnets!",
   "com.minecolonies.building.composter.desc": "Turns Organic Materials Into Something Useful. Really Stinks To Work Here.",
   "com.minecolonies.building.alchemist.desc": "Either Brews Potions Or Trouble. Witch is It?",
-  "com.minecolonies.building.quarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
+  "com.minecolonies.building.simplequarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
+  "com.minecolonies.building.mediumquarry.desc": "Does a Bigger Hole Mean Getting More or Less? Probably More.",
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
+  "com.minecolonies.coremod.structures.buildingmissing": "The builder had a problem locating this blueprint, please try again.",
+
   "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
   "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s",
   "com.minecolonies.command.gui.browsebuilding.loading": "searching ...",
@@ -2364,6 +2393,10 @@
   "com.minecolonies.coremod.gui.townhall.stats.crops_harvested": "Crops Harvested: %d",
   "com.minecolonies.coremod.gui.townhall.stats.land_tilled": "Land Tilled: %d",
   "com.minecolonies.coremod.gui.townhall.stats.fish_caught": "Fish Caught: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_built": "Building Built: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_upgraded": "Building Upgraded: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_repaired": "Building Repaired: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.build_removed": "Building Removed: %d",
   "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
   "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
   "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
@@ -2372,5 +2405,25 @@
   "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
   "com.minecolonies.coremod.gui.townHall.map": "Town Map",
   "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map.",
-  "com.minecolonies.gui.edit": "Edit"
+  "com.minecolonies.gui.edit": "Edit",
+  "com.minecolonies.gui.details": "More Details...",
+
+  "com.minecolonies.coremod.quest.completed": "You have successfully completed the quest: %s",
+  "com.minecolonies.coremod.questobjectives.answer.later": "Sorry, be right back!",
+  "com.minecolonies.coremod.questobjectives.answer.cancel": "I don't have time for this!",
+  "com.minecolonies.coremod.questobjectives.breakblock": "I am still waiting for you to mine $d %s!",
+  "com.minecolonies.coremod.questobjectives.placeblock": "I am still waiting for you to place $d %s!",
+
+  "com.minecolonies.coremod.questobjectives.delivery.waiting": "I am still waiting for %s!",
+  "com.minecolonies.coremod.questobjectives.delivery.waiting.cancel": "I don't have any of it!",
+  "com.minecolonies.coremod.questobjectives.delivery.ready": "Oh hey, you brought %s; can I have it?",
+  "com.minecolonies.coremod.questobjectives.delivery.ready.give": "Yes, here you are!",
+  "com.minecolonies.coremod.questobjectives.delivery.ready.later": "No, wait!",
+  "com.minecolonies.coremod.questobjectives.kill": "I am still waiting for you to kill $d %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding": "I am still waiting for you to build %d level %d %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.existing": "I am still waiting for you to reach level %d for %d %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative": "I am still waiting for you to build or upgrade %d levels of %s!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!",
+  "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
+  "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers"
 }

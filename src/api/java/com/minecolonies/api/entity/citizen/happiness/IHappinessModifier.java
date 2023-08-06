@@ -1,6 +1,8 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
+import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface describing possible happiness factors.
@@ -15,11 +17,11 @@ public interface IHappinessModifier
     String getId();
 
     /**
-     * get the factor of the happiness. value between 0 and 1 if negative. value above 1 if positive.
-     *
+     * Get the factor of the happiness. value between 0 and 1 if negative. value above 1 if positive.
+     * @param data the citizen the factor is for.
      * @return the value of the factor.
      */
-    double getFactor();
+    double getFactor(@Nullable final ICitizenData data);
 
     /**
      * Get the weight of the happiness.
@@ -41,21 +43,4 @@ public interface IHappinessModifier
      * @param compoundNBT the compound to write it to.
      */
     void write(final CompoundTag compoundNBT);
-
-    /**
-     * Called at the end of each day.
-     */
-    void dayEnd();
-
-    /**
-     * Reset the modifier.
-     */
-    void reset();
-
-    /**
-     * Get the days this is active.
-     *
-     * @return the days.
-     */
-    int getDays();
 }

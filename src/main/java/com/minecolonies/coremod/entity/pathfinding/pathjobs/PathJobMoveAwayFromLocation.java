@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +28,11 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * Required avoidDistance.
      */
     protected final int      avoidDistance;
+
+    /**
+     * The blockposition we're trying to move away to
+     */
+    private BlockPos preferredDirection;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -49,6 +56,16 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 
         this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
+
+        preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
+        if (entity instanceof AbstractEntityCitizen)
+        {
+            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColony();
+            if (colony != null)
+            {
+                preferredDirection = colony.getCenter();
+            }
+        }
     }
 
     /**
@@ -78,7 +95,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return -avoid.distSqr(pos);
+        return Math.sqrt(preferredDirection.distSqr(pos)) + 100 / Math.max(1, Math.sqrt(avoid.distSqr(pos)));
     }
 
     /**

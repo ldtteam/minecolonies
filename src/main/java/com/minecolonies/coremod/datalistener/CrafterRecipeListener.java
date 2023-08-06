@@ -53,6 +53,9 @@ public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
                     case RECIPE_TYPE_RECIPE_MULT_OUT:
                         recipeManager.addRecipe(CustomRecipe.parse(key, recipeJson));
                         break;
+                    case RECIPE_TYPE_TEMPLATE:
+                        recipeManager.addRecipeTemplate(key, recipeJson);
+                        break;
                     case RECIPE_TYPE_REMOVE:
                         final ResourceLocation toRemove = new ResourceLocation(GsonHelper.getAsString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
                         recipeManager.removeRecipe(toRemove);

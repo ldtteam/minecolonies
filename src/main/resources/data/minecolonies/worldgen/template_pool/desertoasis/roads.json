@@ -1,0 +1,75 @@
+{
+  "name": "minecolonies:desertoasis/roads",
+  "fallback": "minecolonies:desertoasis/buildings",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:desertoasis/fancy_corner",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:desertoasis/fancy_intersection",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:desertoasis/fancy_straight",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:desertoasis/fancy_tjunction",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/fountain",
+        "processors": "minecolonies:desertoasis/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/smalllake",
+        "processors": "minecolonies:desertoasis/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/smallpark",
+        "processors": "minecolonies:desertoasis/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

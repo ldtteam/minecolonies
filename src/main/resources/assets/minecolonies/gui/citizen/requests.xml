@@ -5,22 +5,7 @@
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
     <list id="requests" size="164 185" pos="33 29">
         <box id="requestx" size="100% 40" linewidth="1">
-            <!--Item icon -->
-            <itemicon id="requestStack" size="16 16" pos="1 3"/>
-            <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3" visible="false"/>
-
-            <!--Request name-->
-            <buttonimage id="detail" size="16 16" pos="1 23" source="minecolonies:textures/gui/citizen/detail_button.png"/>
-            <label id="shortDetail" size="130 12" pos="20 1" color="black"/>
-            <label id="requester" size="130 12" pos="20 13" color="black"/>
-
-            <!-- Color green if possible? -->
-            <buttonimage id="fulfill" size="37 16" pos="20 23" textcolor="black"
-                         label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
-
-            <!-- button to cancel the request-->
-            <buttonimage id="cancel" size="37 16" pos="110 23" textcolor="black"
-                         label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+            <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>
         </box>
     </list>
 </window>

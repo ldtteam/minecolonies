@@ -33,6 +33,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
@@ -40,8 +41,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {
@@ -310,8 +309,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         final ItemStack itemstack = this.angler.getMainHandItem();
         final ItemStack itemstack1 = this.angler.getOffhandItem();
-        final boolean flag = itemstack.getItem() instanceof net.minecraft.world.item.FishingRodItem;
-        final boolean flag1 = itemstack1.getItem() instanceof net.minecraft.world.item.FishingRodItem;
+        final boolean flag = itemstack.canPerformAction(ToolActions.FISHING_ROD_CAST);
+        final boolean flag1 = itemstack1.canPerformAction(ToolActions.FISHING_ROD_CAST);
         if (!this.angler.isRemoved() && this.angler.isAlive() && (flag || flag1) && !(this.distanceToSqr(this.angler) > 1024.0D))
         {
             return false;

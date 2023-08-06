@@ -56,6 +56,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
             else if (entry.getValue() != syncSetting)
             {
                 entry.getValue().updateSetting(syncSetting);
+                entry.getValue().copyValue(syncSetting);
             }
         }
     }

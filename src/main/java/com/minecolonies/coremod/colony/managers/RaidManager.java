@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -35,7 +36,6 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
@@ -365,7 +366,7 @@ public class RaidManager implements IRaiderManager
                     event = new EgyptianRaidEvent(colony);
                 }
                 else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
-                                                                    && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
+                                                              && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
@@ -453,13 +454,22 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
+        BlockPos worldSpawnPos = null;
         // 8 Tries
         for (int i = 0; i < 8; i++)
         {
             spawnPos = findSpawnPointInDirections(new BlockPos(closestBuilding.getX(), calcCenter.getY(), closestBuilding.getZ()), advanceTowards);
             if (spawnPos != null)
             {
-                break;
+                worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
+                  BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
+                  30,
+                  3,
+                  SOLID_AIR_POS_SELECTOR);
+                if (worldSpawnPos != null || MineColonies.getConfig().getServer().skyRaiders.get())
+                {
+                    break;
+                }
             }
         }
 
@@ -468,18 +478,12 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        BlockPos worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
-          BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
-          3,
-          30,
-          SOLID_AIR_POS_SELECTOR);
-
         if (worldSpawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
         {
             worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
               BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
-              10,
               15,
+              10,
               DOUBLE_AIR_POS_SELECTOR);
         }
 
@@ -498,7 +502,7 @@ public class RaidManager implements IRaiderManager
       final BlockPos advancePos)
     {
         BlockPos spawnPos = new BlockPos(start);
-        Vec3 tempPos = new Vec3(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
+        BlockPos tempPos = new BlockPos(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
 
         final int xDiff = Math.abs(start.getX() - advancePos.getX());
@@ -511,15 +515,15 @@ public class RaidManager implements IRaiderManager
         int validChunkCount = 0;
         for (int i = 0; i < 10; i++)
         {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
             {
-                tempPos = tempPos.add(16 * xzRatio.x, 0, 16 * xzRatio.z);
+                tempPos = tempPos.offset((int) (16 * xzRatio.x), 0, (int) (16 * xzRatio.z));
 
-                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
                 {
-                    if (isValidSpawnPoint(buildings, new BlockPos(tempPos)))
+                    if (isValidSpawnPoint(buildings, tempPos) && !isOtherColony(tempPos.getX(), tempPos.getZ()))
                     {
-                        spawnPos = new BlockPos(tempPos);
+                        spawnPos = tempPos;
                         validChunkCount++;
                         if (validChunkCount > 5)
                         {
@@ -544,6 +548,18 @@ public class RaidManager implements IRaiderManager
         }
 
         return null;
+    }
+
+    /**
+     * Check if the spawn position is within another colony
+     *
+     * @param pos
+     * @return
+     */
+    private boolean isOtherColony(final int x, final int z)
+    {
+        final IColonyTagCapability cap = colony.getWorld().getChunk(x >> 4, z >> 4).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        return cap != null && cap.getOwningColony() != 0 && cap.getOwningColony() != colony.getID();
     }
 
     /**
@@ -811,7 +827,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void read(final CompoundTag compound)
     {
-        if (compound.getAllKeys().contains(TAG_RAIDABLE))
+        if (compound.contains(TAG_RAIDABLE))
         {
             setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }

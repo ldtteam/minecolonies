@@ -346,7 +346,7 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
     public void readAdditionalSaveData(final CompoundTag compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
-        if (compound.getAllKeys().contains(TAG_COLONY_ID))
+        if (compound.contains(TAG_COLONY_ID))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)

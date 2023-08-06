@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
-
 /**
  * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate. Default tickrate is 20 tps (Minecraft default).
  */
@@ -31,6 +29,11 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
      * The counter for the statemachine's tickrate.
      */
     private int tickRateCounter = 0;
+
+    /**
+     * Currently used transition
+     */
+    private ITickingTransition<S> executedTransition = null;
 
     /**
      * Reference to our used global transition lists
@@ -64,20 +67,12 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     @Override
     public void tick()
     {
-        // Update the tickrate counter, skip tick if we're lower
-        tickRateCounter++;
-        if (tickRateCounter < tickRate)
+        if (tickRateCounter > 1)
         {
+            tickRateCounter--;
             return;
         }
-        tickRateCounter = 0;
-
-        // Update the tick counter for transitions
-        tickCounter++;
-        if (tickCounter > MAX_TICKRATE)
-        {
-            tickCounter = 1;
-        }
+        tickRateCounter = tickRate;
 
         for (final ITickingTransition<S> transition : aiBlockingTransitions)
         {
@@ -122,10 +117,13 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     public boolean checkTransition(@NotNull final ITickingTransition<S> transition)
     {
         // Check if the target should be run this Tick
-        if ((tickCounter % transition.getTickRate()) != transition.getTickOffset())
+        if (transition.countdownTicksToUpdate() > 0)
         {
             return false;
         }
+
+        transition.setTicksToUpdate(transition.getTickRate());
+        executedTransition = transition;
         return super.checkTransition(transition);
     }
 
@@ -140,5 +138,11 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     {
         this.tickRate = tickRate;
         tickRateCounter = new Random().nextInt(tickRate);
+    }
+
+    @Override
+    public void setCurrentDelay(final int ticksToNext)
+    {
+        executedTransition.setTicksToUpdate(ticksToNext);
     }
 }

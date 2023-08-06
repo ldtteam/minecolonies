@@ -19,5 +19,9 @@ public final class StatisticsConstants
     public static final String CROPS_HARVESTED = "crops_harvested";
     public static final String LAND_TILLED     = "land_tilled";
     public static final String FISH_CAUGHT     = "fish_caught";
+    public static final String BUILD_BUILT     = "build_built";
+    public static final String BUILD_UPGRADED  = "build_upgraded";
+    public static final String BUILD_REPAIRED  = "build_repaired";
+    public static final String BUILD_REMOVED   = "build_removed";
 
 }

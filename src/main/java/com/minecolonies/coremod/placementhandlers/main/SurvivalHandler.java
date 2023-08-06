@@ -7,6 +7,7 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -19,7 +20,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
-import com.minecolonies.coremod.network.messages.client.OpenDecoWindowMessage;
+import com.minecolonies.coremod.network.messages.client.OpenDecoBuildWindowMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -33,12 +34,14 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_CUSTOM_BUILDINGS;
-import static com.minecolonies.api.util.constant.TranslationConstants.WRONG_COLONY;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Minecolonies survival blueprint handler.
@@ -62,6 +65,12 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @OnlyIn(Dist.CLIENT)
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
+        BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+        if (blockState.is(ModBlocks.blockPlantationField))
+        {
+            return false;
+        }
+
         if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof BlockHutTownHall)
         {
             return true;
@@ -72,7 +81,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         {
             return false;
         }
-
         if (!colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
@@ -92,13 +100,20 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
+        if (blueprint == null)
+        {
+            // This can happen if the file didnt finish synching with the server from the client, or something went wrong when synching (package dropped, etc).
+            MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
             if (clientPack || !StructurePacks.hasPack(packName))
             {
-                MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+                MessageUtils.format(BUILDING_MISSING).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
@@ -151,16 +166,17 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   placementSettings.getMirror() != Mirror.NONE,
                   packName,
                   blueprintPath);
+                MinecraftForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, blockPos), world.getBlockState(blockPos.below()), player));
 
                 int level = 0;
                 boolean finishedUpgrade = false;
                 if (compound != null)
                 {
-                    if (compound.getAllKeys().contains(TAG_OTHER_LEVEL))
+                    if (compound.contains(TAG_OTHER_LEVEL))
                     {
                         level = compound.getInt(TAG_OTHER_LEVEL);
                     }
-                    if (compound.getAllKeys().contains(TAG_PASTEABLE))
+                    if (compound.contains(TAG_PASTEABLE))
                     {
                         String newBlueprintPath = blueprintPath;
                         newBlueprintPath = newBlueprintPath.substring(0, newBlueprintPath.length() - 1);
@@ -229,16 +245,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 int level = Utils.getBlueprintLevel(blueprint.getFileName());
                 if (level == -1)
                 {
-                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                    Network.getNetwork().sendToPlayer(new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
                 }
                 else
                 {
-                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                    Network.getNetwork().sendToPlayer(new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
                 }
             }
             else
             {
-                Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                Network.getNetwork().sendToPlayer(new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
             }
         }
 

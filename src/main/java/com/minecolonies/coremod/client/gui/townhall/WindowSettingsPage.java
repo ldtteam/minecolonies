@@ -12,10 +12,9 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.*;
-import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.NotNull;
@@ -107,7 +106,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     {
         new WindowSwitchPack(() -> {
             building.getColony().setStructurePack(StructurePacks.selectedPack.getName());
-            Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, StructurePacks.selectedPack.getName()));
+            Network.getNetwork().sendToServer(new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()));
             return new WindowSettingsPage((BuildingTownHall.View) this.building);
         }).open();
     }
@@ -357,7 +356,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(building.getColony(), this);
+        Screen window = new WindowBannerPicker(building.getColony(), this, isFeatureUnlocked);
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(window));
     }
 

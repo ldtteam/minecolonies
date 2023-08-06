@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
@@ -23,7 +22,9 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -31,7 +32,7 @@ import net.minecraftforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_HOSTILES;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
@@ -193,9 +194,10 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                      .with(AbstractBuilding.FEEDING, new BoolSetting(true))
-                                                                                     .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
-                                .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy.get(), EntityType.COW, new ItemStack(Items.WHEAT, 2)))
-                                .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
+                                                                                     .with(BuildingCowboy.MILKING_AMOUNT, new IntSetting(1))
+                                                                                     .with(BuildingCowboy.STEWING_AMOUNT, new IntSetting(1))
+                                                                                     .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1)), () -> SettingsModuleView::new)
+                                .addBuildingModuleProducer(BuildingCowboy.HerdingModule::new)
                                 .createBuildingEntry());
 
         ModBuildings.crusher = DEFERRED_REGISTER.register(ModBuildings.CRUSHER_ID, () -> new BuildingEntry.Builder()
@@ -225,13 +227,13 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingFarmer::new)
                                 .setBuildingViewProducer(() -> EmptyView::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
+                                .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.farmer.get(), Skill.Stamina, Skill.Athletics, false, b -> 1), () -> WorkerBuildingModuleView::new)
                                 .addBuildingModuleProducer(() -> new BuildingFarmer.CraftingModule(ModJobs.farmer.get()), () -> CraftingModuleView::new)
-                                .addBuildingModuleProducer(() -> new FarmerAssignmentModule(ModJobs.farmer.get(), Skill.Stamina, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                 .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                .addBuildingModuleProducer(BuildingFarmer.FarmerFieldsModule::new, () -> BuildingFarmer.FarmerFieldsModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule()
                                                                    .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
-                                .addBuildingModuleProducer(FarmerFieldModule::new, () -> FarmerFieldModuleView::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .createBuildingEntry());
 
@@ -286,7 +288,7 @@ public final class ModBuildingsInitializer
         ModBuildings.lumberjack = DEFERRED_REGISTER.register(ModBuildings.LUMBERJACK_ID, () -> new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutLumberjack)
                                     .setBuildingProducer(BuildingLumberjack::new)
-                                    .setBuildingViewProducer(() -> EmptyView::new)
+                                    .setBuildingViewProducer(() -> BuildingLumberjack.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LUMBERJACK_ID))
                                     .addBuildingModuleProducer(() -> new BuildingLumberjack.CraftingModule(ModJobs.lumberjack.get()), () -> CraftingModuleView::new)
                                     .addBuildingModuleProducer(() -> new ItemListModule(SAPLINGS_LIST), () -> () -> new ItemListModuleView(SAPLINGS_LIST, RequestSystemTranslationConstants.REQUESTS_TYPE_SAPLINGS, true,
@@ -411,7 +413,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                           .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
-                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder.get(), EntityType.PIG, new ItemStack(Items.CARROT, 2)))
+                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry());
 
         ModBuildings.townHall = DEFERRED_REGISTER.register(ModBuildings.TOWNHALL_ID, () -> new BuildingEntry.Builder()
@@ -567,14 +569,8 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.planter.get(), Skill.Agility, Skill.Dexterity, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingPlantation.CraftingModule(ModJobs.planter.get()), () -> CraftingModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(BuildingPlantation.PlantationFieldsModule::new, () -> BuildingPlantation.PlantationFieldsModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule()
-                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(
-                                                                         Items.SUGAR_CANE.getDescriptionId(),
-                                                                         Items.CACTUS.getDescriptionId(),
-                                                                         Items.BAMBOO.getDescriptionId(),
-                                                                         PlantationSetting.SUGAR_CANE_AND_CACTUS,
-                                                                         PlantationSetting.CACTUS_AND_BAMBOO,
-                                                                         PlantationSetting.BAMBOO_AND_SUGAR_CANE))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry());
 
@@ -587,7 +583,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                           .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
-                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), EntityType.RABBIT, new ItemStack(Items.CARROT, 2)))
+                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry());
 
         //todo we want two here, one custom for the concrete placement, and one crafting for the normal crafting of the powder.
@@ -605,7 +601,7 @@ public final class ModBuildingsInitializer
         ModBuildings.beekeeper = DEFERRED_REGISTER.register(ModBuildings.BEEKEEPER_ID, () -> new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockHutBeekeeper)
                                    .setBuildingProducer(BuildingBeekeeper::new)
-                                   .setBuildingViewProducer(() -> EmptyView::new)
+                                   .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.beekeeper.get(), Skill.Dexterity, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
@@ -613,7 +609,7 @@ public final class ModBuildingsInitializer
                                                                       .with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                       .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
                                    .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, RequestSystemTranslationConstants.REQUEST_TYPE_FLOWERS, false,
-                                     (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
+                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getImmutableFlowers()))
                                    .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterBeekeeper))
                                    .addBuildingModuleProducer(BuildingBeekeeper.HerdingModule::new)
                                    .createBuildingEntry());

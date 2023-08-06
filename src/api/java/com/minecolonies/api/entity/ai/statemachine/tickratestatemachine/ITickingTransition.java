@@ -25,5 +25,12 @@ public interface ITickingTransition<S extends IState> extends IStateMachineTrans
      *
      * @return random
      */
-    int getTickOffset();
+    int countdownTicksToUpdate();
+
+    /**
+     * Sets the ticks until next update
+     *
+     * @param ticksToUpdate
+     */
+    void setTicksToUpdate(int ticksToUpdate);
 }

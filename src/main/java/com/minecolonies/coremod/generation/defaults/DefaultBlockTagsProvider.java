@@ -92,6 +92,9 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.CHISELED_NETHER_BRICKS)
                 .add(Blocks.GRAVEL)
                 .add(Blocks.DIRT_PATH)
+                .add(Blocks.MUD_BRICKS)
+                .add(Blocks.MUD_BRICK_SLAB)
+                .add(Blocks.MUD_BRICK_STAIRS)
                 .add(Blocks.SMOOTH_STONE)
                 .add(Blocks.SMOOTH_STONE_SLAB)
                 .add(Blocks.SMOOTH_SANDSTONE)
@@ -127,6 +130,14 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.DEEPSLATE_TILE_SLAB)
                 .add(Blocks.DEEPSLATE_TILE_STAIRS)
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICKS);
+
+        tag(ModTags.mangroveTree)
+                .add(Blocks.MANGROVE_LOG)
+                .add(Blocks.MANGROVE_ROOTS);
+
+        tag(ModTags.tree)
+                .addTag(BlockTags.LOGS)
+                .addTag(ModTags.mangroveTree);
 
         tag(ModTags.colonyProtectionException)
                 .addOptional(new ResourceLocation("waystones:waystone"))

@@ -32,7 +32,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
     /**
      * Tag of the colony.
      */
-    private static final String TAG_COLONY = "colony";
+    public static final String TAG_COLONY = "colony";
 
     /**
      * Sets the name, creative tab, and registers the Clipboard item.
@@ -114,7 +114,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     private static void openWindow(CompoundTag compound, Level world, Player player)
     {
-        if (compound.getAllKeys().contains(TAG_COLONY))
+        if (compound.contains(TAG_COLONY))
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
             if (colonyView != null) MineColonies.proxy.openClipboardWindow(colonyView);

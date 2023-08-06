@@ -249,11 +249,11 @@ public class RequestTag implements IDeliverable
     public static RequestTag deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final TagKey<Item> theTag = ItemTags.create(new ResourceLocation(compound.getString(NBT_TAG)));
-        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");
         int minCount = count;
-        if (compound.getAllKeys().contains(NBT_COUNT))
+        if (compound.contains(NBT_COUNT))
         {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);

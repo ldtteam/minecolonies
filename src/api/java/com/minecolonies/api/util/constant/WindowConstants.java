@@ -70,6 +70,11 @@ public final class WindowConstants
     public static final String BUTTON_RENAME = "rename";
 
     /**
+     * Id of the patreon button in the GUI.
+     */
+    public static final String BUTTON_PATREON = "patreon";
+
+    /**
      * Id of the mercenary button in the GUI.
      */
     public static final String BUTTON_MERCENARY = "mercenaries";
@@ -626,12 +631,12 @@ public final class WindowConstants
      * The row where the emtpy Happiness bar starts.
      */
 
-    public static final int HAPPINESS_BAR_EMPTY_ROW = 74;
+    public static final int HAPPINESS_BAR_EMPTY_ROW = 0;
 
     /**
      * The row where the full happiness bar starts.
      */
-    public static final int HAPPINESS_BAR_FULL_ROW = 79;
+    public static final int HAPPINESS_BAR_FULL_ROW = 0;
 
     /**
      * X position of the empty heart icon.

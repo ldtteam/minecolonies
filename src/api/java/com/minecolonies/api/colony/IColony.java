@@ -6,18 +6,19 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -128,6 +129,13 @@ public interface IColony
         final String dim = getDimension().location().getPath();
         return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + getID();
     }
+
+    /**
+     * Getter for the team colony color.
+     *
+     * @return the color.
+     */
+    ChatFormatting getTeamColonyColor();
 
     /**
      * Returns this colony's banner patterns, as a List
@@ -475,4 +483,17 @@ public interface IColony
      * @return the current day progress of the colony.
      */
     int getDay();
+
+    /**
+     * Get the quest manager of the colony.
+     * @return the quest manager.
+     */
+    IQuestManager getQuestManager();
+
+    /**
+     * Get citizen from colony.
+     * @param id the id of the cit.
+     * @return the cit.
+     */
+    ICitizen getCitizen(int id);
 }

@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,7 @@ public class JEIPlugin implements IModPlugin
         final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
+        registration.addRecipeCategories(new ToolRecipeCategory(guiHelper));
         registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
         registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
 
@@ -77,19 +79,22 @@ public class JEIPlugin implements IModPlugin
                         GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
                         if (category == null)
                         {
-                            category = new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper);
+                            category = new GenericRecipeCategory(building, job, guiHelper, modIdHelper);
                             craftingCategories.put(job.getJobRegistryEntry(), category);
                         }
-                        else
-                        {
-                            category.addModule(crafting);
-                        }
+                        category.addModule(crafting);
                     }
                 }
-
-                if (module instanceof final AnimalHerdingModule herding)
+                else if (module instanceof final AnimalHerdingModule herding)
                 {
-                    registerCategory(registration, new HerderRecipeCategory(building, herding.getHerdingJob(), herding, guiHelper));
+                    final IJob<?> job = herding.getHerdingJob();
+                    GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
+                    if (category == null)
+                    {
+                        category = new GenericRecipeCategory(building, job, guiHelper, modIdHelper);
+                        craftingCategories.put(job.getJobRegistryEntry(), category);
+                    }
+                    category.addModule(herding);
                 }
             }
 
@@ -113,25 +118,28 @@ public class JEIPlugin implements IModPlugin
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM_STACK,
                 Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
+        registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
         final ClientLevel level = Minecraft.getInstance().level;
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
+        final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            addJobBasedRecipes(vanilla, category, registration::addRecipes);
+            addJobBasedRecipes(vanilla, animals, category, registration::addRecipes);
         }
     }
 
     private <R> void addJobBasedRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                        @NotNull final List<Animal> animals,
                                         @NotNull final JobBasedRecipeCategory<R> category,
                                         @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar)
     {
         try
         {
-            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla));
+            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla, animals));
         }
         catch (Exception e)
         {
@@ -167,12 +175,4 @@ public class JEIPlugin implements IModPlugin
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
         new BrewingCraftingGuiHandler(this.categories).register(registration);
     }
-
-    // while this looks suspiciously similar to BiConsumer, it works around a generic type incompatibility
-    @FunctionalInterface
-    private interface Registrar
-    {
-        <T> void accept(RecipeType<T> type, List<T> list);
-    }
-
 }

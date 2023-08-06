@@ -1,0 +1,138 @@
+{
+  "name": "minecolonies:lostmesacity/buildings",
+  "fallback": "minecolonies:lostmesacity/roads",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:lostmesacity/builder1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+		    "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/builder2",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:lostmesacity/cook1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:lostmesacity/farmer1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:lostmesacity/lumberjack1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/lumberjack2",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/tavern1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 12,
+      "element": {
+        "location": "minecolonies:lostmesacity/guardtower1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/guardtower2",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:lostmesacity/residence1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/residence2",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 8,
+      "element": {
+        "location": "minecolonies:lostmesacity/miner1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:lostmesacity/miner2",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:lostmesacity/warehouse1",
+        "processors": "minecolonies:lostmesacity/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+ ]
+}

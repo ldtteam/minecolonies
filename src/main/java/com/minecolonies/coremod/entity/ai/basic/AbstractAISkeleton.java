@@ -1,34 +1,27 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.ai.DesiredActivity;
-import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.MineColonies;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.EnumSet;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
+public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingStateAI
 {
     @NotNull
     protected final J                     job;
@@ -56,12 +49,16 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         this.job = job;
         this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
-        stateMachine.setTickRate(MineColonies.getConfig().getServer().updateRate.get());
+    }
+
+    @Override
+    public void tick()
+    {
+        stateMachine.tick();
     }
 
     /**
@@ -84,69 +81,8 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         Arrays.asList(targets).forEach(this::registerTarget);
     }
 
-    /**
-     * Returns whether the Goal should begin execution.
-     *
-     * @return true if execution is wanted.
-     */
-    @Override
-    public final boolean canUse()
-    {
-        return worker.getDesiredActivity() == DesiredActivity.WORK;
-    }
-
-    /**
-     * Returns whether an in-progress Goal should continue executing.
-     */
-    @Override
-    public final boolean canContinueToUse()
-    {
-        return super.canContinueToUse();
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task.
-     */
-    @Override
-    public final void start()
-    {
-        worker.getCitizenStatusHandler().setStatus(Status.WORKING);
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-    }
-
-    /**
-     * Resets the task.
-     */
-    @Override
-    public final void stop()
-    {
-        resetAI();
-        worker.getCitizenData().setVisibleStatus(null);
-    }
-
-    /**
-     * Updates the task.
-     */
-    @Override
-    public final void tick()
-    {
-        stateMachine.tick();
-    }
-
     protected void onException(final RuntimeException e)
     {
-    }
-
-    /**
-     * Made final to preserve behaviour: Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it yields zero, the two tasks may
-     * run concurrently, if not - they must run exclusively from each other.
-     *
-     * @param mutexBits the bits to flag this with.
-     */
-    @Override
-    public final void setFlags(final EnumSet<Flag> mutexBits)
-    {
-        super.setFlags(mutexBits);
     }
 
     /**
@@ -210,5 +146,15 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         worker.setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+    }
+
+    /**
+     * Sets the delay to next execution for the currently executed transition
+     *
+     * @param ticksToNextUpdate
+     */
+    public void setCurrentDelay(final int ticksToNextUpdate)
+    {
+        stateMachine.setCurrentDelay(ticksToNextUpdate);
     }
 }

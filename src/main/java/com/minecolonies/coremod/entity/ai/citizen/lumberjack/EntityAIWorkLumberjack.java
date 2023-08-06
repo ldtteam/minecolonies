@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
-import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -23,10 +22,10 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPas
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
@@ -191,7 +190,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
           new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
           new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
           new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND),
+          new AITarget(LUMBERJACK_GATHERING_2, this::gathering2, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -298,8 +298,48 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return getState();
         }
 
+        // Check again for saplings
+        resetGatheringItems();
+        return LUMBERJACK_GATHERING_2;
+    }
+
+    /**
+     * After we ran out of trees, and waited a bit, double-check if there are any saplings to gather
+     * anywhere within our restriction zone.
+     */
+    private IAIState gathering2()
+    {
+        if (building.shouldRestrict())
+        {
+            if (getItemsForPickUp() == null)
+            {
+                // search for interesting items in our restriction zone, if we ran out of trees
+                searchForItems(new AABB(building.getStartRestriction(), building.getEndRestriction())
+                        .inflate(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP));
+            }
+
+            if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
+            {
+                gatherItems();
+                return getState();
+            }
+        }
+
         // Reset everything, maybe there are new crafting requests
+        resetGatheringItems();
         return START_WORKING;
+    }
+
+    @Override
+    protected boolean isItemWorthPickingUp(final ItemStack stack)
+    {
+        if (getState() == LUMBERJACK_GATHERING_2)
+        {
+            // we're only interested in saplings at this point
+            return stack.is(ItemTags.SAPLINGS) || stack.is(fungi);
+        }
+
+        return super.isItemWorthPickingUp(stack);
     }
 
     /**
@@ -311,7 +351,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (job.getTree() == null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.searchingtree"));
 
             return findTree();
         }
@@ -428,12 +467,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState chopTree()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.chopping"));
         final boolean shouldBreakLeaves = building.shouldDefoliate() || job.getTree().isNetherTree();
 
         if (building.shouldRestrict() && !BlockPosUtil.isInArea(building.getStartRestriction(), building.getEndRestriction(), job.getTree().getLocation()))
         {
             job.setTree(null);
+            pathResult = null;
             return START_WORKING;
         }
 
@@ -463,6 +502,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             else
             {
                 job.setTree(null);
+                pathResult = null;
                 checkedInHut = false;
             }
 
@@ -584,10 +624,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveToWithPassable(world,
               AbstractPathJob.prepareStart(worker),
-              workAt,
+              workFrom,
               SEARCH_RANGE,
               worker,
-              this::isPassable), workAt, 1.0d, true);
+              this::isPassable), workFrom, 1.0d, true);
         }
 
         return false;
@@ -720,6 +760,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (plantSapling(job.getTree().getLocation()))
         {
             job.setTree(null);
+            pathResult = null;
             checkedInHut = false;
         }
     }
@@ -750,8 +791,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             return true;
         }
-
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
 
@@ -915,7 +954,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState gathering()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.gathering"));
 
         if (getItemsForPickUp() == null)
         {

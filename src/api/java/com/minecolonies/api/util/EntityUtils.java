@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -192,7 +193,8 @@ public final class EntityUtils
             }
         }
 
-        return world.getBlockState(pos.below()).getMaterial().isSolid() || world.getBlockState(pos.below(2)).getMaterial().isSolid();
+        return SurfaceType.getSurfaceType(world, world.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE
+         || SurfaceType.getSurfaceType(world, world.getBlockState(pos.below(2)), pos.below(2)) == SurfaceType.WALKABLE;
     }
 
 
