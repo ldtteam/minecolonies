@@ -234,7 +234,7 @@ public class ItemStorage
     public int hashCode()
     {
         //Only use the stack itself for the has, equals will handle the broader attributes
-        return Objects.hash(stack.getItem());
+        return Objects.hash(stack.getItem(), this.dmgValue);
     }
 
     @Override

@@ -156,11 +156,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private static ImmutableList<ItemStack> allItems = ImmutableList.of();
 
     /**
-     * Set of all items.  Uses ItemStorage mostly for better equals/hash.
-     */
-    private static ImmutableSet<ItemStorage> allItemsSet = ImmutableSet.of();
-
-    /**
      * Free block positions everyone can interact with.
      */
     private final Set<Block> freeBlocks = new HashSet<>();
@@ -362,8 +357,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getSetOfAllItems()
     {
-        if (allItemsSet.isEmpty()) Log.getLogger().error("getSetOfAllItems when empty");
-        return allItemsSet;
+        if (creativeModeTabMap.isEmpty()) Log.getLogger().error("getSetOfAllItems when empty");
+        return creativeModeTabMap.keySet();
     }
 
     @Override
@@ -621,12 +616,13 @@ public class CompatibilityManager implements ICompatibilityManager
             return;
         }
 
+        //todo some map should be reset here before add?
+
         final Set<ItemStorage> tempFlowers = new HashSet<>();
 
         final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), true, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
-        final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();
         final Registry<CreativeModeTab> registry = level.registryAccess().registryOrThrow(Registries.CREATIVE_MODE_TAB);
 
         for (CreativeModeTab tab : CreativeModeTabs.allTabs())
@@ -655,7 +651,6 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
                 for (final ItemStack item : stacks)
                 {
-                    setBuilder.add(new ItemStorage(item, true));
                     listBuilder.add(item);
 
                     discoverSaplings(item);
@@ -680,7 +675,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
 
         allItems = listBuilder.build();
-        allItemsSet = setBuilder.build();
     }
 
     /**
