@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -59,13 +58,6 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
             return;
         }
 
-        if (building instanceof BuildingTownHall)
-        {
-            colony.setStructurePack(structurePack);
-        }
-        else
-        {
-            building.setStructurePack(structurePack);
-        }
+        building.setStructurePack(structurePack);
     }
 }

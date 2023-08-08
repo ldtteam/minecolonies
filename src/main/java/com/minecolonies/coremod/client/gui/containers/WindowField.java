@@ -1,328 +1,349 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.google.common.collect.Lists;
-import com.minecolonies.api.inventory.container.ContainerField;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.minecolonies.api.colony.ICitizen;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.FieldPlotResizeMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.coremod.client.gui.WindowSelectRes;
+import com.minecolonies.coremod.colony.fields.FarmField;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldUpdateSeedMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.locale.Language;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_GUI_ASSIGNED_FARMER;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_GUI_NO_ASSIGNED_FARMER;
 
 /**
  * Class which creates the GUI of our field inventory.
  */
 @OnlyIn(Dist.CLIENT)
-public class WindowField extends AbstractContainerScreen<ContainerField>
+public class WindowField extends AbstractWindowSkeleton
 {
+    /**
+     * Link to the xml file of the window.
+     */
+    private static final String WINDOW_RESOURCE = ":gui/windowfield.xml";
+
+    /**
+     * The ID for the "not in colony" text.
+     */
+    private static final String NOT_IN_COLONY_TEXT_ID = "not-in-colony";
+
+    /**
+     * The prefix ID of the directional buttons.
+     */
+    private static final String DIRECTIONAL_BUTTON_ID_PREFIX = "dir-resize-";
+
+    /**
+     * The ID of the center icon of the directional buttons.
+     */
+    private static final String DIRECTIONAL_BUTTON_CENTER_ICON_ID = "dir-center";
+
+    /**
+     * The ID of the select seed button.
+     */
+    private static final String SELECT_SEED_BUTTON_ID = "select-seed";
+
+    /**
+     * The ID for the current seed text.
+     */
+    private static final String CURRENT_SEED_TEXT_ID = "current-seed";
+
+    /**
+     * The ID for the current farmer text.
+     */
+    private static final String CURRENT_FARMER_TEXT_ID = "current-farmer";
+
     /**
      * The resource location of the GUI background.
      */
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/scarecrow.png");
 
     /**
-     * The X-OFFSET of the string in the GUI.
+     * The width and height of the directional buttons (they're square)
      */
-    private static final int X_OFFSET = 8;
+    private static final int BUTTON_SIZE = 24;
 
     /**
-     * Y-OFFSET of the string in the GUI.
+     * The tile entity of the scarecrow.
      */
-    private static final int Y_OFFSET = 6;
+    @NotNull
+    private final AbstractTileEntityScarecrow tileEntityScarecrow;
 
     /**
-     * The text color of the string in the GUI.
+     * The farm field instance.
      */
-    private static final int TEXT_COLOR = 0x404040;
-
-    /**
-     * The width and height of the DirectionalButtons (they're square)
-     */
-    private static final int BUTTON_SIDE_LENGTH = 24;
-
-    /**
-     * Tile entity of the scarecrow.
-     */
-    private final AbstractScarecrowTileEntity tileEntity;
-
-    /**
-     * The values to render on each directional button, indicating the size of the field
-     * S, W, N, E.
-     */
-    private final int[] radii = new int[4];
+    @Nullable
+    private FarmField farmField;
 
     /**
      * Create the field GUI.
      *
-     * @param container       the container.
-     * @param playerInventory the player inv.
-     * @param iTextComponent  the display text component.
+     * @param tileEntityScarecrow the scarecrow tile entity.
      */
-    public WindowField(final ContainerField container, final Inventory playerInventory, final Component iTextComponent)
+    public WindowField(@NotNull AbstractTileEntityScarecrow tileEntityScarecrow)
     {
-        super(container, playerInventory, iTextComponent);
-        this.tileEntity = container.getTileEntity();
-    }
+        super(Constants.MOD_ID + WINDOW_RESOURCE);
+        this.tileEntityScarecrow = tileEntityScarecrow;
 
-    @Override
-    protected void init()
-    {
-        super.init();
-
-        final int centerX = this.leftPos + this.imageWidth / 2 + 1;
-        final int centerY = this.topPos + this.imageHeight / 2;
+        registerButton(SELECT_SEED_BUTTON_ID, this::selectSeed);
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
-            int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
-            int yFromPolar = (int) Math.cos(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
-            this.radii[dir.get2DDataValue()] = tileEntity.getRadius(dir);
-
-            // Some magic numbering to get the offsets right
-            DirectionalButton db = new DirectionalButton(
-              centerX + xFromPolar - 12,
-              centerY - 40 + yFromPolar - 12,
-              BUTTON_SIDE_LENGTH,
-              BUTTON_SIDE_LENGTH,
-              Component.literal(String.valueOf(this.radii[dir.get2DDataValue()])),
-              dir
-            );
-            this.addRenderableWidget(db);
-        }
-    }
-
-    @Override
-    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
-    {
-        if (!tileEntity.getOwner().isEmpty())
-        {
-            this.font.draw(stack, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            registerButton(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), this::onDirectionalButtonClick);
         }
 
-        this.font.draw(stack, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
-
-        for (Widget widget : this.renderables)
-        {
-            if (widget instanceof AbstractWidget)
-            {
-                if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
-                {
-                    ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
-                    break;
-                }
-            }
-        }
+        updateAll();
     }
 
     /**
-     * Does draw the background of the GUI.
+     * Button handler for selecting a seed.
+     */
+    private void selectSeed()
+    {
+        new WindowSelectRes(
+          this,
+          stack -> stack.is(Tags.Items.SEEDS) || stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock,
+          (stack, qty) -> setSeed(stack),
+          false).open();
+    }
+
+    /**
+     * Button handler for clicking on any of the directional buttons.
      *
-     * @param partialTicks the ticks delivered.
-     * @param mouseX       the mouseX position.
-     * @param mouseY       the mouseY position.
+     * @param button which button was clicked.
      */
-    @Override
-    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    private void onDirectionalButtonClick(Button button)
     {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        final int marginHorizontal = (width - imageWidth) / 2;
-        final int marginVertical = (height - imageHeight) / 2;
-        blit(stack, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
+        if (farmField == null || !button.isEnabled())
+        {
+            return;
+        }
+
+        String directionName = button.getID().replace(DIRECTIONAL_BUTTON_ID_PREFIX, "");
+        Optional<Direction> direction = Direction.Plane.HORIZONTAL.stream().filter(f -> f.getName().equals(directionName)).findFirst();
+
+        if (direction.isEmpty())
+        {
+            return;
+        }
+
+        int newRadius = (farmField.getRadius(direction.get()) % farmField.getMaxRadius()) + 1;
+        farmField.setRadius(direction.get(), newRadius);
+        button.setText(Component.literal(String.valueOf(newRadius)));
+
+        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()));
     }
 
-    @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    private void updateAll()
     {
-        this.renderBackground(stack);
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
+        updateFarmField();
+        updateElementStates();
+        updateOwner();
+        updateSeed();
+        updateButtons();
     }
 
     /**
-     * Buttons with a direction. Textures are assigned based on direction specified.
+     * Sends a message to the server to update the seed of the field.
+     *
+     * @param stack the provided item stack with the seed.
      */
-    protected class DirectionalButton extends Button
+    private void setSeed(ItemStack stack)
     {
-        public Direction direction;
-        public int       textureX = 176;
-        public int       textureY = 0;
-
-        /**
-         * The arrangement of the button's direction textures in the image.
-         */
-        public int columns = 2;
-
-        /**
-         * Construct a directional button. Arguments based on a basic Button widget
-         *
-         * @param x         the x position from screen top left
-         * @param y         the y position from screen top left
-         * @param width     the width of the button in the gui
-         * @param height    the height of the button in the gui
-         * @param text      the label on the button
-         * @param direction the direction this button faces. Adjusts texture coordinates.
-         */
-        public DirectionalButton(int x, int y, int width, int height, Component text, Direction direction)
+        IColonyView colonyView = getCurrentColony();
+        if (colonyView != null && farmField != null)
         {
-            super(x, y, width, height, text, button -> {});
-            this.direction = direction;
+            Network.getNetwork().sendToServer(new FarmFieldUpdateSeedMessage(colonyView, stack, farmField.getPosition()));
+
+            farmField.setSeed(stack);
+        }
+    }
+
+    /**
+     * Keep attempting to fetch the currently loaded farm field, if not present already.
+     */
+    private void updateFarmField()
+    {
+        if (farmField != null)
+        {
+            return;
         }
 
-        @Override
-        public boolean mouseClicked(final double mouseX, final double mouseY, final int button)
+        IColonyView colonyView = getCurrentColony();
+        if (colonyView == null)
         {
-            if (this.clicked(mouseX, mouseY))
+            return;
+        }
+
+        final IField field = colonyView.getField(otherField -> otherField.getFieldType().equals(FieldRegistries.farmField.get()) && otherField.getPosition()
+                                                                                                                                      .equals(tileEntityScarecrow.getBlockPos()));
+        if (field instanceof FarmField farmFieldFound)
+        {
+            farmField = farmFieldFound;
+        }
+    }
+
+    /**
+     * Updates the states of certain additional elements, determining whether they should be enabled/visible.
+     */
+    private void updateElementStates()
+    {
+        IColonyView colonyView = getCurrentColony();
+
+        findPaneOfTypeByID(NOT_IN_COLONY_TEXT_ID, Text.class).setVisible(colonyView == null);
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(SELECT_SEED_BUTTON_ID, ButtonImage.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(CURRENT_SEED_TEXT_ID, ItemIcon.class).setVisible(colonyView != null);
+        findPaneOfTypeByID(DIRECTIONAL_BUTTON_CENTER_ICON_ID, ItemIcon.class).setVisible(colonyView != null);
+
+        for (Direction dir : Direction.Plane.HORIZONTAL)
+        {
+            findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class).setVisible(colonyView != null);
+        }
+    }
+
+    /**
+     * Update the label which farmer owns the field, if any.
+     */
+    private void updateOwner()
+    {
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_NO_ASSIGNED_FARMER));
+
+        IColonyView colonyView = getCurrentColony();
+        if (colonyView == null || farmField == null || !farmField.isTaken())
+        {
+            return;
+        }
+
+        final IBuildingView building = colonyView.getBuilding(farmField.getBuildingId());
+        if (building == null)
+        {
+            return;
+        }
+
+        final Integer citizenId = building.getAllAssignedCitizens().stream().findFirst().orElse(null);
+        if (citizenId == null)
+        {
+            return;
+        }
+
+        ICitizen citizen = colonyView.getCitizen(citizenId);
+        if (citizen == null)
+        {
+            return;
+        }
+
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_ASSIGNED_FARMER, citizen.getName()));
+    }
+
+    /**
+     * Updates the seed icon next to the selection button.
+     */
+    private void updateSeed()
+    {
+        if (farmField != null)
+        {
+            findPaneOfTypeByID(CURRENT_SEED_TEXT_ID, ItemIcon.class).setItem(farmField.getSeed());
+        }
+    }
+
+    /**
+     * Updates the directional buttons.
+     */
+    private void updateButtons()
+    {
+        for (Direction dir : Direction.Plane.HORIZONTAL)
+        {
+            ButtonImage button = findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class);
+            button.setEnabled(!Objects.isNull(farmField));
+
+            int buttonState = 1;
+            if (!button.isEnabled())
             {
-                int index = this.direction.get2DDataValue();
-                int delta = this.isValidClickButton(button) ? 1 : -1;
-
-                // Perform the cycle
-                radii[index] = (radii[index] + delta) % (ScarecrowTileEntity.getMaxRange() + 1);
-                if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
-
-                this.setMessage(Component.literal(String.valueOf(radii[index])));
-                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getBlockPos()));
-
-                return true;
+                buttonState = 0;
+            }
+            else if (button.wasCursorInPane())
+            {
+                buttonState = 2;
             }
 
-            return false;
-        }
+            button.setImage(TEXTURE, dir.get2DDataValue() * BUTTON_SIZE, buttonState * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
+            button.setText(Component.literal(String.valueOf(Objects.isNull(farmField) ? "" : farmField.getRadius(dir))));
 
-        /**
-         * Retrieves the texture offset depending on the direction of the button
-         *
-         * @return the X offset for the image texture
-         */
-        public int getTextureXOffset()
+            PaneBuilders.tooltipBuilder()
+              .hoverPane(button)
+              .append(Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + dir.getSerializedName()))
+              .appendNL(Component.translatable(getDirectionalTranslationKey(dir)).setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY)))
+              .build();
+        }
+    }
+
+    /**
+     * Get the current colony, if any, from the tile entity.
+     *
+     * @return the colony view, if exists.
+     */
+    @Nullable
+    private IColonyView getCurrentColony()
+    {
+        if (tileEntityScarecrow.getCurrentColony() instanceof IColonyView colonyView)
         {
-            return this.textureX + 24 * Math.floorDiv(this.direction.get2DDataValue(), this.columns);
+            return colonyView;
         }
+        return null;
+    }
 
-        /**
-         * Retrieves the texture offset depending on the direction of the button
-         *
-         * @return the Y offset for the image texture
-         */
-        public int getTextureYOffset()
+    /**
+     * Get translation keys for the different directional buttons.
+     *
+     * @param direction the direction.
+     * @return the translation key.
+     */
+    private String getDirectionalTranslationKey(Direction direction)
+    {
+        Direction[] looks = Direction.orderedByNearest(Minecraft.getInstance().player);
+        Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
+
+        return switch (facing.getOpposite().get2DDataValue() - direction.get2DDataValue())
         {
-            return this.textureY + 72 * (this.direction.get2DDataValue() % this.columns);
-        }
+            case 1, -3 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_RIGHT;
+            case 2, -2 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_OPPOSITE;
+            case 3, -1 -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_LEFT;
+            default -> BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST;
+        };
+    }
 
-        /**
-         * Neatens the buttons by offsetting the text towards the main area of the texture
-         *
-         * @param axis the Axis of the direction that the button represents
-         * @return the render offset
-         */
-        public int getTextOffset(Direction.Axis axis)
-        {
-            switch (this.direction)
-            {
-                case NORTH:
-                    return axis == Direction.Axis.X ? 0 : +2;
-                case EAST:
-                    return axis == Direction.Axis.X ? -2 : 0;
-                case SOUTH:
-                    return axis == Direction.Axis.X ? 0 : -2;
-                case WEST:
-                    return axis == Direction.Axis.X ? +2 : 0;
-            }
-            return 0;
-        }
-
-        @Override
-        public void renderButton(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
-        {
-            Minecraft minecraft = Minecraft.getInstance();
-            Font fontrenderer = minecraft.font;
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-            RenderSystem.setShaderTexture(0, TEXTURE);
-
-            int i = this.getYImage(this.isHovered);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.blit(stack, this.x, this.y, getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
-            this.renderBg(stack, minecraft, mouseX, mouseY);
-            int j = getFGColor();
-            drawCenteredString(stack,
-              fontrenderer, this.getMessage(),
-              this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
-              this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
-              j | Mth.ceil(this.alpha * 255.0F) << 24
-            );
-        }
-
-        @Override
-        public void renderToolTip(@NotNull final PoseStack stack, int mouseX, int mouseY)
-        {
-            // Don't render while they are dragging a stack around
-            if (!menu.getCarried().isEmpty())
-            {
-                return;
-            }
-
-            List<FormattedText> lines = Lists.newArrayList(
-              Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + this.direction.getSerializedName()),
-              Component.translatable(getDirectionalTranslationKey())
-                .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
-            );
-
-            WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
-        }
-
-        /**
-         * Calculates where the player is and the appropriate relative direction
-         *
-         * @return the translation key
-         */
-        public String getDirectionalTranslationKey()
-        {
-            Direction[] looks = Direction.orderedByNearest(Minecraft.getInstance().player);
-            Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
-
-            switch (facing.getOpposite().get2DDataValue() - this.direction.get2DDataValue())
-            {
-                case 1:
-                case -3:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_RIGHT;
-                case 2:
-                case -2:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_OPPOSITE;
-                case 3:
-                case -1:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_LEFT;
-                default:
-                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST;
-            }
-        }
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        updateAll();
     }
 }

@@ -746,7 +746,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
+        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || worker.getLastHurtMob() != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
           .equals(GuardTaskSetting.FOLLOW))
         {
             return false;

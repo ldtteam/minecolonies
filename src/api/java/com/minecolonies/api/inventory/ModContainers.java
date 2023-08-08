@@ -18,7 +18,5 @@ public class ModContainers
 
     public static RegistryObject<MenuType<ContainerCrafting>> craftingGrid;
 
-    public static RegistryObject<MenuType<ContainerField>> field;
-
     public static RegistryObject<MenuType<ContainerCraftingBrewingstand>> craftingBrewingstand;
 }

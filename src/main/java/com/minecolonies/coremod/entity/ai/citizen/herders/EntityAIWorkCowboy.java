@@ -6,10 +6,8 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -138,7 +136,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      */
     private IAIState milkCows()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
         worker.getCitizenData().setVisibleStatus(HERD_COW);
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET))
@@ -189,7 +186,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      */
     private IAIState milkMooshrooms()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
         worker.getCitizenData().setVisibleStatus(HERD_COW);
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BOWL))

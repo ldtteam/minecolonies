@@ -2,23 +2,37 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
+import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public interface IColonyView extends IColony
 {
@@ -267,6 +281,40 @@ public interface IColonyView extends IColony
     IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
 
     /**
+     * Add or update a ColonyView's fields given a network data ColonyView update packet.
+     *
+     * @param type     the field type.
+     * @param position the field position.
+     * @param buf      buffer containing field information.
+     */
+    void handleColonyFieldViewMessage(@NotNull FieldRegistries.FieldEntry type, @NotNull BlockPos position, @NotNull FriendlyByteBuf buf);
+
+    /**
+     * Removes a ColonyView's fields given a data ColonyView update packet.
+     *
+     * @param type     the field type.
+     * @param position the field position.
+     * @param buf      buffer containing field information.
+     */
+    void handleColonyRemoveFieldViewMessage(@NotNull FieldRegistries.FieldEntry type, @NotNull BlockPos position, @NotNull FriendlyByteBuf buf);
+
+    /**
+     * Get all fields.
+     *
+     * @param matcher the field matcher predicate.
+     * @return a collection of fields.
+     */
+    @NotNull List<IField> getFields(Predicate<IField> matcher);
+
+    /**
+     * Get a specific field.
+     *
+     * @param matcher the field matcher predicate.
+     * @return a field instance, or null.
+     */
+    @Nullable IField getField(Predicate<IField> matcher);
+
+    /**
      * Update a players permissions.
      *
      * @param player player username.
@@ -292,13 +340,6 @@ public interface IColonyView extends IColony
 
     @Override
     String getName();
-
-    /**
-     * Getter for the team colony color.
-     *
-     * @return the color.
-     */
-    ChatFormatting getTeamColonyColor();
 
     /**
      * Sets the name of the view.

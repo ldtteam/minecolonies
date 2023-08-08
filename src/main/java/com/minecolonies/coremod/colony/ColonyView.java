@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -55,10 +57,12 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
@@ -81,6 +85,8 @@ public final class ColonyView implements IColonyView
     private final PermissionsView                permissions = new PermissionsView();
     @NotNull
     private final Map<BlockPos, IBuildingView>   buildings   = new HashMap<>();
+    @NotNull
+    private final Set<IField>                    fields      = new HashSet<>();
     //  Citizenry
     @NotNull
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
@@ -97,8 +103,8 @@ public final class ColonyView implements IColonyView
      * The colony flag (set to plain white as default)
      */
     private ListTag        colonyFlag      = new BannerPattern.Builder()
-        .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-        .toListTag();
+                                               .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+                                               .toListTag();
 
     private BlockPos center = BlockPos.ZERO;
 
@@ -1091,6 +1097,39 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+    }
+
+    @Override
+    public void handleColonyFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
+    {
+        final IField fieldView = type.produceField(position);
+        fieldView.deserialize(buf);
+        fields.remove(fieldView);
+        fields.add(fieldView);
+    }
+
+    @Override
+    public void handleColonyRemoveFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
+    {
+        final IField field = type.produceField(position);
+        field.deserialize(buf);
+        fields.remove(field);
+    }
+
+    @Override
+    public @NotNull List<IField> getFields(final Predicate<IField> matcher)
+    {
+        return fields.stream()
+                 .filter(matcher)
+                 .toList();
+    }
+
+    @Override
+    public @Nullable IField getField(final Predicate<IField> matcher)
+    {
+        return getFields(matcher).stream()
+                 .findFirst()
+                 .orElse(null);
     }
 
     /**

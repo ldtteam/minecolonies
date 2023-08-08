@@ -259,8 +259,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             return INVENTORY_FULL;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.building"));
-
         checkForExtraBuildingActions();
 
         // some things to do first! then we go to the actual phase!

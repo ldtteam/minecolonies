@@ -19,14 +19,14 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveya
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
 
 /**
@@ -166,7 +167,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_EMPTYING));
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
         unequip();
 
@@ -224,7 +224,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_DIGGING));
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
@@ -412,7 +411,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_BURYING));
 
         if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
         {

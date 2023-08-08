@@ -35,8 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -582,10 +580,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected LootContext getLootContext(boolean includeKiller)
     {
-        if(playerDamageSource == null)
+        if (playerDamageSource == null)
         {
-            FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) this.world);
-            playerDamageSource = DamageSource.playerAttack(fp);
+            playerDamageSource = DamageSource.playerAttack(getFakePlayer());
         }
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) this.world))
@@ -595,13 +592,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         .withRandom(worker.getRandom())
         .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
 
-        if(includeKiller)
+        if (includeKiller)
         {
             builder = builder
-                .withParameter(LootContextParams.DAMAGE_SOURCE, playerDamageSource)
-                .withParameter(LootContextParams.KILLER_ENTITY, playerDamageSource.getEntity())
-                .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
-            }
+                        .withParameter(LootContextParams.DAMAGE_SOURCE, playerDamageSource)
+                        .withParameter(LootContextParams.KILLER_ENTITY, playerDamageSource.getEntity())
+                        .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
+        }
         
         return builder.create(RecipeStorage.recipeLootParameters);
     }

@@ -16,11 +16,10 @@ import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
@@ -37,7 +36,6 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class containing initializer for all the validator predicates.
@@ -102,32 +100,10 @@ public class InteractionValidatorInitializer
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_FREE_FIELDS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).getFirstModuleOccurance(FarmerFieldModule.class).hasNoFields());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && citizen.getWorkBuilding().getFirstModuleOccurance(FieldsModule.class).hasNoFields());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(INVALID_MINESHAFT),
           citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
-
-        InteractionValidatorRegistry.registerPosBasedPredicate(Component.translatable(NO_SEED_SET),
-          (citizen, pos) ->
-          {
-              if (citizen.getJob() instanceof JobFarmer)
-              {
-                  final IColony colony = citizen.getColony();
-                  if (colony != null)
-                  {
-                      final Level world = colony.getWorld();
-                      if (world != null)
-                      {
-                          final BlockEntity tileEntity = world.getBlockEntity(pos);
-                          if (tileEntity instanceof ScarecrowTileEntity)
-                          {
-                              return ((ScarecrowTileEntity) tileEntity).getSeed() == null;
-                          }
-                      }
-                  }
-              }
-              return false;
-          });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
           citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));

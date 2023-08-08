@@ -13,16 +13,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
-import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
-import com.minecolonies.coremod.colony.workorders.view.WorkOrderDecorationView;
-import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
+import com.minecolonies.coremod.colony.workorders.view.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,6 +67,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     {
         addMapping("building", WorkOrderBuilding.class, WorkOrderBuildingView.class);
         addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
+        addMapping("plantation_field", WorkOrderPlantationField.class, WorkOrderPlantationFieldView.class);
         addMapping("miner", WorkOrderMiner.class, WorkOrderMinerView.class);
     }
 

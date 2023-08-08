@@ -4,12 +4,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Sheep;
@@ -107,7 +105,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private IAIState shearSheep()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
         final Sheep sheep = findShearableSheep();
 

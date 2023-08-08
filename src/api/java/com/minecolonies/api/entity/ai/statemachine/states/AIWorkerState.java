@@ -579,19 +579,6 @@ public enum AIWorkerState implements IAIState
     ENCHANT(false),
 
     /*
-### Avoid-AI ###
-     */
-
-    /**
-     * Checking it the Avoid AI should start.
-     */
-    SAFE(true),
-
-    NEED_RUN(true),
-
-    RUNNING(true),
-
-    /*
 ### Healer ###
    */
     REQUEST_CURE(true),
@@ -614,15 +601,11 @@ public enum AIWorkerState implements IAIState
     /*
 ### Plantation related ###
      */
-    PLANTATION_MOVE_TO_SOIL(true),
-
-    PLANTATION_CHECK_SOIL(true),
-
-    PLANTATION_CLEAR_OBSTACLE(true),
-
-    PLANTATION_FARM(true),
-
-    PLANTATION_PLANT(true),
+    PLANTATION_PICK_FIELD(false),
+    PLANTATION_MOVE_TO_FIELD(false),
+    PLANTATION_DECIDE_FIELD_WORK(false),
+    PLANTATION_WORK_FIELD(true),
+    PLANTATION_RETURN_TO_BUILDING(false),
 
     /*
 ### Beekeeper ###

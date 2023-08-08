@@ -1,39 +1,30 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Random;
 
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.RUNNING;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.SAFE;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
-import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAICitizenAvoidEntity.FleeStates.RUNNING;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAICitizenAvoidEntity.FleeStates.SAFE;
 
 /**
  * AI task to avoid an Entity class.
  */
-public class EntityAICitizenAvoidEntity extends Goal
+public class EntityAICitizenAvoidEntity implements IStateAI
 {
     /**
      * Defines how close the entity has to be to the mob to run away.
@@ -43,7 +34,7 @@ public class EntityAICitizenAvoidEntity extends Goal
     /**
      * The amount of area checks before the citizen assumes it is safe. 40 are done in 10seconds.
      */
-    private static final int CHECKS_BEFORE_SAFE = 40;
+    private static final int CHECKS_BEFORE_SAFE = 20 * 10;
 
     /**
      * Move away distances.
@@ -66,17 +57,18 @@ public class EntityAICitizenAvoidEntity extends Goal
     /**
      * Time spent fleeing.
      */
-    private int fleeingCounter = 0;
+    private int safeTime = 0;
 
     /**
      * The pathresult of trying to move away
      */
     private PathResult moveAwayPath;
 
-    /**
-     * This AI's state changer.
-     */
-    private final ITickRateStateMachine<IAIState> stateMachine;
+    public enum FleeStates implements IState
+    {
+        SAFE,
+        RUNNING
+    }
 
     /**
      * The blockpos from where the citizen started fleeing.
@@ -108,22 +100,13 @@ public class EntityAICitizenAvoidEntity extends Goal
         this.distanceFromEntity = distanceFromEntity;
         this.farSpeed = farSpeed;
         this.nearSpeed = nearSpeed;
-        super.setFlags(EnumSet.of(Flag.MOVE));
 
-        stateMachine = new TickRateStateMachine<>(SAFE, this::onException);
-
-        stateMachine.addTransition(new AITarget(SAFE, this::isEntityClose, () -> RUNNING, 5));
-        stateMachine.addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));
-    }
-
-    /**
-     * Handles any exceptions for this AI.
-     *
-     * @param e exception to handle
-     */
-    private void onException(final RuntimeException e)
-    {
-        Log.getLogger().warn("AvoidAI of:" + citizen.getName() + " threw an Exception:", e);
+        citizen.getCitizenAI().addTransition(new AITarget(CitizenAIState.FLEE, () -> true, () -> {
+            reset();
+            return SAFE;
+        }, 1));
+        citizen.getCitizenAI().addTransition(new AITarget(SAFE, () -> true, this::isEntityClose, 1));
+        citizen.getCitizenAI().addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));
     }
 
     /**
@@ -131,27 +114,25 @@ public class EntityAICitizenAvoidEntity extends Goal
      *
      * @return true if we should flee
      */
-    public boolean isEntityClose()
+    public IState isEntityClose()
     {
-        if (!citizen.isCurrentlyFleeing())
-        {
-            return false;
-        }
+        safeTime++;
 
-        fleeingCounter++;
-
-        // reset after 10s no target
-        if (fleeingCounter == CHECKS_BEFORE_SAFE)
+        if (safeTime > CHECKS_BEFORE_SAFE)
         {
-            fleeingCounter = 0;
-            citizen.setFleeingState(false);
-            citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
-            return false;
+            return CitizenAIState.IDLE;
         }
 
         closestLivingEntity = citizen.getThreatTable().getTargetMob();
+        if (closestLivingEntity != null && citizen.getSensing().hasLineOfSight(closestLivingEntity) && targetEntityClass.isInstance(closestLivingEntity))
+        {
+            safeTime = 0;
+            startingPos = citizen.blockPosition();
+            performMoveAway();
+            return RUNNING;
+        }
 
-        return closestLivingEntity != null && citizen.getSensing().hasLineOfSight(closestLivingEntity) && targetEntityClass.isInstance(closestLivingEntity);
+        return SAFE;
     }
 
     /**
@@ -168,15 +149,15 @@ public class EntityAICitizenAvoidEntity extends Goal
         else
         {
             final Optional<Entity> entityOptional = CompatibilityUtils.getWorldFromCitizen(citizen).getEntities(
-              citizen,
-              citizen.getBoundingBox().inflate(
-                (double) distanceFromEntity,
-                3.0D,
-                (double) distanceFromEntity),
-              target -> target.isAlive() && citizen.getSensing().hasLineOfSight(target))
-                                                      .stream()
-                                                      .filter(targetEntityClass::isInstance)
-                                                      .findFirst();
+                citizen,
+                citizen.getBoundingBox().inflate(
+                  (double) distanceFromEntity,
+                  3.0D,
+                  (double) distanceFromEntity),
+                target -> target.isAlive() && citizen.getSensing().hasLineOfSight(target))
+              .stream()
+              .filter(targetEntityClass::isInstance)
+              .findFirst();
 
             return entityOptional.orElse(null);
         }
@@ -192,8 +173,8 @@ public class EntityAICitizenAvoidEntity extends Goal
         if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone())
         {
             moveAwayPath =
-              citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
-            citizen.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.avoiding"));
+              citizen.getNavigation()
+                .moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
             return true;
         }
         return false;
@@ -241,7 +222,7 @@ public class EntityAICitizenAvoidEntity extends Goal
 
         if (moveAwayPath == null || !moveAwayPath.isInProgress())
         {
-            fleeingCounter = 0;
+            safeTime = 0;
             return true;
         }
         else
@@ -259,47 +240,17 @@ public class EntityAICitizenAvoidEntity extends Goal
     }
 
     /**
-     * Returns whether the Goal should begin execution of avoiding.
-     */
-    @Override
-    public boolean canUse()
-    {
-        if (citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance() && (citizen.getCitizenJobHandler().getColonyJob() == null
-                                                                                                      || citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted()))
-        {
-            startingPos = citizen.blockPosition();
-            fleeingCounter = 0;
-
-            return !(citizen.getHealth() <= SEEK_DOCTOR_HEALTH) || citizen.getCitizenColonyHandler().getColony() == null
-                     || citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class) == null;
-        }
-        return false;
-    }
-
-    /**
-     * Returns whether an in-progress Goal should continue executing.
-     */
-    @Override
-    public boolean canContinueToUse()
-    {
-        stateMachine.tick();
-        if (citizen.getHealth() <= SEEK_DOCTOR_HEALTH && citizen.getCitizenColonyHandler().getColony() != null
-              && citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class) != null)
-        {
-            return false;
-        }
-
-        return citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance();
-    }
-
-    /**
      * Resets the task.
      */
-    @Override
-    public void stop()
+    public void reset()
     {
+        safeTime = 0;
+        if (startingPos != null)
+        {
+            citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
+        }
         closestLivingEntity = null;
         moveAwayPath = null;
-        stateMachine.reset();
+        startingPos = null;
     }
 }
