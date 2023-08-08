@@ -638,6 +638,7 @@ public class CompatibilityManager implements ICompatibilityManager
                         tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
                             stacks.add(stack);
                         });
+                        Log.getLogger().warn("Registering: " + tab.getDisplayName().getString() + " " + tab.getDisplayItems().size());
                     }
                     catch (final Exception ex)
                     {
@@ -675,6 +676,8 @@ public class CompatibilityManager implements ICompatibilityManager
 
 
         allItems = listBuilder.build();
+        Log.getLogger().info("Finished discovering items1 " + creativeModeTabMap.size());
+        Log.getLogger().info("Finished discovering items2 " + allItems.size());
     }
 
     /**
