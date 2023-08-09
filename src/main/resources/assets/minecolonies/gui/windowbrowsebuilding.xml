@@ -14,7 +14,7 @@
     <list id="buildings" size="162 80%" pos="15 30" visible="false">
         <box size="100% 32" linewidth="1">
             <label id="packName" size="158 10" pos="2 2" color="black"/>
-            <label id="buildingName" size="158 10" pos="2 11" color="black"/>
+            <label id="buildingName" size="158 10" pos="2 11" color="black" textscale="0.5" wrap="true"/>
             <label id="buildingSize" size="69% 10" pos="2 21" color="black"/>
             <label id="buildingLevel" align="TOP_RIGHT" textalign="TOP_RIGHT" size="29% 10" pos="2 21" color="black"/>
         </box>
