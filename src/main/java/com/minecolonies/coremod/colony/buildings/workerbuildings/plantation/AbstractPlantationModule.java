@@ -14,11 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Base class for planter modules that determines how the AI should work specific fields.
@@ -95,13 +93,7 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
     @Override
     public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
     {
-        Stream<BlockPos> positions = workingPositions.stream().distinct();
-        Integer maxWorkingPositions = getMaxWorkingPositions();
-        if (maxWorkingPositions != null)
-        {
-            positions = positions.limit(maxWorkingPositions);
-        }
-        return positions.toList();
+        return workingPositions.stream().distinct().limit(getMaxWorkingPositions()).toList();
     }
 
     /**
@@ -110,8 +102,7 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      *
      * @return the maximum amount of plants.
      */
-    @Nullable
-    protected Integer getMaxWorkingPositions()
+    protected int getMaxWorkingPositions()
     {
         return DEFAULT_MAX_PLANTS;
     }

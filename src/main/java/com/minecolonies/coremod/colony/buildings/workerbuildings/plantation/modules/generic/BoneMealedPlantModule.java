@@ -177,9 +177,8 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
         return getValidBonemeal().stream().map(ItemStack::new).toList();
     }
 
-    @Nullable
     @Override
-    protected Integer getMaxWorkingPositions()
+    protected int getMaxWorkingPositions()
     {
         return MAX_PLANTS;
     }

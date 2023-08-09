@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.SeaPickleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -95,8 +94,7 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    @Nullable
-    protected Integer getMaxWorkingPositions()
+    protected int getMaxWorkingPositions()
     {
         return MAX_PLANTS;
     }
