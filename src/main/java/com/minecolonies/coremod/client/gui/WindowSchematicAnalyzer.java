@@ -8,12 +8,14 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.api.util.ItemStorage;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.gui.AbstractWindowSkeleton;
+import com.ldtteam.structurize.client.gui.WindowExtendedBuildTool;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.items.ItemScanAnalyzer;
 import com.minecolonies.coremod.util.SchemAnalyzerUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -74,12 +76,17 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
             close();
         });
         registerButton(BUTTON_SELECT_SCHEMATIC, b -> {
-            new WindowBlueprintSelector((a) -> true, (window, blueprint) -> {
-                Minecraft.getInstance().setScreen(this.getScreen());
-                final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
-                sortAnalyzationResults();
-                switchSelectionTo(getBoxForSide(b), result);
-            }).open();
+            new WindowExtendedBuildTool(
+              new BlockPos(Minecraft.getInstance().player.position().add(Minecraft.getInstance().player.getLookAngle().multiply(10, 10, 10))),
+              1,
+              (window, blueprint) -> {
+                  Minecraft.getInstance().setScreen(this.getScreen());
+                  final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
+                  sortAnalyzationResults();
+                  switchSelectionTo(getBoxForSide(b), result);
+              },
+              (a) -> true
+            ).open();
         });
 
         registerButton(BUTTON_SELECTION_LEFT, b -> {

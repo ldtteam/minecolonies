@@ -191,10 +191,10 @@ public class SchemAnalyzerUtil
         complexityScore += containedBuildings * 500;
 
         // Complexity added for amount of unique blocks, more block variance = more complex
-        complexityScore += blocks.keySet().size() * 20;
+        complexityScore += blocks.keySet().size() * 40;
 
         // Complexity added for schematic size, volume / 10
-        complexityScore += (blueprint.getSizeX() * blueprint.getSizeY() * blueprint.getSizeZ()) / 10;
+        complexityScore += (blueprint.getSizeX() * blueprint.getSizeY() * blueprint.getSizeZ()) / 10.0;
 
         return new SchematicAnalyzationResult((int) complexityScore, blocks.keySet(), containedBuildings, blueprint);
     }
