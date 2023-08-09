@@ -150,6 +150,15 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         return super.loadRequirements();
     }
 
+    /**
+     * Get the path of the quarry shaft blueprint.
+     *
+     * The shaft path is either based on an explicit shaft= tag on the building, or based on the actual schematic used.
+     * The directory can be explicitly specified, or it will default to the same as the building.
+     *
+     * @param quarry the quarry building.
+     * @return tuple of (structureName, workOrderName) for work order, aka (path, desc).
+     */
     private Tuple<String, String> getShaftPath(@NotNull final IBuilding quarry)
     {
         String path = "infrastructure/mineshafts/" + quarry.getSchematicName() + "shaft1.blueprint";
