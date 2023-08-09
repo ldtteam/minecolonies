@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.SeaPickleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -30,6 +31,11 @@ import java.util.List;
  */
 public class SeapicklePlantModule extends BoneMealedPlantModule
 {
+    /**
+     * The maximum amount of sea pickles that can be planted.
+     */
+    private static final int MAX_PLANTS = 10;
+
     /**
      * Default constructor.
      *
@@ -58,9 +64,7 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
         BlockState state = world.getBlockState(workPosition.above());
         if (state.getBlock().equals(Blocks.WATER))
         {
-            return new PlantationModuleResult.Builder()
-                     .plant(workPosition.above())
-                     .pickNewPosition();
+            return new PlantationModuleResult.Builder().plant(workPosition.above()).pickNewPosition();
         }
         else
         {
@@ -88,6 +92,13 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
             return value < SeaPickleBlock.MAX_PICKLES;
         }
         return super.isValidBonemealLocation(blockState);
+    }
+
+    @Override
+    @Nullable
+    protected Integer getMaxWorkingPositions()
+    {
+        return MAX_PLANTS;
     }
 
     @Override

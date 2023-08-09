@@ -25,11 +25,6 @@ public class CrimsonPlantsPlantModule extends BoneMealedPlantModule
     private static final int CHANCE = 35;
 
     /**
-     * The maximum amount of plants allowed on this field.
-     */
-    private static final int MAX_PLANTS = 50;
-
-    /**
      * Default constructor.
      *
      * @param field    the field instance this module is working on.
@@ -52,12 +47,6 @@ public class CrimsonPlantsPlantModule extends BoneMealedPlantModule
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_NETHER;
-    }
-
-    @Override
-    protected int getMaxPlants()
-    {
-        return MAX_PLANTS;
     }
 
     @Override
