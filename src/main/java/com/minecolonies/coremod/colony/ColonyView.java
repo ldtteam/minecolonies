@@ -648,6 +648,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public Set<Long> getLoadedChunks()
+    {
+        return null;
+    }
+
+    @Override
     public ColonyState getState()
     {
         return null;
