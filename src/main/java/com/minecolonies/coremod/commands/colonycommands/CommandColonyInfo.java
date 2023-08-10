@@ -7,11 +7,11 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
@@ -19,8 +19,8 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 
 public class CommandColonyInfo implements IMCCommand
 {
-    private static final String ID_TEXT           = "ID: ";
-    private static final String NAME_TEXT         = "Name: ";
+    public static final  String ID_TEXT           = "ID: ";
+    public static final  String NAME_TEXT         = "Name: ";
     private static final String MAYOR_TEXT        = "Mayor: ";
     private static final String COORDINATES_TEXT  = "Coordinates: ";
     private static final String COORDINATES_XYZ   = "x=%s y=%s z=%s";
