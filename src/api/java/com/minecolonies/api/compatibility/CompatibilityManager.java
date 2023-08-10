@@ -14,6 +14,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -638,7 +639,7 @@ public class CompatibilityManager implements ICompatibilityManager
                         tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
                             stacks.add(stack);
                         });
-                        Log.getLogger().warn("Registering: " + tab.getDisplayName().getString() + " " + tab.getDisplayItems().size());
+                        Log.getLogger().warn("Registering: " + tab.getDisplayName().getString() + " " + stacks.size());
                     }
                     catch (final Exception ex)
                     {
@@ -649,11 +650,18 @@ public class CompatibilityManager implements ICompatibilityManager
                 else
                 {
                     stacks = tab.getDisplayItems();
+                    Log.getLogger().warn("Registering: " + tab.getDisplayName().getString() + " " + tab.getDisplayItems().size());
                 }
+
+                final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
                 for (final ItemStack item : stacks)
                 {
-                    listBuilder.add(item);
+                    if (mapping.addTo(item.getItem(), 1) > 100)
+                    {
+                        continue;
+                    }
 
+                    listBuilder.add(item);
                     discoverSaplings(item);
                     discoverOres(item);
                     discoverPlantables(item);
