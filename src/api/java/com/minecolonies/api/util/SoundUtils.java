@@ -35,7 +35,7 @@ public final class SoundUtils
     /**
      * Standard pitch value.
      */
-    public static final double PITCH = 0.9D;
+    public static final double PITCH = 1.0D;
 
     /**
      * Random object.
