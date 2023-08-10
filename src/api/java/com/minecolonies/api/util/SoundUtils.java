@@ -12,6 +12,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.level.NoteBlockEvent.Note;
@@ -111,6 +112,12 @@ public final class SoundUtils
             return;
         }
 
+        if (citizen.isAsleep())
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.OFF_TO_BED, citizen);
+            return;
+        }
+
         final double v = rand.nextDouble();
         if (v <= 0.1)
         {
@@ -150,7 +157,11 @@ public final class SoundUtils
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.BAD_WEATHER, citizen);
         }
-        else if (v <= 1.0)
+        else if (v <= 0.8 && citizen.isIdleAtJob())
+        {
+            playSoundAtCitizenWith(worldIn, pos, EventType.MISSING_EQUIPMENT, citizen);
+        }
+        else
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen);
         }
@@ -227,6 +238,23 @@ public final class SoundUtils
       @Nullable final EventType type,
       @Nullable final ICivilianData citizenData)
     {
+        playSoundAtCitizenWith(worldIn, position, type, citizenData, type.getChance());
+    }
+
+    /**
+     * Plays a sound with a certain chance at a certain position.
+     *
+     * @param worldIn     the world to play the sound in.
+     * @param position    position to play the sound at.
+     * @param type        sound to play.
+     * @param citizenData the citizen.
+     */
+    public static void playSoundAtCitizenWith(
+      @NotNull final Level worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICivilianData citizenData, final double chance)
+    {
         if (citizenData == null)
         {
             return;
@@ -253,7 +281,7 @@ public final class SoundUtils
         }
 
         final SoundEvent event = citizenData.isFemale() ? CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getSoundProfile()).getB() : CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getSoundProfile()).getA();
-        if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
+        if (chance > rand.nextDouble() * ONE_HUNDRED)
         {
             worldIn.playSound(null,
               position,

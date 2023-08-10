@@ -59,21 +59,21 @@ public final class ModSoundEvents
         for (final ResourceLocation job : mainTypes)
         {
             final Map<EventType, List<Tuple<SoundEvent, SoundEvent>>> map = new HashMap<>();
-            for (final EventType soundEvents : EventType.values())
+            for (final EventType event : EventType.values())
             {
                 final List<Tuple<SoundEvent, SoundEvent>> individualSounds = new ArrayList<>();
                 for (int i = 1; i <= 4; i++)
                 {
                     final SoundEvent maleSoundEvent =
-                      ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".male" + i + "." + soundEvents.name().toLowerCase(Locale.US));
+                      ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".male" + i + "." + event.getId());
                     final SoundEvent femaleSoundEvent =
-                      ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".female" + i + "." + soundEvents.name().toLowerCase(Locale.US));
+                      ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".female" + i + "." + event.getId());
 
                     SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () -> maleSoundEvent);
                     SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(), () -> femaleSoundEvent);
                     individualSounds.add(new Tuple<>(maleSoundEvent, femaleSoundEvent));
                 }
-                map.put(soundEvents, individualSounds);
+                map.put(event, individualSounds);
             }
             CITIZEN_SOUND_EVENTS.put(job.getPath(), map);
         }

@@ -62,13 +62,13 @@ public class DefaultSoundProvider implements DataProvider
 
         for (final ResourceLocation job : mainTypes)
         {
-            for (final EventType soundEvents : EventType.values())
+            for (final EventType event : EventType.values())
             {
                 for (int i = 1; i <= 4; i++)
                 {
-                    sounds.add(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".male" + i + "." + soundEvents.name().toLowerCase(Locale.US),
+                    sounds.add(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".male" + i + "." + event.getId(),
                       createSoundJson("neutral", getDefaultProperties(), defaultMaleSounds));
-                    sounds.add(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".female" + i + "." + soundEvents.name().toLowerCase(Locale.US),
+                    sounds.add(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".female" + i + "." + event.getId(),
                       createSoundJson("neutral", getDefaultProperties(), defaultFemaleSounds));
                 }
             }

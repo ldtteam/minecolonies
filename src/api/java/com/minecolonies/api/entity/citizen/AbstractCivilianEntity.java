@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.sounds.EventType.GREETING;
 import static com.minecolonies.api.sounds.EventType.SUCCESS;
 import static com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -139,7 +140,7 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
             getNavigation().stop();
             getLookControl().setLookAt(player);
 
-            playSoundAtCitizenWith(level, blockPosition(), SUCCESS, getCivilianData());
+            playSoundAtCitizenWith(level, blockPosition(), GREETING, getCivilianData());
         }
     }
 
