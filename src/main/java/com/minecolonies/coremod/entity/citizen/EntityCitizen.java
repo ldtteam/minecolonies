@@ -888,7 +888,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void checkHeal()
     {
-        if (getHealth() < getMaxHealth() && getLastHurtMob() == null)
+        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 

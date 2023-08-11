@@ -20,13 +20,15 @@ import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteract
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,8 +76,6 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * Placeholder skills.
      */
-    private double health;
-    private double maxHealth;
     private double saturation;
 
     /**
@@ -275,13 +275,27 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public double getHealth()
     {
-        return health;
+        final Entity entity = colonyView.getWorld().getEntity(entityId);
+
+        if (entity instanceof LivingEntity)
+        {
+            return ((LivingEntity) entity).getHealth();
+        }
+
+        return CitizenData.MAX_HEALTH;
     }
 
     @Override
     public double getMaxHealth()
     {
-        return maxHealth;
+        final Entity entity = colonyView.getWorld().getEntity(entityId);
+
+        if (entity instanceof LivingEntity)
+        {
+            return ((LivingEntity) entity).getMaxHealth();
+        }
+
+        return CitizenData.MAX_HEALTH;
     }
 
     @Override
@@ -301,10 +315,6 @@ public class CitizenDataView implements ICitizenDataView
 
         homeBuilding = buf.readBoolean() ? buf.readBlockPos() : null;
         workBuilding = buf.readBoolean() ? buf.readBlockPos() : null;
-
-        // Attributes
-        health = buf.readFloat();
-        maxHealth = buf.readFloat();
 
         saturation = buf.readDouble();
         happiness = buf.readDouble();

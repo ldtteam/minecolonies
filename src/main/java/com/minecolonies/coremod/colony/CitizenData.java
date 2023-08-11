@@ -74,7 +74,7 @@ public class CitizenData implements ICitizenData
     /**
      * The max health.
      */
-    private static final float MAX_HEALTH = 20.0F;
+    public static final float MAX_HEALTH = 20.0F;
 
     /**
      * Max levels of an attribute a citizen may initially have.
@@ -941,10 +941,6 @@ public class CitizenData implements ICitizenData
         {
             buf.writeBlockPos(workBuilding.getID());
         }
-
-        // If the entity is not present we assumes standard values.
-        buf.writeFloat(getEntity().map(AbstractEntityCitizen::getHealth).orElse(MAX_HEALTH));
-        buf.writeFloat(getEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness(getColony(), this));
