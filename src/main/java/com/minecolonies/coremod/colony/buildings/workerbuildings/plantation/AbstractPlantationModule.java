@@ -93,7 +93,17 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
     @Override
     public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
     {
-        return workingPositions.stream().distinct().limit(getMaxWorkingPositions()).toList();
+        List<BlockPos> result = new ArrayList<>();
+        int maxWorkingPositions = getMaxWorkingPositions();
+        for (int i = 0; i < maxWorkingPositions; i++)
+        {
+            if (workingPositions.size() == i)
+            {
+                break;
+            }
+            result.add(workingPositions.get(i));
+        }
+        return result;
     }
 
     /**
