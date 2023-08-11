@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInt
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Pose;
@@ -98,11 +99,16 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return false;
         }
 
+
         citizen.setPose(Pose.SLEEPING);
         citizen.getNavigation().stop();
-        citizen.setPos(((double) bedLocation.getX() + HALF_BLOCK),
+
+        final double zOffset = state.getValue(BedBlock.FACING).getAxis() == Direction.Axis.Z && citizen.getCitizenData().isChild() ? 0 : HALF_BLOCK;
+        final double xOffset = state.getValue(BedBlock.FACING).getAxis() == Direction.Axis.X && citizen.getCitizenData().isChild() ? 0 : HALF_BLOCK;
+
+        citizen.setPos(((double) bedLocation.getX() + xOffset),
           (double) bedLocation.getY() + 0.6875D,
-          ((double) bedLocation.getZ() + HALF_BLOCK));
+          ((double) bedLocation.getZ() + zOffset));
         citizen.setSleepingPos(bedLocation);
 
         citizen.setDeltaMovement(Vec3.ZERO);
