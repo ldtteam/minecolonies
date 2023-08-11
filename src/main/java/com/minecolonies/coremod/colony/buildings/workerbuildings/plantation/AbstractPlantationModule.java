@@ -52,10 +52,7 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      * @param item     the item which is harvested.
      */
     protected AbstractPlantationModule(
-      final IField field,
-      final String fieldTag,
-      final String workTag,
-      final Item item)
+      final IField field, final String fieldTag, final String workTag, final Item item)
     {
         super(field);
         this.fieldTag = fieldTag;
@@ -96,16 +93,26 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
     @Override
     public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
     {
-        return workingPositions.stream().distinct().limit(getMaxPlants()).toList();
+        List<BlockPos> result = new ArrayList<>();
+        int maxWorkingPositions = getMaxWorkingPositions();
+        for (int i = 0; i < maxWorkingPositions; i++)
+        {
+            if (workingPositions.size() == i)
+            {
+                break;
+            }
+            result.add(workingPositions.get(i));
+        }
+        return result;
     }
 
     /**
-     * Get the maximum amount of plants this module is allowed to handle.
+     * Get the maximum amount of working positions this field is allowed to handle.
      * Defaults to {@link AbstractPlantationModule#DEFAULT_MAX_PLANTS}.
      *
      * @return the maximum amount of plants.
      */
-    protected int getMaxPlants()
+    protected int getMaxWorkingPositions()
     {
         return DEFAULT_MAX_PLANTS;
     }

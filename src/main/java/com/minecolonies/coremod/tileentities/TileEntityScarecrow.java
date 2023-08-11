@@ -4,6 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FarmFieldRegistrationMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -58,6 +60,11 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         if (currentColony == null && level != null)
         {
             this.currentColony = IColonyManager.getInstance().getIColony(level, worldPosition);
+            // TODO: Remove in 1.20.2
+            if (this.currentColony != null)
+            {
+                Network.getNetwork().sendToServer(new FarmFieldRegistrationMessage(currentColony, worldPosition));
+            }
         }
         return currentColony;
     }

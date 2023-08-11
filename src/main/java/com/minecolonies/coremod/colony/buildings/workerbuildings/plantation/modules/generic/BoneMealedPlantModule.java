@@ -32,6 +32,11 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     private static final int DEFAULT_PERCENTAGE_CHANCE = 50;
 
     /**
+     * The maximum amount of plants allowed on this field. (11 x 11 area)
+     */
+    private static final int MAX_PLANTS = 121;
+
+    /**
      * The internal random used to decide whether to work this field or not.
      */
     private final Random random;
@@ -45,10 +50,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param item     the item which is harvested.
      */
     protected BoneMealedPlantModule(
-      final IField field,
-      final String fieldTag,
-      final String workTag,
-      final Item item)
+      final IField field, final String fieldTag, final String workTag, final Item item)
     {
         super(field, fieldTag, workTag, item);
         this.random = new Random();
@@ -60,12 +62,8 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
         ActionToPerform action = decideWorkAction(world, workingPosition);
         return switch (action)
         {
-            case HARVEST -> new PlantationModuleResult.Builder()
-                              .harvest(workingPosition.above())
-                              .pickNewPosition();
-            case BONEMEAL -> new PlantationModuleResult.Builder()
-                               .bonemeal(workingPosition)
-                               .pickNewPosition();
+            case HARVEST -> new PlantationModuleResult.Builder().harvest(workingPosition.above()).pickNewPosition();
+            case BONEMEAL -> new PlantationModuleResult.Builder().bonemeal(workingPosition).pickNewPosition();
             default -> PlantationModuleResult.NONE;
         };
     }
@@ -153,10 +151,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     @Nullable
     private BlockPos getPositionToHarvest(Level world)
     {
-        return getWorkingPositions().stream()
-                 .filter(pos -> isValidHarvestBlock(world.getBlockState(pos.above())))
-                 .findFirst()
-                 .orElse(null);
+        return getWorkingPositions().stream().filter(pos -> isValidHarvestBlock(world.getBlockState(pos.above()))).findFirst().orElse(null);
     }
 
     /**
@@ -180,6 +175,12 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     public List<ItemStack> getRequiredItemsForOperation()
     {
         return getValidBonemeal().stream().map(ItemStack::new).toList();
+    }
+
+    @Override
+    protected int getMaxWorkingPositions()
+    {
+        return MAX_PLANTS;
     }
 
     @Override
