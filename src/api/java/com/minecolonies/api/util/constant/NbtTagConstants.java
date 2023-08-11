@@ -5,29 +5,29 @@ package com.minecolonies.api.util.constant;
  */
 public final class NbtTagConstants
 {
-    public static final String TAG_ID                 = "id";
-    public static final String TAG_NAME               = "name";
-    public static final String TAG_SUFFIX             = "suffix";
-    public static final String TAG_DIMENSION          = "dimension";
-    public static final String TAG_CENTER             = "center";
-    public static final String TAG_BUILDINGS          = "buildings";
-    public static final String TAG_BUILDING           = "building";
-    public static final String TAG_BUILDINGS_CLAIM    = "buildingsClaim";
-    public static final String TAG_BUILDINGS_UNCLAIM  = "buildingUnclaim";
-    public static final String TAG_CITIZENS           = "citizens";
-    public static final String TAG_VISITORS           = "visitors";
-    public static final String TAG_WORK               = "work";
-    public static final String TAG_MANUAL_HIRING      = "manualHiring";
-    public static final String TAG_MANUAL_HOUSING     = "manualHousing";
-    public static final String TAG_MOVE_IN            = "moveIn";
-    public static final String TAG_REQUESTMANAGER     = "requestManager";
-    public static final String TAG_WAYPOINT           = "waypoints";
-    public static final String TAG_FREE_BLOCKS        = "freeBlocks";
-    public static final String TAG_FREE_POSITIONS     = "freePositions";
-    public static final String TAG_GRAVE              = "graves";
-    public static final String TAG_ABANDONED          = "abandoned";
-    public static final String TAG_PRIO               = "prio";
-    public static final String TAG_LAST_ONLINE        = "lastOnlineTime";
+    public static final String TAG_ID                = "id";
+    public static final String TAG_NAME              = "name";
+    public static final String TAG_SUFFIX            = "suffix";
+    public static final String TAG_DIMENSION         = "dimension";
+    public static final String TAG_CENTER            = "center";
+    public static final String TAG_BUILDINGS         = "buildings";
+    public static final String TAG_BUILDING          = "building";
+    public static final String TAG_BUILDINGS_CLAIM   = "buildingsClaim";
+    public static final String TAG_BUILDINGS_UNCLAIM = "buildingUnclaim";
+    public static final String TAG_CITIZENS          = "citizens";
+    public static final String TAG_VISITORS          = "visitors";
+    public static final String TAG_WORK              = "work";
+    public static final String TAG_MANUAL_HIRING     = "manualHiring";
+    public static final String TAG_MANUAL_HOUSING    = "manualHousing";
+    public static final String TAG_MOVE_IN           = "moveIn";
+    public static final String TAG_REQUESTMANAGER    = "requestManager";
+    public static final String TAG_WAYPOINT          = "waypoints";
+    public static final String TAG_FREE_BLOCKS       = "freeBlocks";
+    public static final String TAG_FREE_POSITIONS    = "freePositions";
+    public static final String TAG_GRAVE             = "graves";
+    public static final String TAG_ABANDONED         = "abandoned";
+    public static final String TAG_PRIO              = "prio";
+    public static final String TAG_LAST_ONLINE       = "lastOnlineTime";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -37,7 +37,8 @@ public final class NbtTagConstants
     public static final String TAG_COLONIES               = "colonies";
     public static final String TAG_COLONY_MANAGER         = "colonymanager";
     public static final String TAG_UUID                   = "uuid";
-    public static final String TAG_NEW_FIELDS             = "newFields";
+    public static final String TAG_FIELDS                 = "fields";
+    public static final String TAG_FIELD                  = "field";
     public static final String TAG_LEISURE                = "leisureSites";
     public static final String TAG_COMPATABILITY_MANAGER  = "compatabilityManager";
     public static final String TAG_SAP_LEAF               = "tagSapLeaves";
@@ -446,17 +447,17 @@ public final class NbtTagConstants
     /**
      * Citizen data Tags.
      */
-    public static final String TAG_FEMALE             = "female";
-    public static final String TAG_TEXTURE            = "texture";
-    public static final String TAG_TEXTURE_UUID       = "textureUUID";
-    public static final String TAG_SKILL              = "skill";
-    public static final String TAG_LEVEL              = "level";
-    public static final String TAG_EXPERIENCE         = "experience";
-    public static final String TAG_NEW_SKILLS         = "newSkills";
-    public static final String TAG_SATURATION         = "saturation";
-    public static final String TAG_ASLEEP             = "asleep";
-    public static final String TAG_CHAT_OPTION        = "chatoption";
-    public static final String TAG_CHAT_OPTIONS       = "chatoptions";
+    public static final String TAG_FEMALE       = "female";
+    public static final String TAG_TEXTURE      = "texture";
+    public static final String TAG_TEXTURE_UUID = "textureUUID";
+    public static final String TAG_SKILL        = "skill";
+    public static final String TAG_LEVEL        = "level";
+    public static final String TAG_EXPERIENCE   = "experience";
+    public static final String TAG_NEW_SKILLS   = "newSkills";
+    public static final String TAG_SATURATION   = "saturation";
+    public static final String TAG_ASLEEP       = "asleep";
+    public static final String TAG_CHAT_OPTION  = "chatoption";
+    public static final String TAG_CHAT_OPTIONS = "chatoptions";
 
     /**
      * Tag of the colony.
@@ -499,15 +500,15 @@ public final class NbtTagConstants
     /**
      * Lumberjack/Tree Tags for NBT
      */
-    public static final String TAG_IS_SLIME_TREE         = "slimeTree";
-    public static final String TAG_DYNAMIC_TREE          = "dynamicTree";
-    public static final String TAG_SAPLING               = "treesapling";
-    public static final String TAG_LOGS                  = "Logs";
-    public static final String TAG_STUMPS                = "Stumps";
-    public static final String TAG_TOP_LOG               = "topLog";
-    public static final String TAG_NETHER_TREE           = "netherTree";
-    public static final String TAG_LEAVES                = "leaves";
-    public static final String TAG_NETHER_TREE_LIST      = "netherTrees";
+    public static final String TAG_IS_SLIME_TREE    = "slimeTree";
+    public static final String TAG_DYNAMIC_TREE     = "dynamicTree";
+    public static final String TAG_SAPLING          = "treesapling";
+    public static final String TAG_LOGS             = "Logs";
+    public static final String TAG_STUMPS           = "Stumps";
+    public static final String TAG_TOP_LOG          = "topLog";
+    public static final String TAG_NETHER_TREE      = "netherTree";
+    public static final String TAG_LEAVES           = "leaves";
+    public static final String TAG_NETHER_TREE_LIST = "netherTrees";
 
     /**
      * Archery building constants.
@@ -553,12 +554,12 @@ public final class NbtTagConstants
     /**
      * Researcher tags.
      */
-    public static final String TAG_CURR_MANA  = "currentMana";
+    public static final String TAG_CURR_MANA = "currentMana";
 
     /**
      * Beekeeper tag
      */
-    public static final String TAG_HIVES              = "hives";
+    public static final String TAG_HIVES = "hives";
 
     /**
      * BannerRallyGuards tags
@@ -579,6 +580,16 @@ public final class NbtTagConstants
      * NetherToken tag name for xp dropped by entity
      */
     public static final String TAG_XP_DROPPED = "xp-dropped";
+
+    /**
+     * The plantation field type stored on plantation field blocks.
+     */
+    public static final String TAG_PLANTATION_FIELD_TYPE = "plantation-field-type";
+
+    /**
+     * The plantation field working positions.
+     */
+    public static final String TAG_PLANTATION_FIELD_WORK_POS = "plantation-field-work-pos";
 
     // --------------------- Chat handling tags --------------------- //
 
@@ -636,7 +647,7 @@ public final class NbtTagConstants
      * Tags to store the stages
      */
     public static final String TAG_TOTAL_STAGES = "totalStages";
-    public static final String TAG_CURR_STAGE = "currStage";
+    public static final String TAG_CURR_STAGE   = "currStage";
 
     /**
      * Tags to store the needed resources to nbt.
@@ -667,14 +678,14 @@ public final class NbtTagConstants
      * Tags to store grave information
      */
     public static final String TAG_DECAY_TIMER = "decaytimer";
-    public static final String TAG_DECAYED = "decayed";
+    public static final String TAG_DECAYED     = "decayed";
 
     /**
      * Tags/JSON names for storing item informations
      */
-    public static final String COUNT_PROP = "count";
-    public static final String ITEM_PROP = "item";
-    public static final String MATCHTYPE_PROP = "matchType";
+    public static final String COUNT_PROP      = "count";
+    public static final String ITEM_PROP       = "item";
+    public static final String MATCHTYPE_PROP  = "matchType";
     public static final String MATCH_NBTIGNORE = "ignore";
 
     /**

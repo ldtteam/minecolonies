@@ -227,13 +227,13 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingFarmer::new)
                                 .setBuildingViewProducer(() -> EmptyView::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
+                                .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.farmer.get(), Skill.Stamina, Skill.Athletics, false, b -> 1), () -> WorkerBuildingModuleView::new)
                                 .addBuildingModuleProducer(() -> new BuildingFarmer.CraftingModule(ModJobs.farmer.get()), () -> CraftingModuleView::new)
-                                .addBuildingModuleProducer(() -> new FarmerAssignmentModule(ModJobs.farmer.get(), Skill.Stamina, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                 .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                .addBuildingModuleProducer(BuildingFarmer.FarmerFieldsModule::new, () -> BuildingFarmer.FarmerFieldsModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule()
                                                                    .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
-                                .addBuildingModuleProducer(FarmerFieldModule::new, () -> FarmerFieldModuleView::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .createBuildingEntry());
 
@@ -569,14 +569,8 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.planter.get(), Skill.Agility, Skill.Dexterity, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingPlantation.CraftingModule(ModJobs.planter.get()), () -> CraftingModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(BuildingPlantation.PlantationFieldsModule::new, () -> BuildingPlantation.PlantationFieldsModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule()
-                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(
-                                                                         Items.SUGAR_CANE.getDescriptionId(),
-                                                                         Items.CACTUS.getDescriptionId(),
-                                                                         Items.BAMBOO.getDescriptionId(),
-                                                                         PlantationSetting.SUGAR_CANE_AND_CACTUS,
-                                                                         PlantationSetting.CACTUS_AND_BAMBOO,
-                                                                         PlantationSetting.BAMBOO_AND_SUGAR_CANE))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry());
 

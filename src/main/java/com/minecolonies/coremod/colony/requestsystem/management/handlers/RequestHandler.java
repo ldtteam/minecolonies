@@ -17,7 +17,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedBlacklistAssignmentRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
