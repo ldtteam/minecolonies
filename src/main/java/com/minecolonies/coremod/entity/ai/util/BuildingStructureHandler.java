@@ -333,7 +333,9 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             return block1 == block2;
         }
 
-        return block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT || block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT;
+        return (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT)
+                 || (block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
+                 || (block1 == ModBlocks.blockRack && block2 == ModBlocks.blockRack);
     }
 
     /**
