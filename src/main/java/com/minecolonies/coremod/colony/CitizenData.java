@@ -441,7 +441,7 @@ public class CitizenData implements ICitizenData
         //Assign the gender before name
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
-        soundProfile = random.nextInt(NUM_SOUND_PROFILES) + 1;
+        soundProfile = random.nextInt(NUM_SOUND_PROFILES);
         paused = false;
         name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
@@ -1311,7 +1311,7 @@ public class CitizenData implements ICitizenData
         }
         else
         {
-            soundProfile = random.nextInt(NUM_SOUND_PROFILES) + 1;
+            soundProfile = random.nextInt(NUM_SOUND_PROFILES);
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
