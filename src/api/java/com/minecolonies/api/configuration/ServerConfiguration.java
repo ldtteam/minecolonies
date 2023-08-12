@@ -125,7 +125,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue                        auditCraftingTags;
     public final ForgeConfigSpec.BooleanValue                        debugInventories;
     public final ForgeConfigSpec.BooleanValue                        blueprintBuildMode;
-
+    public final ForgeConfigSpec.IntValue                            maxItemSubTypeScan;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
@@ -294,6 +294,7 @@ public class ServerConfiguration extends AbstractConfiguration
         auditCraftingTags = defineBoolean(builder, "auditcraftingtags", false);
         debugInventories = defineBoolean(builder, "debuginventories", false);
         blueprintBuildMode = defineBoolean(builder, "blueprintbuildmode", false);
+        maxItemSubTypeScan = defineInteger(builder, "maxitemsubtypescan", 100, 10, 1000);
 
         swapToCategory(builder, "pathfinding");
 

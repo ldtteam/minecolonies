@@ -3,17 +3,20 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
+import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -154,11 +157,6 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of all blocks.
      */
     private static ImmutableList<ItemStack> allItems = ImmutableList.of();
-
-    /**
-     * Set of all items.  Uses ItemStorage mostly for better equals/hash.
-     */
-    private static ImmutableSet<ItemStorage> allItemsSet = ImmutableSet.of();
 
     /**
      * Free block positions everyone can interact with.
@@ -362,8 +360,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getSetOfAllItems()
     {
-        if (allItemsSet.isEmpty()) Log.getLogger().error("getSetOfAllItems when empty");
-        return allItemsSet;
+        if (creativeModeTabMap.isEmpty()) Log.getLogger().error("getSetOfAllItems when empty");
+        return creativeModeTabMap.keySet();
     }
 
     @Override
@@ -653,11 +651,16 @@ public class CompatibilityManager implements ICompatibilityManager
                 {
                     stacks = tab.getDisplayItems();
                 }
+
+                final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
                 for (final ItemStack item : stacks)
                 {
-                    setBuilder.add(new ItemStorage(item, true));
-                    listBuilder.add(item);
+                    if (mapping.addTo(item.getItem(), 1) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxItemSubTypeScan.get())
+                    {
+                        continue;
+                    }
 
+                    listBuilder.add(item);
                     discoverSaplings(item);
                     discoverOres(item);
                     discoverPlantables(item);
@@ -680,7 +683,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
 
         allItems = listBuilder.build();
-        allItemsSet = setBuilder.build();
+        Log.getLogger().info("Finished discovering items " + allItems.size());
     }
 
     /**
