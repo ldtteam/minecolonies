@@ -67,8 +67,12 @@ public class RackPlacementHandler implements IPlacementHandler
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
+        {
+            return itemList;
+        }
 
+        itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState))
         {
             if (!ItemStackUtils.isEmpty(stack))
