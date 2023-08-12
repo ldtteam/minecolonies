@@ -3,13 +3,16 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -89,15 +92,38 @@ public class StatisticsManager implements IStatisticsManager
     @Override
     public void serialize(@NotNull final FriendlyByteBuf buf)
     {
-        final CompoundTag statsCompound = new CompoundTag();
-        writeToNBT(statsCompound);
-        buf.writeNbt(statsCompound);
+        buf.writeVarInt(stats.size());
+        for (final Map.Entry<String, Int2IntLinkedOpenHashMap> dataEntry : stats.entrySet())
+        {
+            buf.writeUtf(dataEntry.getKey());
+            buf.writeVarInt(dataEntry.getValue().size());
+
+            for (final Int2IntMap.Entry valueEntry : dataEntry.getValue().int2IntEntrySet())
+            {
+                buf.writeVarInt(valueEntry.getIntKey());
+                buf.writeVarInt(valueEntry.getIntValue());
+            }
+        }
     }
 
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
-        readFromNBT(buf.readNbt());
+        stats.clear();
+        final int statSize = buf.readVarInt();
+        for (int i = 0; i < statSize; i++)
+        {
+            final String id = buf.readUtf();
+            final int statEntrySize = buf.readVarInt();
+
+            final Int2IntLinkedOpenHashMap statValues = new Int2IntLinkedOpenHashMap(statEntrySize);
+            for (int j = 0; j < statEntrySize; j++)
+            {
+                statValues.put(buf.readVarInt(), buf.readVarInt());
+            }
+
+            stats.put(id, statValues);
+        }
     }
 
     @Override
@@ -130,6 +156,7 @@ public class StatisticsManager implements IStatisticsManager
     @Override
     public void readFromNBT(@NotNull final CompoundTag compound)
     {
+        stats.clear();
         if (compound.contains(TAG_STAT_MANAGER))
         {
             final ListTag statsNbts = compound.getList(TAG_STAT_MANAGER, Tag.TAG_COMPOUND);
