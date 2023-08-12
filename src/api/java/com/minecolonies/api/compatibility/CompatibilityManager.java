@@ -643,7 +643,6 @@ public class CompatibilityManager implements ICompatibilityManager
                         tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
                             stacks.add(stack);
                         });
-                        Log.getLogger().warn("Registering: " + tab.getDisplayName().getString() + " " + stacks.size());
                     }
                     catch (final Exception ex)
                     {
@@ -654,7 +653,6 @@ public class CompatibilityManager implements ICompatibilityManager
                 else
                 {
                     stacks = tab.getDisplayItems();
-                    Log.getLogger().warn("Registering: " + tab.getDisplayName().getString() + " " + tab.getDisplayItems().size());
                 }
 
                 final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
@@ -688,8 +686,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
 
         allItems = listBuilder.build();
-        Log.getLogger().info("Finished discovering items1 " + creativeModeTabMap.size());
-        Log.getLogger().info("Finished discovering items2 " + allItems.size());
+        Log.getLogger().info("Finished discovering items " + allItems.size());
     }
 
     /**
