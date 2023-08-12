@@ -41,7 +41,6 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,13 +70,6 @@ public class RaidManager implements IRaiderManager
     private static final int MIN_BUILDING_SPAWN_DIST = 35;
 
     /**
-     * Different biome ids.
-     */
-    private static final String DESERT_BIOME_ID = "desert";
-    private static final String JUNGLE_BIOME_ID = "jungle";
-    private static final String TAIGA_BIOME_ID  = "taiga";
-
-    /**
      * Thresholds for reducing or increasing raid difficulty
      */
     private static final double LOST_CITIZEN_DIFF_REDUCE_PCT   = 0.15d;
@@ -104,16 +96,6 @@ public class RaidManager implements IRaiderManager
      * Min required raidlevel
      */
     private static final int MIN_REQUIRED_RAIDLEVEL = 75;
-
-    /**
-     * Minimum block sqdistance to colony center allowed to spawn
-     */
-    private static final int MIN_RAID_BLOCK_DIST_CENTER_SQ = 5 * 5 * 16 * 16;
-
-    /**
-     * How many chunks distance a raid span searches additionally
-     */
-    private final static int RAID_SPAWN_SEARCH_CHUNKS = 10;
 
     /**
      * Percentage increased amount of spawns per player
@@ -322,8 +304,9 @@ public class RaidManager implements IRaiderManager
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
-            if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
-                  && colony.getWorld().getBlockState(targetSpawnPoint.below()).getMaterial() == Material.AIR)
+            if (MineColonies.getConfig().getServer().skyRaiders.get() &&
+                  colony.getWorld().getBlockState(targetSpawnPoint).isAir()
+                  && colony.getWorld().getBlockState(targetSpawnPoint.below()).isAir())
             {
                 raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
             }
