@@ -921,6 +921,14 @@
   "com.minecolonies.coremod.gui.workerhuts.recipe.custom": "Custom Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipe.brewing": "Brewing Recipes",
 
+  "item.minecolonies.scan_analyzer": "Schematic Analyzer",
+  "com.minecolonies.coremod.gui.analyzer.select": "Select Schematic",
+  "com.minecolonies.coremod.gui.analyzer.buildings": "Buildings: %d",
+  "com.minecolonies.coremod.gui.analyzer.complexity": "Complexity-score: %d",
+  "com.minecolonies.coremod.gui.analyzer.score": "Score: %s total: %s",
+  "com.minecolonies.coremod.gui.analyzer.size": "Size %s",
+  "com.minecolonies.coremod.tooltip.schematic.tier": "Schematic tier: %s",
+
   "com.minecolonies.coremod.dimension.no": "You are not allowed to place colonies in other dimensions. (This is changeable in the config file.)",
 
   "com.minecolonies.coremod.max.schematic.quiteclose": "Quite close in the",

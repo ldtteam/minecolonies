@@ -1,12 +1,12 @@
 package com.minecolonies.api.creativetab;
 
-import com.minecolonies.api.blocks.*;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -53,7 +53,8 @@ public final class ModCreativeTabs
         output.accept(ModItems.compost);
         output.accept(ModItems.mistletoe);
         output.accept(ModItems.magicpotion);
-        output.accept(ModItems.buildGoggles);
+          output.accept(ModItems.buildGoggles);
+          output.accept(ModItems.scanAnalyzer);
 
         output.accept(ModItems.breadDough);
         output.accept(ModItems.cookieDough);
