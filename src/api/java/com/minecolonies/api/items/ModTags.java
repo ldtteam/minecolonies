@@ -25,13 +25,19 @@ public class ModTags
 
     public static final TagKey<Block> decorationItems = BlockTags.create(TagConstants.DECORATION_ITEMS);
     public static final TagKey<Item>  concretePowder  = ItemTags.create(TagConstants.CONCRETE_POWDER);
-    public static final TagKey<Block> concreteBlock = BlockTags.create(TagConstants.CONCRETE_BLOCK);
-    public static final TagKey<Block> pathingBlocks = BlockTags.create(TagConstants.PATHING_BLOCKS);
-    public static final TagKey<Block> mangroveTree = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
-    public static final TagKey<Block> tree = BlockTags.create(TagConstants.TREE_BLOCKS);
+    public static final TagKey<Block> concreteBlock   = BlockTags.create(TagConstants.CONCRETE_BLOCK);
+    public static final TagKey<Block> pathingBlocks   = BlockTags.create(TagConstants.PATHING_BLOCKS);
+    public static final TagKey<Block> tier1blocks     = BlockTags.create(TagConstants.TIER1_BLOCKS);
+    public static final TagKey<Block> tier2blocks     = BlockTags.create(TagConstants.TIER2_BLOCKS);
+    public static final TagKey<Block> tier3blocks     = BlockTags.create(TagConstants.TIER3_BLOCKS);
+    public static final TagKey<Block> tier4blocks     = BlockTags.create(TagConstants.TIER4_BLOCKS);
+    public static final TagKey<Block> tier5blocks     = BlockTags.create(TagConstants.TIER5_BLOCKS);
+    public static final TagKey<Block> tier6blocks     = BlockTags.create(TagConstants.TIER6_BLOCKS);
+    public static final TagKey<Block> mangroveTree    = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
+    public static final TagKey<Block> tree            = BlockTags.create(TagConstants.TREE_BLOCKS);
 
     public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
-    public static final TagKey<Block> indestructible = BlockTags.create(TagConstants.INDESTRUCTIBLE);
+    public static final TagKey<Block> indestructible            = BlockTags.create(TagConstants.INDESTRUCTIBLE);
 
     public static final TagKey<Block> oreChanceBlocks = BlockTags.create(TagConstants.ORECHANCEBLOCKS);
 
