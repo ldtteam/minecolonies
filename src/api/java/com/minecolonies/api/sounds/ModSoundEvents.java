@@ -1,7 +1,6 @@
 package com.minecolonies.api.sounds;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,21 +9,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.*;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Registering of sound events for our colony.
  */
 public final class ModSoundEvents
 {
+    /**
+     * Citizen sound prefix.
+     */
+    public static final String CITIZEN_SOUND_EVENT_PREFIX = "citizen.";
+
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registry.SOUND_EVENT_REGISTRY, Constants.MOD_ID);
 
     /**
      * Map of sound events.
      */
-    public static Map<String, Map<EventType, Tuple<SoundEvent, SoundEvent>>> CITIZEN_SOUND_EVENTS = new HashMap<>();
+    public static Map<String, Map<EventType, List<Tuple<SoundEvent, SoundEvent>>>> CITIZEN_SOUND_EVENTS = new HashMap<>();
 
     /**
      * Saw sound event.
@@ -48,48 +50,33 @@ public final class ModSoundEvents
      */
     static
     {
-        for (final ResourceLocation job : ModJobs.getJobs())
+        final List<ResourceLocation> mainTypes = new ArrayList<>(ModJobs.getJobs());
+        mainTypes.remove(ModJobs.placeHolder.getId());
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "unemployed"));
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "visitor"));
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "child"));
+
+        for (final ResourceLocation job : mainTypes)
         {
-            if (job.getNamespace().equals(Constants.MOD_ID) && !job.getPath().equals("placeholder"))
+            final Map<EventType, List<Tuple<SoundEvent, SoundEvent>>> map = new HashMap<>();
+            for (final EventType event : EventType.values())
             {
-                final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = new HashMap<>();
-                for (final EventType soundEvents : EventType.values())
+                final List<Tuple<SoundEvent, SoundEvent>> individualSounds = new ArrayList<>();
+                for (int i = 1; i <= 4; i++)
                 {
-                    final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob." + job.getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US));
+                    final SoundEvent maleSoundEvent =
+                      ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".male" + i + "." + event.getId());
                     final SoundEvent femaleSoundEvent =
-                      ModSoundEvents.getSoundID("mob." + job.getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US));
+                      ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".female" + i + "." + event.getId());
 
                     SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () -> maleSoundEvent);
-                    SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(),  () -> femaleSoundEvent);
-                    map.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
+                    SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(), () -> femaleSoundEvent);
+                    individualSounds.add(new Tuple<>(maleSoundEvent, femaleSoundEvent));
                 }
-                CITIZEN_SOUND_EVENTS.put(job.getPath(), map);
+                map.put(event, individualSounds);
             }
+            CITIZEN_SOUND_EVENTS.put(job.getPath(), map);
         }
-
-        final Map<EventType, Tuple<SoundEvent, SoundEvent>> citizenMap = new HashMap<>();
-        for (final EventType soundEvents : EventType.values())
-        {
-            final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US));
-            final SoundEvent femaleSoundEvent = ModSoundEvents.getSoundID("mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US));
-
-            SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () ->  maleSoundEvent);
-            SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(), () ->  femaleSoundEvent);
-            citizenMap.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
-        }
-        CITIZEN_SOUND_EVENTS.put("citizen", citizenMap);
-
-        final Map<EventType, Tuple<SoundEvent, SoundEvent>> childMap = new HashMap<>();
-        for (final EventType soundEvents : EventType.values())
-        {
-            final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob.child.male." + soundEvents.name().toLowerCase(Locale.US));
-            final SoundEvent femaleSoundEvent = ModSoundEvents.getSoundID("mob.child.female." + soundEvents.name().toLowerCase(Locale.US));
-
-            SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () ->  maleSoundEvent);
-            SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(), () ->  femaleSoundEvent);
-            childMap.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
-        }
-        CITIZEN_SOUND_EVENTS.put("child", childMap);
 
         SOUND_EVENTS.register(TavernSounds.tavernTheme.getLocation().getPath(), () -> TavernSounds.tavernTheme);
 

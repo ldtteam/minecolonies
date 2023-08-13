@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 
@@ -63,8 +64,6 @@ import static com.minecolonies.api.util.constant.translation.DebugTranslationCon
 @OnlyIn(Dist.CLIENT)
 public class ClientEventHandler
 {
-    private static final String MOB_SOUND_EVENT_PREFIX = "mob.";
-
     /**
      * Lazy cache for crafting module lookups.
      */
@@ -91,24 +90,12 @@ public class ClientEventHandler
             return;
         }
 
-        if (event.getSound().getLocation().getNamespace().equals(Constants.MOD_ID)
-            && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get())
+        final ResourceLocation soundLocation = event.getSound().getLocation();
+        if (soundLocation.getNamespace().equals(Constants.MOD_ID)
+              && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get()
+              && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX))
         {
-            final String path = event.getSound().getLocation().getPath();
-            if (!path.startsWith(MOB_SOUND_EVENT_PREFIX))
-            {
-                return;
-            }
-            final int secondDotPos = path.indexOf('.', MOB_SOUND_EVENT_PREFIX.length());
-            if (secondDotPos == -1)
-            {
-                return;
-            }
-            final String mobName = path.substring(MOB_SOUND_EVENT_PREFIX.length(), secondDotPos);
-            if (ModSoundEvents.CITIZEN_SOUND_EVENTS.containsKey(mobName))
-            {
-                event.setSound(null);
-            }
+            event.setCanceled(true);
         }
     }
 

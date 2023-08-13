@@ -168,6 +168,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
         if (canAssignField(field))
         {
             field.setBuilding(building.getID());
+            markDirty();
         }
     }
 
