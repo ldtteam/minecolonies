@@ -865,7 +865,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
+                    final ColonyViewBuildingViewMessage message = new ColonyViewBuildingViewMessage(building);
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
                 }
             }
         }
