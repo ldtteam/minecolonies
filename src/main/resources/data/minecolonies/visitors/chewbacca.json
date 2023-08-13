@@ -1,0 +1,10 @@
+{
+  "texture": "a65cfb77-b0a9-491e-a3c9-f1c0a60f9a77",
+  "citizensuffix": "_d",
+  "name": "Jesse",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.chewbacca",
+  "recruitcost": "minecraft:diamond_sword",
+  "recruitcostcount": 2,
+  "gender": "male"
+}
