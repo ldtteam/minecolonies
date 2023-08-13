@@ -260,13 +260,14 @@
   "minecolonies.config.creativeresolve.comment": "Should the request system creatively resolve (if possible) when the player is required to resolve a request? This is a debugging tool and can take a very long time to resolve a request.",
   "minecolonies.config.canplayeruseresetcommand": "Can Players Use the Request System Reset Command",
   "minecolonies.config.canplayeruseresetcommand.comment": "Should players be allowed to use the /mc colony requestsystem-reset command?",
-  
+
   "minecolonies.config.default.boolean": "[Default: %b]",
   "minecolonies.config.default.int": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.long": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.double": "[Default: %f, min: %f, max: %f]",
 
   "block.minecolonies.blockhutfield": "Field",
+  "block.minecolonies.blockhutplantationfield": "Plantation Field",
   "block.minecolonies.gate_iron.name": "Iron Gate",
   "block.minecolonies.gate_iron": "Iron Gate",
   "block.minecolonies.gate_wood.name": "Wooden Gate",
@@ -585,9 +586,18 @@
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
-  "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
+
+  "com.minecolonies.coremod.gui.workerhuts.fields": "Fields",
+  "com.minecolonies.coremod.gui.workerhuts.fields.notincolony": "Field is not inside a colony",
+  "com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode": "Assign fields to worker",
+  "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount": "%d/%d fields in use",
+  "com.minecolonies.coremod.gui.workerhuts.fields.plantcount": "%d/%d types of plants",
+  "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount.reached": "You already reached the limit of fields.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research": "You do not have the required research to assign this field to the plantation.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.farmer.noseed": "Field has no seed set",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
+  "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached": "You already reached the limit of concurrent plants.",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
@@ -613,7 +623,6 @@
   "com.minecolonies.coremod.gui.workerhuts.knighttraineeassignbed": "%s became a knight in training. The %s at %s now has an open bed slot for a new citizen.",
 
   "com.minecolonies.coremod.gui.workerhuts.assignedbed": "%s became a/n %s. The %s at %s now has an open bed slot for a new citizen.",
-
 
   "com.minecolonies.coremod.gui.workerhuts.guardactions": "Guard Actions:",
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the Guard to the job:",
@@ -658,7 +667,7 @@
   "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request Pickup Now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a Mercenary took their %s!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A Mercenary just stole %s from a building!",
-  
+
   "com.minecolonies.coremod.gui.happiness.happinessmodifier": "Happiness Modifiers",
 
   "com.minecolonies.coremod.permission.no": "You do not have permission to do this in this colony!",
@@ -1326,7 +1335,6 @@
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all my flowers are disabled!",
   "com.minecolonies.coremod.request.toolow": "I can't mine the %s at %d %d %d. You need to upgrade the building so I can use a tool with a higher mining level (or mine the block yourself).",
-  "entity.farmer.noseedset": "Please define the seed you want me to grow by placing it in the scarecrow!",
   "entity.farmer.nofreefields": "Place more fields to get me working.",
   "com.minecolonies.coremod.job.deliveryman.nowarehouse": "Please upgrade or build a Warehouse for me to work at.",
   "com.minecolonies.coremod.job.deliveryman.workerchestfull": "I can't deliver because of a full worker chest.",
@@ -1840,6 +1848,9 @@
   "com.minecolonies.coremod.gui.field.to_right": "To your right",
   "com.minecolonies.coremod.gui.field.near": "Nearest to you",
   "com.minecolonies.coremod.gui.field.worker": "Farmer: %s",
+  "com.minecolonies.coremod.gui.field.selectseed": "Pick seed",
+  "com.minecolonies.coremod.gui.field.assignedfarmer": "Farmer: %s",
+  "com.minecolonies.coremod.gui.field.noassignedfarmer": "Farmer: No one",
 
   "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the chit-chat",
 
@@ -2276,7 +2287,7 @@
   "minecolonies:combattraining.skills.desc": "No skill-based bonuses.",
   "minecolonies:sawmill.skills.desc": "Affects recipe improvement chance and working speed.",
   "minecolonies:blacksmith.skills.desc": "Affects recipe improvement chance and working speed.",
-  "minecolonies:stonemason.skills.desc":"Affects recipe improvement chance and working speed.",
+  "minecolonies:stonemason.skills.desc": "Affects recipe improvement chance and working speed.",
   "minecolonies:stonesmeltery.skills.desc": "Affects working speed and smelting speed.",
   "minecolonies:crusher.skills.desc": "Affects working speed and chance to get sick.",
   "minecolonies:sifter.skills.desc": "Affects working speed and chance to obtain items.",

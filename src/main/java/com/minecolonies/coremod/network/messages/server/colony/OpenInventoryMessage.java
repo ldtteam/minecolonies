@@ -9,13 +9,12 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.StringUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +93,6 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
                 entityID = buf.readInt();
                 break;
             case INVENTORY_CHEST:
-            case INVENTORY_FIELD:
                 tePos = buf.readBlockPos();
                 break;
         }
@@ -112,7 +110,6 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
                 buf.writeInt(entityID);
                 break;
             case INVENTORY_CHEST:
-            case INVENTORY_FIELD:
                 buf.writeBlockPos(tePos);
                 break;
         }
@@ -133,9 +130,6 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
                 break;
             case INVENTORY_CHEST:
                 doHutInventory(player, colony);
-                break;
-            case INVENTORY_FIELD:
-                doFieldInventory(player);
                 break;
             default:
                 break;
@@ -166,19 +160,12 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         }
     }
 
-    private void doFieldInventory(final ServerPlayer player)
-    {
-        @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), tePos);
-        NetworkHooks.openScreen(player, scarecrowTileEntity);
-    }
-
     /**
      * Type of inventory.
      */
     private enum InventoryType
     {
         INVENTORY_CITIZEN,
-        INVENTORY_CHEST,
-        INVENTORY_FIELD,
+        INVENTORY_CHEST
     }
 }

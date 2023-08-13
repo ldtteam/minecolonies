@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/plantationnether": 1
+    }
+  ],
+  "icon": "minecraft:crimson_fungus",
+  "parentResearch": "minecolonies:technology/croprotation",
+  "requirements": [
+    {
+      "building": "plantation",
+      "level": 3
+    },
+    {
+      "building": "netherworker",
+      "level": 3
+    },
+    {
+      "item": "minecraft:crimson_fungus",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:warped_fungus",
+      "quantity": 16
+    }
+  ],
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.technology.gargamel.subtitle"
+}

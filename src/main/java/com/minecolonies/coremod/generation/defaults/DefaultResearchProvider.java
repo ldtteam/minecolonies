@@ -113,7 +113,11 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(KNIGHT_TAUNT).setTranslatedName("Knights Force Mobs to Target Them"));
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
         effects.add(new ResearchEffect(ARROW_PIERCE).setTranslatedName("Archers Gain Piercing II"));
-        effects.add(new ResearchEffect(PLANT_2).setTranslatedName("Plantations Grow Two Crops at Once"));
+        effects.add(new ResearchEffect(PLANTATION_LARGE).setTranslatedName("Plantations Unlock 1 Additional Field"));
+        effects.add(new ResearchEffect(PLANTATION_JUNGLE).setTranslatedName("Plantations Unlock Fields For: Bamboo, Cocoa and Vines"));
+        effects.add(new ResearchEffect(PLANTATION_SEA).setTranslatedName("Plantations Unlock Fields For: Kelp, Seagrass and Sea pickles"));
+        effects.add(new ResearchEffect(PLANTATION_EXOTIC).setTranslatedName("Plantations Unlock Fields For: Glowberries"));
+        effects.add(new ResearchEffect(PLANTATION_NETHER).setTranslatedName("Plantations Unlock Fields For: Crimson fungi and Warped fungi"));
         effects.add(new ResearchEffect(BEEKEEP_2).setTranslatedName("Beekeepers Can Harvest Both Honey Bottles and Combs at Once"));
         effects.add(new ResearchEffect(RAILS).setTranslatedName("Citizens use Rails"));
         effects.add(new ResearchEffect(VINES).setTranslatedName("Citizens can climb Vines"));
@@ -1260,15 +1264,56 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .addItemCost(ModItems.compost, 16)
                                      .addEffect(ModBuildings.plantation.get().getBuildingBlock(), 1)
                                      .addToList(r);
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/doubletrouble"), TECH).setParentResearch(letItGrow)
-          .setTranslatedName("Double Trouble")
-          .setTranslatedSubtitle("Double Trouble")
-          .setIcon(Items.GREEN_DYE)
-          .addBuildingRequirement("plantation", 3)
-          .addItemCost(Items.BAMBOO, 64)
-          .addItemCost(Items.SUGAR_CANE, 64)
-          .addItemCost(Items.CACTUS, 64)
-          .addEffect(PLANT_2, 1)
+        final Research cropRotation = new Research(new ResourceLocation(Constants.MOD_ID, "technology/croprotation"), TECH).setParentResearch(letItGrow)
+                                        .setTranslatedName("Crop Rotation")
+                                        .setTranslatedSubtitle("Bigger = better")
+                                        .setIcon(Items.GREEN_DYE)
+                                        .addBuildingRequirement(ModBuildings.PLANTATION_ID, 3)
+                                        .addItemCost(Items.SUGAR_CANE, 32)
+                                        .addItemCost(Items.CACTUS, 32)
+                                        .addEffect(PLANTATION_LARGE, 1)
+                                        .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/junglemaster"), TECH).setParentResearch(letItGrow)
+          .setTranslatedName("Jungle Master")
+          .setTranslatedSubtitle("Wimoweh Wimoweh Wimoweh")
+          .setIcon(Items.VINE)
+          .addBuildingRequirement(ModBuildings.PLANTATION_ID, 2)
+          .addItemCost(Items.BAMBOO, 16)
+          .addItemCost(Items.COCOA_BEANS, 16)
+          .addItemCost(Items.VINE, 16)
+          .addEffect(PLANTATION_JUNGLE, 1)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/takingdivinglessons"), TECH).setParentResearch(letItGrow)
+          .setTranslatedName("Taking Diving Lessons")
+          .setTranslatedSubtitle("*Drowning Noises*")
+          .setIcon(Items.KELP)
+          .addBuildingRequirement(ModBuildings.PLANTATION_ID, 2)
+          .addItemCost(Items.KELP, 16)
+          .addItemCost(Items.SEAGRASS, 16)
+          .addItemCost(Items.SEA_PICKLE, 16)
+          .addEffect(PLANTATION_SEA, 1)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/exoticfruits"), TECH).setParentResearch(letItGrow)
+          .setTranslatedName("Exotic Fruits")
+          .setTranslatedSubtitle("Too Dark Here")
+          .setIcon(Items.GLOW_BERRIES)
+          .addBuildingRequirement(ModBuildings.PLANTATION_ID, 3)
+          .addItemCost(Items.GLOW_BERRIES, 32)
+          .addEffect(PLANTATION_EXOTIC, 1)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/gargamel"), TECH).setParentResearch(cropRotation)
+          .setTranslatedName("Gargamel")
+          .setTranslatedSubtitle("The Root of all Evil")
+          .setIcon(Items.CRIMSON_FUNGUS)
+          .addBuildingRequirement(ModBuildings.PLANTATION_ID, 3)
+          .addBuildingRequirement(ModBuildings.NETHERWORKER_ID, 3)
+          .addItemCost(Items.CRIMSON_FUNGUS, 16)
+          .addItemCost(Items.WARPED_FUNGUS, 16)
+          .addEffect(PLANTATION_NETHER, 1)
           .addToList(r);
 
         final Research bonemeal = new Research(new ResourceLocation(Constants.MOD_ID, "technology/bonemeal"), TECH).setParentResearch(biodegradable)
