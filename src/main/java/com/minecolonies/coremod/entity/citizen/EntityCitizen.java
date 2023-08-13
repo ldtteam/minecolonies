@@ -1887,11 +1887,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         final EntityDimensions oldSize = this.dimensions;
         final Pose pose = this.getPose();
         final EntityDimensions newSize = this.getDimensions(pose);
-        final net.minecraftforge.event.entity.EntityEvent.Size sizeEvent =
-          net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, newSize, this.getEyeHeight(pose, newSize));
-        final EntityDimensions afterEventSize = sizeEvent.getNewSize();
+        // TODO: Restore once forge/neoforge conflict is solved
+        // final net.minecraftforge.event.entity.EntityEvent.Size sizeEvent =net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, newSize,;
+        final EntityDimensions afterEventSize = newSize;
         this.dimensions = afterEventSize;
-        this.eyeHeight = sizeEvent.getNewEyeHeight();
+        this.eyeHeight = this.getEyeHeight(pose, newSize);
         if (afterEventSize.width < oldSize.width)
         {
             double d0 = (double) afterEventSize.width / 2.0D;
