@@ -17,15 +17,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -40,10 +39,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUILD;
+import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowBuildDecoration extends AbstractWindowSkeleton
@@ -85,6 +86,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final boolean mirror;
 
     /**
+     * A function that will supply the message, given the position of the requested builder, if any.
+     */
+    private final Function<BlockPos, IMessage> buildRequestMessage;
+
+    /**
      * Drop down list for builders.
      */
     private DropDownList buildersDropDownList;
@@ -107,7 +113,13 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(final BlockPos pos, final String packMeta, final String path, final Rotation rotation, final boolean mirror)
+    public WindowBuildDecoration(
+      final BlockPos pos,
+      final String packMeta,
+      final String path,
+      final Rotation rotation,
+      final boolean mirror,
+      Function<BlockPos, IMessage> buildRequestMessage)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.packMeta = packMeta;
@@ -130,6 +142,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
         this.rotation = rotation;
         this.mirror = mirror;
+        this.buildRequestMessage = buildRequestMessage;
     }
 
     @Override
@@ -153,7 +166,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private void updateBuilders()
     {
         IColonyView colony = (IColonyView) IColonyManager.getInstance()
-                .getIColony(Minecraft.getInstance().level, structurePos);
+                                             .getIColony(Minecraft.getInstance().level, structurePos);
 
         if (colony == null)
         {
@@ -165,11 +178,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
-                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                        && build.getBuildingType() != ModBuildings.miner.get())
-                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                .sorted(Comparator.comparing(item -> item.getB().distSqr(structurePos)))
-                .collect(Collectors.toList()));
+                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                                             && build.getBuildingType() != ModBuildings.miner.get())
+                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                          .sorted(Comparator.comparing(item -> item.getB().distSqr(structurePos)))
+                          .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -329,10 +342,10 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private void confirmedBuild()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0
-                ? BlockPos.ZERO
-                : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+                                   ? BlockPos.ZERO
+                                   : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, packMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror, builder));
+        Network.getNetwork().sendToServer(buildRequestMessage.apply(builder));
         close();
     }
 }

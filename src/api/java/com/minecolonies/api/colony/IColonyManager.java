@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -373,7 +373,7 @@ public interface IColonyManager
      * @param buildingId ID of the building.
      * @param dim        the dimension.
      */
-    void handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId, ResourceKey<Level> dim);
+    void handleColonyViewRemoveBuildingMessage(int colonyId, final BlockPos buildingId, final ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link #getColonyView(int,

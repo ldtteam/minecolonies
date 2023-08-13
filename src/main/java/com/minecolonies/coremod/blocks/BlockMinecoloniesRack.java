@@ -1,5 +1,10 @@
 package com.minecolonies.coremod.blocks;
 
+import com.google.common.collect.ImmutableList;
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
+import com.ldtteam.domumornamentum.block.components.SimpleRetexturableComponent;
+import com.ldtteam.domumornamentum.tag.ModTags;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
@@ -13,6 +18,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,8 +43,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -51,8 +57,18 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack>
+public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack>  implements IMateriallyTexturedBlock
 {
+
+    public static final List<IMateriallyTexturedBlockComponent> COMPONENTS = ImmutableList.<IMateriallyTexturedBlockComponent>builder()
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/bricks"), ModTags.FRAMED_LIGHT_CENTER, Blocks.BRICKS))
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/sand"), ModTags.TIMBERFRAMES_FRAME, Blocks.SAND))
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/orange_wool"), ModTags.FRAMED_LIGHT_CENTER, Blocks.ORANGE_WOOL))
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/dirt"), ModTags.FRAMED_LIGHT_CENTER, Blocks.DIRT))
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/obsidian"), ModTags.FRAMED_LIGHT_CENTER, Blocks.OBSIDIAN))
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/polished_andesite"), ModTags.FRAMED_LIGHT_CENTER, Blocks.POLISHED_ANDESITE))
+                                                                               .add(new SimpleRetexturableComponent(new ResourceLocation("block/andesite"), ModTags.FRAMED_LIGHT_CENTER, Blocks.ANDESITE))
+                                                                               .build();
 
     /**
      * The hardness this block has.
@@ -272,5 +288,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
+    }
+
+    @Override
+    public @NotNull Block getBlock()
+    {
+        return this;
+    }
+
+    @Override
+    public @NotNull Collection<IMateriallyTexturedBlockComponent> getComponents()
+    {
+        return Collections.emptyList();
     }
 }

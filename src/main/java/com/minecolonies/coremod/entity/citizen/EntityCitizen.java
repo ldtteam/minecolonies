@@ -888,7 +888,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void checkHeal()
     {
-        if (getHealth() < getMaxHealth())
+        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
@@ -907,10 +907,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
 
             heal((float) healAmount);
-            if (healAmount > 0.1D)
-            {
-                citizenData.markDirty();
-            }
         }
     }
 
