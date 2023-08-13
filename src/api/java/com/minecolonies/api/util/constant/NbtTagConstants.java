@@ -28,6 +28,7 @@ public final class NbtTagConstants
     public static final String TAG_ABANDONED         = "abandoned";
     public static final String TAG_PRIO              = "prio";
     public static final String TAG_LAST_ONLINE       = "lastOnlineTime";
+    public static final String TAG_SOUND_PROFILE      = "soundProfile";
 
     /**
      * @deprecated Superseeded by request-based pickup system.

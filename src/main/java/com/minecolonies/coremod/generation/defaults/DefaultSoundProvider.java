@@ -2,12 +2,12 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.*;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
+import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.coremod.generation.SoundsJson.createSoundJson;
 
 public class DefaultSoundProvider implements DataProvider
@@ -48,30 +49,24 @@ public class DefaultSoundProvider implements DataProvider
         childSounds.add("minecolonies:mob/citizen/child/laugh1");
         childSounds.add("minecolonies:mob/citizen/child/laugh2");
 
-        for (final JobEntry job : IJobRegistry.getInstance().getValues())
+        final List<ResourceLocation> mainTypes = new ArrayList<>(ModJobs.getJobs());
+        mainTypes.remove(ModJobs.placeHolder.getId());
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "unemployed"));
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "child"));
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "visitor"));
+
+        for (final ResourceLocation job : mainTypes)
         {
-            if (job.getKey().getNamespace().equals(Constants.MOD_ID) && !job.getKey().getPath().equals("placeholder"))
+            for (final EventType event : EventType.values())
             {
-                for (final EventType soundEvents : EventType.values())
+                for (int i = 1; i <= 4; i++)
                 {
-                    sounds.add("mob." + job.getKey().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US),
+                    sounds.add(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".male" + i + "." + event.getId(),
                       createSoundJson("neutral", getDefaultProperties(), defaultMaleSounds));
-                    sounds.add("mob." + job.getKey().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US),
+                    sounds.add(CITIZEN_SOUND_EVENT_PREFIX + job.getPath() + ".female" + i + "." + event.getId(),
                       createSoundJson("neutral", getDefaultProperties(), defaultFemaleSounds));
                 }
             }
-        }
-
-        for (final EventType soundEvents : EventType.values())
-        {
-            sounds.add("mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), defaultMaleSounds));
-            sounds.add("mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), defaultFemaleSounds));
-        }
-
-        for (final EventType soundEvents : EventType.values())
-        {
-            sounds.add("mob.child.male." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
-            sounds.add("mob.child.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
         }
 
         for (final RaiderType type : RaiderType.values())

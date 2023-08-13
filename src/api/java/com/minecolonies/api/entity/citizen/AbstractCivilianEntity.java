@@ -4,10 +4,8 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,8 +16,9 @@ import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.sounds.EventType.GREETING;
 import static com.minecolonies.api.sounds.EventType.SUCCESS;
-import static com.minecolonies.api.util.SoundUtils.playSoundAtCivilian;
+import static com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, IStuckHandlerEntity
@@ -141,7 +140,7 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
             getNavigation().stop();
             getLookControl().setLookAt(player);
 
-            playSoundAtCivilian(level(), blockPosition(), SUCCESS, getCivilianData());
+            playSoundAtCitizenWith(level, blockPosition(), GREETING, getCivilianData());
         }
     }
 

@@ -30,7 +30,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "minecolonies:gui/builderhut/builder_paper_sketch"
+      "resource": "minecolonies:gui/builderhut/builder_paper_sketch_block"
     }
   ]
 }
