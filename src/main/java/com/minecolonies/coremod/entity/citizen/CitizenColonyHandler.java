@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +39,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Whether the entity is registered to the colony yet.
      */
     protected boolean registered = false;
+
+    private boolean needsClientUpdate = false;
 
     /**
      * Constructor for the experience handler.
@@ -112,7 +114,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Override
     public void updateColonyClient()
     {
-        if (citizen.getEntityData().isDirty())
+        if (needsClientUpdate)
         {
             if (colonyId == 0)
             {
@@ -130,6 +132,18 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();
+
+            needsClientUpdate = false;
+        }
+    }
+
+    @Override
+    public void onSyncDataUpdate(final EntityDataAccessor<?> data)
+    {
+        if (data == DATA_COLONY_ID || data == DATA_CITIZEN_ID || data == DATA_IS_FEMALE || data == DATA_IS_CHILD || data == DATA_MODEL || data == DATA_TEXTURE
+              || data == DATA_TEXTURE_SUFFIX || data == DATA_STYLE || data == DATA_RENDER_METADATA)
+        {
+            needsClientUpdate = true;
         }
     }
 

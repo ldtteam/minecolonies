@@ -429,6 +429,10 @@ public class Permissions implements IPermissions
                 players.put(ownerUUID, new ColonyPlayer(ownerUUID, player.getName(), ranks.get(OWNER_RANK_ID)));
             }
         }
+        else
+        {
+            setOwnerAbandoned();
+        }
     }
 
     /**
@@ -480,7 +484,7 @@ public class Permissions implements IPermissions
     @Override
     public void setOwnerAbandoned()
     {
-        players.remove(getOwner());
+        players.remove(ownerUUID);
 
         ownerName = "[abandoned]";
         ownerUUID = UUID.randomUUID();

@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICitizenColonyHandler
@@ -64,4 +64,11 @@ public interface ICitizenColonyHandler
      * Actions when the entity is removed.
      */
     void onCitizenRemoved();
+
+    /**
+     * Entity data update callback
+     *
+     * @param dataAccessor
+     */
+    void onSyncDataUpdate(EntityDataAccessor<?> dataAccessor);
 }
