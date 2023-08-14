@@ -33,6 +33,27 @@ gradle.projectsEvaluated {
     }
 }
 
+repositories{
+    mavenLocal()
+    flatDir { dirs 'libs' }
+    mavenCentral()
+
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+
+dependencies {
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+    implementation fg.deobf("curse.maven:cupboard-326652:4669193")
+    implementation fg.deobf("curse.maven:spark-361579:4587309")
+    implementation fg.deobf("curse.maven:connectivity-470193:4689492")
+}
+
 minecraft.runs.all {
     lazyToken('minecraft_classpath') {
         configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
