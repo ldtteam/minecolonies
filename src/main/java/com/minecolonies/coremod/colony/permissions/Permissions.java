@@ -429,7 +429,7 @@ public class Permissions implements IPermissions
                 players.put(ownerUUID, new ColonyPlayer(ownerUUID, player.getName(), ranks.get(OWNER_RANK_ID)));
             }
         }
-        else
+        else if (owner == null)
         {
             setOwnerAbandoned();
         }
