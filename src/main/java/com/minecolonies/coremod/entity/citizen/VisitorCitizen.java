@@ -25,6 +25,7 @@ import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessag
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -692,5 +693,15 @@ VisitorCitizen extends AbstractEntityCitizen
     public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
     {
 
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor)
+    {
+        super.onSyncedDataUpdated(dataAccessor);
+        if (citizenColonyHandler != null)
+        {
+            citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
     }
 }
