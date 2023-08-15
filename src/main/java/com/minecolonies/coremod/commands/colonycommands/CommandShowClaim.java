@@ -12,8 +12,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -36,10 +36,10 @@ public class CommandShowClaim implements IMCOPCommand
         final ServerLevel level = context.getSource().getLevel();
 
         // Colony
-        BlockPos pos = context.getSource().getEntity().blockPosition();
+        BlockPos pos = BlockPos.containing(context.getSource().getPosition());
         try
         {
-            pos = BlockPosArgument.getLoadedBlockPos(context, POS_ARG);
+            pos = BlockPosArgument.getBlockPos(context, POS_ARG);
         }
         catch (Exception e)
         {

@@ -103,6 +103,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
+        if (pos.equals(BlockPos.ZERO))
+        {
+            Log.getLogger().warn("Creating building at zero pos!:", new Exception());
+        }
+
         this.location = pos;
         this.colony = colony;
     }
