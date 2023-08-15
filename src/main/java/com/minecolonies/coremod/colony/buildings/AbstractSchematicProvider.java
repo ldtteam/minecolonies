@@ -265,7 +265,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public Tuple<BlockPos, BlockPos> getCorners()
     {
-        if (lowerCorner == null || higherCorner == null)
+        if (lowerCorner.equals(BlockPos.ZERO) || higherCorner.equals(BlockPos.ZERO))
         {
             this.calculateCorners();
         }
