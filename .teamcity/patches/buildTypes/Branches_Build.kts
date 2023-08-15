@@ -1,6 +1,7 @@
 package patches.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.GradleBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2019_2.ui.*
 
@@ -34,6 +35,23 @@ changeBuildType(RelativeId("Branches_Build")) {
         }
     }
     steps {
-        items.removeAt(0)
+        update<GradleBuildStep>(0) {
+            id = "RUNNER_9"
+            clearConditions()
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerRunParameters = "-v /opt/buildagent/gradle:/home/gradle/.gradle -u 0"
+            param("org.jfrog.artifactory.selectedDeployableServer.useM2CompatiblePatterns", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionNumberOfBuilds", "120")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishMavenDescriptors", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.activateGradleIntegration", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildDependencies", "Requires Artifactory Pro.")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "PROJECT_EXT_39")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "null")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolveReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishIvyDescriptors", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionMaxDays", "30")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployArtifacts", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "")
+        }
     }
 }
