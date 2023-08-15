@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -183,6 +184,11 @@ public interface IColonyTagCapability
         @Override
         public void addBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk)
         {
+            if (chunk.getPos().equals(ChunkPos.ZERO))
+            {
+                Log.getLogger().warn("Claiming id:" + colonyId + " building at zero pos!" + pos, new Exception());
+            }
+
             if (owningColony == NO_COLONY_ID)
             {
                 setOwningColony(colonyId, chunk);

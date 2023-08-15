@@ -579,9 +579,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 tileEntity.setBuilding(building);
                 building.upgradeBuildingLevelToSchematicData();
 
-                Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
+                Log.getLogger().debug(String.format("Colony %d - new Building %s for %s at %s",
                   colony.getID(),
-                  tileEntity.getBlockState().getClass(),
+                  building.getBuildingDisplayName(),
+                  tileEntity.getBlockState().getBlock(),
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
