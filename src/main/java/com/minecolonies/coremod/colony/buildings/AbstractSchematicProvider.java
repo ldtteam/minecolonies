@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -100,6 +99,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * Blueprint future for delayed info reading.
      */
     private Future<Blueprint> blueprintFuture;
+    private String            blueprintFuturePack = "";
+    private String            blueprintFutureName = "";
 
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
@@ -265,6 +266,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public Tuple<BlockPos, BlockPos> getCorners()
     {
+        if (buildingLevel == 0)
+        {
+            return new Tuple<>(getPosition(), getPosition());
+        }
+
         if (lowerCorner.equals(BlockPos.ZERO) || higherCorner.equals(BlockPos.ZERO))
         {
             this.calculateCorners();
@@ -357,12 +363,14 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             }
             else
             {
-                Log.getLogger().error(String.format("Failed to get rotation for %s: ", this.path));
+                Log.getLogger()
+                  .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path));
             }
         }
         catch (Exception e)
         {
-            Log.getLogger().error(String.format("Failed to get rotation for %s: ", this.path), e);
+            Log.getLogger()
+              .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path), e);
             return 0;
         }
 
@@ -426,9 +434,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                     }
                 }
             }
-            catch (InterruptedException | ExecutionException e)
+            catch (Exception e)
             {
-                e.printStackTrace();
+                Log.getLogger().info("Failed to load blueprintfuture for: pack:" + blueprintFuturePack + " name:" + blueprintFutureName, e);
+                blueprintFuture = null;
             }
         }
     }
@@ -453,6 +462,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
 
         blueprintFuture = StructurePacks.getBlueprintFuture(packName, structureName);
+        blueprintFuturePack = packName;
+        blueprintFutureName = structureName;
     }
 
     @Override
