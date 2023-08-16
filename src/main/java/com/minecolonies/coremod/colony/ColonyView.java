@@ -25,6 +25,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.managers.ResearchManager;
@@ -80,6 +81,8 @@ public final class ColonyView implements IColonyView
     //  General Attributes
     private final int                            id;
     private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
+    private final Map<Integer, BlockPos>         workOrderClaimCache = new HashMap<>();
+    private int                                  workOrderCachedCount;
     //  Administration/permissions
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
@@ -963,6 +966,8 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewWorkOrderMessage(final FriendlyByteBuf buf)
     {
+        boolean claimsChanged = false;
+
         workOrders.clear();
         final int amount = buf.readInt();
         for (int i = 0; i < amount; i++)
@@ -971,7 +976,16 @@ public final class ColonyView implements IColonyView
             if (workOrder != null)
             {
                 workOrders.put(workOrder.getId(), workOrder);
+
+                final BlockPos oldClaimedBy = workOrderClaimCache.put(workOrder.getId(), workOrder.getClaimedBy());
+                claimsChanged |= !Objects.equals(workOrder.getClaimedBy(), oldClaimedBy);
             }
+        }
+
+        if (claimsChanged || workOrders.size() != workOrderCachedCount)
+        {
+            workOrderCachedCount = workOrders.size();
+            ColonyBlueprintRenderer.invalidateCache();
         }
 
         return null;
