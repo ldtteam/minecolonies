@@ -478,6 +478,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             if (!structurePlacer.getB().nextStage())
             {
                 building.setProgressPos(null, null);
+                worker.getCitizenData().setStatusPosition(null);
                 return COMPLETE_BUILD;
             }
         }
@@ -503,6 +504,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
             blockToMine = result.getBlockResult().getWorldPos();
+            worker.getCitizenData().setStatusPosition(blockToMine);
             return MINE_BLOCK;
         }
         else
@@ -877,13 +879,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
+     * Get the current block being placed/removed. May be null if nothing is loaded yet.
+     *
+     * @return the current building position, or null.
+     */
+    @Nullable
+    public BlockPos getCurrentBuildingPosition()
+    {
+        return structurePlacer == null ? null : structurePlacer.getB().getProgressPosInWorld(structurePlacer.getA().getIterator().getProgressPos());
+    }
+
+    /**
      * Get the current working position for the worker. If workFrom is null calculate a new one.
      *
      * @return the current working position.
      */
     protected BlockPos getCurrentWorkingPosition()
     {
-        return workFrom == null ? getWorkingPosition(structurePlacer.getB().getProgressPosInWorld(structurePlacer.getA().getIterator().getProgressPos())) : workFrom;
+        return workFrom == null ? getWorkingPosition(getCurrentBuildingPosition()) : workFrom;
     }
 
     /**
@@ -952,6 +965,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         workFrom = null;
         structurePlacer = null;
         building.setProgressPos(null, null);
+        worker.getCitizenData().setStatusPosition(null);
     }
 
     /**

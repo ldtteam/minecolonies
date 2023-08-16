@@ -165,6 +165,13 @@ public interface ICitizenDataView extends ICitizen
     VisibleCitizenStatus getVisibleStatus();
 
     /**
+     * Gets a location of interest of this citizen's job.
+     *
+     * @return the location, or null if nowhere is particularly interesting right now.
+     */
+    @Nullable BlockPos getStatusPosition();
+
+    /**
      * Get the job view that belongs to this citizen (or null).
      * @return the job.
      */
