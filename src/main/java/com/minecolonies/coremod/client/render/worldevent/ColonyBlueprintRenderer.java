@@ -9,6 +9,7 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -29,7 +30,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -318,11 +318,11 @@ public class ColonyBlueprintRenderer
         final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData();
         blueprintPreviewData.setBlueprintFuture(blueprintFuture);
         blueprintPreviewData.setPos(BlockPos.ZERO);
-        blueprintPreviewData.rotate(key.rotation());
-        if (key.mirror() != Mirror.NONE)
+        if (key.orientation().mirror() != Mirror.NONE)
         {
             blueprintPreviewData.mirror();
         }
+        blueprintPreviewData.rotate(key.orientation().rotation());
 
         return blueprintPreviewData;
     }
@@ -360,7 +360,7 @@ public class ColonyBlueprintRenderer
     /**
      * Cache key for {@link #blueprintDataCache}.
      */
-    private record BlueprintCacheKey(@NotNull String packName, @NotNull String path, Mirror mirror, Rotation rotation)
+    private record BlueprintCacheKey(@NotNull String packName, @NotNull String path, RotationMirror orientation)
     {
     }
 
@@ -412,8 +412,8 @@ public class ColonyBlueprintRenderer
 
                         final String structurePack = buildingView.getStructurePack();
                         final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath,
-                                buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
-                                BlockPosUtil.getRotationFromRotations(buildingView.getRotation()));
+                                RotationMirror.of(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
+                                        buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
 
                         desired.put(currentPosition,
                                 new PendingRenderData(key, currentPosition, 0,
@@ -452,8 +452,8 @@ public class ColonyBlueprintRenderer
                 {
                     final int builder = getBuilderId(ctx.nearestColony, workOrder.getClaimedBy());
                     final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getPackName(), workOrder.getStructurePath(),
-                            workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
-                            BlockPosUtil.getRotationFromRotations(workOrder.getRotation()));
+                            RotationMirror.of(BlockPosUtil.getRotationFromRotations(workOrder.getRotation()),
+                                    workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
                     desired.put(workOrder.getLocation(),
                             new PendingRenderData(key, workOrder.getLocation(), builder,
                                 workOrder.getWorkOrderType() == WorkOrderType.REMOVE,
