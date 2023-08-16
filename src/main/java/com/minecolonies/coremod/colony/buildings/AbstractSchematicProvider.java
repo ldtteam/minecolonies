@@ -221,7 +221,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
         {
             packName = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
-            path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName()) + buildingLevel  + ".blueprint";
+            path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName()) + buildingLevel + ".blueprint";
         }
         else
         {
@@ -266,15 +266,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public Tuple<BlockPos, BlockPos> getCorners()
     {
-        if (buildingLevel == 0)
-        {
-            return new Tuple<>(getPosition(), getPosition());
-        }
-
         if (lowerCorner.equals(BlockPos.ZERO) || higherCorner.equals(BlockPos.ZERO))
         {
             this.calculateCorners();
+
+            if (lowerCorner.equals(BlockPos.ZERO) || higherCorner.equals(BlockPos.ZERO))
+            {
+                return new Tuple<>(getPosition(), getPosition());
+            }
         }
+
         return new Tuple<>(lowerCorner, higherCorner);
     }
 
@@ -316,9 +317,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public Set<BlockPos> getChildren()
     {
         return colony.getBuildingManager().getBuildings().values().stream()
-                 .filter(f -> f.getParent().equals(getID()))
-                 .map(ISchematicProvider::getID)
-                 .collect(Collectors.toUnmodifiableSet());
+          .filter(f -> f.getParent().equals(getID()))
+          .map(ISchematicProvider::getID)
+          .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
