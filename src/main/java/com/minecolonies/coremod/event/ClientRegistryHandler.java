@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.entity.ModEntities;
@@ -28,6 +29,7 @@ import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.client.render.projectile.FireArrowRenderer;
 import com.minecolonies.coremod.client.render.projectile.RendererSpear;
+import com.minecolonies.coremod.client.render.worldevent.ColonyBlueprintRenderer;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -42,6 +44,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
@@ -314,7 +317,8 @@ public class ClientRegistryHandler
 
         ItemProperties.register(ModItems.spear, new ResourceLocation("throwing"), (item, world, entity, light) ->
                                                                            (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
-
+        ItemProperties.register(ModItems.buildGoggles, new ResourceLocation("disabled"), (item, world, entity, light) ->
+                (ColonyBlueprintRenderer.willRenderBlueprints() ? 0.0F : 1.0F));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -323,5 +327,12 @@ public class ClientRegistryHandler
     {
         // not worthwhile creating a category for compost, as we never unlock them in the book; this hides some warnings
         event.registerRecipeCategoryFinder(ModRecipeSerializer.CompostRecipeType.get(), r -> RecipeBookCategories.UNKNOWN);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void registerKeys(final RegisterKeyMappingsEvent event)
+    {
+        ModKeyMappings.register(event);
     }
 }

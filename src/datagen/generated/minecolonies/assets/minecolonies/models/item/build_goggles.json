@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "minecolonies:item/build_goggles_disabled",
+      "predicate": {
+        "minecraft:disabled": 1.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "minecolonies:item/build_goggles"
+  }
+}

@@ -10,6 +10,7 @@ import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -23,6 +24,8 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Mirror;
@@ -73,6 +76,11 @@ public class ColonyBlueprintRenderer
     private static BlockPos lastCacheRebuild = null;
 
     /**
+     * True when blueprints should be rendered.  Toggled via hotkey.
+     */
+    private static boolean shouldRenderBlueprints = true;
+
+    /**
      * Blueprints we're still loading.
      */
     private static final Map<BlockPos, PendingRenderData> pendingBoxes = new HashMap<>();
@@ -97,12 +105,29 @@ public class ColonyBlueprintRenderer
     }
 
     /**
+     * Indicates whether blueprint rendering is enabled or disabled.
+     *
+     * @return true when enabled.
+     */
+    public static boolean willRenderBlueprints()
+    {
+        return shouldRenderBlueprints;
+    }
+
+    /**
      * Renders blueprints into the client.
      *
      * @param ctx rendering context
      */
     static void renderBlueprints(final WorldEventContext ctx)
     {
+        if (ModKeyMappings.TOGGLE_GOGGLES.get().consumeClick())
+        {
+            shouldRenderBlueprints = !shouldRenderBlueprints;
+
+            ctx.clientPlayer.playNotifySound(SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.NEUTRAL, 1.0F, shouldRenderBlueprints ? 0.75F : 0.25F);
+        }
+
         if (!ctx.hasNearestColony())
         {
             blueprintRenderCache.clear();
@@ -140,10 +165,13 @@ public class ColonyBlueprintRenderer
             processPendingBlueprints();
         }
 
-        for (final Map.Entry<BlueprintCacheKey, List<BlockPos>> entry : blueprintRenderCache.entrySet())
+        if (shouldRenderBlueprints)
         {
-            final BlueprintPreviewData data = blueprintDataCache.getUnchecked(entry.getKey());
+            for (final Map.Entry<BlueprintCacheKey, List<BlockPos>> entry : blueprintRenderCache.entrySet())
+            {
+                final BlueprintPreviewData data = blueprintDataCache.getUnchecked(entry.getKey());
             BlueprintHandler.getInstance().drawAtListOfPositions(data, entry.getValue(), ctx.stageEvent);
+            }
         }
     }
 
