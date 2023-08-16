@@ -88,6 +88,7 @@ public class WorkManager implements IWorkManager
         final IWorkOrder workOrder = workOrders.get(orderId);
         if (workOrder != null)
         {
+            dirty = true;
             workOrders.remove(orderId);
             colony.removeWorkOrderInView(orderId);
             workOrder.onRemoved(colony);
