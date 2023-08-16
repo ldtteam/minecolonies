@@ -1,6 +1,9 @@
 {
   "itemGroup.minecolonies": "MineColonies",
 
+  "key.minecolonies.categories.general": "MineColonies",
+  "key.minecolonies.toggle_goggles": "Toggle Goggles Preview",
+
   "com.minecolonies.configgui.title": "MineColonies Config",
   "minecolonies.config.gameplay": "Gameplay Settings",
   "minecolonies.config.gameplay.comment": "All configuration items related to the core gameplay",
@@ -1058,6 +1061,8 @@
   "item.minecolonies.santa_hat": "Santa Hat",
   "item.minecolonies.build_goggles": "Builder's Goggles",
   "item.minecolonies.build_goggles.lore": "They do nothing!",
+  "item.minecolonies.build_goggles.enabled": "Blueprint previews enabled",
+  "item.minecolonies.build_goggles.disabled": "Blueprint previews disabled",
 
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
