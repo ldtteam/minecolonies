@@ -12,7 +12,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -99,6 +98,7 @@ public class PermissionsMessage
         @Override
         public void toBytes(@NotNull final FriendlyByteBuf buf)
         {
+            data.resetReaderIndex();
             buf.writeInt(colonyID);
             buf.writeUtf(dimension.location().toString());
             buf.writeBytes(data);
