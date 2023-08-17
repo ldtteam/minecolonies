@@ -2,19 +2,22 @@ package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -136,5 +139,81 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
     public DialogueElement getReadyDialogueTree()
     {
         return readyDialogueElement;
+    }
+
+    @Override
+    public @NotNull IObjectiveInstance createObjectiveInstance()
+    {
+        return new DeliveryProgressInstance(this);
+    }
+
+    /**
+     * Progress data of this objective.
+     */
+    public static class DeliveryProgressInstance implements IDialogueObjectInstance
+    {
+        /**
+         * Tag for has interacted the NBT state of this progress instance.
+         */
+        private static final String TAG_HAS_INTERACTED = "hasInteracted";
+
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final DeliveryObjectiveTemplateTemplate template;
+
+        /**
+         * Whether the player has completed the dialogue interaction.
+         */
+        private boolean hasInteracted = false;
+
+        /**
+         * Default constructor.
+         */
+        public DeliveryProgressInstance(final DeliveryObjectiveTemplateTemplate template)
+        {
+            this.template = template;
+        }
+
+        @Override
+        public boolean isFulfilled()
+        {
+            return hasInteracted;
+        }
+
+        @Override
+        public int getMissingQuantity()
+        {
+            return isFulfilled() ? 0 : template.quantity;
+        }
+
+        @Override
+        public MutableComponent getProgressText(final IQuestInstance quest)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.delivery.progress",
+              isFulfilled() ? template.quantity : 0,
+              template.quantity,
+              template.item.getDisplayName().plainCopy().withStyle(ChatFormatting.GRAY));
+        }
+
+        @Override
+        public void setHasInteracted(boolean hasInteracted)
+        {
+            this.hasInteracted = hasInteracted;
+        }
+
+        @Override
+        public CompoundTag serializeNBT()
+        {
+            final CompoundTag compoundTag = new CompoundTag();
+            compoundTag.putBoolean(TAG_HAS_INTERACTED, hasInteracted);
+            return compoundTag;
+        }
+
+        @Override
+        public void deserializeNBT(final CompoundTag compound)
+        {
+            this.hasInteracted = compound.getBoolean(TAG_HAS_INTERACTED);
+        }
     }
 }

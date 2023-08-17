@@ -1,6 +1,6 @@
 package com.minecolonies.api.quests;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface IQuestObjectiveTemplate
      * @param colonyQuest the colony quest it belongs to.
      * @return potentially related objective data.
      */
-    @Nullable
+    @NotNull
     IObjectiveInstance startObjective(final IQuestInstance colonyQuest);
 
     /**
@@ -34,8 +34,8 @@ public interface IQuestObjectiveTemplate
      * Get objective data related to the objective.
      * @return the data, default null.
      */
-    @Nullable
-    default IObjectiveInstance createObjectiveInstance() { return null; }
+    @NotNull
+    IObjectiveInstance createObjectiveInstance();
 
     /**
      * Get the list of reward unlocks from this objective.
