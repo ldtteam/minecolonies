@@ -919,6 +919,14 @@
   "com.minecolonies.coremod.gui.workerhuts.recipe.custom": "Custom Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipe.brewing": "Brewing Recipes",
 
+  "item.minecolonies.scan_analyzer": "Schematic Analyzer",
+  "com.minecolonies.coremod.gui.analyzer.select": "Select Schematic",
+  "com.minecolonies.coremod.gui.analyzer.buildings": "Buildings: %d",
+  "com.minecolonies.coremod.gui.analyzer.complexity": "Complexity-score: %d",
+  "com.minecolonies.coremod.gui.analyzer.score": "Score: %s total: %s",
+  "com.minecolonies.coremod.gui.analyzer.size": "Size %s",
+  "com.minecolonies.coremod.tooltip.schematic.tier": "Schematic tier: %s",
+
   "com.minecolonies.coremod.dimension.no": "You are not allowed to place colonies in other dimensions. (This is changeable in the config file.)",
 
   "com.minecolonies.coremod.max.schematic.quiteclose": "Quite close in the",
@@ -2092,7 +2100,9 @@
   "com.minecolonies.coremod.gui.chat.nathan": "I am Nathan, I have come here from the Nether to start a new life.",
   "com.minecolonies.coremod.gui.chat.jmwarrior": "Hi, I'm Luz! Child of the Human Realm and student of the Demon Realm! I've come in search far and wide for a place to inspire and provide my magical skills! Say, do you know how I got here? And have you seen any portal doors with a giant eye?",
   "com.minecolonies.coremod.gui.chat.doggus": "Doggus, a passionate builder with a heart torn between creativity and perfectionism, stands at the precipice of their aspirations, yearning to construct masterpieces while battling inner doubts.",
+  "com.minecolonies.coremod.gui.chat.chewbacca": "After losing my village, I am travelling from city to city offering my services as a knight to protect others so that they do not suffer the same fate as my village.",
   "com.minecolonies.coremod.gui.chat.moobien": "Just a simple bloke from the deep south looking for somewhere to build",
+  "com.minecolonies.coremod.gui.chat.cammy": "I am an elven brewmaster from the fallen Silverleaf Realm, roaming MineColonies offering exotic brews, seeking allies to reclaim his homeland's lost magic and glory",
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",

@@ -1,0 +1,10 @@
+{
+  "texture": "74d25ae4-9751-4e63-bd18-7faf5bdcbdc9",
+  "citizensuffix": "_w",
+  "name": "Eldrin Moonshadow",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.cammy",
+  "recruitcost": "minecraft:nether_star",
+  "recruitcostcount": 1,
+  "gender": "male"
+}

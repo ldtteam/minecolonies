@@ -1,0 +1,21 @@
+{
+  "values": [
+    "minecraft:netherite_block",
+    "minecraft:purpur_slab",
+    "minecraft:purpur_block",
+    "minecraft:purpur_pillar",
+    "minecraft:purpur_stairs",
+    "minecraft:end_stone",
+    "minecraft:end_stone_bricks",
+    "minecraft:end_stone_brick_stairs",
+    "minecraft:end_stone_brick_slab",
+    "minecraft:end_stone_brick_wall",
+    "minecraft:end_rod",
+    "#minecraft:shulker_boxes",
+    "minecraft:chorus_plant",
+    "minecraft:chorus_flower",
+    "minecraft:ochre_froglight",
+    "minecraft:verdant_froglight",
+    "minecraft:pearlescent_froglight"
+  ]
+}

@@ -5,24 +5,29 @@ package com.minecolonies.api.sounds;
  */
 public enum EventType
 {
-    GENERAL(0.2),
-    NOISE(2),
-    OFF_TO_BED(2),
-    BAD_WEATHER(2),
-    SATURATION_LOW(0.2),
-    SATURATION_HIGH(0.2),
-    BAD_HOUSING(0.2),
-    GOOD_HOUSING(0.2),
+    GENERAL(0.2, "general"),
+    NOISE(2, "noise"),
+    OFF_TO_BED(2, "gotobed"),
+    BAD_WEATHER(2, "badweather"),
+    SATURATION_LOW(0.2, "lowsaturation"),
+    SATURATION_HIGH(0.2, "highsaturation"),
+    BAD_HOUSING(0.2, "badhousing"),
+    GOOD_HOUSING(0.2, "goodhousing"),
 
-    GREETING(2),
-    FAREWELL(2),
-    MISSING_EQUIPMENT(2),
-    HAPPY(0.2),
-    UNHAPPY(0.2),
-    SICKNESS(0.2),
-    INTERACTION(100),
-    SUCCESS(20),
-    DANGER(2);
+    GREETING(2, "greeting"),
+    FAREWELL(2, "farewell"),
+    MISSING_EQUIPMENT(2, "missingequipment"),
+    HAPPY(0.2, "happy"),
+    UNHAPPY(0.2, "unhappy"),
+    SICKNESS(0.2, "sick"),
+    INTERACTION(100, "interaction"),
+    SUCCESS(20, "success"),
+    DANGER(2, "danger");
+
+    /**
+     * The id of it.
+     */
+    private final String id;
 
     /**
      * The chance for the sound to get played.
@@ -34,9 +39,10 @@ public enum EventType
      *
      * @param chance the chance for the sound to be played.
      */
-    EventType(final double chance)
+    EventType(final double chance, final String id)
     {
         this.chance = chance;
+        this.id = id;
     }
 
     /**
@@ -47,5 +53,14 @@ public enum EventType
     public double getChance()
     {
         return chance;
+    }
+
+    /**
+     * Get the id.
+     * @return the id.
+     */
+    public String getId()
+    {
+        return this.id;
     }
 }

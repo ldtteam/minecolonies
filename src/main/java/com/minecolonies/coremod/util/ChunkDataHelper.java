@@ -113,6 +113,11 @@ public final class ChunkDataHelper
      */
     public static void addStorageToChunk(final LevelChunk chunk, final ChunkLoadStorage storage)
     {
+        if (chunk.getPos().equals(ChunkPos.ZERO))
+        {
+            Log.getLogger().warn("Trying to claim zero chunk!", new Exception());
+        }
+
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         storage.applyToCap(cap, chunk);
 
@@ -147,8 +152,9 @@ public final class ChunkDataHelper
      * @param range   the range to claim.
      * @param corners also (un)claim all chunks intersecting this box (if not null)
      */
-    public static void claimBuildingChunks(final IColony colony, final boolean add, final BlockPos center, final int range,
-                                           @Nullable final Tuple<BlockPos, BlockPos> corners)
+    public static void claimBuildingChunks(
+      final IColony colony, final boolean add, final BlockPos center, final int range,
+      @Nullable final Tuple<BlockPos, BlockPos> corners)
     {
         buildingClaimInRange(colony, add, range, center, false);
 
@@ -271,10 +277,10 @@ public final class ChunkDataHelper
      * @param corners the box.
      */
     private static void buildingClaimBox(
-            final IColony colony,
-            final BlockPos anchor,
-            final boolean add,
-            final Tuple<BlockPos, BlockPos> corners)
+      final IColony colony,
+      final BlockPos anchor,
+      final boolean add,
+      final Tuple<BlockPos, BlockPos> corners)
     {
         final Level world = colony.getWorld();
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
@@ -293,9 +299,9 @@ public final class ChunkDataHelper
             if (maxColonySize != 0 && pos.distSqr(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
             {
                 Log.getLogger()
-                        .debug(
-                                "Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
-                                        + " max is config workingRangeTownHall ^2");
+                  .debug(
+                    "Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
+                      + " max is config workingRangeTownHall ^2");
                 continue;
             }
 
@@ -435,6 +441,11 @@ public final class ChunkDataHelper
         if (cap == null)
         {
             return false;
+        }
+
+        if (chunk.getPos().equals(ChunkPos.ZERO))
+        {
+            Log.getLogger().warn("Trying to claim at zero chunk pos!:", new Exception());
         }
 
         // Before directly adding cap data, apply data from our cache.

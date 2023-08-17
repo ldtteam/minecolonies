@@ -168,16 +168,13 @@ public class CreateColonyMessage implements IMessage
 
         if (ownedColony == null)
         {
-            IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
-            if (createdColony != null)
-            {
-                createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-                MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
+            final IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
+            createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+            MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
 
-                if (isLogicalServer)
-                {
-                    MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
-                }
+            if (isLogicalServer)
+            {
+                MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
             }
             return;
         }
