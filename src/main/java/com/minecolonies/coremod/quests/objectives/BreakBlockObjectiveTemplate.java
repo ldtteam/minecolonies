@@ -7,14 +7,15 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
@@ -93,14 +94,13 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new BlockMiningProgressInstance();
+        return createObjectiveInstance();
     }
 
-    @Nullable
     @Override
-    public IObjectiveInstance createObjectiveInstance()
+    public @NotNull IObjectiveInstance createObjectiveInstance()
     {
-        return new BlockMiningProgressInstance();
+        return new BlockMiningProgressInstance(this);
     }
 
     @Override
@@ -152,14 +152,27 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     /**
      * Progress data of this objective.
      */
-    public class BlockMiningProgressInstance implements IObjectiveInstance
+    public static class BlockMiningProgressInstance implements IObjectiveInstance
     {
         private int currentProgress = 0;
+
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final BreakBlockObjectiveTemplate template;
+
+        /**
+         * Default constructor.
+         */
+        public BlockMiningProgressInstance(final IQuestObjectiveTemplate template)
+        {
+            this.template = (BreakBlockObjectiveTemplate) template;
+        }
 
         @Override
         public boolean isFulfilled()
         {
-            return currentProgress >= blocksToMine;
+            return currentProgress >= template.blocksToMine;
         }
 
         @Override
@@ -173,7 +186,17 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         @Override
         public int getMissingQuantity()
         {
-            return blocksToMine > currentProgress ? blocksToMine - currentProgress : 0;
+            return template.blocksToMine > currentProgress ? template.blocksToMine - currentProgress : 0;
+        }
+
+        @Override
+        public MutableComponent getProgressText(final IQuestInstance quest)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.breakblock.progress",
+              currentProgress,
+              template.blocksToMine,
+              template.blockToMine.getName().withStyle(
+                ChatFormatting.GRAY));
         }
 
         @Override

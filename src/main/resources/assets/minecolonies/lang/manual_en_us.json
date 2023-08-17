@@ -853,6 +853,10 @@
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
 
+  "com.minecolonies.coremod.item.questlog.gui.inprogress": "In progress quests",
+  "com.minecolonies.coremod.item.questlog.gui.available": "Available quests",
+  "com.minecolonies.coremod.item.questlog.gui.finished": "Finished quests",
+
   "com.minecolonies.coremod.item.bannerrallyguards.selected": "Added %s at %s to rallying list.",
   "com.minecolonies.coremod.item.bannerrallyguards.deselected": "Removed %s at %s from rallying list.",
   "com.minecolonies.coremod.item.bannerrallyguards.tooltip": "Rallied guard towers: %d",
@@ -2411,19 +2415,27 @@
   "com.minecolonies.coremod.quest.completed": "You have successfully completed the quest: %s",
   "com.minecolonies.coremod.questobjectives.answer.later": "Sorry, be right back!",
   "com.minecolonies.coremod.questobjectives.answer.cancel": "I don't have time for this!",
+  "com.minecolonies.coremod.questobjectives.answer.progress": "Talk to %s",
   "com.minecolonies.coremod.questobjectives.breakblock": "I am still waiting for you to mine $d %s!",
+  "com.minecolonies.coremod.questobjectives.breakblock.progress": "%d/%d %s blocks mined",
   "com.minecolonies.coremod.questobjectives.placeblock": "I am still waiting for you to place $d %s!",
+  "com.minecolonies.coremod.questobjectives.placeblock.progress": "%d/%d %s blocks placed",
 
   "com.minecolonies.coremod.questobjectives.delivery.waiting": "I am still waiting for %s!",
   "com.minecolonies.coremod.questobjectives.delivery.waiting.cancel": "I don't have any of it!",
   "com.minecolonies.coremod.questobjectives.delivery.ready": "Oh hey, you brought %s; can I have it?",
   "com.minecolonies.coremod.questobjectives.delivery.ready.give": "Yes, here you are!",
   "com.minecolonies.coremod.questobjectives.delivery.ready.later": "No, wait!",
+  "com.minecolonies.coremod.questobjectives.delivery.progress": "%d/%d %s delivered",
   "com.minecolonies.coremod.questobjectives.kill": "I am still waiting for you to kill $d %s!",
+  "com.minecolonies.coremod.questobjectives.kill.progress": "%d/%d %s killed",
   "com.minecolonies.coremod.questobjectives.buildbuilding": "I am still waiting for you to build %d level %d %s!",
   "com.minecolonies.coremod.questobjectives.buildbuilding.existing": "I am still waiting for you to reach level %d for %d %s!",
   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative": "I am still waiting for you to build or upgrade %d levels of %s!",
   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.progress": "%d/%d %s buildings built",
+  "com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative": "%d/%d totaling levels of %s buildings built",
+
   "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
   "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers"
 }

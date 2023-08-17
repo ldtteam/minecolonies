@@ -11,6 +11,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
 import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
+import com.minecolonies.coremod.quests.objectives.IDialogueObjectInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -105,6 +106,10 @@ public class QuestDialogueInteraction extends StandardInteraction
             final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
             if (result instanceof IFinalQuestDialogueAnswer)
             {
+                if (colonyQuest.getCurrentObjectiveInstance() instanceof IDialogueObjectInstance dialogueObjectInstance)
+                {
+                    dialogueObjectInstance.setHasInteracted(true);
+                }
                 ((IFinalQuestDialogueAnswer) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
                 if (!(result instanceof IQuestDialogueAnswer.CloseUIDialogueAnswer))
                 {

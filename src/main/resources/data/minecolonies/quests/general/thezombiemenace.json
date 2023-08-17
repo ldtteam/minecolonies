@@ -5,7 +5,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 500
+      "rarity": 1
     },
     {
       "type": "minecolonies:state",

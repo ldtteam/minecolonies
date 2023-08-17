@@ -3,7 +3,6 @@ package com.minecolonies.coremod.quests;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
-import com.minecolonies.api.quests.ITriggerReturnData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
@@ -201,9 +200,10 @@ public class QuestInstance implements IQuestInstance
     public IObjectiveInstance advanceObjective(final Player player, final int nextObjective)
     {
         final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
+        final IQuestObjectiveTemplate questObjectiveTemplate = questData.getObjective(this.objectiveProgress);
 
         // Always when advancing an objective, get the rewards from the current objective.
-        final List<Integer> rewards = (questData.getObjective(this.objectiveProgress).getRewardUnlocks());
+        final List<Integer> rewards = questObjectiveTemplate.getRewardUnlocks();
         if(!rewards.isEmpty())
         {
             questData.unlockQuestRewards(colony, player, this, rewards);
@@ -302,11 +302,8 @@ public class QuestInstance implements IQuestInstance
         if (nbt.contains(TAG_OBJECTIVE))
         {
             final IObjectiveInstance data = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(objectiveProgress).createObjectiveInstance();
-            if (data != null)
-            {
-                data.deserializeNBT(nbt.getCompound(TAG_OBJECTIVE));
-                this.currentObjectiveInstance = data;
-            }
+            data.deserializeNBT(nbt.getCompound(TAG_OBJECTIVE));
+            this.currentObjectiveInstance = data;
         }
 
         if (nbt.contains(TAG_PLAYER))

@@ -1,0 +1,17 @@
+<window size="190 244" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
+
+    <label size="100% 11" pos="0 11" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.item.questlog.gui.inprogress)"/>
+
+    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+
+    <list id="quests" size="100% 206" pos="13 27">
+        <view size="100% 30">
+            <label id="questName" size="80% 11" pos="20% 11" color="black"/>
+            <label id="questGiver" size="80% 11" pos="20% 25" color="black"/>
+        </view>
+    </list>
+</window>

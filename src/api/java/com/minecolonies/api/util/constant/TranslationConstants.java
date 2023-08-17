@@ -86,6 +86,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER                           = "com.minecolonies.coremod.item.scroll.no_builder";
     @NonNls
+    public static final String COM_MINECOLONIES_QUEST_LOG_NEED_COLONY                               = "com.minecolonies.coremod.item.questlog.needcolony";
+    @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED                        = "com.minecolonies.coremod.item.bannerrallyguards.selected";
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED                      = "com.minecolonies.coremod.item.bannerrallyguards.deselected";

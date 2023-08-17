@@ -11,6 +11,7 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,11 +126,11 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
 
-        if (checkForFulfillment(colonyQuest, new BuildingProgressInstance(false)))
+        if (checkForFulfillment(colonyQuest, new BuildingProgressInstance(this)))
         {
             // Already detect as finished!
             return colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
@@ -140,15 +141,13 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
             // Only serverside cleanup.
             colonyQuest.getColony().getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
         }
-
-        return new BuildingProgressInstance(false);
+        return createObjectiveInstance();
     }
 
-    @Nullable
     @Override
-    public IObjectiveInstance createObjectiveInstance()
+    public @NotNull IObjectiveInstance createObjectiveInstance()
     {
-        return new BuildingProgressInstance(false);
+        return new BuildingProgressInstance(this);
     }
 
     @Override
@@ -178,20 +177,26 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
             return;
         }
 
+        if (!(progressData instanceof BuildingProgressInstance buildingProgressInstance))
+        {
+            return;
+        }
+
         if (qty > 0)
         {
             if (level >= lvl)
             {
-                ((BuildingProgressInstance) progressData).currentProgress++;
+                buildingProgressInstance.currentProgress++;
             }
         }
         else
         {
-            ((BuildingProgressInstance) progressData).currentProgress++;
+            buildingProgressInstance.currentProgress++;
         }
 
-        if (checkForFulfillment(colonyQuest, ((BuildingProgressInstance) progressData)))
+        if (checkForFulfillment(colonyQuest, buildingProgressInstance))
         {
+            buildingProgressInstance.finished = true;
             cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
         }
@@ -206,12 +211,9 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
                 int count = 0;
                 for (final IBuilding building : colonyQuest.getColony().getBuildingManager().getBuildings().values())
                 {
-                    if (building.getBuildingType() == buildingEntry)
+                    if (building.getBuildingType() == buildingEntry && building.getBuildingLevel() >= lvl)
                     {
-                        if (building.getBuildingLevel() >= lvl)
-                        {
-                            count++;
-                        }
+                        count++;
                     }
                 }
                 return count > qty;
@@ -223,7 +225,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
                 {
                     if (building.getBuildingType() == buildingEntry)
                     {
-                        count+= building.getBuildingLevel();
+                        count += building.getBuildingLevel();
                     }
                 }
                 return count > lvl;
@@ -244,14 +246,11 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
             // Only serverside cleanup.
             colonyQuest.getColony().getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
             final @Nullable IObjectiveInstance objInstance = colonyQuest.getCurrentObjectiveInstance();
-            if (objInstance instanceof BuildingProgressInstance)
+            if (objInstance instanceof BuildingProgressInstance progressInstance && checkForFulfillment(colonyQuest, progressInstance))
             {
-                if (checkForFulfillment(colonyQuest, (BuildingProgressInstance) objInstance))
-                {
-                    ((BuildingProgressInstance) objInstance).finished = true;
-                    cleanupListener(colonyQuest);
-                    colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
-                }
+                progressInstance.finished = true;
+                cleanupListener(colonyQuest);
+                colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
             }
         }
     }
@@ -259,8 +258,13 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     /**
      * Progress data of this objective.
      */
-    public class BuildingProgressInstance implements IObjectiveInstance
+    public static class BuildingProgressInstance implements IObjectiveInstance
     {
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final BuildBuildingObjectiveTemplate template;
+
         /**
          * Whether all requirements were fulfilled.
          */
@@ -271,9 +275,10 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
          */
         private int currentProgress = 0;
 
-        public BuildingProgressInstance(final boolean finished)
+        public BuildingProgressInstance(final BuildBuildingObjectiveTemplate template)
         {
-            this.finished = true;
+            this.template = template;
+            this.finished = false;
         }
 
         @Override
@@ -295,8 +300,26 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         @Override
         public int getMissingQuantity()
         {
-            // Noop
             return 0;
+        }
+
+        @Override
+        public MutableComponent getProgressText(final IQuestInstance quest)
+        {
+            if (template.qty > 0)
+            {
+                return Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.progress",
+                  currentProgress,
+                  template.qty,
+                  Component.translatable(template.buildingEntry.getTranslationKey()));
+            }
+            else
+            {
+                return Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative",
+                  currentProgress,
+                  template.lvl,
+                  Component.translatable(template.buildingEntry.getTranslationKey()));
+            }
         }
 
         @Override

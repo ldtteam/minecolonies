@@ -3,10 +3,12 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
-import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IObjectiveInstance;
-import com.minecolonies.api.quests.IQuestObjectiveTemplate;
+import com.minecolonies.api.colony.ICitizen;
+import com.minecolonies.api.quests.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,7 +99,7 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         if (target == 0)
         {
@@ -107,6 +109,80 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
         {
             colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getIndex());
         }
-        return null;
+        return createObjectiveInstance();
+    }
+
+    @Override
+    public @NotNull IObjectiveInstance createObjectiveInstance()
+    {
+        return new DialogueProgressInstance(this);
+    }
+
+    /**
+     * Progress data of this objective.
+     */
+    public static class DialogueProgressInstance implements IDialogueObjectInstance
+    {
+        /**
+         * Tag for has interacted the NBT state of this progress instance.
+         */
+        private static final String TAG_HAS_INTERACTED = "hasInteracted";
+
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final DialogueObjectiveTemplateTemplate template;
+
+        /**
+         * Whether the player has completed the dialogue interaction.
+         */
+        private boolean hasInteracted = false;
+
+        /**
+         * Default constructor.
+         */
+        public DialogueProgressInstance(final DialogueObjectiveTemplateTemplate template)
+        {
+            this.template = template;
+        }
+
+        @Override
+        public boolean isFulfilled()
+        {
+            return hasInteracted;
+        }
+
+        @Override
+        public int getMissingQuantity()
+        {
+            return hasInteracted ? 0 : 1;
+        }
+
+        @Override
+        public MutableComponent getProgressText(final IQuestInstance quest)
+        {
+            final ICitizen citizen = quest.getColony().getCitizen(template.target == 0 ? quest.getQuestGiverId() : template.target - 1);
+            return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName());
+        }
+
+        @Override
+        public void setHasInteracted(boolean hasInteracted)
+        {
+            this.hasInteracted = hasInteracted;
+        }
+
+        @Override
+        public CompoundTag serializeNBT()
+        {
+            final CompoundTag compoundTag = new CompoundTag();
+            compoundTag.putBoolean(TAG_HAS_INTERACTED, hasInteracted);
+            return compoundTag;
+        }
+
+        @Override
+        public void deserializeNBT(final CompoundTag compound)
+        {
+            this.hasInteracted = compound.getBoolean(TAG_HAS_INTERACTED);
+        }
     }
 }

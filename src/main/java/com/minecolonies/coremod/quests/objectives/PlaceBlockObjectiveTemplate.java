@@ -7,14 +7,15 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
@@ -93,14 +94,13 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestPlaceObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new BlockPlacementProgressInstance();
+        return createObjectiveInstance();
     }
 
-    @Nullable
     @Override
-    public IObjectiveInstance createObjectiveInstance()
+    public @NotNull IObjectiveInstance createObjectiveInstance()
     {
-        return new BlockPlacementProgressInstance();
+        return new BlockPlacementProgressInstance(this);
     }
 
     @Override
@@ -152,14 +152,24 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     /**
      * Progress data of this objective.
      */
-    public class BlockPlacementProgressInstance implements IObjectiveInstance
+    public static class BlockPlacementProgressInstance implements IObjectiveInstance
     {
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final PlaceBlockObjectiveTemplate template;
+
         private int currentProgress = 0;
+
+        public BlockPlacementProgressInstance(final PlaceBlockObjectiveTemplate template)
+        {
+            this.template = template;
+        }
 
         @Override
         public boolean isFulfilled()
         {
-            return currentProgress >= qty;
+            return currentProgress >= template.qty;
         }
 
         @Override
@@ -173,7 +183,17 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         @Override
         public int getMissingQuantity()
         {
-            return qty > currentProgress ? qty - currentProgress : 0;
+            return template.qty > currentProgress ? template.qty - currentProgress : 0;
+        }
+
+        @Override
+        public MutableComponent getProgressText(final IQuestInstance quest)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.placeblock.progress",
+              currentProgress,
+              template.blockToPlace,
+              template.blockToPlace.getName().withStyle(
+                ChatFormatting.GRAY));
         }
 
         @Override
