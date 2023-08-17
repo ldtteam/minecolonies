@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +39,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Whether the entity is registered to the colony yet.
      */
     protected boolean registered = false;
+
+    private boolean needsClientUpdate = false;
 
     /**
      * Constructor for the experience handler.
@@ -112,7 +114,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Override
     public void updateColonyClient()
     {
-        if (citizen.getEntityData().isDirty())
+        if (needsClientUpdate)
         {
             if (colonyId == 0)
             {
@@ -130,7 +132,19 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();
-            citizen.getEntityData().clearDirty();
+
+            needsClientUpdate = false;
+        }
+    }
+
+    @Override
+    public void onSyncDataUpdate(final EntityDataAccessor<?> data)
+    {
+        if (data.equals(DATA_COLONY_ID) || data.equals(DATA_CITIZEN_ID) || data.equals(DATA_IS_FEMALE) || data.equals(DATA_IS_CHILD.getId()) || data.equals(DATA_MODEL)
+              || data.equals(DATA_TEXTURE)
+              || data.equals(DATA_TEXTURE_SUFFIX) || data.equals(DATA_STYLE) || data.equals(DATA_RENDER_METADATA))
+        {
+            needsClientUpdate = true;
         }
     }
 

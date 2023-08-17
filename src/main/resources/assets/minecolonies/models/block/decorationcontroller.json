@@ -3,7 +3,7 @@
 	"textures": {
 		"0": "block/stripped_oak_log",
 		"1": "block/stripped_oak_log_top",
-		"2": "minecolonies:gui/builderhut/builder_paper_sketch",
+		"2": "minecolonies:gui/builderhut/builder_paper_sketch_block",
 		"3": "block/coal_block",
 		"4": "block/yellow_concrete",
 		"6": "block/stripped_birch_log",

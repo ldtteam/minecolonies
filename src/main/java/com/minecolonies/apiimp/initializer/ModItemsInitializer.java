@@ -131,8 +131,10 @@ public final class ModItemsInitializer
 
         ModItems.magicpotion = new ItemMagicPotion("magicpotion", ModCreativeTabs.MINECOLONIES, new Item.Properties());
         ModItems.buildGoggles = new ItemBuildGoggles("build_goggles", ModCreativeTabs.MINECOLONIES, new Item.Properties());
+        ModItems.scanAnalyzer = new ItemScanAnalyzer("scan_analyzer", ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplychestdeployer"), ModItems.supplyChest);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scan_analyzer"), ModItems.scanAnalyzer);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterguard"), ModItems.scepterGuard);
         registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);

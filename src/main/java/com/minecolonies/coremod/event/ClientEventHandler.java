@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.google.common.collect.ImmutableMap;
+import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -11,6 +12,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.client.gui.WindowBuildingBrowser;
@@ -18,6 +20,8 @@ import com.minecolonies.coremod.client.render.worldevent.ColonyBorderRenderer;
 import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.util.DomumOrnamentumUtils;
+import com.minecolonies.coremod.util.SchemAnalyzerUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -45,6 +49,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +59,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 
@@ -63,8 +69,6 @@ import static com.minecolonies.api.util.constant.translation.DebugTranslationCon
 @OnlyIn(Dist.CLIENT)
 public class ClientEventHandler
 {
-    private static final String MOB_SOUND_EVENT_PREFIX = "mob.";
-
     /**
      * Lazy cache for crafting module lookups.
      */
@@ -91,77 +95,85 @@ public class ClientEventHandler
             return;
         }
 
-        if (event.getSound().getLocation().getNamespace().equals(Constants.MOD_ID)
-            && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get())
+        final ResourceLocation soundLocation = event.getSound().getLocation();
+        if (soundLocation.getNamespace().equals(Constants.MOD_ID)
+              && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get()
+              && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX))
         {
-            final String path = event.getSound().getLocation().getPath();
-            if (!path.startsWith(MOB_SOUND_EVENT_PREFIX))
-            {
-                return;
-            }
-            final int secondDotPos = path.indexOf('.', MOB_SOUND_EVENT_PREFIX.length());
-            if (secondDotPos == -1)
-            {
-                return;
-            }
-            final String mobName = path.substring(MOB_SOUND_EVENT_PREFIX.length(), secondDotPos);
-            if (ModSoundEvents.CITIZEN_SOUND_EVENTS.containsKey(mobName))
-            {
-                event.setSound(null);
-            }
+            event.setCanceled(true);
         }
     }
 
     /**
      * Fires when an item tooltip is requested, generally from inventory, JEI, or when minecraft is first populating the recipe book.
+     *
      * @param event An ItemTooltipEvent
      */
     @SubscribeEvent
     public static void onItemTooltipEvent(final ItemTooltipEvent event)
     {
         // Vanilla recipe books populate tooltips once before the player exists on remote clients, some other cases.
-        if(event.getEntity() == null)
+        if (event.getEntity() == null)
         {
             return;
         }
         IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level, event.getEntity().blockPosition());
-        if(colony == null)
+        if (colony == null)
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
         }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
-        if(event.getItemStack().getItem() instanceof BlockItem)
+        if (event.getItemStack().getItem() instanceof BlockItem)
         {
             final BlockItem blockItem = (BlockItem) event.getItemStack().getItem();
-            if(blockItem.getBlock() instanceof AbstractBlockHut)
+            if (blockItem.getBlock() instanceof AbstractBlockHut)
             {
                 handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
+            }
+
+            if (event.getEntity().isCreative() && InventoryUtils.hasItemInItemHandler(new InvWrapper(event.getEntity().getInventory()), ModItems.scanTool.get()))
+            {
+                int tier = SchemAnalyzerUtil.getBlockTier(blockItem.getBlock());
+
+                if (DomumOrnamentumUtils.isDoBlock(blockItem.getBlock()) && event.getItemStack().hasTag())
+                {
+                    for (Block block : DomumOrnamentumUtils.getTextureData(event.getItemStack()).getTexturedComponents().values())
+                    {
+                        tier = Math.max(tier, SchemAnalyzerUtil.getBlockTier(block));
+                    }
+                }
+
+                event.getToolTip().add(Component.translatable("com.minecolonies.coremod.tooltip.schematic.tier", tier));
             }
         }
     }
 
     /**
      * Display crafter recipe-related information on the client.
-     * @param colony   The colony to check against, if one is present.
-     * @param toolTip  The tooltip to add the text onto.
-     * @param item     The item that will have the tooltip text added.
+     *
+     * @param colony  The colony to check against, if one is present.
+     * @param toolTip The tooltip to add the text onto.
+     * @param item    The item that will have the tooltip text added.
      */
     private static void handleCrafterRecipeTooltips(@Nullable final IColony colony, final List<Component> toolTip, final Item item)
     {
         final List<CustomRecipe> recipes = CustomRecipeManager.getInstance().getRecipeByOutput(item);
-        if(recipes.isEmpty())
+        if (recipes.isEmpty())
         {
             return;
         }
 
-        for(CustomRecipe rec : recipes)
+        for (CustomRecipe rec : recipes)
         {
-            if(!rec.getShowTooltip() || rec.getCrafter().length() < 2)
+            if (!rec.getShowTooltip() || rec.getCrafter().length() < 2)
             {
                 continue;
             }
             final BuildingEntry craftingBuilding = crafterToBuilding.get().get(rec.getCrafter());
-            if (craftingBuilding == null) continue;
+            if (craftingBuilding == null)
+            {
+                continue;
+            }
             final Component craftingBuildingName = getFullBuildingName(craftingBuilding);
             if (rec.getMinBuildingLevel() > 0)
             {
@@ -172,7 +184,7 @@ public class ClientEventHandler
                 // unless we can change how colony.hasBuilding uses its parameter...
 
                 final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, rec.getMinBuildingLevel());
-                if(colony != null && colony.hasBuilding(schematicName, rec.getMinBuildingLevel(), true))
+                if (colony != null && colony.hasBuilding(schematicName, rec.getMinBuildingLevel(), true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
                 }
@@ -185,13 +197,13 @@ public class ClientEventHandler
             else
             {
                 final MutableComponent reqBuildingTxt = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
-                    .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
+                  .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
                 toolTip.add(reqBuildingTxt);
             }
-            if(rec.getRequiredResearchId() != null)
+            if (rec.getRequiredResearchId() != null)
             {
                 final Set<IGlobalResearch> researches;
-                if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasResearch(rec.getRequiredResearchId()))
+                if (IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasResearch(rec.getRequiredResearchId()))
                 {
                     researches = new HashSet<>();
                     researches.add(IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearch(rec.getRequiredResearchId()));
@@ -200,7 +212,7 @@ public class ClientEventHandler
                 {
                     researches = IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearchForEffect(rec.getRequiredResearchId());
                 }
-                if(researches != null)
+                if (researches != null)
                 {
                     final ChatFormatting researchFormat;
                     if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
@@ -216,7 +228,7 @@ public class ClientEventHandler
                     for (IGlobalResearch research : researches)
                     {
                         toolTip.add(Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
-                                MutableComponent.create(research.getName())).setStyle(Style.EMPTY.withColor(researchFormat)));
+                          MutableComponent.create(research.getName())).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
             }
@@ -225,6 +237,7 @@ public class ClientEventHandler
 
     /**
      * Gets a string like "ModName Building Name" for the specified building entry.
+     *
      * @param building The building entry
      * @return The translated building name
      */
@@ -232,14 +245,15 @@ public class ClientEventHandler
     {
         final String namespace = building.getBuildingBlock().getRegistryName().getNamespace();
         final String modName = ModList.get().getModContainerById(namespace)
-                .map(m -> m.getModInfo().getDisplayName())
-                .orElse(namespace);
+          .map(m -> m.getModInfo().getDisplayName())
+          .orElse(namespace);
         final Component buildingName = building.getBuildingBlock().getName();
         return Component.literal(modName + " ").append(buildingName);
     }
 
     /**
      * Builds a mapping from crafting module ids to the corresponding buildings.
+     *
      * @return The mapping
      */
     private static Map<String, BuildingEntry> buildCrafterToBuildingMap()
@@ -248,14 +262,14 @@ public class ClientEventHandler
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
             building.getModuleProducers().stream()
-                    .map(Supplier::get)
-                    .filter(m -> m instanceof ICraftingBuildingModule)
-                    .map(m -> (ICraftingBuildingModule) m)
-                    .filter(m -> m.getCraftingJob() != null)
-                    .forEach(crafting ->
-                    {
-                        builder.put(crafting.getCustomRecipeKey(), building);
-                    });
+              .map(Supplier::get)
+              .filter(m -> m instanceof ICraftingBuildingModule)
+              .map(m -> (ICraftingBuildingModule) m)
+              .filter(m -> m.getCraftingJob() != null)
+              .forEach(crafting ->
+              {
+                  builder.put(crafting.getCustomRecipeKey(), building);
+              });
         }
         return builder.build();
     }
@@ -263,9 +277,10 @@ public class ClientEventHandler
     /**
      * Display research-related information on MineColonies Building hut blocks.
      * While this test can handle other non-hut blocks, research can only currently effect AbstractHutBlocks.
-     * @param colony   The colony to check against, if one is present.
-     * @param tooltip  The tooltip to add the text onto.
-     * @param block    The hut block
+     *
+     * @param colony  The colony to check against, if one is present.
+     * @param tooltip The tooltip to add the text onto.
+     * @param block   The hut block
      */
     private static void handleHutBlockResearchUnlocks(final IColony colony, final List<Component> tooltip, final Block block)
     {

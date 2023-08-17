@@ -187,4 +187,10 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
      * @return
      */
     Optional<? extends AbstractCivilianEntity> getEntity();
+
+    /**
+     * Get the sound profile of the citizen.
+     * @return the profile id.
+     */
+    int getSoundProfile();
 }
