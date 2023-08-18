@@ -11,7 +11,7 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -304,21 +304,21 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         }
 
         @Override
-        public MutableComponent getProgressText(final IQuestInstance quest)
+        public Component getProgressText(final IQuestInstance quest, final Style style)
         {
             if (template.qty > 0)
             {
                 return Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.progress",
                   currentProgress,
                   template.qty,
-                  Component.translatable(template.buildingEntry.getTranslationKey()));
+                  Component.translatable(template.buildingEntry.getTranslationKey()).setStyle(style));
             }
             else
             {
                 return Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative",
                   currentProgress,
                   template.lvl,
-                  Component.translatable(template.buildingEntry.getTranslationKey()));
+                  Component.translatable(template.buildingEntry.getTranslationKey()).setStyle(style));
             }
         }
 

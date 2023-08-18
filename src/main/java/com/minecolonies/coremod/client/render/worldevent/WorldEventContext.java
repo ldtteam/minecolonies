@@ -10,7 +10,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,27 +19,130 @@ import org.jetbrains.annotations.Nullable;
  */
 public class WorldEventContext
 {
-    public static final WorldEventContext INSTANCE = new WorldEventContext();
+    private static WorldEventContext instance;
+
+    /**
+     * In chunks
+     */
+    private RenderLevelStageEvent stageEvent;
+    private int                   clientRenderDist;
+    private BufferSource          bufferSource;
+    private PoseStack             poseStack;
+    private float                 partialTicks;
+    private ClientLevel           clientLevel;
+    private LocalPlayer           clientPlayer;
+    private ItemStack             mainHandItem;
+    @Nullable
+    private IColonyView           nearestColony;
 
     private WorldEventContext()
     {
         // singleton
     }
 
-    RenderLevelStageEvent stageEvent;
-    BufferSource bufferSource;
-    PoseStack poseStack;
-    float partialTicks;
-    ClientLevel clientLevel;
-    LocalPlayer clientPlayer;
-    ItemStack mainHandItem;
-    @Nullable
-    IColonyView nearestColony;
+    /**
+     * Get the instance of the world event context.
+     *
+     * @return the world event context.
+     */
+    public static synchronized WorldEventContext getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new WorldEventContext();
+        }
+        return instance;
+    }
 
     /**
-     * In chunks
+     * Get the render level stage event.
+     *
+     * @return the render level stage event.
      */
-    int clientRenderDist;
+    public RenderLevelStageEvent getStageEvent()
+    {
+        return stageEvent;
+    }
+
+    /**
+     * Get the client render distance.
+     *
+     * @return the client render distance.
+     */
+    public int getClientRenderDist()
+    {
+        return clientRenderDist;
+    }
+
+    /**
+     * Get the buffer source.
+     *
+     * @return the buffer source.
+     */
+    public BufferSource getBufferSource()
+    {
+        return bufferSource;
+    }
+
+    /**
+     * Get the pose stack.
+     *
+     * @return the pose stack.
+     */
+    public PoseStack getPoseStack()
+    {
+        return poseStack;
+    }
+
+    /**
+     * Get the partial ticks.
+     *
+     * @return the partial ticks.
+     */
+    public float getPartialTicks()
+    {
+        return partialTicks;
+    }
+
+    /**
+     * Get the client level.
+     *
+     * @return the client level.
+     */
+    public ClientLevel getClientLevel()
+    {
+        return clientLevel;
+    }
+
+    /**
+     * Get the player.
+     *
+     * @return the player.
+     */
+    public LocalPlayer getClientPlayer()
+    {
+        return clientPlayer;
+    }
+
+    /**
+     * Get the main hand item, if any.
+     *
+     * @return the main hand item or an empty stack.
+     */
+    public ItemStack getMainHandItem()
+    {
+        return mainHandItem;
+    }
+
+    /**
+     * Get the nearest colony, if any.
+     *
+     * @return the nearest colony or null.
+     */
+    public IColonyView getNearestColony()
+    {
+        return nearestColony;
+    }
 
     public void renderWorldLastEvent(final RenderLevelStageEvent event)
     {
@@ -50,7 +152,7 @@ public class WorldEventContext
         partialTicks = event.getPartialTick();
         clientLevel = Minecraft.getInstance().level;
         clientPlayer = Minecraft.getInstance().player;
-        mainHandItem = clientPlayer.getMainHandItem();
+        mainHandItem = clientPlayer != null ? clientPlayer.getMainHandItem() : ItemStack.EMPTY;
         nearestColony = IColonyManager.getInstance().getClosestColonyView(clientLevel, clientPlayer.blockPosition());
         clientRenderDist = Minecraft.getInstance().options.renderDistance().get();
 
@@ -81,7 +183,7 @@ public class WorldEventContext
         poseStack.popPose();
     }
 
-    boolean hasNearestColony()
+    public boolean hasNearestColony()
     {
         return nearestColony != null;
     }

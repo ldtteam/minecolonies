@@ -12,13 +12,12 @@
     <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
 
     <label size="100% 11" pos="0 30" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.item.questlog.gui.inprogress)"/>
+           label="$(com.minecolonies.coremod.item.questlog.gui.available)"/>
 
     <list id="quests" size="160 187" pos="20 46">
-        <view size="100% 45">
+        <view size="100% 30">
             <label id="questName" size="130 11" pos="0 0" color="black"/>
             <label id="questGiver" size="130 11" pos="0 15" color="black"/>
-            <label id="questObjective" size="130 11" pos="0 30" color="black"/>
             <buttonimage id="questLocator" size="15 22" pos="135 0" source="minecolonies:textures/gui/quest-locator.png"/>
         </view>
     </list>

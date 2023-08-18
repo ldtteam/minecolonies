@@ -855,9 +855,17 @@
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
 
-  "com.minecolonies.coremod.item.questlog.gui.inprogress": "In progress quests",
-  "com.minecolonies.coremod.item.questlog.gui.available": "Available quests",
-  "com.minecolonies.coremod.item.questlog.gui.finished": "Finished quests",
+  "item.minecolonies.questlog": "Quest Log",
+
+  "com.minecolonies.coremod.item.questlog.gui.title": "Quest Log",
+  "com.minecolonies.coremod.item.questlog.gui.inprogress": "In Progress Quests",
+  "com.minecolonies.coremod.item.questlog.gui.available": "Available Quests",
+  "com.minecolonies.coremod.item.questlog.gui.finished": "Finished Quests",
+  "com.minecolonies.coremod.item.questlog.gui.name_prefix": "Name: ",
+  "com.minecolonies.coremod.item.questlog.gui.giver_prefix": "Citizen: ",
+  "com.minecolonies.coremod.item.questlog.gui.completed": "Completed",
+  "com.minecolonies.coremod.item.questlog.gui.completed_multiple": "Times completed: %d/%d",
+  "com.minecolonies.coremod.item.questlog.gui.track_citizen": "Track citizen",
 
   "com.minecolonies.coremod.item.bannerrallyguards.selected": "Added %s at %s to rallying list.",
   "com.minecolonies.coremod.item.bannerrallyguards.deselected": "Removed %s at %s from rallying list.",

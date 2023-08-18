@@ -1,129 +1,128 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
+import com.minecolonies.coremod.client.render.worldevent.highlightmanager.IHighlightRenderData;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HighlightManager
 {
     /**
      * A position to highlight with a unique id.
      */
-    private static final Map<String, List<TimedBoxRenderData>> HIGHLIGHT_MAP = new HashMap<>();
+    private static final List<HighlightRenderDataContainer> HIGHLIGHT_ITEMS = new ArrayList<>();
 
     /**
      * Highlights positions
      *
-     * @param ctx rendering context
+     * @param context rendering context
      */
-    static void render(final WorldEventContext ctx)
+    static void render(final WorldEventContext context)
     {
-        if (HIGHLIGHT_MAP.isEmpty())
+        if (HIGHLIGHT_ITEMS.isEmpty())
         {
             return;
         }
 
-        final long worldTime = ctx.clientLevel.getGameTime();
+        final long worldTime = context.getClientLevel().getGameTime();
 
-        for (final Iterator<List<TimedBoxRenderData>> categoryIterator = HIGHLIGHT_MAP.values().iterator(); categoryIterator.hasNext();)
+        List<HighlightRenderDataContainer> itemsToRemove = new ArrayList<>();
+        for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS)
         {
-            final List<TimedBoxRenderData> boxes = categoryIterator.next();
-            for (final Iterator<TimedBoxRenderData> boxListIterator = boxes.iterator(); boxListIterator.hasNext();)
+            renderDataContainer.attemptStart(context);
+            IHighlightRenderData renderData = renderDataContainer.data;
+
+            if (renderDataContainer.isExpired(worldTime))
             {
-                final TimedBoxRenderData boxRenderData = boxListIterator.next();
-
-                if (boxRenderData.removalTimePoint <= worldTime)
-                {
-                    boxListIterator.remove();
-                    continue;
-                }
-
-                final MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-                ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, buffer, new AABB(boxRenderData.pos), 0.025f, boxRenderData.argbColor, true);
-                if (!boxRenderData.text.isEmpty())
-                {
-                   WorldRenderMacros.renderDebugText(boxRenderData.pos, boxRenderData.text, ctx.poseStack, true, 3, buffer);
-                }
-                ColonyWorldRenderMacros.endRenderLineBox(buffer);
-                buffer.endBatch();
+                renderData.stopRender(context);
+                itemsToRemove.add(renderDataContainer);
             }
-
-            if (boxes.isEmpty())
+            else
             {
-                categoryIterator.remove();
+                renderData.render(context);
             }
         }
+        HIGHLIGHT_ITEMS.removeAll(itemsToRemove);
     }
 
     /**
-     * Box data for rendering
-     */
-    public static class TimedBoxRenderData
-    {
-        private List<String> text = new ArrayList<>();
-        private BlockPos pos = BlockPos.ZERO;
-        private long removalTimePoint = 0;
-        private int argbColor = 0xffffffff;
-
-        /**
-         * List of strings to display
-         */
-        public TimedBoxRenderData addText(final String text)
-        {
-            this.text.add(text);
-            return this;
-        }
-
-        /**
-         * Timepoint of removal (world gametime)
-         */
-        public TimedBoxRenderData setRemovalTimePoint(final long removalTimePoint)
-        {
-            this.removalTimePoint = removalTimePoint;
-            return this;
-        }
-
-        /**
-         * Position to display at
-         */
-        public TimedBoxRenderData setPos(final BlockPos pos)
-        {
-            this.pos = pos;
-            return this;
-        }
-
-        /**
-         * Color code for the box, argb format
-         */
-        public TimedBoxRenderData setColor(final int argbColor)
-        {
-            this.argbColor = argbColor;
-            return this;
-        }
-    }
-
-    /**
-     * Adds a box to be rendered for the given category
+     * Clears all highlight items for the given key.
      *
-     * @param category
-     * @param data
+     * @param key the key to remove the render data for.
      */
-    public static void addRenderBox(final String category, final TimedBoxRenderData data)
+    public static void clearHighlightsForKey(final String key)
     {
-        HIGHLIGHT_MAP.computeIfAbsent(category, k -> new ArrayList<>()).add(data);
+        HIGHLIGHT_ITEMS.removeIf(container -> container.key.equals(key));
     }
 
     /**
-     * Clears all boxes of a category
+     * Adds a highlight item for the given key.
      *
-     * @param category
+     * @param key  the key of the item to render.
+     * @param data the highlight render data.
      */
-    public static void clearCategory(final String category)
+    public static void addHighlight(final String key, final IHighlightRenderData data)
     {
-        HIGHLIGHT_MAP.remove(category);
+        HIGHLIGHT_ITEMS.add(new HighlightRenderDataContainer(key, data));
+    }
+
+    /**
+     * Internal container for managing highlight renderer data.
+     */
+    private static class HighlightRenderDataContainer
+    {
+        /**
+         * The key for this renderer.
+         */
+        private final String key;
+
+        /**
+         * The data for this renderer.
+         */
+        private final IHighlightRenderData data;
+
+        /**
+         * The time at which the highlighter was started.
+         */
+        private long startTime = 0;
+
+        /**
+         * Default constructor.
+         */
+        private HighlightRenderDataContainer(String key, IHighlightRenderData data)
+        {
+            this.key = key;
+            this.data = data;
+        }
+
+        /**
+         * Check if the highlight has expired.
+         *
+         * @return true if expired.
+         */
+        private boolean isExpired(final long worldTime)
+        {
+            Duration duration = data.getDuration();
+            if (duration != null)
+            {
+                return (startTime + (duration.getSeconds() * 20)) < worldTime;
+            }
+            return false;
+        }
+
+        /**
+         * Attempt to start the rendering of the highlight data.
+         *
+         * @param context the world event context.
+         */
+        private void attemptStart(final WorldEventContext context)
+        {
+            if (startTime == 0)
+            {
+                startTime = context.getClientLevel().getGameTime();
+                data.startRender(context);
+            }
+        }
     }
 }

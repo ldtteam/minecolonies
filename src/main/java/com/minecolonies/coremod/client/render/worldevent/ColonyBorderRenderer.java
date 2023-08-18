@@ -38,35 +38,35 @@ public class ColonyBorderRenderer
 
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.buildTool.get() || !ctx.hasNearestColony())
+        if (ctx.getMainHandItem().getItem() != ModItems.buildTool.get() || !ctx.hasNearestColony())
         {
             return;
         }
 
-        final ChunkPos playerChunkPos = new ChunkPos(ctx.clientPlayer.blockPosition());
+        final ChunkPos playerChunkPos = new ChunkPos(ctx.getClientPlayer().blockPosition());
 
-        if (lastColony != ctx.nearestColony || !lastPlayerChunkPos.equals(playerChunkPos))
+        if (lastColony != ctx.getNearestColony() || !lastPlayerChunkPos.equals(playerChunkPos))
         {
-            lastColony = ctx.nearestColony;
+            lastColony = ctx.getNearestColony();
             lastPlayerChunkPos = playerChunkPos;
 
             final Map<ChunkPos, Integer> coloniesMap = new HashMap<>();
             final Map<ChunkPos, Integer> chunkticketsMap = new HashMap<>();
             final BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-            final int nearestColonyId = ctx.nearestColony.getID();
-            final int playerRenderDist = Math.max(ctx.clientRenderDist - RENDER_DIST_THRESHOLD, 2);
-            final int range = Math.max(ctx.clientRenderDist, MineColonies.getConfig().getServer().maxColonySize.get());
+            final int nearestColonyId = ctx.getNearestColony().getID();
+            final int playerRenderDist = Math.max(ctx.getClientRenderDist() - RENDER_DIST_THRESHOLD, 2);
+            final int range = Math.max(ctx.getClientRenderDist(), MineColonies.getConfig().getServer().maxColonySize.get());
 
             for (int chunkX = -range; chunkX <= range; chunkX++)
             {
                 for (int chunkZ = -range; chunkZ <= range; chunkZ++)
                 {
-                    final LevelChunk chunk = ctx.clientLevel.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
+                    final LevelChunk chunk = ctx.getClientLevel().getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
                     if (chunk.isEmpty()) { continue; }
                     final ChunkPos chunkPos = chunk.getPos();
 
                     chunk.getCapability(CLOSE_COLONY_CAP, null).ifPresent(cap -> coloniesMap.put(chunkPos, cap.getOwningColony()));
-                    if (ctx.nearestColony.getTicketedChunks().contains(chunkPos.toLong()))
+                    if (ctx.getNearestColony().getTicketedChunks().contains(chunkPos.toLong()))
                     {
                         chunkticketsMap.put(chunkPos, nearestColonyId);
                     }
@@ -96,7 +96,7 @@ public class ColonyBorderRenderer
             return;
         }
 
-        pushShaderMVstack(ctx.poseStack);
+        pushShaderMVstack(ctx.getPoseStack());
         WorldRenderMacros.LINES.setupRenderState();
         p.bind();
         p.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());

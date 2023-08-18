@@ -71,8 +71,8 @@ public class PathfindingDebugRenderer
 
     private static void debugDrawNode(final MNode n, final int argbColor, final WorldEventContext ctx)
     {
-        ctx.poseStack.pushPose();
-        ctx.poseStack.translate(n.pos.getX() + 0.375d, n.pos.getY() + 0.375d, n.pos.getZ() + 0.375d);
+        ctx.getPoseStack().pushPose();
+        ctx.getPoseStack().translate(n.pos.getX() + 0.375d, n.pos.getY() + 0.375d, n.pos.getZ() + 0.375d);
 
         final Entity entity = Minecraft.getInstance().getCameraEntity();
         if (n.pos.closerThan(entity.blockPosition(), 5d))
@@ -80,25 +80,25 @@ public class PathfindingDebugRenderer
             renderDebugText(n, ctx);
         }
 
-        ctx.poseStack.scale(0.25F, 0.25F, 0.25F);
+        ctx.getPoseStack().scale(0.25F, 0.25F, 0.25F);
 
-        WorldRenderMacros.renderBox(ctx.bufferSource, ctx.poseStack, BlockPos.ZERO, BlockPos.ZERO, argbColor);
+        WorldRenderMacros.renderBox(ctx.getBufferSource(), ctx.getPoseStack(), BlockPos.ZERO, BlockPos.ZERO, argbColor);
 
         if (n.parent != null)
         {
-            final Matrix4f lineMatrix = ctx.poseStack.last().pose();
+            final Matrix4f lineMatrix = ctx.getPoseStack().last().pose();
 
             final float pdx = n.parent.pos.getX() - n.pos.getX() + 0.125f;
             final float pdy = n.parent.pos.getY() - n.pos.getY() + 0.125f;
             final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
 
-            final VertexConsumer buffer = ctx.bufferSource.getBuffer(WorldRenderMacros.LINES);
+            final VertexConsumer buffer = ctx.getBufferSource().getBuffer(WorldRenderMacros.LINES);
 
             buffer.vertex(lineMatrix, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
             buffer.vertex(lineMatrix, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
         }
 
-        ctx.poseStack.popPose();
+        ctx.getPoseStack().popPose();
     }
 
     private static void renderDebugText(@NotNull final MNode n, final WorldEventContext ctx)
@@ -109,21 +109,21 @@ public class PathfindingDebugRenderer
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
         final int i = Math.max(fontrenderer.width(s1), fontrenderer.width(s2)) / 2;
 
-        ctx.poseStack.pushPose();
-        ctx.poseStack.translate(0.0F, 0.75F, 0.0F);
+        ctx.getPoseStack().pushPose();
+        ctx.getPoseStack().translate(0.0F, 0.75F, 0.0F);
 
-        ctx.poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        ctx.poseStack.scale(-0.014F, -0.014F, 0.014F);
-        ctx.poseStack.translate(0.0F, 18F, 0.0F);
-        final Matrix4f mat = ctx.poseStack.last().pose();
+        ctx.getPoseStack().mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        ctx.getPoseStack().scale(-0.014F, -0.014F, 0.014F);
+        ctx.getPoseStack().translate(0.0F, 18F, 0.0F);
+        final Matrix4f mat = ctx.getPoseStack().last().pose();
 
-        WorldRenderMacros.renderFillRectangle(ctx.bufferSource, ctx.poseStack, -i - 1, -5, 0, 2 * i + 2, 17, 0x7f000000);
+        WorldRenderMacros.renderFillRectangle(ctx.getBufferSource(), ctx.getPoseStack(), -i - 1, -5, 0, 2 * i + 2, 17, 0x7f000000);
 
-        ctx.poseStack.translate(0.0F, -5F, -0.1F);
-        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 1, 0xFFFFFFFF, false, mat, ctx.bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
-        ctx.poseStack.translate(0.0F, 8F, -0.1F);
-        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 1, 0xFFFFFFFF, false, mat, ctx.bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
+        ctx.getPoseStack().translate(0.0F, -5F, -0.1F);
+        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 1, 0xFFFFFFFF, false, mat, ctx.getBufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+        ctx.getPoseStack().translate(0.0F, 8F, -0.1F);
+        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 1, 0xFFFFFFFF, false, mat, ctx.getBufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
 
-        ctx.poseStack.popPose();
+        ctx.getPoseStack().popPose();
     }
 }

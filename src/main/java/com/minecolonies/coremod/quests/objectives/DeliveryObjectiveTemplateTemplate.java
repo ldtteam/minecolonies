@@ -6,11 +6,10 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
@@ -188,12 +187,12 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
         }
 
         @Override
-        public MutableComponent getProgressText(final IQuestInstance quest)
+        public Component getProgressText(final IQuestInstance quest, final Style style)
         {
             return Component.translatable("com.minecolonies.coremod.questobjectives.delivery.progress",
               isFulfilled() ? template.quantity : 0,
               template.quantity,
-              template.item.getDisplayName().plainCopy().withStyle(ChatFormatting.GRAY));
+              template.item.getDisplayName().plainCopy().setStyle(style));
         }
 
         @Override

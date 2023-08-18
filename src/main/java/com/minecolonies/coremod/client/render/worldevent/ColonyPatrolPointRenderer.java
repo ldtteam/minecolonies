@@ -36,13 +36,13 @@ public class ColonyPatrolPointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard || !ctx.mainHandItem.hasTag())
+        if (ctx.getMainHandItem().getItem() != ModItems.scepterGuard || !ctx.getMainHandItem().hasTag())
         {
             return;
         }
 
-        final CompoundTag itemStackNbt = ctx.mainHandItem.getTag();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(itemStackNbt.getInt(TAG_ID), ctx.clientLevel.dimension());
+        final CompoundTag itemStackNbt = ctx.getMainHandItem().getTag();
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(itemStackNbt.getInt(TAG_ID), ctx.getClientLevel().dimension());
 
         if (colony == null)
         {
@@ -79,7 +79,7 @@ public class ColonyPatrolPointRenderer
 
         if (guardTowerView instanceof AbstractBuildingGuards.View guardTower)
         {
-            BlueprintHandler.getInstance().drawAtListOfPositions(partolPointTemplate, guardTower.getPatrolTargets(), ctx.stageEvent);
+            BlueprintHandler.getInstance().drawAtListOfPositions(partolPointTemplate, guardTower.getPatrolTargets(), ctx.getStageEvent());
         }
     }
 }
