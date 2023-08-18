@@ -521,6 +521,17 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(ModItems.questLog)
+          .pattern("XTX")
+          .pattern("LPL")
+          .pattern("XPX")
+          .define('P', Items.PAPER)
+          .define('L', Items.LEATHER)
+          .define('X', Items.STICK)
+          .define('T', buildTool.get())
+          .unlockedBy("has_build_tool", has(buildTool.get()))
+          .save(consumer);
+
         ShapedRecipeBuilder.shaped(ModItems.resourceScroll)
                 .pattern("XTX")
                 .pattern("XPX")
