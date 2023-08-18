@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "L": {
       "item": "minecraft:leather"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "minecolonies:questlog"
-  }
+  },
+  "show_notification": true
 }

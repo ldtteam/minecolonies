@@ -1,17 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_items": {
+    "has_build_tool": {
       "conditions": {
         "items": [
           {
             "items": [
               "structurize:sceptergold"
-            ]
-          },
-          {
-            "items": [
-              "minecolonies:blockhutplantation"
             ]
           }
         ]
@@ -20,20 +15,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecolonies:blockhutplantationfield"
+        "recipe": "minecolonies:questlog"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_items",
+      "has_build_tool",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "minecolonies:blockhutplantationfield"
+      "minecolonies:questlog"
     ]
   },
   "sends_telemetry_event": false
