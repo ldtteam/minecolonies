@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -184,9 +184,12 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         }
 
         @Override
-        public MutableComponent getProgressText(final IQuestInstance quest)
+        public Component getProgressText(final IQuestInstance quest, final Style style)
         {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress", currentProgress, template.entitiesToKill, template.entityToKill.getDescription());
+            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress",
+              currentProgress,
+              template.entitiesToKill,
+              template.entityToKill.getDescription().plainCopy().setStyle(style));
         }
 
         @Override

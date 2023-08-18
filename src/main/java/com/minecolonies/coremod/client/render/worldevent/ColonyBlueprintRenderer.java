@@ -99,7 +99,7 @@ public class ColonyBlueprintRenderer
             return;
         }
 
-        final BlockPos activePosition = ctx.clientPlayer.blockPosition();
+        final BlockPos activePosition = ctx.getClientPlayer().blockPosition();
         if (lastCacheRebuild == null || !lastCacheRebuild.closerThan(activePosition, CACHE_RESET_RANGE))
         {
             rebuildCache(ctx, activeRules);
@@ -119,7 +119,7 @@ public class ColonyBlueprintRenderer
             final BlockPos position = entry.getKey();
             if (buildingData.blueprint != null && buildingData.blueprint.getBlueprint() != null)
             {
-                StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
+                StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.getPartialTicks(), position, ctx.getPoseStack());
             }
         }
     }
@@ -138,22 +138,22 @@ public class ColonyBlueprintRenderer
 
             if (buildingData.box().getPos1() != INVALID_POS)
             {
-                ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
+                ColonyWorldRenderMacros.renderLineBox(ctx.getPoseStack(), ctx.getBufferSource(),
                         new AABB(buildingData.box().getPos1(), buildingData.box().getPos2().offset(1, 1, 1)),
                         0.08f, 0xFF0000FF, false);
             }
 
             buildingData.box().getAnchor().ifPresent(pos ->
             {
-                if (ctx.clientPlayer.isShiftKeyDown())
+                if (ctx.getClientPlayer().isShiftKeyDown())
                 {
-                    ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
+                    ColonyWorldRenderMacros.renderLineBox(ctx.getPoseStack(), ctx.getBufferSource(),
                             new AABB(pos), 0.02f, 0xFFFF0000, true);
                 }
             });
         }
 
-        ColonyWorldRenderMacros.endRenderLineBox(ctx.bufferSource);
+        ColonyWorldRenderMacros.endRenderLineBox(ctx.getBufferSource());
     }
 
     private static void rebuildCache(final WorldEventContext ctx, final List<IRenderBlueprintRule> rules)
@@ -289,7 +289,7 @@ public class ColonyBlueprintRenderer
         {
             return RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() != null &&
                     MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get() &&
-                    ctx.mainHandItem.getItem() == buildTool.get();
+                    ctx.getMainHandItem().getItem() == buildTool.get();
         }
 
         @Override
@@ -302,7 +302,7 @@ public class ColonyBlueprintRenderer
             final AABB blueprintAABB = new AABB(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
                     .inflate(2 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());
 
-            for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
+            for (final IBuildingView buildingView : ctx.getNearestColony().getBuildings())
             {
                 if (buildingView.getBuildingType() == ModBuildings.postBox.get() || buildingView.getBuildingType() == ModBuildings.stash.get())
                 {
@@ -310,7 +310,7 @@ public class ColonyBlueprintRenderer
                 }
                 final BlockPos currentPosition = buildingView.getPosition();
 
-                final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) ctx.clientLevel.getBlockEntity(buildingView.getPosition());
+                final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) ctx.getClientLevel().getBlockEntity(buildingView.getPosition());
                 if (tileEntityColonyBuilding != null)
                 {
                     final Tuple<BlockPos, BlockPos> corners = tileEntityColonyBuilding.getInWorldCorners();
@@ -349,7 +349,7 @@ public class ColonyBlueprintRenderer
         @Override
         public boolean isEnabled(final WorldEventContext ctx)
         {
-            return ctx.clientPlayer.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.buildGoggles);
+            return ctx.getClientPlayer().getItemBySlot(EquipmentSlot.HEAD).is(ModItems.buildGoggles);
         }
 
         @Override
@@ -360,9 +360,9 @@ public class ColonyBlueprintRenderer
 
             // show work orders
             final Map<BlockPos, Supplier<PendingRenderData>> desired = new HashMap<>();
-            for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
+            for (final IWorkOrderView workOrder : ctx.getNearestColony().getWorkOrders())
             {
-                if (workOrder.getLocation().distSqr(ctx.clientPlayer.blockPosition()) < range)
+                if (workOrder.getLocation().distSqr(ctx.getClientPlayer().blockPosition()) < range)
                 {
                     desired.put(workOrder.getLocation(), () ->
                     {
@@ -377,12 +377,12 @@ public class ColonyBlueprintRenderer
             }
 
             // and also just the anchor pos for unbuilt non-work-orders, to help find lost huts
-            for (final IBuildingView building : ctx.nearestColony.getBuildings())
+            for (final IBuildingView building : ctx.getNearestColony().getBuildings())
             {
                 if (!desired.containsKey(building.getPosition()) &&
                         building.getBuildingLevel() == 0 &&
                         building.getBuildingMaxLevel() > 0 &&
-                        building.getPosition().distSqr(ctx.clientPlayer.blockPosition()) < range)
+                        building.getPosition().distSqr(ctx.getClientPlayer().blockPosition()) < range)
                 {
                     desired.put(building.getPosition(), () ->
                             new PendingRenderData(null, building.getPosition(), new PlacementSettings(),

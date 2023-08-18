@@ -14,17 +14,17 @@ public class GuardTowerRallyBannerRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.bannerRallyGuards)
+        if (ctx.getMainHandItem().getItem() != ModItems.bannerRallyGuards)
         {
             return;
         }
 
-        for (final ILocation guardTower : ItemBannerRallyGuards.getGuardTowerLocations(ctx.mainHandItem))
+        for (final ILocation guardTower : ItemBannerRallyGuards.getGuardTowerLocations(ctx.getMainHandItem()))
         {
-            if (ctx.clientLevel.dimension() != guardTower.getDimension())
+            if (ctx.getClientLevel().dimension() != guardTower.getDimension())
             {
-                WorldRenderMacros.renderBlackLineBox(ctx.bufferSource,
-                    ctx.poseStack,
+                WorldRenderMacros.renderBlackLineBox(ctx.getBufferSource(),
+                    ctx.getPoseStack(),
                     guardTower.getInDimensionLocation(),
                     guardTower.getInDimensionLocation(),
                     0.02f);

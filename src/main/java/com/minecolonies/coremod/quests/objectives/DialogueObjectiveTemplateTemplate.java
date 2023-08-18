@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.quests.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -159,10 +159,17 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
         }
 
         @Override
-        public MutableComponent getProgressText(final IQuestInstance quest)
+        public Component getProgressText(final IQuestInstance quest, final Style style)
         {
             final ICitizen citizen = quest.getColony().getCitizen(template.target == 0 ? quest.getQuestGiverId() : template.target - 1);
-            return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName());
+            if (citizen != null)
+            {
+                return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
+            }
+            else
+            {
+                return Component.empty();
+            }
         }
 
         @Override

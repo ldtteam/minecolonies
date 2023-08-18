@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -77,7 +76,7 @@ public class ClientEventHandler
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderWorldLastEvent(@NotNull final RenderLevelStageEvent event)
     {
-        WorldEventContext.INSTANCE.renderWorldLastEvent(event);
+        WorldEventContext.getInstance().renderWorldLastEvent(event);
     }
 
     @SubscribeEvent

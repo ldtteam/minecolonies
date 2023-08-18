@@ -1976,4 +1976,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
         }
     }
+
+    @Override
+    public boolean isCurrentlyGlowing()
+    {
+        return level.isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+    }
 }

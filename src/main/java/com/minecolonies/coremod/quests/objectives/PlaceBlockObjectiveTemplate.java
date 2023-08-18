@@ -7,10 +7,9 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -187,13 +186,12 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         }
 
         @Override
-        public MutableComponent getProgressText(final IQuestInstance quest)
+        public Component getProgressText(final IQuestInstance quest, final Style style)
         {
             return Component.translatable("com.minecolonies.coremod.questobjectives.placeblock.progress",
               currentProgress,
               template.blockToPlace,
-              template.blockToPlace.getName().withStyle(
-                ChatFormatting.GRAY));
+              template.blockToPlace.getName().setStyle(style));
         }
 
         @Override

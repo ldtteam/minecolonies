@@ -2,7 +2,7 @@ package com.minecolonies.api.quests;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
@@ -28,7 +28,8 @@ public interface IObjectiveInstance extends INBTSerializable<CompoundTag>
      * Get a {@link Component} instance with the text containing the progress of this objective.
      *
      * @param quest the quest to get the info from.
+     * @param style the style to use on subcomponents.
      * @return the chat component.
      */
-    MutableComponent getProgressText(IQuestInstance quest);
+    Component getProgressText(IQuestInstance quest, Style style);
 }
