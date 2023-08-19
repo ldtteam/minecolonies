@@ -594,6 +594,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         final Map<ResourceLocation, Block> resMap = new HashMap<>();
         final int displayPerSlots = this.getInventory().getSlots() / 4;
         int index = 0;
+        boolean update = false;
 
         final List<Map.Entry<ItemStorage, Integer>> list = content.entrySet().stream().sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue())).toList();
         final Queue<Block> extraBlockQueue = new ArrayDeque<>();
@@ -623,7 +624,13 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                     block = extraBlockQueue.poll();
                 }
 
-                resMap.put(textureMapping.get(index), block);
+                final ResourceLocation resLoc = textureMapping.get(index);
+
+                resMap.put(resLoc, block);
+                if (this.textureDataCache == null || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(block))
+                {
+                    update = true;
+                }
                 index++;
             }
         }
@@ -635,14 +642,22 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             {
                 block = extraBlockQueue.poll();
             }
-            resMap.put(textureMapping.get(i), block);
+            final ResourceLocation resLoc = textureMapping.get(i);
+            resMap.put(resLoc, block);
+            if (this.textureDataCache == null || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(block))
+            {
+                update = true;
+            }
         }
 
-        this.textureDataCache =  new MaterialTextureData(resMap);
-        this.requestModelDataUpdate();
-        if (level != null)
+        if (update)
         {
-            level.sendBlockUpdated(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState(), Block.UPDATE_ALL);
+            this.textureDataCache = new MaterialTextureData(resMap);
+            this.requestModelDataUpdate();
+            if (level != null)
+            {
+                level.sendBlockUpdated(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState(), Block.UPDATE_ALL);
+            }
         }
     }
 
