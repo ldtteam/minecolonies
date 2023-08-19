@@ -6,6 +6,10 @@ repositories {
         url 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
+        name "JourneyMap"
+        url "https://jm.gserv.me/repository/maven-public/"
+    }
+    maven {
         name "Rei"
         url "https://maven.shedaniel.me/"
     }
