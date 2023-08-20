@@ -55,10 +55,10 @@ public class TimedBoxRenderData implements IHighlightRenderData
     public void render(final WorldEventContext context)
     {
         final MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        ColonyWorldRenderMacros.renderLineBox(context.getPoseStack(), buffer, new AABB(pos), 0.025f, argbColor, true);
+        ColonyWorldRenderMacros.renderLineBox(context.poseStack, buffer, new AABB(pos), 0.025f, argbColor, true);
         if (!text.isEmpty())
         {
-            WorldRenderMacros.renderDebugText(pos, text, context.getPoseStack(), true, 3, buffer);
+            WorldRenderMacros.renderDebugText(pos, text, context.poseStack, true, 3, buffer);
         }
         ColonyWorldRenderMacros.endRenderLineBox(buffer);
         buffer.endBatch();

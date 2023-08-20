@@ -31,18 +31,18 @@ public class ColonyPatrolPointRenderer
 
     /**
      * Renders the guard scepter objects into the world.
-     * 
+     *
      * @param ctx rendering context
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.getMainHandItem().getItem() != ModItems.scepterGuard || !ctx.getMainHandItem().hasTag())
+        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard || !ctx.mainHandItem.hasTag())
         {
             return;
         }
 
-        final CompoundTag itemStackNbt = ctx.getMainHandItem().getTag();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(itemStackNbt.getInt(TAG_ID), ctx.getClientLevel().dimension());
+        final CompoundTag itemStackNbt = ctx.mainHandItem.getTag();
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(itemStackNbt.getInt(TAG_ID), ctx.clientLevel.dimension());
 
         if (colony == null)
         {
@@ -80,9 +80,9 @@ public class ColonyPatrolPointRenderer
         if (guardTowerView instanceof AbstractBuildingGuards.View guardTower)
         {
             StructureClientHandler.renderStructureAtPosList(partolPointTemplate,
-                ctx.getPartialTicks(),
-                guardTower.getPatrolTargets(),
-                ctx.getPoseStack());
+              ctx.partialTicks,
+              guardTower.getPatrolTargets(),
+              ctx.poseStack);
         }
     }
 }

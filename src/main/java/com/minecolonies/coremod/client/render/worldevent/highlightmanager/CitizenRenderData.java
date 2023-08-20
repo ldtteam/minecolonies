@@ -67,7 +67,7 @@ public class CitizenRenderData implements IHighlightRenderData
     @Nullable
     private EntityCitizen getCitizenEntity(final WorldEventContext context)
     {
-        final IColonyView colony = context.getNearestColony();
+        final IColonyView colony = context.nearestColony;
         if (colony == null)
         {
             return null;

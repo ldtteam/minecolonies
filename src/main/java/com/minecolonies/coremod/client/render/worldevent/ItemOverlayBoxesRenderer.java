@@ -16,16 +16,16 @@ public class ItemOverlayBoxesRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.getMainHandItem().getItem() instanceof final IBlockOverlayItem overlayItem)
+        if (ctx.mainHandItem.getItem() instanceof final IBlockOverlayItem overlayItem)
         {
-            final List<IBlockOverlayItem.OverlayBox> boxes = overlayItem.getOverlayBoxes(ctx.getClientLevel(), ctx.getClientPlayer(), ctx.getMainHandItem());
+            final List<IBlockOverlayItem.OverlayBox> boxes = overlayItem.getOverlayBoxes(ctx.clientLevel, ctx.clientPlayer, ctx.mainHandItem);
 
             for (final IBlockOverlayItem.OverlayBox box : boxes)
             {
-                ColonyWorldRenderMacros.renderLineBox(ctx.getPoseStack(), ctx.getBufferSource(), box.bounds(), box.width(), box.color(), box.showThroughBlocks());
+                ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource, box.bounds(), box.width(), box.color(), box.showThroughBlocks());
             }
 
-            ColonyWorldRenderMacros.endRenderLineBox(ctx.getBufferSource());
+            ColonyWorldRenderMacros.endRenderLineBox(ctx.bufferSource);
         }
     }
 }
