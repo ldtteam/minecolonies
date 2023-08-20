@@ -857,6 +857,8 @@
 
   "item.minecolonies.questlog": "Quest Log",
 
+  "com.minecolonies.coremod.item.questlog.needcolony": "No colony set (sneak + use the clipboard on the Town Hall)",
+  "com.minecolonies.coremod.item.questlog.registered": "Tracking quests on the quest log from %s.",
   "com.minecolonies.coremod.item.questlog.gui.title": "Quest Log",
   "com.minecolonies.coremod.item.questlog.gui.inprogress": "In Progress Quests",
   "com.minecolonies.coremod.item.questlog.gui.available": "Available Quests",

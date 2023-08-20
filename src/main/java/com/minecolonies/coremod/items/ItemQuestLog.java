@@ -2,11 +2,10 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.client.gui.questlog.WindowQuestLogInProgress;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.client.gui.questlog.WindowQuestLog;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_QUEST_LOG_COLONY_SET;
 
 /**
  * Class describing the quest log item.
@@ -52,12 +51,12 @@ public class ItemQuestLog extends AbstractItemMinecolonies
         final CompoundTag compound = checkForCompound(questLog);
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity && buildingEntity.getBuilding() instanceof BuildingTownHall)
+        if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
             compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
             if (!ctx.getLevel().isClientSide)
             {
-                MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_NEED_COLONY, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)
@@ -123,7 +122,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
             if (colonyView != null)
             {
-                new WindowQuestLogInProgress(colonyView).open();
+                new WindowQuestLog(colonyView).open();
             }
         }
         else
