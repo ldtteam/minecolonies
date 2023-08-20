@@ -31,7 +31,7 @@ public class ColonyPatrolPointRenderer
 
     /**
      * Renders the guard scepter objects into the world.
-     *
+     * 
      * @param ctx rendering context
      */
     static void render(final WorldEventContext ctx)
@@ -80,9 +80,9 @@ public class ColonyPatrolPointRenderer
         if (guardTowerView instanceof AbstractBuildingGuards.View guardTower)
         {
             StructureClientHandler.renderStructureAtPosList(partolPointTemplate,
-              ctx.partialTicks,
-              guardTower.getPatrolTargets(),
-              ctx.poseStack);
+                ctx.partialTicks,
+                guardTower.getPatrolTargets(),
+                ctx.poseStack);
         }
     }
 }

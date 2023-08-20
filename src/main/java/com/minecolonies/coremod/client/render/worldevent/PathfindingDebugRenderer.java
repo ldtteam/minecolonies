@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;

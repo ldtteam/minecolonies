@@ -48,7 +48,7 @@ public class WorldEventContext
         partialTicks = event.getPartialTick();
         clientLevel = Minecraft.getInstance().level;
         clientPlayer = Minecraft.getInstance().player;
-        mainHandItem = clientPlayer != null ? clientPlayer.getMainHandItem() : ItemStack.EMPTY;
+        mainHandItem = clientPlayer.getMainHandItem();
         nearestColony = IColonyManager.getInstance().getClosestColonyView(clientLevel, clientPlayer.blockPosition());
         clientRenderDist = Minecraft.getInstance().options.renderDistance().get();
 

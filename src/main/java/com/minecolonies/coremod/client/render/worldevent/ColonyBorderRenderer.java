@@ -106,10 +106,10 @@ public class ColonyBorderRenderer
     }
 
     private static VertexBuffer draw(final BufferBuilder bufferbuilder,
-      final Map<ChunkPos, Integer> mapToDraw,
-      final int playerColonyId,
-      final ChunkPos playerChunkPos,
-      final int playerRenderDist)
+        final Map<ChunkPos, Integer> mapToDraw,
+        final int playerColonyId,
+        final ChunkPos playerChunkPos,
+        final int playerRenderDist)
     {
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
         final Map<Integer, Color> colonyColours = new HashMap<>();
@@ -118,7 +118,7 @@ public class ColonyBorderRenderer
         bufferbuilder.begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
         mapToDraw.forEach((chunkPos, colonyId) -> {
             if (colonyId == 0 || chunkPos.x <= playerChunkPos.x - playerRenderDist || chunkPos.x >= playerChunkPos.x + playerRenderDist
-                  || chunkPos.z <= playerChunkPos.z - playerRenderDist || chunkPos.z >= playerChunkPos.z + playerRenderDist)
+                || chunkPos.z <= playerChunkPos.z - playerRenderDist || chunkPos.z >= playerChunkPos.z + playerRenderDist)
             {
                 return;
             }
@@ -137,7 +137,7 @@ public class ColonyBorderRenderer
                 {
                     final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, Minecraft.getInstance().level.dimension());
                     final ChatFormatting team = colony != null ? colony.getTeamColonyColor()
-                                                  : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
+                            : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
                     return new Color(team.getColor());
                 });
 

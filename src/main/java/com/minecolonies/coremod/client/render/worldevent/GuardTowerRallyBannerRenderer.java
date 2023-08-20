@@ -9,7 +9,7 @@ public class GuardTowerRallyBannerRenderer
 {
     /**
      * Renders the rallying banner guard tower indicators into the world.
-     *
+     * 
      * @param ctx rendering context
      */
     static void render(final WorldEventContext ctx)
@@ -24,10 +24,10 @@ public class GuardTowerRallyBannerRenderer
             if (ctx.clientLevel.dimension() != guardTower.getDimension())
             {
                 WorldRenderMacros.renderBlackLineBox(ctx.bufferSource,
-                  ctx.poseStack,
-                  guardTower.getInDimensionLocation(),
-                  guardTower.getInDimensionLocation(),
-                  0.02f);
+                    ctx.poseStack,
+                    guardTower.getInDimensionLocation(),
+                    guardTower.getInDimensionLocation(),
+                    0.02f);
             }
         }
     }

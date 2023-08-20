@@ -22,7 +22,7 @@ public class ColonyWorldRenderMacros
      * @param showThroughBlocks true to render through existing blocks, false to only render in air
      */
     public static void renderLineBox(final PoseStack poseStack, final MultiBufferSource.BufferSource bufferSource,
-      final AABB bounds, final float width, final int color, final boolean showThroughBlocks)
+                                     final AABB bounds, final float width, final int color, final boolean showThroughBlocks)
     {
         final float halfLine = width / 2.0f;
         final float minX = (float) (bounds.minX - halfLine);
@@ -47,13 +47,13 @@ public class ColonyWorldRenderMacros
         if (showThroughBlocks)
         {
             renderLineBox(poseStack, bufferSource.getBuffer(RenderTypes.LINES_INSIDE_BLOCKS),
-              minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
-              red / 2, green / 2, blue / 2, alpha / 2);
+                    minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
+                    red / 2, green / 2, blue / 2, alpha / 2);
         }
 
         renderLineBox(poseStack, bufferSource.getBuffer(RenderTypes.LINES_OUTSIDE_BLOCKS),
-          minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
-          red, green, blue, alpha);
+                minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2,
+                red, green, blue, alpha);
     }
 
     /**
@@ -88,11 +88,11 @@ public class ColonyWorldRenderMacros
      * @param alpha     alpha
      */
     private static void renderLineBox(final PoseStack poseStack, final VertexConsumer buffer,
-      final float minX, final float minY, final float minZ,
-      final float minX2, final float minY2, final float minZ2,
-      final float maxX, final float maxY, final float maxZ,
-      final float maxX2, final float maxY2, final float maxZ2,
-      final int red, final int green, final int blue, final int alpha)
+                                      final float minX, final float minY, final float minZ,
+                                      final float minX2, final float minY2, final float minZ2,
+                                      final float maxX, final float maxY, final float maxZ,
+                                      final float maxX2, final float maxY2, final float maxZ2,
+                                      final int red, final int green, final int blue, final int alpha)
     {
         buffer.defaultColor(red, green, blue, alpha);
         WorldRenderMacros.populateRenderLineBox(minX, minY, minZ, minX2, minY2, minZ2, maxX, maxY, maxZ, maxX2, maxY2, maxZ2, poseStack.last().pose(), buffer);

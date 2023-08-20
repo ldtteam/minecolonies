@@ -28,7 +28,7 @@ public class ColonyWaypointRenderer
 
     /**
      * Renders waypoints of current colony.
-     *
+     * 
      * @param ctx rendering context
      */
     static void render(final WorldEventContext ctx)
@@ -71,10 +71,10 @@ public class ColonyWaypointRenderer
 
             StructureClientHandler.renderStructureAtPosList(
               RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
-                : wayPointTemplate,
-              ctx.partialTicks,
-              new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),
-              ctx.poseStack);
+                    : wayPointTemplate,
+                ctx.partialTicks,
+                new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),
+                ctx.poseStack);
         }
     }
 }
