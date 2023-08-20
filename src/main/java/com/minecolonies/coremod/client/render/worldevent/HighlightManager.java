@@ -25,7 +25,7 @@ public class HighlightManager
             return;
         }
 
-        final long worldTime = context.getClientLevel().getGameTime();
+        final long worldTime = context.clientLevel.getGameTime();
 
         List<HighlightRenderDataContainer> itemsToRemove = new ArrayList<>();
         for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS)
@@ -120,7 +120,7 @@ public class HighlightManager
         {
             if (startTime == 0)
             {
-                startTime = context.getClientLevel().getGameTime();
+                startTime = context.clientLevel.getGameTime();
                 data.startRender(context);
             }
         }
