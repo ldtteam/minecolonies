@@ -4,6 +4,8 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
@@ -13,6 +15,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
@@ -59,7 +62,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private IPlantationModule.PlantationModuleResult activeModuleResult = null;
 
-    private IDeliverable currentDeliverable;
+    private IConcreteDeliverable currentDeliverable;
 
     /**
      * Constructor for the planter.
@@ -375,7 +378,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      * @param deliverable the request that needs to be delivered.
      * @return false if the items are present in their own inventory, true if the items are in the hut or not present at all.
      */
-    private boolean checkIfItemsUnavailable(final IDeliverable deliverable)
+    private boolean checkIfItemsUnavailable(final IConcreteDeliverable deliverable)
     {
         final int invCount =
           InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), deliverable::matches);
@@ -412,7 +415,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     @Override
     public IAIState getStateAfterPickUp()
     {
-        if (currentDeliverable != null && !InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), currentDeliverable.getResult().getItem()))
+        if (currentDeliverable != null && !InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), currentDeliverable.getResult().getItem())
+              && building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+          (IRequest<? extends IDeliverable> r) -> currentDeliverable.getRequestedItems().stream().anyMatch(r.getRequest()::matches)).isEmpty()
+              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+          (IRequest<? extends IDeliverable> r) -> currentDeliverable.getRequestedItems().stream().anyMatch(r.getRequest()::matches)).isEmpty())
         {
             worker.getCitizenData().createRequestAsync(currentDeliverable);
         }
