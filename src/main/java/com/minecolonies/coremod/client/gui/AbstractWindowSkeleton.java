@@ -95,7 +95,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      */
     public final void registerButton(final String id, final Runnable action)
     {
-        registerButton(id, (button) -> action.run());
+        registerButton(id, button -> action.run());
     }
 
     /**
@@ -163,15 +163,18 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
 
         buttonNextPage.on();
         buttonPrevPage.on();
-        if (curPage == 1)
+        if (curPage == 1/* && !switchView.isEndlessScrollingEnabled()*/)
         {
             buttonPrevPage.off();
         }
-        if (curPage == switchPagesSize)
+        if (curPage == switchPagesSize/* && !switchView.isEndlessScrollingEnabled()*/)
         {
             buttonNextPage.off();
         }
-        pageNum.setText(Component.literal(curPage + "/" + switchPagesSize));
+        if (pageNum != null)
+        {
+            pageNum.setText(Component.literal(curPage + "/" + switchPagesSize));
+        }
     }
 
     @Override

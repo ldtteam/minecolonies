@@ -13,7 +13,7 @@ public interface IHighlightRenderData
     /**
      * Indicate the render data it should start rendering.
      */
-    void startRender(final WorldEventContext context);
+    default void startRender(final WorldEventContext context) {}
 
     /**
      * Indicate the render data it should continue rendering.
@@ -23,7 +23,7 @@ public interface IHighlightRenderData
     /**
      * Indicate the render data it should stop rendering.
      */
-    void stopRender(final WorldEventContext context);
+    default void stopRender(final WorldEventContext context) {}
 
     /**
      * Get the duration of the highlight.

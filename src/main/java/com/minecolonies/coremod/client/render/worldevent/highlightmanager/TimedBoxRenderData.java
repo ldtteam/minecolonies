@@ -46,12 +46,6 @@ public class TimedBoxRenderData implements IHighlightRenderData
     }
 
     @Override
-    public void startRender(final WorldEventContext context)
-    {
-        // No-op
-    }
-
-    @Override
     public void render(final WorldEventContext context)
     {
         final MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -62,12 +56,6 @@ public class TimedBoxRenderData implements IHighlightRenderData
         }
         ColonyWorldRenderMacros.endRenderLineBox(buffer);
         buffer.endBatch();
-    }
-
-    @Override
-    public void stopRender(final WorldEventContext context)
-    {
-        // No-op
     }
 
     @Override
