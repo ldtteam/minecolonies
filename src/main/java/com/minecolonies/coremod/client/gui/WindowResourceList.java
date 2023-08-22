@@ -450,6 +450,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
+        // Disable update for 5s on insert
+        // DO Insert check to see if it fails(full etc) on client
         pullResourcesFromHut();
         window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
     }
