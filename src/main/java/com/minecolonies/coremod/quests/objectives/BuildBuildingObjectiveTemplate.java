@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -136,7 +135,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     }
 
     @Override
-    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
 

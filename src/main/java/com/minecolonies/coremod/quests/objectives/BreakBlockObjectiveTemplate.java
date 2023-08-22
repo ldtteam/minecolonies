@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -86,7 +85,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
