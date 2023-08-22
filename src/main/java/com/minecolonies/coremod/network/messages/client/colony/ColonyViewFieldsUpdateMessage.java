@@ -4,11 +4,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.fields.registry.FieldDataManager;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -19,10 +18,13 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Add or Update a IFieldView to a ColonyView on the client.
+ * Update message for auto syncing the entire field list.
  */
-public class ColonyViewRemoveFieldViewMessage implements IMessage
+public class ColonyViewFieldsUpdateMessage implements IMessage
 {
     /**
      * The colony this field belongs to.
@@ -35,43 +37,30 @@ public class ColonyViewRemoveFieldViewMessage implements IMessage
     private ResourceKey<Level> dimension;
 
     /**
-     * The type of the field.
+     * The list of field items.
      */
-    private FieldRegistries.FieldEntry type;
-
-    /**
-     * The position of the field.
-     */
-    private BlockPos position;
-
-    /**
-     * The buffer containing the serialized field class.
-     */
-    private FriendlyByteBuf fieldData;
+    private Set<IField> fields;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyViewRemoveFieldViewMessage()
+    public ColonyViewFieldsUpdateMessage()
     {
         super();
     }
 
     /**
-     * Creates a message to handle colony views.
+     * Creates a message to handle colony all field views.
      *
      * @param colony the colony this field is in.
-     * @param field  field to add or update a view.
+     * @param fields the complete list of fields of this colony.
      */
-    public ColonyViewRemoveFieldViewMessage(@NotNull final IColony colony, @NotNull final IField field)
+    public ColonyViewFieldsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IField> fields)
     {
         super();
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
-        this.type = field.getFieldType();
-        this.position = field.getPosition();
-        this.fieldData = new FriendlyByteBuf(Unpooled.buffer());
-        field.serialize(fieldData);
+        this.fields = fields;
     }
 
     @Override
@@ -79,9 +68,13 @@ public class ColonyViewRemoveFieldViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
-        buf.writeRegistryId(FieldRegistries.getFieldRegistry(), type);
-        buf.writeBlockPos(position);
-        buf.writeBytes(fieldData);
+        buf.writeInt(fields.size());
+        for (IField field : fields)
+        {
+            final FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
+            buf.writeInt(fieldBuffer.readableBytes());
+            buf.writeBytes(fieldBuffer);
+        }
     }
 
     @Override
@@ -89,10 +82,15 @@ public class ColonyViewRemoveFieldViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
-        type = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
-        position = buf.readBlockPos();
-        fieldData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
-        buf.readBytes(fieldData, buf.readableBytes());
+        fields = new HashSet<>();
+        int fieldCount = buf.readInt();
+        for (int i = 0; i < fieldCount; i++)
+        {
+            int readableBytes = buf.readInt();
+            FriendlyByteBuf fieldData = new FriendlyByteBuf(Unpooled.buffer(readableBytes));
+            buf.readBytes(fieldData, readableBytes);
+            fields.add(FieldDataManager.bufferToField(fieldData));
+        }
     }
 
     @Nullable
@@ -108,7 +106,7 @@ public class ColonyViewRemoveFieldViewMessage implements IMessage
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (view != null)
         {
-            view.handleColonyRemoveFieldViewMessage(type, position, fieldData);
+            view.handleColonyFieldViewUpdateMessage(fields);
         }
         else
         {
