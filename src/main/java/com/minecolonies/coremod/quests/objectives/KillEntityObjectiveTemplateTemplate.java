@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
@@ -95,7 +96,20 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public @NotNull IObjectiveInstance createObjectiveInstance()
+    public Component getProgressText(final IQuestInstance quest, final Style style)
+    {
+        if (quest.getCurrentObjectiveInstance() instanceof EntityKillProgressInstance progress)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress",
+              progress.currentProgress,
+              entitiesToKill,
+              entityToKill.getDescription().plainCopy().setStyle(style));
+        }
+        return Component.empty();
+    }
+
+    @Override
+    public @Nullable IObjectiveInstance createObjectiveInstance()
     {
         return new EntityKillProgressInstance(this);
     }
@@ -149,7 +163,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     /**
      * Progress data of this objective.
      */
-    public static class EntityKillProgressInstance implements IObjectiveInstance
+    private static class EntityKillProgressInstance implements IObjectiveInstance
     {
         /**
          * The template belonging to this progress instance.
@@ -181,15 +195,6 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         public int getMissingQuantity()
         {
             return template.entitiesToKill > currentProgress ? template.entitiesToKill - currentProgress : 0;
-        }
-
-        @Override
-        public Component getProgressText(final IQuestInstance quest, final Style style)
-        {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress",
-              currentProgress,
-              template.entitiesToKill,
-              template.entityToKill.getDescription().plainCopy().setStyle(style));
         }
 
         @Override

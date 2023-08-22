@@ -5,10 +5,7 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.quests.IObjectiveInstance;
-import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestManager;
-import com.minecolonies.api.quests.IQuestTemplate;
+import com.minecolonies.api.quests.*;
 import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
 import com.minecolonies.coremod.client.render.worldevent.highlightmanager.CitizenRenderData;
 import net.minecraft.ChatFormatting;
@@ -24,7 +21,7 @@ import static com.minecolonies.coremod.client.gui.questlog.Constants.*;
 /**
  * Window quest log renderer for in progress quests.
  */
-public class WindowQuestLogInProgressQuestQuestRenderer implements WindowQuestLogQuestRenderer<IQuestInstance>
+public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQuestModule<IQuestInstance>
 {
     @Override
     public List<IQuestInstance> getQuestItems(final IColonyView colonyView)
@@ -40,23 +37,20 @@ public class WindowQuestLogInProgressQuestQuestRenderer implements WindowQuestLo
         setText(row, LABEL_QUEST_NAME, Component.translatable(QUEST_LOG_NAME_PREFIX).append(questTemplate.getName()));
         setText(row, LABEL_QUEST_GIVER, Component.translatable(QUEST_LOG_GIVER_PREFIX).append(getQuestGiverName(colonyView, quest)));
 
-        final IObjectiveInstance currentObjectiveInstance = quest.getCurrentObjectiveInstance();
-        if (currentObjectiveInstance != null)
-        {
-            final Text questObjectiveText = row.findPaneOfTypeByID(LABEL_QUEST_OBJECTIVE, Text.class);
+        final IQuestObjectiveTemplate objectiveTemplate = questTemplate.getObjective(quest.getObjectiveIndex());
+        final Text questObjectiveText = row.findPaneOfTypeByID(LABEL_QUEST_OBJECTIVE, Text.class);
 
-            final Component progressText = currentObjectiveInstance.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.GOLD));
-            final Component mainComponent = Component.literal(" - ")
-                                              .append(progressText)
-                                              .withStyle(ChatFormatting.GOLD);
+        final Component progressText = objectiveTemplate.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.GOLD));
+        final Component mainComponent = Component.literal(" - ")
+                                          .append(progressText)
+                                          .withStyle(ChatFormatting.GOLD);
 
-            questObjectiveText.setText(mainComponent);
+        questObjectiveText.setText(mainComponent);
 
-            PaneBuilders.tooltipBuilder()
-              .append(currentObjectiveInstance.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.WHITE)))
-              .hoverPane(questObjectiveText)
-              .build();
-        }
+        PaneBuilders.tooltipBuilder()
+          .append(objectiveTemplate.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.WHITE)))
+          .hoverPane(questObjectiveText)
+          .build();
     }
 
     @Override

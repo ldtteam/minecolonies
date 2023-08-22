@@ -31,9 +31,9 @@ public class WindowQuestLog extends AbstractWindowSkeleton
     private static final String WINDOW_RESOURCE = ":gui/windowquestlog.xml";
 
     /**
-     * Map of the different renderer classes, each dedicated to its own view.
+     * Map of the different module classes, each dedicated to its own view.
      */
-    private final Map<String, QuestRendererContainer<?>> rendererMap = new HashMap<>();
+    private final Map<String, QuestModuleContainer<?>> moduleMap = new HashMap<>();
 
     /**
      * Default constructor.
@@ -45,9 +45,9 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         registerButton(BUTTON_QUEST_LOCATOR, this::locateCitizenClickedInternal);
 
-        this.rendererMap.put("pageInProgress", new QuestRendererContainer<>(new WindowQuestLogInProgressQuestQuestRenderer(), colonyView, switchView, "pageInProgress"));
-        this.rendererMap.put("pageAvailable", new QuestRendererContainer<>(new WindowQuestLogAvailableQuestRenderer(), colonyView, switchView, "pageAvailable"));
-        this.rendererMap.put("pageFinished", new QuestRendererContainer<>(new WindowQuestLogFinishedQuestRenderer(), colonyView, switchView, "pageFinished"));
+        this.moduleMap.put("pageInProgress", new QuestModuleContainer<>(new WindowQuestLogInProgressQuestQuestModule(), colonyView, switchView, "pageInProgress"));
+        this.moduleMap.put("pageAvailable", new QuestModuleContainer<>(new WindowQuestLogAvailableQuestModule(), colonyView, switchView, "pageAvailable"));
+        this.moduleMap.put("pageFinished", new QuestModuleContainer<>(new WindowQuestLogFinishedQuestModule(), colonyView, switchView, "pageFinished"));
     }
 
     /**
@@ -60,10 +60,10 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         if (switchView.getCurrentView() != null)
         {
             String pageId = switchView.getCurrentView().getID();
-            final QuestRendererContainer<?> renderer = rendererMap.get(pageId);
-            if (renderer != null)
+            final QuestModuleContainer<?> module = moduleMap.get(pageId);
+            if (module != null)
             {
-                renderer.trackQuest(button);
+                module.trackQuest(button);
             }
         }
     }
@@ -76,10 +76,10 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         if (switchView.getCurrentView() != null)
         {
             String pageId = switchView.getCurrentView().getID();
-            final QuestRendererContainer<?> renderer = rendererMap.get(pageId);
-            if (renderer != null)
+            final QuestModuleContainer<?> module = moduleMap.get(pageId);
+            if (module != null)
             {
-                renderer.onUpdate();
+                module.onUpdate();
             }
         }
     }
@@ -87,12 +87,12 @@ public class WindowQuestLog extends AbstractWindowSkeleton
     /**
      * Internal class for keeping track of the different pages.
      */
-    private static class QuestRendererContainer<T>
+    private static class QuestModuleContainer<T>
     {
         /**
-         * The renderer class used to render the quest items.
+         * The module class used to render the quest items.
          */
-        private final WindowQuestLogQuestRenderer<T> renderer;
+        private final WindowQuestLogQuestModule<T> module;
 
         /**
          * The current colony.
@@ -112,14 +112,14 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         /**
          * Default constructor.
          */
-        public QuestRendererContainer(final WindowQuestLogQuestRenderer<T> renderer, final IColonyView colonyView, final SwitchView switchView, final String pageId)
+        public QuestModuleContainer(final WindowQuestLogQuestModule<T> module, final IColonyView colonyView, final SwitchView switchView, final String pageId)
         {
-            this.renderer = renderer;
+            this.module = module;
             this.colonyView = colonyView;
             Pane parent = switchView.getChildren().stream().filter(f -> f.getID().equals(pageId)).findFirst().orElseThrow();
             this.questsList = parent.findPaneOfTypeByID(LIST_QUESTS, ScrollingList.class);
 
-            this.questItems = renderer.getQuestItems(colonyView);
+            this.questItems = module.getQuestItems(colonyView);
 
             this.questsList.setDataProvider(new ScrollingList.DataProvider()
             {
@@ -132,7 +132,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
                 @Override
                 public void updateElement(final int index, final Pane rowPane)
                 {
-                    renderer.renderQuestItem(questItems.get(index), colonyView, rowPane);
+                    module.renderQuestItem(questItems.get(index), colonyView, rowPane);
 
                     final ButtonImage questLocator = rowPane.findPaneOfTypeByID(BUTTON_QUEST_LOCATOR, ButtonImage.class);
                     if (questLocator != null)
@@ -151,7 +151,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
          */
         void onUpdate()
         {
-            this.questItems = renderer.getQuestItems(colonyView);
+            this.questItems = module.getQuestItems(colonyView);
         }
 
         /**
@@ -162,7 +162,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         void trackQuest(final Button button)
         {
             final int row = questsList.getListElementIndexByPane(button);
-            renderer.trackQuest(questItems.get(row));
+            module.trackQuest(questItems.get(row));
         }
     }
 }

@@ -17,7 +17,7 @@ import static com.minecolonies.coremod.client.gui.questlog.Constants.LABEL_QUEST
 /**
  * Window quest log renderer for finished quests.
  */
-public class WindowQuestLogFinishedQuestRenderer implements WindowQuestLogQuestRenderer<FinishedQuest>
+public class WindowQuestLogFinishedQuestModule implements WindowQuestLogQuestModule<FinishedQuest>
 {
     @Override
     public List<FinishedQuest> getQuestItems(final IColonyView colonyView)

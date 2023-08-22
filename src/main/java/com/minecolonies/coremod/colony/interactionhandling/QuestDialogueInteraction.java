@@ -5,13 +5,15 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IFinalQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
 import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
-import com.minecolonies.coremod.quests.objectives.IDialogueObjectInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -106,10 +108,6 @@ public class QuestDialogueInteraction extends StandardInteraction
             final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
             if (result instanceof IFinalQuestDialogueAnswer)
             {
-                if (colonyQuest.getCurrentObjectiveInstance() instanceof IDialogueObjectInstance dialogueObjectInstance)
-                {
-                    dialogueObjectInstance.setHasInteracted(true);
-                }
                 ((IFinalQuestDialogueAnswer) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
                 if (!(result instanceof IQuestDialogueAnswer.CloseUIDialogueAnswer))
                 {
@@ -269,6 +267,6 @@ public class QuestDialogueInteraction extends StandardInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return currentElement != null && citizen.isParticipantOfQuest(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId) != null && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getIndex() == index;
+        return currentElement != null && citizen.isParticipantOfQuest(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId) != null && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getObjectiveIndex() == index;
     }
 }

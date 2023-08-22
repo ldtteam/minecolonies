@@ -41,6 +41,11 @@ public class QuestManager implements IQuestManager
     private final List<ResourceLocation> unlockedQuests = new ArrayList<>();
 
     /**
+     * Cached mapped results for the finished quests.
+     */
+    private List<FinishedQuest> finishedQuestsCache = null;
+
+    /**
      * Quest reputation.
      */
     private double questReputation = 0;
@@ -94,6 +99,8 @@ public class QuestManager implements IQuestManager
             availableQuests.remove(questId);
             finishedQuests.put(questId, finishedQuests.getOrDefault(questId, 0) + 1);
         }
+
+        finishedQuestsCache = null;
     }
 
     @Override
@@ -274,24 +281,28 @@ public class QuestManager implements IQuestManager
     @Override
     public List<IQuestInstance> getAvailableQuests()
     {
-        return availableQuests.values().stream().toList();
+        return new ArrayList<>(availableQuests.values());
     }
 
     @Override
     public List<IQuestInstance> getInProgressQuests()
     {
-        return inProgressQuests.values().stream().toList();
+        return new ArrayList<>(inProgressQuests.values());
     }
 
     @Override
     public List<FinishedQuest> getFinishedQuests()
     {
-        List<FinishedQuest> data = new ArrayList<>();
-        for (Map.Entry<ResourceLocation, Integer> entry : finishedQuests.entrySet())
+        if (finishedQuestsCache == null)
         {
-            IQuestTemplate template = GLOBAL_SERVER_QUESTS.get(entry.getKey());
-            data.add(new FinishedQuest(template, entry.getValue()));
+            List<FinishedQuest> data = new ArrayList<>();
+            for (Map.Entry<ResourceLocation, Integer> entry : finishedQuests.entrySet())
+            {
+                IQuestTemplate template = GLOBAL_SERVER_QUESTS.get(entry.getKey());
+                data.add(new FinishedQuest(template, entry.getValue()));
+            }
+            finishedQuestsCache = Collections.unmodifiableList(data);
         }
-        return Collections.unmodifiableList(data);
+        return finishedQuestsCache;
     }
 }
