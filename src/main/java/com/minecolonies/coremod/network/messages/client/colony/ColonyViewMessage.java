@@ -62,6 +62,11 @@ public class ColonyViewMessage implements IMessage
         this.colonyBuffer = new FriendlyByteBuf(buf.copy());
     }
 
+    /**
+     * Set whether the message is a new subscription(full view)
+     *
+     * @param newSubscription
+     */
     public void setIsNewSubscription(boolean newSubscription)
     {
         isNewSubscription = newSubscription;
