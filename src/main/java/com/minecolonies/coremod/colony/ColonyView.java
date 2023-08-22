@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -58,7 +57,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1107,20 +1105,10 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyFieldViewUpdateMessage(final Set<IField> fields)
     {
-        final IField fieldView = type.produceField(position);
-        fieldView.deserialize(buf);
-        fields.remove(fieldView);
-        fields.add(fieldView);
-    }
-
-    @Override
-    public void handleColonyRemoveFieldViewMessage(final @NotNull FieldRegistries.FieldEntry type, final @NonNull BlockPos position, @NotNull final FriendlyByteBuf buf)
-    {
-        final IField field = type.produceField(position);
-        field.deserialize(buf);
-        fields.remove(field);
+        this.fields.clear();
+        this.fields.addAll(fields);
     }
 
     @Override
