@@ -10,7 +10,6 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,7 +100,7 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     }
 
     @Override
-    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         if (target == 0)
         {

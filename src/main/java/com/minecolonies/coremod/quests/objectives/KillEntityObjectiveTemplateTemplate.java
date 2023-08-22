@@ -84,7 +84,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
