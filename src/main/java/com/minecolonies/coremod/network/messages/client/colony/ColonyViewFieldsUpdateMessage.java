@@ -18,7 +18,9 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,7 +41,7 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
     /**
      * The list of field items.
      */
-    private Set<IField> fields;
+    private Map<IField, IField> fields;
 
     /**
      * Empty constructor used when registering the
@@ -60,7 +62,8 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
         super();
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
-        this.fields = fields;
+        this.fields = new HashMap<>();
+        fields.forEach(field -> this.fields.put(field, field));
     }
 
     @Override
@@ -69,9 +72,9 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeInt(fields.size());
-        for (IField field : fields)
+        for (IField field : fields.keySet())
         {
-            final FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
+            FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
             buf.writeInt(fieldBuffer.readableBytes());
             buf.writeBytes(fieldBuffer);
         }
@@ -82,14 +85,15 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
     {
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        fields = new HashSet<>();
+        fields = new HashMap<>();
         int fieldCount = buf.readInt();
         for (int i = 0; i < fieldCount; i++)
         {
             int readableBytes = buf.readInt();
             FriendlyByteBuf fieldData = new FriendlyByteBuf(Unpooled.buffer(readableBytes));
             buf.readBytes(fieldData, readableBytes);
-            fields.add(FieldDataManager.bufferToField(fieldData));
+            IField parsedField = FieldDataManager.bufferToField(fieldData);
+            fields.put(parsedField, parsedField);
         }
     }
 
@@ -106,7 +110,19 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (view != null)
         {
-            view.handleColonyFieldViewUpdateMessage(fields);
+            Set<IField> updatedFields = new HashSet<>();
+            view.getFields(field -> true).forEach(existingField -> {
+                if (this.fields.containsKey(existingField))
+                {
+                    final FriendlyByteBuf copyBuffer = new FriendlyByteBuf(Unpooled.buffer());
+                    this.fields.get(existingField).serialize(copyBuffer);
+                    existingField.deserialize(copyBuffer);
+                    updatedFields.add(existingField);
+                }
+            });
+            updatedFields.addAll(this.fields.keySet());
+
+            view.handleColonyFieldViewUpdateMessage(updatedFields);
         }
         else
         {
