@@ -11,7 +11,6 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
 import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
-import com.minecolonies.coremod.quests.objectives.IDialogueObjectInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -60,10 +59,6 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
                 {
                     if (((IQuestDeliveryObjective) objective).hasItem(player, colonyQuest) && ((IQuestDeliveryObjective) objective).tryDiscountItem(player, colonyQuest))
                     {
-                        if (colonyQuest.getCurrentObjectiveInstance() instanceof IDialogueObjectInstance dialogueObjectInstance)
-                        {
-                            dialogueObjectInstance.setHasInteracted(true);
-                        }
                         ((IFinalQuestDialogueAnswer) result).applyToQuest(player, colonyQuest);
                         finished = true;
                     }

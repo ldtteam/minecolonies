@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         super.startObjective(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony)
@@ -94,6 +95,19 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
             QuestObjectiveEventHandler.addQuestMineObjectiveListener(this.blockToMine, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
         return createObjectiveInstance();
+    }
+
+    @Override
+    public Component getProgressText(final IQuestInstance quest, final Style style)
+    {
+        if (quest.getCurrentObjectiveInstance() instanceof BlockMiningProgressInstance progress)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.breakblock.progress",
+              progress.currentProgress,
+              blocksToMine,
+              blockToMine.getName().setStyle(style));
+        }
+        return Component.empty();
     }
 
     @Override
@@ -151,7 +165,7 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     /**
      * Progress data of this objective.
      */
-    public static class BlockMiningProgressInstance implements IObjectiveInstance
+    private static class BlockMiningProgressInstance implements IObjectiveInstance
     {
         private int currentProgress = 0;
 
@@ -186,15 +200,6 @@ public class BreakBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         public int getMissingQuantity()
         {
             return template.blocksToMine > currentProgress ? template.blocksToMine - currentProgress : 0;
-        }
-
-        @Override
-        public Component getProgressText(final IQuestInstance quest, final Style style)
-        {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.breakblock.progress",
-              currentProgress,
-              template.blocksToMine,
-              template.blockToMine.getName().setStyle(style));
         }
 
         @Override

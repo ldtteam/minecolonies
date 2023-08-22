@@ -313,7 +313,7 @@ public class QuestInstance implements IQuestInstance
     }
 
     @Override
-    public int getIndex()
+    public int getObjectiveIndex()
     {
         return objectiveProgress;
     }

@@ -4,11 +4,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.ICitizen;
-import com.minecolonies.api.quests.*;
-import net.minecraft.nbt.CompoundTag;
+import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
+import com.minecolonies.api.quests.IObjectiveInstance;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,97 +101,30 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     }
 
     @Override
-    public @NotNull IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
+    public @Nullable IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
     {
         if (target == 0)
         {
-            colonyQuest.getQuestGiver().openDialogue(colonyQuest, colonyQuest.getIndex());
+            colonyQuest.getQuestGiver().openDialogue(colonyQuest, colonyQuest.getObjectiveIndex());
         }
         else
         {
-            colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getIndex());
+            colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getObjectiveIndex());
         }
-        return createObjectiveInstance();
+        return null;
     }
 
     @Override
-    public @NotNull IObjectiveInstance createObjectiveInstance()
+    public Component getProgressText(final IQuestInstance quest, final Style style)
     {
-        return new DialogueProgressInstance(this);
-    }
-
-    /**
-     * Progress data of this objective.
-     */
-    public static class DialogueProgressInstance implements IDialogueObjectInstance
-    {
-        /**
-         * Tag for has interacted the NBT state of this progress instance.
-         */
-        private static final String TAG_HAS_INTERACTED = "hasInteracted";
-
-        /**
-         * The template belonging to this progress instance.
-         */
-        private final DialogueObjectiveTemplateTemplate template;
-
-        /**
-         * Whether the player has completed the dialogue interaction.
-         */
-        private boolean hasInteracted = false;
-
-        /**
-         * Default constructor.
-         */
-        public DialogueProgressInstance(final DialogueObjectiveTemplateTemplate template)
+        final ICitizen citizen = quest.getColony().getCitizen(target == 0 ? quest.getQuestGiverId() : target - 1);
+        if (citizen != null)
         {
-            this.template = template;
+            return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
         }
-
-        @Override
-        public boolean isFulfilled()
+        else
         {
-            return hasInteracted;
-        }
-
-        @Override
-        public int getMissingQuantity()
-        {
-            return hasInteracted ? 0 : 1;
-        }
-
-        @Override
-        public Component getProgressText(final IQuestInstance quest, final Style style)
-        {
-            final ICitizen citizen = quest.getColony().getCitizen(template.target == 0 ? quest.getQuestGiverId() : template.target - 1);
-            if (citizen != null)
-            {
-                return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
-            }
-            else
-            {
-                return Component.empty();
-            }
-        }
-
-        @Override
-        public void setHasInteracted(boolean hasInteracted)
-        {
-            this.hasInteracted = hasInteracted;
-        }
-
-        @Override
-        public CompoundTag serializeNBT()
-        {
-            final CompoundTag compoundTag = new CompoundTag();
-            compoundTag.putBoolean(TAG_HAS_INTERACTED, hasInteracted);
-            return compoundTag;
-        }
-
-        @Override
-        public void deserializeNBT(final CompoundTag compound)
-        {
-            this.hasInteracted = compound.getBoolean(TAG_HAS_INTERACTED);
+            return Component.empty();
         }
     }
 }

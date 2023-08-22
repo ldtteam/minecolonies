@@ -21,7 +21,7 @@ import static com.minecolonies.coremod.client.gui.questlog.Constants.*;
 /**
  * Window quest log renderer for available quests.
  */
-public class WindowQuestLogAvailableQuestRenderer implements WindowQuestLogQuestRenderer<IQuestInstance>
+public class WindowQuestLogAvailableQuestModule implements WindowQuestLogQuestModule<IQuestInstance>
 {
     @Override
     public List<IQuestInstance> getQuestItems(final IColonyView colonyView)

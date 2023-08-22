@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @param <T> the quest instance type.
  */
-public interface WindowQuestLogQuestRenderer<T>
+public interface WindowQuestLogQuestModule<T>
 {
     /**
      * Get the list of quests for this window.
