@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
@@ -38,7 +39,6 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveW
 import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
@@ -196,12 +196,12 @@ public class Colony implements IColony
     /**
      * The Positions which players can freely interact.
      */
-    private final Set<BlockPos> freePositions = new HashSet<>();
+    private ImmutableSet<BlockPos> freePositions = ImmutableSet.of();
 
     /**
      * The Blocks which players can freely interact with.
      */
-    private final Set<Block> freeBlocks = new HashSet<>();
+    private ImmutableSet<Block> freeBlocks = ImmutableSet.of();
 
     /**
      * Colony permission event handler.
@@ -1066,7 +1066,7 @@ public class Colony implements IColony
      */
     public Set<BlockPos> getFreePositions()
     {
-        return new HashSet<>(freePositions);
+        return freePositions;
     }
 
     /**
@@ -1076,7 +1076,7 @@ public class Colony implements IColony
      */
     public Set<Block> getFreeBlocks()
     {
-        return new HashSet<>(freeBlocks);
+        return freeBlocks;
     }
 
     /**
@@ -1086,7 +1086,10 @@ public class Colony implements IColony
      */
     public void addFreePosition(@NotNull final BlockPos pos)
     {
-        freePositions.add(pos);
+        ImmutableSet.Builder<BlockPos> builder = ImmutableSet.builder();
+        builder.addAll(freePositions);
+        builder.add(pos);
+        freePositions = builder.build();
         markDirty();
     }
 
@@ -1097,7 +1100,10 @@ public class Colony implements IColony
      */
     public void addFreeBlock(@NotNull final Block block)
     {
-        freeBlocks.add(block);
+        ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
+        builder.addAll(freeBlocks);
+        builder.add(block);
+        freeBlocks = builder.build();
         markDirty();
     }
 
