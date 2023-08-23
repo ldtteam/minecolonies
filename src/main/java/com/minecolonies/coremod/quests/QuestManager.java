@@ -268,6 +268,7 @@ public class QuestManager implements IQuestManager
         {
             this.finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));
         }
+        finishedQuestsCache = null;
 
         this.unlockedQuests.clear();
         final ListTag unlockedListTag = nbt.getList(TAG_UNLOCKED, Tag.TAG_COMPOUND);
