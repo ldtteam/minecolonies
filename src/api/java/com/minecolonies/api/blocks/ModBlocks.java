@@ -75,18 +75,19 @@ public final class ModBlocks
      * Utility blocks.
      */
     public static AbstractBlockMinecoloniesConstructionTape<? extends AbstractBlockMinecoloniesConstructionTape<?>> blockConstructionTape;
-    public static AbstractBlockMinecoloniesRack<? extends AbstractBlockMinecoloniesRack<?>>             blockRack;
-    public static AbstractBlockMinecoloniesGrave<? extends AbstractBlockMinecoloniesGrave<?>>           blockGrave;
-    public static AbstractBlockMinecoloniesNamedGrave<? extends AbstractBlockMinecoloniesNamedGrave<?>> blockNamedGrave;
-    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockWayPoint;
-    public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>>                                 blockBarrel;
-    public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>> blockDecorationPlaceholder;
-    public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>>       blockScarecrow;
-    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockCompostedDirt;
-    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                       blockColonyBanner;
-    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                       blockColonyWallBanner;
-    public static AbstractBlockGate                                                                     blockIronGate;
-    public static AbstractBlockGate                                                                     blockWoodenGate;
+    public static AbstractBlockMinecoloniesRack<? extends AbstractBlockMinecoloniesRack<?>>                         blockRack;
+    public static AbstractBlockMinecoloniesGrave<? extends AbstractBlockMinecoloniesGrave<?>>                       blockGrave;
+    public static AbstractBlockMinecoloniesNamedGrave<? extends AbstractBlockMinecoloniesNamedGrave<?>>             blockNamedGrave;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                                 blockWayPoint;
+    public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>>                                             blockBarrel;
+    public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>>             blockDecorationPlaceholder;
+    public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>>                   blockScarecrow;
+    public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>>             blockPlantationField;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                                 blockCompostedDirt;
+    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyBanner;
+    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyWallBanner;
+    public static AbstractBlockGate                                                                                 blockIronGate;
+    public static AbstractBlockGate                                                                                 blockWoodenGate;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -150,6 +151,6 @@ public final class ModBlocks
           blockSimpleQuarry,
           blockMediumQuarry,
           //blockLargeQuarry
-          };
+        };
     }
 }

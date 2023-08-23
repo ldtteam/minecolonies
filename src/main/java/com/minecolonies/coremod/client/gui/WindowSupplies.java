@@ -105,6 +105,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(
                 StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint"),
                 blueprint -> {
+                    if (blueprint == null)
+                    {
+                        cancelClicked();
+                        return;
+                    }
                     RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);
                     adjustToGroundOffset();
                     findPaneOfTypeByID("tip", Text.class).setVisible(false);

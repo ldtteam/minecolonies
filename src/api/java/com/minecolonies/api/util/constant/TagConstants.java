@@ -6,23 +6,32 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-/** Constants for the block/item tags defined by Minecolonies */
+/**
+ * Constants for the block/item tags defined by Minecolonies
+ */
 public final class TagConstants
 {
-    public static final ResourceLocation DECORATION_ITEMS = new ResourceLocation(MOD_ID, "decoblocks");
-    public static final ResourceLocation CONCRETE_POWDER = new ResourceLocation(MOD_ID, "concrete_powder");
-    public static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation(MOD_ID, "concrete");
-    public static final ResourceLocation PATHING_BLOCKS = new ResourceLocation(MOD_ID, "pathblocks");
-    public static final ResourceLocation MANGROVE_TREE_BLOCKS = new ResourceLocation(MOD_ID, "mangrove_tree");
-    public static final ResourceLocation TREE_BLOCKS = new ResourceLocation(MOD_ID, "tree");
-    public static final ResourceLocation FLORIST_FLOWERS = new ResourceLocation(MOD_ID, "florist_flowers");
-    public static final ResourceLocation EXCLUDED_FOOD = new ResourceLocation(MOD_ID, "excluded_food");
-    public static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
-    public static final ResourceLocation VALIDSPAWNBLOCKS = new ResourceLocation(MOD_ID, "validspawnblocks");
+    public static final ResourceLocation DECORATION_ITEMS          = new ResourceLocation(MOD_ID, "decoblocks");
+    public static final ResourceLocation CONCRETE_POWDER           = new ResourceLocation(MOD_ID, "concrete_powder");
+    public static final ResourceLocation CONCRETE_BLOCK            = new ResourceLocation(MOD_ID, "concrete");
+    public static final ResourceLocation PATHING_BLOCKS            = new ResourceLocation(MOD_ID, "pathblocks");
+    public static final ResourceLocation TIER0_BLOCKS              = new ResourceLocation(MOD_ID, "tier0blocks");
+    public static final ResourceLocation TIER1_BLOCKS              = new ResourceLocation(MOD_ID, "tier1blocks");
+    public static final ResourceLocation TIER2_BLOCKS              = new ResourceLocation(MOD_ID, "tier2blocks");
+    public static final ResourceLocation TIER3_BLOCKS              = new ResourceLocation(MOD_ID, "tier3blocks");
+    public static final ResourceLocation TIER4_BLOCKS              = new ResourceLocation(MOD_ID, "tier4blocks");
+    public static final ResourceLocation TIER5_BLOCKS              = new ResourceLocation(MOD_ID, "tier5blocks");
+    public static final ResourceLocation TIER6_BLOCKS              = new ResourceLocation(MOD_ID, "tier6blocks");
+    public static final ResourceLocation MANGROVE_TREE_BLOCKS      = new ResourceLocation(MOD_ID, "mangrove_tree");
+    public static final ResourceLocation TREE_BLOCKS               = new ResourceLocation(MOD_ID, "tree");
+    public static final ResourceLocation FLORIST_FLOWERS           = new ResourceLocation(MOD_ID, "florist_flowers");
+    public static final ResourceLocation EXCLUDED_FOOD             = new ResourceLocation(MOD_ID, "excluded_food");
+    public static final ResourceLocation ORECHANCEBLOCKS           = new ResourceLocation(MOD_ID, "orechanceblocks");
+    public static final ResourceLocation VALIDSPAWNBLOCKS          = new ResourceLocation(MOD_ID, "validspawnblocks");
     public static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
-    public static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
-    public static final ResourceLocation COMPOSTABLES = new ResourceLocation(MOD_ID, "compostables");
-    public static final ResourceLocation COMPOSTABLES_POOR = new ResourceLocation(MOD_ID, "compostables_poor");
+    public static final ResourceLocation FUNGI                     = new ResourceLocation(MOD_ID, "fungi");
+    public static final ResourceLocation COMPOSTABLES              = new ResourceLocation(MOD_ID, "compostables");
+    public static final ResourceLocation COMPOSTABLES_POOR         = new ResourceLocation(MOD_ID, "compostables_poor");
     public static final ResourceLocation COMPOSTABLES_RICH = new ResourceLocation(MOD_ID, "compostables_rich");
     public static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
     public static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");

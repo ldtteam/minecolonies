@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.citizens.event.CitizenRemovedEvent;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -69,6 +68,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -889,7 +889,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void checkHeal()
     {
-        if (getHealth() < getMaxHealth())
+        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
@@ -908,10 +908,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
 
             heal((float) healAmount);
-            if (healAmount > 0.1D)
-            {
-                citizenData.markDirty();
-            }
         }
     }
 
@@ -1060,18 +1056,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * Sets the size of the citizen entity
-     *
-     * @param width  Width
-     * @param height Height
-     */
-    @Override
-    public void setCitizensize(final @NotNull float width, final @NotNull float height)
-    {
-        this.dimensions = new EntityDimensions(width, height, false);
-    }
-
-    /**
      * Sets whether this entity is a child
      *
      * @param isChild boolean
@@ -1082,7 +1066,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (isChild && !this.child)
         {
             new EntityAICitizenChild(this);
-            setCitizensize((float) CITIZEN_WIDTH / 2, (float) CITIZEN_HEIGHT / 2);
         }
         else
         {
@@ -1090,11 +1073,16 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
             }
-            setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
         this.child = isChild;
         this.getEntityData().set(DATA_IS_CHILD, isChild);
         markDirty();
+    }
+
+    @Override
+    public float getScale()
+    {
+        return child ? 0.5f * super.getScale() : super.getScale();
     }
 
     /**
@@ -1512,19 +1500,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return;
         }
 
-        // Makes the avoidance AI take over.
-        citizenAI.addTransition(new AIOneTimeEventTarget<>(CitizenAIState.FLEE));
-
         if ((getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard))
         {
             // 30 Blocks range
             callForHelp(attacker, 900);
             return;
         }
-        else
-        {
-            callForHelp(attacker, MAX_GUARD_CALL_RANGE);
-        }
+
+        citizenAI.addTransition(new AIOneTimeEventTarget<>(CitizenAIState.FLEE));
+        callForHelp(attacker, MAX_GUARD_CALL_RANGE);
         if (moveAwayPath == null || !moveAwayPath.isInProgress())
         {
             moveAwayPath = this.getNavigation().moveAwayFromLivingEntity(attacker, 15, INITIAL_RUN_SPEED_AVOID);
@@ -1965,10 +1949,31 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
     /**
      * Get the AI controlling the citizens behaviour
+     *
      * @return
      */
     public ITickRateStateMachine<IState> getCitizenAI()
     {
         return citizenAI;
+    }
+
+    @Override
+    public boolean isSuppressingBounce()
+    {
+        if (citizenSleepHandler.isAsleep())
+        {
+            return true;
+        }
+        return super.isSuppressingBounce();
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor)
+    {
+        super.onSyncedDataUpdated(dataAccessor);
+        if (citizenColonyHandler != null)
+        {
+            citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
     }
 }

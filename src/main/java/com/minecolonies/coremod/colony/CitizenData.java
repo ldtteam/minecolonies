@@ -74,7 +74,7 @@ public class CitizenData implements ICitizenData
     /**
      * The max health.
      */
-    private static final float MAX_HEALTH = 20.0F;
+    public static final float MAX_HEALTH = 20.0F;
 
     /**
      * Max levels of an attribute a citizen may initially have.
@@ -90,6 +90,11 @@ public class CitizenData implements ICitizenData
      * Possible texture suffixes.
      */
     public static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
+
+    /**
+     * Number of sound profiles.
+     */
+    private static final int NUM_SOUND_PROFILES = 4;
 
     /**
      * The unique citizen id.
@@ -295,6 +300,11 @@ public class CitizenData implements ICitizenData
     private final List<ResourceLocation> finishedQuestParticipation = new ArrayList<>();
 
     /**
+     * The sound profile index.
+     */
+    private int soundProfile;
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -331,6 +341,12 @@ public class CitizenData implements ICitizenData
     {
         final AbstractEntityCitizen citizen = entity.get();
         return Optional.ofNullable(citizen);
+    }
+
+    @Override
+    public int getSoundProfile()
+    {
+        return soundProfile;
     }
 
     @Override
@@ -425,6 +441,7 @@ public class CitizenData implements ICitizenData
         //Assign the gender before name
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
+        soundProfile = random.nextInt(NUM_SOUND_PROFILES);
         paused = false;
         name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
@@ -471,6 +488,11 @@ public class CitizenData implements ICitizenData
         citizen.getEntityData().set(DATA_BED_POS, getBedPos());
         citizen.getEntityData().set(DATA_JOB, getJob() == null ? "" : getJob().getJobRegistryEntry().getKey().toString());
         citizen.getEntityData().set(DATA_STYLE, colony.getTextureStyleId());
+
+        if (getBedPos().equals(BlockPos.ZERO))
+        {
+            citizen.getCitizenSleepHandler().onWakeUp();
+        }
 
         // Safety check that ensure the citizen its job matches the work building job
         if (getJob() != null && workBuilding != null)
@@ -937,10 +959,6 @@ public class CitizenData implements ICitizenData
             buf.writeBlockPos(workBuilding.getID());
         }
 
-        // If the entity is not present we assumes standard values.
-        buf.writeFloat(getEntity().map(AbstractEntityCitizen::getHealth).orElse(MAX_HEALTH));
-        buf.writeFloat(getEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
-
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness(getColony(), this));
 
@@ -1169,6 +1187,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_ID, id);
         nbtTagCompound.putString(TAG_NAME, name);
         nbtTagCompound.putString(TAG_SUFFIX, textureSuffix);
+        nbtTagCompound.putInt(TAG_SOUND_PROFILE, soundProfile);
 
         nbtTagCompound.putBoolean(TAG_FEMALE, female);
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
@@ -1280,6 +1299,15 @@ public class CitizenData implements ICitizenData
         else
         {
             textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
+        }
+
+        if (nbtTagCompound.contains(TAG_SOUND_PROFILE))
+        {
+            soundProfile = nbtTagCompound.getInt(TAG_SOUND_PROFILE);
+        }
+        else
+        {
+            soundProfile = random.nextInt(NUM_SOUND_PROFILES);
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);

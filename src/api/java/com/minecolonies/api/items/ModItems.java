@@ -76,6 +76,7 @@ public final class ModItems
     public static Item magicpotion;
 
     public static Item buildGoggles;
+    public static Item scanAnalyzer;
 
     /**
      * Private constructor to hide the implicit public one.

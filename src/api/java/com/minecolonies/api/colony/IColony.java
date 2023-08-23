@@ -416,6 +416,8 @@ public interface IColony
      */
     int getLoadedChunkCount();
 
+    Set<Long> getLoadedChunks();
+
     /**
      * Returns the colonies current state.
      *

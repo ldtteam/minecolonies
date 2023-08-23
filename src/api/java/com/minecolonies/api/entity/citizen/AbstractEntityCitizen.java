@@ -209,7 +209,18 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     {
         if (!player.level.isClientSide())
         {
-            SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.INTERACTION, this.getCitizenData());
+            if (this.getPose() == Pose.SLEEPING)
+            {
+                SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.OFF_TO_BED, this.getCitizenData(), 100);
+            }
+            else if (getCitizenData() != null && getCitizenData().isIdleAtJob())
+            {
+                SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.MISSING_EQUIPMENT, this.getCitizenData(), 100);
+            }
+            else
+            {
+                SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.INTERACTION, this.getCitizenData(), 100);
+            }
         }
 
         return super.interactAt(player, vec, hand);
@@ -574,14 +585,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     @NotNull
     public abstract IItemHandler getItemHandlerCitizen();
-
-    /**
-     * Sets the size of the citizen entity
-     *
-     * @param width  Width
-     * @param height Height
-     */
-    public abstract void setCitizensize(@NotNull float width, @NotNull float height);
 
     /**
      * Sets whether this entity is a child

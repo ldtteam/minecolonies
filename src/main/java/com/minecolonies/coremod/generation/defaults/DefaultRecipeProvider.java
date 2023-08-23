@@ -183,6 +183,17 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutFarmer))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(ModBlocks.blockPlantationField)
+          .pattern(" T ")
+          .pattern("SIS")
+          .pattern("PPP")
+          .define('S', Items.STICK)
+          .define('P', ItemTags.PLANKS)
+          .define('I', Items.IRON_INGOT)
+          .define('T', buildTool.get())
+          .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutPlantation))
+          .save(consumer);
+
         ShapedRecipeBuilder.shaped(ModBlocks.blockSimpleQuarry)
                 .pattern("XTX")
                 .pattern("XDX")

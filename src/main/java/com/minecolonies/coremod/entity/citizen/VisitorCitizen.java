@@ -25,13 +25,17 @@ import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessag
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -58,7 +62,8 @@ import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleA
 /**
  * Visitor citizen entity
  */
-public class VisitorCitizen extends AbstractEntityCitizen
+public class
+VisitorCitizen extends AbstractEntityCitizen
 {
     /**
      * The citizen experience handler
@@ -274,12 +279,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         {
             citizenData.markDirty();
         }
-    }
-
-    @Override
-    public void setCitizensize(@NotNull final float width, @NotNull final float height)
-    {
-        this.dimensions = new EntityDimensions(width, height, false);
     }
 
     @Override
@@ -694,5 +693,15 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
     {
 
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor)
+    {
+        super.onSyncedDataUpdated(dataAccessor);
+        if (citizenColonyHandler != null)
+        {
+            citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
     }
 }

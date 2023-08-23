@@ -120,7 +120,6 @@ public class BlockSetting implements ISetting
 
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
-          building,
           (stack) -> {
               final Item item = stack.getItem();
               if (!( item instanceof BlockItem ))
@@ -137,6 +136,10 @@ public class BlockSetting implements ISetting
 
               return block.getShape(state, new SingleStateBlockGetter(state), BlockPos.ZERO, CollisionContext.empty()).equals(Shapes.block()) && state.getMaterial().blocksMotion();
           }, (stack, qty) -> {
+              if (stack.isEmpty())
+              {
+                  return;
+              }
             value = (BlockItem) stack.getItem();
             settingsModuleView.getSetting(new SettingKey(key.getType(), key.getUniqueId())).updateSetting(this);
             settingsModuleView.trigger(key);

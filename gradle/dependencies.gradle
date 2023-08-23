@@ -2,10 +2,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        name "JEI"
-        url 'https://dvs1.progwml6.com/files/maven/'
-    }
-    maven {
         name "JourneyMap"
         url "https://jm.gserv.me/repository/maven-public/"
     }

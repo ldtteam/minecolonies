@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static com.minecolonies.api.sounds.EventType.GREETING;
+import static com.minecolonies.api.sounds.EventType.SUCCESS;
+import static com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -245,7 +248,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         if (data.getEntity().isPresent())
         {
             final AbstractEntityCitizen citizen = data.getEntity().get();
-            citizen.playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+            playSoundAtCitizenWith(citizen.level, citizen.blockPosition(), SUCCESS, data);
             Network.getNetwork()
               .sendToTrackingEntity(new VanillaParticleMessage(citizen.getX(), citizen.getY(), citizen.getZ(), ParticleTypes.HAPPY_VILLAGER),
                 data.getEntity().get());

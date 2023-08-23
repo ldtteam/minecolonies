@@ -6,35 +6,39 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.fields.registry.FieldDataManager;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveFieldViewMessage;
 import com.minecolonies.coremod.quests.objectives.IBuildingUpgradeObjectiveTemplate;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -44,13 +48,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
@@ -75,7 +79,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     /**
      * List of fields of the colony.
      */
-    private final List<BlockPos> fields = new ArrayList<>();
+    private final Set<IField> fields = ConcurrentHashMap.newKeySet();
 
     /**
      * The warehouse building position. Initially null.
@@ -99,12 +103,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private ITownHall townHall;
 
     /**
-     * Variable to check if the buildings needs to be synched.
+     * Variable to check if the buildings needs to be synced.
      */
     private boolean isBuildingsDirty = false;
 
     /**
-     * Variable to check if the fields needs to be synched.
+     * Variable to check if the fields needs to be synced.
      */
     private boolean isFieldsDirty = false;
 
@@ -140,6 +144,21 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         maxChunkZ = colony.getCenter().getZ() >> 4;
         minChunkZ = colony.getCenter().getZ() >> 4;
 
+        // Fields
+        if (compound.contains(TAG_FIELDS))
+        {
+            final ListTag fieldsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
+            for (int i = 0; i < fieldsTagList.size(); ++i)
+            {
+                final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
+                final IField field = FieldDataManager.compoundToField(fieldCompound);
+                if (field != null)
+                {
+                    addField(field);
+                }
+            }
+        }
+
         //  Buildings
         final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.size(); ++i)
@@ -150,16 +169,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 addBuilding(b);
                 setMaxChunk(b);
-            }
-        }
-
-        if (compound.contains(TAG_NEW_FIELDS))
-        {
-            // Fields before Buildings, because the Farmer needs them.
-            final ListTag fieldTagList = compound.getList(TAG_NEW_FIELDS, Tag.TAG_COMPOUND);
-            for (int i = 0; i < fieldTagList.size(); ++i)
-            {
-                addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));
             }
         }
 
@@ -176,6 +185,27 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 }
             }
             leisureSites = ImmutableList.copyOf(leisureSitesList);
+        }
+
+        // Ensure fields are still tied to an appropriate building
+        for (IField field : fields.stream().filter(IField::isTaken).toList())
+        {
+            final IBuilding building = buildings.get(field.getBuildingId());
+            if (building == null)
+            {
+                field.resetOwningBuilding();
+                continue;
+            }
+
+            final FieldsModule fieldsModule = building.getFirstOptionalModuleOccurance(FieldsModule.class).orElse(null);
+            if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
+            {
+                field.resetOwningBuilding();
+                if (fieldsModule != null)
+                {
+                    fieldsModule.freeField(field);
+                }
+            }
         }
     }
 
@@ -222,14 +252,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         compound.put(TAG_BUILDINGS, buildingTagList);
 
         // Fields
-        @NotNull final ListTag fieldTagList = new ListTag();
-        for (@NotNull final BlockPos pos : fields)
-        {
-            @NotNull final CompoundTag fieldCompound = new CompoundTag();
-            BlockPosUtil.write(fieldCompound, TAG_POS, pos);
-            fieldTagList.add(fieldCompound);
-        }
-        compound.put(TAG_NEW_FIELDS, fieldTagList);
+        compound.put(TAG_FIELDS, fields.stream()
+                                   .map(FieldDataManager::fieldToCompound)
+                                   .collect(NBTUtils.toListNBT()));
 
         // Leisure sites
         @NotNull final ListTag leisureTagList = new ListTag();
@@ -246,6 +271,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void clearDirty()
     {
         isBuildingsDirty = false;
+        isFieldsDirty = false;
         buildings.values().forEach(IBuilding::clearDirty);
     }
 
@@ -295,27 +321,19 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-        @NotNull final ArrayList<BlockPos> tempFields = new ArrayList<>(fields);
-
-        for (@NotNull final BlockPos pos : tempFields)
+        for (final IField field : fields)
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement(colony)))
             {
-                if (!(colony.getWorld().getBlockEntity(pos) instanceof ScarecrowTileEntity))
-                {
-                    removeField(pos);
-                }
+                removeField(f -> f.equals(field));
             }
         }
 
         for (@NotNull final BlockPos pos : leisureSites)
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos) && (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController)))
             {
-                if (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController))
-                {
-                    removeLeisureSite(pos);
-                }
+                removeLeisureSite(pos);
             }
         }
 
@@ -344,7 +362,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         return leisureSites;
     }
-    
+
     @Override
     public BlockPos getRandomLeisureSite()
     {
@@ -534,20 +552,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         return townHall != null;
     }
 
-    @NotNull
-    @Override
-    public List<BlockPos> getFields()
-    {
-        return Collections.unmodifiableList(fields);
-    }
-
-    @Override
-    public void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final Level world)
-    {
-        addField(pos);
-        markFieldsDirty();
-    }
-
     @Override
     public <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
     {
@@ -563,20 +567,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public ScarecrowTileEntity getFreeField(final int owner, final Level world)
-    {
-        for (@NotNull final BlockPos pos : fields)
-        {
-            final BlockEntity field = world.getBlockEntity(pos);
-            if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
-            {
-                return (ScarecrowTileEntity) field;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world)
     {
         tileEntity.setColony(colony);
@@ -589,9 +579,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 tileEntity.setBuilding(building);
                 building.upgradeBuildingLevelToSchematicData();
 
-                Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
+                Log.getLogger().debug(String.format("Colony %d - new Building %s for %s at %s",
                   colony.getID(),
-                  tileEntity.getBlockState().getClass(),
+                  building.getBuildingDisplayName(),
+                  tileEntity.getBlockState().getBlock(),
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
@@ -681,14 +672,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
-    }
-
-    @Override
-    public void removeField(final BlockPos pos)
-    {
-        this.markFieldsDirty();
-        fields.remove(pos);
-        colony.markDirty();
     }
 
     @Override
@@ -816,6 +799,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private void markFieldsDirty()
     {
         isFieldsDirty = true;
+        for (IBuilding building : buildings.values())
+        {
+            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(AbstractBuildingModule::markDirty);
+        }
     }
 
     /**
@@ -865,7 +852,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
+                    final ColonyViewBuildingViewMessage message = new ColonyViewBuildingViewMessage(building);
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
                 }
             }
         }
@@ -887,28 +875,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            for (final IBuilding building : buildings.values())
+            for (final IField field : fields)
             {
-                if (building instanceof BuildingFarmer)
-                {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
-                }
+                players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(colony, field), player));
             }
         }
-    }
-
-    /**
-     * Add a Field to the Colony.
-     *
-     * @param pos Field position to add to the colony.
-     */
-    private void addField(@NotNull final BlockPos pos)
-    {
-        if (!fields.contains(pos))
-        {
-            fields.add(pos);
-        }
-        colony.markDirty();
     }
 
     @Override
@@ -974,5 +945,50 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void stopTrackingBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
     {
         buildBuildingObjectives.getOrDefault(buildingEntry, new ArrayList<>()).remove(colonyQuest);
+    }
+
+    @Override
+    public @NotNull List<IField> getFields(Predicate<IField> matcher)
+    {
+        return fields.stream()
+                 .filter(matcher)
+                 .toList();
+    }
+
+    @Override
+    public Optional<IField> getField(Predicate<IField> matcher)
+    {
+        return getFields(matcher)
+                 .stream()
+                 .findFirst();
+    }
+
+    @Override
+    public boolean addField(IField field)
+    {
+        if (fields.add(field))
+        {
+            markFieldsDirty();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void removeField(Predicate<IField> matcher)
+    {
+        final List<IField> fieldsToRemove = fields.stream()
+                                              .filter(matcher)
+                                              .toList();
+
+        // We must send the message to everyone since fields here will be permanently removed from the list.
+        // And the clients have no way to later on also get their fields removed, thus every client has to be told
+        // immediately that the field is gone.
+        for (IField field : fieldsToRemove)
+        {
+            fields.remove(field);
+            Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(colony, field));
+            markFieldsDirty();
+        }
     }
 }
