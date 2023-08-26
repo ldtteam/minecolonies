@@ -10,7 +10,6 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
-import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
@@ -641,7 +640,7 @@ public class CompatibilityManager implements ICompatibilityManager
                             stacks.add(stack);
                         });
                     }
-                    catch (final Exception ex)
+                    catch (final Throwable ex)
                     {
                         Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString() + "; using fallback", ex);
                     }
