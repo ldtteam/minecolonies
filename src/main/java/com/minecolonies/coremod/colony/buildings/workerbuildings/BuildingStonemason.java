@@ -11,10 +11,14 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import com.minecolonies.coremod.colony.buildings.modules.AbstractDOCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags.Items;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_STONEMASON;
+
+import java.util.Optional;
 
 /**
  * Class of the stonemason building.
@@ -96,7 +100,18 @@ public class BuildingStonemason extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON);
+
+            OptionalPredicate<ItemStack> verifyStone = stack -> 
+            {
+                if(stack.is(Items.STONE) || stack.is(Items.NETHERRACK) 
+                || stack.is(Blocks.PRISMARINE.asItem()) || stack.is(Blocks.DARK_PRISMARINE.asItem()))
+                {
+                    return Optional.of(true);
+                }
+                return Optional.empty();
+            };
+
+            return verifyStone.combine(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON));
         }
 
         @Override
