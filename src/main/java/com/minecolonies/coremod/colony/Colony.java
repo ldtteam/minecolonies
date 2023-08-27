@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -193,12 +194,12 @@ public class Colony implements IColony
     /**
      * The Positions which players can freely interact.
      */
-    private final Set<BlockPos> freePositions = new HashSet<>();
+    private ImmutableSet<BlockPos> freePositions = ImmutableSet.of();
 
     /**
      * The Blocks which players can freely interact with.
      */
-    private final Set<Block> freeBlocks = new HashSet<>();
+    private ImmutableSet<Block> freeBlocks = ImmutableSet.of();
 
     /**
      * Colony permission event handler.
@@ -784,22 +785,24 @@ public class Colony implements IColony
         }
 
         // Free blocks
-        freeBlocks.clear();
+        final Set<Block> tempFreeBlocks = new HashSet<>();
         final ListTag freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, Tag.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
-            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
+            tempFreeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
         }
+        freeBlocks = ImmutableSet.copyOf(tempFreeBlocks);
 
-        freePositions.clear();
+        final Set<BlockPos> tempFreePositions = new HashSet<>();
         // Free positions
         final ListTag freePositionTagList = compound.getList(TAG_FREE_POSITIONS, Tag.TAG_COMPOUND);
         for (int i = 0; i < freePositionTagList.size(); ++i)
         {
             final CompoundTag blockTag = freePositionTagList.getCompound(i);
             final BlockPos block = BlockPosUtil.read(blockTag, TAG_FREE_POSITIONS);
-            freePositions.add(block);
+            tempFreePositions.add(block);
         }
+        freePositions = ImmutableSet.copyOf(tempFreePositions);
 
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
@@ -1063,7 +1066,7 @@ public class Colony implements IColony
      */
     public Set<BlockPos> getFreePositions()
     {
-        return new HashSet<>(freePositions);
+        return freePositions;
     }
 
     /**
@@ -1073,7 +1076,7 @@ public class Colony implements IColony
      */
     public Set<Block> getFreeBlocks()
     {
-        return new HashSet<>(freeBlocks);
+        return freeBlocks;
     }
 
     /**
@@ -1083,7 +1086,10 @@ public class Colony implements IColony
      */
     public void addFreePosition(@NotNull final BlockPos pos)
     {
-        freePositions.add(pos);
+        ImmutableSet.Builder<BlockPos> builder = ImmutableSet.builder();
+        builder.addAll(freePositions);
+        builder.add(pos);
+        freePositions = builder.build();
         markDirty();
     }
 
@@ -1094,7 +1100,10 @@ public class Colony implements IColony
      */
     public void addFreeBlock(@NotNull final Block block)
     {
-        freeBlocks.add(block);
+        ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
+        builder.addAll(freeBlocks);
+        builder.add(block);
+        freeBlocks = builder.build();
         markDirty();
     }
 
@@ -1105,7 +1114,15 @@ public class Colony implements IColony
      */
     public void removeFreePosition(@NotNull final BlockPos pos)
     {
-        freePositions.remove(pos);
+        ImmutableSet.Builder<BlockPos> builder = ImmutableSet.builder();
+        for (final BlockPos tempPos : freePositions)
+        {
+            if (!pos.equals(tempPos))
+            {
+                builder.add(tempPos);
+            }
+        }
+        freePositions = builder.build();
         markDirty();
     }
 
@@ -1116,7 +1133,15 @@ public class Colony implements IColony
      */
     public void removeFreeBlock(@NotNull final Block block)
     {
-        freeBlocks.remove(block);
+        ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
+        for (final Block tempBlock : freeBlocks)
+        {
+            if (block != tempBlock)
+            {
+                builder.add(tempBlock);
+            }
+        }
+        freeBlocks = builder.build();
         markDirty();
     }
 

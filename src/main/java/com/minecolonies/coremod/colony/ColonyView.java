@@ -992,7 +992,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
+     * Update a ColonyView's citizens given a network data ColonyView update packet. The ICitizenManager makes sure to update citizens instead of replacing them.
      *
      * @param id  ID of the citizen.
      * @param buf Network data.
