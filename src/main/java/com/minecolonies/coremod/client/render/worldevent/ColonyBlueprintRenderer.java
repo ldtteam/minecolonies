@@ -315,14 +315,10 @@ public class ColonyBlueprintRenderer
     {
         final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path());
 
-        final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData();
+        final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
         blueprintPreviewData.setBlueprintFuture(blueprintFuture);
         blueprintPreviewData.setPos(BlockPos.ZERO);
-        if (key.orientation().mirror() != Mirror.NONE)
-        {
-            blueprintPreviewData.mirror();
-        }
-        blueprintPreviewData.rotate(key.orientation().rotation());
+        blueprintPreviewData.setRotationMirror(key.orientation());
 
         return blueprintPreviewData;
     }
