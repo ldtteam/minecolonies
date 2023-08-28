@@ -14,7 +14,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
@@ -385,14 +384,8 @@ public class ColonyBlueprintRenderer
 
             for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
             {
-                if (buildingView.getBuildingType() == ModBuildings.postBox.get() || buildingView.getBuildingType() == ModBuildings.stash.get())
-                {
-                    continue;
-                }
                 final BlockPos currentPosition = buildingView.getPosition();
-
-                final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) ctx.clientLevel.getBlockEntity(buildingView.getPosition());
-                if (tileEntityColonyBuilding != null)
+                if (ctx.clientLevel.getBlockEntity(currentPosition) instanceof final TileEntityColonyBuilding tileEntityColonyBuilding)
                 {
                     final Tuple<BlockPos, BlockPos> corners = tileEntityColonyBuilding.getInWorldCorners();
                     BlockPos cornerA = corners.getA();
