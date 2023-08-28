@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -52,16 +51,24 @@ public class ColonyViewMessage implements IMessage
     /**
      * Add or Update a ColonyView on the client.
      *
-     * @param colony            Colony of the view to update.
-     * @param buf               the bytebuffer.
-     * @param isNewSubscription Boolean whether or not this is a new subscription.
+     * @param colony Colony of the view to update.
+     * @param buf    the bytebuffer.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final FriendlyByteBuf buf, final boolean isNewSubscription)
+    public ColonyViewMessage(@NotNull final Colony colony, final FriendlyByteBuf buf)
     {
         this.colonyId = colony.getID();
-        this.isNewSubscription = isNewSubscription;
         this.dim = colony.getDimension();
         this.colonyBuffer = new FriendlyByteBuf(buf.copy());
+    }
+
+    /**
+     * Set whether the message is a new subscription(full view)
+     *
+     * @param newSubscription
+     */
+    public void setIsNewSubscription(boolean newSubscription)
+    {
+        isNewSubscription = newSubscription;
     }
 
     @Override
@@ -77,6 +84,7 @@ public class ColonyViewMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        colonyBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
         buf.writeUtf(dim.location().toString());

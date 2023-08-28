@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.ICivilianData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.citizens.event.CitizenAddedEvent;
@@ -218,7 +221,8 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.isDirty() || !newSubscribers.isEmpty())
                 {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                    final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage(colony, citizen);
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
                 }
             }
         }
