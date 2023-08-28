@@ -172,7 +172,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     private void spawnCitizenFromBed()
     {
         final BlockPos spawn;
-        final BlockState bedState = citizen.level.getBlockState(getBedLocation());
+        final BlockState bedState = getBedLocation().equals(BlockPos.ZERO) ? null : citizen.level.getBlockState(getBedLocation());
         if (!getBedLocation().equals(BlockPos.ZERO) && bedState.is(BlockTags.BEDS))
         {
             if (bedState.getValue(BedBlock.PART) == BedPart.HEAD)
