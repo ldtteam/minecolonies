@@ -361,6 +361,7 @@
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
   "entity.builder.messagebuildernecessary": "This building requires a Builder's Hut of level %d or higher to be upgraded, repaired, or deconstructed!",
+  "entity.builder.inventoryfull": "Building inventory is full, could not insert %s",
 
   "entity.deliveryman.forcepickup": "I will come along and do a pickup shortly!",
   "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",

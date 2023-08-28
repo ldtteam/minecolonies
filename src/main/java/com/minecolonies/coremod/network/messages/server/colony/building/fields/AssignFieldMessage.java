@@ -52,6 +52,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
+        fieldData.resetReaderIndex();
         buf.writeBoolean(assign);
         buf.writeBytes(fieldData);
     }

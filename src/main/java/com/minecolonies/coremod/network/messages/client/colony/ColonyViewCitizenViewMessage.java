@@ -9,7 +9,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
@@ -66,6 +65,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        citizenBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
         buf.writeUtf(dimension.location().toString());
