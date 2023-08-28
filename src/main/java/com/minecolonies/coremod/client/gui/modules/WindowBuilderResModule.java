@@ -17,9 +17,9 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.TransferItemsRequestMessage;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     /**
      * Tick to update the list.
      */
-    private int tick = 0;
+    private int tickToInventoryUpdate = 0;
 
     /**
      * Constructor for window builder hut.
@@ -215,10 +215,10 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     public void onUpdate()
     {
         super.onUpdate();
-        if (tick++ == 20)
+        if (tickToInventoryUpdate++ == 20)
         {
             pullResourcesFromHut();
-            tick = 0;
+            tickToInventoryUpdate = 0;
         }
         window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
     }
@@ -241,6 +241,9 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         }
         else
         {
+            // Delay updates to allow conflicts with network data 3s until server data is loaded
+            tickToInventoryUpdate = -20 * 3;
+
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
             @NotNull final ItemStack itemStack = res.getItemStack().copy();

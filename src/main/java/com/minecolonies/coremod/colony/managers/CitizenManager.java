@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.ICivilianData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.citizens.event.CitizenAddedEvent;
@@ -29,14 +32,13 @@ import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -219,7 +221,8 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.isDirty() || !newSubscribers.isEmpty())
                 {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                    final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage(colony, citizen);
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
                 }
             }
         }
