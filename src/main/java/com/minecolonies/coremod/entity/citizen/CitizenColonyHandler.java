@@ -103,6 +103,12 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return;
         }
 
+        if (colony.getWorld() == null)
+        {
+            // Wait until colony loads world
+            return;
+        }
+
         this.colony = colony;
         colony.getCitizenManager().registerCivilian(citizen);
         registered = true;
