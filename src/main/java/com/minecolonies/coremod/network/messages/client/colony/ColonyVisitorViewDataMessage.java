@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -68,6 +69,13 @@ public class ColonyVisitorViewDataMessage implements IMessage
         this.dimension = colony.getDimension();
         this.visitors = visitors;
         this.refresh = refresh;
+
+        visitorBuf = new FriendlyByteBuf(Unpooled.buffer());
+        for (final IVisitorData data : visitors)
+        {
+            visitorBuf.writeInt(data.getId());
+            data.serializeViewNetworkData(visitorBuf);
+        }
     }
 
     @Override
@@ -95,12 +103,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
         buf.writeUtf(dimension.location().toString());
         buf.writeBoolean(refresh);
         buf.writeInt(visitors.size());
-
-        for (final IVisitorData data : visitors)
-        {
-            buf.writeInt(data.getId());
-            data.serializeViewNetworkData(buf);
-        }
+        buf.writeBytes(visitorBuf);
     }
 
     @Nullable
