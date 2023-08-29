@@ -163,11 +163,11 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
 
         buttonNextPage.on();
         buttonPrevPage.on();
-        if (curPage == 1/* && !switchView.isEndlessScrollingEnabled()*/)
+        if (curPage == 1 && !switchView.isEndlessScrollingEnabled())
         {
             buttonPrevPage.off();
         }
-        if (curPage == switchPagesSize/* && !switchView.isEndlessScrollingEnabled()*/)
+        if (curPage == switchPagesSize && !switchView.isEndlessScrollingEnabled())
         {
             buttonNextPage.off();
         }
