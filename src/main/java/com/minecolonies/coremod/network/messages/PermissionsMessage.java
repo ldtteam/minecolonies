@@ -98,6 +98,7 @@ public class PermissionsMessage
         @Override
         public void toBytes(@NotNull final FriendlyByteBuf buf)
         {
+            data.resetReaderIndex();
             buf.writeInt(colonyID);
             buf.writeUtf(dimension.location().toString());
             buf.writeBytes(data);

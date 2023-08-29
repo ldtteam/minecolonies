@@ -49,6 +49,7 @@ public class GlobalQuestSyncMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        questBuffer.resetReaderIndex();
         buf.writeBytes(questBuffer);
     }
 
