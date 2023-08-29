@@ -6,6 +6,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
