@@ -5,16 +5,16 @@
       "item": "minecraft:gold_ingot"
     },
     {
-      "item": "minecraft:netherrack"
-    },
-    {
-      "item": "minecraft:nether_quartz_ore"
-    },
-    {
       "item": "minecraft:rotten_flesh"
     },
     {
       "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "minecraft:netherrack"
+    },
+    {
+      "item": "minecraft:nether_quartz_ore"
     },
     {
       "item": "minecraft:soul_sand"
