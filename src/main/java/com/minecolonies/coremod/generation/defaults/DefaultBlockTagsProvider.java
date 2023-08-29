@@ -164,6 +164,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockColonyWallBanner)
                 .add(ModBlocks.blockPostBox)
                 .add(ModBlocks.blockStash)
+                .add(ModBlocks.blockPlantationField)
                 .add(ModBlocks.getHuts());
 
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
