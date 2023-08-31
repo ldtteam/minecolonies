@@ -187,6 +187,11 @@ public interface IRegisteredStructureManager
     void markBuildingsDirty();
 
     /**
+     * Marks fields data dirty.
+     */
+    void markFieldsDirty();
+
+    /**
      * Creates a building from a tile entity and adds it to the colony.
      *
      * @param tileEntity Tile entity to build a building from.
