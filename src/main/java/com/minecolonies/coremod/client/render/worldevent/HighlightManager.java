@@ -4,14 +4,16 @@ import com.minecolonies.coremod.client.render.worldevent.highlightmanager.IHighl
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HighlightManager
 {
     /**
      * A position to highlight with a unique id.
      */
-    private static final List<HighlightRenderDataContainer> HIGHLIGHT_ITEMS = new ArrayList<>();
+    private static final Map<String, HighlightRenderDataContainer> HIGHLIGHT_ITEMS = new HashMap<>();
 
     /**
      * Highlights positions
@@ -28,7 +30,7 @@ public class HighlightManager
         final long worldTime = context.clientLevel.getGameTime();
 
         List<HighlightRenderDataContainer> itemsToRemove = new ArrayList<>();
-        for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS)
+        for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS.values())
         {
             renderDataContainer.attemptStart(context);
             IHighlightRenderData renderData = renderDataContainer.data;
@@ -43,7 +45,11 @@ public class HighlightManager
                 renderData.render(context);
             }
         }
-        HIGHLIGHT_ITEMS.removeAll(itemsToRemove);
+
+        for (HighlightRenderDataContainer container : itemsToRemove)
+        {
+            HIGHLIGHT_ITEMS.remove(container.key);
+        }
     }
 
     /**
@@ -53,7 +59,7 @@ public class HighlightManager
      */
     public static void clearHighlightsForKey(final String key)
     {
-        HIGHLIGHT_ITEMS.removeIf(container -> container.key.equals(key));
+        HIGHLIGHT_ITEMS.remove(key);
     }
 
     /**
@@ -64,7 +70,7 @@ public class HighlightManager
      */
     public static void addHighlight(final String key, final IHighlightRenderData data)
     {
-        HIGHLIGHT_ITEMS.add(new HighlightRenderDataContainer(key, data));
+        HIGHLIGHT_ITEMS.put(key, new HighlightRenderDataContainer(key, data));
     }
 
     /**
