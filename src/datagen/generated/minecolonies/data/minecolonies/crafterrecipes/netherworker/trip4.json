@@ -17,9 +17,6 @@
       "item": "minecraft:nether_quartz_ore"
     },
     {
-      "item": "minecraft:porkchop"
-    },
-    {
       "item": "minecraft:soul_sand"
     },
     {
@@ -35,7 +32,7 @@
       "item": "minecraft:soul_soil"
     },
     {
-      "item": "minecraft:leather"
+      "item": "minecraft:porkchop"
     },
     {
       "item": "minecraft:glowstone"
@@ -68,7 +65,16 @@
       "item": "minecraft:blackstone"
     },
     {
+      "item": "minecraft:leather"
+    },
+    {
+      "item": "minecraft:nether_wart"
+    },
+    {
       "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "minecraft:ochre_froglight"
     },
     {
       "item": "minecraft:ghast_tear"
@@ -77,22 +83,16 @@
       "item": "minecraft:ender_pearl"
     },
     {
-      "item": "minecraft:nether_wart"
+      "item": "minecraft:pearlescent_froglight"
     },
     {
-      "item": "minecraft:ochre_froglight"
+      "item": "minecraft:verdant_froglight"
     },
     {
       "item": "minecraft:magma_cream"
     },
     {
       "item": "minecraft:blaze_rod"
-    },
-    {
-      "item": "minecraft:pearlescent_froglight"
-    },
-    {
-      "item": "minecraft:verdant_froglight"
     }
   ],
   "crafter": "netherworker_custom",

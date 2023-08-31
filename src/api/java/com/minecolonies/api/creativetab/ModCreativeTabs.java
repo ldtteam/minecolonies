@@ -29,6 +29,7 @@ public final class ModCreativeTabs
         }
 
         output.accept(ModBlocks.blockScarecrow);
+        output.accept(ModBlocks.blockPlantationField);
         output.accept(ModBlocks.blockRack);
         output.accept(ModBlocks.blockGrave);
         output.accept(ModBlocks.blockNamedGrave);
