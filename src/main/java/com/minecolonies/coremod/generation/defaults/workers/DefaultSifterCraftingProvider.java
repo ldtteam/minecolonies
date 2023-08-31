@@ -25,10 +25,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -285,7 +282,9 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                 final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
 
                 final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
-                final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
+                final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream()
+                        .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
+                        .map(ItemStack::getItem));
 
                 CustomRecipeProvider.CustomRecipeBuilder.create(SIFTER, MODULE_CUSTOM, name)
                         .inputs(Stream.of(
