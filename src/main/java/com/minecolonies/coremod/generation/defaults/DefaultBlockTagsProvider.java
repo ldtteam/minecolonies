@@ -157,6 +157,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockRack)
                 .add(ModBlocks.blockWoodenGate)
                 .add(ModBlocks.blockScarecrow)
+                .add(ModBlocks.blockPlantationField)
                 .add(ModBlocks.blockDecorationPlaceholder)
                 .add(ModBlocks.blockColonyBanner)
                 .add(ModBlocks.blockColonyWallBanner)

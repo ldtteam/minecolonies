@@ -69,6 +69,7 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        fieldData.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeInt(fields.size());
