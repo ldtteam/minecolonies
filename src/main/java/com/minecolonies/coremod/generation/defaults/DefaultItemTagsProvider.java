@@ -224,7 +224,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.DYES);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER))
-                .add(Items.HAY_BLOCK);
+                .add(Items.HAY_BLOCK)
+                .add(Items.GRASS)
+                .add(Items.FERN);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FARMER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FARMER))
                 .add(Items.HAY_BLOCK)
@@ -394,6 +396,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ItemTags.WOODEN_SLABS)
                 .addTag(ItemTags.WOODEN_STAIRS)
                 .add(Items.LECTERN, Items.PISTON)
+                .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
                 .add(paperExtras);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
