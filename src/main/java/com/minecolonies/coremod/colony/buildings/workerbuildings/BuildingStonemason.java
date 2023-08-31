@@ -100,11 +100,9 @@ public class BuildingStonemason extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-
             OptionalPredicate<ItemStack> verifyStone = stack -> 
             {
-                if(stack.is(Items.STONE) || stack.is(Items.NETHERRACK) 
-                || stack.is(Blocks.PRISMARINE.asItem()) || stack.is(Blocks.DARK_PRISMARINE.asItem()))
+                if(stack.is(Items.STONE) || stack.is(Items.NETHERRACK) || stack.is(Blocks.PRISMARINE.asItem()) || stack.is(Blocks.DARK_PRISMARINE.asItem()))
                 {
                     return Optional.of(true);
                 }
