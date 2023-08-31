@@ -2,18 +2,13 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.permissions.ColonyPlayer;
-import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.core.BlockPos;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -24,14 +19,7 @@ import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 public interface IColonyView extends IColony
@@ -281,22 +269,11 @@ public interface IColonyView extends IColony
     IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
 
     /**
-     * Add or update a ColonyView's fields given a network data ColonyView update packet.
+     * Update all field instances in the colony view.
      *
-     * @param type     the field type.
-     * @param position the field position.
-     * @param buf      buffer containing field information.
+     * @param fields the list of fields.
      */
-    void handleColonyFieldViewMessage(@NotNull FieldRegistries.FieldEntry type, @NotNull BlockPos position, @NotNull FriendlyByteBuf buf);
-
-    /**
-     * Removes a ColonyView's fields given a data ColonyView update packet.
-     *
-     * @param type     the field type.
-     * @param position the field position.
-     * @param buf      buffer containing field information.
-     */
-    void handleColonyRemoveFieldViewMessage(@NotNull FieldRegistries.FieldEntry type, @NotNull BlockPos position, @NotNull FriendlyByteBuf buf);
+    void handleColonyFieldViewUpdateMessage(Set<IField> fields);
 
     /**
      * Get all fields.

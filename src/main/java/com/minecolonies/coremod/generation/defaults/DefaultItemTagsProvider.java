@@ -228,7 +228,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.DYES);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER))
-          .add(Items.HAY_BLOCK);
+                .add(Items.HAY_BLOCK)
+                .add(Items.GRASS)
+                .add(Items.FERN);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FARMER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FARMER))
           .add(Items.HAY_BLOCK)
@@ -397,12 +399,12 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTags(ItemTags.STONE_BRICKS, ItemTags.SLABS, ItemTags.STAIRS, ItemTags.WALLS);
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONEMASON))
-          .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
-          .addTag(ItemTags.WOODEN_SLABS)
-          .addTag(ItemTags.WOODEN_STAIRS)
-          .addTag(ItemTags.TRIM_TEMPLATES)
-          .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-          .add(paperExtras);
+                .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
+                .addTag(ItemTags.WOODEN_SLABS)
+                .addTag(ItemTags.WOODEN_STAIRS)
+                .add(Items.LECTERN, Items.PISTON)
+                .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
+                .add(paperExtras);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));

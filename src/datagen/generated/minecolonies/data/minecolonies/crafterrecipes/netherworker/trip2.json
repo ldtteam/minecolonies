@@ -32,9 +32,6 @@
       "item": "minecraft:soul_soil"
     },
     {
-      "item": "minecraft:porkchop"
-    },
-    {
       "item": "minecraft:glowstone"
     },
     {
@@ -47,13 +44,16 @@
       "item": "minecraft:crimson_stem"
     },
     {
+      "item": "minecraft:porkchop"
+    },
+    {
+      "item": "minecraft:nether_wart"
+    },
+    {
       "item": "minecraft:leather"
     },
     {
       "item": "minecraft:gunpowder"
-    },
-    {
-      "item": "minecraft:nether_wart"
     },
     {
       "item": "minecraft:ghast_tear"
