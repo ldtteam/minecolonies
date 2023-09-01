@@ -11,7 +11,6 @@ import com.minecolonies.api.items.ModTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
 
@@ -108,7 +107,7 @@ public class SchemAnalyzerUtil
         {
             score *= 31;
         }
-        else if (block == Blocks.BOOKSHELF)
+        else if (state.is(Tags.Blocks.BOOKSHELVES))
         {
             score *= 3;
         }
