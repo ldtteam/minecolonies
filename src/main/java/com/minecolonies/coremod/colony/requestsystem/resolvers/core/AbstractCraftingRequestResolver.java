@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -19,9 +20,9 @@ import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -132,36 +133,43 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (building.getBuildingLevel() <= 0 || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
+        if (building.getBuildingLevel() <= 0
+              || !building.hasModule(WorkerBuildingModule.class)
+              || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
         {
             return false;
         }
 
-        if (createsCraftingCycle(manager, request, request))
+        if (createsCraftingCycle(manager, request, request.getRequest(), request))
         {
             return false;
         }
 
-        // As long as we're not resolving food, fast resolve
-        if(!(request.getRequest() instanceof Food))
+        final boolean isFood = !(request.getRequest() instanceof Food);
+        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {
-            return building.hasModule(WorkerBuildingModule.class) && canBuildingCraftStack(building, itemStack -> request.getRequest().matches(itemStack));
-        }
+            final IRecipeStorage recipe = module.getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
 
-        // If this building is resolving a generic food request, then only allow it to resolve non-smeltables. 
-        if(building.hasModule(WorkerBuildingModule.class))
-        {
-            for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
+            // If this building is resolving a generic food request, then only allow it to resolve non-smeltables.
+            if (recipe != null && (!isFood || recipe.getIntermediate() != Blocks.FURNACE) && canBuildingCraftStack(building, recipe))
             {
-                final IRecipeStorage recipe = module.getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
-                if (recipe != null && recipe.getIntermediate() != Blocks.FURNACE)
+                final int recipeCount = request.getRequest().getCount() / recipe.getPrimaryOutput().getCount();
+                boolean success = true;
+                for (final ItemStorage ingredient : recipe.getCleanedInput())
                 {
-                    return canBuildingCraftStack(building, itemStack -> request.getRequest().matches(itemStack));
+                    if (createsCraftingCycle(manager, request, new Stack(ingredient.getItemStack(), ingredient.getAmount() * recipeCount, ingredient.getAmount() * recipeCount), null))
+                    {
+                        success = false;
+                        break;
+                    }
+                }
+                if (success)
+                {
+                    return true;
                 }
             }
         }
 
-        // It's both a Food request and smeltable
         return false;
     }
 
@@ -176,9 +184,10 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     protected boolean createsCraftingCycle(
       @NotNull final IRequestManager manager,
       @NotNull final IRequest<?> request,
-      @NotNull final IRequest<? extends IDeliverable> target)
+      @NotNull final IDeliverable target,
+      @Nullable final IRequest<? extends IDeliverable> targetRequest)
     {
-        return createsCraftingCycle(manager, request, target, 0, new ArrayList<>());
+        return createsCraftingCycle(manager, request, target, targetRequest, 0);
     }
 
     /**
@@ -194,33 +203,18 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     protected boolean createsCraftingCycle(
       @NotNull final IRequestManager manager,
       @NotNull final IRequest<?> request,
-      @NotNull final IRequest<? extends IDeliverable> target,
-      final int count,
-      final List<IRequestable> reqs)
+      @NotNull final IDeliverable target,
+      @Nullable final IRequest<? extends IDeliverable> targetRequest,
+        final int count)
     {
-        if (reqs.contains(request.getRequest()))
-        {
-            for (final IRequestable requestable : reqs)
-            {
-                if (requestable.equals(request.getRequest())
-                      && request.getRequest() instanceof IDeliverable
-                      && requestable instanceof IDeliverable
-                      && ((IDeliverable) request.getRequest()).getCount() <= ((IDeliverable) requestable).getCount())
-                {
-                    return true;
-                }
-            }
-        }
-        reqs.add(request.getRequest());
-
         if (count > MAX_CRAFTING_CYCLE_DEPTH)
         {
             return true;
         }
 
-        if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
+        if ((targetRequest == null || !targetRequest.equals(request)) && request.getRequest().equals(target))
         {
-            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() <= target.getRequest().getCount() && !request.hasChildren())
+            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() <= target.getCount())
             {
                 return true;
             }
@@ -231,17 +225,17 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count + 1, reqs);
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, targetRequest, count + 1);
     }
 
     /**
-     * Check if a building can craft a certain stack.
+     * Check if a building can craft a certain recipe.
      *
      * @param building       the building to check in.
-     * @param stackPredicate predicate used to check if a building knows the recipe.
+     * @param recipe         the recipe to check.
      * @return true if so.
      */
-    public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, Predicate<ItemStack> stackPredicate);
+    public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, IRecipeStorage recipe);
 
     @Nullable
     @Override

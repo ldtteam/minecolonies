@@ -92,18 +92,9 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final Predicate<ItemStack> stackPredicate)
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final IRecipeStorage recipe)
     {
-        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
-        {
-            final IRecipeStorage recipe = module.getFirstRecipe(stackPredicate);
-            if (recipe != null && (recipe.getIntermediate() == null || recipe.getIntermediate() == Blocks.AIR))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return recipe != null && (recipe.getIntermediate() == null || recipe.getIntermediate() == Blocks.AIR);
     }
 
     @Override
