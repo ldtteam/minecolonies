@@ -1,14 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,8 +15,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -160,8 +155,7 @@ public class BuildingLibrary extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        //todo we might in the future want to add our own oredict tag to this.
-        if (block == Blocks.BOOKSHELF)
+        if (block.defaultBlockState().is(Tags.Blocks.BOOKSHELVES))
         {
             bookCases.add(pos);
         }
@@ -179,7 +173,7 @@ public class BuildingLibrary extends AbstractBuilding
             return getPosition();
         }
         final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
-        if (colony.getWorld().getBlockState(returnPos).getBlock() == Blocks.BOOKSHELF)
+        if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES))
         {
             return returnPos;
         }
