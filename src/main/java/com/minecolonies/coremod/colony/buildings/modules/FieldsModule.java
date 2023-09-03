@@ -183,6 +183,13 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
         return getOwnedFields().size() < getMaxFieldCount() && canAssignFieldOverride(field);
     }
 
+    @Override
+    public void markDirty()
+    {
+        super.markDirty();
+        building.getColony().getBuildingManager().markFieldsDirty();
+    }
+
     /**
      * Additional checks to see if this field can be assigned to the building.
      *
