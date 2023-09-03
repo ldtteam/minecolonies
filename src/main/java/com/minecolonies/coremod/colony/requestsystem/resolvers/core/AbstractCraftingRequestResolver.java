@@ -196,7 +196,6 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param request the request.
      * @param target  the target to create.
      * @param count   the itemCount.
-     * @param reqs    the list of reqs.
      * @return true if a loop is detected to abort.
      */
     protected boolean createsCraftingCycle(
