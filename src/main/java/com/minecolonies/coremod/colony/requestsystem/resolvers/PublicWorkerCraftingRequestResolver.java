@@ -105,7 +105,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final IRecipeStorage recipeStorage)
+    public boolean canBuildingCraftRecipe(@NotNull final AbstractBuilding building, final IRecipeStorage recipeStorage)
     {
         return recipeStorage != null;
     }

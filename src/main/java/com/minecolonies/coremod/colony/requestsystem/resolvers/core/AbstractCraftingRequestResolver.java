@@ -22,7 +22,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -145,13 +144,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        final boolean isFood = !(request.getRequest() instanceof Food);
+        final boolean isFood = request.getRequest() instanceof Food;
         for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {
             final IRecipeStorage recipe = module.getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
 
             // If this building is resolving a generic food request, then only allow it to resolve non-smeltables.
-            if (recipe != null && (!isFood || recipe.getIntermediate() != Blocks.FURNACE) && canBuildingCraftStack(building, recipe))
+            if (recipe != null && (!isFood || recipe.getIntermediate() != Blocks.FURNACE) && canBuildingCraftRecipe(building, recipe))
             {
                 final int recipeCount = request.getRequest().getCount() / recipe.getPrimaryOutput().getCount();
                 boolean success = true;
@@ -235,7 +234,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param recipe         the recipe to check.
      * @return true if so.
      */
-    public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, IRecipeStorage recipe);
+    public abstract boolean canBuildingCraftRecipe(@NotNull final AbstractBuilding building, IRecipeStorage recipe);
 
     @Nullable
     @Override

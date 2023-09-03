@@ -92,7 +92,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final IRecipeStorage recipe)
+    public boolean canBuildingCraftRecipe(@NotNull final AbstractBuilding building, final IRecipeStorage recipe)
     {
         return recipe != null && (recipe.getIntermediate() == null || recipe.getIntermediate() == Blocks.AIR);
     }
