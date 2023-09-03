@@ -105,8 +105,29 @@ public final class CraftingUtils
      */
     public static OptionalPredicate<ItemStack> getIngredientValidatorBasedOnTags(@NotNull final String crafterJobName)
     {
+        return getIngredientValidatorBasedOnTags(crafterJobName, false);
+    }
+    /**
+     * Generates an {@link OptionalPredicate} that reports whether a particular
+     * stack is allowed, banned, or undecided when used as a crafting ingredient
+     * by the specified job, based on the associated tags.
+     *
+     * @param crafterJobName The name of the crafting job (defines which tags to check).
+     * @param includeDoRules True if applying DO overrides
+     * @return a validator that checks the crafting ingredient tags.
+     */
+    public static OptionalPredicate<ItemStack> getIngredientValidatorBasedOnTags(@NotNull final String crafterJobName, boolean includeDoRules)
+    {
         return stack ->
         {
+            if(includeDoRules)
+            {
+                final TagKey<Item> includedDoIngredients = ModTags.crafterDoIngredient.get(crafterJobName);
+                if (includedDoIngredients != null && stack.is(includedDoIngredients))
+                {
+                    return Optional.of(true);
+                }
+            }
             // Check against excluded ingredients
             final TagKey<Item> excludedIngredients = ModTags.crafterIngredientExclusions.get(crafterJobName);
             if (excludedIngredients != null && stack.is(excludedIngredients))
