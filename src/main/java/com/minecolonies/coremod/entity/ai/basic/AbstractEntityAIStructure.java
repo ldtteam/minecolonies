@@ -37,7 +37,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -886,7 +885,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     @Nullable
     public BlockPos getCurrentBuildingPosition()
     {
-        return structurePlacer == null ? null : structurePlacer.getB().getProgressPosInWorld(structurePlacer.getA().getIterator().getProgressPos());
+        if (structurePlacer == null || structurePlacer.getA() == null || structurePlacer.getB() == null)
+        {
+            return null;
+        }
+
+        final BlockPos progressPos = structurePlacer.getA().getIterator().getProgressPos();
+        if (progressPos == null || progressPos.equals(NULL_POS))
+        {
+            return null;
+        }
+
+        return structurePlacer.getB().getProgressPosInWorld(progressPos);
     }
 
     /**
