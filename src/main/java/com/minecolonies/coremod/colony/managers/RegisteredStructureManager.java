@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.*;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -35,9 +34,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.colony.fields.registry.FieldDataManager;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
-import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldsUpdateMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
-import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveFieldViewMessage;
 import com.minecolonies.coremod.quests.objectives.IBuildingUpgradeObjectiveTemplate;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
@@ -796,13 +794,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     /**
      * Updates all subscribers of fields etc.
      */
-    private void markFieldsDirty()
+    @Override
+    public void markFieldsDirty()
     {
         isFieldsDirty = true;
-        for (IBuilding building : buildings.values())
-        {
-            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(AbstractBuildingModule::markDirty);
-        }
     }
 
     /**
@@ -875,10 +870,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            for (final IField field : fields)
-            {
-                players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(colony, field), player));
-            }
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldsUpdateMessage(colony, fields), player));
         }
     }
 
@@ -987,7 +979,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (IField field : fieldsToRemove)
         {
             fields.remove(field);
-            Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(colony, field));
             markFieldsDirty();
         }
     }

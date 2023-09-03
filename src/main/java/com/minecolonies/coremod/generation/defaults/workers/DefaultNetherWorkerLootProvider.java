@@ -26,10 +26,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -241,7 +238,9 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
             final int buildingLevel = i + 1;
 
             final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, levels.get(i).build());
-            final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
+            final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream()
+                    .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
+                    .map(ItemStack::getItem));
 
             CustomRecipeProvider.CustomRecipeBuilder.create(NETHERWORKER, MODULE_CUSTOM, "trip" + buildingLevel)
                     .minBuildingLevel(buildingLevel)

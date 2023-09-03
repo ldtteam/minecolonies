@@ -20,6 +20,16 @@ public final class FieldDataManager
     private static final String TAG_FIELD_POSITION = "position";
     private static final String TAG_FIELD_DATA     = "data";
 
+    private FieldDataManager()
+    {
+    }
+
+    /**
+     * Creates a field instance from NBT compound data.
+     *
+     * @param compound the input compound data.
+     * @return the created field instance.
+     */
     public static IField compoundToField(final @NotNull CompoundTag compound)
     {
         ResourceLocation fieldName = new ResourceLocation(compound.getString(TAG_FIELD_NAME));
@@ -33,6 +43,13 @@ public final class FieldDataManager
         return field;
     }
 
+    /**
+     * Creates a field instance from a field type and position.
+     *
+     * @param fieldName the field registry entry name.
+     * @param position  the position of the field.
+     * @return the field instance.
+     */
     public static IField resourceLocationToField(final @NotNull ResourceLocation fieldName, final @NotNull BlockPos position)
     {
         final FieldRegistries.FieldEntry fieldEntry = FieldRegistries.getFieldRegistry().getValue(fieldName);
@@ -46,6 +63,12 @@ public final class FieldDataManager
         return fieldEntry.produceField(position);
     }
 
+    /**
+     * Creates a field instance from a complete network buffer.
+     *
+     * @param buf the buffer, still containing the field registry type and position.
+     * @return the field instance.
+     */
     public static IField bufferToField(final @NotNull FriendlyByteBuf buf)
     {
         final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
@@ -55,6 +78,12 @@ public final class FieldDataManager
         return field;
     }
 
+    /**
+     * Creates a network buffer from a field instance.
+     *
+     * @param field the field instance.
+     * @return the network buffer.
+     */
     public static FriendlyByteBuf fieldToBuffer(final @NotNull IField field)
     {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
@@ -64,6 +93,12 @@ public final class FieldDataManager
         return buf;
     }
 
+    /**
+     * Creates NBT compound data from a field instance.
+     *
+     * @param field the field instance.
+     * @return the NBT compound.
+     */
     public static CompoundTag fieldToCompound(final @NotNull IField field)
     {
         final CompoundTag compound = new CompoundTag();

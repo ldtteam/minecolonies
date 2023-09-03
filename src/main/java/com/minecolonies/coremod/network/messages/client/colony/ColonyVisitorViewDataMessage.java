@@ -1,12 +1,16 @@
 package com.minecolonies.coremod.network.messages.client.colony;
 
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import io.netty.buffer.Unpooled;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
@@ -65,6 +69,13 @@ public class ColonyVisitorViewDataMessage implements IMessage
         this.dimension = colony.getDimension();
         this.visitors = visitors;
         this.refresh = refresh;
+
+        visitorBuf = new FriendlyByteBuf(Unpooled.buffer());
+        for (final IVisitorData data : visitors)
+        {
+            visitorBuf.writeInt(data.getId());
+            data.serializeViewNetworkData(visitorBuf);
+        }
     }
 
     @Override
@@ -87,16 +98,12 @@ public class ColonyVisitorViewDataMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        visitorBuf.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeBoolean(refresh);
         buf.writeInt(visitors.size());
-
-        for (final IVisitorData data : visitors)
-        {
-            buf.writeInt(data.getId());
-            data.serializeViewNetworkData(buf);
-        }
+        buf.writeBytes(visitorBuf);
     }
 
     @Nullable
