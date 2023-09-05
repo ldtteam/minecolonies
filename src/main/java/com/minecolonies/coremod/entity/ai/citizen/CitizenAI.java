@@ -249,6 +249,11 @@ public class CitizenAI implements IStateAI
      */
     public boolean shouldEat()
     {
+        if (lastState == CitizenAIState.EATING && !citizen.getCitizenData().justAte())
+        {
+            return true;
+        }
+
         if (citizen.getCitizenData().justAte())
         {
             return false;

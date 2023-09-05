@@ -209,7 +209,6 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
-
         final FoodProperties itemFood = stack.getItem().getFoodProperties(stack, citizen);
 
         Item containerItem = stack.getItem().getCraftingRemainingItem();
@@ -256,6 +255,8 @@ public class EntityAIEatTask implements IStateAI
             waitingTicks = 0;
             return EAT;
         }
+
+        citizenData.setJustAte(true);
         return CitizenAIState.IDLE;
     }
 
