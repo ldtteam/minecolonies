@@ -105,7 +105,7 @@ public class BuildingFletcher extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER);
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER, true);
         }
 
         @Override

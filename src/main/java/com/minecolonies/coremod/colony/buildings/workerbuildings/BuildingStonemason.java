@@ -96,7 +96,7 @@ public class BuildingStonemason extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON);
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON, true);
         }
 
         @Override

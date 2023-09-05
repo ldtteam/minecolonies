@@ -138,7 +138,7 @@ public class BuildingSawmill extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL, true)
                     .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
         }
 
