@@ -190,7 +190,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return START_WORKING;
         }
 
-        if (walkToBlock(new BlockPos(living.position())))
+        if (walkToBlock(living.blockPosition()))
         {
             return getState();
         }
