@@ -131,7 +131,7 @@ public class BuildingGlassblower extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER);
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER, true);
         }
 
         @Override
