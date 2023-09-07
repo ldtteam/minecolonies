@@ -77,8 +77,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(BLOCK_ATTACKS).setTranslatedName("Knight Shield Blocking Chance +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5}));
         effects.add(new ResearchEffect(BLOCK_BREAK_SPEED).setTranslatedName("Citizen Block Break Speed +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(BLOCK_PLACE_SPEED).setTranslatedName("Citizen Block Place Speed +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
-        effects.add(new ResearchEffect(CITIZEN_CAP).setTranslatedName("Increase Max Citizens to %s")
-                      .setLevels(new double[] {CitizenConstants.CITIZEN_LIMIT_OUTPOST, CitizenConstants.CITIZEN_LIMIT_HAMLET, CitizenConstants.CITIZEN_LIMIT_VILLAGE,
+        effects.add(new ResearchEffect(CITIZEN_CAP).setTranslatedName("Increase Max Citizens by %s")
+                      .setLevels(new double[] {CitizenConstants.CITIZEN_LIMIT_DEFAULT, CitizenConstants.CITIZEN_LIMIT_OUTPOST, CitizenConstants.CITIZEN_LIMIT_HAMLET,
+                        CitizenConstants.CITIZEN_LIMIT_VILLAGE,
                         CitizenConstants.CITIZEN_LIMIT_MAX}));
         effects.add(new ResearchEffect(CITIZEN_INV_SLOTS).setTranslatedName("Citizen Inventory +%s Slots").setLevels(new double[] {9, 18, 27}));
         effects.add(new ResearchEffect(DOUBLE_ARROWS).setTranslatedName("Archer Multishot +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5}));
@@ -297,28 +298,28 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                    .setIcon(ModBlocks.blockHutHome.asItem(), 50)
                                    .addBuildingRequirement(ModBuildings.HOME_ID, 4)
                                    .addItemCost(Items.COOKED_BEEF, 64)
-                                   .addEffect(CITIZEN_CAP, 1)
+                                   .addEffect(CITIZEN_CAP, 2)
                                    .addToList(r);
         final Research hamlet = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/hamlet"), CIVIL).setParentResearch(outpost)
                                   .setTranslatedName("Hamlet")
                                   .setIcon(ModBlocks.blockHutHome.asItem(), 75)
                                   .addBuildingRequirement(ModBuildings.HOME_ID, 5)
                                   .addItemCost(Items.COOKED_BEEF, 128)
-                                  .addEffect(CITIZEN_CAP, 2)
+                                  .addEffect(CITIZEN_CAP, 3)
                                   .addToList(r);
         final Research village = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/village"), CIVIL).setParentResearch(hamlet)
                                    .setTranslatedName("Village")
                                    .setIcon(ModBlocks.blockHutHome.asItem(), 100)
                                    .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 4)
                                    .addItemCost(Items.COOKED_BEEF, 256)
-                                   .addEffect(CITIZEN_CAP, 3)
+                                   .addEffect(CITIZEN_CAP, 4)
                                    .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/city"), CIVIL).setParentResearch(village)
           .setTranslatedName("City")
           .setIcon(ModBlocks.blockHutHome.asItem(), 200)
           .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 5)
           .addItemCost(Items.COOKED_BEEF, 512)
-          .addEffect(CITIZEN_CAP, 4)
+          .addEffect(CITIZEN_CAP, 5)
           .addToList(r);
 
         final Research diligent = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/diligent"), CIVIL).setParentResearch(keen)
