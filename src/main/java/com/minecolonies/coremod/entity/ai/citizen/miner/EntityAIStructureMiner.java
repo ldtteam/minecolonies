@@ -954,7 +954,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
         {
-            int level = building.getBuildingLevel();
+            final int level = building.getBuildingLevel();
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance, level),
               worker.getInventoryCitizen());
         }

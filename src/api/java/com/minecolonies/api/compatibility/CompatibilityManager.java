@@ -795,8 +795,8 @@ public class CompatibilityManager implements ICompatibilityManager
             for (final String ore : MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyOres.get())
             {
                 final String pattern = "([\\w:]+)!(\\d+)(?:#(\\d+))?";
-                Pattern r = Pattern.compile(pattern);
-                Matcher m = r.matcher(ore);
+                final Pattern r = Pattern.compile(pattern);
+                final Matcher m = r.matcher(ore);
                 if (!m.find())
                 {
                     Log.getLogger().warn("Wrong configured ore: " + ore);
@@ -805,8 +805,9 @@ public class CompatibilityManager implements ICompatibilityManager
 
                 final String oreName = m.group(1);
                 final String chance = m.group(2);
+                final String detectedLevelName = m.group(3);
+
                 String mineLevelName = defaultMineLevelName + "";
-                String detectedLevelName = m.group(3);
                 if (m.groupCount() == 3 && null != detectedLevelName) {
                     mineLevelName = m.group(3);
                 }
