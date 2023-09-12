@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
+import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,6 +31,7 @@ import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
@@ -105,7 +107,16 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(BUTTON_JOB, this::jobClicked);
         super.registerButton(TOGGLE_SHOW_EMPLOYED, this::showEmployedToggled);
 
-        moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class));
+        final Predicate<JobEntry> allowedJobs = BuildingUtils.getAllowedJobs(colony.getWorld(), buildingId);
+        final Predicate<IAssignmentModuleView> allowedModules = m -> !m.getAssignedCitizens().isEmpty() ||
+                allowedJobs.test(m.getJobEntry());
+
+        moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class).stream()
+                .filter(allowedModules).toList());
+        if (moduleViews.isEmpty())
+        {
+            return;
+        }
         selectedModule = moduleViews.get(0);
 
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
@@ -324,6 +335,12 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        if (moduleViews.isEmpty())
+        {
+            close();
+            return;
+        }
+
         updateCitizens();
         findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).off();
 

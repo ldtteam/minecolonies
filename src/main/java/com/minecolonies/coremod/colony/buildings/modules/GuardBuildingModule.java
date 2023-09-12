@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
@@ -17,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,8 +79,8 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
         boolean hiredFromTraining = false;
 
         // If we have no active worker, attempt to grab one from the appropriate trainer
-        if (building.getSetting(HIRE_TRAINEE).getValue() && !isFull() && ((building.getBuildingLevel() > 0 && building.isBuilt()))
-              && ((this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring()) || this.getHiringMode() == HiringMode.AUTO))
+        if (building.getSetting(HIRE_TRAINEE).getValue() && !isFull() &&
+                BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
         {
             ICitizenData trainingCitizen = null;
             int maxSkill = 0;
