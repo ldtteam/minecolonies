@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -816,7 +817,7 @@ public class CompatibilityManager implements ICompatibilityManager
             }
 
             List<ItemStorage> alternative = null;
-            int mineMaxLevel = 5;
+            int mineMaxLevel = ModBuildings.miner.get().produceBuilding(BlockPos.ZERO, null).getMaxBuildingLevel();
             for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++) {
                 if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty()) {
                     alternative = luckyOres.get(levelToTest);
