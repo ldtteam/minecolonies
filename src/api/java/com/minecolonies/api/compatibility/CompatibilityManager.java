@@ -792,28 +792,40 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (luckyOres.isEmpty())
         {
-            final int defaultMineLevelName = 0;
             for (final String ore : MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyOres.get())
             {
-                final String pattern = "([\\w:]+)!(\\d+)(?:#(\\d+))?";
-                final Pattern r = Pattern.compile(pattern);
-                final Matcher m = r.matcher(ore);
-                if (!m.find())
+                final String[] split = ore.split("!");
+                if (split.length < 2)
                 {
                     Log.getLogger().warn("Wrong configured ore: " + ore);
                     continue;
                 }
 
-                final String oreName = m.group(1);
-                final String chance = m.group(2);
-                final String detectedLevelName = m.group(3);
-
-                String mineLevelName = defaultMineLevelName + "";
-                if (m.groupCount() == 3 && null != detectedLevelName) {
-                    mineLevelName = m.group(3);
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
+                if (item == null || item == Items.AIR) {
+                    Log.getLogger().warn("Invalid lucky block: " + ore);
+                    continue;
                 }
 
-                discoverLuckyOre(ore, oreName, chance, mineLevelName);
+                final int defaultMineLevel = 0;
+                int buildingLevel = defaultMineLevel;
+                final ItemStack stack = new ItemStack(item, 1);
+                try {
+                    if (split.length == 3) {
+                        buildingLevel = Integer.parseInt(split[2]);
+                    }
+
+                    final int rarity = Integer.parseInt(split[split.length - 1]);
+
+                    luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
+
+                    for (int i = 0; i < rarity; i++) {
+                        List<ItemStorage> luckyOreOnLevel = luckyOres.get(buildingLevel);
+                        luckyOreOnLevel.add(new ItemStorage(stack));
+                    }
+                } catch (final NumberFormatException ex) {
+                    Log.getLogger().warn("Ore has invalid rarity or building level: " + ore);
+                }
             }
 
             List<ItemStorage> alternative = null;
@@ -830,28 +842,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
         }
         Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
-    }
-
-    private void discoverLuckyOre(String ore, String oreName, String chance, String mineLevelName) {
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(oreName));
-        if (item == null || item == Items.AIR) {
-            Log.getLogger().warn("Invalid lucky block: " + ore);
-            return;
-        }
-
-        final ItemStack stack = new ItemStack(item, 1);
-        try {
-            final int rarity = Integer.parseInt(chance);
-            final int buildingLevel = Integer.parseInt(mineLevelName);
-            luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
-
-            for (int i = 0; i < rarity; i++) {
-                List<ItemStorage> luckyOreOnLevel = luckyOres.get(buildingLevel);
-                luckyOreOnLevel.add(new ItemStorage(stack));
-            }
-        } catch (final NumberFormatException ex) {
-            Log.getLogger().warn("Ore has invalid rarity or building level: " + ore);
-        }
     }
 
     /**
