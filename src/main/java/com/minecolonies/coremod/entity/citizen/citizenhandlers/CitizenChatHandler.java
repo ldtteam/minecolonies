@@ -3,16 +3,12 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).
@@ -45,30 +41,30 @@ public class CitizenChatHandler implements ICitizenChatHandler
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-            MutableComponent contentComponent;
+            Component nameComponent;
             if (job != null)
             {
-                contentComponent = Component.translatable(
-                  TranslationConstants.WORKER_DIED,
+                nameComponent = Component.translatable(
+                  TranslationConstants.WORKER_FULL,
                   Component.translatable(job.getJobRegistryEntry().getTranslationKey()),
-                  citizen.getCitizenData().getName(),
-                  Math.round(citizen.getX()),
-                  Math.round(citizen.getY()),
-                  Math.round(citizen.getZ()),
-                  Component.translatable(damageSource.msgId));
+                  citizen.getCitizenData().getName());
             }
             else
             {
-                contentComponent = Component.translatable(
-                  TranslationConstants.COLONIST_DIED,
-                  citizen.getCitizenData().getName(),
-                  Math.round(citizen.getX()),
-                  Math.round(citizen.getY()),
-                  Math.round(citizen.getZ()),
-                  Component.translatable(damageSource.msgId));
+                nameComponent = Component.translatable(
+                  TranslationConstants.COLONIST_FULL,
+                  citizen.getCitizenData().getName());
             }
-
-            MessageUtils.format(contentComponent)
+            String result = citizen.getCombatTracker().getDeathMessage().getString().replace(citizen.getDisplayName().getString(), nameComponent.getString());
+            if (isAlphanumeric(result.charAt(result.length() - 1))) {
+                result += "!";
+            }
+            result += " ";
+            result += Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION,
+                    Math.round(citizen.getX()),
+                    Math.round(citizen.getY()),
+                    Math.round(citizen.getZ())).getString();
+            MessageUtils.format(result)
               .with(ChatFormatting.RED)
               .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
@@ -105,5 +101,9 @@ public class CitizenChatHandler implements ICitizenChatHandler
 
             builder.sendTo(citizen.getCitizenColonyHandler().getColony()).forAllPlayers();
         }
+    }
+
+    private static boolean isAlphanumeric(char c) {
+        return c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
     }
 }

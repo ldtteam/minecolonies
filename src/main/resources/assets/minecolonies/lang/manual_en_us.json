@@ -280,11 +280,12 @@
   "block.blockhuttownhall.messagemaxsize.config": "%d has reached its max size. Edit the config file to be able to get more.",
   "block.blockhuttownhall.messagemaxsize.research": "%d has reached its max size. You can get more by completing the research in the University.",
 
-  "block.blockhuttownhall.messagecolonistdead": "The colonist %s has died at %d %d %d of %s!",
+  "block.blockhuttownhall.messagecolonistfull": "The colonist %s",
+  "block.blockhuttownhall.messagecolonistgravelocation": "Their death position is %d %d %d.",
   "block.blockhuttownhall.messageinvalidworld": "You can't place a Town Hall in this world type",
   "block.blockhuttownhall.messagetooclose": "Too close to existing Town Hall",
   "block.blockhuttownhall.messagetooFar": "Too far away from your colony",
-  "block.blockhuttownhall.messageworkerdead": "The %s %s has died at %d %d %d of %s!",
+  "block.blockhuttownhall.messageworkerfull": "The %s %s",
 
   "tile.blockhuttownhall.messageplacedalreadydel": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click:",
   "tile.blockhuttownhall.messageplacedalreadyinfi": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click [DELETE]. If you want to start a new colony but not delete your old one, click [ABANDON].",
