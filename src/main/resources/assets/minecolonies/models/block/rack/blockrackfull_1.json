@@ -1,9 +1,16 @@
 {
-	"parent": "minecolonies:block/blockrackfull",
-	"textures": {
-      "9": "block/bricks",
-      "10": "block/sand",
-      "11": "block/orange_wool",
-      "12": "block/dirt"
-    }
+  "parent": "minecolonies:block/blockrackfull",
+  "textures": {
+    "0": "block/oak_planks",
+    "1": "block/stone",
+    "9": "block/bricks",
+    "10": "block/sand",
+    "11": "block/orange_wool",
+    "12": "block/dirt",
+    "sur9": "block/oak_log",
+    "sur10": "block/spruce_log",
+    "sur11": "block/birch_log",
+    "sur12": "block/jungle_log",
+    "particle": "block/oak_planks"
+  }
 }
