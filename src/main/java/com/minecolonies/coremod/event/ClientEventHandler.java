@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -97,10 +96,11 @@ public class ClientEventHandler
 
         final ResourceLocation soundLocation = event.getSound().getLocation();
         if (soundLocation.getNamespace().equals(Constants.MOD_ID)
-              && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get()
-              && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX))
+              && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX)
+              && Boolean.TRUE.equals(!MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get())
+        )
         {
-            event.setCanceled(true);
+            event.setSound(null);
         }
     }
 
