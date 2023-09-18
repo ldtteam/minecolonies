@@ -97,7 +97,7 @@ public class ClientEventHandler
         final ResourceLocation soundLocation = event.getSound().getLocation();
         if (soundLocation.getNamespace().equals(Constants.MOD_ID)
               && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX)
-              && Boolean.TRUE.equals(!MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get())
+              && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get()
         )
         {
             event.setSound(null);
