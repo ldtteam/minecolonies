@@ -84,8 +84,4 @@ public class CitizenChatHandler implements ICitizenChatHandler
             builder.sendTo(citizen.getCitizenColonyHandler().getColony()).forAllPlayers();
         }
     }
-
-    private static boolean isAlphanumeric(char c) {
-        return c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
-    }
 }
