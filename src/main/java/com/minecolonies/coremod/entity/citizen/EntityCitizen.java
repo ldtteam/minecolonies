@@ -76,6 +76,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -192,6 +193,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
+     * Our custom combat tracker.
+     */
+    private final CitizenCombatTracker combatTracker;
+
+    /**
      * The path-result of trying to move away
      */
     private PathResult moveAwayPath;
@@ -267,6 +273,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
+        this.combatTracker = new CitizenCombatTracker(this);
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
@@ -1977,5 +1984,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
         }
+    }
+
+    @Override
+    public CombatTracker getCombatTracker()
+    {
+        return combatTracker;
     }
 }
