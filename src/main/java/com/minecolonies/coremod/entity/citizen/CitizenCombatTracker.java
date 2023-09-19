@@ -15,18 +15,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Adaptation of CombatTracker to properly handle citizen death messages.
  */
-public class CitizenCombatTracker extends CombatTracker {
+public class CitizenCombatTracker extends CombatTracker
+{
     public CitizenCombatTracker(EntityCitizen citizen)
     {
         super(citizen);
-    }
-
-    /**
-     * Helper method to cast the superclass's mob field to EntityCitizen.
-     */
-    private EntityCitizen citizen()
-    {
-        return (EntityCitizen) getMob();
     }
 
     @Override
@@ -38,15 +31,15 @@ public class CitizenCombatTracker extends CombatTracker {
         if (job != null)
         {
             nameComponent = Component.translatable(
-                    TranslationConstants.WORKER_DESC,
-                    Component.translatable(job.getJobRegistryEntry().getTranslationKey()),
-                    citizen().getCitizenData().getName());
+              TranslationConstants.WORKER_DESC,
+              Component.translatable(job.getJobRegistryEntry().getTranslationKey()),
+              citizen().getCitizenData().getName());
         }
         else
         {
             nameComponent = Component.translatable(
-                    TranslationConstants.COLONIST_DESC,
-                    citizen().getCitizenData().getName());
+              TranslationConstants.COLONIST_DESC,
+              citizen().getCitizenData().getName());
         }
         //adapted from supermethod
         CombatEntry lastEntry = getLastEntry();
@@ -105,9 +98,19 @@ public class CitizenCombatTracker extends CombatTracker {
                 //adapted from DamageSource#getLocalizedDeathMessage
                 LivingEntity killer = citizen().getKillCredit();
                 String s = "death.attack." + lastEntry.getSource().msgId;
-                result = killer != null ? Component.translatable(killer instanceof Player ? s + ".player" : s, nameComponent, killer.getDisplayName()) : Component.translatable(s, nameComponent);
+                result = killer != null
+                           ? Component.translatable(killer instanceof Player ? s + ".player" : s, nameComponent, killer.getDisplayName())
+                           : Component.translatable(s, nameComponent);
             }
             return result;
         }
+    }
+
+    /**
+     * Helper method to cast the superclass's mob field to EntityCitizen.
+     */
+    private EntityCitizen citizen()
+    {
+        return (EntityCitizen) getMob();
     }
 }
