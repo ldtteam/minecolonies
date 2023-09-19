@@ -75,6 +75,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -190,6 +191,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
+     * Our custom combat tracker.
+     */
+    private final CitizenCombatTracker combatTracker;
+
+    /**
      * The path-result of trying to move away
      */
     private PathResult moveAwayPath;
@@ -265,6 +271,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
+        this.combatTracker = new CitizenCombatTracker(this);
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
@@ -1974,6 +1981,27 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenColonyHandler != null)
         {
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
+    }
+
+    @Override
+    public CombatTracker getCombatTracker()
+    {
+        return combatTracker;
+    }
+
+    @Nullable
+    @Override
+    public LivingEntity getKillCredit()
+    {
+        //necessary as the supermethod doesn't use getCombatTracker() here
+        if (getCombatTracker().getKiller() != null)
+        {
+            return getCombatTracker().getKiller();
+        }
+        else
+        {
+            return super.getKillCredit();
         }
     }
 }
