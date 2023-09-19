@@ -400,9 +400,11 @@ public final class TranslationConstants
     @NonNls
     public static final String BUILDER_BUILDING_TOO_LOW                                             = "entity.builder.messagebuildtoolow";
     @NonNls
-    public static final String COLONIST_DIED                                                        = "block.blockhuttownhall.messagecolonistdead";
+    public static final String COLONIST_DESC                                                        = "block.blockhuttownhall.messagecolonistdesc";
     @NonNls
-    public static final String WORKER_DIED                                                          = "block.blockhuttownhall.messageworkerdead";
+    public static final String WORKER_DESC                                                          = "block.blockhuttownhall.messageworkerdesc";
+    @NonNls
+    public static final String COLONIST_GRAVE_LOCATION                                              = "block.blockhuttownhall.messagecolonistgravelocation";
     @NonNls
     public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS                                    = "block.minecolonies.blockhut.breakwarn.children";
     @NonNls
