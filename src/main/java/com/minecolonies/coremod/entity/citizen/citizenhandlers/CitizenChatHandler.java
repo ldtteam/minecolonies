@@ -40,33 +40,15 @@ public class CitizenChatHandler implements ICitizenChatHandler
     {
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
-            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-            Component nameComponent;
-            if (job != null)
-            {
-                nameComponent = Component.translatable(
-                  TranslationConstants.WORKER_FULL,
-                  Component.translatable(job.getJobRegistryEntry().getTranslationKey()),
-                  citizen.getCitizenData().getName());
-            }
-            else
-            {
-                nameComponent = Component.translatable(
-                  TranslationConstants.COLONIST_FULL,
-                  citizen.getCitizenData().getName());
-            }
-            String result = citizen.getCombatTracker().getDeathMessage().getString().replace(citizen.getDisplayName().getString(), nameComponent.getString());
-            if (isAlphanumeric(result.charAt(result.length() - 1))) {
-                result += "!";
-            }
-            result += " ";
-            result += Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION,
-                    Math.round(citizen.getX()),
-                    Math.round(citizen.getY()),
-                    Math.round(citizen.getZ())).getString();
-            MessageUtils.format(result)
-              .with(ChatFormatting.RED)
-              .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
+            MessageUtils.format("")
+                    .with(ChatFormatting.RED)
+                    .append(citizen.getCombatTracker().getDeathMessage())
+                    .append(Component.literal("! "))
+                    .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION,
+                            Math.round(citizen.getX()),
+                            Math.round(citizen.getY()),
+                            Math.round(citizen.getZ())))
+                    .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
     }
 
