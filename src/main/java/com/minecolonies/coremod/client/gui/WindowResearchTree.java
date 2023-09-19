@@ -15,27 +15,27 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
-import com.minecolonies.coremod.colony.buildings.views.EmptyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
-import net.minecraft.network.chat.Component;
 
 /**
  * BOWindow to display a particular branch of the tree.
@@ -632,8 +632,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
             // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
             // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
-            if(research.getEffects().get(txt).getId().equals(CITIZEN_CAP)
-                 && (((GlobalResearchEffect)research.getEffects().get(txt)).getEffect() + 25) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
+            if (research.getEffects().get(txt).getId().equals(CITIZEN_CAP)
+                  && (((GlobalResearchEffect) research.getEffects().get(txt)).getEffect()) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
             {
                 hoverPaneBuilder.paragraphBreak().append(Component.translatable("com.minecolonies.research.effects.citizencapaddition.description", Component.translatable(
                   "com.minecolonies.coremod.research.limit.maxeffect")));
