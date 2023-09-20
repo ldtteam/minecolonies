@@ -261,6 +261,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             {
                 citizen.getJob(JobMiner.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);
+                getColony().getWorkManager().setDirty(true);
                 return;
             }
         }
