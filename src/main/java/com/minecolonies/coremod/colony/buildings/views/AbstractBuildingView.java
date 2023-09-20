@@ -139,6 +139,11 @@ public abstract class AbstractBuildingView implements IBuildingView
     private boolean isDeconstructed;
 
     /**
+     * If citizen assignment is permitted.
+     */
+    private boolean isAssignmentAllowed;
+
+    /**
      * Set of building modules this building has.
      */
     protected List<IBuildingModuleView> moduleViews = new ArrayList<>();
@@ -424,6 +429,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
         loadRequestSystemFromNBT(buf.readNbt());
         isDeconstructed = buf.readBoolean();
+        isAssignmentAllowed = buf.readBoolean();
 
         for (final IBuildingModuleView module: moduleViews)
         {
@@ -693,6 +699,6 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public boolean allowsAssignment()
     {
-        return !isDeconstructed;
+        return isAssignmentAllowed;
     }
 }

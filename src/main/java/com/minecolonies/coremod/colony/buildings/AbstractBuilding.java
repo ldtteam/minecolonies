@@ -681,6 +681,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeNbt(requestSystemCompound);
 
         buf.writeBoolean(isDeconstructed());
+        buf.writeBoolean(canAssignCitizens());
 
         getModules(IPersistentModule.class).forEach(module -> module.serializeToView(buf));
     }
