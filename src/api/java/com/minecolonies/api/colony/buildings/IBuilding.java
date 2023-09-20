@@ -456,6 +456,15 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
     }
 
     /**
+     * Check if this building is sufficiently built to be able to assign workers.
+     * @return true if so.
+     */
+    default boolean canAssignCitizens()
+    {
+        return getBuildingLevel() > 0 && isBuilt();
+    }
+
+    /**
      * Get the set of all assigned citizens in the colony.
      * @return the list
      */

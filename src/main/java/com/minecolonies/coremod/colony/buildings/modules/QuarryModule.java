@@ -56,7 +56,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
-                if (data.getJob() instanceof JobQuarrier && !hasAssignedCitizen(data) && ((JobQuarrier) data.getJob()).findQuarry() == null)
+                if (data.getJob() instanceof JobQuarrier quarrier && !hasAssignedCitizen(data) && quarrier.findQuarry() == null)
                 {
                     assignCitizen(data);
                 }
