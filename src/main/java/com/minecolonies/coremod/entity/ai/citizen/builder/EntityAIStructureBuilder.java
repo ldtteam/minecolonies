@@ -201,14 +201,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (walkToBlock(workFrom))
-        {
-            return false;
-        }
-
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5L + (pathBackupFactor * 5L))
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) < 5L + (pathBackupFactor * 5L))
         {
             workFrom = null;
+            return true;
+        }
+
+        if (walkToBlock(workFrom))
+        {
             return false;
         }
 
