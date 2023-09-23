@@ -123,7 +123,7 @@ public class EntityAIVisitor implements IState
         if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.position()), 2) && citizen.hasLineOfSight(target))
         {
             citizen.swing(InteractionHand.MAIN_HAND);
-            target.hurt(new NamedDamageSource("death.attack.entity.minecolonies.visitor", citizen), 10.0f);
+            target.hurt(new NamedDamageSource("entity.minecolonies.visitor", citizen), 10.0f);
         }
 
         return false;
