@@ -55,37 +55,37 @@ public class CommandColonyPrintStats implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), false);
+            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), false);
             return 0;
         }
 
         final BlockPos position = colony.getCenter();
-        context.getSource().sendSuccess(() -> literalAndRemember(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), false);
+        context.getSource().sendSuccess(literalAndRemember(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), false);
         final String mayor = colony.getPermissions().getOwnerName();
-        context.getSource().sendSuccess(() -> literalAndRemember(MAYOR_TEXT + mayor), false);
+        context.getSource().sendSuccess(literalAndRemember(MAYOR_TEXT + mayor), false);
         context.getSource()
-          .sendSuccess(() -> literalAndRemember(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), false);
+          .sendSuccess(literalAndRemember(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), false);
         context.getSource()
-          .sendSuccess(() -> literalAndRemember(
+          .sendSuccess(literalAndRemember(
             COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
             ChatFormatting.GREEN)), false);
-        context.getSource().sendSuccess(() -> literalAndRemember(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), false);
-        context.getSource().sendSuccess(() -> literalAndRemember(IS_DELETABLE + !colony.canBeAutoDeleted()), false);
+        context.getSource().sendSuccess(literalAndRemember(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), false);
+        context.getSource().sendSuccess(literalAndRemember(IS_DELETABLE + !colony.canBeAutoDeleted()), false);
 
         if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
-            context.getSource().sendSuccess(() -> literalAndRemember(CANNOT_BE_RAIDED), false);
+            context.getSource().sendSuccess(literalAndRemember(CANNOT_BE_RAIDED), false);
         }
 
         final RaidManager.RaidHistory last = ((RaidManager) colony.getRaiderManager()).getLastRaid();
         if (last != null)
         {
-            context.getSource().sendSuccess(() -> literalAndRemember(last.toString()), false);
+            context.getSource().sendSuccess(literalAndRemember(last.toString()), false);
         }
 
-        context.getSource().sendSuccess(() -> literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size()), false);
+        context.getSource().sendSuccess(literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size()), false);
         context.getSource()
-          .sendSuccess(() -> literalAndRemember(colony.getBuildingManager()
+          .sendSuccess(literalAndRemember(colony.getBuildingManager()
             .getBuildings()
             .values()
             .stream()
@@ -94,8 +94,8 @@ public class CommandColonyPrintStats implements IMCOPCommand
               Collectors.joining("\n"))), false);
 
         List<ResourceLocation> completed = ((LocalResearchTree) colony.getResearchManager().getResearchTree()).getCompletedList();
-        context.getSource().sendSuccess(() -> literalAndRemember("Reasearches completed count:" + completed.size()), false);
-        context.getSource().sendSuccess(() -> literalAndRemember(completed.stream().map(r -> r.toString()).collect(Collectors.joining("\n"))), false);
+        context.getSource().sendSuccess(literalAndRemember("Reasearches completed count:" + completed.size()), false);
+        context.getSource().sendSuccess(literalAndRemember(completed.stream().map(r -> r.toString()).collect(Collectors.joining("\n"))), false);
 
         Log.getLogger().info(fullLog);
         return 1;
