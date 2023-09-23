@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -36,7 +37,10 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -45,14 +49,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NIGHTS_SINCE_LAST_RAID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RAIDABLE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Handles spawning hostile raid events.
@@ -143,11 +147,6 @@ public class RaidManager implements IRaiderManager
     private int nightsSinceLastRaid = INITIAL_NIGHTS_SINCE_LAST_RAID;
 
     /**
-     * Last raider spawnpoints.
-     */
-    private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
-
-    /**
      * The colony of the manager.
      */
     private final Colony colony;
@@ -173,11 +172,6 @@ public class RaidManager implements IRaiderManager
     private static final int INITIAL_LOST_CITIZENS = 0;
 
     /**
-     * The amount of citizens lost in a raid, two for normal citizens one for guards
-     */
-    private int lostCitizens = INITIAL_LOST_CITIZENS;
-
-    /**
      * The initial next raid type
      */
     private static final String INITIAL_NEXT_RAID_TYPE = "";
@@ -186,6 +180,11 @@ public class RaidManager implements IRaiderManager
      * The next raidType, or "" if the next raid should be determined from biome.
      */
     private String nextForcedType = INITIAL_NEXT_RAID_TYPE;
+
+    /**
+     * List which keeps track of raid historical data
+     */
+    private List<RaidHistory> raidHistories = new ArrayList<>();
 
     /**
      * Creates the RaidManager for a colony.
@@ -213,12 +212,6 @@ public class RaidManager implements IRaiderManager
     public void setCanHaveRaiderEvents(final boolean canHave)
     {
         this.haveBarbEvents = canHave;
-    }
-
-    @Override
-    public void addRaiderSpawnPoint(final BlockPos pos)
-    {
-        lastSpawnPoints.add(pos);
     }
 
     @Override
@@ -293,12 +286,15 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
+        raidHistories.add(new RaidHistory(amount, colony.getWorld().getGameTime()));
         nightsSinceLastRaid = 0;
         raidTonight = false;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
         {
+            IColonyRaidEvent raidEvent = null;
+
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
@@ -328,6 +324,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
             else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
@@ -338,6 +335,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
             else
@@ -371,10 +369,11 @@ public class RaidManager implements IRaiderManager
                 event.setHorde(new Horde(amount));
 
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
 
-            addRaiderSpawnPoint(targetSpawnPoint);
+            raidHistories.get(raidHistories.size() - 1).spawnData.add(new RaidSpawnInfo(raidEvent.getEventTypeID(), targetSpawnPoint));
         }
         colony.markDirty();
     }
@@ -592,7 +591,13 @@ public class RaidManager implements IRaiderManager
     @Override
     public List<BlockPos> getLastSpawnPoints()
     {
-        return new ArrayList<>(lastSpawnPoints);
+        if (raidHistories.isEmpty())
+        {
+            return List.of();
+        }
+
+        final RaidHistory last = raidHistories.get(raidHistories.size() - 1);
+        return last.spawnData.stream().map(raidSpawnInfo -> raidSpawnInfo.spawnpos).collect(Collectors.toList());
     }
 
     /**
@@ -628,19 +633,22 @@ public class RaidManager implements IRaiderManager
         {
             if (nightsSinceLastRaid == 0)
             {
-                final double lostPct = (double) lostCitizens / colony.getCitizenManager().getMaxCitizens();
-                if (lostPct > LOST_CITIZEN_DIFF_REDUCE_PCT)
+                if (!raidHistories.isEmpty())
                 {
-                    raidDifficulty = Math.max(MIN_RAID_DIFFICULTY, raidDifficulty - (int) (lostPct / LOST_CITIZEN_DIFF_REDUCE_PCT));
-                }
-                else if (lostPct < LOST_CITIZEN_DIFF_INCREASE_PCT)
-                {
-                    raidDifficulty = Math.min(MAX_RAID_DIFFICULTY, raidDifficulty + 1);
+                    RaidHistory history = raidHistories.get(raidHistories.size() - 1);
+                    final double lostPct = (double) history.lostCitizens / colony.getCitizenManager().getMaxCitizens();
+                    if (lostPct > LOST_CITIZEN_DIFF_REDUCE_PCT)
+                    {
+                        raidDifficulty = Math.max(MIN_RAID_DIFFICULTY, raidDifficulty - (int) (lostPct / LOST_CITIZEN_DIFF_REDUCE_PCT));
+                    }
+                    else if (lostPct < LOST_CITIZEN_DIFF_INCREASE_PCT)
+                    {
+                        raidDifficulty = Math.min(MAX_RAID_DIFFICULTY, raidDifficulty + 1);
+                    }
                 }
             }
 
             nightsSinceLastRaid++;
-            lostCitizens = 0;
         }
         else
         {
@@ -780,20 +788,30 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
+
+        if (raidHistories.isEmpty())
+        {
+            return;
+        }
+
+        final RaidHistory history = raidHistories.get(raidHistories.size() - 1);
         if (citizen.getJob() instanceof AbstractJobGuard)
         {
-            lostCitizens++;
+            history.lostCitizens++;
         }
         else
         {
-            lostCitizens += 2;
+            history.lostCitizens += 2;
         }
 
-        if (((double) lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
+        if (((double) history.lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
         {
             for (final IColonyEvent event : colony.getEventManager().getEvents().values())
             {
-                event.setStatus(EventStatus.DONE);
+                if (event instanceof IColonyRaidEvent)
+                {
+                    event.setStatus(EventStatus.DONE);
+                }
             }
         }
     }
@@ -804,7 +822,13 @@ public class RaidManager implements IRaiderManager
         compound.putBoolean(TAG_RAIDABLE, canHaveRaiderEvents());
         compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, getNightsSinceLastRaid());
         compound.putInt(TAG_RAID_DIFFICULTY, raidDifficulty);
-        compound.putInt(TAG_LOST_CITIZENS, lostCitizens);
+
+        ListTag nbtList = new ListTag();
+        for (final RaidHistory history : raidHistories)
+        {
+            nbtList.add(history.write());
+        }
+        compound.put(TAG_RAID_HISTORY, nbtList);
     }
 
     @Override
@@ -825,12 +849,181 @@ public class RaidManager implements IRaiderManager
         }
 
         raidDifficulty = Mth.clamp(compound.getInt(TAG_RAID_DIFFICULTY), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
-        lostCitizens = compound.getInt(TAG_LOST_CITIZENS);
+
+        if (compound.contains(TAG_RAID_HISTORY))
+        {
+            raidHistories.clear();
+            ListTag nbtList = compound.getList(TAG_RAID_HISTORY, Tag.TAG_COMPOUND);
+            for (final Tag tag : nbtList)
+            {
+                raidHistories.add(RaidHistory.fromNBT((CompoundTag) tag));
+            }
+        }
     }
 
     @Override
     public int getLostCitizen()
     {
-        return lostCitizens;
+        if (raidHistories.isEmpty())
+        {
+            return 0;
+        }
+
+        return raidHistories.get(raidHistories.size() - 1).lostCitizens;
+    }
+
+    @Override
+    public void onRaiderDeath(final AbstractEntityMinecoloniesMob entity)
+    {
+        final RaidHistory last = getLastRaid();
+        if (last != null)
+        {
+            last.deadRaiders++;
+        }
+    }
+
+    /**
+     * List of raid histories
+     *
+     * @return
+     */
+    public RaidHistory getLastRaid()
+    {
+        if (raidHistories.isEmpty())
+        {
+            return null;
+        }
+
+        return raidHistories.get(raidHistories.size() - 1);
+    }
+
+    /**
+     * Data holder for raid history
+     */
+    public static class RaidHistory
+    {
+        /**
+         * Serialization constants
+         */
+        static final String TAG_LOSTCITIZENS = "lostCitizens";
+        static final String TAG_RAIDERAMOUNT = "raiderAmount";
+        static final String TAG_RAIDTIME     = "raidTime";
+        static final String TAG_SPAWNINFO    = "spawnInfo";
+
+        /**
+         * Lost citizens during the raid
+         */
+        public int lostCitizens = 0;
+
+        /**
+         * Total amount of raiders spawned for all raids
+         */
+        public final int raiderAmount;
+
+        /**
+         * Total amount of raiders killed all raids
+         */
+        public int deadRaiders = 0;
+
+        /**
+         * World time at which the raid occured
+         */
+        public final long raidTime;
+
+        /**
+         * List of raid types and their spawnpoints
+         */
+        public final List<RaidSpawnInfo> spawnData = new ArrayList<>();
+
+        public RaidHistory(final int raiderAmount, final long raidTime)
+        {
+            this.raidTime = raidTime;
+            this.raiderAmount = raiderAmount;
+        }
+
+        private CompoundTag write()
+        {
+            CompoundTag tag = new CompoundTag();
+            tag.putInt(TAG_LOSTCITIZENS, lostCitizens);
+            tag.putInt(TAG_RAIDERAMOUNT, raiderAmount);
+            tag.putLong(TAG_RAIDTIME, raidTime);
+            ListTag nbtList = new ListTag();
+            for (final RaidSpawnInfo raidSpawnInfo : spawnData)
+            {
+                nbtList.add(raidSpawnInfo.write());
+            }
+            tag.put(TAG_SPAWNINFO, nbtList);
+            return tag;
+        }
+
+        private static RaidHistory fromNBT(final CompoundTag tag)
+        {
+            RaidHistory history = new RaidHistory(tag.getInt(TAG_RAIDERAMOUNT), tag.getLong(TAG_RAIDTIME));
+            history.lostCitizens = tag.getInt(TAG_LOST_CITIZENS);
+            ListTag nbtList = tag.getList(TAG_SPAWNINFO, Tag.TAG_COMPOUND);
+            for (final Tag entry : nbtList)
+            {
+                history.spawnData.add(RaidSpawnInfo.fromNBT((CompoundTag) entry));
+            }
+
+            return history;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Raid on: " + raidTime / 24000L
+                     + "\nRaiders spawned: " + raiderAmount
+                     + "\nRaiders killed: " + deadRaiders
+                     + "\nCitizens lost: " + lostCitizens
+                     + "\nSpawns:" + spawnData.stream().map(Object::toString).collect(Collectors.joining("\n"));
+        }
+    }
+
+    /**
+     * Data holder for raid spawns
+     */
+    public static class RaidSpawnInfo
+    {
+        /**
+         * Serialization constants
+         */
+        static final String TAG_RAIDTYPE = "raidtype";
+
+        /**
+         * Id of the raid type
+         */
+        public final ResourceLocation raidType;
+
+        /**
+         * Position of the raid spawn
+         */
+        public final BlockPos spawnpos;
+
+        public RaidSpawnInfo(final ResourceLocation raidType, final BlockPos spawnpos)
+        {
+            this.raidType = raidType;
+            this.spawnpos = spawnpos;
+        }
+
+        private CompoundTag write()
+        {
+            CompoundTag tag = new CompoundTag();
+            tag.putString(TAG_RAIDTYPE, raidType.toString());
+            tag.putInt("x", spawnpos.getX());
+            tag.putInt("y", spawnpos.getY());
+            tag.putInt("z", spawnpos.getZ());
+            return tag;
+        }
+
+        public static RaidSpawnInfo fromNBT(final CompoundTag tag)
+        {
+            return new RaidSpawnInfo(new ResourceLocation(tag.getString(TAG_RAIDTYPE)), new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z")));
+        }
+
+        public String toString()
+        {
+            return "Type: " + raidType.toString() + " pos: " + spawnpos.toShortString();
+        }
     }
 }

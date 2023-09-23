@@ -54,6 +54,7 @@ public class EntryPoint
           .addNode(new CommandLoadBackup().build())
           .addNode(new CommandLoadAllBackups().build())
           .addNode(new CommandColonyInfo().build())
+          .addNode(new CommandColonyPrintStats().build())
           .addNode(new CommandColonyChunks().build())
           .addNode(new CommandRSReset().build())
           .addNode(new CommandRSResetAll().build())
