@@ -1,8 +1,9 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import net.minecraft.nbt.CompoundTag;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.List;
 
@@ -31,13 +32,6 @@ public interface IRaiderManager
      * @param canHave true or false.
      */
     void setCanHaveRaiderEvents(final boolean canHave);
-
-    /**
-     * Add a spawnPoint to the last raiders spawns.
-     *
-     * @param pos the position to set.
-     */
-    void addRaiderSpawnPoint(final BlockPos pos);
 
     /**
      * Set if raiders will raid tonight.
@@ -180,4 +174,11 @@ public interface IRaiderManager
      * @return weighted amount of list citizen
      */
     int getLostCitizen();
+
+    /**
+     * Called when a raider mob dies
+     *
+     * @param entity
+     */
+    void onRaiderDeath(AbstractEntityMinecoloniesMob entity);
 }

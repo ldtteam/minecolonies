@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
@@ -26,7 +27,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -214,6 +214,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         // Respawn as a new entity in a loaded chunk, if not too close.
         respawns.add(new Tuple<>(entity.getType(), entity.blockPosition()));
+    }
+
+    @Override
+    public void onEntityDeath(final LivingEntity entity)
+    {
+        if (entity instanceof AbstractEntityMinecoloniesMob)
+        {
+            colony.getRaiderManager().onRaiderDeath((AbstractEntityMinecoloniesMob) entity);
+        }
     }
 
     /**

@@ -188,6 +188,11 @@ public final class NbtTagConstants
     public static final String TAG_NIGHTS_SINCE_LAST_RAID = "nightsRaid";
 
     /**
+     * Tag to store raid history data
+     */
+    public static final String TAG_RAID_HISTORY = "raidhistory";
+
+    /**
      * Tag on the ancient tome used to indicate if a raid will happen.
      */
     public static final String TAG_RAID_WILL_HAPPEN = "raidWillHappen";
