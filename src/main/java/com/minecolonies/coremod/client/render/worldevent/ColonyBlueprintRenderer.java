@@ -1,14 +1,19 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.client.ModKeyMappings;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
@@ -19,15 +24,18 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Supplier;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 
@@ -47,16 +55,34 @@ public class ColonyBlueprintRenderer
     private static final double CACHE_RESET_RANGE = 12.5F;
 
     /**
-     * The cached map of blueprints that are rendered.
+     * The cached list of blueprints to be rendered.
      */
-    private static Map<BlockPos, RenderData> blueprintCache = new HashMap<>();
+    private static Map<BlueprintCacheKey, List<BlockPos>> blueprintRenderCache = new HashMap<>();
+
+    /**
+     * The cached list of boxes to be rendered.
+     */
+    private static Map<BlockPos, BoxRenderData> boxRenderCache = new HashMap<>();
+
+    /**
+     * The cache of blueprint data.
+     */
+    private static final LoadingCache<BlueprintCacheKey, BlueprintPreviewData> blueprintDataCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(2))
+            .softValues()
+            .build(CacheLoader.from(ColonyBlueprintRenderer::makeBlueprintPreview));
 
     private static BlockPos lastCacheRebuild = null;
 
     /**
+     * True when blueprints should be rendered.  Toggled via hotkey.
+     */
+    private static boolean shouldRenderBlueprints = true;
+
+    /**
      * Blueprints we're still loading.
      */
-    private static final Queue<PendingRenderData> pendingBlueprints = new LinkedList<>();
+    private static final Map<BlockPos, PendingRenderData> pendingBoxes = new HashMap<>();
 
     /**
      * Rendering rules.  Order matters.
@@ -70,15 +96,41 @@ public class ColonyBlueprintRenderer
     }
 
     /**
+     * Invalidate the cache, because something significant has changed in colony data (e.g. more work orders).
+     */
+    public static void invalidateCache()
+    {
+        lastCacheRebuild = null;
+    }
+
+    /**
+     * Indicates whether blueprint rendering is enabled or disabled.
+     *
+     * @return true when enabled.
+     */
+    public static boolean willRenderBlueprints()
+    {
+        return shouldRenderBlueprints;
+    }
+
+    /**
      * Renders blueprints into the client.
      *
      * @param ctx rendering context
      */
     static void renderBlueprints(final WorldEventContext ctx)
     {
+        if (ModKeyMappings.TOGGLE_GOGGLES.get().consumeClick())
+        {
+            shouldRenderBlueprints = !shouldRenderBlueprints;
+
+            ctx.clientPlayer.playNotifySound(SoundEvents.NOTE_BLOCK_PLING, SoundSource.NEUTRAL, 1.0F, shouldRenderBlueprints ? 0.75F : 0.25F);
+        }
+
         if (!ctx.hasNearestColony())
         {
-            blueprintCache.clear();
+            blueprintRenderCache.clear();
+            boxRenderCache.clear();
             lastCacheRebuild = null;
             return;
         }
@@ -94,7 +146,8 @@ public class ColonyBlueprintRenderer
 
         if (activeRules.isEmpty())
         {
-            blueprintCache.clear();
+            blueprintRenderCache.clear();
+            boxRenderCache.clear();
             lastCacheRebuild = null;
             return;
         }
@@ -111,15 +164,12 @@ public class ColonyBlueprintRenderer
             processPendingBlueprints();
         }
 
-        for (final Map.Entry<BlockPos, RenderData> entry : blueprintCache.entrySet())
+        if (shouldRenderBlueprints)
         {
-            final RenderData buildingData = entry.getValue();
-            if (buildingData == null) { continue; }
-
-            final BlockPos position = entry.getKey();
-            if (buildingData.blueprint != null && buildingData.blueprint.getBlueprint() != null)
+            for (final Map.Entry<BlueprintCacheKey, List<BlockPos>> entry : blueprintRenderCache.entrySet())
             {
-                StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
+                final BlueprintPreviewData data = blueprintDataCache.getUnchecked(entry.getKey());
+                StructureClientHandler.renderStructureAtPosList(data, ctx.partialTicks, entry.getValue(), ctx.poseStack);
             }
         }
     }
@@ -131,10 +181,9 @@ public class ColonyBlueprintRenderer
      */
     static void renderBoxes(final WorldEventContext ctx)
     {
-        for (final Map.Entry<BlockPos, RenderData> entry : blueprintCache.entrySet())
+        for (final Map.Entry<BlockPos, BoxRenderData> entry : boxRenderCache.entrySet())
         {
-            final RenderData buildingData = entry.getValue();
-            if (buildingData == null) { continue; }
+            final BoxRenderData buildingData = entry.getValue();
 
             if (buildingData.box().getPos1() != INVALID_POS)
             {
@@ -151,6 +200,20 @@ public class ColonyBlueprintRenderer
                             new AABB(pos), 0.02f, 0xFFFF0000, true);
                 }
             });
+
+            if (ctx.nearestColony != null && buildingData.builder() != 0 && ctx.clientPlayer.isShiftKeyDown())
+            {
+                final ICitizenDataView citizen = ctx.nearestColony.getCitizen(buildingData.builder());
+                if (citizen != null)
+                {
+                    final BlockPos pos = citizen.getStatusPosition();
+                    if (pos != null)
+                    {
+                        ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
+                                new AABB(pos), 0.02f, 0xFF00FF00, true);
+                    }
+                }
+            }
         }
 
         ColonyWorldRenderMacros.endRenderLineBox(ctx.bufferSource);
@@ -159,94 +222,104 @@ public class ColonyBlueprintRenderer
     private static void rebuildCache(final WorldEventContext ctx, final List<IRenderBlueprintRule> rules)
     {
         Collections.reverse(rules);   // so the first rule "wins"
-        final Map<BlockPos, Supplier<PendingRenderData>> desired = new HashMap<>();
+        final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
         for (final IRenderBlueprintRule rule : rules)
         {
             desired.putAll(rule.getDesiredBlueprints(ctx));
         }
 
-        final Map<BlockPos, RenderData> newCache = new HashMap<>();
-        for (final Map.Entry<BlockPos, Supplier<PendingRenderData>> entry : desired.entrySet())
+        final Map<BlueprintCacheKey, List<BlockPos>> newBlueprints = new HashMap<>();
+        final Map<BlockPos, BoxRenderData> newBoxes = new HashMap<>();
+        for (final Map.Entry<BlockPos, PendingRenderData> entry : desired.entrySet())
         {
-            if (blueprintCache.containsKey(entry.getKey()))
+            if (entry.getValue().blueprint() != null && !entry.getValue().boxOnly())
             {
-                newCache.put(entry.getKey(), blueprintCache.get(entry.getKey()));
+                final List<BlockPos> posList = newBlueprints.computeIfAbsent(entry.getValue().blueprint(), k -> new ArrayList<>());
+                posList.add(entry.getKey());
+            }
+
+            final BoxRenderData newBox = tryLoadBox(entry.getValue());
+            if (newBox != null)
+            {
+                newBoxes.put(entry.getKey(), newBox);
             }
             else
             {
-                newCache.put(entry.getKey(), null);
-                pendingBlueprints.add(entry.getValue().get());
+                pendingBoxes.put(entry.getKey(), entry.getValue());
+
+                final BoxRenderData oldBox = boxRenderCache.getOrDefault(entry.getKey(), null);
+                if (oldBox != null)
+                {
+                    newBoxes.put(entry.getKey(), oldBox);
+                }
             }
         }
-        blueprintCache = newCache;
+        blueprintRenderCache = newBlueprints;
+        boxRenderCache = newBoxes;
+    }
+
+    private static @Nullable BoxRenderData tryLoadBox(@NotNull final PendingRenderData data)
+    {
+        if (data.blueprint() == null)
+        {
+            if (data.boxOnly() && data.hasAnchor())     // render only the anchor
+            {
+                final BoxPreviewData box = new BoxPreviewData(INVALID_POS, INVALID_POS, Optional.of(data.pos()));
+                return new BoxRenderData(box, 0);
+            }
+            return new BoxRenderData(null, 0);
+        }
+
+        final BlueprintPreviewData blueprintData = blueprintDataCache.getUnchecked(data.blueprint());
+        final Blueprint localBlueprint = blueprintData.getBlueprint();
+        if (localBlueprint == null)
+        {
+            return null;
+        }
+
+        if (blueprintData.isEmpty())
+        {
+            return new BoxRenderData(null, 0);
+        }
+        else
+        {
+            final BlockPos primaryOffset = localBlueprint.getPrimaryBlockOffset();
+            final BlockPos boxStartPos = data.pos().subtract(primaryOffset);
+            final BlockPos boxEndPos = boxStartPos.offset(localBlueprint.getSizeX() - 1, localBlueprint.getSizeY() - 1, localBlueprint.getSizeZ() - 1);
+            final BoxPreviewData box = new BoxPreviewData(boxStartPos, boxEndPos, data.hasAnchor() ? Optional.of(data.pos()) : Optional.empty());
+
+            return new BoxRenderData(box, data.builder());
+        }
     }
 
     private static void processPendingBlueprints()
     {
-        while (!pendingBlueprints.isEmpty())
+        final Iterator<Map.Entry<BlockPos, PendingRenderData>> iterator = pendingBoxes.entrySet().iterator();
+        while (iterator.hasNext())
         {
-            final PendingRenderData data = pendingBlueprints.peek();
-            if (data.blueprint() != null && !data.blueprint().isDone())
+            final Map.Entry<BlockPos, PendingRenderData> entry = iterator.next();
+            final BoxRenderData box = tryLoadBox(entry.getValue());
+            if (box != null)
             {
-                break;
-            }
-            try
-            {
-                pendingBlueprints.poll();
-                if (data.blueprint() == null)
+                if (box.box() != null || box.builder() != 0)
                 {
-                    if (data.boxOnly() && data.hasAnchor())     // render only the anchor
-                    {
-                        final BoxPreviewData box = new BoxPreviewData(INVALID_POS, INVALID_POS, Optional.of(data.pos()));
-                        blueprintCache.put(data.pos(), new RenderData(null, box));
-                    }
-                    else
-                    {
-                        blueprintCache.remove(data.pos());
-                    }
-                    continue;
+                    boxRenderCache.put(entry.getKey(), box);
                 }
-                final Blueprint localBlueprint = data.blueprint().get();
-                if (localBlueprint == null)
-                {
-                    blueprintCache.remove(data.pos());
-                }
-                else if (blueprintCache.containsKey(data.pos()))
-                {
-                    final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData();
-                    blueprintPreviewData.setBlueprint(localBlueprint);
-                    blueprintPreviewData.setPos(data.pos());
-                    blueprintPreviewData.rotate(data.settings().getRotation());
-                    if (data.settings().getMirror() != Mirror.NONE)
-                    {
-                        blueprintPreviewData.mirror();
-                    }
-
-                    final BlockPos primaryOffset = localBlueprint.getPrimaryBlockOffset();
-                    final BlockPos boxStartPos = data.pos().subtract(primaryOffset);
-                    final BlockPos size = new BlockPos(localBlueprint.getSizeX(), localBlueprint.getSizeY(), localBlueprint.getSizeZ());
-                    final BlockPos boxEndPos = boxStartPos.offset(size).offset(-1, -1, -1);
-                    final BoxPreviewData box = new BoxPreviewData(boxStartPos, boxEndPos, data.hasAnchor() ? Optional.of(data.pos()) : Optional.empty());
-
-                    localBlueprint.setRenderSource(data.pos());
-                    if (data.boxOnly())
-                    {
-                        blueprintCache.put(data.pos(), new RenderData(null, box));
-                    }
-                    else
-                    {
-                        blueprintCache.put(data.pos(), new RenderData(blueprintPreviewData, box));
-                    }
-
-                    // only process one real blueprint per call
-                    break;
-                }
-            }
-            catch (final InterruptedException | ExecutionException ex)
-            {
-                //Noop
+                iterator.remove();
             }
         }
+    }
+
+    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key)
+    {
+        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path());
+
+        final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
+        blueprintPreviewData.setBlueprintFuture(blueprintFuture);
+        blueprintPreviewData.setPos(BlockPos.ZERO);
+        blueprintPreviewData.setRotationMirror(key.orientation());
+
+        return blueprintPreviewData;
     }
 
     /**
@@ -260,22 +333,29 @@ public class ColonyBlueprintRenderer
         boolean isEnabled(WorldEventContext ctx);
 
         /**
-         * Report the complete list of locations that should render blueprints; if they're new then it will fetch the data.
+         * Report the complete list of locations that should render blueprints.
          */
-        Map<BlockPos, Supplier<PendingRenderData>> getDesiredBlueprints(WorldEventContext ctx);
-    }
-
-    /**
-     * Holds blueprint renderdata (loaded).
-     */
-    private record RenderData(BlueprintPreviewData blueprint, BoxPreviewData box)
-    {
+        Map<BlockPos, PendingRenderData> getDesiredBlueprints(WorldEventContext ctx);
     }
 
     /**
      * Holds blueprint renderdata (pending load).
      */
-    private record PendingRenderData(Future<Blueprint> blueprint, BlockPos pos, PlacementSettings settings, boolean boxOnly, boolean hasAnchor)
+    private record PendingRenderData(@Nullable BlueprintCacheKey blueprint, @NotNull BlockPos pos, int builder, boolean boxOnly, boolean hasAnchor)
+    {
+    }
+
+    /**
+     * Holds box renderdata (loaded).
+     */
+    private record BoxRenderData(@Nullable BoxPreviewData box, int builder)
+    {
+    }
+
+    /**
+     * Cache key for {@link #blueprintDataCache}.
+     */
+    private record BlueprintCacheKey(@NotNull String packName, @NotNull String path, RotationMirror orientation)
     {
     }
 
@@ -293,9 +373,9 @@ public class ColonyBlueprintRenderer
         }
 
         @Override
-        public Map<BlockPos, Supplier<PendingRenderData>> getDesiredBlueprints(final WorldEventContext ctx)
+        public Map<BlockPos, PendingRenderData> getDesiredBlueprints(final WorldEventContext ctx)
         {
-            final Map<BlockPos, Supplier<PendingRenderData>> desired = new HashMap<>();
+            final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
             final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getPos();
             final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
             final BlockPos zeroPos = activePosition.subtract(blueprint.getPrimaryBlockOffset());
@@ -304,14 +384,8 @@ public class ColonyBlueprintRenderer
 
             for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
             {
-                if (buildingView.getBuildingType() == ModBuildings.postBox.get() || buildingView.getBuildingType() == ModBuildings.stash.get())
-                {
-                    continue;
-                }
                 final BlockPos currentPosition = buildingView.getPosition();
-
-                final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) ctx.clientLevel.getBlockEntity(buildingView.getPosition());
-                if (tileEntityColonyBuilding != null)
+                if (ctx.clientLevel.getBlockEntity(currentPosition) instanceof final TileEntityColonyBuilding tileEntityColonyBuilding)
                 {
                     final Tuple<BlockPos, BlockPos> corners = tileEntityColonyBuilding.getInWorldCorners();
                     BlockPos cornerA = corners.getA();
@@ -319,20 +393,19 @@ public class ColonyBlueprintRenderer
 
                     if (blueprintAABB.intersects(new AABB(cornerA, cornerB)))
                     {
-                        desired.put(currentPosition, () ->
-                        {
-                            String schemPath = buildingView.getStructurePath();
-                            schemPath = schemPath.replace(".blueprint", "");
-                            schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
+                        String schemPath = buildingView.getStructurePath();
+                        schemPath = schemPath.replace(".blueprint", "");
+                        schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
 
-                            final String structurePack = buildingView.getStructurePack();
+                        final String structurePack = buildingView.getStructurePack();
+                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath,
+                                RotationMirror.of(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
+                                        buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
 
-                            final Future<Blueprint> localBlueprint = StructurePacks.getBlueprintFuture(structurePack, schemPath);
-                            return new PendingRenderData(localBlueprint, currentPosition,
-                                    new PlacementSettings(buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(buildingView.getRotation())),
+                        desired.put(currentPosition,
+                                new PendingRenderData(key, currentPosition, 0,
                                     buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel(),
-                                    true);
-                        });
+                                    true));
                     }
                 }
             }
@@ -353,26 +426,25 @@ public class ColonyBlueprintRenderer
         }
 
         @Override
-        public Map<BlockPos, Supplier<PendingRenderData>> getDesiredBlueprints(final WorldEventContext ctx)
+        public Map<BlockPos, PendingRenderData> getDesiredBlueprints(final WorldEventContext ctx)
         {
             // ideally we'd check based on the bounding box, but we don't know that until we load the blueprints
             final double range = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getClient().buildgogglerange.get());
 
             // show work orders
-            final Map<BlockPos, Supplier<PendingRenderData>> desired = new HashMap<>();
+            final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
             for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
             {
                 if (workOrder.getLocation().distSqr(ctx.clientPlayer.blockPosition()) < range)
                 {
-                    desired.put(workOrder.getLocation(), () ->
-                    {
-                        final Future<Blueprint> localBlueprint = StructurePacks.getBlueprintFuture(workOrder.getPackName(), workOrder.getStructurePath());
-                        return new PendingRenderData(localBlueprint, workOrder.getLocation(),
-                                new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
-                                        BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
+                    final int builder = getBuilderId(ctx.nearestColony, workOrder.getClaimedBy());
+                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getPackName(), workOrder.getStructurePath(),
+                            RotationMirror.of(BlockPosUtil.getRotationFromRotations(workOrder.getRotation()),
+                                    workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
+                    desired.put(workOrder.getLocation(),
+                            new PendingRenderData(key, workOrder.getLocation(), builder,
                                 workOrder.getWorkOrderType() == WorkOrderType.REMOVE,
-                                workOrder instanceof WorkOrderBuildingView);
-                    });
+                                workOrder instanceof WorkOrderBuildingView));
                 }
             }
 
@@ -384,13 +456,37 @@ public class ColonyBlueprintRenderer
                         building.getBuildingMaxLevel() > 0 &&
                         building.getPosition().distSqr(ctx.clientPlayer.blockPosition()) < range)
                 {
-                    desired.put(building.getPosition(), () ->
-                            new PendingRenderData(null, building.getPosition(), new PlacementSettings(),
+                    desired.put(building.getPosition(),
+                            new PendingRenderData(null, building.getPosition(), 0,
                                     true, true));
                 }
             }
 
             return desired;
+        }
+
+        /**
+         * Find the builder for this work order, if any.
+         *
+         * @param colony the colony.
+         * @param builderPos the builder's building id.
+         * @return the builder's id, or 0.
+         */
+        private int getBuilderId(final IColonyView colony, final BlockPos builderPos)
+        {
+            if (builderPos != null && !builderPos.equals(BlockPos.ZERO))
+            {
+                final IBuildingView builderView = colony.getBuilding(builderPos);
+                if (builderView != null)
+                {
+                    final Set<Integer> builders = builderView.getAllAssignedCitizens();
+                    if (!builders.isEmpty())
+                    {
+                        return builders.iterator().next();
+                    }
+                }
+            }
+            return 0;
         }
     }
 }

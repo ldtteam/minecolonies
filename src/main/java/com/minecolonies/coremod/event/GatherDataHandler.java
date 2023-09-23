@@ -25,6 +25,7 @@ public class GatherDataHandler
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator, event.getExistingFileHelper());
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeClient(), new DefaultItemModelProvider(generator, event.getExistingFileHelper()));
         generator.addProvider(event.includeClient(), new DefaultEntityIconProvider(generator));
         generator.addProvider(event.includeClient() && event.includeServer(), new QuestTranslationProvider(generator));
 

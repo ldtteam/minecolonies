@@ -235,6 +235,20 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
     void setVisibleStatus(VisibleCitizenStatus status);
 
     /**
+     * Gets a location of interest of this citizen's job.
+     *
+     * @return the location, or null if nowhere is particularly interesting right now.
+     */
+    @Nullable BlockPos getStatusPosition();
+
+    /**
+     * Sets the location of interest of this citizen.
+     *
+     * @param pos the location, or null to clear.
+     */
+    void setStatusPosition(@Nullable BlockPos pos);
+
+    /**
      * Get the random var of the citizen.
      * @return the random.
      */
