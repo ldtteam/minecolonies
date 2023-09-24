@@ -208,7 +208,7 @@ public class ItemNbtCalculator implements DataProvider
         if (jsonObject.has("children"))
         {
             final Set<CheckedNbtKey> children = new HashSet<>();
-            jsonObject.getAsJsonArray("children").forEach(child -> deserializeKeyFromJson(child.getAsJsonObject()));
+            jsonObject.getAsJsonArray("children").forEach(child -> children.add(deserializeKeyFromJson(child.getAsJsonObject())));
             return new CheckedNbtKey(key, children);
         }
         else
