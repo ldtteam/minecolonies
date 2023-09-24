@@ -59,11 +59,14 @@ public class ModTags
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);
 
+    public static final TagKey<Item> ignoreNBT = ItemTags.create(TagConstants.IGNORE_NBT);
+
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredient           = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredientExclusions = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterDoIngredient         = new HashMap<>();
+
 
     /**
      * Tag specifier for Products to Include

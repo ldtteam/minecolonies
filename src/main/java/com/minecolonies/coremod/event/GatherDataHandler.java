@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.generation.DatagenLootTableManager;
+import com.minecolonies.coremod.generation.ItemNbtCalculator;
 import com.minecolonies.coremod.generation.defaults.*;
 import com.minecolonies.coremod.generation.defaults.workers.*;
 import com.minecolonies.coremod.util.SchemFixerUtil;
@@ -61,5 +62,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), lootTableManager));
         generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput()));
+
+        generator.addProvider(event.includeClient() && event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), event.getLookupProvider()));
     }
 }

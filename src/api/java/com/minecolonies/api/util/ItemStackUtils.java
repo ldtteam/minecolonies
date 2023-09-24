@@ -6,12 +6,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -87,6 +89,11 @@ public final class ItemStackUtils
      * The compound id for Silk Touch enchantment.
      */
     private static final int SILK_TOUCH_ENCHANT_ID = 33;
+
+    /**
+     * List of the checked nbt sets for itemstack comparisons.
+     */
+    public static HashMap<Item, Set<CheckedNbtKey>> CHECKED_NBT_KEYS = new HashMap<>();
 
     /**
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
@@ -784,31 +791,35 @@ public final class ItemStackUtils
                 return false;
             }
 
-            // Then sort on NBT
-            if (itemStack1.hasTag() && itemStack2.hasTag())
+            if (itemStack1.hasTag() || itemStack2.hasTag())
             {
+                final Set<CheckedNbtKey> checkedKeys = CHECKED_NBT_KEYS.getOrDefault(itemStack1.getItem(), null);
+                if (checkedKeys == null)
+                {
+                    return itemStack1.hasTag() && itemStack2.hasTag() && itemStack1.getTag().equals(itemStack2.getTag());
+                }
+                if (itemStack1.hasTag() != itemStack2.hasTag() && !checkedKeys.isEmpty())
+                {
+                    return false;
+                }
+
+                if (checkedKeys.isEmpty())
+                {
+                    return true;
+                }
+
                 CompoundTag nbt1 = itemStack1.getTag();
                 CompoundTag nbt2 = itemStack2.getTag();
 
-                for (String key : nbt1.getAllKeys())
+                for (final CheckedNbtKey key : checkedKeys)
                 {
-                    if (!matchDamage && key.equals("Damage"))
-                    {
-                        continue;
-                    }
-                    if (!nbt2.contains(key) || !nbt1.get(key).equals(nbt2.get(key)))
+                    if (!key.matches(nbt1, nbt2))
                     {
                         return false;
                     }
                 }
-
-                return nbt1.getAllKeys().size() == nbt2.getAllKeys().size();
             }
-            else
-            {
-                return (!itemStack1.hasTag() || itemStack1.getTag().isEmpty())
-                         && (!itemStack2.hasTag() || itemStack2.getTag().isEmpty());
-            }
+            return true;
         }
         return false;
     }
