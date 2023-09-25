@@ -28,7 +28,7 @@ public class NamedDamageSource extends EntityDamageSource
     @Override
     public Component getLocalizedDeathMessage(LivingEntity entityLivingBaseIn)
     {
-        return Component.translatable(this.msgId, entityLivingBaseIn.getName());
+        return Component.translatable("death.attack." + this.msgId, entityLivingBaseIn.getName());
     }
 
     /**
