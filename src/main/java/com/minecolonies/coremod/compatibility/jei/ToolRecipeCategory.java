@@ -4,7 +4,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.ToolUsage;
 import com.minecolonies.coremod.colony.crafting.ToolsAnalyzer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -126,6 +125,8 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
         }
 
         final int scale = 2;
+        stack.pose().pushPose();
+        stack.pose().scale(1F / scale, 1F / scale, 1.0F);
         int x = SLOT_X;
         for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
         {
@@ -133,5 +134,6 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
             stack.drawString(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0, false);
             x += 18;
         }
+        stack.pose().popPose();
     }
 }
