@@ -746,6 +746,11 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             return false;
         }
 
+        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) <= 5 + 5 * pathBackupFactor)
+        {
+            return true;
+        }
+
         if (walkToBlock(workFrom))
         {
             return false;
