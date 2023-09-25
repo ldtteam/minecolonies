@@ -34,14 +34,14 @@ public class EntityAICitizenAvoidEntity implements IStateAI
     /**
      * The amount of area checks before the citizen assumes it is safe. 40 are done in 10seconds.
      */
-    private static final int CHECKS_BEFORE_SAFE = 20 * 10;
+    private static final int CHECKS_BEFORE_SAFE = 20 * 10 / 5;
 
     /**
      * Move away distances.
      */
-    private static final float MIN_MOVE_AWAY_DIST = 10;
-    private static final float MED_MOVE_AWAY_DIST = 20;
-    private static final float MAX_MOVE_AWAY_DIST = 30;
+    private static final float MIN_MOVE_AWAY_DIST = 7;
+    private static final float MED_MOVE_AWAY_DIST = 15;
+    private static final float MAX_MOVE_AWAY_DIST = 20;
 
     /**
      * The entity we are attached to.
@@ -105,7 +105,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
             reset();
             return SAFE;
         }, 1));
-        citizen.getCitizenAI().addTransition(new AITarget(SAFE, () -> true, this::isEntityClose, 1));
+        citizen.getCitizenAI().addTransition(new AITarget(SAFE, () -> true, this::isEntityClose, 5));
         citizen.getCitizenAI().addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));
     }
 
@@ -123,8 +123,8 @@ public class EntityAICitizenAvoidEntity implements IStateAI
             return CitizenAIState.IDLE;
         }
 
-        closestLivingEntity = citizen.getThreatTable().getTargetMob();
-        if (closestLivingEntity != null && citizen.getSensing().hasLineOfSight(closestLivingEntity) && targetEntityClass.isInstance(closestLivingEntity))
+        final Entity currentClosest = getClosestToAvoid();
+        if (currentClosest != null)
         {
             safeTime = 0;
             startingPos = citizen.blockPosition();
@@ -222,10 +222,6 @@ public class EntityAICitizenAvoidEntity implements IStateAI
 
         if (moveAwayPath == null || !moveAwayPath.isInProgress())
         {
-            if (citizen.distanceTo(closestLivingEntity) < TOO_CLOSE_TO_MOB)
-            {
-                performMoveAway();
-            }
             safeTime = 0;
             return true;
         }
