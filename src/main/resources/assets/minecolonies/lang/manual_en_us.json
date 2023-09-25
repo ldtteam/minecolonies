@@ -406,6 +406,8 @@
   "com.minecolonies.command.delete.success": "Created backup and deleted colony %s.",
   "com.minecolonies.command.canspawnraider.success": "Colony %s can spawn raiders: %s",
   "com.minecolonies.command.raidnow.success": "Raid started for colony %s, take care!",
+  "com.minecolonies.command.raidnow.failure": "Raid aborted for colony %s. Reason %s!",
+
   "com.minecolonies.command.raidtonight.success": "A raid on colony %s is coming tonight!",
   "com.minecolonies.command.loadbackup.success": "Successfully loaded backup.",
   "com.minecolonies.command.export.success": "Exported colony to zip: %s",

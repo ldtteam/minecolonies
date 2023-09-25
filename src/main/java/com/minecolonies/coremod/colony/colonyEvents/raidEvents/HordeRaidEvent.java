@@ -12,10 +12,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
@@ -367,6 +364,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(),
                         BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
                 .with(ChatFormatting.DARK_RED).sendTo(colony).forManagers();
+        Log.getLogger().warn("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);

@@ -250,18 +250,22 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void raiderEvent(String raidType, final boolean overrideConfig)
+    public RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig)
     {
-        if (colony.getWorld() == null || !canRaid(overrideConfig) || raidType == null)
+        if (colony.getWorld() == null || raidType == null)
         {
-            return;
+            return RaidSpawnResult.ERROR;
+        }
+        else if (!canRaid(overrideConfig))
+        {
+            return RaidSpawnResult.CANNOT_RAID;
         }
 
         final int raidLevel = getColonyRaidLevel();
         int amount = calculateRaiderAmount(raidLevel);
         if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
         {
-            return;
+            return RaidSpawnResult.TOO_SMALL;
         }
 
         // Splits into multiple raids if too large
@@ -283,7 +287,7 @@ public class RaidManager implements IRaiderManager
 
         if (spawnPoints.isEmpty())
         {
-            return;
+            return RaidSpawnResult.NO_SPAWN_POINT;
         }
 
         raidHistories.add(new RaidHistory(amount, colony.getWorld().getGameTime()));
@@ -376,6 +380,7 @@ public class RaidManager implements IRaiderManager
             raidHistories.get(raidHistories.size() - 1).spawnData.add(new RaidSpawnInfo(raidEvent.getEventTypeID(), targetSpawnPoint));
         }
         colony.markDirty();
+        return RaidSpawnResult.SUCCESS;
     }
 
     /**
@@ -681,22 +686,13 @@ public class RaidManager implements IRaiderManager
         this.nightsSinceLastRaid = nightsSinceLastRaid;
     }
 
-    /**
-     * Checks if a raid is possible
-     *
-     * @return whether a raid is possible
-     */
     @Override
     public boolean canRaid()
     {
         return canRaid(false);
     }
 
-    /**
-     * Checks if a raid is possible
-     * @param override if the config should be ignored.
-     * @return whether a raid is possible
-     */
+    @Override
     public boolean canRaid(final boolean override)
     {
         return !WorldUtil.isPeaceful(colony.getWorld())
