@@ -246,13 +246,13 @@ public class RaidManager implements IRaiderManager
     @Override
     public void raiderEvent()
     {
-        raiderEvent("");
+        raiderEvent("", false);
     }
 
     @Override
-    public void raiderEvent(String raidType)
+    public void raiderEvent(String raidType, final boolean overrideConfig)
     {
-        if (colony.getWorld() == null || !canRaid() || raidType == null)
+        if (colony.getWorld() == null || !canRaid(overrideConfig) || raidType == null)
         {
             return;
         }
@@ -346,8 +346,8 @@ public class RaidManager implements IRaiderManager
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
-                                                              && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
+                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
+                                                              && raidType.isEmpty()) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
@@ -659,8 +659,9 @@ public class RaidManager implements IRaiderManager
         if (raidTonight)
         {
             raidTonight = false;
-            raiderEvent(nextForcedType);
-            nextForcedType = "";
+            final boolean overrideConfig = !nextForcedType.isEmpty();
+            raiderEvent(nextForcedType, overrideConfig);
+            nextForcedType = INITIAL_NEXT_RAID_TYPE;
         }
         else
         {
@@ -688,8 +689,18 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canRaid()
     {
+        return canRaid(false);
+    }
+
+    /**
+     * Checks if a raid is possible
+     * @param override if the config should be ignored.
+     * @return whether a raid is possible
+     */
+    public boolean canRaid(final boolean override)
+    {
         return !WorldUtil.isPeaceful(colony.getWorld())
-                 && MineColonies.getConfig().getServer().doBarbariansSpawn.get()
+                 && (MineColonies.getConfig().getServer().doBarbariansSpawn.get() || override)
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }

@@ -127,13 +127,13 @@ public class CitizenAI implements IStateAI
     {
         if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
         {
-            if (shouldEat())
+            if (shouldEat() && citizen.getLastHurtMob() == null)
             {
                 return CitizenAIState.EATING;
             }
 
             // Sick
-            if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+            if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getLastHurtMob() == null)
             {
                 citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
                 return CitizenAIState.SICK;

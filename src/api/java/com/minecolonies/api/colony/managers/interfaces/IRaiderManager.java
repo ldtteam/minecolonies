@@ -71,8 +71,10 @@ public interface IRaiderManager
 
     /**
      * Trigger a specific type of raid on a colony.
+     * @param raidType the type of raid (or empty).
+     * @param overrideConfig if it should override the config to allow raiders.
      */
-    void raiderEvent(String raidType);
+    void raiderEvent(String raidType, final boolean overrideConfig);
 
     /**
      * Calculates the spawn position for raids

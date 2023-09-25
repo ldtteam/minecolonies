@@ -39,9 +39,9 @@ public class EntityAICitizenAvoidEntity implements IStateAI
     /**
      * Move away distances.
      */
-    private static final float MIN_MOVE_AWAY_DIST = 5;
-    private static final float MED_MOVE_AWAY_DIST = 10;
-    private static final float MAX_MOVE_AWAY_DIST = 20;
+    private static final float MIN_MOVE_AWAY_DIST = 10;
+    private static final float MED_MOVE_AWAY_DIST = 20;
+    private static final float MAX_MOVE_AWAY_DIST = 30;
 
     /**
      * The entity we are attached to.
@@ -222,6 +222,10 @@ public class EntityAICitizenAvoidEntity implements IStateAI
 
         if (moveAwayPath == null || !moveAwayPath.isInProgress())
         {
+            if (citizen.distanceTo(closestLivingEntity) < TOO_CLOSE_TO_MOB)
+            {
+                performMoveAway();
+            }
             safeTime = 0;
             return true;
         }

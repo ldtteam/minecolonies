@@ -63,7 +63,7 @@ public class CommandRaid implements IMCOPCommand
 
         if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
         {
-            colony.getRaiderManager().raiderEvent(raidType);
+            colony.getRaiderManager().raiderEvent(raidType, true);
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_SUCCESS, colony.getName()), true);
         }
         else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
