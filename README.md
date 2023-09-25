@@ -2,7 +2,7 @@
 [![Build Status](https://buildsystem.ldtteam.com/app/rest/builds/buildType:LetSDevTogether_Minecolonies_Alpha_Release/statusIcon)](http://buildsystem.ldtteam.com/)
 [![Crowdin](https://badges.crowdin.net/minecolonies/localized.svg)](https://crowdin.com/project/minecolonies)
 
-![mcol logo](minecolonies.png)
+![mcol logo](minecolonies_logo.png)
 
 
 # MineColonies
