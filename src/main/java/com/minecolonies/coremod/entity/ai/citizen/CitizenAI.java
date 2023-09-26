@@ -125,7 +125,7 @@ public class CitizenAI implements IStateAI
      */
     private IState calculateNextState()
     {
-        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardJob)
         {
             if (shouldEat())
             {
@@ -133,7 +133,7 @@ public class CitizenAI implements IStateAI
             }
 
             // Sick
-            if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getLastHurtMob() == null)
+            if (citizen.getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted())
             {
                 citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
                 return CitizenAIState.SICK;
