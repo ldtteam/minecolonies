@@ -125,7 +125,7 @@ public class CitizenAI implements IStateAI
      */
     private IState calculateNextState()
     {
-        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardJob)
         {
             if (shouldEat())
             {
@@ -133,7 +133,7 @@ public class CitizenAI implements IStateAI
             }
 
             // Sick
-            if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+            if (citizen.getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted())
             {
                 citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
                 return CitizenAIState.SICK;
@@ -249,17 +249,7 @@ public class CitizenAI implements IStateAI
      */
     public boolean shouldEat()
     {
-        if (lastState == CitizenAIState.EATING && !citizen.getCitizenData().justAte())
-        {
-            return true;
-        }
-
         if (citizen.getCitizenData().justAte())
-        {
-            return false;
-        }
-
-        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
         {
             return false;
         }
@@ -269,13 +259,19 @@ public class CitizenAI implements IStateAI
             return false;
         }
 
-        if (citizen.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION &&
-              (citizen.getCitizenData().getSaturation() <= RESTAURANT_LIMIT ||
-                 (citizen.getCitizenData().getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH)))
+        if (lastState == CitizenAIState.EATING)
         {
             return true;
         }
-        return false;
+
+        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
+        {
+            return false;
+        }
+
+        return citizen.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION &&
+                 (citizen.getCitizenData().getSaturation() <= RESTAURANT_LIMIT ||
+                    (citizen.getCitizenData().getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH));
     }
 
     /**
