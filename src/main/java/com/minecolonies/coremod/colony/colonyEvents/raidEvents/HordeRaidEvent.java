@@ -364,7 +364,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(),
                         BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
                 .with(ChatFormatting.DARK_RED).sendTo(colony).forManagers();
-        Log.getLogger().warn("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
+        Log.getLogger().debug("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);
