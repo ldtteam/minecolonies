@@ -246,22 +246,26 @@ public class RaidManager implements IRaiderManager
     @Override
     public void raiderEvent()
     {
-        raiderEvent("");
+        raiderEvent("", false);
     }
 
     @Override
-    public void raiderEvent(String raidType)
+    public RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig)
     {
-        if (colony.getWorld() == null || !canRaid() || raidType == null)
+        if (colony.getWorld() == null || raidType == null)
         {
-            return;
+            return RaidSpawnResult.ERROR;
+        }
+        else if (!canRaid(overrideConfig))
+        {
+            return RaidSpawnResult.CANNOT_RAID;
         }
 
         final int raidLevel = getColonyRaidLevel();
         int amount = calculateRaiderAmount(raidLevel);
         if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
         {
-            return;
+            return RaidSpawnResult.TOO_SMALL;
         }
 
         // Splits into multiple raids if too large
@@ -283,7 +287,7 @@ public class RaidManager implements IRaiderManager
 
         if (spawnPoints.isEmpty())
         {
-            return;
+            return RaidSpawnResult.NO_SPAWN_POINT;
         }
 
         raidHistories.add(new RaidHistory(amount, colony.getWorld().getGameTime()));
@@ -346,8 +350,8 @@ public class RaidManager implements IRaiderManager
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
-                                                              && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
+                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
+                                                              && raidType.isEmpty()) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
@@ -376,6 +380,7 @@ public class RaidManager implements IRaiderManager
             raidHistories.get(raidHistories.size() - 1).spawnData.add(new RaidSpawnInfo(raidEvent.getEventTypeID(), targetSpawnPoint));
         }
         colony.markDirty();
+        return RaidSpawnResult.SUCCESS;
     }
 
     /**
@@ -659,8 +664,9 @@ public class RaidManager implements IRaiderManager
         if (raidTonight)
         {
             raidTonight = false;
-            raiderEvent(nextForcedType);
-            nextForcedType = "";
+            final boolean overrideConfig = !nextForcedType.isEmpty();
+            raiderEvent(nextForcedType, overrideConfig);
+            nextForcedType = INITIAL_NEXT_RAID_TYPE;
         }
         else
         {
@@ -680,16 +686,17 @@ public class RaidManager implements IRaiderManager
         this.nightsSinceLastRaid = nightsSinceLastRaid;
     }
 
-    /**
-     * Checks if a raid is possible
-     *
-     * @return whether a raid is possible
-     */
     @Override
     public boolean canRaid()
     {
+        return canRaid(false);
+    }
+
+    @Override
+    public boolean canRaid(final boolean override)
+    {
         return !WorldUtil.isPeaceful(colony.getWorld())
-                 && MineColonies.getConfig().getServer().doBarbariansSpawn.get()
+                 && (MineColonies.getConfig().getServer().doBarbariansSpawn.get() || override)
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }

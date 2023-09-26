@@ -477,6 +477,7 @@ public class EntityAISickTask implements IStateAI
         citizen.releaseUsingItem();
         citizen.stopUsingItem();
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.getCitizenSleepHandler().onWakeUp();
         placeToPath = null;
     }
 

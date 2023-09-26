@@ -12,6 +12,15 @@ import java.util.List;
  */
 public interface IRaiderManager
 {
+    public enum RaidSpawnResult
+    {
+        SUCCESS,
+        TOO_SMALL,
+        CANNOT_RAID,
+        NO_SPAWN_POINT,
+        ERROR
+    }
+
     /**
      * Checks if the raider manager can have raider events.
      *
@@ -71,8 +80,10 @@ public interface IRaiderManager
 
     /**
      * Trigger a specific type of raid on a colony.
+     * @param raidType the type of raid (or empty).
+     * @param overrideConfig if it should override the config to allow raiders.
      */
-    void raiderEvent(String raidType);
+    RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig);
 
     /**
      * Calculates the spawn position for raids
@@ -128,6 +139,14 @@ public interface IRaiderManager
      * @return true if possible.
      */
     boolean canRaid();
+
+    /**
+     * Whether the colony can be raided.
+     *
+     * @@param overrideConfig if the config should be overriden.
+     * @return true if possible.
+     */
+    boolean canRaid(final boolean overrideConfig);
 
     /**
      * calculates the colonies raid level
