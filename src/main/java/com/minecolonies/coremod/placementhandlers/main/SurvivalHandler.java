@@ -293,7 +293,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         final BlockPos pos1 = new BlockPos(zeroPos.getX(), zeroPos.getY(), zeroPos.getZ());
         final BlockPos pos2 = new BlockPos(zeroPos.getX() + blueprint.getSizeX() - 1, zeroPos.getY() + blueprint.getSizeY() - 1, zeroPos.getZ() + blueprint.getSizeZ() - 1);
 
-        Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(pos1.getX(), pos2.getX()) + 1;
         final int maxX = Math.max(pos1.getX(), pos2.getX());
 
@@ -307,14 +306,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;
                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                if (!chunks.contains(pos))
+
+                final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
                 {
-                    chunks.add(pos);
-                    final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-                    if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
         }
