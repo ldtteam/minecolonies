@@ -249,7 +249,6 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             this.newNavigator.getNodeEvaluator().setCanPassDoors(true);
             newNavigator.getPathingOptions().withDropCost(1.3D);
-            newNavigator.getPathingOptions().withDropCost(1.3D);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()
