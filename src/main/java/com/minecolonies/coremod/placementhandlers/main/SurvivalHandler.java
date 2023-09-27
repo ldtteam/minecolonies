@@ -10,10 +10,12 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -22,13 +24,16 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.OpenDecoBuildWindowMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,6 +45,10 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -109,6 +118,24 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+
+        final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
+        if (tempColony != null
+              && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+                    && !(anchor.getBlock() instanceof BlockHutTownHall
+                           && IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))))
+        {
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
+
+        if (!isBlueprintInColony(blueprint, tempColony, blockPos))
+        {
+            MessageUtils.format(BP_OUTSIDE_COLONY).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
+
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
             if (clientPack || !StructurePacks.hasPack(packName))
@@ -123,16 +150,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             {
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
                 if (slot == -1 && !player.isCreative())
-                {
-                    SoundUtils.playErrorSound(player, player.blockPosition());
-                    return;
-                }
-
-                final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
-                if (tempColony != null
-                      && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                            && !(anchor.getBlock() instanceof BlockHutTownHall
-                                   && IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))))
                 {
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
@@ -196,11 +213,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     {
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         Log.getLogger().error("BuildTool: building is null!", new Exception());
+                        return;
                     }
                 }
                 else
                 {
-                    SoundUtils.playSuccessSound(player, player.blockPosition());
                     if (building.getTileEntity() != null)
                     {
                         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, blockPos);
@@ -259,5 +276,48 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
 
         Log.getLogger().warn("Handling Survival Placement in Colony");
+    }
+
+    /**
+     * Check if the blueprint is fully inside colony boundaries.
+     * @param blueprint the blueprint to check.
+     * @param colony the colony to check for.
+     * @param blockPos the position to check at.
+     * @return true if so.
+     */
+    private boolean isBlueprintInColony(final Blueprint blueprint, final IColony colony, final BlockPos blockPos)
+    {
+        final Level world = colony.getWorld();
+        final BlockPos zeroPos = blockPos.subtract(blueprint.getPrimaryBlockOffset());
+
+        final BlockPos pos1 = new BlockPos(zeroPos.getX(), zeroPos.getY(), zeroPos.getZ());
+        final BlockPos pos2 = new BlockPos(zeroPos.getX() + blueprint.getSizeX() - 1, zeroPos.getY() + blueprint.getSizeY() - 1, zeroPos.getZ() + blueprint.getSizeZ() - 1);
+
+        Set<ChunkPos> chunks = new HashSet<>();
+        final int minX = Math.min(pos1.getX(), pos2.getX()) + 1;
+        final int maxX = Math.max(pos1.getX(), pos2.getX());
+
+        final int minZ = Math.min(pos1.getZ(), pos2.getZ()) + 1;
+        final int maxZ = Math.max(pos1.getZ(), pos2.getZ());
+
+        for (int x = minX; x < maxX; x += 16)
+        {
+            for (int z = minZ; z < maxZ; z += 16)
+            {
+                final int chunkX = x >> 4;
+                final int chunkZ = z >> 4;
+                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                if (!chunks.contains(pos))
+                {
+                    chunks.add(pos);
+                    final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                    if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
