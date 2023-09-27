@@ -43,7 +43,7 @@ public class PathingOptions
     /**
      * Cost to traverse trap doors
      */
-    public double traverseToggleAbleCost = 2D;
+    public double traverseToggleAbleCost = 10D;
 
     /**
      * Cost to climb a vine.
