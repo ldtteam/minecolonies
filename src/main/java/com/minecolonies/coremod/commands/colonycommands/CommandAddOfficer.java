@@ -60,6 +60,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             return 0;
         }
         colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
+        colony.getPackageManager().addImportantColonyPlayer(context.getSource().getServer().getPlayerList().getPlayer(profile.getId()));
 
         context.getSource().sendSuccess(Component.translatable(CommandTranslationConstants.COMMAND_OFFICER_ADD_SUCCESS, profile.getName(), colony.getName()), true);
         return 1;

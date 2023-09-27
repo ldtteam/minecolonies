@@ -73,7 +73,7 @@ public class RaiderWalkAI implements IStateAI
             else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
             {
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(((IColonyRaidEvent) event).getWayPoints(), raider.blockPosition(), targetBlock);
-                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.1);
+                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.8);
             }
         }
 

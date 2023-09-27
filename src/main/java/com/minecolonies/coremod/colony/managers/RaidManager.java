@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -32,6 +33,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.Pirat
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import net.minecraft.core.BlockPos;
@@ -512,7 +514,7 @@ public class RaidManager implements IRaiderManager
                     {
                         spawnPos = tempPos;
                         validChunkCount++;
-                        if (validChunkCount > 5)
+                        if (validChunkCount > 2 || i > 2)
                         {
                             return spawnPos;
                         }
@@ -760,7 +762,7 @@ public class RaidManager implements IRaiderManager
     public BlockPos getRandomBuilding()
     {
         buildingPosUsage++;
-        if (buildingPosUsage > 3 || lastBuilding == null)
+        if (buildingPosUsage > 6 || lastBuilding == null)
         {
             buildingPosUsage = 0;
             final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
@@ -769,6 +771,33 @@ public class RaidManager implements IRaiderManager
             {
                 final int rand = colony.getWorld().random.nextInt(buildingArray.length);
                 final IBuilding building = (IBuilding) buildingArray[rand];
+
+                if (lastBuilding != null)
+                {
+                    // Alerts guards of raiders reaching a building
+                    final List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
+
+                    for (final ICitizenData entry : colony.getCitizenManager().getCitizens())
+                    {
+                        if (entry.getEntity().isPresent()
+                              && entry.getJob() instanceof AbstractJobGuard
+                              && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), lastBuilding) < 75 * 75 && entry.getJob().getWorkerAI() != null)
+                        {
+                            if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
+                            {
+                                possibleGuards.add(entry.getEntity().get());
+                            }
+                        }
+                    }
+
+                    possibleGuards.sort(Comparator.comparingInt(guard -> (int) lastBuilding.distSqr(guard.blockPosition())));
+
+                    for (int i = 0; i < possibleGuards.size() && i <= 3; i++)
+                    {
+                        ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).setNextPatrolTarget(lastBuilding);
+                    }
+                }
+
                 lastBuilding = building.getPosition();
             }
             else
