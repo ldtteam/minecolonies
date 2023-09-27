@@ -75,27 +75,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
         BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (blockState.is(ModBlocks.blockPlantationField))
-        {
-            return false;
-        }
-
-        if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof BlockHutTownHall)
-        {
-            return true;
-        }
-
-        final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
-        if (colonyView == null)
-        {
-            return false;
-        }
-        if (!colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-        {
-            return false;
-        }
-
-        return colonyView.isCoordInColony(clientLevel, blockPos);
+        return !blockState.is(ModBlocks.blockPlantationField);
     }
 
     @Override
@@ -120,21 +100,37 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
-        if (tempColony != null
-              && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                    && !(anchor.getBlock() instanceof BlockHutTownHall
-                           && IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))))
+        final boolean isInColony = tempColony != null && tempColony.isCoordInColony(world, blockPos);
+        if (isInColony && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
+            MessageUtils.format(BP_NO_PERM).sendTo(player);
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
 
-        if (!isBlueprintInColony(blueprint, tempColony, blockPos))
+        boolean successfulTownHallLocation = false;
+        if (anchor.getBlock() instanceof BlockHutTownHall)
+        {
+            if (IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))
+            {
+                successfulTownHallLocation = true;
+            }
+            else
+            {
+                MessageUtils.format(TOWNHALL_TOO_CLOSE).sendTo(player);
+                SoundUtils.playErrorSound(player, player.blockPosition());
+                return;
+            }
+        }
+
+        if ((!isInColony || !isBlueprintInColony(blueprint, tempColony, blockPos)) && !successfulTownHallLocation)
         {
             MessageUtils.format(BP_OUTSIDE_COLONY).sendTo(player);
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
+
+
 
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
@@ -146,7 +142,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             }
 
             final ItemStack stack = new ItemStack(anchor.getBlock());
-            if (anchor.getBlock() != null && EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
+            if (EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
             {
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
                 if (slot == -1 && !player.isCreative())
@@ -157,21 +153,14 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
                 final CompoundTag compound = inventoryStack.getTag();
-                if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
+                if (compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
                 {
                     MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
 
-                if (tempColony != null)
-                {
-                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
-                }
-                else
-                {
-                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName());
-                }
+                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
 
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
