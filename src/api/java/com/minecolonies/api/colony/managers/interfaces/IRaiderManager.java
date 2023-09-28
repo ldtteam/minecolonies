@@ -143,7 +143,7 @@ public interface IRaiderManager
     /**
      * Whether the colony can be raided.
      *
-     * @@param overrideConfig if the config should be overriden.
+     * @param overrideConfig if the config should be overriden.
      * @return true if possible.
      */
     boolean canRaid(final boolean overrideConfig);
