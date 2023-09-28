@@ -461,6 +461,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(ModItems.rawPumpkinPie)
                 .add(ModItems.cakeBatter);
 
+
+        tag(ModTags.ignoreNBT)
+          .addTag(ItemTags.BANNERS);
     }
 
     @NotNull
