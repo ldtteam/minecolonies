@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -75,6 +76,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
         BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+
+        if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
+        {
+            final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
+            if (colonyView == null)
+            {
+                return false;
+            }
+        }
+
         return !blockState.is(ModBlocks.blockPlantationField);
     }
 
@@ -129,8 +140,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
-
-
 
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
