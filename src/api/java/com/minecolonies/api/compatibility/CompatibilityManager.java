@@ -623,7 +623,6 @@ public class CompatibilityManager implements ICompatibilityManager
         final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), true, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
-        final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();
         final Registry<CreativeModeTab> registry = level.registryAccess().registryOrThrow(Registries.CREATIVE_MODE_TAB);
 
         for (CreativeModeTab tab : CreativeModeTabs.allTabs())
