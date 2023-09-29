@@ -25,7 +25,6 @@ import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.loot.SupplyLoot;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
-import com.minecolonies.coremod.placementhandlers.main.PlantationFieldPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.coremod.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.coremod.proxy.ClientProxy;
@@ -134,7 +133,6 @@ public class MineColonies
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
-        SurvivalBlueprintHandlers.registerHandler(new PlantationFieldPlacementHandler());
     }
 
     /**

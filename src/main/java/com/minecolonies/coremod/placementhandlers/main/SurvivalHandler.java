@@ -5,30 +5,38 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
+import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.OpenDecoBuildWindowMessage;
+import com.minecolonies.coremod.network.messages.client.OpenPlantationFieldBuildWindowMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,6 +48,10 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -65,28 +77,13 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @OnlyIn(Dist.CLIENT)
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
-        BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (blockState.is(ModBlocks.blockPlantationField))
+        if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
         {
-            return false;
+            final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
+            return colonyView != null;
         }
 
-        if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof BlockHutTownHall)
-        {
-            return true;
-        }
-
-        final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
-        if (colonyView == null)
-        {
-            return false;
-        }
-        if (!colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-        {
-            return false;
-        }
-
-        return colonyView.isCoordInColony(clientLevel, blockPos);
+        return true;
     }
 
     @Override
@@ -107,8 +104,47 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
+
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+
+        final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
+        final boolean isInColony = tempColony != null && tempColony.isCoordInColony(world, blockPos);
+        if (isInColony && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
+        {
+            MessageUtils.format(BP_NO_PERM).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
+
+        boolean successfulTownHallLocation = false;
+        if (anchor.getBlock() instanceof BlockHutTownHall)
+        {
+            if (IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))
+            {
+                successfulTownHallLocation = true;
+            }
+            else
+            {
+                MessageUtils.format(TOWNHALL_TOO_CLOSE).sendTo(player);
+                SoundUtils.playErrorSound(player, player.blockPosition());
+                return;
+            }
+        }
+
+        if ((!isInColony || !isBlueprintInColony(blueprint, tempColony, blockPos)) && !successfulTownHallLocation)
+        {
+            MessageUtils.format(BP_OUTSIDE_COLONY).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
+            return;
+        }
+
+        if (anchor.is(ModBlocks.blockPlantationField))
+        {
+            Network.getNetwork()
+              .sendToPlayer(new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror),
+                (ServerPlayer) player);
+        }
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
             if (clientPack || !StructurePacks.hasPack(packName))
@@ -119,7 +155,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             }
 
             final ItemStack stack = new ItemStack(anchor.getBlock());
-            if (anchor.getBlock() != null && EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
+            if (EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
             {
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
                 if (slot == -1 && !player.isCreative())
@@ -128,33 +164,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     return;
                 }
 
-                final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
-                if (tempColony != null
-                      && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                            && !(anchor.getBlock() instanceof BlockHutTownHall
-                                   && IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))))
-                {
-                    SoundUtils.playErrorSound(player, player.blockPosition());
-                    return;
-                }
-
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
                 final CompoundTag compound = inventoryStack.getTag();
-                if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
+                if (compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
                 {
                     MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
 
-                if (tempColony != null)
-                {
-                    AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
-                }
-                else
-                {
-                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName());
-                }
+                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
 
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
@@ -196,11 +215,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     {
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         Log.getLogger().error("BuildTool: building is null!", new Exception());
+                        return;
                     }
                 }
                 else
                 {
-                    SoundUtils.playSuccessSound(player, player.blockPosition());
                     if (building.getTileEntity() != null)
                     {
                         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, blockPos);
@@ -259,5 +278,44 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
 
         Log.getLogger().warn("Handling Survival Placement in Colony");
+    }
+
+    /**
+     * Check if the blueprint is fully inside colony boundaries.
+     * @param blueprint the blueprint to check.
+     * @param colony the colony to check for.
+     * @param blockPos the position to check at.
+     * @return true if so.
+     */
+    private boolean isBlueprintInColony(final Blueprint blueprint, final IColony colony, final BlockPos blockPos)
+    {
+        final Level world = colony.getWorld();
+        final BlockPos zeroPos = blockPos.subtract(blueprint.getPrimaryBlockOffset());
+
+        final BlockPos pos1 = new BlockPos(zeroPos.getX(), zeroPos.getY(), zeroPos.getZ());
+        final BlockPos pos2 = new BlockPos(zeroPos.getX() + blueprint.getSizeX() - 1, zeroPos.getY() + blueprint.getSizeY() - 1, zeroPos.getZ() + blueprint.getSizeZ() - 1);
+
+        final int minX = Math.min(pos1.getX(), pos2.getX()) + 1;
+        final int maxX = Math.max(pos1.getX(), pos2.getX());
+
+        final int minZ = Math.min(pos1.getZ(), pos2.getZ()) + 1;
+        final int maxZ = Math.max(pos1.getZ(), pos2.getZ());
+
+        for (int x = minX; x < maxX; x += 16)
+        {
+            for (int z = minZ; z < maxZ; z += 16)
+            {
+                final int chunkX = x >> 4;
+                final int chunkZ = z >> 4;
+                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+
+                final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
