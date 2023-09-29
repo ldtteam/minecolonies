@@ -126,6 +126,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
         final Entity currentClosest = getClosestToAvoid();
         if (currentClosest != null)
         {
+            closestLivingEntity = currentClosest;
             safeTime = 0;
             startingPos = citizen.blockPosition();
             performMoveAway();
