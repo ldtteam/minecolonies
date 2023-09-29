@@ -21,9 +21,11 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
+import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.OpenDecoBuildWindowMessage;
+import com.minecolonies.coremod.network.messages.client.OpenPlantationFieldBuildWindowMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -75,18 +77,13 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @OnlyIn(Dist.CLIENT)
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
-        BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-
         if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
         {
             final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
-            if (colonyView == null)
-            {
-                return false;
-            }
+            return colonyView != null;
         }
 
-        return !blockState.is(ModBlocks.blockPlantationField);
+        return true;
     }
 
     @Override
@@ -107,6 +104,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
+
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
 
@@ -141,6 +139,12 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             return;
         }
 
+        if (anchor.is(ModBlocks.blockPlantationField))
+        {
+            Network.getNetwork()
+              .sendToPlayer(new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror),
+                (ServerPlayer) player);
+        }
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
             if (clientPack || !StructurePacks.hasPack(packName))
