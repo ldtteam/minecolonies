@@ -296,7 +296,7 @@ public class PathingStuckHandler implements IStuckHandler
             return;
         }
 
-        // Move away, 20% chance to skip this.
+        // Move away, with chance to skip this.
         if (stuckLevel == 1 && rand.nextDouble() > chanceToByPassMovingAway)
         {
             stuckLevel++;
@@ -448,7 +448,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             entityPos = entityPos.above();
         }
-        
+
         tryPlaceLadderAt(world, entityPos);
         tryPlaceLadderAt(world, entityPos.above());
         tryPlaceLadderAt(world, entityPos.above(2));
