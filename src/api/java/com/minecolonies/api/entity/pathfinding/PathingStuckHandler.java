@@ -297,7 +297,7 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         // Move away, 20% chance to skip this.
-        if (stuckLevel == 1 && rand.nextDouble() < chanceToByPassMovingAway)
+        if (stuckLevel == 1 && rand.nextDouble() > chanceToByPassMovingAway)
         {
             stuckLevel++;
             delayToNextUnstuckAction = 300;
@@ -448,7 +448,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             entityPos = entityPos.above();
         }
-
+        
         tryPlaceLadderAt(world, entityPos);
         tryPlaceLadderAt(world, entityPos.above());
         tryPlaceLadderAt(world, entityPos.above(2));
@@ -512,6 +512,10 @@ public class PathingStuckHandler implements IStuckHandler
 
         final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
 
+        if (entity.getHealth() >= entity.getMaxHealth() / 3)
+        {
+            entity.hurt(new EntityDamageSource("Stuck-damage", entity), (float) Math.max(0.5, entity.getHealth() / 20.0));
+        }
         breakBlocksAhead(world, new BlockPos(entity.position()), facing);
     }
 
