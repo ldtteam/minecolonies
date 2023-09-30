@@ -252,6 +252,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()
+                                                 .withChanceToByPassMovingAway(0.20)
                                                  .withPlaceLadders();
 
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().doBarbariansBreakThroughWalls.get())
