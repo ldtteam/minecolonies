@@ -120,7 +120,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         boolean successfulTownHallLocation = false;
         if (anchor.getBlock() instanceof BlockHutTownHall)
         {
-            if (IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))
+            if (isInColony || IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))
             {
                 successfulTownHallLocation = true;
             }
