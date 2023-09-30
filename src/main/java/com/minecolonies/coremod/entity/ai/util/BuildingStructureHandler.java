@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -246,7 +248,6 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         {
             if (ItemStackUtils.isTool(stack, ToolType.FLINT_N_STEEL))
             {
-                //todo after 1.17 port try to find a generic way to handle this in Structurize.
                 if (structureAI.checkForToolOrWeapon(ToolType.FLINT_N_STEEL))
                 {
                     return false;
@@ -257,6 +258,21 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         }
 
         return AbstractEntityAIStructure.hasListOfResInInvOrRequest(structureAI, itemList, itemList.size() > 1) == AbstractEntityAIStructure.ItemCheckResult.SUCCESS;
+    }
+
+    @Override
+    public void consume(final List<ItemStack> requiredItems)
+    {
+        if (this.getInventory() != null)
+        {
+            for (final ItemStack tempStack : requiredItems)
+            {
+                if (!ItemStackUtils.isEmpty(tempStack))
+                {
+                    InventoryUtils.reduceStackInItemHandler(this.getInventory(), tempStack);
+                }
+            }
+        }
     }
 
     @Override
