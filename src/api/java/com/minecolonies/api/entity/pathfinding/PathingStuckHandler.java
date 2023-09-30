@@ -97,6 +97,11 @@ public class PathingStuckHandler implements IStuckHandler
     private int completeStuckBlockBreakRange = 0;
 
     /**
+     * Chance to bypass moving away.
+     */
+    private double chanceToByPassMovingAway = 0;
+
+    /**
      * Temporary comparison variables to compare with last update
      */
     private boolean hadPath         = false;
@@ -291,8 +296,8 @@ public class PathingStuckHandler implements IStuckHandler
             return;
         }
 
-        // Move away
-        if (stuckLevel == 1)
+        // Move away, 20% chance to skip this.
+        if (stuckLevel == 1 && rand.nextDouble() < chanceToByPassMovingAway)
         {
             stuckLevel++;
             delayToNextUnstuckAction = 300;
@@ -420,7 +425,7 @@ public class PathingStuckHandler implements IStuckHandler
     {
         final BlockState state = world.getBlockState(pos);
         final Block blockAtPos = state.getBlock();
-        if (blockAtPos instanceof IBuilderUndestroyable || state.is(blockAtPos))
+        if (blockAtPos instanceof IBuilderUndestroyable || state.is(ModTags.indestructible))
         {
             return;
         }
@@ -519,7 +524,7 @@ public class PathingStuckHandler implements IStuckHandler
     private void tryPlaceLadderAt(final Level world, final BlockPos pos)
     {
         final BlockState state = world.getBlockState(pos);
-        if (state.getBlock() != Blocks.LADDER && !state.canOcclude() && world.getFluidState(pos).isEmpty())
+        if (state.getBlock() != Blocks.LADDER && world.getFluidState(pos).isEmpty())
         {
             for (final Direction dir : HORIZONTAL_DIRS)
             {
@@ -548,6 +553,12 @@ public class PathingStuckHandler implements IStuckHandler
     public PathingStuckHandler withBuildLeafBridges()
     {
         canBuildLeafBridges = true;
+        return this;
+    }
+
+    public PathingStuckHandler withChanceToByPassMovingAway(final double chance)
+    {
+        chanceToByPassMovingAway = chance;
         return this;
     }
 
