@@ -1,11 +1,15 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Generic ISetting that represents all possible setting objects (string, numbers, boolean, etc).
@@ -13,75 +17,133 @@ import net.minecraft.server.level.ServerPlayer;
 public interface ISetting
 {
     /**
+     * Get the resource location of the view you want to use for this setting.
+     *
+     * @return the resource location indicating which view to use.
+     */
+    ResourceLocation getLayoutItem();
+
+    /**
      * Add the handling of the specific setting to the box in the UI.
-     * @param key the key of the setting.
-     * @param rowPane the pane of it.
+     *
+     * @param key                the key of the setting.
+     * @param rowPane            the pane of it.
      * @param settingsModuleView the module view that holds the setting.
-     * @param building the building.
-     * @param window the calling window.
+     * @param building           the building.
+     * @param window             the calling window.
      */
     void setupHandler(
       final ISettingKey<?> key,
       final Pane rowPane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final BOWindow window);
+      final IBuildingView building,
+      final BOWindow window);
 
     /**
      * Update the handling (e.g update settings text).
-     * @param key the key of the setting.
-     * @param rowPane the pane of it.
+     *
+     * @param key                the key of the setting.
+     * @param rowPane            the pane of it.
      * @param settingsModuleView the module view that holds the setting.
-     * @param building the building.
-     * @param window the calling window.
+     * @param building           the building.
+     * @param window             the calling window.
      */
     void render(
       final ISettingKey<?> key,
       final Pane rowPane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final BOWindow window);
+      final IBuildingView building,
+      final BOWindow window);
 
     /**
      * Trigger a setting.
      */
-    void trigger();
+    default void trigger() {}
 
     /**
-     * Check if this setting is effective (provided {@link ISettingsModule#getOptionalSetting(ISettingKey)} is used).
-     * @return true by default
+     * Check if this setting is active (provided {@link ISettingsModule#getOptionalSetting(ISettingKey)} is used).
+     *
+     * @return true if the setting is active;
      */
-    default boolean isActive(ISettingsModule module)
+    default boolean isActive(final ISettingsModule module)
     {
         return true;
     }
 
     /**
-     * Check if this setting is visible in the GUI.
-     * @return true by default.
+     * Configures if this setting is inactive, whether it should show in the settings at all.
+     * This would default to false in most cases as we want to prevent not showing settings, but certain settings related to
+     * addon mods may want to be hidden if another mod is not loaded.
+     *
+     * @return true if the inactive setting should be hidden.
      */
-    default boolean isActive(ISettingsModuleView module)
+    default boolean shouldHideWhenInactive()
     {
-        return true;
+        return false;
     }
 
     /**
      * Called when updated.
+     *
      * @param building the building its updated for.
-     * @param sender the player triggering the update.
+     * @param sender   the player triggering the update.
      */
-    default void onUpdate(IBuilding building, final ServerPlayer sender) { };
+    default void onUpdate(final IBuilding building, final ServerPlayer sender) {}
 
     /**
      * Allow updating a setting with new data.
-     * @param iSetting the setting with new data
+     *
+     * @param setting the setting with new data
      */
-    default void updateSetting(final ISetting iSetting)
-    {
-        
-    }
+    default void updateSetting(final ISetting setting) {}
 
     /**
      * Copy value from another instance.
-     * @param iSetting the setting to copy from
+     *
+     * @param setting the setting to copy from
      */
-    void copyValue(final ISetting iSetting);
+    void copyValue(final ISetting setting);
+
+    /**
+     * Generates the hover pane for inactive settings.
+     *
+     * @param component          the component to put the hover pane on.
+     * @param settingsModuleView the module view that holds the setting.
+     */
+    default void setInActiveHoverPane(final Pane component, final ISettingsModuleView settingsModuleView)
+    {
+        final Component inActiveReason = getInactiveReason();
+        if (!isActive(settingsModuleView) && inActiveReason != null)
+        {
+            PaneBuilders.tooltipBuilder()
+              .append(inActiveReason)
+              .hoverPane(component)
+              .build();
+        }
+        else
+        {
+            component.setHoverPane(null);
+        }
+    }
+
+    /**
+     * Get the reason why this setting is inactive.
+     *
+     * @return a component stating why this is inactive, or null if no reason.
+     */
+    @Nullable
+    default Component getInactiveReason()
+    {
+        return null;
+    }
+
+    /**
+     * Check if this setting is active (provided {@link ISettingsModule#getOptionalSetting(ISettingKey)} is used).
+     *
+     * @return a component containing a message why this setting is not active, return null if the setting is supposed to be active.
+     */
+    default boolean isActive(final ISettingsModuleView module)
+    {
+        return true;
+    }
 }

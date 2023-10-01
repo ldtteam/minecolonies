@@ -17,6 +17,7 @@ public class DynamicTreesSetting extends IntSetting
 
     /**
      * Create a new dynamic tree setting
+     *
      * @param value        the current value
      * @param defaultValue the default value
      */
@@ -31,9 +32,12 @@ public class DynamicTreesSetting extends IntSetting
         return ModList.get().isLoaded("dynamictrees");
     }
 
-    /**
-     * @return whether the setting is active (i.e. whether dynamic trees is loaded)
-     */
+    @Override
+    public boolean shouldHideWhenInactive()
+    {
+        return true;
+    }
+
     @Override
     public boolean isActive(ISettingsModuleView module)
     {

@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -12,6 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MathUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,6 +24,11 @@ import java.util.List;
  */
 public class StringSetting implements IStringSetting
 {
+    /**
+     * The maximum possible width of the trigger button.
+     */
+    public static final int MAX_BUTTON_WIDTH = 145;
+
     /**
      * The value of the setting.
      */
@@ -83,6 +86,12 @@ public class StringSetting implements IStringSetting
         return new ArrayList<>(settings);
     }
 
+    @Override
+    public ResourceLocation getLayoutItem()
+    {
+        return new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml");
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void setupHandler(
@@ -91,15 +100,33 @@ public class StringSetting implements IStringSetting
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
+    public void render(
+      final ISettingKey<?> key,
+      final Pane pane,
+      final ISettingsModuleView settingsModuleView,
+      final IBuildingView building,
+      final BOWindow window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(Component.translatable(settings.get(currentIndex)));
+        int buttonWidth = MathUtils.clamp(getButtonWidth(settingsModuleView), 0, MAX_BUTTON_WIDTH);
+        ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
+        triggerButton.setSize(buttonWidth, triggerButton.getHeight());
+        triggerButton.setEnabled(isActive(settingsModuleView));
+        triggerButton.setText(getDisplayText());
+        setInActiveHoverPane(triggerButton, settingsModuleView);
+    }
+
+    /**
+     * Get the text to render on the button, defaults to the stored index value.
+     *
+     * @return the component to render on the button.
+     */
+    protected Component getDisplayText()
+    {
+        return Component.translatable(settings.get(currentIndex));
     }
 
     @Override
@@ -134,12 +161,12 @@ public class StringSetting implements IStringSetting
     }
 
     @Override
-    public void updateSetting(final ISetting iSetting)
+    public void updateSetting(final ISetting setting)
     {
-        if (iSetting instanceof StringSetting)
+        if (setting instanceof StringSetting stringSetting)
         {
             this.settings.clear();
-            this.settings.addAll(((StringSetting) iSetting).settings);
+            this.settings.addAll(stringSetting.settings);
             if (currentIndex >= this.settings.size())
             {
                 currentIndex = this.settings.size() - 1;
@@ -151,5 +178,16 @@ public class StringSetting implements IStringSetting
     public void set(final String value)
     {
         currentIndex = getSettings().indexOf(value);
+    }
+
+    /**
+     * Get the width to render the button at. This can be at most 145, to leave adequate spacing.
+     *
+     * @param settingsModuleView the module view that holds the setting.
+     * @return the width.
+     */
+    protected int getButtonWidth(final ISettingsModuleView settingsModuleView)
+    {
+        return MAX_BUTTON_WIDTH;
     }
 }
