@@ -1,12 +1,15 @@
 package com.minecolonies.coremod.client.gui.modules;
 
+import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.View;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import net.minecraft.network.chat.Component;
@@ -14,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.DESC_LABEL;
+import static com.minecolonies.api.util.constant.WindowConstants.LIST_SETTINGS;
 
 /**
  * BOWindow for all the settings of a hut.
@@ -22,14 +26,14 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class SettingsModuleWindow extends AbstractModuleWindow
 {
     /**
-     * Resource scrolling list.
-     */
-    private final ScrollingList settingsList;
-
-    /**
      * The building this belongs to.
      */
     protected final IBuildingView building;
+
+    /**
+     * Resource scrolling list.
+     */
+    private final ScrollingList settingsList;
 
     /**
      * The module view.
@@ -38,8 +42,8 @@ public class SettingsModuleWindow extends AbstractModuleWindow
 
     /**
      * @param building   the building it belongs to.
-     * @param res   the building res id.
-     * @param moduleView   the assigned module view.
+     * @param res        the building res id.
+     * @param moduleView the assigned module view.
      */
     public SettingsModuleWindow(
       final String res,
@@ -68,8 +72,6 @@ public class SettingsModuleWindow extends AbstractModuleWindow
     {
         settingsList.enable();
         settingsList.show();
-
-        //Creates a dataProvider for the unemployed resourceList.
         settingsList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
@@ -79,7 +81,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return moduleView.getActiveSettings().size();
+                return moduleView.getSettingsToShow().size();
             }
 
             /**
@@ -90,17 +92,45 @@ public class SettingsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ISettingKey<?> key = moduleView.getActiveSettings().get(index);
-                if (rowPane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
+                final ISettingKey<? extends ISetting> key = moduleView.getSettingsToShow().get(index);
+                final ISetting setting = moduleView.getSetting(key);
+                if (setting == null)
                 {
-                    moduleView.getSettings().get(key).setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                    return;
                 }
-                else if (!rowPane.findPaneOfTypeByID("id", Text.class).getText().getString().equals(key.getUniqueId().toString()))
+
+                final Box box = rowPane.findPaneOfTypeByID("box", Box.class);
+                final Text idField = box.findPaneOfTypeByID("id", Text.class);
+
+                if (idField != null && !idField.getTextAsString().equals(key.getUniqueId().toString()))
                 {
-                    ((View) rowPane).getChildren().clear();
-                    moduleView.getSettings().get(key).setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                    box.getChildren().clear();
                 }
-                moduleView.getSettings().get(key).render(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+
+                if (box.getChildren().isEmpty())
+                {
+                    Loader.createFromXMLFile(setting.getLayoutItem(), (View) rowPane);
+                    setting.setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                    final Text rowIdField = rowPane.findPaneOfTypeByID("id", Text.class);
+                    if (rowIdField != null)
+                    {
+                        rowIdField.setText(Component.literal(key.getUniqueId().toString()));
+                    }
+                    else
+                    {
+                        Log.getLogger()
+                          .warn(
+                            "Settings for class \"{}\" it's window does not provide an \"id\" field. Make sure this exists so the view can be properly recycled when the settings list is modified!",
+                            setting.getClass().getName());
+                    }
+                    final Text rowDescriptionField = rowPane.findPaneOfTypeByID("desc", Text.class);
+                    if (rowDescriptionField != null)
+                    {
+                        rowDescriptionField.setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+                    }
+                }
+
+                setting.render(key, rowPane, moduleView, building, SettingsModuleWindow.this);
             }
         });
     }

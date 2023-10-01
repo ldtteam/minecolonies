@@ -1,10 +1,19 @@
 <window size="100% 100%" pause="false" lightbox="false">
     <text id="id" size="0 0" pos="0 0" visible="false"/>
-    <text id="desc" size="120 15" pos="5 1" color="black"/>
-    <buttonimage  id="trigger" pos="67 1" size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+    <text id="desc" size="100% 15" pos="5 5" color="black" textalign="vertical left" wrap="true"/>
 
-    <label id="minePos" size="164 24" pos="5 15" color="black" visible="false" />
-    <buttonimage id="setTarget" size="86 17" pos="67 18" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 visible="false"/>
+    <buttonimage id="trigger" pos="5 25" size="145 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+    <buttonimage id="setPositions"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.targetpatrol)"
+                 textcolor="black"
+                 pos="70 25"
+                 size="80 17"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+    <buttonimage id="helpButton"
+                 label="?"
+                 textalign="MIDDLE"
+                 textcolor="red"
+                 pos="135 25"
+                 size="15 15"
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
 </window>

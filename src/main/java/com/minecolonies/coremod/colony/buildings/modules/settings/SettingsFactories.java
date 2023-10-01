@@ -371,6 +371,7 @@ public class SettingsFactories
 
     /**
      * Specific factory for the string setting with desc.
+     * TODO: Remove in future versions as this only exists right now for settings parsing purposes, this one is not necessary anymore because {@link StringSetting} contains a description by default now.
      */
     public static class StringWithDescSettingsFactory extends AbstractStringSettingsFactory<StringSettingWithDesc>
     {
@@ -396,22 +397,22 @@ public class SettingsFactories
     }
 
     /**
-     * Specific factory for the string setting with desc.
+     * Specific factory for the guard patrol mode setting.
      */
-    public static class PatrolModeSettingFactory extends AbstractStringSettingsFactory<PatrolModeSetting>
+    public static class GuardPatrolModeSettingFactory extends AbstractStringSettingsFactory<GuardPatrolModeSetting>
     {
         @NotNull
         @Override
-        public TypeToken<PatrolModeSetting> getFactoryOutputType()
+        public TypeToken<GuardPatrolModeSetting> getFactoryOutputType()
         {
-            return TypeToken.of(PatrolModeSetting.class);
+            return TypeToken.of(GuardPatrolModeSetting.class);
         }
 
         @NotNull
         @Override
-        public PatrolModeSetting getNewInstance(final List<String> value, final int curr)
+        public GuardPatrolModeSetting getNewInstance(final List<String> value, final int curr)
         {
-            return new PatrolModeSetting(value, curr);
+            return new GuardPatrolModeSetting(value, curr);
         }
 
         @Override
@@ -448,22 +449,22 @@ public class SettingsFactories
     }
 
     /**
-     * Specific factory for the string setting with desc.
+     * Specific factory for the guard follow mode setting.
      */
-    public static class FollowModeSettingFactory extends AbstractStringSettingsFactory<FollowModeSetting>
+    public static class GuardFollowModeSettingFactory extends AbstractStringSettingsFactory<GuardFollowModeSetting>
     {
         @NotNull
         @Override
-        public TypeToken<FollowModeSetting> getFactoryOutputType()
+        public TypeToken<GuardFollowModeSetting> getFactoryOutputType()
         {
-            return TypeToken.of(FollowModeSetting.class);
+            return TypeToken.of(GuardFollowModeSetting.class);
         }
 
         @NotNull
         @Override
-        public FollowModeSetting getNewInstance(final List<String> value, final int curr)
+        public GuardFollowModeSetting getNewInstance(final List<String> value, final int curr)
         {
-            return new FollowModeSetting(value, curr);
+            return new GuardFollowModeSetting(value, curr);
         }
 
         @Override
