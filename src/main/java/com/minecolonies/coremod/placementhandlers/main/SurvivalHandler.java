@@ -166,14 +166,12 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
                 final CompoundTag compound = inventoryStack.getTag();
-                if (compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
+                if (compound != null && compound.contains(TAG_COLONY_ID) && tempColony != null && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
                 {
                     MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
-
-                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
 
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
@@ -186,6 +184,14 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   packName,
                   blueprintPath);
                 MinecraftForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, blockPos), world.getBlockState(blockPos.below()), player));
+
+                if (tempColony == null)
+                {
+                    return;
+                }
+
+                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
+
 
                 int level = 0;
                 boolean finishedUpgrade = false;
