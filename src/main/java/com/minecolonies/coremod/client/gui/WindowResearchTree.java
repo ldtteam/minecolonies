@@ -860,79 +860,45 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         int storageXOffset = ICON_WIDTH;
 
-        for (final IResearchRequirement requirement : research.getResearchRequirement())
-        {
-            if (requirement instanceof AlternateBuildingResearchRequirement)
+        final List<AlternateBuildingResearchRequirement> alternateBuildingRequirements = new ArrayList<>();
+        final List<BuildingResearchRequirement> buildingRequirements = new ArrayList<>();
+        final List<ItemStorage> itemRequirements = research.getCostList();
+
+        research.getResearchRequirement().forEach(requirement -> {
+            // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
+            if (requirement instanceof AlternateBuildingResearchRequirement alternateBuildingRequirement && alternateBuildingRequirements.isEmpty())
             {
-                for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
-                {
-                    final Item item;
-                    if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                      new ResourceLocation(Constants.MOD_ID, building.getKey())))
-                    {
-                        item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                          new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
-                    }
-                    else
-                    {
-                        item = Items.AIR.asItem();
-                    }
-                    final ItemStack stack = new ItemStack(item);
-                    stack.setCount(building.getValue());
-                    final ItemIcon icon = new ItemIcon();
-                    icon.setItem(stack);
-                    icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
-                    icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                    view.addChild(icon);
-                    if(requirement.isFulfilled(this.building.getColony()))
-                    {
-                        PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
-                    }
-                    else
-                    {
-                        PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_UNFULFILLED).build();
-                    }
-
-                    storageXOffset += COST_OFFSET;
-                }
-                // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
-                break;
+                alternateBuildingRequirements.add(alternateBuildingRequirement);
             }
-        }
-        // If there are more than one requirement, we want a clear divider before normal building research requirements.
-        if (storageXOffset > ICON_WIDTH + COST_OFFSET)
-        {
-            final Image divider = new Image();
-            divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"), false);
-            divider.setSize(ICON_X_OFFSET, Y_SPACING);
-            divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
-            view.addChild(divider);
-            storageXOffset += ICON_X_OFFSET;
-        }
+            else if (requirement instanceof BuildingResearchRequirement buildingRequirement)
+            {
+                buildingRequirements.add(buildingRequirement);
+            }
+        });
 
-        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        for (final AlternateBuildingResearchRequirement requirement : alternateBuildingRequirements)
         {
-            if (requirement instanceof BuildingResearchRequirement)
+            for (Map.Entry<String, Integer> building : requirement.getBuildings().entrySet())
             {
                 final Item item;
                 if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                  new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                  new ResourceLocation(Constants.MOD_ID, building.getKey())))
                 {
                     item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                      new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+                      new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
                 }
                 else
                 {
                     item = Items.AIR.asItem();
                 }
                 final ItemStack stack = new ItemStack(item);
-                stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+                stack.setCount(building.getValue());
                 final ItemIcon icon = new ItemIcon();
                 icon.setItem(stack);
-                icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+                icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
                 icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                 view.addChild(icon);
-                if(requirement.isFulfilled(this.building.getColony()))
+                if (requirement.isFulfilled(this.building.getColony()))
                 {
                     PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
                 }
@@ -944,19 +910,52 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 storageXOffset += COST_OFFSET;
             }
         }
-        // If there are two or more research requirements, we want a clear divider before the cost side.
-        // Again, there can only be one alternate-building requirement, so this would indicate at least two of building or research requirements.
-        if (research.getResearchRequirement().size() >= 2)
+
+        // If there are more than one requirement, we want a clear divider before normal building research requirements.
+        if (!alternateBuildingRequirements.isEmpty() && !buildingRequirements.isEmpty())
         {
             final Image divider = new Image();
             divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"), false);
             divider.setSize(ICON_X_OFFSET, Y_SPACING);
             divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
             view.addChild(divider);
+            storageXOffset += ICON_X_OFFSET;
+        }
+
+        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        {
+            final Item item;
+            if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+              new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+            {
+                item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                  new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+            }
+            else
+            {
+                item = Items.AIR.asItem();
+            }
+            final ItemStack stack = new ItemStack(item);
+            stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+            final ItemIcon icon = new ItemIcon();
+            icon.setItem(stack);
+            icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+            view.addChild(icon);
+            if (requirement.isFulfilled(this.building.getColony()))
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
+            }
+            else
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_UNFULFILLED).build();
+            }
+
+            storageXOffset += COST_OFFSET;
         }
 
         storageXOffset = COST_OFFSET;
-        for (final ItemStorage storage : research.getCostList())
+        for (final ItemStorage storage : itemRequirements)
         {
             // This must be a copy, to avoid potential serialization issues with large item stack counts.
             final ItemStack is = storage.getItemStack().copy();
