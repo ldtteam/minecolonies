@@ -561,7 +561,8 @@ public class CompatibilityManager implements ICompatibilityManager
             // fetch default config for all level
             // override it if specific config for this level is available.
             List<ItemStorage> luckyOresInLevel = luckyOres.get(0);
-            if (luckyOres.containsKey(buildingLevel)) {
+            if (luckyOres.containsKey(buildingLevel))
+            {
                 luckyOresInLevel = luckyOres.get(buildingLevel);
             }
 
@@ -802,7 +803,8 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
 
                 final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
-                if (item == null || item == Items.AIR) {
+                if (item == null || item == Items.AIR)
+                {
                     Log.getLogger().warn("Invalid lucky block: " + ore);
                     continue;
                 }
@@ -810,8 +812,10 @@ public class CompatibilityManager implements ICompatibilityManager
                 final int defaultMineLevel = 0;
                 int buildingLevel = defaultMineLevel;
                 final ItemStack stack = new ItemStack(item, 1);
-                try {
-                    if (split.length == 3) {
+                try
+                {
+                    if (split.length == 3)
+                    {
                         buildingLevel = Integer.parseInt(split[2]);
                     }
 
@@ -819,27 +823,32 @@ public class CompatibilityManager implements ICompatibilityManager
 
                     luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
 
-                    for (int i = 0; i < rarity; i++) {
+                    for (int i = 0; i < rarity; i++)
+                    {
                         List<ItemStorage> luckyOreOnLevel = luckyOres.get(buildingLevel);
                         luckyOreOnLevel.add(new ItemStorage(stack));
                     }
-                } catch (final NumberFormatException ex) {
+                }
+                catch (final NumberFormatException ex)
+                {
                     Log.getLogger().warn("Ore has invalid rarity or building level: " + ore);
                 }
             }
 
             List<ItemStorage> alternative = null;
             int mineMaxLevel = ModBuildings.miner.get().produceBuilding(BlockPos.ZERO, null).getMaxBuildingLevel();
-            for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++) {
-                if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty()) {
+            for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++)
+            {
+                if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty())
+                {
                     alternative = luckyOres.get(levelToTest);
                 }
             }
 
-            for (int levelToReplace = 0; levelToReplace <= mineMaxLevel; levelToReplace++) {
+            for (int levelToReplace = 0; levelToReplace <= mineMaxLevel; levelToReplace++)
+            {
                 luckyOres.putIfAbsent(levelToReplace, alternative);
             }
-
         }
         Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
     }
