@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.ChunkPos;
@@ -65,10 +67,13 @@ public class ChunkCache implements LevelReader
         {
             for (int l = this.chunkZ; l <= j; ++l)
             {
-                if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)))
+                if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)) && worldIn.getChunkSource() instanceof ServerChunkCache serverChunkCache)
                 {
-                    final LevelChunk chunk = worldIn.getChunkSource().getChunk(k, l, true);
-                    this.chunkArray[k - this.chunkX][l - this.chunkZ] = chunk;
+                    final ChunkHolder holder = serverChunkCache.chunkMap.visibleChunkMap.get(ChunkPos.asLong(k, l));
+                    if (holder != null)
+                    {
+                        this.chunkArray[k - this.chunkX][l - this.chunkZ] = holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().orElse(null);
+                    }
                 }
             }
         }
