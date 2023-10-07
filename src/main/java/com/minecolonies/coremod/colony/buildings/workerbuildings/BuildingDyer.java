@@ -97,7 +97,13 @@ public class BuildingDyer extends AbstractBuilding
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_DYER).orElse(false);
         }
-        
+
+        @Override
+        public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen)
+        {
+            // don't improve any dyeing recipes
+        }
+
         @Override
         public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
         {
@@ -236,6 +242,12 @@ public class BuildingDyer extends AbstractBuilding
                 return false;
             }
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_DYER_SMELTING).orElse(false);
+        }
+
+        @Override
+        public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen)
+        {
+            // don't improve any dyeing recipes
         }
     }
 }
