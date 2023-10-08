@@ -416,6 +416,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public List<MutableComponent> getDesc()
     {
         final List<MutableComponent> desc = new ArrayList<>();
+        desc.add(Component.translatable("block." + Constants.MOD_ID + "." + getHutName()));
         desc.add(Component.translatable(getBuildingEntry().getTranslationKey() + ".desc"));
         return desc;
     }
