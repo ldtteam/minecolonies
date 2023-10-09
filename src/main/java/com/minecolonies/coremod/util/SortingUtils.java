@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ExactMatchItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -44,7 +43,7 @@ public final class SortingUtils
 
         try
         {
-            final Map<ItemStorage, Integer> map = new HashMap<>();
+            final Map<ExactMatchItemStorage, Integer> map = new HashMap<>();
             if (inv != null)
             {
                 for (int i = 0; i < inv.getSlots(); i++)
@@ -53,7 +52,7 @@ public final class SortingUtils
                     {
                         continue;
                     }
-                    final ItemStorage storage = new ItemStorage(inv.getStackInSlot(i));
+                    final ExactMatchItemStorage storage = new ExactMatchItemStorage(inv.getStackInSlot(i));
                     inv.setStackInSlot(i, ItemStack.EMPTY);
                     int amount = storage.getAmount();
                     if (map.containsKey(storage))
@@ -90,7 +89,7 @@ public final class SortingUtils
      */
     private static void pushIntoInv(
       final AtomicInteger currentSlot,
-      final Map.Entry<ItemStorage, Integer> entry,
+      final Map.Entry<ExactMatchItemStorage, Integer> entry,
       final CombinedItemHandler inv,
       final AtomicInteger requiredSlots,
       final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
@@ -141,7 +140,7 @@ public final class SortingUtils
      * @param t2 the second itemStorage entry.
      * @return an integer which describes the difference.
      */
-    private static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
+    private static int compare(final Map.Entry<ExactMatchItemStorage, Integer> t1, final Map.Entry<ExactMatchItemStorage, Integer> t2)
     {
         final int creativeTabId1 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(t1.getKey());
         final int creativeTabId2 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(t2.getKey());
@@ -178,11 +177,11 @@ public final class SortingUtils
      * @param map the map of itemStorages with amount.
      * @return a tuple containing the required information.
      */
-    private static Tuple<AtomicInteger, Map<Integer, Integer>> calcRequiredSlots(final Map<ItemStorage, Integer> map)
+    private static Tuple<AtomicInteger, Map<Integer, Integer>> calcRequiredSlots(final Map<ExactMatchItemStorage, Integer> map)
     {
         final Map<Integer, Integer> creativeTabs = new HashMap<>();
         int sum = 0;
-        for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
+        for (final Map.Entry<ExactMatchItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
             final int index = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(entry.getKey());

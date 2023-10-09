@@ -761,12 +761,28 @@ public final class ItemStackUtils
      * @param min         if the count of stack2 has to be at least the same as stack1.
      * @return True when they are equal except the stacksize, false when not.
      */
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT, final boolean min)
+    {
+        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, false, false);
+    }
+
+    /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param itemStack1  The left stack to compare.
+     * @param itemStack2  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
+     * @param min         if the count of stack2 has to be at least the same as stack1.
+     * @return True when they are equal except the stacksize, false when not.
+     */
     public static boolean compareItemStacksIgnoreStackSize(
       final ItemStack itemStack1,
       final ItemStack itemStack2,
       final boolean matchDamage,
       final boolean matchNBT,
-      final boolean min)
+      final boolean min,
+      final boolean matchNBTExactly)
     {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
@@ -793,6 +809,10 @@ public final class ItemStackUtils
 
             if (itemStack1.hasTag() || itemStack2.hasTag())
             {
+                if (matchNBTExactly)
+                {
+                    return Objects.equals(itemStack1.getTag(), itemStack2.getTag());
+                }
                 final Set<CheckedNbtKey> checkedKeys = CHECKED_NBT_KEYS.getOrDefault(itemStack1.getItem(), null);
                 if (checkedKeys == null)
                 {
