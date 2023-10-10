@@ -846,12 +846,25 @@
     "item": "minecolonies:bread_dough"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
     "item": "minecolonies:build_goggles"
   },
   {
     "item": "minecolonies:cake_batter"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:chiefsword"
   },
   {
@@ -888,6 +901,14 @@
     "item": "minecolonies:golden_bread"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:iron_scimitar"
   },
   {
@@ -921,30 +942,102 @@
     "item": "minecolonies:pharaoegg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pharaoscepter"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_cap"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_chest"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_hat"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_leggins"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_legs"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_shoes"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:pirate_top"
   },
   {
@@ -957,15 +1050,47 @@
     "item": "minecolonies:pirateegg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:plate_armor_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:plate_armor_chest"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:plate_armor_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:plate_armor_legs"
   },
   {
@@ -975,12 +1100,28 @@
     "item": "minecolonies:resourcescroll"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:santa_hat"
   },
   {
     "item": "minecolonies:scan_analyzer"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:scepterpermission"
   },
   {
@@ -1002,21 +1143,49 @@
     "item": "minecolonies:shieldmaidenegg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
     "item": "minecolonies:sifter_mesh_diamond"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
     "item": "minecolonies:sifter_mesh_flint"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
     "item": "minecolonies:sifter_mesh_iron"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
     "item": "minecolonies:sifter_mesh_string"
   },
   {
     "item": "minecolonies:simplequarry"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecolonies:spear"
   },
   {
@@ -1350,12 +1519,25 @@
     "item": "minecraft:bone_meal"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
     "item": "minecraft:book"
   },
   {
     "item": "minecraft:bookshelf"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:bow"
   },
   {
@@ -1470,6 +1652,14 @@
     "item": "minecraft:carrot"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:carrot_on_a_stick"
   },
   {
@@ -1491,15 +1681,47 @@
     "item": "minecraft:chain"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:chainmail_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:chainmail_chestplate"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:chainmail_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:chainmail_leggings"
   },
   {
@@ -1734,6 +1956,14 @@
     "item": "minecraft:crimson_trapdoor"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:crossbow"
   },
   {
@@ -1971,39 +2201,111 @@
     "item": "minecraft:diamond"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_axe"
   },
   {
     "item": "minecraft:diamond_block"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_chestplate"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_hoe"
   },
   {
     "item": "minecraft:diamond_horse_armor"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_leggings"
   },
   {
     "item": "minecraft:diamond_ore"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_pickaxe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_shovel"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:diamond_sword"
   },
   {
@@ -2067,6 +2369,14 @@
     "item": "minecraft:elder_guardian_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:elytra"
   },
   {
@@ -2180,6 +2490,14 @@
     "item": "minecraft:firework_star"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:fishing_rod"
   },
   {
@@ -2189,6 +2507,14 @@
     "item": "minecraft:flint"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:flint_and_steel"
   },
   {
@@ -2282,36 +2608,108 @@
     "item": "minecraft:golden_apple"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_axe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_boots"
   },
   {
     "item": "minecraft:golden_carrot"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_chestplate"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_hoe"
   },
   {
     "item": "minecraft:golden_horse_armor"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_leggings"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_pickaxe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_shovel"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:golden_sword"
   },
   {
@@ -2498,6 +2896,14 @@
     "item": "minecraft:ink_sac"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_axe"
   },
   {
@@ -2507,18 +2913,50 @@
     "item": "minecraft:iron_block"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_chestplate"
   },
   {
     "item": "minecraft:iron_door"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_hoe"
   },
   {
@@ -2528,6 +2966,14 @@
     "item": "minecraft:iron_ingot"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_leggings"
   },
   {
@@ -2537,12 +2983,36 @@
     "item": "minecraft:iron_ore"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_pickaxe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_shovel"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:iron_sword"
   },
   {
@@ -2639,18 +3109,50 @@
     "item": "minecraft:leather"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:leather_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:leather_chestplate"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:leather_helmet"
   },
   {
     "item": "minecraft:leather_horse_armor"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:leather_leggings"
   },
   {
@@ -3085,39 +3587,111 @@
     "item": "minecraft:nether_wart_block"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_axe"
   },
   {
     "item": "minecraft:netherite_block"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_boots"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_chestplate"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_hoe"
   },
   {
     "item": "minecraft:netherite_ingot"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_leggings"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_pickaxe"
   },
   {
     "item": "minecraft:netherite_scrap"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_shovel"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:netherite_sword"
   },
   {
@@ -3771,12 +4345,28 @@
     "item": "minecraft:seagrass"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:shears"
   },
   {
     "item": "minecraft:sheep_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:shield"
   },
   {
@@ -3974,6 +4564,14 @@
     "item": "minecraft:stone"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:stone_axe"
   },
   {
@@ -3992,15 +4590,39 @@
     "item": "minecraft:stone_button"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:stone_hoe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:stone_pickaxe"
   },
   {
     "item": "minecraft:stone_pressure_plate"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:stone_shovel"
   },
   {
@@ -4010,6 +4632,14 @@
     "item": "minecraft:stone_stairs"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:stone_sword"
   },
   {
@@ -4135,6 +4765,14 @@
     "item": "minecraft:trapped_chest"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:trident"
   },
   {
@@ -4165,6 +4803,14 @@
     "item": "minecraft:turtle_egg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:turtle_helmet"
   },
   {
@@ -4210,6 +4856,14 @@
     "item": "minecraft:warped_fungus"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:warped_fungus_on_a_stick"
   },
   {
@@ -4378,18 +5032,58 @@
     "item": "minecraft:wolf_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:wooden_axe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:wooden_hoe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:wooden_pickaxe"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:wooden_shovel"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
     "item": "minecraft:wooden_sword"
   },
   {

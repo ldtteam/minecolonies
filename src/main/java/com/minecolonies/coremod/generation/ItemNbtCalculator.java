@@ -91,8 +91,16 @@ public class ItemNbtCalculator implements DataProvider
         {
             final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
             final CompoundTag tag = (stack.hasTag() && !stack.is(ModTags.ignoreNBT)) ? stack.getTag() : new CompoundTag();
-            final Set<String> keys = tag.getAllKeys();
+            final Set<String> keys = tag.isEmpty() ? new HashSet<>() : new HashSet<>(tag.getAllKeys());
 
+            if (stack.isEnchantable())
+            {
+                keys.add("Enchantments");
+            }
+            if (stack.isRepairable())
+            {
+                keys.add("RepairCost");
+            }
             // We ignore damage in nbt.
             keys.remove("Damage");
 
