@@ -11,6 +11,6 @@ public class ArcherSquireModuleView extends WorkerBuildingModuleView
     @Override
     public boolean canBeHiredAs(final JobEntry jobEntry)
     {
-        return jobEntry == ModJobs.ranger.get();
+        return jobEntry == ModJobs.archer.get();
     }
 }
