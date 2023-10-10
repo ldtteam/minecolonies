@@ -8,8 +8,6 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
@@ -17,7 +15,6 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -116,8 +112,16 @@ public class ItemNbtCalculator implements DataProvider
         {
             final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
             final CompoundTag tag = (stack.hasTag() && !stack.is(ModTags.ignoreNBT)) ? stack.getTag() : new CompoundTag();
-            final Set<String> keys = tag.getAllKeys();
+            final Set<String> keys = tag.isEmpty() ? new HashSet<>() : new HashSet<>(tag.getAllKeys());
 
+            if (stack.isEnchantable())
+            {
+                keys.add("Enchantments");
+            }
+            if (stack.isRepairable())
+            {
+                keys.add("RepairCost");
+            }
             // We ignore damage in nbt.
             keys.remove("Damage");
 
