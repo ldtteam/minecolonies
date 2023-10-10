@@ -116,7 +116,7 @@ public class EventHandler
     {
         if (!event.getLevel().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy) && !(event.getEntity()
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && event.getEntity() instanceof Mob && event.getEntity() instanceof Enemy && !(event.getEntity()
               .getType()
               .is(ModTags.mobAttackBlacklist)))
             {
