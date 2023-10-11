@@ -21,36 +21,49 @@ public class NoDamageFireworkRocketEntity extends FireworkRocketEntity
         super(world, x, y, z, itemStack);
     }
 
-    private void explodeNoDamage() {
-        this.level.broadcastEntityEvent(this, (byte)17);
+    @Override
+    protected void onHitEntity(@NotNull EntityHitResult entityHitResult)
+    {
+        super.onHitEntity(entityHitResult);
+        if (!this.level.isClientSide)
+        {
+            this.explodeNoDamage();
+        }
+    }
+
+    /**
+     * Mirror of the FireworkRocketEntity.explode() method, without its call to the dealExplosionDamage() method.
+     */
+    private void explodeNoDamage()
+    {
+        this.level.broadcastEntityEvent(this, (byte) 17);
         this.gameEvent(GameEvent.EXPLODE, this.getOwner());
         this.discard();
     }
 
-    private boolean hasExplosionData() {
+    @Override
+    protected void onHitBlock(BlockHitResult entityHitResult)
+    {
+        BlockPos blockpos = new BlockPos(entityHitResult.getBlockPos());
+        this.level.getBlockState(blockpos).entityInside(this.level, blockpos, this);
+        if (!this.level.isClientSide() && this.hasExplosionData())
+        {
+            this.explodeNoDamage();
+        }
+
+        super.onHitBlock(entityHitResult);
+    }
+
+    /**
+     * Mirror of the FireworkRocketEntity.hasExplosion() method, however slightly modified to use input NBT due to no access to
+     * the EntityDataAccessors.
+     */
+    private boolean hasExplosionData()
+    {
         final CompoundTag compoundTag = new CompoundTag();
         addAdditionalSaveData(compoundTag);
         final CompoundTag fireworksItem = compoundTag.getCompound("FireworksItem");
         ListTag listtag = fireworksItem.getList("Explosions", 10);
         return !listtag.isEmpty();
-    }
-
-    @Override
-    protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
-        super.onHitEntity(entityHitResult);
-        if (!this.level.isClientSide) {
-            this.explodeNoDamage();
-        }
-    }
-
-    @Override
-    protected void onHitBlock(BlockHitResult entityHitResult) {
-        BlockPos blockpos = new BlockPos(entityHitResult.getBlockPos());
-        this.level.getBlockState(blockpos).entityInside(this.level, blockpos, this);
-        if (!this.level.isClientSide() && this.hasExplosionData()) {
-            this.explodeNoDamage();
-        }
-
-        super.onHitBlock(entityHitResult);
     }
 }
