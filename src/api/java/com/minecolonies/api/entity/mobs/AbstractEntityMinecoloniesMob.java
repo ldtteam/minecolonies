@@ -38,11 +38,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import java.util.List;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -193,13 +196,48 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
         RaiderMobUtils.setEquipment(this);
     }
 
+    /**
+     * Ignores cramming
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (this.level().isClientSide())
+        {
+            this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
+        }
+        else
+        {
+            List<Entity> list = this.level().getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this));
+            if (!list.isEmpty())
+            {
+                for (int l = 0; l < list.size(); ++l)
+                {
+                    Entity entity = list.get(l);
+                    this.doPush(entity);
+                }
+            }
+        }
+    }
+
     @Override
     public void push(@NotNull final Entity entityIn)
     {
-        if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
+        if (invulTime > 0)
         {
             return;
         }
+
+        if ((collisionCounter += 3) > COLL_THRESHOLD)
+        {
+            if (collisionCounter > (COLL_THRESHOLD * 2))
+            {
+                collisionCounter = 0;
+            }
+
+            return;
+        }
+
         super.push(entityIn);
     }
 
@@ -515,7 +553,12 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof LivingEntity && !(damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob))
+        if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob)
+        {
+            return false;
+        }
+
+        if (damageSource.getEntity() instanceof LivingEntity)
         {
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }

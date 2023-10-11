@@ -8,13 +8,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.minecolonies.api.sounds.EventType.GREETING;
 import static com.minecolonies.api.sounds.EventType.SUCCESS;
@@ -114,6 +118,30 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
         if (level().isClientSide)
         {
             soundManager.tick();
+        }
+    }
+
+    /**
+     * Ignores cramming
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (this.level().isClientSide())
+        {
+            this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
+        }
+        else
+        {
+            List<Entity> list = this.level().getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this));
+            if (!list.isEmpty())
+            {
+                for (int l = 0; l < list.size(); ++l)
+                {
+                    Entity entity = list.get(l);
+                    this.doPush(entity);
+                }
+            }
         }
     }
 
