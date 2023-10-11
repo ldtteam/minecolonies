@@ -8,6 +8,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -629,22 +630,27 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
+            final IResearchEffect<?> researchEffect = research.getEffects().get(txt);
             // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
             // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
             // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
-            if (research.getEffects().get(txt).getId().equals(CITIZEN_CAP)
-                  && ((GlobalResearchEffect) research.getEffects().get(txt)).getEffect() > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
+            if (researchEffect instanceof GlobalResearchEffect globalResearchEffect && researchEffect.getId().equals(CITIZEN_CAP)
+                  && globalResearchEffect.getEffect() > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverPaneBuilder.paragraphBreak().append(Component.translatable("com.minecolonies.research.effects.citizencapaddition.description", Component.translatable(
-                  "com.minecolonies.coremod.research.limit.maxeffect")));
+                final MutableComponent mainText =
+                  Component.translatable(researchEffect.getDesc().getKey(), 0, IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get());
+                // This call to `Math.round` doesn't serve any purpose, it's only meant to convert the double into a long, so that it will display correctly without any trailing zeroes.
+                final MutableComponent finishText = Component.translatable(researchEffect.getDesc().getKey() + ".over", Math.round(globalResearchEffect.getEffect()));
+                hoverPaneBuilder.paragraphBreak().append(mainText).append(Component.literal(" ")).append(finishText);
             }
             else
             {
-                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(research.getEffects().get(txt).getDesc()));
+                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(researchEffect.getDesc()));
             }
-            if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
+
+            if (!researchEffect.getSubtitle().getKey().isEmpty())
             {
-                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(MutableComponent.create(research.getEffects().get(txt).getSubtitle())).italic().colorName("GRAY");
+                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(MutableComponent.create(researchEffect.getSubtitle())).italic().colorName("GRAY");
             }
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
