@@ -637,6 +637,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             regularActionTimer = 0;
         }
 
+        if (worker.getRandom().nextDouble() < 0.05)
+        {
+            equipInventoryArmor();
+        }
+
         if (!hasTool())
         {
             return PREPARING;
