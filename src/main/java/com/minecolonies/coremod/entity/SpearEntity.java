@@ -81,7 +81,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
+    public Packet<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
@@ -110,7 +110,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         }
 
         Entity ownerEntity = this.getOwner();
-        DamageSource damageSource = this.level().damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
+        DamageSource damageSource = new IndirectEntityDamageSource("spear", this, ownerEntity == null ? this : ownerEntity);
         this.dealtDamage = true;
         if (targetEntity.hurt(damageSource, damageAmount))
         {
