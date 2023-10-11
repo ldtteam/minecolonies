@@ -4,7 +4,6 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
@@ -113,7 +112,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             boolean allUpgraded = true;
             for (BlockPos tower : ((BuildingBarracks) barrack).getTowers())
             {
-                Log.getLogger().info("Upgraded: " + allUpgraded);
                 if (colony.getBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
                 {
                     allUpgraded = false;

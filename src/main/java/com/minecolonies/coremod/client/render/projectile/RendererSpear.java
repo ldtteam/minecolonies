@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render.projectile;
 
-import com.minecolonies.api.entity.SpearEntity;
+import com.minecolonies.coremod.entity.SpearEntity;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.model.SpearModel;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * Custom renderer for spears
  */
 @OnlyIn(Dist.CLIENT)
-public class RendererSpear extends EntityRenderer<SpearEntity>
+public class RendererSpear extends EntityRenderer<ThrownTrident>
 {
     private final ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/spear.png");
     private final SpearModel       model ;
@@ -38,7 +39,7 @@ public class RendererSpear extends EntityRenderer<SpearEntity>
     }
 
     @Override
-    public void render(@NotNull  final SpearEntity entity, final float entityYaw, final float partialTicks, @NotNull final PoseStack stack, @NotNull final MultiBufferSource buffer, final int light)
+    public void render(@NotNull final ThrownTrident entity, final float entityYaw, final float partialTicks, @NotNull final PoseStack stack, @NotNull final MultiBufferSource buffer, final int light)
     {
         super.render(entity, entityYaw, partialTicks, stack, buffer, light);
 
@@ -52,7 +53,7 @@ public class RendererSpear extends EntityRenderer<SpearEntity>
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull final SpearEntity spearEntity)
+    public ResourceLocation getTextureLocation(@NotNull final ThrownTrident spearEntity)
     {
         return texture;
     }

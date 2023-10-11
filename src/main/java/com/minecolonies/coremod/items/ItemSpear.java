@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.entity.SpearEntity;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.entity.SpearEntity;
 import com.minecolonies.coremod.client.render.SpearItemTileEntityRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -22,8 +20,6 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ItemSpear extends TridentItem
 {

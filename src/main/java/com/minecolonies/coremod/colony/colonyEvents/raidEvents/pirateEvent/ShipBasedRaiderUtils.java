@@ -344,7 +344,12 @@ public final class ShipBasedRaiderUtils
 
         if (secondClosest.distManhattan(target) < closest.distManhattan(target))
         {
-            return secondClosest;
+            closest = secondClosest;
+        }
+
+        if (closest.distManhattan(target) >= startPos.distManhattan(target))
+        {
+            return target;
         }
 
         return closest;
