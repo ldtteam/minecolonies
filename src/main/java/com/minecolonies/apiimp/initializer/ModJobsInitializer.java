@@ -114,10 +114,10 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.SMELTER_ID)
           .createJobEntry());
 
-        ModJobs.ranger = register(DEFERRED_REGISTER, ModJobs.RANGER_ID.getPath(), () -> new JobEntry.Builder()
+        ModJobs.archer = register(DEFERRED_REGISTER, ModJobs.ARCHER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobRanger::new)
           .setJobViewProducer(() -> DefaultJobView::new)
-          .setRegistryName(ModJobs.RANGER_ID)
+          .setRegistryName(ModJobs.ARCHER_ID)
           .createJobEntry());
 
         ModJobs.knight = register(DEFERRED_REGISTER, ModJobs.KNIGHT_ID.getPath(), () -> new JobEntry.Builder()
@@ -138,16 +138,16 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.STUDENT_ID)
           .createJobEntry());
 
-        ModJobs.archer = register(DEFERRED_REGISTER, ModJobs.ARCHER_ID.getPath(), () -> new JobEntry.Builder()
+        ModJobs.archerInTraining = register(DEFERRED_REGISTER, ModJobs.ARCHER_TRAINING_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobArcherTraining::new)
           .setJobViewProducer(() -> DefaultJobView::new)
-          .setRegistryName(ModJobs.ARCHER_ID)
+          .setRegistryName(ModJobs.ARCHER_TRAINING_ID)
           .createJobEntry());
 
-        ModJobs.combat = register(DEFERRED_REGISTER, ModJobs.COMBAT_ID.getPath(), () -> new JobEntry.Builder()
+        ModJobs.knightInTraining = register(DEFERRED_REGISTER, ModJobs.KNIGHT_TRAINING_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCombatTraining::new)
           .setJobViewProducer(() -> DefaultJobView::new)
-          .setRegistryName(ModJobs.COMBAT_ID)
+          .setRegistryName(ModJobs.KNIGHT_TRAINING_ID)
           .createJobEntry());
 
         ModJobs.sawmill = register(DEFERRED_REGISTER, ModJobs.SAWMILL_ID.getPath(), () -> new JobEntry.Builder()
