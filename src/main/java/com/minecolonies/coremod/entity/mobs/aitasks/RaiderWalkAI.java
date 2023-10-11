@@ -14,6 +14,8 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.core.BlockPos;
 
+import java.util.List;
+
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
@@ -67,13 +69,17 @@ public class RaiderWalkAI implements IStateAI
             {
                 targetBlock = raider.getColony().getRaiderManager().getRandomBuilding();
                 walkTimer = raider.level.getGameTime() + TICKS_SECOND * 240;
-                final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(((IColonyRaidEvent) event).getWayPoints(), raider.blockPosition(), targetBlock);
-                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.1);
+
+                final List<BlockPos> wayPoints = ((IColonyRaidEvent) event).getWayPoints();
+                final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
+                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), !moveToPos.equals(targetBlock) && moveToPos.distManhattan(wayPoints.get(0)) > 50 ? 1.8 : 1.1);
             }
             else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
             {
-                final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(((IColonyRaidEvent) event).getWayPoints(), raider.blockPosition(), targetBlock);
-                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.8);
+                final List<BlockPos> wayPoints = ((IColonyRaidEvent) event).getWayPoints();
+                final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
+                raider.getNavigation()
+                  .moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), !moveToPos.equals(targetBlock) && moveToPos.distManhattan(wayPoints.get(0)) > 50 ? 1.8 : 1.1);
             }
         }
 

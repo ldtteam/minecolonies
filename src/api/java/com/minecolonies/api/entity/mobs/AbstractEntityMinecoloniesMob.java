@@ -21,6 +21,7 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.Log;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
@@ -41,16 +43,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
-
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 
 import net.minecraft.world.entity.Entity.RemovalReason;
 
@@ -199,13 +196,48 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
         RaiderMobUtils.setEquipment(this);
     }
 
+    /**
+     * Ignores cramming
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (this.level.isClientSide())
+        {
+            this.level.getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
+        }
+        else
+        {
+            List<Entity> list = this.level.getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this));
+            if (!list.isEmpty())
+            {
+                for (int l = 0; l < list.size(); ++l)
+                {
+                    Entity entity = list.get(l);
+                    this.doPush(entity);
+                }
+            }
+        }
+    }
+
     @Override
     public void push(@NotNull final Entity entityIn)
     {
-        if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
+        if (invulTime > 0)
         {
             return;
         }
+
+        if ((collisionCounter += 3) > COLL_THRESHOLD)
+        {
+            if (collisionCounter > (COLL_THRESHOLD * 2))
+            {
+                collisionCounter = 0;
+            }
+
+            return;
+        }
+
         super.push(entityIn);
     }
 
@@ -521,7 +553,12 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof LivingEntity && !(damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob))
+        if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob)
+        {
+            return false;
+        }
+
+        if (damageSource.getEntity() instanceof LivingEntity)
         {
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }
