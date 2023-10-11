@@ -89,7 +89,6 @@ public class CustomArrowEntity extends Arrow
                 {
                     source = level.damageSources().arrow(this, shooter);
                 }
-                setPlayerArmorPierce();
                 player.hurt(source, (float) getBaseDamage());
                 setBaseDamage(0);
             }

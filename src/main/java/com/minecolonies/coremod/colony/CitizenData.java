@@ -527,7 +527,7 @@ public class CitizenData implements ICitizenData
 
         setLastPosition(citizen.blockPosition());
 
-        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
+        citizen.getCitizenJobHandler().onJobChanged(workBuilding == null ? null : citizen.getCitizenJobHandler().getColonyJob());
 
         applyResearchEffects();
 
