@@ -898,7 +898,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void checkHeal()
     {
-        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtMob() == null)
+        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
@@ -1552,7 +1552,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 {
                     final ThreatTable table = ((EntityCitizen) entry.getEntity().get()).getThreatTable();
                     table.addThreat((LivingEntity) attacker, 0);
-                    if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
+                    if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp(attacker.blockPosition()))
                     {
                         possibleGuards.add(entry.getEntity().get());
                     }
