@@ -392,34 +392,36 @@ public class PathingStuckHandler implements IStuckHandler
      * @param start  the position the entity is at.
      * @param facing the direction the goal is in.
      */
-    private void breakBlocksAhead(final Level world, final BlockPos start, final Direction facing)
+    private boolean breakBlocksAhead(final Level world, final BlockPos start, final Direction facing)
     {
         // In entity
         if (!world.isEmptyBlock(start))
         {
             setAirIfPossible(world, start);
-            return;
+            return true;
         }
 
         // Above entity
         if (!world.isEmptyBlock(start.above(3)))
         {
             setAirIfPossible(world, start.above(3));
-            return;
+            return true;
         }
 
         // Goal direction up
         if (!world.isEmptyBlock(start.above().relative(facing)))
         {
             setAirIfPossible(world, start.above().relative(facing));
-            return;
+            return true;
         }
 
         // In goal direction
         if (!world.isEmptyBlock(start.relative(facing)))
         {
             setAirIfPossible(world, start.relative(facing));
+            return true;
         }
+        return false;
     }
 
     /**
@@ -519,11 +521,10 @@ public class PathingStuckHandler implements IStuckHandler
 
         final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
 
-        if (entity.getHealth() >= entity.getMaxHealth() / 3)
+        if (breakBlocksAhead(world, new BlockPos(entity.position()), facing) && entity.getHealth() >= entity.getMaxHealth() / 3)
         {
             entity.hurt(new EntityDamageSource("Stuck-damage", entity), (float) Math.max(0.5, entity.getHealth() / 20.0));
         }
-        breakBlocksAhead(world, new BlockPos(entity.position()), facing);
     }
 
     /**
