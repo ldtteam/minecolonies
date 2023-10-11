@@ -852,7 +852,7 @@ public class CompatibilityManager implements ICompatibilityManager
             }
 
             List<ItemStorage> alternative = null;
-            int mineMaxLevel = ModBuildings.miner.get().produceBuilding(BlockPos.ZERO, null).getMaxBuildingLevel();
+            int mineMaxLevel = 5;
             for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++)
             {
                 if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty())
