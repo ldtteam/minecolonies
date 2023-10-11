@@ -284,7 +284,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             return;
         }
-        delayToNextUnstuckAction = 50;
+        delayToNextUnstuckAction = 100;
 
         // Clear path
         if (stuckLevel == 0)
