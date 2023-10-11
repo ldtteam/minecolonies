@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -50,6 +51,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -139,7 +142,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of lucky oreBlocks which get dropped by the miner.
      */
-    private final List<ItemStorage> luckyOres = new ArrayList<>();
+    private final Map<Integer, List<ItemStorage>> luckyOres = new HashMap<>();
 
     /**
      * The items and weights of the recruitment.
@@ -542,11 +545,19 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public ItemStack getRandomLuckyOre(final double chanceBonus)
+    public ItemStack getRandomLuckyOre(final double chanceBonus, final int buildingLevel)
     {
         if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyBlockChance.get() * chanceBonus)
         {
-            return luckyOres.get(random.nextInt(luckyOres.size())).getItemStack().copy();
+            // fetch default config for all level
+            // override it if specific config for this level is available.
+            List<ItemStorage> luckyOresInLevel = luckyOres.get(0);
+            if (luckyOres.containsKey(buildingLevel))
+            {
+                luckyOresInLevel = luckyOres.get(buildingLevel);
+            }
+
+            return luckyOresInLevel.get(random.nextInt(luckyOres.size())).getItemStack().copy();
         }
         return ItemStack.EMPTY;
     }
@@ -814,19 +825,45 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
+                final int defaultMineLevel = 0;
+                int buildingLevel = defaultMineLevel;
                 final ItemStack stack = new ItemStack(item, 1);
                 try
                 {
+                    if (split.length == 3)
+                    {
+                        buildingLevel = Integer.parseInt(split[2]);
+                    }
+
                     final int rarity = Integer.parseInt(split[split.length - 1]);
+
+                    luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
+
                     for (int i = 0; i < rarity; i++)
                     {
-                        luckyOres.add(new ItemStorage(stack));
+                        List<ItemStorage> luckyOreOnLevel = luckyOres.get(buildingLevel);
+                        luckyOreOnLevel.add(new ItemStorage(stack));
                     }
                 }
                 catch (final NumberFormatException ex)
                 {
-                    Log.getLogger().warn("Ore has invalid rarity: " + ore);
+                    Log.getLogger().warn("Ore has invalid rarity or building level: " + ore);
                 }
+            }
+
+            List<ItemStorage> alternative = null;
+            int mineMaxLevel = ModBuildings.miner.get().produceBuilding(BlockPos.ZERO, null).getMaxBuildingLevel();
+            for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++)
+            {
+                if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty())
+                {
+                    alternative = luckyOres.get(levelToTest);
+                }
+            }
+
+            for (int levelToReplace = 0; levelToReplace <= mineMaxLevel; levelToReplace++)
+            {
+                luckyOres.putIfAbsent(levelToReplace, alternative);
             }
         }
         Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
