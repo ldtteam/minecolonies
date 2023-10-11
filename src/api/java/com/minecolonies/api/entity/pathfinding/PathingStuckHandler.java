@@ -328,9 +328,9 @@ public class PathingStuckHandler implements IStuckHandler
         // Place ladders & leaves
         if (stuckLevel >= 3 && stuckLevel <= 5)
         {
+            delayToNextUnstuckAction = 200;
             if (canPlaceLadders && rand.nextBoolean())
             {
-                delayToNextUnstuckAction = 200;
                 placeLadders(navigator);
             }
             else if (canBuildLeafBridges && rand.nextBoolean())
@@ -394,6 +394,13 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void breakBlocksAhead(final Level world, final BlockPos start, final Direction facing)
     {
+        // In entity
+        if (!world.isEmptyBlock(start))
+        {
+            setAirIfPossible(world, start);
+            return;
+        }
+
         // Above entity
         if (!world.isEmptyBlock(start.above(3)))
         {
