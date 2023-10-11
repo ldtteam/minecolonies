@@ -43,7 +43,6 @@ public class CombatUtils
     public static AbstractArrow createArrowForShooter(final LivingEntity shooter)
     {
         AbstractArrow arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level);
-        arrowEntity.setOwner(shooter);
 
         final ItemStack rangedWeapon = shooter.getItemInHand(InteractionHand.MAIN_HAND);
         final Item rangedWeaponItem = rangedWeapon.getItem();
@@ -60,6 +59,7 @@ public class CombatUtils
             arrowEntity = EntityType.TRIDENT.create(shooter.level);
         }
 
+        arrowEntity.setOwner(shooter);
         arrowEntity.setPos(shooter.getX(), shooter.getY() + 1, shooter.getZ());
         return arrowEntity;
     }

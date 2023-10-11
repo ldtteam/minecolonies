@@ -61,5 +61,5 @@ public class ModEntities
 
     public static EntityType<? extends ThrownPotion> DRUID_POTION;
 
-    public static EntityType<SpearEntity> SPEAR;
+    public static EntityType<? extends ThrownTrident> SPEAR;
 }

@@ -599,7 +599,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public void startHelpCitizen(final LivingEntity attacker)
     {
-        if (canHelp())
+        if (canHelp(attacker.blockPosition()))
         {
             ((IThreatTableEntity) worker).getThreatTable().addThreat(attacker, 20);
             registerTarget(new AIOneTimeEventTarget(CombatAIStates.ATTACKING));
@@ -610,11 +610,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * Check if we can help a citizen
      *
      * @return true if not fighting/helping already
+     * @param pos
      */
-    public boolean canHelp()
+    public boolean canHelp(final BlockPos pos)
     {
         if ((getState() == CombatAIStates.NO_TARGET || getState() == GUARD_SLEEP) && canBeInterrupted())
         {
+            if (buildingGuards.getTask().equals(GuardTaskSetting.GUARD) && !isWithinPersecutionDistance(pos,getPersecutionDistance()))
+            {
+                return false;
+            }
+
             // Stop sleeping when someone called for help
             stopSleeping();
             return true;

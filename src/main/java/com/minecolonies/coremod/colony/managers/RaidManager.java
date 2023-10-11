@@ -784,7 +784,7 @@ public class RaidManager implements IRaiderManager
                               && entry.getJob() instanceof AbstractJobGuard
                               && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), lastBuilding) < 75 * 75 && entry.getJob().getWorkerAI() != null)
                         {
-                            if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
+                            if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp(building.getPosition()))
                             {
                                 possibleGuards.add(entry.getEntity().get());
                             }
