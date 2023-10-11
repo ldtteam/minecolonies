@@ -69,6 +69,11 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             return false;
         }
 
+        if (!request.getRequest().canBeResolvedByBuilding())
+        {
+            return false;
+        }
+
         final Predicate<ItemStack> pred = itemStack -> {
             if (ItemStackUtils.isEmpty(itemStack) || !request.getRequest().matches(itemStack))
             {

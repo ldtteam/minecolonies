@@ -52,4 +52,14 @@ public interface IDeliverable extends IRetryable
      * @return the deliverable.
      */
     IDeliverable copyWithCount(final int newCount);
+
+
+    /**
+     * Can this type of request be resolved by the building, or only by external resolvers.
+     * @return true if so.
+     */
+    default boolean canBeResolvedByBuilding()
+    {
+        return true;
+    }
 }
