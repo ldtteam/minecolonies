@@ -344,7 +344,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected int getSearchRange()
     {
-        return 0;
+        return 16;
     }
 
     @Override
