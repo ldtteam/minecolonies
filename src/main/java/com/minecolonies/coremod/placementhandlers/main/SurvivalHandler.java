@@ -187,6 +187,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 if (tempColony == null)
                 {
+                    // Townhall Placement
+                    SoundUtils.playSuccessSound(player, player.blockPosition());
                     return;
                 }
 
