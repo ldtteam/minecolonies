@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -168,8 +169,8 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
         if (colony != null && colony.getBuildingManager().getBuilding(pos) instanceof final BuildingLumberjack hut)
         {
-            final BlockPos startRestriction = start != null ? start : hut.getStartRestriction();
-            final BlockPos endRestriction = end != null ? end : hut.getEndRestriction();
+            final BlockPos startRestriction = start != null ? start : Objects.requireNonNullElse(hut.getStartRestriction(), BlockPos.ZERO);
+            final BlockPos endRestriction = end != null ? end : Objects.requireNonNullElse(hut.getEndRestriction(), BlockPos.ZERO);
             if (!startRestriction.equals(BlockPos.ZERO) && !endRestriction.equals(BlockPos.ZERO))
             {
                 return new Box(pos, new Tuple<>(startRestriction, endRestriction));
