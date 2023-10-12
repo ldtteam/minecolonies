@@ -2,9 +2,7 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.entity.SpearEntity;
 import com.minecolonies.api.util.NoDamageFireworkRocketEntity;
-import com.minecolonies.coremod.entity.SpearEntity;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.*;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
