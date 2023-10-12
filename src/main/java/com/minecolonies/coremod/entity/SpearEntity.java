@@ -1,5 +1,7 @@
-package com.minecolonies.api.entity;
+package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.entity.ICustomAttackSound;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -11,7 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -24,17 +25,20 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.world.entity.Entity.RemovalReason;
-
 /**
  * Custom arrow entity used for spear throwing, acts similar to the trident without any of the special effects.
  */
 public class SpearEntity extends ThrownTrident implements ICustomAttackSound
 {
     /**
-     * Max time the arrow is alive before removing it, currently gets removed after 60 seconds.
+     * Max time the spear is alive before removing it
      */
-    private static final int MAX_TIME_ALIVE = 1200;
+    private static final int MAX_LIVE_TIME = 10 * 20;
+
+    /**
+     * Max time the spear is stuck in ground before removing it.
+     */
+    private static final int GROUND_LIVE_TIME = 2 * 20;
 
     /**
      * The spears base damage before any modifications.
@@ -106,7 +110,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         }
 
         Entity ownerEntity = this.getOwner();
-        DamageSource damageSource = new IndirectEntityDamageSource("spear", this, ownerEntity == null ? this : ownerEntity).setProjectile();
+        DamageSource damageSource = new IndirectEntityDamageSource("spear", this, ownerEntity == null ? this : ownerEntity);
         this.dealtDamage = true;
         if (targetEntity.hurt(damageSource, damageAmount))
         {
@@ -165,12 +169,19 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     @Override
     public void tick()
     {
-        super.tick();
-
-        if (tickCount > MAX_TIME_ALIVE)
+        if (this.tickCount > MAX_LIVE_TIME)
         {
             remove(RemovalReason.DISCARDED);
+            return;
         }
+
+        if (this.inGroundTime > GROUND_LIVE_TIME)
+        {
+            remove(RemovalReason.DISCARDED);
+            return;
+        }
+
+        super.tick();
     }
 
     @Override
@@ -199,5 +210,17 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     public SoundEvent getAttackSound()
     {
         return SoundEvents.TRIDENT_THROW;
+    }
+
+    @Override
+    public boolean save(@NotNull CompoundTag nbt)
+    {
+        return false;
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag nbt)
+    {
+        discard();
     }
 }

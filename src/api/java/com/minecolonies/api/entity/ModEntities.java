@@ -13,6 +13,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 
 public class ModEntities
 {
@@ -64,7 +65,7 @@ public class ModEntities
 
     public static EntityType<? extends ThrownPotion> DRUID_POTION;
 
-    public static EntityType<SpearEntity> SPEAR;
+    public static EntityType<? extends ThrownTrident> SPEAR;
 
     public static EntityType<NoDamageFireworkRocketEntity> NO_DAMAGE_FIREWORK_ENTITY;
 }
