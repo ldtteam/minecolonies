@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.barbarians;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.sounds.SoundEvent;
@@ -12,7 +12,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityBarbarian extends AbstractEntityMinecoloniesMob
+public abstract class AbstractEntityBarbarian extends AbstractEntityRaiderMob
 {
     /**
      * Swim speed for barbarians

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Mob;
@@ -13,8 +13,6 @@ import net.minecraft.core.BlockPos;
 import java.util.EnumSet;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Break door entity AI with mutex.
@@ -60,9 +58,9 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         hardness = (int) (1 + mob.level.getBlockState(doorPos).getDestroySpeed(mob.level, doorPos));
 
         // No stuck during door break
-        if (mob instanceof AbstractEntityMinecoloniesMob)
+        if (mob instanceof AbstractEntityRaiderMob)
         {
-            ((AbstractEntityMinecoloniesMob) mob).setCanBeStuck(false);
+            ((AbstractEntityRaiderMob) mob).setCanBeStuck(false);
         }
     }
 
@@ -70,9 +68,9 @@ public class EntityAIBreakDoor extends BreakDoorGoal
     {
         super.stop();
         this.mob.level.destroyBlockProgress(this.mob.getId(), this.doorPos, -1);
-        if (mob instanceof AbstractEntityMinecoloniesMob)
+        if (mob instanceof AbstractEntityRaiderMob)
         {
-            ((AbstractEntityMinecoloniesMob) mob).setCanBeStuck(true);
+            ((AbstractEntityRaiderMob) mob).setCanBeStuck(true);
         }
     }
 
@@ -94,14 +92,14 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         {
             int fasterBreakPerXNearby = 5;
 
-            if (mob instanceof AbstractEntityMinecoloniesMob && !mob.level.isClientSide())
+            if (mob instanceof AbstractEntityRaiderMob && !mob.level.isClientSide())
             {
-                final IColony colony = ((AbstractEntityMinecoloniesMob) mob).getColony();
+                final IColony colony = ((AbstractEntityRaiderMob) mob).getColony();
 
                 fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectStrength(MECHANIC_ENHANCED_GATES);
             }
             breakChance = Math.max(1,
-              hardness / (1 + (mob.level.getEntitiesOfClass(AbstractEntityMinecoloniesMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
+              hardness / (1 + (mob.level.getEntitiesOfClass(AbstractEntityRaiderMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
         }
 
         if (this.breakTime == this.getDoorBreakTime() - 1)

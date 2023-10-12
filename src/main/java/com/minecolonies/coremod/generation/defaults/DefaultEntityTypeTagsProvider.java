@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.generation.defaults;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
@@ -23,5 +24,8 @@ public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
     {
         tag(ModTags.hostile).add(EntityType.SLIME);
         tag(ModTags.mobAttackBlacklist).add(EntityType.ENDERMAN, EntityType.LLAMA);
+
+        final TagAppender<EntityType<?>> raiderTagAppender = tag(ModTags.raiders);
+        ModEntities.getRaiders().forEach(raiderTagAppender::add);
     }
 }
