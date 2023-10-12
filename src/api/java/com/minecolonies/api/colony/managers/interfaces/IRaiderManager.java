@@ -47,7 +47,17 @@ public interface IRaiderManager
      *
      * @param willRaid true or false.
      */
-    void setRaidNextNight(final boolean willRaid);
+    default void setRaidNextNight(final boolean willRaid)
+    {
+        setRaidNextNight(willRaid, "", true);
+    }
+
+    /**
+     * Set if raiders will raid tonight.
+     *
+     * @param willRaid true or false.
+     */
+    void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips);
 
     /**
      * Set if a specific type of raiders will raid tonight.
@@ -57,7 +67,10 @@ public interface IRaiderManager
      *               Accepted names include "pirate", "egyptian", "norsemen", "barbarian", and "amazon".
      *               Defaults to "barbarian" if unsupported type is attempted.
      */
-    void setRaidNextNight(final boolean willRaid, final String raidType);
+    default void setRaidNextNight(final boolean willRaid, final String raidType)
+    {
+        setRaidNextNight(willRaid, raidType, true);
+    }
 
     /**
      * Returns whether spies are enabled
@@ -83,7 +96,18 @@ public interface IRaiderManager
      * @param raidType the type of raid (or empty).
      * @param overrideConfig if it should override the config to allow raiders.
      */
-    RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig);
+    default RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig)
+    {
+        return raiderEvent(raidType, overrideConfig, true);
+    }
+
+    /**
+     * Trigger a specific type of raid on a colony.
+     * @param raidType the type of raid (or empty).
+     * @param overrideConfig if it should override the config to allow raiders.
+     * @param allowShips if ship spawns are allowed.
+     */
+    RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig, final boolean allowShips);
 
     /**
      * Calculates the spawn position for raids
