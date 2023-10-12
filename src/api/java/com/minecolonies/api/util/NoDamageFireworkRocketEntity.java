@@ -3,9 +3,11 @@ package com.minecolonies.api.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -21,10 +23,14 @@ public class NoDamageFireworkRocketEntity extends FireworkRocketEntity
         super(world, x, y, z, itemStack);
     }
 
+    public NoDamageFireworkRocketEntity(final EntityType<NoDamageFireworkRocketEntity> spearEntityEntityType, final Level level)
+    {
+        super(spearEntityEntityType, level);
+    }
+
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult)
     {
-        super.onHitEntity(entityHitResult);
         if (!this.level.isClientSide)
         {
             this.explodeNoDamage();
@@ -51,7 +57,8 @@ public class NoDamageFireworkRocketEntity extends FireworkRocketEntity
             this.explodeNoDamage();
         }
 
-        super.onHitBlock(entityHitResult);
+        BlockState blockstate = this.level.getBlockState(entityHitResult.getBlockPos());
+        blockstate.onProjectileHit(this.level, blockstate, entityHitResult, this);
     }
 
     /**
