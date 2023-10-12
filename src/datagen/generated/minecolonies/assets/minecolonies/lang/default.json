@@ -215,7 +215,7 @@
   "com.minecolonies.research.effects.blockhutstonesmeltery.description": "Unlocks Stone Smeltery",
   "com.minecolonies.research.effects.blockplacespeedmultiplier.description": "Citizen Block Place Speed +%3$s%%",
   "com.minecolonies.research.effects.buildermodeunlock.description": "Add the option to select different build-modes for your builders",
-  "com.minecolonies.research.effects.citizencapaddition.description": "Max Citizens +%s",
+  "com.minecolonies.research.effects.citizencapaddition.description": "Max Citizens to %2$s",
   "com.minecolonies.research.effects.citizeninvslotsaddition.description": "Citizen Inventory +%s Slots",
   "com.minecolonies.research.effects.consumearrowsunlock.description": "Archers Use Arrows For +2 Damage",
   "com.minecolonies.research.effects.consumepotions.description": "Druids request Magic Potions to unlock new Abilities",
