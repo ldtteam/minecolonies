@@ -183,7 +183,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
                     if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, blueprint, colony.getWorld()))
                     {
                         spawnPoint = endpoint;
-                        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
                     }
                 }
                 this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
