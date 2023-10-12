@@ -189,6 +189,11 @@ public class RaidManager implements IRaiderManager
     private List<RaidHistory> raidHistories = new ArrayList<>();
 
     /**
+     * If ships will be allowed or not.
+     */
+    private boolean allowShips = true;
+
+    /**
      * Creates the RaidManager for a colony.
      *
      * @param colony the colony.
@@ -217,16 +222,11 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void setRaidNextNight(final boolean willRaid)
-    {
-        this.raidTonight = willRaid;
-    }
-
-    @Override
-    public void setRaidNextNight(final boolean willRaid, final String raidType)
+    public void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips)
     {
         this.raidTonight = true;
         this.nextForcedType = raidType;
+        this.allowShips = allowShips;
     }
 
     @Override
@@ -252,7 +252,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig)
+    public RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig, final boolean allowShips)
     {
         if (colony.getWorld() == null || raidType == null)
         {
@@ -317,13 +317,9 @@ public class RaidManager implements IRaiderManager
             final int shipRotation = colony.getWorld().random.nextInt(4);
             final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
             final int rand = colony.getWorld().random.nextInt(100);
-            if ((raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
+            if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony,
-              targetSpawnPoint,
-              amount,
-              shipRotation,
-              NorsemenShipRaidEvent.SHIP_NAME))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, NorsemenShipRaidEvent.SHIP_NAME))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -333,7 +329,7 @@ public class RaidManager implements IRaiderManager
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
-            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
+            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
                        && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
@@ -666,7 +662,7 @@ public class RaidManager implements IRaiderManager
         {
             raidTonight = false;
             final boolean overrideConfig = !nextForcedType.isEmpty();
-            raiderEvent(nextForcedType, overrideConfig);
+            raiderEvent(nextForcedType, overrideConfig, allowShips);
             nextForcedType = INITIAL_NEXT_RAID_TYPE;
         }
         else
