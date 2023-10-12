@@ -52,9 +52,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
- * Abstract for all Barbarian entities.
+ * Abstract for all raider entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuckHandlerEntity, IThreatTableEntity, Enemy
+public abstract class AbstractEntityRaiderMob extends Mob implements IStuckHandlerEntity, IThreatTableEntity, Enemy
 {
     /**
      * Difficulty at which raiders team up
@@ -183,7 +183,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final Level world)
+    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
@@ -553,7 +553,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob)
+        if (damageSource.getEntity() instanceof AbstractEntityRaiderMob)
         {
             return false;
         }
