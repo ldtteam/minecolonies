@@ -1768,6 +1768,7 @@
   "entity.amazonspearman": "Amazon Spearman",
   "entity.minecolonies.amazonspearman": "Amazon Spearman",
   "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear",
+  "death.attack.spear": "%s was perforated by a spear",
   "entity.amazonchief": "Amazon Leader",
   "entity.minecolonies.amazonchief": "Amazon Leader",
   "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader",
