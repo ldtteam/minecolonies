@@ -281,7 +281,7 @@ public class Colony implements IColony
     /**
      * The colonies state machine
      */
-    private final ITickRateStateMachine<ColonyState> colonyStateMachine;
+    private ITickRateStateMachine<ColonyState> colonyStateMachine = null;
 
     /**
      * If the colony is dirty.
@@ -383,6 +383,8 @@ public class Colony implements IColony
         researchManager = new ResearchManager(this);
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
         {
+            Log.getLogger().warn("Exception triggered in colony:"+getID()+" in dimension:"+getDimension().location(), e);
+            colonyStateMachine.setCurrentDelay(20 * 60 * 5);
         });
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
