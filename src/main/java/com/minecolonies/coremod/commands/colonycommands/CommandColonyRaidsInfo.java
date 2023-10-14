@@ -33,13 +33,13 @@ public class CommandColonyRaidsInfo implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_DISABLED_IN_CONFIG), true);
+            context.getSource().sendSuccess(Component.translatable(COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 
@@ -48,7 +48,7 @@ public class CommandColonyRaidsInfo implements IMCOPCommand
         {
             final RaidManager.RaidHistory history = allRaids.get(i);
             final double hoursSince = Math.round(100 * (colony.getWorld().getGameTime() - history.raidTime) / (20.0 * 60 * 60)) / 100.0;
-            context.getSource().sendSuccess(() -> Component.literal(hoursSince + " hours ago:" + history), true);
+            context.getSource().sendSuccess(Component.literal(hoursSince + " hours ago:" + history), true);
         }
 
         return 1;
