@@ -387,4 +387,14 @@ public class LocalResearchTree implements ILocalResearchTree
               addResearch(research.getBranch(), research);
           });
     }
+
+    /**
+     * Get the list of all finished researches
+     *
+     * @return
+     */
+    public List<ResourceLocation> getCompletedList()
+    {
+        return new ArrayList<>(isComplete);
+    }
 }

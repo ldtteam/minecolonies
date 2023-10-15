@@ -37,5 +37,6 @@ public final class ModBannerPatterns
         BANNER_PATTERNS.register("bear", () -> new BannerPattern("ber"));
         BANNER_PATTERNS.register("fleur", () -> new BannerPattern("flr"));
         BANNER_PATTERNS.register("tinycross", () -> new BannerPattern("tcr"));
+        BANNER_PATTERNS.register("cantabrian", () -> new BannerPattern("ctbr"));
     }
 }

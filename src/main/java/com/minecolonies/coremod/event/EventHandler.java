@@ -116,7 +116,7 @@ public class EventHandler
     {
         if (!event.getLevel().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy) && !(event.getEntity()
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && event.getEntity() instanceof Mob && event.getEntity() instanceof Enemy && !(event.getEntity()
               .getType()
               .is(ModTags.mobAttackBlacklist)))
             {
@@ -255,8 +255,8 @@ public class EventHandler
         final Level world = event.player.level;
         final ChunkPos chunkPos = event.player.chunkPosition();
 
-        final ChunkPos oldPos = playerPositions.computeIfAbsent(event.player.getUUID(), e -> event.player.chunkPosition());
-        if (oldPos.equals(chunkPos))
+        final ChunkPos oldPos = playerPositions.get(event.player.getUUID());
+        if (oldPos != null && oldPos.equals(chunkPos))
         {
             return;
         }
@@ -408,6 +408,7 @@ public class EventHandler
             {
                 colony.getPackageManager().removeCloseSubscriber(player);
                 colony.getPackageManager().removeImportantColonyPlayer(player);
+                playerPositions.remove(player.getUUID());
             }
         }
     }

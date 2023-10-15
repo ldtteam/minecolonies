@@ -2,6 +2,7 @@ package com.minecolonies.api.entity.pathfinding;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import net.minecraft.core.BlockPos;
@@ -95,6 +96,11 @@ public class PathingStuckHandler implements IStuckHandler
      * BLock break range on complete stuck
      */
     private int completeStuckBlockBreakRange = 0;
+
+    /**
+     * Chance to bypass moving away.
+     */
+    private double chanceToByPassMovingAway = 0;
 
     /**
      * Temporary comparison variables to compare with last update
@@ -279,7 +285,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             return;
         }
-        delayToNextUnstuckAction = 50;
+        delayToNextUnstuckAction = 100;
 
         // Clear path
         if (stuckLevel == 0)
@@ -291,8 +297,8 @@ public class PathingStuckHandler implements IStuckHandler
             return;
         }
 
-        // Move away
-        if (stuckLevel == 1)
+        // Move away, with chance to skip this.
+        if (stuckLevel == 1 && rand.nextDouble() > chanceToByPassMovingAway)
         {
             stuckLevel++;
             delayToNextUnstuckAction = 300;
@@ -323,9 +329,9 @@ public class PathingStuckHandler implements IStuckHandler
         // Place ladders & leaves
         if (stuckLevel >= 3 && stuckLevel <= 5)
         {
+            delayToNextUnstuckAction = 200;
             if (canPlaceLadders && rand.nextBoolean())
             {
-                delayToNextUnstuckAction = 200;
                 placeLadders(navigator);
             }
             else if (canBuildLeafBridges && rand.nextBoolean())
@@ -387,27 +393,36 @@ public class PathingStuckHandler implements IStuckHandler
      * @param start  the position the entity is at.
      * @param facing the direction the goal is in.
      */
-    private void breakBlocksAhead(final Level world, final BlockPos start, final Direction facing)
+    private boolean breakBlocksAhead(final Level world, final BlockPos start, final Direction facing)
     {
+        // In entity
+        if (!world.isEmptyBlock(start))
+        {
+            setAirIfPossible(world, start);
+            return true;
+        }
+
         // Above entity
         if (!world.isEmptyBlock(start.above(3)))
         {
             setAirIfPossible(world, start.above(3));
-            return;
+            return true;
         }
 
         // Goal direction up
         if (!world.isEmptyBlock(start.above().relative(facing)))
         {
             setAirIfPossible(world, start.above().relative(facing));
-            return;
+            return true;
         }
 
         // In goal direction
         if (!world.isEmptyBlock(start.relative(facing)))
         {
             setAirIfPossible(world, start.relative(facing));
+            return true;
         }
+        return false;
     }
 
     /**
@@ -420,7 +435,7 @@ public class PathingStuckHandler implements IStuckHandler
     {
         final BlockState state = world.getBlockState(pos);
         final Block blockAtPos = state.getBlock();
-        if (blockAtPos instanceof IBuilderUndestroyable || state.is(blockAtPos))
+        if (blockAtPos instanceof IBuilderUndestroyable || state.is(ModTags.indestructible))
         {
             return;
         }
@@ -434,10 +449,10 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void placeLadders(final AbstractAdvancedPathNavigate navigator)
     {
-        final Level world = navigator.getOurEntity().level();
+        final Level world = navigator.getOurEntity().level;
         final Mob entity = navigator.getOurEntity();
 
-        BlockPos entityPos = BlockPos.containing(entity.position());
+        BlockPos entityPos = entity.blockPosition();
 
         while (world.getBlockState(entityPos).getBlock() == Blocks.LADDER)
         {
@@ -507,7 +522,10 @@ public class PathingStuckHandler implements IStuckHandler
 
         final Direction facing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getDesiredPos());
 
-        breakBlocksAhead(world, BlockPos.containing(entity.position()), facing);
+        if (breakBlocksAhead(world, entity.blockPosition(), facing) && entity.getHealth() >= entity.getMaxHealth() / 3)
+        {
+            entity.hurt(world.damageSources().source(DamageSourceKeys.STUCK_DAMAGE), (float) Math.max(0.5, entity.getHealth() / 20.0));
+        }
     }
 
     /**
@@ -519,7 +537,7 @@ public class PathingStuckHandler implements IStuckHandler
     private void tryPlaceLadderAt(final Level world, final BlockPos pos)
     {
         final BlockState state = world.getBlockState(pos);
-        if (state.getBlock() != Blocks.LADDER && !state.canOcclude() && world.getFluidState(pos).isEmpty())
+        if (state.getBlock() != Blocks.LADDER && world.getFluidState(pos).isEmpty())
         {
             for (final Direction dir : HORIZONTAL_DIRS)
             {
@@ -548,6 +566,12 @@ public class PathingStuckHandler implements IStuckHandler
     public PathingStuckHandler withBuildLeafBridges()
     {
         canBuildLeafBridges = true;
+        return this;
+    }
+
+    public PathingStuckHandler withChanceToByPassMovingAway(final double chance)
+    {
+        chanceToByPassMovingAway = chance;
         return this;
     }
 

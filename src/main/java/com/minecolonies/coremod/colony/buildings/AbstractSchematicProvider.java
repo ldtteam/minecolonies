@@ -566,7 +566,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
             }
 
-            if (level > 0 && level > getBuildingLevel() && level <= getMaxBuildingLevel())
+            if (level > 0 && (level > getBuildingLevel() || isDeconstructed) && level <= getMaxBuildingLevel())
             {
                 if (level > getBuildingLevel())
                 {
@@ -575,6 +575,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
                 setBuildingLevel(level);
                 onUpgradeComplete(level);
+                isDeconstructed = false;
             }
         }
     }

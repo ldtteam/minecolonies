@@ -325,4 +325,11 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param recipeLocation the location of the recipe.
      */
     void toggle(int recipeLocation);
+
+    /**
+     * Check if a recipe is disabled.
+     * @param token the recipe id to check for.
+     * @return true if so.
+     */
+    boolean isDisabled(final IToken<?> token);
 }

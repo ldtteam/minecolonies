@@ -413,6 +413,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public List<MutableComponent> getDesc()
     {
         final List<MutableComponent> desc = new ArrayList<>();
+        desc.add(Component.translatable(getBuildingEntry().getTranslationKey()));
         desc.add(Component.translatable(getBuildingEntry().getTranslationKey() + ".desc"));
         return desc;
     }
@@ -420,7 +421,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public Component getBlueprintDisplayName()
     {
-        return Component.translatable("block." + Constants.MOD_ID + "." + getHutName());
+        return Component.translatable(getBuildingEntry().getTranslationKey());
     }
 
     @Override

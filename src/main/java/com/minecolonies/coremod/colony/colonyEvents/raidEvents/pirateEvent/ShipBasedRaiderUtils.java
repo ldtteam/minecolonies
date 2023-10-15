@@ -10,6 +10,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
@@ -135,7 +136,11 @@ public final class ShipBasedRaiderUtils
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final Level world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
-        final List<Predicate<BlockState>> allowedShipMaterials = Lists.newArrayList(BlockBehaviour.BlockStateBase::liquid, state -> state.is(BlockTags.ICE), state -> !state.blocksMotion());
+        final List<Predicate<BlockState>> allowedShipMaterials = Lists.newArrayList();
+
+        allowedShipMaterials.add(BlockBehaviour.BlockStateBase::liquid);
+        allowedShipMaterials.add(state -> state.is(BlockTags.ICE));
+        allowedShipMaterials.add(state -> !state.blocksMotion() && state.getFluidState().is(FluidTags.WATER));
 
         if (MineColonies.getConfig().getServer().skyRaiders.get())
         {
@@ -145,7 +150,7 @@ public final class ShipBasedRaiderUtils
         return isSurfaceAreaMostlyMaterial(allowedShipMaterials, world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.99);
+          0.85);
     }
 
     /**
@@ -194,14 +199,28 @@ public final class ShipBasedRaiderUtils
                 boolean suitableBlock = false;
                 for (final Predicate<BlockState> pred : materials)
                 {
-                    if (!pred.test(state))
+                    if (pred.test(state))
                     {
                         suitableBlock = true;
                         break;
                     }
                 }
+
+                // Checks up to 5 blocks above for air/nonblocking
+                if (suitableBlock)
+                {
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        if (world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY + i, from.getZ() + (z * zDir))).blocksMotion())
+                        {
+                            suitableBlock = false;
+                            break;
+                        }
+                    }
+                }
+
                 // Count surface waterblocks
-                if (!suitableBlock || !world.isEmptyBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
+                if (!suitableBlock)
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
@@ -356,7 +375,12 @@ public final class ShipBasedRaiderUtils
 
         if (secondClosest.distManhattan(target) < closest.distManhattan(target))
         {
-            return secondClosest;
+            closest = secondClosest;
+        }
+
+        if (closest.distManhattan(target) >= startPos.distManhattan(target))
+        {
+            return target;
         }
 
         return closest;

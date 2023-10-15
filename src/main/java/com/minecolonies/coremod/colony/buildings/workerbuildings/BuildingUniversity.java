@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -9,7 +8,6 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -17,11 +15,9 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -108,8 +104,7 @@ public class BuildingUniversity extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        //todo we might in the future want to add our own oredict tag to this.
-        if (block == Blocks.BOOKSHELF)
+        if (block.defaultBlockState().is(Tags.Blocks.BOOKSHELVES))
         {
             bookCases.add(pos);
         }
@@ -127,7 +122,7 @@ public class BuildingUniversity extends AbstractBuilding
             return getPosition();
         }
         final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
-        if (colony.getWorld().getBlockState(returnPos).getBlock() == Blocks.BOOKSHELF)
+        if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES))
         {
             return returnPos;
         }

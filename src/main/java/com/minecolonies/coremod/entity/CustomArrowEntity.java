@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity;
 
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -8,14 +9,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 /**
  * Custom arrow entity class which remove themselves when on the ground for a bit to not cause lag and they do not scale in damage with their motion.
@@ -26,6 +27,11 @@ public class CustomArrowEntity extends Arrow
      * Max time the arrow is stuck before removing it
      */
     private static final int MAX_LIVE_TIME = 10 * 20;
+
+    /**
+     * Max time the arrow is stuck in ground before removing it.
+     */
+    private static final int GROUND_LIVE_TIME = 2 * 20;
 
     /**
      * Whether the arrow entity pierces players
@@ -83,7 +89,6 @@ public class CustomArrowEntity extends Arrow
                 {
                     source = level.damageSources().arrow(this, shooter);
                 }
-                setPlayerArmorPierce();
                 player.hurt(source, (float) getBaseDamage());
                 setBaseDamage(0);
             }
@@ -118,13 +123,49 @@ public class CustomArrowEntity extends Arrow
     }
 
     @Override
+    public boolean shouldFall()
+    {
+        if (this.inGround)
+        {
+            final AABB aabb = (new AABB(this.position(), this.position())).inflate(0.06D);
+            for(VoxelShape voxelshape : this.level.getBlockCollisions(null, aabb)) {
+                if (!voxelshape.isEmpty())
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean save(@NotNull CompoundTag nbt)
+    {
+        return false;
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag nbt)
+    {
+        discard();
+    }
+
+    @Override
     public void tick()
     {
-        super.tick();
-
         if (this.tickCount > MAX_LIVE_TIME)
         {
             remove(RemovalReason.DISCARDED);
+            return;
         }
+
+        if (this.inGroundTime > GROUND_LIVE_TIME)
+        {
+            remove(RemovalReason.DISCARDED);
+            return;
+        }
+
+        super.tick();
     }
 }

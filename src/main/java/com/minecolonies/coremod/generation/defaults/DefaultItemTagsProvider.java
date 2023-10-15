@@ -402,9 +402,16 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(ItemTags.WOODEN_SLABS)
                 .addTag(ItemTags.WOODEN_STAIRS)
-                .add(Items.LECTERN, Items.PISTON)
+                .addTag(ItemTags.TRIM_TEMPLATES)
+                .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
                 .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
                 .add(paperExtras);
+
+        tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_STONEMASON))
+                .add(Items.STONE)
+                .add(Items.NETHERRACK)
+                .add(Items.PRISMARINE)
+                .add(Items.DARK_PRISMARINE);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
@@ -465,6 +472,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE)
           .addTags(Tags.Items.GRAVEL, Tags.Items.SAND)
           .addTags(Tags.Items.INGOTS, storageBlocks);
+
+        tag(ModTags.ignoreNBT)
+          .addTag(ItemTags.BANNERS);
     }
 
     @NotNull

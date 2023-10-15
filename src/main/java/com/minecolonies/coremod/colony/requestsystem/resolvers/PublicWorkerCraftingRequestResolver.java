@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
@@ -104,16 +105,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final Predicate<ItemStack> stackPredicate)
+    public boolean canBuildingCraftRecipe(@NotNull final AbstractBuilding building, final IRecipeStorage recipeStorage)
     {
-        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
-        {
-            if (module.getFirstRecipe(stackPredicate) != null)
-            {
-                return true;
-            }
-        }
-        return false;
+        return recipeStorage != null;
     }
 
     @Override
