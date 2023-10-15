@@ -59,7 +59,7 @@ public class QuestDeliveryInteraction extends QuestDialogueInteraction
                 {
                     if (((IQuestDeliveryObjective) objective).hasItem(player, colonyQuest) && ((IQuestDeliveryObjective) objective).tryDiscountItem(player, colonyQuest))
                     {
-                        ((IFinalQuestDialogueAnswer) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
+                        ((IFinalQuestDialogueAnswer) result).applyToQuest(player, colonyQuest);
                         finished = true;
                     }
                 }
