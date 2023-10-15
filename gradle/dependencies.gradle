@@ -62,7 +62,6 @@ dependencies {
          runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}-forge")
     }
 
-    implementation fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.exactMinecraftVersion}:${project.dynamicTreesVersion}")
     compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.exactMinecraftVersion}:${project.dynamicTreesVersion}")
     apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.exactMinecraftVersion}:${project.dynamicTreesVersion}")
 
