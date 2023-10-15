@@ -129,7 +129,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The AI for citizens, controlling different global states
      */
-    protected ITickRateStateMachine<IState> entityStateController = new TickRateStateMachine<>(EntityState.INIT, e -> Log.getLogger().warn(e));
+    protected ITickRateStateMachine<IState> entityStateController = new TickRateStateMachine<>(EntityState.INIT,
+      e -> Log.getLogger()
+        .warn("Citizen " + getDisplayName().getString() + " id:" + (getCitizenData() != null ? getCitizenData().getId() : -1) + "from colony: "
+                + getCitizenColonyHandler().getColonyId() + " state controller exception", e));
 
     /**
      * Constructor for a new citizen typed entity.
@@ -385,7 +388,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             super.onPlayerCollide(player);
             return;
         }
-        
+
         final IJob<?> job = getCitizenData().getJob();
         if (job == null || !job.isGuard())
         {
@@ -767,22 +770,25 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     /**
      * Queue a sound at the citizen.
-     * @param soundEvent the sound event to play.
-     * @param length the length of the event.
+     *
+     * @param soundEvent  the sound event to play.
+     * @param length      the length of the event.
      * @param repetitions the number of times to play it.
      */
     public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions);
 
     /**
      * Queue a sound at the citizen.
-     * @param soundEvent the sound event to play.
-     * @param length the length of the event.
+     *
+     * @param soundEvent  the sound event to play.
+     * @param length      the length of the event.
      * @param repetitions the number of times to play it.
      */
     public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch);
 
     /**
      * Get the entities state controller
+     *
      * @return
      */
     public ITickRateStateMachine<IState> getEntityStateController()

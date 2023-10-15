@@ -1991,4 +1991,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         return combatTracker;
     }
+
+    @Override
+    public boolean isCurrentlyGlowing()
+    {
+        return level.isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+    }
 }
