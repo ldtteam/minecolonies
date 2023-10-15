@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.quests.objectives;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IQuestDeliveryObjective;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
@@ -109,7 +112,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
                 throw new RuntimeException(e);
             }
         }
-        final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : - 1;
+        final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
         final String nbtMode = details.has(NBT_MODE_KEY) ? details.get(NBT_MODE_KEY).getAsString() : "";
         return new DeliveryObjectiveTemplateTemplate(target, item, quantity, nextObj, parseRewards(jsonObject), nbtMode);
     }
@@ -136,5 +139,14 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
     public DialogueElement getReadyDialogueTree()
     {
         return readyDialogueElement;
+    }
+
+    @Override
+    public Component getProgressText(final IQuestInstance quest, final Style style)
+    {
+        return Component.translatable("com.minecolonies.coremod.questobjectives.delivery.progress",
+          0,
+          quantity,
+          item.getDisplayName().plainCopy().setStyle(style));
     }
 }

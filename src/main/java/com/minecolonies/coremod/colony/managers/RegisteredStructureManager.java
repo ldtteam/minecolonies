@@ -913,12 +913,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             markBuildingsDirty();
             if (buildBuildingObjectives.containsKey(building.getBuildingType()))
             {
-                for (final IQuestInstance instance : buildBuildingObjectives.get(building.getBuildingType()))
+                for (final IQuestInstance instance : new ArrayList<>(buildBuildingObjectives.get(building.getBuildingType())))
                 {
-                    final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getIndex());
-                    if (objective instanceof IBuildingUpgradeObjectiveTemplate)
+                    final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
+                    if (objective instanceof IBuildingUpgradeObjectiveTemplate buildingTemplate)
                     {
-                        ((IBuildingUpgradeObjectiveTemplate) objective).onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
+                        buildingTemplate.onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
                     }
                 }
             }

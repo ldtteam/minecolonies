@@ -6,7 +6,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.questlog.WindowQuestLog;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -21,12 +21,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_QUEST_LOG_COLONY_SET;
 
 /**
- * Class describing the clipboard item.
+ * Class describing the quest log item.
  */
-public class ItemClipboard extends AbstractItemMinecolonies
+public class ItemQuestLog extends AbstractItemMinecolonies
 {
     /**
      * Tag of the colony.
@@ -34,22 +34,22 @@ public class ItemClipboard extends AbstractItemMinecolonies
     public static final String TAG_COLONY = "colony";
 
     /**
-     * Sets the name, creative tab, and registers the Clipboard item.
+     * Sets the name, creative tab, and registers the quest log item.
      *
      * @param properties the properties.
      */
-    public ItemClipboard(final Item.Properties properties)
+    public ItemQuestLog(final Item.Properties properties)
     {
-        super("clipboard", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
+        super("questlog", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @Override
     @NotNull
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        final ItemStack clipboard = ctx.getPlayer().getItemInHand(ctx.getHand());
+        final ItemStack questLog = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-        final CompoundTag compound = checkForCompound(clipboard);
+        final CompoundTag compound = checkForCompound(questLog);
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
@@ -57,7 +57,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
             if (!ctx.getLevel().isClientSide)
             {
-                MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)
@@ -79,48 +79,57 @@ public class ItemClipboard extends AbstractItemMinecolonies
     @Override
     @NotNull
     public InteractionResultHolder<ItemStack> use(
-            final Level worldIn,
-            final Player playerIn,
-            final InteractionHand hand)
+      final Level worldIn,
+      final Player playerIn,
+      final InteractionHand hand)
     {
-        final ItemStack clipboard = playerIn.getItemInHand(hand);
+        final ItemStack questLog = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isClientSide) {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+        if (!worldIn.isClientSide)
+        {
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, questLog);
         }
 
-        openWindow(checkForCompound(clipboard), worldIn, playerIn);
+        openWindow(checkForCompound(questLog), worldIn, playerIn);
 
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, questLog);
     }
 
     /**
      * Check for the compound and return it. If not available create and return it.
      *
-     * @param clipboard the clipboard to check for.
-     * @return the compound of the clipboard.
+     * @param questLog the quest log item to check for.
+     * @return the compound of the quest log.
      */
-    private static CompoundTag checkForCompound(final ItemStack clipboard)
+    private static CompoundTag checkForCompound(final ItemStack questLog)
     {
-        if (!clipboard.hasTag()) clipboard.setTag(new CompoundTag());
-        return clipboard.getTag();
+        if (!questLog.hasTag())
+        {
+            questLog.setTag(new CompoundTag());
+        }
+        return questLog.getTag();
     }
 
     /**
-     * Opens the clipboard window if there is a valid colony linked
+     * Opens the quest log window if there is a valid colony linked
+     *
      * @param compound the item compound
-     * @param player the player entity opening the window
+     * @param player   the player entity opening the window
      */
     private static void openWindow(CompoundTag compound, Level world, Player player)
     {
         if (compound.contains(TAG_COLONY))
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
-            if (colonyView != null) MineColonies.proxy.openClipboardWindow(colonyView);
+            if (colonyView != null)
+            {
+                new WindowQuestLog(colonyView).open();
+            }
         }
         else
         {
-            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY), true);
         }
     }
 }
+
