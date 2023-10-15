@@ -235,6 +235,11 @@ public class CitizenData implements ICitizenData
     private VisibleCitizenStatus status;
 
     /**
+     * The current location of interest.
+     */
+    @Nullable private BlockPos statusPosition;
+
+    /**
      * The citizen data random.
      */
     private Random random = new Random();
@@ -527,7 +532,7 @@ public class CitizenData implements ICitizenData
 
         setLastPosition(citizen.blockPosition());
 
-        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
+        citizen.getCitizenJobHandler().onJobChanged(workBuilding == null ? null : citizen.getCitizenJobHandler().getColonyJob());
 
         applyResearchEffects();
 
@@ -993,6 +998,12 @@ public class CitizenData implements ICitizenData
         buf.writeNbt(happinessCompound);
 
         buf.writeInt(status != null ? status.getId() : -1);
+
+        buf.writeBoolean(statusPosition != null);
+        if (statusPosition != null)
+        {
+            buf.writeBlockPos(statusPosition);
+        }
 
         buf.writeBoolean(job != null);
         if (job != null)
@@ -1578,6 +1589,22 @@ public class CitizenData implements ICitizenData
             markDirty();
         }
         this.status = status;
+    }
+
+    @Override
+    public @Nullable BlockPos getStatusPosition()
+    {
+        return this.statusPosition;
+    }
+
+    @Override
+    public void setStatusPosition(@Nullable BlockPos pos)
+    {
+        if (!Objects.equals(this.statusPosition, pos))
+        {
+            this.statusPosition = pos;
+            markDirty();
+        }
     }
 
     /**

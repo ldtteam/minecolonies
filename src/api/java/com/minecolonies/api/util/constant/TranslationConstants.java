@@ -378,11 +378,14 @@ public final class TranslationConstants
     @NonNls
     public static final String RANK_TYPE_NONE                                                       = "com.minecolonies.coremod.gui.townhall.ranktype.none";
     @NonNls
-    public static final String NO_HUT_IN_INVENTORY                                                  = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
+    public static final String TOWNHALL_TOO_CLOSE                                                   = "com.minecolonies.coremod.placement.townhalltooclose";
     @NonNls
     public static final String WRONG_COLONY                                                         = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
     @NonNls
-    public static final String INDESTRUCTIBLE_BLOCK_AT_POS                                          = "com.minecolonies.coremod.buildtool.indestructible";
+    public static final String BP_OUTSIDE_COLONY                                                    ="com.minecolonies.coremod.placement.outofcolony";
+
+    @NonNls
+    public static final String BP_NO_PERM                                                           = "com.minecolonies.coremod.placement.noperm";
     @NonNls
     public static final String BUILDER_ACTION_BUILDING                                              = "com.minecolonies.coremod.action.builder.building";
     @NonNls
@@ -404,9 +407,11 @@ public final class TranslationConstants
     @NonNls
     public static final String BUILDER_BUILDING_TOO_LOW                                             = "entity.builder.messagebuildtoolow";
     @NonNls
-    public static final String COLONIST_DIED                                                        = "block.blockhuttownhall.messagecolonistdead";
+    public static final String COLONIST_DESC                                                        = "block.blockhuttownhall.messagecolonistdesc";
     @NonNls
-    public static final String WORKER_DIED                                                          = "block.blockhuttownhall.messageworkerdead";
+    public static final String WORKER_DESC                                                          = "block.blockhuttownhall.messageworkerdesc";
+    @NonNls
+    public static final String COLONIST_GRAVE_LOCATION                                              = "block.blockhuttownhall.messagecolonistgravelocation";
     @NonNls
     public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS                                    = "block.minecolonies.blockhut.breakwarn.children";
     @NonNls

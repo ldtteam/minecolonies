@@ -89,6 +89,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
         building.setProgressPos(blockPos, stage);
+        worker.getCitizenData().setStatusPosition(blockPos.equals(NULL_POS) ? null : structurePlacer.getB().getProgressPosInWorld(blockPos));
     }
 
     @Override

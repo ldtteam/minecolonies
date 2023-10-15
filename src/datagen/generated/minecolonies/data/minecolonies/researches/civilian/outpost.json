@@ -2,7 +2,7 @@
   "branch": "minecolonies:civilian",
   "effects": [
     {
-      "minecolonies:effects/citizencapaddition": 1
+      "minecolonies:effects/citizencapaddition": 2
     }
   ],
   "icon": "minecolonies:blockhutcitizen:50",

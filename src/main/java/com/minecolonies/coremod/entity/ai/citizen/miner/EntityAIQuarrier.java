@@ -143,6 +143,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
             final Tuple<String, String> shaft = getShaftPath(quarry);
             final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+            wo.setClaimedBy(building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
         }
@@ -362,6 +363,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 {
                     building.nextStage();
                     building.setProgressPos(null, null);
+                    worker.getCitizenData().setStatusPosition(null);
                     return COMPLETE_BUILD;
                 }
                 else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
@@ -397,10 +399,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             if (currentWorldPos.getY() < worker.getLevel().getMinBuildHeight() + 5)
             {
                 building.setProgressPos(null, null);
+                worker.getCitizenData().setStatusPosition(null);
                 return COMPLETE_BUILD;
             }
 
             blockToMine = currentWorldPos;
+            worker.getCitizenData().setStatusPosition(blockToMine);
             return MINE_BLOCK;
         }
 
@@ -543,21 +547,32 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     protected boolean checkIfCanceled()
     {
+        boolean isCanceled = false;
         if (job.findQuarry() == null)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
-            return true;
+            isCanceled = true;
         }
         else if (job.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
-            return true;
+            isCanceled = true;
         }
         else if(job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
         {
+            isCanceled = true;
+        }
+
+        if (isCanceled)
+        {
+            if (job.hasWorkOrder())
+            {
+                job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+                job.setWorkOrder(null);
+            }
             blockToMine = null;
-            job.complete();
             building.setProgressPos(null, null);
+            worker.getCitizenData().setStatusPosition(null);
             return true;
         }
         return super.checkIfCanceled();
@@ -729,6 +744,11 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 workFrom = worker.blockPosition();
             }
             return false;
+        }
+
+        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) <= 5 + 5 * pathBackupFactor)
+        {
+            return true;
         }
 
         if (walkToBlock(workFrom))

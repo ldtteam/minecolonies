@@ -399,6 +399,12 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
                 .add(paperExtras);
 
+        tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_STONEMASON))
+                .add(Items.STONE)
+                .add(Items.NETHERRACK)
+                .add(Items.PRISMARINE)
+                .add(Items.DARK_PRISMARINE);
+
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY));
@@ -455,6 +461,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(ModItems.rawPumpkinPie)
                 .add(ModItems.cakeBatter);
 
+
+        tag(ModTags.ignoreNBT)
+          .addTag(ItemTags.BANNERS);
     }
 
     @NotNull

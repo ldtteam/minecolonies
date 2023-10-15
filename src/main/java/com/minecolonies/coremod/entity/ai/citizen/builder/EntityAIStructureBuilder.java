@@ -95,6 +95,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             building.searchWorkOrder();
             building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            worker.getCitizenData().setStatusPosition(null);
             return false;
         }
 
@@ -104,6 +105,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             job.setWorkOrder(null);
             building.setProgressPos(null, null);
+            worker.getCitizenData().setStatusPosition(null);
             return false;
         }
 
@@ -199,6 +201,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 workFrom = worker.blockPosition();
             }
             return false;
+        }
+
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) <= 5L + (pathBackupFactor * 5L))
+        {
+            return true;
         }
 
         if (walkToBlock(workFrom))

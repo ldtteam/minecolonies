@@ -1,6 +1,9 @@
 {
   "itemGroup.minecolonies": "MineColonies",
 
+  "key.minecolonies.categories.general": "MineColonies",
+  "key.minecolonies.toggle_goggles": "Toggle Goggles Preview",
+
   "com.minecolonies.configgui.title": "MineColonies Config",
   "minecolonies.config.gameplay": "Gameplay Settings",
   "minecolonies.config.gameplay.comment": "All configuration items related to the core gameplay",
@@ -280,11 +283,12 @@
   "block.blockhuttownhall.messagemaxsize.config": "%d has reached its max size. Edit the config file to be able to get more.",
   "block.blockhuttownhall.messagemaxsize.research": "%d has reached its max size. You can get more by completing the research in the University.",
 
-  "block.blockhuttownhall.messagecolonistdead": "The colonist %s has died at %d %d %d of %s!",
+  "block.blockhuttownhall.messagecolonistdesc": "The colonist %s",
+  "block.blockhuttownhall.messagecolonistgravelocation": "Their death position is %d %d %d.",
   "block.blockhuttownhall.messageinvalidworld": "You can't place a Town Hall in this world type",
   "block.blockhuttownhall.messagetooclose": "Too close to existing Town Hall",
   "block.blockhuttownhall.messagetooFar": "Too far away from your colony",
-  "block.blockhuttownhall.messageworkerdead": "The %s %s has died at %d %d %d of %s!",
+  "block.blockhuttownhall.messageworkerdesc": "The %s %s",
 
   "tile.blockhuttownhall.messageplacedalreadydel": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click:",
   "tile.blockhuttownhall.messageplacedalreadyinfi": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click [DELETE]. If you want to start a new colony but not delete your old one, click [ABANDON].",
@@ -370,9 +374,9 @@
   "entity.minecolonies.archerbarbarian": "Archer Barbarian",
   "entity.minecolonies.chiefbarbarian": "Chief Barbarian",
   "entity.chiefbarbarian": "Chief Barbarian",
-  "death.attack.entity.minecolonies.barbarian": "%s was sliced and diced by a Barbarian!",
-  "death.attack.entity.minecolonies.chiefbarbarian": "%s was macerated by a Great Chief!",
-  "death.attack.entity.minecolonies.archerbarbarian": "%s was ravaged by an Archer Barbarian!",
+  "death.attack.entity.minecolonies.barbarian": "%s was sliced and diced by a Barbarian",
+  "death.attack.entity.minecolonies.chiefbarbarian": "%s was macerated by a Great Chief",
+  "death.attack.entity.minecolonies.archerbarbarian": "%s was ravaged by an Archer Barbarian",
   "entity.archerbarbarian": "Archer Barbarian",
 
   "entity.builder.messagenobuilder": "You need a Builder to build or upgrade this building.",
@@ -403,6 +407,8 @@
   "com.minecolonies.command.delete.success": "Created backup and deleted colony %s.",
   "com.minecolonies.command.canspawnraider.success": "Colony %s can spawn raiders: %s",
   "com.minecolonies.command.raidnow.success": "Raid started for colony %s, take care!",
+  "com.minecolonies.command.raidnow.failure": "Raid aborted for colony %s. Reason %s!",
+
   "com.minecolonies.command.raidtonight.success": "A raid on colony %s is coming tonight!",
   "com.minecolonies.command.loadbackup.success": "Successfully loaded backup.",
   "com.minecolonies.command.export.success": "Exported colony to zip: %s",
@@ -1038,11 +1044,11 @@
   "entity.minecolonies.archerpirate": "Archer Pirate",
   "entity.minecolonies.chiefpirate": "Pirate Captain",
   "entity.chiefpirate": "Pirate Captain",
-  "death.attack.entity.minecolonies.pirate": "%s was sliced and diced by a Pirate!",
-  "death.attack.entity.minecolonies.chiefpirate": "%s was macerated by a Pirate Captain!",
-  "death.attack.entity.minecolonies.archerpirate": "%s was ravaged by an Archer Pirate!",
-  "death.attack.entity.minecolonies.mercenary": "%s was eaten alive by a Mercenary!",
-  "death.attack.slap": "%s was slapped to death by a Mercenary!",
+  "death.attack.entity.minecolonies.pirate": "%s was sliced and diced by a Pirate",
+  "death.attack.entity.minecolonies.chiefpirate": "%s was macerated by a Pirate Captain",
+  "death.attack.entity.minecolonies.archerpirate": "%s was ravaged by an Archer Pirate",
+  "death.attack.entity.minecolonies.mercenary": "%s was eaten alive by a Mercenary",
+  "death.attack.slap": "%s was slapped to death by a Mercenary",
 
   "item.minecolonies.pirate_hat": "Pirate Hat",
   "item.minecolonies.pirate_top": "Pirate Top",
@@ -1073,6 +1079,8 @@
   "item.minecolonies.santa_hat": "Santa Hat",
   "item.minecolonies.build_goggles": "Builder's Goggles",
   "item.minecolonies.build_goggles.lore": "They do nothing!",
+  "item.minecolonies.build_goggles.enabled": "Blueprint previews enabled",
+  "item.minecolonies.build_goggles.disabled": "Blueprint previews disabled",
 
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
@@ -1381,7 +1389,6 @@
   "com.minecolonies.coremod.research.requirement.university.level": "Requires University Level %d",
   "com.minecolonies.coremod.research.limit.onemaxperbranch": "Only one max-level research can be unlocked per branch.",
   "com.minecolonies.coremod.research.limit.immutable": "This research cannot be undone.",
-  "com.minecolonies.coremod.research.limit.maxeffect": "MAX",
   "com.minecolonies.coremod.research.limit.requirement": "Requirement : %s %s",
   "com.minecolonies.coremod.research.effect.modifier.multiplication": "%s by %d percent",
   "com.minecolonies.coremod.research.effect.modifier.addition": "%s + %d",
@@ -1764,20 +1771,21 @@
   "entity.minecolonies.archermummy": "Archer Mummy",
   "entity.minecolonies.pharao": "Pharaoh",
   "entity.pharao": "Pharaoh",
-  "death.attack.entity.minecolonies.mummy": "%s was scared to death by a Mummy!",
-  "death.attack.entity.minecolonies.pharao": "%s was put to sleep by a Pharaoh!",
-  "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glare!",
+  "death.attack.entity.minecolonies.mummy": "%s was scared to death by a Mummy",
+  "death.attack.entity.minecolonies.pharao": "%s was put to sleep by a Pharaoh",
+  "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glare",
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
 
   "entity.amazon": "Amazon",
   "entity.minecolonies.amazon": "Amazon",
-  "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow!",
+  "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow",
   "entity.amazonspearman": "Amazon Spearman",
   "entity.minecolonies.amazonspearman": "Amazon Spearman",
-  "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear!",
+  "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear",
+  "death.attack.spear": "%s was perforated by a spear",
   "entity.amazonchief": "Amazon Leader",
   "entity.minecolonies.amazonchief": "Amazon Leader",
-  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader!",
+  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader",
 
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "Planting:",
@@ -1791,11 +1799,11 @@
   "entity.norsemenarcher": "Archer Norseman",
   "entity.shieldmaiden": "Shieldmaiden",
 
-  "death.attack.entity.minecolonies.norsemenchief": "%s was grounded by the great Viking Chief!",
-  "death.attack.entity.minecolonies.norsemenarcher": "%s was hit by an Archer Viking!",
-  "death.attack.entity.minecolonies.shieldmaiden": "%s was crushed by a Shieldmaiden!",
-  "death.attack.entity.minecolonies.visitor": "%s died after starting a brawl at the local tavern. They brought it upon themself!",
-  "death.attack.entity.minecolonies.training": "%s got killed during Training. What happened?",
+  "death.attack.entity.minecolonies.norsemenchief": "%s was grounded by the great Viking Chief",
+  "death.attack.entity.minecolonies.norsemenarcher": "%s was hit by an Archer Viking",
+  "death.attack.entity.minecolonies.shieldmaiden": "%s was crushed by a Shieldmaiden",
+  "death.attack.entity.minecolonies.visitor": "%s died after starting a brawl at the local tavern",
+  "death.attack.entity.minecolonies.training": "%s got killed during training",
 
   "item.minecolonies.shieldmaidenegg": "Shieldmaiden Spawn Egg",
   "item.minecolonies.norsemenarcheregg": "Archer Norseman Spawn Egg",
@@ -2458,5 +2466,10 @@
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative": "%d/%d totaling levels of %s buildings built",
 
   "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
-  "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers"
+  "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers",
+  "com.minecolonies.coremod.placement.outofcolony": "Error on placement! Building or Decoration partially outside of the colony!",
+  "com.minecolonies.coremod.placement.noperm": "Error on placement! You don't have the permission in this colony!",
+  "com.minecolonies.coremod.placement.townhalltooclose": "Error on placement! You are too close to an existing colony!",
+
+  "com.minecolonies.research.effects.citizencapaddition.description.over": "(%1$s, reduced to configuration limit)"
 }

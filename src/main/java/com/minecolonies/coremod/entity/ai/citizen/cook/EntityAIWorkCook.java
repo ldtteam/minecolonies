@@ -20,7 +20,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
-import net.minecraft.core.BlockPos;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
@@ -192,7 +191,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return START_WORKING;
         }
 
-        if (walkToBlock(new BlockPos(living.position())))
+        if (walkToBlock(living.blockPosition()))
         {
             return getState();
         }
@@ -231,11 +230,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
         worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(FOOD_SERVED, count);
-
-        if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
-        {
-            citizenToServe.get(0).getCitizenData().setJustAte(true);
-        }
 
         if (citizenToServe.isEmpty() && living instanceof Player)
         {
@@ -300,14 +294,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         this.reservedItemCache.clear(); //Clear the cache of current pending work
 
         citizenToServe.clear();
-        final List<AbstractEntityCitizen> citizenList = WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, building, null)
-                                                          .stream()
-                                                          .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook)
-                                                                           && shouldBeFed(cit)
-                                                                           && !InventoryUtils.hasItemInItemHandler(cit.getItemHandlerCitizen(), stack -> CAN_EAT.test(stack) && canEat(stack, cit)))
-                                                          .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
-                                                          .collect(Collectors.toList());
-
         final List<? extends Player> playerList = WorldUtil.getEntitiesWithinBuilding(world, Player.class,
           building, player -> player != null
                       && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER
@@ -317,8 +303,15 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         playerToServe.addAll(playerList);
 
         boolean hasFoodInBuilding = false;
-        for (final AbstractEntityCitizen citizen : citizenList)
+        for (final EntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world, EntityCitizen.class, building, null))
         {
+            if (citizen.getCitizenJobHandler().getColonyJob() instanceof JobCook
+                         || !shouldBeFed(citizen)
+                         || InventoryUtils.hasItemInItemHandler(citizen.getItemHandlerCitizen(), stack -> CAN_EAT.test(stack) && canEat(stack, citizen)))
+            {
+                continue;
+            }
+
             final Predicate<ItemStack> foodPredicate = stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack) && canEat(stack, citizen);
             if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
             {
@@ -367,7 +360,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean shouldBeFed(AbstractEntityCitizen citizen)
     {
-        return citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !citizen.getCitizenData().justAte();
+        return citizen.getCitizenData() != null
+                 && !citizen.getCitizenData().isWorking()
+                 && citizen.getCitizenData().getSaturation() <= AVERAGE_SATURATION
+                 && !citizen.getCitizenData().justAte();
+
     }
 
     /**

@@ -202,7 +202,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "claims");
 
-        maxColonySize = defineInteger(builder, "maxColonySize", 20, 1, 50);
+        maxColonySize = defineInteger(builder, "maxColonySize", 20, 1, 250);
         minColonyDistance = defineInteger(builder, "minColonyDistance", 8, 1, 200);
         initialColonySize = defineInteger(builder, "initialColonySize", 4, 1, 15);
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);

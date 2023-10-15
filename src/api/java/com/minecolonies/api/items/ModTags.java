@@ -59,10 +59,14 @@ public class ModTags
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.MOB_ATTACK_BLACKLIST);
 
+    public static final TagKey<Item> ignoreNBT = ItemTags.create(TagConstants.IGNORE_NBT);
+
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredient           = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredientExclusions = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterDoIngredient         = new HashMap<>();
+
 
     /**
      * Tag specifier for Products to Include
@@ -83,6 +87,11 @@ public class ModTags
      * Tag specifier for Ingredients to exclude
      */
     private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
+
+    /**
+     * Tag specifier for Ingredients to include
+     */
+    private static final String DO_INGREDIENT = "_do_ingredient";
 
     public static void init()
     {
@@ -114,11 +123,13 @@ public class ModTags
         final ResourceLocation ingredients = new ResourceLocation(MOD_ID, crafterName.concat(INGREDIENT));
         final ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, crafterName.concat(PRODUCT_EXCLUDED));
         final ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, crafterName.concat(INGREDIENT_EXCLUDED));
+        final ResourceLocation doIngredients = new ResourceLocation(MOD_ID, crafterName.concat(DO_INGREDIENT));
 
         crafterProduct.put(crafterName, ItemTags.create(products));
         crafterProductExclusions.put(crafterName, ItemTags.create(productsExcluded));
         crafterIngredient.put(crafterName, ItemTags.create(ingredients));
         crafterIngredientExclusions.put(crafterName, ItemTags.create(ingredientsExcluded));
+        crafterDoIngredient.put(crafterName, ItemTags.create(doIngredients));
     }
 
     private ModTags()

@@ -941,6 +941,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         return true;
     }
 
+    @Override
+    public boolean isDisabled(final IToken<?> token)
+    {
+        return disabledRecipes.contains(token);
+    }
+
     /** This module is for standard crafters (3x3 by default) */
     public abstract static class Crafting extends AbstractCraftingBuildingModule
     {

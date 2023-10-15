@@ -261,9 +261,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     @Override
     public boolean canAIBeInterrupted()
     {
-        if (getWorkerAI() instanceof AbstractAISkeleton)
+        if (getWorkerAI() != null)
         {
-            return ((AbstractAISkeleton<?>) getWorkerAI()).canBeInterrupted();
+            return getWorkerAI().canBeInterrupted();
         }
 
         return true;
