@@ -13,7 +13,9 @@
       "level": 1
     },
     {
-      "item": "minecraft:iron_ore",
+      "item": {
+        "item": "minecraft:iron_ore"
+      },
       "quantity": 32
     }
   ],

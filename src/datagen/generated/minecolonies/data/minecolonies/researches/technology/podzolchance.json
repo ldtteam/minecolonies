@@ -13,7 +13,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:podzol",
+      "item": {
+        "item": "minecraft:podzol"
+      },
       "quantity": 8
     }
   ],

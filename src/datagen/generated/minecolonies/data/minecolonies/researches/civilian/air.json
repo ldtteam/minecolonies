@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:civilian/ambition",
   "requirements": [
     {
-      "item": "minecraft:heart_of_the_sea",
+      "item": {
+        "item": "minecraft:heart_of_the_sea"
+      },
       "quantity": 1
     }
   ],

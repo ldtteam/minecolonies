@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:combat/mightycleave",
   "requirements": [
     {
-      "item": "minecraft:iron_block",
+      "item": {
+        "item": "minecraft:iron_block"
+      },
       "quantity": 32
     }
   ],

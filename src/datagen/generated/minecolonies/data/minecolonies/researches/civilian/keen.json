@@ -12,7 +12,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:book",
+      "item": {
+        "item": "minecraft:book"
+      },
       "quantity": 3
     }
   ],

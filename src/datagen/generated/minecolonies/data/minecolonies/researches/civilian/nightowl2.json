@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:golden_carrot",
+      "item": {
+        "item": "minecraft:golden_carrot"
+      },
       "quantity": 75
     }
   ],

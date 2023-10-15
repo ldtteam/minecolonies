@@ -13,7 +13,9 @@
       "level": 1
     },
     {
-      "item": "minecraft:string",
+      "item": {
+        "item": "minecraft:string"
+      },
       "quantity": 16
     }
   ],

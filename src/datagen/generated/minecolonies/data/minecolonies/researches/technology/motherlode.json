@@ -9,7 +9,14 @@
   "parentResearch": "minecolonies:technology/amazingveins",
   "requirements": [
     {
-      "item": "minecraft:diamond_ore",
+      "item": [
+        {
+          "item": "minecraft:diamond_ore"
+        },
+        {
+          "item": "minecraft:deepslate_diamond_ore"
+        }
+      ],
       "quantity": 64
     }
   ],

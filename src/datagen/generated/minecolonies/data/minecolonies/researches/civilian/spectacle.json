@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecraft:cake",
+      "item": {
+        "item": "minecraft:cake"
+      },
       "quantity": 18
     }
   ],

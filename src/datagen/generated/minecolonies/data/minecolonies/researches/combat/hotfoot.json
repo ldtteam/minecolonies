@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:combat/flee",
   "requirements": [
     {
-      "item": "minecraft:emerald",
+      "item": {
+        "item": "minecraft:emerald"
+      },
       "quantity": 64
     }
   ],

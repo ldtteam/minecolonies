@@ -14,7 +14,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:emerald",
+      "item": {
+        "item": "minecraft:emerald"
+      },
       "quantity": 1
     }
   ],

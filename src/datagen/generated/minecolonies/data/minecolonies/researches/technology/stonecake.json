@@ -12,7 +12,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:chiseled_stone_bricks",
+      "item": {
+        "item": "minecraft:chiseled_stone_bricks"
+      },
       "quantity": 64
     }
   ],

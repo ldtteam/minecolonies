@@ -13,11 +13,15 @@
       "level": 9
     },
     {
-      "item": "minecolonies:clipboard",
+      "item": {
+        "item": "minecolonies:clipboard"
+      },
       "quantity": 1
     },
     {
-      "item": "minecraft:book",
+      "item": {
+        "item": "minecraft:book"
+      },
       "quantity": 16
     }
   ],

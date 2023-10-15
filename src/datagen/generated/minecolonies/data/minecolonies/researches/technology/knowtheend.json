@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:chorus_fruit",
+      "item": {
+        "item": "minecraft:chorus_fruit"
+      },
       "quantity": 64
     }
   ],

@@ -13,15 +13,21 @@
       "level": 4
     },
     {
-      "item": "minecraft:redstone",
+      "item": {
+        "item": "minecraft:redstone"
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:gold_ingot",
+      "item": {
+        "item": "minecraft:gold_ingot"
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:lapis_lazuli",
+      "item": {
+        "item": "minecraft:lapis_lazuli"
+      },
       "quantity": 128
     }
   ],

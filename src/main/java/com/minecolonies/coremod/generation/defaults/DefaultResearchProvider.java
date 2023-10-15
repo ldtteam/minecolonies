@@ -8,8 +8,9 @@ import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1787,7 +1788,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/motherlode"), TECH).setParentResearch(amazingVeins)
           .setTranslatedName("Motherlode")
           .setIcon(Items.DIAMOND_BLOCK)
-          .addItemCost(Items.DIAMOND_ORE, 64)
+          .addItemCost(Ingredient.of(Items.DIAMOND_ORE, Items.DEEPSLATE_DIAMOND_ORE), 64)
           .addEffect(MORE_ORES, 5)
           .addToList(r);
 

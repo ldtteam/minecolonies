@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:combat/captaintraining",
   "requirements": [
     {
-      "item": "minecraft:shield",
+      "item": {
+        "item": "minecraft:shield"
+      },
       "quantity": 27
     }
   ],

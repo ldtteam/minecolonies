@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecolonies:compost",
+      "item": {
+        "item": "minecolonies:compost"
+      },
       "quantity": 64
     }
   ],

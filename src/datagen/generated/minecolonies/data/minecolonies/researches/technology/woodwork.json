@@ -12,7 +12,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:oak_planks",
+      "item": {
+        "item": "minecraft:oak_planks"
+      },
       "quantity": 64
     }
   ],

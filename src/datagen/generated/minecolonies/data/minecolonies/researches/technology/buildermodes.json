@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:diamond_axe",
+      "item": {
+        "item": "minecraft:diamond_axe"
+      },
       "quantity": 1
     }
   ],

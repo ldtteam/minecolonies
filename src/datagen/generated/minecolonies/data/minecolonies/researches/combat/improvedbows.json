@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:iron_block",
+      "item": {
+        "item": "minecraft:iron_block"
+      },
       "quantity": 6
     }
   ],

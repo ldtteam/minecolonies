@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:technology/steelbracing",
   "requirements": [
     {
-      "item": "minecraft:diamond",
+      "item": {
+        "item": "minecraft:diamond"
+      },
       "quantity": 128
     }
   ],

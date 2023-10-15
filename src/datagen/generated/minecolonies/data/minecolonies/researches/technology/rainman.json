@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:technology/rtm",
   "requirements": [
     {
-      "item": "minecraft:salmon_bucket",
+      "item": {
+        "item": "minecraft:salmon_bucket"
+      },
       "quantity": 27
     }
   ],

@@ -13,11 +13,15 @@
       "level": 1
     },
     {
-      "item": "minecraft:arrow",
+      "item": {
+        "item": "minecraft:arrow"
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:redstone",
+      "item": {
+        "item": "minecraft:redstone"
+      },
       "quantity": 64
     }
   ],

@@ -13,15 +13,21 @@
       "level": 3
     },
     {
-      "item": "minecraft:gravel",
+      "item": {
+        "item": "minecraft:gravel"
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:sand",
+      "item": {
+        "item": "minecraft:sand"
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:clay",
+      "item": {
+        "item": "minecraft:clay"
+      },
       "quantity": 64
     }
   ],

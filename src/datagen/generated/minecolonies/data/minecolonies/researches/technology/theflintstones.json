@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:stone_bricks",
+      "item": {
+        "item": "minecraft:stone_bricks"
+      },
       "quantity": 64
     }
   ],

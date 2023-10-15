@@ -12,7 +12,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:lava_bucket",
+      "item": {
+        "item": "minecraft:lava_bucket"
+      },
       "quantity": 4
     }
   ],
