@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecraft:cooked_beef",
+      "item": {
+        "item": "minecraft:cooked_beef"
+      },
       "quantity": 256
     }
   ],

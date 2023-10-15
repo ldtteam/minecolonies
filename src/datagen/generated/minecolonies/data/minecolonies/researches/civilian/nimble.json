@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:rabbit_foot",
+      "item": {
+        "item": "minecraft:rabbit_foot"
+      },
       "quantity": 1
     }
   ],

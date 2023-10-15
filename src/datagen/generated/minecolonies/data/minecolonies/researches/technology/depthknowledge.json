@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:deepslate",
+      "item": {
+        "item": "minecraft:deepslate"
+      },
       "quantity": 64
     }
   ],

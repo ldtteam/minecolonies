@@ -13,15 +13,21 @@
       "level": 2
     },
     {
-      "item": "minecraft:kelp",
+      "item": {
+        "item": "minecraft:kelp"
+      },
       "quantity": 16
     },
     {
-      "item": "minecraft:seagrass",
+      "item": {
+        "item": "minecraft:seagrass"
+      },
       "quantity": 16
     },
     {
-      "item": "minecraft:sea_pickle",
+      "item": {
+        "item": "minecraft:sea_pickle"
+      },
       "quantity": 16
     }
   ],

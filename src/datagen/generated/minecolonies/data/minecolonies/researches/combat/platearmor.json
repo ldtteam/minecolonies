@@ -13,7 +13,9 @@
       "mandatory-building": "blacksmith"
     },
     {
-      "item": "minecraft:iron_ingot",
+      "item": {
+        "item": "minecraft:iron_ingot"
+      },
       "quantity": 32
     }
   ],

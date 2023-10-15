@@ -12,7 +12,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:bone",
+      "item": {
+        "item": "minecraft:bone"
+      },
       "quantity": 8
     }
   ],

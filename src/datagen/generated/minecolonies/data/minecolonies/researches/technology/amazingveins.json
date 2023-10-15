@@ -13,7 +13,9 @@
       "level": 5
     },
     {
-      "item": "minecraft:gold_ore",
+      "item": {
+        "item": "minecraft:gold_ore"
+      },
       "quantity": 64
     }
   ],

@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:redstone",
+      "item": {
+        "item": "minecraft:redstone"
+      },
       "quantity": 64
     }
   ],

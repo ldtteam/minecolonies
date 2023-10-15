@@ -13,7 +13,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:arrow",
+      "item": {
+        "item": "minecraft:arrow"
+      },
       "quantity": 64
     }
   ],

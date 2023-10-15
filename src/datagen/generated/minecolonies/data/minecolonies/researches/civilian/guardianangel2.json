@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:civilian/guardianangel",
   "requirements": [
     {
-      "item": "minecraft:hay_block",
+      "item": {
+        "item": "minecraft:hay_block"
+      },
       "quantity": 256
     }
   ],

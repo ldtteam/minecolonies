@@ -13,15 +13,21 @@
       "level": 2
     },
     {
-      "item": "minecraft:bamboo",
+      "item": {
+        "item": "minecraft:bamboo"
+      },
       "quantity": 16
     },
     {
-      "item": "minecraft:cocoa_beans",
+      "item": {
+        "item": "minecraft:cocoa_beans"
+      },
       "quantity": 16
     },
     {
-      "item": "minecraft:vine",
+      "item": {
+        "item": "minecraft:vine"
+      },
       "quantity": 16
     }
   ],

@@ -12,15 +12,21 @@
       "level": 1
     },
     {
-      "item": "minecraft:rotten_flesh",
+      "item": {
+        "item": "minecraft:rotten_flesh"
+      },
       "quantity": 8
     },
     {
-      "item": "minecraft:bone",
+      "item": {
+        "item": "minecraft:bone"
+      },
       "quantity": 8
     },
     {
-      "item": "minecraft:spider_eye",
+      "item": {
+        "item": "minecraft:spider_eye"
+      },
       "quantity": 8
     }
   ],

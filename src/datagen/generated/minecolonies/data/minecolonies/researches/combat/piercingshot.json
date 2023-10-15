@@ -13,7 +13,9 @@
       "level": 10
     },
     {
-      "item": "minecraft:flint",
+      "item": {
+        "item": "minecraft:flint"
+      },
       "quantity": 64
     }
   ],

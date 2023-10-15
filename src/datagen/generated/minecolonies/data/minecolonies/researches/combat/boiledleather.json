@@ -13,7 +13,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:leather",
+      "item": {
+        "item": "minecraft:leather"
+      },
       "quantity": 64
     }
   ],

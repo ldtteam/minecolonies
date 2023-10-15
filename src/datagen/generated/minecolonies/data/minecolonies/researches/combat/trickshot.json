@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:bow",
+      "item": {
+        "item": "minecraft:bow"
+      },
       "quantity": 5
     }
   ],

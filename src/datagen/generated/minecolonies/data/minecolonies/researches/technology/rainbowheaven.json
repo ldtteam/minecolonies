@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:poppy",
+      "item": {
+        "item": "minecraft:poppy"
+      },
       "quantity": 64
     }
   ],

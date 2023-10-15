@@ -13,7 +13,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:iron_boots",
+      "item": {
+        "item": "minecraft:iron_boots"
+      },
       "quantity": 1
     }
   ],

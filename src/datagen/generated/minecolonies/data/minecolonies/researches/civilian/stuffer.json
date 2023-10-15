@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecraft:cookie",
+      "item": {
+        "item": "minecraft:cookie"
+      },
       "quantity": 128
     }
   ],

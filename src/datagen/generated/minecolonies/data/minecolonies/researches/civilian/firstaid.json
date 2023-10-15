@@ -12,7 +12,9 @@
       "level": 1
     },
     {
-      "item": "minecraft:hay_block",
+      "item": {
+        "item": "minecraft:hay_block"
+      },
       "quantity": 8
     }
   ],

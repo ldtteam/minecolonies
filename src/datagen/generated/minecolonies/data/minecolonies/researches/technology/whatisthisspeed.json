@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:technology/heavymachinery",
   "requirements": [
     {
-      "item": "minecraft:redstone",
+      "item": {
+        "item": "minecraft:redstone"
+      },
       "quantity": 1024
     }
   ],

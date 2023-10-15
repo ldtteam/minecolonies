@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecraft:wheat_seeds",
+      "item": {
+        "item": "minecraft:wheat_seeds"
+      },
       "quantity": 128
     }
   ],

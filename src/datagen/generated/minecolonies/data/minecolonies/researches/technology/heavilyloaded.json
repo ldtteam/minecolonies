@@ -10,7 +10,9 @@
   "parentResearch": "minecolonies:technology/loaded",
   "requirements": [
     {
-      "item": "minecraft:emerald",
+      "item": {
+        "item": "minecraft:emerald"
+      },
       "quantity": 256
     }
   ],

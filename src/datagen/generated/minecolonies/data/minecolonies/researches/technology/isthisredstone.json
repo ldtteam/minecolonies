@@ -9,7 +9,9 @@
   "parentResearch": "minecolonies:technology/hot",
   "requirements": [
     {
-      "item": "minecraft:redstone",
+      "item": {
+        "item": "minecraft:redstone"
+      },
       "quantity": 128
     }
   ],

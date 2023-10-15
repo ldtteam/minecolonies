@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:beehive",
+      "item": {
+        "item": "minecraft:beehive"
+      },
       "quantity": 16
     }
   ],

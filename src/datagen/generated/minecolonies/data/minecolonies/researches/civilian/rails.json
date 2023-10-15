@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:rail",
+      "item": {
+        "item": "minecraft:rail"
+      },
       "quantity": 64
     }
   ],

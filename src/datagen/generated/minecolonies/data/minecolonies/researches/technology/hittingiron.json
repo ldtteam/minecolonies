@@ -12,7 +12,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:anvil",
+      "item": {
+        "item": "minecraft:anvil"
+      },
       "quantity": 1
     }
   ],

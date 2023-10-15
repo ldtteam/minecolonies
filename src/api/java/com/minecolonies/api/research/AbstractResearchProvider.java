@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -12,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -558,16 +560,30 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Adds an item cost to the research.  This will be consumed when beginning the research, and will not be refunded.
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
          * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
-         * @param item   The item to require.
-         * @param count  The number of the item to require.
+         *
+         * @param item  The item to require.
+         * @param count The number of the item to require.
          * @return this.
          */
         public Research addItemCost(final Item item, final int count)
         {
+            return addItemCost(Ingredient.of(item), count);
+        }
+
+        /**
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
+         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
+         *
+         * @param ingredient The ingredient to require.
+         * @param count      The number of the item to require.
+         * @return this.
+         */
+        public Research addItemCost(final Ingredient ingredient, final int count)
+        {
             final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            if (this.json.has("requirements") && this.json.get("requirements").isJsonArray())
             {
                 reqArray = this.json.getAsJsonArray("requirements");
                 this.json.remove("requirements");
@@ -576,10 +592,8 @@ public abstract class AbstractResearchProvider implements DataProvider
             {
                 reqArray = new JsonArray();
             }
-            JsonObject req = new JsonObject();
-            req.addProperty("item", ForgeRegistries.ITEMS.getKey(item).toString());
-            req.addProperty("quantity", count);
-            reqArray.add(req);
+
+            reqArray.add(new CountedIngredient(ingredient, count).toJson());
             this.json.add("requirements", reqArray);
             return this;
         }

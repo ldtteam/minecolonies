@@ -13,7 +13,9 @@
       "level": 2
     },
     {
-      "item": "minecraft:paper",
+      "item": {
+        "item": "minecraft:paper"
+      },
       "quantity": 64
     }
   ],

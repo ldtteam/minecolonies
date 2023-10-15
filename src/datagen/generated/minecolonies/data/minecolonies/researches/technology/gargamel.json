@@ -17,11 +17,15 @@
       "level": 3
     },
     {
-      "item": "minecraft:crimson_fungus",
+      "item": {
+        "item": "minecraft:crimson_fungus"
+      },
       "quantity": 16
     },
     {
-      "item": "minecraft:warped_fungus",
+      "item": {
+        "item": "minecraft:warped_fungus"
+      },
       "quantity": 16
     }
   ],

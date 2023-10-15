@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecolonies:blockminecoloniesrack",
+      "item": {
+        "item": "minecolonies:blockminecoloniesrack"
+      },
       "quantity": 32
     }
   ],

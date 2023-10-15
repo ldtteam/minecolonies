@@ -13,7 +13,9 @@
       "level": 3
     },
     {
-      "item": "minecolonies:mistletoe",
+      "item": {
+        "item": "minecolonies:mistletoe"
+      },
       "quantity": 64
     }
   ],

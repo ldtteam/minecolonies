@@ -13,7 +13,9 @@
       "level": 1
     },
     {
-      "item": "minecraft:diamond",
+      "item": {
+        "item": "minecraft:diamond"
+      },
       "quantity": 8
     }
   ],

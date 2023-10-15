@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecraft:shield",
+      "item": {
+        "item": "minecraft:shield"
+      },
       "quantity": 8
     }
   ],

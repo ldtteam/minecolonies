@@ -13,7 +13,9 @@
       "level": 4
     },
     {
-      "item": "minecraft:golden_apple",
+      "item": {
+        "item": "minecraft:golden_apple"
+      },
       "quantity": 16
     }
   ],

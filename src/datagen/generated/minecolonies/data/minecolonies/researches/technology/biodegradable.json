@@ -12,7 +12,9 @@
       "level": 3
     },
     {
-      "item": "minecraft:bone_meal",
+      "item": {
+        "item": "minecraft:bone_meal"
+      },
       "quantity": 64
     }
   ],

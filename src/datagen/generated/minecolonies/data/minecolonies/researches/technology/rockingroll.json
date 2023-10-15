@@ -13,7 +13,9 @@
       "level": 1
     },
     {
-      "item": "minecraft:stone",
+      "item": {
+        "item": "minecraft:stone"
+      },
       "quantity": 64
     }
   ],

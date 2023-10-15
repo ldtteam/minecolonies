@@ -9,15 +9,21 @@
   "parentResearch": "minecolonies:technology/whatyaneed",
   "requirements": [
     {
-      "item": "minecolonies:gate_wood",
+      "item": {
+        "item": "minecolonies:gate_wood"
+      },
       "quantity": 64
     },
     {
-      "item": "minecolonies:ancienttome",
+      "item": {
+        "item": "minecolonies:ancienttome"
+      },
       "quantity": 2
     },
     {
-      "item": "minecraft:iron_block",
+      "item": {
+        "item": "minecraft:iron_block"
+      },
       "quantity": 5
     }
   ],
