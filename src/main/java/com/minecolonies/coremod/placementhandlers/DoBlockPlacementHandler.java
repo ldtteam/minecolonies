@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.domumornamentum.block.AbstractPanelBlockTrapdoor;
+import com.ldtteam.domumornamentum.block.AbstractPostBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
@@ -125,6 +126,10 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             else if (blockState.getBlock() instanceof PanelBlock)
             {
                 item.getOrCreateTag().putString("type", blockState.getValue(PanelBlock.TYPE).toString().toUpperCase());
+            }
+            else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
+            {
+                item.getOrCreateTag().putString("type", blockState.getValue(AbstractPostBlock.TYPE).toString().toUpperCase());
             }
             itemList.add(item);
         }
