@@ -14,6 +14,7 @@ import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
+import com.minecolonies.coremod.client.render.worldevent.highlightmanager.TimedBoxRenderData;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.placementhandlers.main.SuppliesHandler;
@@ -65,7 +66,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
 
         if (!type.equals(WindowSupplies.type))
         {
-            HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
+            HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
             RenderingCache.removeBlueprint("supplies");
         }
         else if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
@@ -119,7 +120,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     @Override
     protected void cancelClicked()
     {
-        HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
+        HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
         RenderingCache.removeBlueprint("supplies");
         close();
     }
@@ -176,16 +177,14 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             }
         }
 
-        HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
+        HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
             MessageUtils.format(WARNING_SUPPLY_BUILDING_BAD_BLOCKS).sendTo(Minecraft.getInstance().player);
 
             for (final PlacementError error : placementErrorList)
             {
-                HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
-                  .setPos(error.getPos())
-                  .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
+                HighlightManager.addHighlight(RENDER_BOX_CATEGORY, new TimedBoxRenderData(error.getPos())
                   .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0x80FF0000));
             }

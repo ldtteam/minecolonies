@@ -3,10 +3,13 @@ package com.minecolonies.coremod.quests.objectives;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
-import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IObjectiveInstance;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,12 +104,26 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     {
         if (target == 0)
         {
-            colonyQuest.getQuestGiver().openDialogue(colonyQuest, colonyQuest.getIndex());
+            colonyQuest.getQuestGiver().openDialogue(colonyQuest, colonyQuest.getObjectiveIndex());
         }
         else
         {
-            colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getIndex());
+            colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getObjectiveIndex());
         }
         return null;
+    }
+
+    @Override
+    public Component getProgressText(final IQuestInstance quest, final Style style)
+    {
+        final ICitizen citizen = quest.getColony().getCitizen(target == 0 ? quest.getQuestGiverId() : target - 1);
+        if (citizen != null)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
+        }
+        else
+        {
+            return Component.empty();
+        }
     }
 }
