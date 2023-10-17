@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -91,14 +92,26 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new EntityKillProgressInstance();
+        return createObjectiveInstance();
     }
 
-    @Nullable
     @Override
-    public IObjectiveInstance createObjectiveInstance()
+    public Component getProgressText(final IQuestInstance quest, final Style style)
     {
-        return new EntityKillProgressInstance();
+        if (quest.getCurrentObjectiveInstance() instanceof EntityKillProgressInstance progress)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress",
+              progress.currentProgress,
+              entitiesToKill,
+              entityToKill.getDescription().plainCopy().setStyle(style));
+        }
+        return Component.empty();
+    }
+
+    @Override
+    public @Nullable IObjectiveInstance createObjectiveInstance()
+    {
+        return new EntityKillProgressInstance(this);
     }
 
     @Override
@@ -150,14 +163,24 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     /**
      * Progress data of this objective.
      */
-    public class EntityKillProgressInstance implements IObjectiveInstance
+    private static class EntityKillProgressInstance implements IObjectiveInstance
     {
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final KillEntityObjectiveTemplateTemplate template;
+
         private int currentProgress = 0;
+
+        public EntityKillProgressInstance(final KillEntityObjectiveTemplateTemplate template)
+        {
+            this.template = template;
+        }
 
         @Override
         public boolean isFulfilled()
         {
-            return currentProgress >= entitiesToKill;
+            return currentProgress >= template.entitiesToKill;
         }
 
         @Override
@@ -171,7 +194,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         @Override
         public int getMissingQuantity()
         {
-            return entitiesToKill > currentProgress ? entitiesToKill - currentProgress : 0;
+            return template.entitiesToKill > currentProgress ? template.entitiesToKill - currentProgress : 0;
         }
 
         @Override

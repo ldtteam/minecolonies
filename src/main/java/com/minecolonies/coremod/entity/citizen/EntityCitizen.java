@@ -2004,4 +2004,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return super.getKillCredit();
         }
     }
+
+    @Override
+    public boolean isCurrentlyGlowing()
+    {
+        return level.isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+    }
 }
