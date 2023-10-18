@@ -9,14 +9,16 @@ import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.*;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -53,36 +55,27 @@ public class ItemNbtCalculator implements DataProvider
     {
         final List<ItemStack> allStacks;
         final HolderLookup.Provider provider = lookupProvider.join();
-        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlagSet.of(), true, provider);
+        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlags.REGISTRY.allFlags(), true, provider);
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
-        final HolderLookup.RegistryLookup<CreativeModeTab> registry = provider.lookup(Registries.CREATIVE_MODE_TAB).get();
 
-        for (CreativeModeTab tab : CreativeModeTabs.allTabs())
+        for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
         {
-            if (tab != registry.get(CreativeModeTabs.SEARCH).get().get() && tab != registry.get(CreativeModeTabs.HOTBAR).get().get())
+            if (tab.getType() == CreativeModeTab.Type.CATEGORY)
             {
-                final Collection<ItemStack> stacks;
                 if (tab.getDisplayItems().isEmpty())
                 {
-                    stacks = new HashSet<>();
                     try
                     {
-                        tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
-                            stacks.add(stack);
-                        });
+                        tab.buildContents(tempDisplayParams);
                     }
                     catch (final Throwable ex)
                     {
-                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString() + "; using fallback", ex);
+                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString(), ex);
                     }
                 }
-                else
-                {
-                    stacks = tab.getDisplayItems();
-                }
 
-                for (final ItemStack item : stacks)
+                for (final ItemStack item : tab.getDisplayItems())
                 {
                     if (item.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IMateriallyTexturedBlock texturedBlock)
                     {

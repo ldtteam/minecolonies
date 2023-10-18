@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -51,8 +50,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -636,31 +633,23 @@ public class CompatibilityManager implements ICompatibilityManager
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
         final Registry<CreativeModeTab> registry = level.registryAccess().registryOrThrow(Registries.CREATIVE_MODE_TAB);
 
-        for (CreativeModeTab tab : CreativeModeTabs.allTabs())
+        for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
         {
-            if (tab != registry.get(CreativeModeTabs.SEARCH) && tab != registry.get(CreativeModeTabs.HOTBAR))
+            if (tab.getType() == CreativeModeTab.Type.CATEGORY)
             {
-                final Collection<ItemStack> stacks;
                 if (tab.getDisplayItems().isEmpty())
                 {
-                    stacks = new HashSet<>();
                     try
                     {
-                        tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
-                            stacks.add(stack);
-                        });
+                        tab.buildContents(new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), false, level.registryAccess()));
                     }
                     catch (final Throwable ex)
                     {
-                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString() + "; using fallback", ex);
+                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString(), ex);
                     }
-
-                }
-                else
-                {
-                    stacks = tab.getDisplayItems();
                 }
 
+                final Collection<ItemStack> stacks = tab.getDisplayItems();
                 final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
                 for (final ItemStack item : stacks)
                 {
