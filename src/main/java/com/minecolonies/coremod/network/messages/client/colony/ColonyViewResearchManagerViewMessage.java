@@ -7,6 +7,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -60,7 +61,7 @@ public class ColonyViewResearchManagerViewMessage implements IMessage
     public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         colonyId = buf.readInt();
-        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         researchManagerData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(researchManagerData, buf.readableBytes());
     }
