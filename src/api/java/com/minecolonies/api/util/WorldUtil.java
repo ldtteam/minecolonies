@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -13,32 +12,24 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.Registry;
-import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
@@ -378,5 +369,81 @@ public class WorldUtil
     {
         final DimensionType dimensionType = world.dimensionType();
         return yBlock > getDimensionMinHeight(dimensionType) && yBlock < getDimensionMaxHeight(dimensionType);
+    }
+
+    /**
+     * Get nearest player, our own cheaper check.
+     * @param livingEntity the entity to check.
+     * @param x pos x
+     * @param y pos y
+     * @param z pos z
+     * @param lookDistance min distance.
+     * @return closest player or null.
+     */
+    @Nullable
+    public static Player getNearestPlayer(Mob livingEntity, final int x, final int y, final int z, final double lookDistance)
+    {
+        return getNearestEntity(livingEntity.level.players(), livingEntity, x, y, z, lookDistance);
+    }
+
+    /**
+     * Get the closest entity, cheaper than mojank.
+     * @param entityList entity list to check.
+     * @param livingEntity the entity they should be close to.
+     * @param x pos x
+     * @param y pos y
+     * @param z pos z
+     * @param lookDistance max distance.
+     * @return the entity or null.
+     * @param <T> type of entity.
+     */
+    @Nullable
+    public static <T extends LivingEntity> T getNearestEntity(List<? extends T> entityList, @Nullable Mob livingEntity, int x, int y, int z, double lookDistance)
+    {
+        double currentEntityDistance = 100;
+        T closestEntity = null;
+        final BlockPos entityPos = new BlockPos(x, y, z);
+
+        for (T entity : entityList)
+        {
+            if (entity == livingEntity)
+            {
+                continue;
+            }
+            else if (!entity.canBeSeenByAnyone())
+            {
+                continue;
+            }
+
+            double entityDistance = entity.blockPosition().above().distSqr(entityPos);
+            if (entityDistance > lookDistance)
+            {
+                continue;
+            }
+
+            double invisPct = entity.getVisibilityPercent(livingEntity);
+            double invisPctModifier = Math.max(lookDistance * invisPct, 2.0D);
+            if (entityDistance > invisPctModifier * invisPctModifier)
+            {
+                continue;
+            }
+
+            if (livingEntity instanceof Mob)
+            {
+                Mob mob = (Mob) livingEntity;
+                if (!mob.getSensing().hasLineOfSight(entity))
+                {
+                    continue;
+                }
+            }
+
+            if (entityDistance < currentEntityDistance)
+            {
+                currentEntityDistance = entityDistance;
+                closestEntity = entity;
+            }
+        }
+
+        return closestEntity;
     }
 }
