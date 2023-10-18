@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -62,6 +63,16 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      */
     private IAIState study()
     {
+        if (studyPos == null)
+        {
+            studyPos = building.getRandomBookShelf();
+        }
+
+        if (walkToBlock(studyPos))
+        {
+            return getState();
+        }
+
         final IColony colony = building.getColony();
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
         if (!inProgress.isEmpty() && job.getCurrentMana() > 0)
@@ -75,17 +86,8 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
             {
                 building.onSuccess(research);
             }
+            colony.getResearchManager().markDirty();
             job.reduceCurrentMana();
-        }
-
-        if (studyPos == null)
-        {
-            studyPos = building.getRandomBookShelf();
-        }
-
-        if (walkToBlock(studyPos))
-        {
-            return getState();
         }
 
         worker.decreaseSaturationForContinuousAction();

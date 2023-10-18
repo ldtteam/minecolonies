@@ -136,7 +136,9 @@ public class LocalResearchTree implements ILocalResearchTree
                       .getResearch(research.getBranch(), research.getId())
                       .setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
                 }
+                colony.getResearchManager().markDirty();
                 SoundUtils.playSuccessSound(player, player.blockPosition());
+                colony.getResearchManager().markDirty();
                 return;
             }
             final InvWrapper playerInv = new InvWrapper(player.getInventory());
@@ -175,6 +177,7 @@ public class LocalResearchTree implements ILocalResearchTree
             }
             MessageUtils.format(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName())).sendTo(player);
             research.startResearch(colony.getResearchManager().getResearchTree());
+            colony.getResearchManager().markDirty();
             SoundUtils.playSuccessSound(player, player.blockPosition());
         }
         else
@@ -187,6 +190,7 @@ public class LocalResearchTree implements ILocalResearchTree
                       .getResearchTree()
                       .getResearch(research.getBranch(), research.getId())
                       .setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
+                    colony.getResearchManager().markDirty();
                 }
             }
             else
@@ -209,6 +213,7 @@ public class LocalResearchTree implements ILocalResearchTree
               .sendTo(player);
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
+            colony.getResearchManager().markDirty();
         }
         // If complete, it's a request to undo the research.
         else if (research.getState() == ResearchState.FINISHED)
@@ -260,6 +265,7 @@ public class LocalResearchTree implements ILocalResearchTree
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
             resetEffects(colony);
+            colony.getResearchManager().markDirty();
         }
         colony.markDirty();
     }
@@ -307,6 +313,7 @@ public class LocalResearchTree implements ILocalResearchTree
                         for (final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(branch.getKey(), research.getValue().getId()).getEffects())
                         {
                             colony.getResearchManager().getResearchEffects().applyEffect(effect);
+                            colony.getResearchManager().markDirty();
                         }
                     }
                 }
