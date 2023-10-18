@@ -1,10 +1,13 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Research manager of the colony holding the tree and effects.
@@ -24,6 +27,14 @@ public interface IResearchManager
      * @param statsCompound the compound.
      */
     void writeToNBT(@NotNull final CompoundTag statsCompound);
+
+    void sendPackets(Set<ServerPlayer> closeSubscribers, Set<ServerPlayer> newSubscribers);
+
+    void markDirty();
+
+    boolean isDirty();
+
+    void clearDirty();
 
     /**
      * Get the instance of the researchTree.

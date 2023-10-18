@@ -11,7 +11,9 @@ import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewResearchManagerViewMessage;
 import com.minecolonies.coremod.research.LocalResearch;
 import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.research.ResearchEffectManager;
@@ -19,14 +21,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -57,6 +58,11 @@ public class ResearchManager implements IResearchManager
      */
     private final IColony colony;
 
+    /**
+     * Whether synch to client is necessary.
+     */
+    private boolean dirty;
+
     @Override
     public void readFromNBT(@NotNull final CompoundTag compound)
     {
@@ -67,6 +73,43 @@ public class ResearchManager implements IResearchManager
     public void writeToNBT(@NotNull final CompoundTag compound)
     {
         tree.writeToNBT(compound);
+    }
+
+    @Override
+    public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
+    {
+        if (dirty || !newSubscribers.isEmpty())
+        {
+            final Set<ServerPlayer> players = new HashSet<>();
+            if (dirty)
+            {
+                players.addAll(closeSubscribers);
+            }
+            players.addAll(newSubscribers);
+
+            final ColonyViewResearchManagerViewMessage message = new ColonyViewResearchManagerViewMessage(colony, this);
+            players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+
+        }
+        clearDirty();
+    }
+
+    @Override
+    public final void markDirty()
+    {
+        dirty = true;
+    }
+
+    @Override
+    public final boolean isDirty()
+    {
+        return dirty;
+    }
+
+    @Override
+    public void clearDirty()
+    {
+        dirty = false;
     }
 
     public ResearchManager(IColony colony)
@@ -164,6 +207,7 @@ public class ResearchManager implements IResearchManager
             removes.add(research);
         }
         autoStartResearch.removeAll(removes);
+        markDirty();
     }
 
     /**
@@ -172,6 +216,7 @@ public class ResearchManager implements IResearchManager
      */
     private void startCostlessResearch(IGlobalResearch research)
     {
+        markDirty();
         boolean creativePlayer = false;
         for (Player player : colony.getMessagePlayerEntities())
         {

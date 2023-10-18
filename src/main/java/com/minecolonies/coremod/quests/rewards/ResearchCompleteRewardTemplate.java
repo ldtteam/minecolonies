@@ -44,5 +44,6 @@ public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
     {
         colony.getResearchManager().getResearchTree().finishResearch(research);
+        colony.getResearchManager().markDirty();
     }
 }
