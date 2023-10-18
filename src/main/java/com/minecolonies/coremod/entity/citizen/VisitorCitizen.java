@@ -17,6 +17,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
+import com.minecolonies.coremod.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.coremod.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -32,13 +33,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -128,7 +125,7 @@ VisitorCitizen extends AbstractEntityCitizen
      * @param type  the Entity type.
      * @param world the world.
      */
-    public VisitorCitizen(final EntityType<? extends AgeableMob> type, final Level world)
+    public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -156,7 +153,7 @@ VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
-        this.goalSelector.addGoal(++priority, new LookAtPlayerGoal(this, LivingEntity.class, WATCH_CLOSEST));
+        this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
         new EntityAIVisitor(this);
     }
 

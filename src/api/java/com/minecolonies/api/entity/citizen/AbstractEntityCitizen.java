@@ -48,7 +48,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -140,7 +139,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param type  the Entity type.
      * @param world the world.
      */
-    public AbstractEntityCitizen(final EntityType<? extends AgeableMob> type, final Level world)
+    public AbstractEntityCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
     }
@@ -287,18 +286,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public ResourceLocation getModelType()
     {
         return modelId;
-    }
-
-    /**
-     * For the time being we don't want any childrens of our colonists.
-     *
-     * @return the child.
-     */
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(final ServerLevel world, final AgeableMob parent)
-    {
-        return null;
     }
 
     @Override
@@ -756,16 +743,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public boolean isPushedByFluid()
     {
         return false;
-    }
-
-    /**
-     * Do not allow bubble movement
-     *
-     * @param down
-     */
-    public void onInsideBubbleColumn(boolean down)
-    {
-
     }
 
     /**

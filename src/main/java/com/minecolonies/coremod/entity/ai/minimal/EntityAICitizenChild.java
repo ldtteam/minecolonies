@@ -7,13 +7,13 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +165,7 @@ public class EntityAICitizenChild implements IStateAI
               1.0D,
               (double) START_FOLLOW_DISTANCE),
             // Limit entity classes
-            target -> target.isAlive() && (target instanceof AgeableMob || target instanceof Player))
+            target -> target.isAlive() && (target instanceof AbstractCivilianEntity || target instanceof Player))
           // Take the first entity
           .stream()
           .findFirst()
