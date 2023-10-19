@@ -773,11 +773,14 @@ public class EventHandler
     }
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
+    public static void onServerTick(TickEvent.ServerTickEvent event)
+    {
         final double lastTickMs = event.getServer().tickTimes[event.getServer().getTickCount() % 100] * 1.0E-6D;
-        if (lastTickMs > 50) {
+        if (lastTickMs > 50)
+        {
             TickRateStateMachine.slownessFactor = Mth.clamp(lastTickMs / 50, 1.0D, 5.0D);
-        } else {
+        } else
+        {
             TickRateStateMachine.slownessFactor = 1.0D;
         }
     }

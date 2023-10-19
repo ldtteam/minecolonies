@@ -94,7 +94,7 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     @Override
     public boolean checkBedExists()
     {
-        if (tickCount % 5 == 3)
+        if (tickCount % 5 == randomVariance % 5)
         {
             return true;
         }

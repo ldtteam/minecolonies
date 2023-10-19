@@ -138,7 +138,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
         }
         else
         {
-            if (this.tickCount % 5 == 0)
+            if (this.tickCount % 5 == randomVariance % 5)
             {
                 entityPushCache.clear();
                 entityPushCache = this.level.getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());

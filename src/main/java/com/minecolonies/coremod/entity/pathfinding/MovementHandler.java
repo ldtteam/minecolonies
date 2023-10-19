@@ -32,6 +32,9 @@ public class MovementHandler extends MoveControl
      */
     private float stepHeight;
 
+    /**
+     * Speed value
+     */
     private float speedValue;
 
     public MovementHandler(Mob mob)
