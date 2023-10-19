@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import org.jetbrains.annotations.NotNull;
 
+import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +16,11 @@ import java.util.function.Consumer;
  */
 public class TickRateStateMachine<S extends IState> extends BasicStateMachine<ITickingTransition<S>, S> implements ITickRateStateMachine<S>
 {
+    /**
+     * TPS factor of the server
+     */
+    public static double slownessFactor = 1.0D;
+
     /**
      * Counter keeping track of ticks
      */
@@ -122,7 +128,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
             return false;
         }
 
-        transition.setTicksToUpdate(transition.getTickRate());
+        transition.setTicksToUpdate((int) (transition.getTickRate() / slownessFactor));
         executedTransition = transition;
         return super.checkTransition(transition);
     }
