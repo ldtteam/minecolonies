@@ -216,7 +216,7 @@ public final class ColonyView implements IColonyView
     /**
      * The research effects of the colony.
      */
-    private final IResearchManager manager;
+    private final IResearchManager researchManager;
 
     /**
      * Whether spies are active and highlight enemy positions.
@@ -267,7 +267,7 @@ public final class ColonyView implements IColonyView
     private ColonyView(final int id)
     {
         this.id = id;
-        this.manager = new ResearchManager(this);
+        this.researchManager = new ResearchManager(this);
         this.questManager = new QuestManager(this);
     }
 
@@ -425,10 +425,6 @@ public final class ColonyView implements IColonyView
             buf.writeInt(col.getID());
             buf.writeUtf(col.getDimension().location().toString());
         }
-
-        final CompoundTag treeTag = new CompoundTag();
-        colony.getResearchManager().writeToNBT(treeTag);
-        buf.writeNbt(treeTag);
 
         if (hasNewSubscribers || colony.isTicketedChunksDirty())
         {
@@ -921,8 +917,6 @@ public final class ColonyView implements IColonyView
               ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
-        this.manager.readFromNBT(buf.readNbt());
-
         final int ticketChunkCount = buf.readInt();
         if (ticketChunkCount != -1)
         {
@@ -1115,6 +1109,12 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+    }
+
+    @Override
+    public void handleColonyViewResearchManagerUpdate(final CompoundTag compoundTag)
+    {
+        this.researchManager.readFromNBT(compoundTag);
     }
 
     @Override
@@ -1596,7 +1596,7 @@ public final class ColonyView implements IColonyView
     @Override
     public IResearchManager getResearchManager()
     {
-        return manager;
+        return researchManager;
     }
 
     @Override
