@@ -46,7 +46,7 @@ public class StringSetting implements IStringSetting
      */
     public StringSetting(final String... settings)
     {
-        this.settings = Arrays.asList(settings);
+        this.settings = new ArrayList<>(Arrays.asList(settings));
         this.currentIndex = 0;
     }
 
@@ -58,7 +58,7 @@ public class StringSetting implements IStringSetting
      */
     public StringSetting(final List<String> settings, final int currentIndex)
     {
-        this.settings = settings;
+        this.settings = new ArrayList<>(settings);
         this.currentIndex = currentIndex;
     }
 
