@@ -24,7 +24,6 @@ import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -673,11 +672,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             for (final IResearchCost cost : research.getCostList())
             {
-                final Component items =
-                  ComponentUtils.formatList(cost.getItems().stream().map(Item::getDescription).toList(), Component.literal(" / "));
                 hoverPaneBuilder.paragraphBreak()
                   .append(Component.literal(" - "))
-                  .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", cost.getCount(), items));
+                  .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", cost.getCount(), cost.getTranslatedName()));
                 if (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())))
                 {
                     hoverPaneBuilder.color(COLOR_TEXT_FULFILLED);

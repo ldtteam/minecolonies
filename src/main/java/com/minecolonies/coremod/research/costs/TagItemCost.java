@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research.costs;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.research.costs.IResearchCost;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -55,6 +56,12 @@ public class TagItemCost implements IResearchCost
     public List<Item> getItems()
     {
         return ForgeRegistries.ITEMS.tags().getTag(this.tag).stream().toList();
+    }
+
+    @Override
+    public Component getTranslatedName()
+    {
+        return Component.translatable(String.format("com.minecolonies.coremod.research.tags.%s", this.tag.location()));
     }
 
     @Override
