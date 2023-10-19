@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -35,11 +36,20 @@ public class StandardRecipeManager implements IRecipeManager
      */
     private ImmutableMap<IToken<?>, IRecipeStorage> cache = null;
 
-
     /**
      * The list of recipes marked as used this session
      */
     private final Set<IToken<?>> usedRecipes = new HashSet<>();
+
+    /**
+     * If was written to since the last save.
+     */
+    private boolean dirty = false;
+
+    /**
+     * Nbt cache.
+     */
+    private ListTag nbtCache = null;
 
     @Override
     public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes()
@@ -63,6 +73,7 @@ public class StandardRecipeManager implements IRecipeManager
         recipes.put(storage.getToken(), storage);
         registerUse(storage.getToken());
         cache = null;
+        dirty = true;
         return storage.getToken();
     }
 
@@ -87,9 +98,14 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public void write(@NotNull final CompoundTag compound)
     {
-        @NotNull final ListTag recipesTagList =
-          recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
-        compound.put(TAG_RECIPES, recipesTagList);
+        if (dirty || nbtCache == null)
+        {
+            nbtCache = recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+            Log.getLogger().warn("Writing Recipe Manager: " + recipes.size() + " recipes!");
+        }
+
+        compound.put(TAG_RECIPES, nbtCache);
+        dirty = false;
     }
 
     @Override
@@ -112,6 +128,7 @@ public class StandardRecipeManager implements IRecipeManager
             }
         }
         cache = null;
+        nbtCache = list;
     }
 
     @Override
@@ -124,6 +141,11 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public void registerUse(final IToken<?> token)
     {
+        if (usedRecipes.contains(token))
+        {
+            return;
+        }
         usedRecipes.add(token);
+        dirty = true;
     }
 }

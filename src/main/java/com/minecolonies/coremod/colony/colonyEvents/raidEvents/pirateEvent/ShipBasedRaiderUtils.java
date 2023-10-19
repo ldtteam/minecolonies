@@ -9,18 +9,23 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
@@ -67,8 +72,8 @@ public final class ShipBasedRaiderUtils
       final IColonyRaidEvent event)
     {
         return colony.getEventManager()
-                .getStructureManager()
-                .spawnTemporaryStructure(blueprint, targetSpawnPoint, event.getID());
+                 .getStructureManager()
+                 .spawnTemporaryStructure(blueprint, targetSpawnPoint, event.getID());
     }
 
     /**
@@ -132,17 +137,21 @@ public final class ShipBasedRaiderUtils
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final Level world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
-        final List<Material> allowedShipMaterials = Lists.newArrayList(Material.WATER, Material.ICE, Material.WATER_PLANT);
+        final List<Predicate<BlockState>> allowedShipMaterials = Lists.newArrayList();
+
+        allowedShipMaterials.add(state -> state.getMaterial().isLiquid());
+        allowedShipMaterials.add(state -> state.is(BlockTags.ICE));
+        allowedShipMaterials.add(state -> !state.getMaterial().isSolid() && state.getFluidState().is(FluidTags.WATER));
 
         if (MineColonies.getConfig().getServer().skyRaiders.get())
         {
-            allowedShipMaterials.add(Material.AIR);
+            allowedShipMaterials.add(BlockBehaviour.BlockStateBase::isAir);
         }
 
         return isSurfaceAreaMostlyMaterial(allowedShipMaterials, world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.99);
+          0.85);
     }
 
     /**
@@ -157,7 +166,7 @@ public final class ShipBasedRaiderUtils
      * @return true if enough water surface blocks are found
      */
     public static boolean isSurfaceAreaMostlyMaterial(
-      @NotNull final List<Material> materials,
+      @NotNull final List<Predicate<BlockState>> materials,
       @NotNull final Level world,
       final int baseY, @NotNull final BlockPos from,
       @NotNull final BlockPos to,
@@ -187,9 +196,32 @@ public final class ShipBasedRaiderUtils
         {
             for (int z = 0; z < zDist; z++)
             {
+                final BlockState state = world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY, from.getZ() + (z * zDir)));
+                boolean suitableBlock = false;
+                for (final Predicate<BlockState> pred : materials)
+                {
+                    if (pred.test(state))
+                    {
+                        suitableBlock = true;
+                        break;
+                    }
+                }
+
+                // Checks up to 5 blocks above for air/nonblocking
+                if (suitableBlock)
+                {
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        if (world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY + i, from.getZ() + (z * zDir))).getMaterial().isSolid())
+                        {
+                            suitableBlock = false;
+                            break;
+                        }
+                    }
+                }
+
                 // Count surface waterblocks
-                if (!materials.contains(world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY, from.getZ() + (z * zDir))).getMaterial())
-                      || !world.isEmptyBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
+                if (!suitableBlock)
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
@@ -279,7 +311,7 @@ public final class ShipBasedRaiderUtils
                 for (int z = -radius; z <= radius; z++)
                 {
                     if (world.getBlockState(spawnPos.offset(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.offset(x, y + 1, z))
-                      .getBlock() instanceof AirBlock)
+                                                                                                          .getBlock() instanceof AirBlock)
                     {
                         return spawnPos.offset(x, y, z);
                     }
@@ -310,7 +342,7 @@ public final class ShipBasedRaiderUtils
         {
             final BlockPos point = path.getNode(i).asBlockPos();
             if (lastPoint.distManhattan(point) > spacing
-                  && world.getBlockState(point).getMaterial() == Material.AIR)
+                  && world.getBlockState(point).isAir())
             {
                 wayPoints.add(point);
                 lastPoint = point;
