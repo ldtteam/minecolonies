@@ -3,6 +3,7 @@ package com.minecolonies.coremod.generation.defaults;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -81,7 +82,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(BLOCK_ATTACKS).setTranslatedName("Knight Shield Blocking Chance +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5}));
         effects.add(new ResearchEffect(BLOCK_BREAK_SPEED).setTranslatedName("Citizen Block Break Speed +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(BLOCK_PLACE_SPEED).setTranslatedName("Citizen Block Place Speed +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
-        effects.add(new ResearchEffect(CITIZEN_CAP).setTranslatedName("Max Citizens +%s")
+        effects.add(new ResearchEffect(CITIZEN_CAP).setTranslatedName("Max Citizens to %2$s")
                       .setLevels(new double[] {CitizenConstants.CITIZEN_LIMIT_DEFAULT, CitizenConstants.CITIZEN_LIMIT_OUTPOST, CitizenConstants.CITIZEN_LIMIT_HAMLET,
                         CitizenConstants.CITIZEN_LIMIT_VILLAGE,
                         CitizenConstants.CITIZEN_LIMIT_MAX}));
@@ -1462,7 +1463,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setSortOrder(2)
           .setIcon(ModBlocks.blockHutConcreteMixer.asItem())
           .addBuildingRequirement("crusher", 1)
-          .addItemCost(Items.WHITE_CONCRETE, 32)
+          .addItemCost(ModTags.concreteItems, 32)
           .addEffect(ModBuildings.concreteMixer.get().getBuildingBlock(), 1)
           .addToList(r);
 
@@ -1472,7 +1473,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setSortOrder(5)
                                     .setIcon(ModBlocks.blockHutSawmill.asItem())
                                     .addBuildingRequirement("lumberjack", 3)
-                                    .addItemCost(Items.OAK_PLANKS, 64)
+                                    .addItemCost(ItemTags.PLANKS, 64)
                                     .addEffect(ModBuildings.sawmill.get().getBuildingBlock(), 1)
                                     .addToList(r);
         final Research stringWork = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stringwork"), TECH).setParentResearch(woodwork)

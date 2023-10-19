@@ -75,8 +75,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.RED_CONCRETE_POWDER)
           .add(Items.BLACK_CONCRETE_POWDER);
 
-        final TagKey<Item> concrete = ItemTags.create(new ResourceLocation(MOD_ID, "concrete"));
-        copy(ModTags.concreteBlock, concrete);
+        copy(ModTags.concreteBlocks, ModTags.concreteItems);
+        copy(ModTags.concretePowderBlocks, ModTags.concretePowderItems);
 
         final TagKey<Item> glazedTerracotta = ItemTags.create(new ResourceLocation(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta)
@@ -223,7 +223,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.DYES)
           .add(Items.RED_NETHER_BRICKS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_DYER))
-          .addTags(ModTags.concretePowder);
+                .addTags(ModTags.concretePowderItems);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER_SMELTING))
           .addTag(Tags.Items.DYES);
 
@@ -366,7 +366,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.BRICKS, Items.STONE_BRICKS, Items.CHISELED_STONE_BRICKS, Items.CRACKED_STONE_BRICKS, Items.MOSSY_STONE_BRICKS)
           .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
           .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.END_STONES)
-          .addTags(Tags.Items.SANDSTONE, concrete)
+          .addTags(Tags.Items.SANDSTONE, ModTags.concreteItems)
           .addTags(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
           .addTags(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
           .addTags(ItemTags.STAIRS, ItemTags.SLABS, ItemTags.WALLS);
