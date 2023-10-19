@@ -33,4 +33,16 @@ public class GuiTranslationConstants
     public static final String FIELD_GUI_ASSIGNED_FARMER    = "com.minecolonies.coremod.gui.field.assignedfarmer";
     @NonNls
     public static final String FIELD_GUI_NO_ASSIGNED_FARMER = "com.minecolonies.coremod.gui.field.noassignedfarmer";
+
+    // Quest log
+    @NonNls
+    public static final String QUEST_LOG_NAME_PREFIX             = "com.minecolonies.coremod.item.questlog.gui.name_prefix";
+    @NonNls
+    public static final String QUEST_LOG_GIVER_PREFIX            = "com.minecolonies.coremod.item.questlog.gui.giver_prefix";
+    @NonNls
+    public static final String QUEST_LOG_COMPLETED_ONCE_TEXT     = "com.minecolonies.coremod.item.questlog.gui.completed";
+    @NonNls
+    public static final String QUEST_LOG_COMPLETED_MULTIPLE_TEXT = "com.minecolonies.coremod.item.questlog.gui.completed_multiple";
+    @NonNls
+    public static final String QUEST_LOG_TRACK_CITIZEN_TEXT      = "com.minecolonies.coremod.item.questlog.gui.track_citizen";
 }

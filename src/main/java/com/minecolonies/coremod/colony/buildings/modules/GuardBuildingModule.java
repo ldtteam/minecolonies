@@ -14,8 +14,6 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
-import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
@@ -87,9 +85,13 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
 
             for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
             {
-                if ((getJobEntry() == ModJobs.archer.get() && trainee.getJob() instanceof JobArcherTraining
-                      || getJobEntry() == ModJobs.knight.get() && trainee.getJob() instanceof JobCombatTraining)
-                           && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
+                if (trainee.getJob() == null)
+                {
+                    continue;
+                }
+                if ((getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
+                       || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()))
+                      && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());
                     trainingCitizen = trainee;

@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,4 +82,25 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @return the reputation.
      */
     double getReputation();
+
+    /**
+     * Get the list of available quests in the colony.
+     *
+     * @return the list of quest instances.
+     */
+    List<IQuestInstance> getAvailableQuests();
+
+    /**
+     * Get the list of in progress quests in the colony.
+     *
+     * @return the list of quest instances.
+     */
+    List<IQuestInstance> getInProgressQuests();
+
+    /**
+     * Get the list of completed quests in the colony.
+     *
+     * @return the list of quest templates, and how often they've been completed.
+     */
+    List<FinishedQuest> getFinishedQuests();
 }

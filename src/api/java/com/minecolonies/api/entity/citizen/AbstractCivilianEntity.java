@@ -3,25 +3,29 @@ package com.minecolonies.api.entity.citizen;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.sounds.SoundManager;
+import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.sounds.EventType.GREETING;
 import static com.minecolonies.api.sounds.EventType.SUCCESS;
 import static com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, IStuckHandlerEntity
+public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEntity implements Npc
 {
     /**
      * Whether this entity can be stuck for stuckhandling
@@ -39,11 +43,16 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     private SoundManager soundManager;
 
     /**
+     * Entity push cache.
+     */
+    private List<Entity> entityPushCache = new ArrayList<>();
+
+    /**
      * Create a new instance.
      * @param type from type.
      * @param worldIn the world.
      */
-    protected AbstractCivilianEntity(final EntityType<? extends AgeableMob> type, final Level worldIn)
+    protected AbstractCivilianEntity(final EntityType<? extends PathfinderMob> type, final Level worldIn)
     {
         super(type, worldIn);
         if (worldIn.isClientSide)
@@ -86,34 +95,46 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public abstract void setCitizenId(int id);
 
     @Override
-    public boolean canBeLeashed(Player player)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean canBeStuck()
-    {
-        return canBeStuck;
-    }
-
-    /**
-     * Sets whether the entity currently can be stuck
-     *
-     * @param canBeStuck
-     */
-    public void setCanBeStuck(final boolean canBeStuck)
-    {
-        this.canBeStuck = canBeStuck;
-    }
-
-    @Override
     public void tick()
     {
         super.tick();
         if (level.isClientSide)
         {
             soundManager.tick();
+        }
+    }
+
+    @Override
+    public boolean checkBedExists()
+    {
+        // todo make university its own synch message.
+        return this.getSleepingPos().map(pos-> {
+            BlockState state = this.level.getBlockState(pos);
+            return state.getBlock().isBed(state, this.level, pos, this);
+        }).orElse(false);
+    }
+
+    /**
+     * Ignores cramming
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (this.level.isClientSide())
+        {
+            this.level.getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntityUtils.pushableBy()).forEach(this::doPush);
+        }
+        else
+        {
+            if (this.tickCount % 5 == 0)
+            {
+                entityPushCache.clear();
+                entityPushCache = this.level.getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
+            }
+            for (Entity entity : entityPushCache)
+            {
+                this.doPush(entity);
+            }
         }
     }
 
@@ -151,27 +172,5 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public SoundManager getSoundManager()
     {
         return soundManager;
-    }
-
-    @Override
-    protected void removeFrost()
-    {
-
-    }
-
-    @Override
-    protected void tryAddFrost()
-    {
-
-    }
-
-    /**
-     * Prevent citizens and visitors from travelling to other dimensions through portals.
-     */
-    @Nullable
-    @Override
-    public Entity changeDimension(@NotNull final ServerLevel serverWorld, @NotNull final ITeleporter teleporter)
-    {
-        return null;
     }
 }

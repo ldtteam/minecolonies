@@ -55,7 +55,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> EmptyView::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
                                  .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                 .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.archer.get(), Skill.Agility, Skill.Adaptability, false, ISchematicProvider::getBuildingLevel), () -> ArcherSquireModuleView::new)
+                                 .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.archerInTraining.get(), Skill.Agility, Skill.Adaptability, false, ISchematicProvider::getBuildingLevel), () -> ArcherSquireModuleView::new)
                                  .addBuildingModuleProducer(BedHandlingModule::new)
                                  .createBuildingEntry());
 
@@ -149,7 +149,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingCombatAcademy::new)
                                        .setBuildingViewProducer(() -> EmptyView::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID))
-                                       .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.combat.get(), Skill.Adaptability, Skill.Stamina, false, ISchematicProvider::getBuildingLevel), () -> KnightSquireBuildingModuleView::new)
+                                       .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.knightInTraining.get(), Skill.Adaptability, Skill.Stamina, false, ISchematicProvider::getBuildingLevel), () -> KnightSquireBuildingModuleView::new)
                                        .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                        .addBuildingModuleProducer(BedHandlingModule::new)
                                        .createBuildingEntry());

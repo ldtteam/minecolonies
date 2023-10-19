@@ -83,15 +83,26 @@ public class CommandColonyPrintStats implements IMCOPCommand
             context.getSource().sendSuccess(literalAndRemember(last.toString()), false);
         }
 
-        context.getSource().sendSuccess(literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size()), false);
-        context.getSource()
-          .sendSuccess(literalAndRemember(colony.getBuildingManager()
-            .getBuildings()
-            .values()
-            .stream()
-            .map(building -> building.getSchematicName() + building.getBuildingLevel() + " pos:" + building.getPosition().toShortString())
-            .collect(
-              Collectors.joining("\n"))), false);
+        if (colony.getBuildingManager().getBuildings().size() > 0)
+        {
+            context.getSource()
+              .sendSuccess(literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size() + " average level:" + colony.getBuildingManager()
+                .getBuildings()
+                .values()
+                .stream()
+                .filter(iBuilding -> iBuilding.getBuildingLevel() != 0)
+                .collect(
+                  Collectors.summingInt(ibuilding -> ibuilding.getBuildingLevel() / colony.getBuildingManager().getBuildings().size()))), false);
+            context.getSource()
+              .sendSuccess(literalAndRemember(colony.getBuildingManager()
+                .getBuildings()
+                .values()
+                .stream()
+                .filter(iBuilding -> iBuilding.getBuildingLevel() != 0)
+                .map(building -> building.getSchematicName() + building.getBuildingLevel() + " pos:" + building.getPosition().toShortString())
+                .collect(
+                  Collectors.joining("\n"))), false);
+        }
 
         List<ResourceLocation> completed = ((LocalResearchTree) colony.getResearchManager().getResearchTree()).getCompletedList();
         context.getSource().sendSuccess(literalAndRemember("Reasearches completed count:" + completed.size()), false);

@@ -52,6 +52,7 @@ public class FMLEventHandler
         event.addListener(new CustomVisitorListener());
         event.addListener(new CitizenNameListener());
         event.addListener(new QuestJsonListener());
+        event.addListener(new ItemNbtListener());
     }
 
     @SubscribeEvent

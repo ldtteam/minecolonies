@@ -29,12 +29,12 @@ public class ItemStorage
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    private final boolean shouldIgnoreDamageValue;
+    protected final boolean shouldIgnoreDamageValue;
 
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    private final boolean shouldIgnoreNBTValue;
+    protected final boolean shouldIgnoreNBTValue;
 
     /**
      * The creative tab index of the storage.

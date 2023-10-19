@@ -256,4 +256,10 @@ public class Food implements IDeliverable
     {
         return TYPE_TOKENS;
     }
+
+    @Override
+    public boolean canBeResolvedByBuilding()
+    {
+        return false;
+    }
 }

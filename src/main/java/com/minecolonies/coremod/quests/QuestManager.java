@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.quests;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.quests.FinishedQuest;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestTemplate;
 import com.minecolonies.api.quests.IQuestManager;
@@ -38,6 +39,11 @@ public class QuestManager implements IQuestManager
      * Unlocked quest requirements.
      */
     private final List<ResourceLocation> unlockedQuests = new ArrayList<>();
+
+    /**
+     * Cached mapped results for the finished quests.
+     */
+    private List<FinishedQuest> finishedQuestsCache = null;
 
     /**
      * Quest reputation.
@@ -93,6 +99,8 @@ public class QuestManager implements IQuestManager
             availableQuests.remove(questId);
             finishedQuests.put(questId, finishedQuests.getOrDefault(questId, 0) + 1);
         }
+
+        finishedQuestsCache = null;
     }
 
     @Override
@@ -260,6 +268,7 @@ public class QuestManager implements IQuestManager
         {
             this.finishedQuests.put(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)), ((CompoundTag) element).getInt(TAG_QUANTITY));
         }
+        finishedQuestsCache = null;
 
         this.unlockedQuests.clear();
         final ListTag unlockedListTag = nbt.getList(TAG_UNLOCKED, Tag.TAG_COMPOUND);
@@ -268,5 +277,33 @@ public class QuestManager implements IQuestManager
             this.unlockedQuests.add(new ResourceLocation(((CompoundTag) element).getString(TAG_ID)));
         }
         this.questReputation = nbt.getDouble(TAG_REPUTATION);
+    }
+
+    @Override
+    public List<IQuestInstance> getAvailableQuests()
+    {
+        return new ArrayList<>(availableQuests.values());
+    }
+
+    @Override
+    public List<IQuestInstance> getInProgressQuests()
+    {
+        return new ArrayList<>(inProgressQuests.values());
+    }
+
+    @Override
+    public List<FinishedQuest> getFinishedQuests()
+    {
+        if (finishedQuestsCache == null)
+        {
+            List<FinishedQuest> data = new ArrayList<>();
+            for (Map.Entry<ResourceLocation, Integer> entry : finishedQuests.entrySet())
+            {
+                IQuestTemplate template = GLOBAL_SERVER_QUESTS.get(entry.getKey());
+                data.add(new FinishedQuest(template, entry.getValue()));
+            }
+            finishedQuestsCache = Collections.unmodifiableList(data);
+        }
+        return finishedQuestsCache;
     }
 }
