@@ -13,8 +13,11 @@
       "level": 1
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:diamond"
+        "items": [
+          "minecraft:diamond"
+        ]
       },
       "quantity": 8
     }

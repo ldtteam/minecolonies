@@ -13,8 +13,11 @@
       "level": 4
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:golden_carrot"
+        "items": [
+          "minecraft:golden_carrot"
+        ]
       },
       "quantity": 16
     }

@@ -13,8 +13,11 @@
       "level": 1
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:paper"
+        "items": [
+          "minecraft:paper"
+        ]
       },
       "quantity": 32
     }

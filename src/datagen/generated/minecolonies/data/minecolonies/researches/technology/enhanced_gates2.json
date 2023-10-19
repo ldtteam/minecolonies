@@ -9,20 +9,29 @@
   "parentResearch": "minecolonies:technology/enhanced_gates1",
   "requirements": [
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecolonies:gate_iron"
+        "items": [
+          "minecolonies:gate_iron"
+        ]
       },
       "quantity": 64
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecolonies:ancienttome"
+        "items": [
+          "minecolonies:ancienttome"
+        ]
       },
       "quantity": 2
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:obsidian"
+        "items": [
+          "minecraft:obsidian"
+        ]
       },
       "quantity": 32
     }

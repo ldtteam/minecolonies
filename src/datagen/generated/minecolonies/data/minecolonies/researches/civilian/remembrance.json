@@ -12,8 +12,11 @@
       "level": 2
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:bone"
+        "items": [
+          "minecraft:bone"
+        ]
       },
       "quantity": 8
     }

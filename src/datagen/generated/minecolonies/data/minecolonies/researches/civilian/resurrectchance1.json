@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:ghast_tear"
+        "items": [
+          "minecraft:ghast_tear"
+        ]
       },
       "quantity": 1
     }

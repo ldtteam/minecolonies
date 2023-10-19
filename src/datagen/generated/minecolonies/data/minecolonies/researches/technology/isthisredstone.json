@@ -9,8 +9,11 @@
   "parentResearch": "minecolonies:technology/hot",
   "requirements": [
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:redstone"
+        "items": [
+          "minecraft:redstone"
+        ]
       },
       "quantity": 128
     }

@@ -13,8 +13,11 @@
       "level": 10
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:flint"
+        "items": [
+          "minecraft:flint"
+        ]
       },
       "quantity": 64
     }

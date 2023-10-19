@@ -8,14 +8,20 @@
   "icon": "minecraft:leather_boots",
   "requirements": [
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:white_wool"
+        "items": [
+          "minecraft:white_wool"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:feather"
+        "items": [
+          "minecraft:feather"
+        ]
       },
       "quantity": 16
     }

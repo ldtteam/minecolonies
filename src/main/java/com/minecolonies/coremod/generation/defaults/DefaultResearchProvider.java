@@ -9,6 +9,7 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -1761,34 +1762,34 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Veinminer")
                                      .setIcon(Items.IRON_BLOCK)
                                      .addBuildingRequirement(ModBuildings.MINER_ID, 1)
-                                     .addItemCost(Items.IRON_ORE, 32)
+                                     .addItemCost(ItemTags.IRON_ORES, 32)
                                      .addEffect(MORE_ORES, 1)
                                      .addToList(r);
         final Research goodVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/goodveins"), TECH).setParentResearch(veinminer)
                                      .setTranslatedName("Good Veins")
                                      .setIcon(Items.COAL_BLOCK)
                                      .addBuildingRequirement(ModBuildings.MINER_ID, 2)
-                                     .addItemCost(Items.IRON_ORE, 64)
+                                     .addItemCost(ItemTags.IRON_ORES, 64)
                                      .addEffect(MORE_ORES, 2)
                                      .addToList(r);
         final Research richVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/richveins"), TECH).setParentResearch(goodVeins)
                                      .setTranslatedName("Rich Veins")
                                      .setIcon(Items.GOLD_BLOCK)
                                      .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
-                                     .addItemCost(Items.GOLD_ORE, 32)
+                                     .addItemCost(ItemTags.GOLD_ORES, 32)
                                      .addEffect(MORE_ORES, 3)
                                      .addToList(r);
         final Research amazingVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/amazingveins"), TECH).setParentResearch(richVeins)
                                         .setTranslatedName("Amazing Veins")
                                         .setIcon(Items.LAPIS_BLOCK)
                                         .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 5)
-                                        .addItemCost(Items.GOLD_ORE, 64)
+                                        .addItemCost(ItemTags.GOLD_ORES, 64)
                                         .addEffect(MORE_ORES, 4)
                                         .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/motherlode"), TECH).setParentResearch(amazingVeins)
           .setTranslatedName("Motherlode")
           .setIcon(Items.DIAMOND_BLOCK)
-          .addItemCost(Ingredient.of(Items.DIAMOND_ORE, Items.DEEPSLATE_DIAMOND_ORE), 64)
+          .addItemCost(ItemTags.DIAMOND_ORES, 64)
           .addEffect(MORE_ORES, 5)
           .addToList(r);
 

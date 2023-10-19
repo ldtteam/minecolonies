@@ -17,14 +17,20 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:crimson_fungus"
+        "items": [
+          "minecraft:crimson_fungus"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:warped_fungus"
+        "items": [
+          "minecraft:warped_fungus"
+        ]
       },
       "quantity": 16
     }

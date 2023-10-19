@@ -12,20 +12,29 @@
       "level": 1
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:rotten_flesh"
+        "items": [
+          "minecraft:rotten_flesh"
+        ]
       },
       "quantity": 8
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:bone"
+        "items": [
+          "minecraft:bone"
+        ]
       },
       "quantity": 8
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:spider_eye"
+        "items": [
+          "minecraft:spider_eye"
+        ]
       },
       "quantity": 8
     }

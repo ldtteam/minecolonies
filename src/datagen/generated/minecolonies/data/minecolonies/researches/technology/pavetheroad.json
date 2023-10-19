@@ -13,8 +13,11 @@
       "level": 1
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:white_concrete"
+        "items": [
+          "minecraft:white_concrete"
+        ]
       },
       "quantity": 32
     }

@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:diamond_axe"
+        "items": [
+          "minecraft:diamond_axe"
+        ]
       },
       "quantity": 1
     }

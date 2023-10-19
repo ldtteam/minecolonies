@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecolonies:compost"
+        "items": [
+          "minecolonies:compost"
+        ]
       },
       "quantity": 64
     }

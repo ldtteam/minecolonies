@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:wheat_seeds"
+        "items": [
+          "minecraft:wheat_seeds"
+        ]
       },
       "quantity": 64
     }

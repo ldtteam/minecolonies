@@ -12,8 +12,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:oak_planks"
+        "items": [
+          "minecraft:oak_planks"
+        ]
       },
       "quantity": 64
     }

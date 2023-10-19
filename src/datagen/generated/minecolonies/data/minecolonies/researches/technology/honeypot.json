@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:beehive"
+        "items": [
+          "minecraft:beehive"
+        ]
       },
       "quantity": 16
     }

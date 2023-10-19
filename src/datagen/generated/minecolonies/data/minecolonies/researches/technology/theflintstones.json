@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:stone_bricks"
+        "items": [
+          "minecraft:stone_bricks"
+        ]
       },
       "quantity": 64
     }

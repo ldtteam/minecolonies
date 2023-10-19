@@ -13,8 +13,11 @@
       "level": 4
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:cooked_beef"
+        "items": [
+          "minecraft:cooked_beef"
+        ]
       },
       "quantity": 64
     }

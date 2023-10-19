@@ -12,8 +12,11 @@
       "level": 2
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:lava_bucket"
+        "items": [
+          "minecraft:lava_bucket"
+        ]
       },
       "quantity": 4
     }

@@ -13,20 +13,29 @@
       "level": 2
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:bamboo"
+        "items": [
+          "minecraft:bamboo"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:cocoa_beans"
+        "items": [
+          "minecraft:cocoa_beans"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:vine"
+        "items": [
+          "minecraft:vine"
+        ]
       },
       "quantity": 16
     }

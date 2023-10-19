@@ -8,6 +8,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.blockui.RotatingItemIcon;
 import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
@@ -22,6 +24,7 @@ import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -668,19 +671,20 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
-            for(final ItemStorage is : research.getCostList())
+            for (final IResearchCost cost : research.getCostList())
             {
+                final Component items =
+                  ComponentUtils.formatList(cost.getItems().stream().map(Item::getDescription).toList(), Component.literal(" / "));
                 hoverPaneBuilder.paragraphBreak()
                   .append(Component.literal(" - "))
-                  .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getDescription()));
-                if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-                  stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount()))
+                  .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", cost.getCount(), items));
+                if (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())))
                 {
-                    hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
+                    hoverPaneBuilder.color(COLOR_TEXT_FULFILLED);
                 }
                 else
                 {
-                    hoverPaneBuilder.color(COLOR_TEXT_FULFILLED);
+                    hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
                 }
             }
             if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.UNLOCKABLES)
@@ -868,7 +872,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         final List<AlternateBuildingResearchRequirement> alternateBuildingRequirements = new ArrayList<>();
         final List<BuildingResearchRequirement> buildingRequirements = new ArrayList<>();
-        final List<ItemStorage> itemRequirements = research.getCostList();
+        final List<IResearchCost> itemRequirements = research.getCostList();
 
         research.getResearchRequirement().forEach(requirement -> {
             // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
@@ -961,27 +965,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
 
         storageXOffset = COST_OFFSET;
-        for (final ItemStorage storage : itemRequirements)
+        for (final IResearchCost cost : itemRequirements)
         {
-            // This must be a copy, to avoid potential serialization issues with large item stack counts.
-            final ItemStack is = storage.getItemStack().copy();
-            is.setCount(storage.getAmount());
-            final ItemIcon icon = new ItemIcon();
-            icon.setItem(is);
+            final RotatingItemIcon icon = new RotatingItemIcon();
             icon.setPosition(offsetX + RESEARCH_WIDTH - storageXOffset - INITIAL_X_OFFSET, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
             icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+            icon.setItems(cost.getItems().stream().map(ItemStack::new).map(stack -> {
+                stack.setCount(cost.getCount());
+                return stack;
+            }).toList());
             view.addChild(icon);
-            if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-              stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(storage.getItemStack())) < storage.getAmount()))
-            {
-                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(Component.translatable("com.minecolonies.coremod.research.limit.requirement",
-                  storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_UNFULFILLED).build();
-            }
-            else
-            {
-                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(Component.translatable("com.minecolonies.coremod.research.limit.requirement",
-                  storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_FULFILLED).build();
-            }
             storageXOffset += COST_OFFSET;
         }
     }

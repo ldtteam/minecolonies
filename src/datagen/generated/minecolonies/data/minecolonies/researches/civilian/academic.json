@@ -9,8 +9,11 @@
   "parentResearch": "minecolonies:civilian/reflective",
   "requirements": [
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:book"
+        "items": [
+          "minecraft:book"
+        ]
       },
       "quantity": 128
     }

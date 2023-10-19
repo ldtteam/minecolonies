@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:shield"
+        "items": [
+          "minecraft:shield"
+        ]
       },
       "quantity": 4
     }
