@@ -3,13 +3,13 @@ package com.minecolonies.coremod.research;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.client.Minecraft;
@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;
 
@@ -90,12 +91,22 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The property name for items.
      */
-    private static final String RESEARCH_ITEM_NAME_PROP = "item";
+    public static final String RESEARCH_ITEM_NAME_PROP = "item";
+
+    /**
+     * The property name for items list.
+     */
+    public static final String RESEARCH_ITEM_LIST_PROP = "items";
+
+    /**
+     * The property name for item tags.
+     */
+    public static final String RESEARCH_ITEM_TAG_PROP = "tag";
 
     /**
      * The property name for a quantity.
      */
-    private static final String RESEARCH_QUANTITY_PROP = "quantity";
+    public static final String RESEARCH_QUANTITY_PROP = "quantity";
 
     /**
      * The property name for a non-university building requirement.
@@ -149,7 +160,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The costList of the research.
      */
-    private final List<ItemStorage> costList = new ArrayList<>();
+    private final List<IResearchCost> costList = new ArrayList<>();
 
     /**
      * The id of the parent research which has to be completed first.
@@ -369,11 +380,20 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasEnoughResources(final IItemHandler inventory)
     {
-        for (final ItemStorage cost : costList)
+        if (costList.isEmpty())
         {
-            final int count = InventoryUtils.getItemCountInItemHandler(inventory,
-              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
-            if (count < cost.getAmount())
+            return true;
+        }
+
+        for (final IResearchCost ingredient : costList)
+        {
+            int totalCount = 0;
+            for (final Item cost : ingredient.getItems())
+            {
+                final int count = InventoryUtils.getItemCountInItemHandler(inventory, stack -> stack.getItem().equals(cost));
+                totalCount += count;
+            }
+            if (totalCount < ingredient.getCount())
             {
                 return false;
             }
@@ -382,7 +402,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public List<ItemStorage> getCostList()
+    public List<IResearchCost> getCostList()
     {
         return ImmutableList.copyOf(costList);
     }
@@ -508,7 +528,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void addCost(final ItemStorage cost)
+    public void addCost(final IResearchCost cost)
     {
         costList.add(cost);
     }
@@ -680,9 +700,10 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     /**
-     * Parse the Icon.  Returns an empty item stack if the string is invalid.
-     * @param icon                The unvalidated string representing an icon's resource location or texture file location.
-     * @return                    The ItemStack for a given string representation, if a valid item is registered, or ItemStack.Empty if invalid.
+     * Parse the Icon. Returns an empty item stack if the string is invalid.
+     *
+     * @param icon The unvalidated string representing an icon's resource location or texture file location.
+     * @return The ItemStack for a given string representation, if a valid item is registered, or ItemStack.Empty if invalid.
      */
     private ItemStack parseIconItemStacks(final String icon)
     {
@@ -724,7 +745,7 @@ public class GlobalResearch implements IGlobalResearch
             outputString[1] = iconParts[1];
         }
         final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(outputString[0], outputString[1]));
-        if(item.equals(Items.AIR))
+        if (item.equals(Items.AIR))
         {
             return ItemStack.EMPTY;
         }
@@ -783,7 +804,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * Gets the Research Building, Item, and Research requirements, and if present and valid, assigns them in the GlobalResearch.
      *
-     * @param researchJson        A json object to evaluate for requirements properties.
+     * @param researchJson A json object to evaluate for requirements properties.
      */
     private void parseRequirements(final JsonObject researchJson)
     {
@@ -791,73 +812,80 @@ public class GlobalResearch implements IGlobalResearch
         {
             for (final JsonElement reqArrayElement : researchJson.get(RESEARCH_REQUIREMENTS_PROP).getAsJsonArray())
             {
-                // ItemRequirements.  If no count, assumes 1x.
-                if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP) &&
-                     reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
+                if (!reqArrayElement.isJsonObject())
                 {
-                    final ItemStack itemStack = ItemStackUtils.idToItemStack(reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString());
-                    final ItemStorage itemStorage = new ItemStorage(itemStack, false, !ItemStackUtils.hasTag(itemStack));
-                    if(reqArrayElement.getAsJsonObject().has(RESEARCH_QUANTITY_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).isJsonPrimitive()
-                         && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
-                    {
-                        itemStorage.setAmount(reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsNumber().intValue());
-                    }
-                    this.costList.add(itemStorage);
-                }
-                // Building Requirements.  If no level, assume 1x.
-                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_PROP) &&
-                          reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsJsonPrimitive().isString())
-                {
-                    final int level;
-                    if(reqArrayElement.getAsJsonObject().has(RESEARCH_LEVEL_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).isJsonPrimitive()
-                         && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsJsonPrimitive().isNumber())
-                    {
-                        level = reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsNumber().intValue();
-                    }
-                    else
-                    {
-                        level = 1;
-                    }
-                    this.requirements.add(new BuildingResearchRequirement(level, reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsString(), false));
+                    continue;
                 }
 
+                final JsonObject rootObject = reqArrayElement.getAsJsonObject();
+
+                // ItemRequirements. If no count, assumes 1x.
+                if (IMinecoloniesAPI.getInstance().getResearchCostRegistry().getEntries().stream().anyMatch(entry -> entry.getValue().hasCorrectJsonFields(rootObject)))
+                {
+                    final Optional<IResearchCost> cost = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getEntries().stream()
+                                                           .filter(entry -> entry.getValue().hasCorrectJsonFields(rootObject))
+                                                           .map(entry -> entry.getValue().parseFromJson(rootObject))
+                                                           .findFirst();
+                    cost.ifPresent(this.costList::add);
+                }
+                // Building Requirements. If no level, assume 1x.
+                else if (rootObject.has(RESEARCH_REQUIRED_BUILDING_PROP)
+                           && rootObject.get(RESEARCH_REQUIRED_BUILDING_PROP).isJsonPrimitive()
+                           && rootObject.get(RESEARCH_REQUIRED_BUILDING_PROP).getAsJsonPrimitive().isString())
+                {
+                    int level = 1;
+                    if (rootObject.has(RESEARCH_LEVEL_PROP) && rootObject.get(RESEARCH_LEVEL_PROP).isJsonPrimitive() && rootObject.get(RESEARCH_LEVEL_PROP)
+                                                                                                                          .getAsJsonPrimitive()
+                                                                                                                          .isNumber())
+                    {
+                        level = rootObject.get(RESEARCH_LEVEL_PROP).getAsNumber().intValue();
+                    }
+                    this.requirements.add(new BuildingResearchRequirement(level, rootObject.get(RESEARCH_REQUIRED_BUILDING_PROP).getAsString(), false));
+                }
                 // Research Requirements.
-                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_RESEARCH_PROP) &&
-                          reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
+                else if (rootObject.has(RESEARCH_REQUIRED_RESEARCH_PROP)
+                           && rootObject.get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive()
+                           && rootObject.get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
                 {
-                    if (reqArrayElement.getAsJsonObject().has(RESEARCH_NAME_PROP) &&
-                      reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
+                    if (rootObject.has(RESEARCH_NAME_PROP) && rootObject.get(RESEARCH_NAME_PROP).isJsonPrimitive() && rootObject
+                                                                                                                        .get(RESEARCH_NAME_PROP)
+                                                                                                                        .getAsJsonPrimitive()
+                                                                                                                        .isString())
                     {
-                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString()),
-                          Component.translatable(reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsString())));
+                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(rootObject
+                                                                                                     .get(RESEARCH_REQUIRED_RESEARCH_PROP)
+                                                                                                     .getAsString()),
+                          Component.translatable(rootObject.get(RESEARCH_NAME_PROP).getAsString())));
                     }
                     else
                     {
-                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString())));
+                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(rootObject.get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString())));
                     }
                 }
-
                 // Alternate Building Requirements.  Requires at least one building type at a specific level out of all Alternate Buildings.
                 // Only supports one group of alternates for a given research, for now:
                 // House:4 OR Fisher:2 OR TownHall:1 OR Mine:3 is supported.
                 // House:4 OR Fisher:2 AND TownHall:1 OR Mine:3 is not.
-                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_ALTERNATE_BUILDING_PROP) &&
-                          reqArrayElement.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsJsonPrimitive().isString())
+                else if (rootObject.has(RESEARCH_ALTERNATE_BUILDING_PROP)
+                           && rootObject.get(RESEARCH_ALTERNATE_BUILDING_PROP).isJsonPrimitive()
+                           && rootObject.get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsJsonPrimitive().isString())
                 {
-                    parseAndAssignAlternateBuildingRequirement(reqArrayElement.getAsJsonObject());
+                    parseAndAssignAlternateBuildingRequirement(rootObject);
                 }
-
                 // Mandatory Building Requirements.  Requires that the colony have one building of at least the required level.
-                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_MANDATORY_BUILDING_PROP) &&
-                          reqArrayElement.getAsJsonObject().get(RESEARCH_MANDATORY_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_MANDATORY_BUILDING_PROP).getAsJsonPrimitive().isString() &&
-                          reqArrayElement.getAsJsonObject().has(RESEARCH_LEVEL_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsJsonPrimitive().isNumber())
+                else if (rootObject.has(RESEARCH_MANDATORY_BUILDING_PROP)
+                           && rootObject.get(RESEARCH_MANDATORY_BUILDING_PROP).isJsonPrimitive()
+                           && rootObject.get(RESEARCH_MANDATORY_BUILDING_PROP).getAsJsonPrimitive().isString()
+                           && rootObject.has(RESEARCH_LEVEL_PROP) && rootObject.get(RESEARCH_LEVEL_PROP).isJsonPrimitive()
+                           && rootObject.get(RESEARCH_LEVEL_PROP).getAsJsonPrimitive().isNumber())
                 {
-                    this.requirements.add(new BuildingResearchRequirement(reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsNumber().intValue(), reqArrayElement.getAsJsonObject().get(RESEARCH_MANDATORY_BUILDING_PROP).getAsString(), true));
+                    this.requirements.add(new BuildingResearchRequirement(rootObject.get(RESEARCH_LEVEL_PROP).getAsNumber().intValue(),
+                      rootObject.get(RESEARCH_MANDATORY_BUILDING_PROP).getAsString(),
+                      true));
                 }
-
                 else
                 {
-                    Log.getLogger().warn("Invalid Research Requirement formatting for " + this.branch + "/" + this.id);
+                    Log.getLogger().warn("Invalid Research Requirement formatting for {}/{}", this.branch, this.id);
                 }
             }
         }

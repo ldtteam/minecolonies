@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.*;
@@ -161,17 +163,20 @@ public class LocalResearchTree implements ILocalResearchTree
                 }
             }
             // We know the player has the items, so now we can remove them safely.
-            for (ItemStorage cost : research.getCostList())
+            for (IResearchCost cost : research.getCostList())
             {
-                final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv,
-                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
-                int amount = cost.getAmount();
-                for (Integer slotNum : slotsWithMaterial)
+                int toRemoveLeft = cost.getCount();
+
+                for (Item item : cost.getItems())
                 {
-                    amount = amount - playerInv.extractItem(slotNum, amount, false).getCount();
-                    if (amount <= 0)
+                    final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv, stack -> stack.getItem().equals(item));
+                    for (Integer slotNum : slotsWithMaterial)
                     {
-                        break;
+                        toRemoveLeft = toRemoveLeft - playerInv.extractItem(slotNum, toRemoveLeft, false).getCount();
+                        if (toRemoveLeft <= 0)
+                        {
+                            break;
+                        }
                     }
                 }
             }

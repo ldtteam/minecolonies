@@ -13,8 +13,11 @@
       "level": 5
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:bow"
+        "items": [
+          "minecraft:bow"
+        ]
       },
       "quantity": 18
     }

@@ -13,8 +13,11 @@
       "level": 5
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:chorus_fruit"
+        "items": [
+          "minecraft:chorus_fruit"
+        ]
       },
       "quantity": 16
     }

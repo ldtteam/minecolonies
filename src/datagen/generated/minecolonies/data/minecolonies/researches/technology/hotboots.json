@@ -13,14 +13,20 @@
       "level": 1
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:leather"
+        "items": [
+          "minecraft:leather"
+        ]
       },
       "quantity": 32
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:iron_ingot"
+        "items": [
+          "minecraft:iron_ingot"
+        ]
       },
       "quantity": 16
     }

@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:rabbit_foot"
+        "items": [
+          "minecraft:rabbit_foot"
+        ]
       },
       "quantity": 1
     }

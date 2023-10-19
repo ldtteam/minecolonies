@@ -1,11 +1,10 @@
 package com.minecolonies.api.research;
 
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +45,7 @@ public interface IGlobalResearch
      *
      * @return the list.
      */
-    List<ItemStorage> getCostList();
+    List<IResearchCost> getCostList();
 
     /**
      * Start the research.
@@ -55,7 +54,7 @@ public interface IGlobalResearch
     void startResearch(@NotNull final ILocalResearchTree localResearchTree);
 
     /**
-     * Human readable description of research, in human-readable text or as a translation key.
+     * Human-readable description of research, in human-readable text or as a translation key.
      * @return the description.
      */
     TranslatableContents getName();
@@ -178,9 +177,9 @@ public interface IGlobalResearch
 
     /**
      * Add an individual cost.
-     * @param cost the individual item to add to the cost list, as an ItemStorage.
+     * @param cost the individual item to add to the cost list, as a reseach cost instance.
      */
-    void addCost(final ItemStorage cost);
+    void addCost(final IResearchCost cost);
 
     /**
      * Add an individual effect.

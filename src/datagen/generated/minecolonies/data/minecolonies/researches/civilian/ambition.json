@@ -8,8 +8,11 @@
   "icon": "minecolonies:blockhutmysticalsite",
   "requirements": [
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:diamond"
+        "items": [
+          "minecraft:diamond"
+        ]
       },
       "quantity": 1
     }

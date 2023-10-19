@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:vine"
+        "items": [
+          "minecraft:vine"
+        ]
       },
       "quantity": 64
     }

@@ -13,8 +13,9 @@
       "level": 2
     },
     {
+      "type": "minecolonies:item_tag",
       "item": {
-        "item": "minecraft:iron_ore"
+        "tag": "minecraft:iron_ores"
       },
       "quantity": 64
     }

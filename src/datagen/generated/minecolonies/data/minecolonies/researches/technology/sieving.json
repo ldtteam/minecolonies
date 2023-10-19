@@ -13,8 +13,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:string"
+        "items": [
+          "minecraft:string"
+        ]
       },
       "quantity": 64
     }

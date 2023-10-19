@@ -13,20 +13,29 @@
       "level": 2
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:kelp"
+        "items": [
+          "minecraft:kelp"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:seagrass"
+        "items": [
+          "minecraft:seagrass"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:sea_pickle"
+        "items": [
+          "minecraft:sea_pickle"
+        ]
       },
       "quantity": 16
     }

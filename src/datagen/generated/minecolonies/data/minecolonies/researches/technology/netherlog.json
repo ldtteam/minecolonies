@@ -9,14 +9,20 @@
   "parentResearch": "minecolonies:technology/opennether",
   "requirements": [
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:ender_eye"
+        "items": [
+          "minecraft:ender_eye"
+        ]
       },
       "quantity": 16
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecolonies:ancienttome"
+        "items": [
+          "minecolonies:ancienttome"
+        ]
       },
       "quantity": 1
     },

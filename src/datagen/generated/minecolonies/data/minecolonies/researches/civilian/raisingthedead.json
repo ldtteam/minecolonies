@@ -13,8 +13,11 @@
       "level": 5
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:totem_of_undying"
+        "items": [
+          "minecraft:totem_of_undying"
+        ]
       },
       "quantity": 1
     }

@@ -13,8 +13,11 @@
       "level": 4
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:iron_ingot"
+        "items": [
+          "minecraft:iron_ingot"
+        ]
       },
       "quantity": 32
     }

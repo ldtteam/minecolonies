@@ -12,8 +12,11 @@
       "level": 3
     },
     {
+      "type": "minecolonies:item_list",
       "item": {
-        "item": "minecraft:anvil"
+        "items": [
+          "minecraft:anvil"
+        ]
       },
       "quantity": 1
     }
