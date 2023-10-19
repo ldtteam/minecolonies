@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -93,14 +94,26 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestPlaceObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
-        return new BlockPlacementProgressInstance();
+        return createObjectiveInstance();
     }
 
-    @Nullable
     @Override
-    public IObjectiveInstance createObjectiveInstance()
+    public Component getProgressText(final IQuestInstance quest, final Style style)
     {
-        return new BlockPlacementProgressInstance();
+        if (quest.getCurrentObjectiveInstance() instanceof BlockPlacementProgressInstance progress)
+        {
+            return Component.translatable("com.minecolonies.coremod.questobjectives.placeblock.progress",
+              progress.currentProgress,
+              blockToPlace,
+              blockToPlace.getName().setStyle(style));
+        }
+        return Component.empty();
+    }
+
+    @Override
+    public @Nullable IObjectiveInstance createObjectiveInstance()
+    {
+        return new BlockPlacementProgressInstance(this);
     }
 
     @Override
@@ -152,14 +165,24 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     /**
      * Progress data of this objective.
      */
-    public class BlockPlacementProgressInstance implements IObjectiveInstance
+    private static class BlockPlacementProgressInstance implements IObjectiveInstance
     {
+        /**
+         * The template belonging to this progress instance.
+         */
+        private final PlaceBlockObjectiveTemplate template;
+
         private int currentProgress = 0;
+
+        public BlockPlacementProgressInstance(final PlaceBlockObjectiveTemplate template)
+        {
+            this.template = template;
+        }
 
         @Override
         public boolean isFulfilled()
         {
-            return currentProgress >= qty;
+            return currentProgress >= template.qty;
         }
 
         @Override
@@ -173,7 +196,7 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         @Override
         public int getMissingQuantity()
         {
-            return qty > currentProgress ? qty - currentProgress : 0;
+            return template.qty > currentProgress ? template.qty - currentProgress : 0;
         }
 
         @Override

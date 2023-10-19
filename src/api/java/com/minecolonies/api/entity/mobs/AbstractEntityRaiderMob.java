@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.citizen.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTable;
@@ -54,7 +55,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all raider entities.
  */
-public abstract class AbstractEntityRaiderMob extends Mob implements IStuckHandlerEntity, IThreatTableEntity, Enemy
+public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {
     /**
      * Difficulty at which raiders team up
@@ -150,11 +151,6 @@ public abstract class AbstractEntityRaiderMob extends Mob implements IStuckHandl
      * Counts entity collisions
      */
     private int collisionCounter = 0;
-
-    /**
-     * Whether the entity is possibly stuck
-     */
-    private boolean canBeStuck = true;
 
     /**
      * The collision threshold
@@ -736,22 +732,6 @@ public abstract class AbstractEntityRaiderMob extends Mob implements IStuckHandl
         return difficulty;
     }
 
-    @Override
-    public boolean canBeStuck()
-    {
-        return canBeStuck;
-    }
-
-    /**
-     * Sets whether the entity currently could be stuck
-     *
-     * @param canBeStuck true if its possible to be stuck
-     */
-    public void setCanBeStuck(final boolean canBeStuck)
-    {
-        this.canBeStuck = canBeStuck;
-    }
-
     /**
      * Disallow pushing from fluids to prevent stuck
      *
@@ -760,16 +740,6 @@ public abstract class AbstractEntityRaiderMob extends Mob implements IStuckHandl
     public boolean isPushedByFluid()
     {
         return false;
-    }
-
-    /**
-     * Do not allow bubble movement
-     *
-     * @param down
-     */
-    public void onInsideBubbleColumn(boolean down)
-    {
-
     }
 
     @Override

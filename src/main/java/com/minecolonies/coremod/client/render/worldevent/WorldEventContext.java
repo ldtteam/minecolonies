@@ -27,15 +27,15 @@ public class WorldEventContext
         // singleton
     }
 
-    RenderLevelStageEvent stageEvent;
-    BufferSource bufferSource;
-    PoseStack poseStack;
-    float partialTicks;
-    ClientLevel clientLevel;
-    LocalPlayer clientPlayer;
-    ItemStack mainHandItem;
+    public RenderLevelStageEvent stageEvent;
+    public BufferSource bufferSource;
+    public PoseStack poseStack;
+    public float partialTicks;
+    public ClientLevel clientLevel;
+    public LocalPlayer clientPlayer;
+    public ItemStack mainHandItem;
     @Nullable
-    IColonyView nearestColony;
+    public IColonyView nearestColony;
 
     /**
      * In chunks

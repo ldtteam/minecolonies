@@ -945,6 +945,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
+        colony.getBuildingManager().onBuildingUpgradeComplete(this, newLevel);
     }
 
     @Override

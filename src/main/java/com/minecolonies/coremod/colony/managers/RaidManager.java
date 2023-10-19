@@ -224,7 +224,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips)
     {
-        this.raidTonight = true;
+        this.raidTonight = willRaid;
         this.nextForcedType = raidType;
         this.allowShips = allowShips;
     }
@@ -928,6 +928,15 @@ public class RaidManager implements IRaiderManager
         }
 
         return raidHistories.get(raidHistories.size() - 1);
+    }
+
+    /**
+     * Gets all raid histories
+     * @return
+     */
+    public List<RaidHistory> getAllRaids()
+    {
+        return new ArrayList<>(raidHistories);
     }
 
     /**
