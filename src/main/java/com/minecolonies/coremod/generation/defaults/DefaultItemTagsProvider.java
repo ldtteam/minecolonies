@@ -57,24 +57,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL);
         tag(ModTags.compostables_rich).add(Items.PODZOL, ModBlocks.blockCompostedDirt.asItem());
 
-        tag(ModTags.concretePowder)
-          .add(Items.WHITE_CONCRETE_POWDER)
-          .add(Items.ORANGE_CONCRETE_POWDER)
-          .add(Items.MAGENTA_CONCRETE_POWDER)
-          .add(Items.LIGHT_BLUE_CONCRETE_POWDER)
-          .add(Items.YELLOW_CONCRETE_POWDER)
-          .add(Items.LIME_CONCRETE_POWDER)
-          .add(Items.PINK_CONCRETE_POWDER)
-          .add(Items.GRAY_CONCRETE_POWDER)
-          .add(Items.LIGHT_GRAY_CONCRETE_POWDER)
-          .add(Items.CYAN_CONCRETE_POWDER)
-          .add(Items.PURPLE_CONCRETE_POWDER)
-          .add(Items.BLUE_CONCRETE_POWDER)
-          .add(Items.BROWN_CONCRETE_POWDER)
-          .add(Items.GREEN_CONCRETE_POWDER)
-          .add(Items.RED_CONCRETE_POWDER)
-          .add(Items.BLACK_CONCRETE_POWDER);
-
         copy(ModTags.concreteBlocks, ModTags.concreteItems);
         copy(ModTags.concretePowderBlocks, ModTags.concretePowderItems);
 

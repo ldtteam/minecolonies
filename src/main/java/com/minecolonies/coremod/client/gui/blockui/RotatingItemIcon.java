@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui.blockui;
 
+import com.ldtteam.blockui.BOGuiGraphics;
 import com.ldtteam.blockui.controls.ItemIcon;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +74,7 @@ public class RotatingItemIcon extends ItemIcon
     }
 
     @Override
-    public void drawSelf(final PoseStack ms, final double mx, final double my)
+    public void drawSelf(final BOGuiGraphics ms, final double mx, final double my)
     {
         long currentMillis = System.currentTimeMillis();
         if ((currentMillis - this.lastUpdateMillis) >= this.duration)
