@@ -77,7 +77,7 @@ public class ProviderHandler implements IProviderHandler
     @VisibleForTesting
     void removeProviderInternal(final IToken<?> token)
     {
-        manager.getLogger().info(String.format("Removing provider: %s", token));
+        manager.log(String.format("Removing provider: %s", token));
 
         //Get the resolvers that are being removed.
         final Collection<IToken<?>> assignedResolvers = getRegisteredResolvers(token);
@@ -87,7 +87,7 @@ public class ProviderHandler implements IProviderHandler
         //Removing the data from the maps.
         manager.getProviderResolverAssignmentDataStore().getAssignments().remove(token);
         manager.getColony().markDirty();
-        manager.getLogger().debug(String.format("Removed provider: %s", token));
+        manager.log(String.format("Removed provider: %s", token));
     }
 
     /**

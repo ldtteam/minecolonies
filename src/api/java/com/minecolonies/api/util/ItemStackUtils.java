@@ -716,18 +716,13 @@ public final class ItemStackUtils
     }
 
     /**
-     * get the size of the stack. This is for compatibility between 1.10 and 1.11
+     * get the size of the stac
      *
      * @param stack to get the size from
      * @return the size of the stack
      */
     public static int getSize(@NotNull final ItemStack stack)
     {
-        if (ItemStackUtils.isEmpty(stack))
-        {
-            return 0;
-        }
-
         return stack.getCount();
     }
 

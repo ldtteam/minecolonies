@@ -347,7 +347,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final BlockEntity tileEntity = world.getBlockEntity(targetBuildingLocation.getInDimensionLocation());
 
-        if (!(tileEntity instanceof TileEntityColonyBuilding))
+        if (!(tileEntity instanceof TileEntityColonyBuilding) || ((AbstractTileEntityColonyBuilding) tileEntity).getBuilding() == null)
         {
             // TODO: Non-Colony deliveries are unsupported yet. Fix that at some point in time.
             job.finishRequest(true);

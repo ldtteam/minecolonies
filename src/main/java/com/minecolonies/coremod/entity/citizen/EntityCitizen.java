@@ -761,7 +761,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             EventHandler.onEnteringChunkEntity(this, currentChunk);
         }
 
-        if (!this.getEyeInFluidType().isAir() && !this.level.getBlockState(new BlockPos(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN))
+        if (!this.getEyeInFluidType().isAir() && !this.level.getBlockState(this.blockPosition()).is(Blocks.BUBBLE_COLUMN))
         {
             this.moveTo(this.position().add(random.nextBoolean() ? 1 : 0, 0, random.nextBoolean() ? 1 : 0));
         }

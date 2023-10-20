@@ -571,16 +571,13 @@ public final class StandardRequests
         public Component getLongDisplayString()
         {
             final MutableComponent result = Component.literal("");
-            final MutableComponent preType = Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_TYPE_PREFIX);
-
-            result.append(preType);
-
             result.append(getRequest().getToolClass().getDisplayName());
 
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
                 result.append(Component.literal(" "));
                 result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
+                result.append(Component.literal(" "));
                 result.append(Component.literal(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
             }
 
@@ -594,6 +591,7 @@ public final class StandardRequests
 
                 result.append(Component.literal(" "));
                 result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MAXIMUM_LEVEL_PREFIX));
+                result.append(Component.literal(" "));
                 result.append(Component.literal(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
             }
 
