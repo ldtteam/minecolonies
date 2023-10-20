@@ -2,19 +2,20 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -75,11 +76,20 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             final IBuildingView buildingView = colonyView.getBuilding(builderPos);
             if (buildingView instanceof BuildingBuilder.View builderBuildingView)
             {
+                final String currentHash = getWorkOrderHash(buildingView);
+                final String storedHash = compound.contains(TAG_WAREHOUSE_SNAPSHOT_WO_HASH) ? compound.getString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH) : null;
+                final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, storedHash);
+
                 Map<String, Integer> warehouseSnapshot = new HashMap<>();
-                if (compound.contains(TAG_WAREHOUSE_SNAPSHOT) && compound.contains(TAG_WAREHOUSE_SNAPSHOT_WO_HASH))
+                if (snapshotNeedsUpdate)
                 {
-                    final String currentWorkOrderHash = getWorkOrderHash(buildingView);
-                    if (currentWorkOrderHash.equals(compound.getString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH)))
+                    // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
+                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos));
+                }
+                else
+                {
+                    // If the hashes are still up-to-date, load the old snapshot data from the NBT, if any exists.
+                    if (compound.contains(TAG_WAREHOUSE_SNAPSHOT))
                     {
                         final CompoundTag warehouseSnapshotCompound = compound.getCompound(TAG_WAREHOUSE_SNAPSHOT);
                         warehouseSnapshot = warehouseSnapshotCompound.getAllKeys().stream()
@@ -98,28 +108,6 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         {
             MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
         }
-    }
-
-    /**
-     * Creates a work order hash from a work order.
-     *
-     * @param building the building instance.
-     * @return the work order hash.
-     */
-    @NotNull
-    private static String getWorkOrderHash(final IBuilding building)
-    {
-        final Optional<IWorkOrder> currentWorkOrder = building.getColony()
-                                                        .getWorkManager()
-                                                        .getOrderedList(w -> true, building.getID())
-                                                        .stream()
-                                                        .findFirst();
-        if (currentWorkOrder.isEmpty())
-        {
-            return "";
-        }
-        long location = currentWorkOrder.get().getLocation().asLong();
-        return location + "__" + currentWorkOrder.get().getStructurePack();
     }
 
     /**
@@ -146,6 +134,97 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     }
 
     /**
+     * Updates the warehouse snapshot.
+     *
+     * @param warehousePos the position of the warehouse.
+     * @param compound     the compound data.
+     * @param player       the player entity who clicked the warehouse.
+     */
+    private static void updateWarehouseSnapshot(final BlockPos warehousePos, final CompoundTag compound, final Player player)
+    {
+        if (!compound.contains(TAG_COLONY_ID) || !compound.contains(TAG_BUILDER))
+        {
+            MessageUtils.format(COM_MINECOLONIES_SCROLL_NO_COLONY).sendTo(player);
+            return;
+        }
+
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), Minecraft.getInstance().level.dimension());
+        if (colonyView != null)
+        {
+            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
+            final IBuildingView buildingView = colonyView.getBuilding(builderPos);
+            if (buildingView instanceof BuildingBuilder.View)
+            {
+                final String currentHash = getWorkOrderHash(buildingView);
+                final WarehouseSnapshot warehouseSnapshotData = gatherWarehouseSnapshot(buildingView, warehousePos, currentHash, player);
+
+                if (warehouseSnapshotData != null)
+                {
+                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot, warehouseSnapshotData.hash));
+                }
+                else
+                {
+                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos));
+                }
+            }
+        }
+    }
+
+    /**
+     * Load the map of warehouse items from the given warehouse
+     *
+     * @param buildingView      the builder building view instance.
+     * @param warehouseBlockPos the position of the warehouse.
+     * @param hash              the current work order hash.
+     * @param player            the player who triggered the resource scroll.
+     * @return a map containing the snapshot, or null in case a fault appears.
+     */
+    @Nullable
+    private static ItemResourceScroll.WarehouseSnapshot gatherWarehouseSnapshot(
+      final IBuildingView buildingView,
+      final BlockPos warehouseBlockPos,
+      final String hash,
+      final Player player)
+    {
+        final IBuildingView warehouse = buildingView.getColony().getBuilding(warehouseBlockPos);
+
+        if (warehouse == null)
+        {
+            MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_COLONY).sendTo(player);
+            return null;
+        }
+
+        if (hash.isBlank())
+        {
+            return null;
+        }
+
+        final BuildingResourcesModuleView resourcesModule = buildingView.getModuleView(BuildingResourcesModuleView.class);
+
+        final Map<String, Integer> items = new HashMap<>();
+        for (final BlockPos container : warehouse.getContainerList())
+        {
+            final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
+            if (blockEntity instanceof TileEntityRack rack)
+            {
+                rack.getAllContent().forEach((item, amount) -> {
+                    final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
+                    final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
+                    if (!resourcesModule.getResources().containsKey(key))
+                    {
+                        return;
+                    }
+
+                    int oldAmount = items.getOrDefault(key, 0);
+                    items.put(key, oldAmount + amount);
+                });
+            }
+        }
+
+        return new WarehouseSnapshot(items, hash);
+    }
+
+    /**
      * Used when clicking on block in world.
      *
      * @param ctx the context of use.
@@ -160,9 +239,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final CompoundTag compound = scroll.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity && buildingEntity.getBuilding() != null)
+        if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
         {
-            if (buildingEntity.getBuilding().getBuildingType().equals(ModBuildings.builder.get()))
+            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
             {
                 compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
                 BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
@@ -172,35 +251,17 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                     MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
-            else if (buildingEntity.getBuilding().getBuildingType().equals(ModBuildings.wareHouse.get()))
+            else if (buildingEntity instanceof TileEntityWareHouse)
             {
-                if (!ctx.getLevel().isClientSide)
+                if (ctx.getLevel().isClientSide)
                 {
-                    final WorkOrderSnapshot warehouseSnapshot =
-                      gatherWarehouseSnapshot(buildingEntity, compound.contains(TAG_BUILDER) ? BlockPosUtil.read(compound, TAG_BUILDER) : null, ctx.getPlayer());
-
-                    if (warehouseSnapshot != null)
-                    {
-                        CompoundTag snapshotData = new CompoundTag();
-                        warehouseSnapshot.snapshot.keySet()
-                          .forEach(itemKey -> compound.putInt(itemKey, warehouseSnapshot.snapshot.getOrDefault(itemKey, 0)));
-                        compound.put(TAG_WAREHOUSE_SNAPSHOT, snapshotData);
-                        compound.putString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH, warehouseSnapshot.hash);
-                    }
-                    else
-                    {
-                        compound.remove(TAG_WAREHOUSE_SNAPSHOT);
-                        compound.remove(TAG_WAREHOUSE_SNAPSHOT_WO_HASH);
-                    }
+                    updateWarehouseSnapshot(buildingEntity.getTilePos(), compound, ctx.getPlayer());
                 }
             }
             else
             {
-                if (!ctx.getLevel().isClientSide)
-                {
-                    final MutableComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
-                    MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
-                }
+                final MutableComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
+                MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)
@@ -268,62 +329,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     }
 
     /**
-     * Load the map of warehouse items from the given warehouse
-     *
-     * @param warehouseTileEntity the tile entity of the clicked warehouse.
-     * @param builderPos          the position of the linked builder.
-     * @param player              the player who triggered the resource scroll.
-     * @return a map containing the snapshot, or null in case a fault appears.
-     */
-    @Nullable
-    private WorkOrderSnapshot gatherWarehouseSnapshot(final AbstractTileEntityColonyBuilding warehouseTileEntity, @Nullable final BlockPos builderPos, final Player player)
-    {
-        final IBuilding builder = warehouseTileEntity.getColony().getBuildingManager().getBuilding(builderPos);
-        if (builder == null)
-        {
-            MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_COLONY).sendTo(player);
-            return null;
-        }
-
-        final String hash = getWorkOrderHash(builder);
-
-        if (hash.isBlank())
-        {
-            return null;
-        }
-
-        final BuildingResourcesModule resourcesModule = builder.getFirstModuleOccurance(BuildingResourcesModule.class);
-        final IBuilding warehouse = warehouseTileEntity.getColony().getBuildingManager().getBuilding(warehouseTileEntity.getTilePos());
-
-        final Map<String, Integer> items = new HashMap<>();
-        for (final BlockPos container : warehouse.getContainers())
-        {
-            final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
-            if (blockEntity instanceof TileEntityRack rack)
-            {
-                rack.getAllContent().forEach((item, amount) -> {
-                    final String key = item.getItemStack().getDescriptionId();
-                    if (!resourcesModule.getNeededResources().containsKey(key))
-                    {
-                        return;
-                    }
-
-                    int oldAmount = items.getOrDefault(key, 0);
-                    items.put(key, oldAmount + amount);
-                });
-            }
-        }
-
-        return new WorkOrderSnapshot(items, hash);
-    }
-
-    /**
-     * Container class for work order snapshot data.
+     * Container class for warehouse snapshot data.
      *
      * @param snapshot the snapshot data.
      * @param hash     the work order hash for comparison between work orders.
      */
-    private record WorkOrderSnapshot(Map<String, Integer> snapshot, String hash)
+    private record WarehouseSnapshot(Map<String, Integer> snapshot, String hash)
     {
     }
 }
