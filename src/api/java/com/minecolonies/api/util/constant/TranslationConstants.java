@@ -322,6 +322,8 @@ public final class TranslationConstants
     @NonNls
     public static final String NO_COLONY_YET                                                        = "com.minecolonies.coremod.workorder.nocolonyyet";
     @NonNls
+    public static final String DOCRAFTING_BLOCK                                                     = "com.minecolonies.coremod.gui.docrafting.block";
+    @NonNls
     public static final String OUT_OF_COLONY                                                        = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
     public static final String NO                                                                   = "com.minecolonies.coremod.entity.citizen.no.";
