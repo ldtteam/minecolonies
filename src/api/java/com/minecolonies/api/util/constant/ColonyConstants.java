@@ -5,12 +5,18 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.TicketType;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * Colony wide constants.
  */
 public final class ColonyConstants
 {
+    /**
+     * Shared random
+     */
+    public static final Random rand = new Random();
+
     /**
      * Constant string id of our ticket type.
      */

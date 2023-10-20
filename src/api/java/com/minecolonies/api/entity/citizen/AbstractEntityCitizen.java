@@ -349,6 +349,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
+     * Don't push if we're ignoring being pushed
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (collisionCounter > COLL_THRESHOLD)
+        {
+            return;
+        }
+
+        super.pushEntities();
+    }
+
+    /**
      * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
      *
      * @param entityIn entity to collide with
@@ -414,24 +428,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         {
             collisionCounter--;
         }
-    }
-
-    @Override
-    protected void tryAddSoulSpeed()
-    {
-
-    }
-
-    @Override
-    protected void removeSoulSpeed()
-    {
-
-    }
-
-    @Override
-    public boolean canSpawnSoulSpeedParticle()
-    {
-        return false;
     }
 
     /**
@@ -694,7 +690,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void detectEquipmentUpdates()
     {
-        if (this.isEquipmentDirty)
+        if (this.isEquipmentDirty && tickCount % 20 == randomVariance)
         {
             this.isEquipmentDirty = false;
             List<Pair<EquipmentSlot, ItemStack>> list = Lists.newArrayListWithCapacity(6);
@@ -777,5 +773,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public ITickRateStateMachine<IState> getEntityStateController()
     {
         return entityStateController;
+    }
+
+    @Override
+    public boolean isSleeping()
+    {
+        return getCitizenSleepHandler().isAsleep();
     }
 }
