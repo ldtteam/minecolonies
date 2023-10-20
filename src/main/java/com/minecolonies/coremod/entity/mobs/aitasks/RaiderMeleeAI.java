@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -25,7 +25,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for melee attacking a target
  */
-public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
+public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntity> extends AttackMoveAI<T>
 {
     /**
      * Extended reach based on difficulty

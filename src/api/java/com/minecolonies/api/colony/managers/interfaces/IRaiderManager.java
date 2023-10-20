@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 
@@ -223,5 +223,5 @@ public interface IRaiderManager
      *
      * @param entity
      */
-    void onRaiderDeath(AbstractEntityMinecoloniesMob entity);
+    void onRaiderDeath(AbstractEntityRaiderMob entity);
 }
