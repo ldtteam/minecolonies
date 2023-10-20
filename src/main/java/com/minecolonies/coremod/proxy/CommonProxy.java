@@ -6,23 +6,25 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.RecipeBook;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.stats.RecipeBook;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.*;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -139,11 +141,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openResourceScrollWindow(
-      final int colonyId,
-      final BlockPos pos,
-      final BlockPos warehousePos,
-      final CompoundTag warehouseCompound)
+    public void openResourceScrollWindow(@NotNull final BuildingBuilder.View buildingView, @NotNull final Map<String, Integer> warehouseSnapshot)
     {
         /*
          * Intentionally left empty.

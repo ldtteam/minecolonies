@@ -2,43 +2,46 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDER;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -57,6 +60,108 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     }
 
     /**
+     * Check for the compound and return it. If not available create and return it.
+     *
+     * @param item the item to check in for.
+     * @return the compound of the item.
+     */
+    private static CompoundTag checkForCompound(final ItemStack item)
+    {
+        if (!item.hasTag())
+        {
+            item.setTag(new CompoundTag());
+        }
+        return item.getTag();
+    }
+
+    /**
+     * Opens the scroll window if there is a valid builder linked
+     *
+     * @param compound the item compound
+     * @param player   the player entity opening the window
+     */
+    private static void openWindow(final CompoundTag compound, final Player player)
+    {
+        final int colonyId = compound.getInt(TAG_COLONY_ID);
+        final BlockPos builderPos = compound.contains(TAG_BUILDER) ? BlockPosUtil.read(compound, TAG_BUILDER) : null;
+
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
+        if (colonyView != null)
+        {
+            final IBuildingView buildingView = colonyView.getBuilding(builderPos);
+            if (buildingView instanceof BuildingBuilder.View builderBuildingView)
+            {
+                Map<String, Integer> warehouseSnapshot = new HashMap<>();
+                if (compound.contains(TAG_WAREHOUSE_SNAPSHOT) && compound.contains(TAG_WAREHOUSE_SNAPSHOT_WO_HASH))
+                {
+                    final String currentWorkOrderHash = getWorkOrderHash(buildingView);
+                    if (currentWorkOrderHash.equals(compound.getString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH)))
+                    {
+                        final CompoundTag warehouseSnapshotCompound = compound.getCompound(TAG_WAREHOUSE_SNAPSHOT);
+                        warehouseSnapshot = warehouseSnapshotCompound.getAllKeys().stream()
+                                              .collect(Collectors.toMap(k -> k, warehouseSnapshotCompound::getInt));
+                    }
+                }
+
+                MineColonies.proxy.openResourceScrollWindow(builderBuildingView, warehouseSnapshot);
+            }
+            else
+            {
+                MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+            }
+        }
+        else
+        {
+            MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+        }
+    }
+
+    /**
+     * Creates a work order hash from a work order.
+     *
+     * @param building the building instance.
+     * @return the work order hash.
+     */
+    @NotNull
+    private static String getWorkOrderHash(final IBuilding building)
+    {
+        final Optional<IWorkOrder> currentWorkOrder = building.getColony()
+                                                        .getWorkManager()
+                                                        .getOrderedList(w -> true, building.getID())
+                                                        .stream()
+                                                        .findFirst();
+        if (currentWorkOrder.isEmpty())
+        {
+            return "";
+        }
+        long location = currentWorkOrder.get().getLocation().asLong();
+        return location + "__" + currentWorkOrder.get().getStructurePack();
+    }
+
+    /**
+     * Creates a work order hash from a work order view.
+     *
+     * @param buildingView the building view instance.
+     * @return the work order hash.
+     */
+    @NotNull
+    private static String getWorkOrderHash(final IBuildingView buildingView)
+    {
+        final Optional<IWorkOrderView> currentWorkOrder = buildingView.getColony()
+                                                            .getWorkOrders()
+                                                            .stream()
+                                                            .filter(o -> o.getClaimedBy().equals(buildingView.getID()))
+                                                            .max(Comparator.comparingInt(IWorkOrderView::getPriority));
+        if (currentWorkOrder.isEmpty())
+        {
+            return "";
+        }
+
+        long location = currentWorkOrder.get().getLocation().asLong();
+        return location + "__" + currentWorkOrder.get().getPackName();
+    }
+
+    /**
      * Used when clicking on block in world.
      *
      * @param ctx the context of use.
@@ -69,13 +174,11 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
 
         final CompoundTag compound = checkForCompound(scroll);
-        BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+        final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof TileEntityColonyBuilding)
+        if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity && buildingEntity.getBuilding() != null)
         {
-            final AbstractTileEntityColonyBuilding buildingEntity = (AbstractTileEntityColonyBuilding) entity;
-
-            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
+            if (buildingEntity.getBuilding().getBuildingType().equals(ModBuildings.builder.get()))
             {
                 compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
                 BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
@@ -85,11 +188,26 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                     MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
-            else if (buildingEntity instanceof TileEntityWareHouse)
+            else if (buildingEntity.getBuilding().getBuildingType().equals(ModBuildings.wareHouse.get()))
             {
-                if (ctx.getLevel().isClientSide)
+                if (!ctx.getLevel().isClientSide)
                 {
-                    openWindow(compound, ctx.getPlayer(), buildingEntity.getPosition());
+                    final WorkOrderSnapshot warehouseSnapshot =
+                      gatherWarehouseSnapshot(buildingEntity, compound.contains(TAG_BUILDER) ? BlockPosUtil.read(compound, TAG_BUILDER) : null, ctx.getPlayer());
+
+                    if (warehouseSnapshot != null)
+                    {
+                        CompoundTag snapshotData = new CompoundTag();
+                        warehouseSnapshot.snapshot.keySet()
+                          .forEach(itemKey -> compound.putInt(itemKey, warehouseSnapshot.snapshot.getOrDefault(itemKey, 0)));
+                        compound.put(TAG_WAREHOUSE_SNAPSHOT, snapshotData);
+                        compound.putString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH, warehouseSnapshot.hash);
+                    }
+                    else
+                    {
+                        compound.remove(TAG_WAREHOUSE_SNAPSHOT);
+                        compound.remove(TAG_WAREHOUSE_SNAPSHOT_WO_HASH);
+                    }
                 }
             }
             else
@@ -103,7 +221,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else if (ctx.getLevel().isClientSide)
         {
-            openWindow(compound, ctx.getPlayer(), null);
+            openWindow(compound, ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;
@@ -131,7 +249,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
         }
 
-        openWindow(checkForCompound(clipboard), playerIn, null);
+        openWindow(checkForCompound(clipboard), playerIn);
 
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
     }
@@ -155,9 +273,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(builderPos);
-            if (buildingView instanceof BuildingBuilder.View)
+            if (buildingView instanceof BuildingBuilder.View builderBuildingView)
             {
-                String name = ((BuildingBuilder.View) buildingView).getWorkerName();
+                String name = builderBuildingView.getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
                               ? Component.literal(ChatFormatting.DARK_PURPLE + name)
                               : Component.translatable(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
@@ -166,37 +284,62 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     }
 
     /**
-     * Check for the compound and return it. If not available create and return it.
+     * Load the map of warehouse items from the given warehouse
      *
-     * @param item the item to check in for.
-     * @return the compound of the item.
+     * @param warehouseTileEntity the tile entity of the clicked warehouse.
+     * @param builderPos          the position of the linked builder.
+     * @param player              the player who triggered the resource scroll.
+     * @return a map containing the snapshot, or null in case a fault appears.
      */
-    private static CompoundTag checkForCompound(final ItemStack item)
+    @Nullable
+    private WorkOrderSnapshot gatherWarehouseSnapshot(final AbstractTileEntityColonyBuilding warehouseTileEntity, @Nullable final BlockPos builderPos, final Player player)
     {
-        if (!item.hasTag())
+        final IBuilding builder = warehouseTileEntity.getColony().getBuildingManager().getBuilding(builderPos);
+        if (builder == null)
         {
-            item.setTag(new CompoundTag());
+            MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_COLONY).sendTo(player);
+            return null;
         }
-        return item.getTag();
+
+        final String hash = getWorkOrderHash(builder);
+
+        if (hash.isBlank())
+        {
+            return null;
+        }
+
+        final BuildingResourcesModule resourcesModule = builder.getFirstModuleOccurance(BuildingResourcesModule.class);
+        final IBuilding warehouse = warehouseTileEntity.getColony().getBuildingManager().getBuilding(warehouseTileEntity.getTilePos());
+
+        final Map<String, Integer> items = new HashMap<>();
+        for (final BlockPos container : warehouse.getContainers())
+        {
+            final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
+            if (blockEntity instanceof TileEntityRack rack)
+            {
+                rack.getAllContent().forEach((item, amount) -> {
+                    final String key = item.getItemStack().getDescriptionId();
+                    if (!resourcesModule.getNeededResources().containsKey(key))
+                    {
+                        return;
+                    }
+
+                    int oldAmount = items.getOrDefault(key, 0);
+                    items.put(key, oldAmount + amount);
+                });
+            }
+        }
+
+        return new WorkOrderSnapshot(items, hash);
     }
 
     /**
-     * Opens the scroll window if there is a valid builder linked
+     * Container class for work order snapshot data.
      *
-     * @param compound the item compound
-     * @param player   the player entity opening the window
+     * @param snapshot the snapshot data.
+     * @param hash     the work order hash for comparison between work orders.
      */
-    private static void openWindow(CompoundTag compound, Player player, BlockPos warehousePos)
+    private record WorkOrderSnapshot(Map<String, Integer> snapshot, String hash)
     {
-        if (compound.contains(TAG_COLONY_ID) && compound.contains(TAG_BUILDER))
-        {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos, warehousePos, compound);
-        }
-        else
-        {
-            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
-        }
     }
 }
