@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
@@ -35,11 +36,9 @@ import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.DOCRAFTING_BLOCK;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -52,10 +51,14 @@ public class DOCraftingWindow extends AbstractModuleWindow
      */
     private static final String RESOURCE_STRING = ":gui/layouthuts/layoutdocrafting.xml";
 
-    private static final String[] BLOCKICONS = new String[] { BLOCK1, BLOCK2, BLOCK3 };
+    /**
+     * Inputs scrolling list.
+     */
+    private final ScrollingList inputs;
+    private final List<ItemIcon> inputIcons = new ArrayList<>();
 
     /**
-     * Resource scrolling list.
+     * Outputs scrolling list.
      */
     private final ScrollingList resourceList;
 
@@ -85,13 +88,32 @@ public class DOCraftingWindow extends AbstractModuleWindow
         this.craftingModuleView = view;
 
         validator = craftingModuleView.getIngredientValidator();
+        inputs = this.window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
-        registerButton(BLOCK1_ADD, this::addBlock1);
-        registerButton(BLOCK2_ADD, this::addBlock2);
-        registerButton(BLOCK3_ADD, this::addBlock3);
-        registerButton(ADD, this::addRecipe);
+        inputIcons.addAll(Collections.nCopies(inputInventory.getContainerSize(), null));
+        inputs.setDataProvider(inputInventory::getContainerSize, this::updateInputs);
+
+        registerButton("add", this::addRecipe);
         registerButton(BUTTON_REQUEST, this::showRequests);
+    }
+
+    private void updateInputs(final int index, final Pane rowPane)
+    {
+        rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class)
+                .setText(Component.translatable(DOCRAFTING_BLOCK, index + 1));
+
+        final ItemIcon icon = rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class);
+        inputIcons.set(index, icon);
+
+        rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class).setHandler(btn ->
+        {
+            new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(index, stack), (stack, qty) -> {
+                inputInventory.setItem(index, stack);
+                icon.setItem(stack);
+                updateStockList();
+            }, false).open();
+        });
     }
 
     private void showRequests()
@@ -132,13 +154,13 @@ public class DOCraftingWindow extends AbstractModuleWindow
                 {
                     final ItemStack componentBlock = new ItemStack(textureData.getTexturedComponents().getOrDefault(component.getId(), Blocks.AIR));
                     inputInventory.setItem(slot, componentBlock);
-                    findPaneOfTypeByID(BLOCKICONS[slot], ItemIcon.class).setItem(componentBlock);
+                    inputIcons.get(slot).setItem(componentBlock);
                     ++slot;
                 }
-                for (; slot < 3; ++slot)
+                for (; slot < inputInventory.getContainerSize(); ++slot)
                 {
                     inputInventory.setItem(slot, ItemStack.EMPTY);
-                    findPaneOfTypeByID(BLOCKICONS[slot], ItemIcon.class).setItem(ItemStack.EMPTY);
+                    inputIcons.get(slot).setItem(ItemStack.EMPTY);
                 }
                 updateStockList();
             }
@@ -206,42 +228,6 @@ public class DOCraftingWindow extends AbstractModuleWindow
           new ArrayList<>());
 
         Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getId()));
-    }
-
-    /**
-     * Add the stack.
-     */
-    private void addBlock1()
-    {
-        new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(0, stack), (stack, qty) -> {
-            inputInventory.setItem(0, stack);
-            findPaneOfTypeByID(BLOCK1, ItemIcon.class).setItem(stack);
-            updateStockList();
-        }, false).open();
-    }
-
-    /**
-     * Add the stack.
-     */
-    private void addBlock2()
-    {
-        new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(1, stack), (stack, qty) -> {
-            inputInventory.setItem(1, stack);
-            findPaneOfTypeByID(BLOCK2, ItemIcon.class).setItem(stack);
-            updateStockList();
-        }, false).open();
-    }
-
-    /**
-     * Add the stack.
-     */
-    private void addBlock3()
-    {
-        new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(2, stack), (stack, qty) -> {
-            inputInventory.setItem(2, stack);
-            updateStockList();
-            findPaneOfTypeByID(BLOCK3, ItemIcon.class).setItem(stack);
-        }, false).open();
     }
 
     @Override

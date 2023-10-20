@@ -144,7 +144,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void tick()
     {
-        manager.getLogger().debug("Starting reassignment.");
+        manager.log("Starting reassignment.");
 
         //Lets decrement all delays
         getAllAssignedRequests().forEach(t -> {
@@ -187,10 +187,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         }).collect(Collectors.toSet());
 
         successfully.forEach(t -> {
-            manager.getLogger().debug("Failed to reassign a retryable request: " + id);
+            manager.log("Failed to reassign a retryable request: " + id);
         });
 
-        manager.getLogger().debug("Finished reassignment.");
+        manager.log("Finished reassignment.");
     }
 
     @Override

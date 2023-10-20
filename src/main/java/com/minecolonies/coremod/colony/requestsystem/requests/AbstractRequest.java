@@ -137,7 +137,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        manager.getLogger().debug("Updated state from: " + getId() + " to: " + state);
+        manager.log("Updated state from: " + getId() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
@@ -366,7 +366,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                manager.getLogger().debug("First child entering progression: " + child + " setting progression state for: " + getId());
+                manager.log("First child entering progression: " + child + " setting progression state for: " + getId());
             }
         }
         catch (final IllegalArgumentException ex)
