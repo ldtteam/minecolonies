@@ -3,18 +3,17 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.state.BlockState;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.stats.RecipeBook;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.util.Map;
 
 /**
  * Basic proxy interface.
@@ -66,16 +65,10 @@ public interface IProxy
     /**
      * Opens the resource scroll window.
      *
-     * @param colonyId          the colony id.
-     * @param pos               the position of the builder.
-     * @param warehousePos      the position of the warehouse clicked on (if any).
-     * @param warehouseCompound the compound data to store the warehouse snapshot to.
+     * @param builderView       the view class for the builder.
+     * @param warehouseSnapshot the snapshot of the warehouse.
      */
-    void openResourceScrollWindow(
-      final int colonyId,
-      final BlockPos pos,
-      final @Nullable BlockPos warehousePos,
-      final @Nullable CompoundTag warehouseCompound);
+    void openResourceScrollWindow(@NotNull final BuildingBuilder.View builderView, @NotNull final Map<String, Integer> warehouseSnapshot);
 
     /**
      * Returns the recipe book from the player.
