@@ -50,12 +50,10 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
-import net.minecraft.world.entity.Entity.RemovalReason;
-
 /**
- * Abstract for all Barbarian entities.
+ * Abstract for all raider entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
+public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {
     /**
      * Difficulty at which raiders team up
@@ -179,7 +177,7 @@ public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecolo
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final Level world)
+    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
@@ -549,7 +547,7 @@ public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecolo
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob)
+        if (damageSource.getEntity() instanceof AbstractEntityRaiderMob)
         {
             return false;
         }

@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
@@ -216,9 +216,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     @Override
     public void onEntityDeath(final LivingEntity entity)
     {
-        if (entity instanceof AbstractEntityMinecoloniesMob)
+        if (entity instanceof AbstractEntityRaiderMob)
         {
-            colony.getRaiderManager().onRaiderDeath((AbstractEntityMinecoloniesMob) entity);
+            colony.getRaiderManager().onRaiderDeath((AbstractEntityRaiderMob) entity);
         }
     }
 
