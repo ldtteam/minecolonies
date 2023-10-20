@@ -203,7 +203,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(false);
         rowPane.findPaneOfTypeByID(IN_WAREHOUSE_AMOUNT, Text.class).clearText();
 
-        final int warehouseAmount = warehouseSnapshot.getOrDefault(resource.getItem().getDescriptionId(), 0);
+        int resourceHashcode = resource.getItemStack().hasTag() ? resource.getItemStack().getTag().hashCode() : 0;
+        int warehouseAmount = warehouseSnapshot.getOrDefault(resource.getItem().getDescriptionId() + "-" + resourceHashcode, 0);
 
         if (resource.getAmountInDelivery() > 0)
         {
