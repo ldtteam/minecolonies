@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -57,21 +56,6 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     public ItemResourceScroll(final Item.Properties properties)
     {
         super("resourcescroll", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
-    }
-
-    /**
-     * Check for the compound and return it. If not available create and return it.
-     *
-     * @param item the item to check in for.
-     * @return the compound of the item.
-     */
-    private static CompoundTag checkForCompound(final ItemStack item)
-    {
-        if (!item.hasTag())
-        {
-            item.setTag(new CompoundTag());
-        }
-        return item.getTag();
     }
 
     /**
@@ -173,7 +157,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-        final CompoundTag compound = checkForCompound(scroll);
+        final CompoundTag compound = scroll.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity && buildingEntity.getBuilding() != null)
@@ -249,7 +233,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
         }
 
-        openWindow(checkForCompound(clipboard), playerIn);
+        openWindow(clipboard.getOrCreateTag(), playerIn);
 
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
     }
@@ -265,7 +249,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return;
         }
 
-        final CompoundTag compound = checkForCompound(stack);
+        final CompoundTag compound = stack.getOrCreateTag();
         final int colonyId = compound.getInt(TAG_COLONY_ID);
         final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
 
