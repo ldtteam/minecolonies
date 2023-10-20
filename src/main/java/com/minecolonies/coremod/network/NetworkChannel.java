@@ -30,10 +30,7 @@ import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
 import com.minecolonies.coremod.research.GlobalResearchTreeMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -251,9 +248,6 @@ public class NetworkChannel
         registerMessage(++idx, CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
 
         registerMessage(++idx, ColonyListMessage.class, ColonyListMessage::new);
-
-        // Resource scroll NBT share message
-        registerMessage(++idx, ResourceScrollSaveWarehouseSnapshotMessage.class, ResourceScrollSaveWarehouseSnapshotMessage::new);
     }
 
     private void setupInternalMessages()
