@@ -2,14 +2,13 @@ package com.minecolonies.coremod.commands.killcommands;
 
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.entity.EntityTypeTest;
 
 public class CommandKillRaider implements IMCOPCommand
@@ -26,11 +25,11 @@ public class CommandKillRaider implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getLevel().getEntities(EntityTypeTest.forClass(AbstractEntityMinecoloniesMob.class), (e) -> true).forEach(entity ->
+        context.getSource().getLevel().getEntities(EntityTypeTest.forClass(AbstractEntityRaiderMob.class), (e) -> true).forEach(entity ->
         {
             if (entity != null)
             {
-                final AbstractEntityMinecoloniesMob mob = (AbstractEntityMinecoloniesMob) entity;
+                final AbstractEntityRaiderMob mob = (AbstractEntityRaiderMob) entity;
                 mob.die(new DamageSource("despawn"));
                 mob.remove(Entity.RemovalReason.DISCARDED);
 

@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.egyptians;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -14,7 +14,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all egyptian entities.
  */
-public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesMob
+public abstract class AbstractEntityEgyptian extends AbstractEntityRaiderMob
 {
     /**
      * Swim speed for mummies
