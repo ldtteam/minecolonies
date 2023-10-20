@@ -53,6 +53,12 @@ public class ChunkCache implements LevelReader
      */
     protected     Level          world;
 
+    /**
+     * Dimension limits
+     */
+    private final int minBuildHeight;
+    private final int maxBuildHeight;
+
     public ChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn, final DimensionType type)
     {
         this.world = worldIn;
@@ -78,6 +84,9 @@ public class ChunkCache implements LevelReader
             }
         }
         this.dimType = type;
+
+        minBuildHeight = worldIn.getMinBuildHeight();
+        maxBuildHeight = worldIn.getMaxBuildHeight();
     }
 
     /**
@@ -108,6 +117,18 @@ public class ChunkCache implements LevelReader
             return null;
         }
         return this.chunkArray[i][j].getBlockEntity(pos, createType);
+    }
+
+    @Override
+    public int getMinBuildHeight()
+    {
+        return minBuildHeight;
+    }
+
+    @Override
+    public int getMaxBuildHeight()
+    {
+        return maxBuildHeight;
     }
 
     @NotNull
