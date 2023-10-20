@@ -34,8 +34,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
 public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
 {
@@ -451,7 +450,7 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
         }
         else if (getBuildingLevel() <= WOOD_HUT_LEVEL)
         {
-            return TOOL_LEVEL_WOOD_OR_GOLD;
+            return BASIC_TOOL_LEVEL;
         }
         return getBuildingLevel() - WOOD_HUT_LEVEL;
     }
