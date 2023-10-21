@@ -284,8 +284,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public Logger getLogger()
+    public void log(final String message)
     {
-        return wrappedManager.getLogger();
+        wrappedManager.log(message);
     }
 }

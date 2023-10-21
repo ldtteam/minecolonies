@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.manager;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.*;
@@ -106,6 +107,11 @@ public class StandardRequestManager implements IStandardRequestManager
 
     private int version = -1;
 
+    /**
+     * if debug logging should actually reach the logger.
+     */
+    private boolean enableLogging;
+
     public StandardRequestManager(@NotNull final IColony colony)
     {
         this.colony = colony;
@@ -116,6 +122,7 @@ public class StandardRequestManager implements IStandardRequestManager
     private void setup()
     {
         dataStoreManager = StandardFactoryController.getInstance().getNewInstance(TypeConstants.DATA_STORE_MANAGER);
+        enableLogging = IMinecoloniesAPI.getInstance().getConfig().getCommon().rsEnableDebugLogging.get();
 
         requestIdentitiesDataStoreId = registerDataStore(TypeConstants.REQUEST_IDENTITIES_DATA_STORE);
         requestResolverIdentitiesDataStoreId = registerDataStore(TypeConstants.REQUEST_RESOLVER_IDENTITIES_DATA_STORE);
@@ -287,7 +294,7 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<?> request = getRequestHandler().getRequest(token);
 
-        getLogger().debug("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
+        log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
 
         request.setState(new WrappedStaticStateRequestManager(this), state);
         markDirty();
@@ -295,27 +302,27 @@ public class StandardRequestManager implements IStandardRequestManager
         switch (request.getState())
         {
             case RESOLVED:
-                getLogger().debug("Request resolved: " + token + ". Determining followup requests...");
+                log("Request resolved: " + token + ". Determining followup requests...");
                 getRequestHandler().onRequestResolved(token);
                 return;
             case COMPLETED:
-                getLogger().debug("Request completed: " + token + ". Notifying parent and requester...");
+                log("Request completed: " + token + ". Notifying parent and requester...");
                 getRequestHandler().onRequestCompleted(token);
                 return;
             case OVERRULED:
-                getLogger().debug("Request overruled: " + token + ". Notifying parent, children and requester...");
+                log("Request overruled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestOverruled(token);
                 return;
             case FAILED:
-                getLogger().debug("Request failed: " + token + ". Notifying parent, children and requester...");
+                log("Request failed: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestCancelled(token);
                 return;
             case CANCELLED:
-                getLogger().debug("Request cancelled: " + token + ". Notifying parent, children and requester...");
+                log("Request cancelled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestCancelled(token);
                 return;
             case RECEIVED:
-                getLogger().debug("Request received: " + token + ". Removing from system...");
+                log("Request received: " + token + ". Removing from system...");
                 getRequestHandler().cleanRequestData(token);
                 return;
             default:
@@ -553,11 +560,14 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         version = -1;
     }
-
+    
     @Override
-    public Logger getLogger()
+    public void log(final String message)
     {
-        return logger;
+        if (enableLogging)
+        {
+            logger.debug(message);
+        }
     }
 
     @Override
