@@ -356,8 +356,8 @@ public class EventHandler
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
-                event.setResult(Event.Result.DENY);
-                break;
+                event.setSpawnCancelled(true);
+                return;
             }
         }
     }
