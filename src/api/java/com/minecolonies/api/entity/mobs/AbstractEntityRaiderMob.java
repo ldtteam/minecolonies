@@ -144,6 +144,11 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     private boolean envDamageImmunity = false;
 
     /**
+     * Temporary Environmental damage immunity shortly after spawning.
+     */
+    private boolean tempEnvDamageImmunity = true;
+
+    /**
      * Counts entity collisions
      */
     private int collisionCounter = 0;
@@ -267,7 +272,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             this.navigation = newNavigator;
             this.newNavigator.setCanFloat(true);
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
-            this.newNavigator.getNodeEvaluator().setCanPassDoors(true);
+            this.newNavigator.getPathingOptions().setEnterDoors(true);
             newNavigator.getPathingOptions().withDropCost(1.3D);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
@@ -430,6 +435,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
         if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
+            envDmgCooldown--;
             if (worldTimeAtSpawn == 0)
             {
                 worldTimeAtSpawn = level().getGameTime();
@@ -552,7 +558,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
         if (damageSource.getDirectEntity() == null)
         {
-            if (envDamageImmunity)
+            if (envDamageImmunity || tempEnvDamageImmunity)
             {
                 return false;
             }
@@ -651,6 +657,17 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     public void setEnvDamageImmunity(final boolean immunity)
     {
         envDamageImmunity = immunity;
+    }
+
+
+    /**
+     * Sets the temporary immunity to environmental damage
+     *
+     * @param immunity whether immune
+     */
+    public void setTempEnvDamageImmunity(final boolean immunity)
+    {
+        tempEnvDamageImmunity = immunity;
     }
 
     /**

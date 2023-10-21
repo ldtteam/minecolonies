@@ -1595,4 +1595,13 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         return pos.getY() <= maxY && pos.getY() >= minY;
     }
+
+    /**
+     * Getter for the pathing options.
+     * @return the pathing options
+     */
+    protected PathingOptions getPathingOptions()
+    {
+        return pathingOptions;
+    }
 }

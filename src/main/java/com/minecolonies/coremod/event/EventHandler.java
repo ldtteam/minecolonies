@@ -327,7 +327,7 @@ public class EventHandler
      * @param event the join world event.
      */
     @SubscribeEvent
-    public static void on(final MobSpawnEvent.FinalizeSpawn event)
+    public static void on(final MobSpawnEvent.PositionCheck event)
     {
         if (!(event.getEntity() instanceof Enemy) || !(event.getLevel() instanceof Level))
         {
@@ -356,7 +356,7 @@ public class EventHandler
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
-                event.setSpawnCancelled(true);
+                event.setResult(Event.Result.DENY);
                 return;
             }
         }

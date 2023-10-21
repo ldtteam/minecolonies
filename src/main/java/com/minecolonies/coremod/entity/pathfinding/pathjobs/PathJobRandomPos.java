@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -9,6 +10,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.VineBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
@@ -161,6 +166,55 @@ public class PathJobRandomPos extends AbstractPathJob
     protected double getNodeResultScore(@NotNull final MNode n)
     {
         return 0;
+    }
+
+    @Override
+    protected double computeCost(
+      @NotNull final BlockPos dPos,
+      final boolean isSwimming,
+      final boolean onPath,
+      final boolean onRails,
+      final boolean railsExit,
+      final boolean swimStart,
+      final boolean corner,
+      final BlockState state,
+      final BlockPos blockPos)
+    {
+        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
+
+        if (onPath)
+        {
+            cost *= getPathingOptions().onPathCost;
+        }
+
+        if (onRails)
+        {
+            cost *= getPathingOptions().onRailCost;
+        }
+
+        if (railsExit)
+        {
+            cost *= getPathingOptions().railsExitCost;
+        }
+
+        if (state.getBlock() instanceof VineBlock)
+        {
+            cost *= getPathingOptions().vineCost;
+        }
+
+        if (isSwimming)
+        {
+            if (swimStart)
+            {
+                cost *= getPathingOptions().swimCostEnter;
+            }
+            else
+            {
+                cost *= getPathingOptions().swimCost;
+            }
+        }
+
+        return cost;
     }
 
     /**
