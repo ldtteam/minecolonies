@@ -684,4 +684,15 @@ public class CitizenManager implements ICitizenManager
             }
         }
     }
+
+    @Override
+    public void afterBuildingLoad()
+    {
+        calculateMaxCitizens();
+
+        for(final ICitizenData data: citizens.values())
+        {
+            data.onBuildingLoad();
+        }
+    }
 }

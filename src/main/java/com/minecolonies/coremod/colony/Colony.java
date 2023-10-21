@@ -751,7 +751,7 @@ public class Colony implements IColony
         buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
 
         // Recalculate max after citizens and buildings are loaded.
-        citizenManager.calculateMaxCitizens();
+        citizenManager.afterBuildingLoad();
 
         graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
 

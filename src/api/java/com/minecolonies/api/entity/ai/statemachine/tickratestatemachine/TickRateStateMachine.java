@@ -80,32 +80,36 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
         }
         tickRateCounter = tickRate;
 
-        for (final ITickingTransition<S> transition : aiBlockingTransitions)
+        for (int i = 0, aiBlockingTransitionsSize = aiBlockingTransitions.size(); i < aiBlockingTransitionsSize; i++)
         {
+            final ITickingTransition<S> transition = aiBlockingTransitions.get(i);
             if (checkTransition(transition))
             {
                 return;
             }
         }
 
-        for (final ITickingTransition<S> transition : eventTransitions)
+        for (int i = 0, eventTransitionsSize = eventTransitions.size(); i < eventTransitionsSize; i++)
         {
+            final ITickingTransition<S> transition = eventTransitions.get(i);
             if (checkTransition(transition))
             {
                 return;
             }
         }
 
-        for (final ITickingTransition<S> transition : stateBlockingTransitions)
+        for (int i = 0, stateBlockingTransitionsSize = stateBlockingTransitions.size(); i < stateBlockingTransitionsSize; i++)
         {
+            final ITickingTransition<S> transition = stateBlockingTransitions.get(i);
             if (checkTransition(transition))
             {
                 return;
             }
         }
 
-        for (final ITickingTransition<S> transition : currentStateTransitions)
+        for (int i = 0, currentStateTransitionsSize = currentStateTransitions.size(); i < currentStateTransitionsSize; i++)
         {
+            final ITickingTransition<S> transition = currentStateTransitions.get(i);
             if (checkTransition(transition))
             {
                 return;
