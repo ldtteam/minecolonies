@@ -10,6 +10,9 @@ import java.util.List;
 
 /**
  * Variation of the ItemIcon which accepts multiple items and slowly rotates between them.
+ * TODO: This needs to be ported to BlockUI at a later stage, with a proper animation handler,
+ *  instead of being backed by a timer, increased through the draw methods.
+ *  Conferred with Nightenom that we keep this in Minecolonies for the time being.
  */
 public class RotatingItemIcon extends ItemIcon
 {
