@@ -413,7 +413,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     {
         if (this.citizen != null)
         {
-            this.citizen.markDirty();
+            this.citizen.markDirty(20);
         }
     }
 

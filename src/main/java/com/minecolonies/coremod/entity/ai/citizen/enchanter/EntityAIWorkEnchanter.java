@@ -414,7 +414,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             worker.getInventoryCitizen().extractItem(bookSlot, 1, false);
             worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_DRAIN);
-            worker.getCitizenData().markDirty();
+            worker.getCitizenData().markDirty(80);
         }
         resetDraining();
         return IDLE;

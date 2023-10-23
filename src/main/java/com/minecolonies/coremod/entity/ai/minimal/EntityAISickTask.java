@@ -296,7 +296,6 @@ public class EntityAISickTask implements IStateAI
             citizen.getCitizenData().setBedPos(BlockPos.ZERO);
         }
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
         citizen.setHealth(citizen.getMaxHealth());
         reset();

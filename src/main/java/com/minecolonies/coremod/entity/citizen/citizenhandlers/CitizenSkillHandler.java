@@ -208,7 +208,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         if (level > tuple.getA())
         {
             levelUp(data);
-            data.markDirty();
+            data.markDirty(10);
         }
     }
 
@@ -237,7 +237,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
 
         if (level < tuple.getA())
         {
-            data.markDirty();
+            data.markDirty(10);
         }
     }
 
