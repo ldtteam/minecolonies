@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.combat.CombatAIStates;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
@@ -26,7 +26,7 @@ public class RaiderWalkAI implements IStateAI
     /**
      * The entity using this AI
      */
-    private final AbstractEntityMinecoloniesMob raider;
+    private final AbstractEntityRaiderMob raider;
 
     /**
      * Target block we're walking to
@@ -38,7 +38,7 @@ public class RaiderWalkAI implements IStateAI
      */
     private long walkTimer = 0;
 
-    public RaiderWalkAI(final AbstractEntityMinecoloniesMob raider, final ITickRateStateMachine<IState> stateMachine)
+    public RaiderWalkAI(final AbstractEntityRaiderMob raider, final ITickRateStateMachine<IState> stateMachine)
     {
         this.raider = raider;
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::walk, () -> null, 80));

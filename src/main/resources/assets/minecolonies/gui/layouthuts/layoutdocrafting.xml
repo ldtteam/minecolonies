@@ -3,25 +3,17 @@
     <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.docrafting)"/>
 
-    <label id="block1Label" size="40 12" pos="20 37" color="black" label="$(com.minecolonies.coremod.gui.docrafting.block1)"/>
-    <itemicon id="block1Icon" size="17 17" pos="60 35"/>
-    <buttonimage id="addBlock1" size="64 15" pos="80 35" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
-                 label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
+    <list id="resources" size="135 57" pos="20 35">
+        <view size="100% 17">
+            <label id="resourceName" size="40 12" pos="0 2" color="black"/>
+            <itemicon id="resourceIcon" size="17 17" pos="40 0"/>
+            <buttonimage id="resourceAdd" size="64 15" pos="60 0" textcolor="black"
+                         source="minecolonies:textures/gui/builderhut/builder_button_small.png"
+                         label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
+        </view>
+    </list>
 
-    <label id="block2Label" size="40 12" pos="20 57" color="black" label="$(com.minecolonies.coremod.gui.docrafting.block2)"/>
-    <itemicon id="block2Icon" size="17 17" pos="60 55"/>
-    <buttonimage id="addBlock2" size="64 15" pos="80 55" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
-                 label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
-
-    <label id="block3Label" size="40 12" pos="20 77" color="black"  label="$(com.minecolonies.coremod.gui.docrafting.block3)"/>
-    <itemicon id="block3Icon" size="17 17" pos="60 75"/>
-    <buttonimage id="addBlock3" size="64 15" pos="80 75" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
-                 label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
-
-    <buttonimage id="request" size="16 16" pos="155 54"
+    <buttonimage id="request" size="16 16" pos="155 51"
                  source="minecolonies:textures/gui/citizen/detail_button.png"
                  tooltip="$(com.minecolonies.coremod.gui.citizen.requesttitle)"/>
 

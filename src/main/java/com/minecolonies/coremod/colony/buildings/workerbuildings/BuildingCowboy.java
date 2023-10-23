@@ -2,11 +2,15 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IHasRequiredItemsModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
@@ -15,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
@@ -22,10 +27,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -101,7 +106,7 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Cow (and Mooshroom) herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IPersistentModule
+    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IHasRequiredItemsModule, IPersistentModule
     {
         private int currentMilk;
         private int currentStew;
@@ -110,6 +115,31 @@ public class BuildingCowboy extends AbstractBuilding
         public HerdingModule()
         {
             super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
+        }
+
+        @Override
+        public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+        {
+            final int days = Math.max(1, getBuilding().getSetting(MILKING_DAYS).getValue());
+            final int bucketsToKeep = (int) Math.ceil(2D * getBuilding().getSetting(MILKING_AMOUNT).getValue() / days);
+            final int bowlsToKeep = (int) Math.ceil(2D * getBuilding().getSetting(STEWING_AMOUNT).getValue() / days);
+
+            final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
+            if (bucketsToKeep > 0)
+            {
+                requiredItems.put(s -> s.is(Items.BUCKET), new Tuple<>(bucketsToKeep, false));
+            }
+            if (bowlsToKeep > 0)
+            {
+                requiredItems.put(s -> s.is(Items.BOWL), new Tuple<>(bowlsToKeep, false));
+            }
+            return requiredItems;
+        }
+
+        @Override
+        public Map<ItemStorage, Integer> reservedStacksExcluding(@Nullable IRequest<? extends IDeliverable> excluded)
+        {
+            return Collections.emptyMap();
         }
 
         @NotNull

@@ -443,16 +443,6 @@ public final class WindowConstants
     public static final String GUIDE_CONFIRM         = "confirm";
     public static final String GUIDE_CLOSE           = "close";
 
-    public static final String BLOCK1_ADD = "addBlock1";
-    public static final String BLOCK2_ADD = "addBlock2";
-    public static final String BLOCK3_ADD = "addBlock3";
-
-    public static final String BLOCK1 = "block1Icon";
-    public static final String BLOCK2 = "block2Icon";
-    public static final String BLOCK3 = "block3Icon";
-
-    public static final String ADD = "add";
-
     /**
      * BOWindow resource list gui file.
      */

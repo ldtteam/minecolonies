@@ -266,8 +266,15 @@ public class InventoryUtils
         if (itemHandler == null)
         {
             Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+            return 0;
         }
-        return itemHandler == null ? 0 : filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
+
+        int count = 0;
+        for (final ItemStack stack : filterItemHandler(itemHandler, itemStackSelectionPredicate))
+        {
+            count += stack.getCount();
+        }
+        return count;
     }
 
     public static int getItemCountInItemHandlers(@Nullable final Collection<IItemHandler> itemHandlers, @NotNull final Predicate<ItemStack> itemStackPredicate)
@@ -792,7 +799,7 @@ public class InventoryUtils
 
     /**
      * Count the number of items of different types a building has.
-     * 
+     *
      * @param provider the building to check.
      * @param stacks   the stacks to check for.
      * @return Amount of occurrences of stacks that match the given stacks.
