@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -224,7 +224,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips)
     {
-        this.raidTonight = true;
+        this.raidTonight = willRaid;
         this.nextForcedType = raidType;
         this.allowShips = allowShips;
     }
@@ -905,7 +905,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void onRaiderDeath(final AbstractEntityMinecoloniesMob entity)
+    public void onRaiderDeath(final AbstractEntityRaiderMob entity)
     {
         final RaidHistory last = getLastRaid();
         if (last != null)
@@ -927,6 +927,15 @@ public class RaidManager implements IRaiderManager
         }
 
         return raidHistories.get(raidHistories.size() - 1);
+    }
+
+    /**
+     * Gets all raid histories
+     * @return
+     */
+    public List<RaidHistory> getAllRaids()
+    {
+        return new ArrayList<>(raidHistories);
     }
 
     /**

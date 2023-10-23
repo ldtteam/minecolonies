@@ -45,7 +45,8 @@ public class EntityInitializer
     {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES))
         {
-            final @Nullable IForgeRegistry<EntityType> registry = event.getForgeRegistry();
+            final @Nullable IForgeRegistry<EntityType<?>> registry = event.getForgeRegistry();
+
             ModEntities.CITIZEN = build(registry, "citizen",
               EntityType.Builder.of(EntityCitizen::new, MobCategory.CREATURE)
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
@@ -209,7 +210,7 @@ public class EntityInitializer
         }
     }
 
-    private static <T extends Entity> EntityType<T> build(IForgeRegistry<EntityType> registry, final String key, final EntityType.Builder<T> builder)
+    private static <T extends Entity> EntityType<T> build(IForgeRegistry<EntityType<?>> registry, final String key, final EntityType.Builder<T> builder)
     {
         EntityType<T> entity = builder.build(Constants.MOD_ID + ":" + key);
         registry.register(new ResourceLocation(Constants.MOD_ID + ":" + key), entity);

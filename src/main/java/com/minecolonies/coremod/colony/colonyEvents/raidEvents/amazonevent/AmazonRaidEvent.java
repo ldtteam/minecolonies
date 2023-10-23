@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
@@ -50,7 +50,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
@@ -105,7 +105,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     public void onEntityDeath(final LivingEntity entity)
     {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityMinecoloniesMob))
+        if (!(entity instanceof AbstractEntityRaiderMob))
         {
             return;
         }

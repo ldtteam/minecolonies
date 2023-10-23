@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.google.common.base.Predicates;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
@@ -17,13 +18,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static net.minecraft.world.entity.EntitySelector.NO_SPECTATORS;
 
 /**
  * Entity related utilities.
@@ -335,4 +340,23 @@ public final class EntityUtils
     {
         return target != null && (target.hasImpulse || !target.isOnGround()) && target.fallDistance <= 0.1f && target.level.isEmptyBlock(target.blockPosition().below(2));
     }
+
+    /**
+     * Entity pushable by predicate. Cheaper version compared to mojank.
+     * @return The predicate.
+     */
+    public static Predicate<Entity> pushableBy()
+    {
+        return NO_SPECTATORS.and((localEntity) -> {
+            if (!localEntity.isPushable())
+            {
+                return false;
+            }
+            else
+            {
+                return !localEntity.level.isClientSide || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
+            }
+        });
+    }
 }
+

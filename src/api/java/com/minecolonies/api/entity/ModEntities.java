@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
@@ -15,6 +16,8 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 
+import java.util.List;
+
 public class ModEntities
 {
     public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
@@ -23,9 +26,9 @@ public class ModEntities
 
     public static EntityType<? extends Entity> FISHHOOK;
 
-    public static EntityType<? extends AbstractEntityBarbarian> BARBARIAN;
-
     public static EntityType<? extends PathfinderMob> MERCENARY;
+
+    public static EntityType<? extends AbstractEntityBarbarian> BARBARIAN;
 
     public static EntityType<? extends AbstractEntityBarbarian> ARCHERBARBARIAN;
 
@@ -68,4 +71,25 @@ public class ModEntities
     public static EntityType<? extends ThrownTrident> SPEAR;
 
     public static EntityType<NoDamageFireworkRocketEntity> NO_DAMAGE_FIREWORK_ENTITY;
+
+    public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders()
+    {
+        return List.of(
+          BARBARIAN,
+          ARCHERBARBARIAN,
+          CHIEFBARBARIAN,
+          AMAZON,
+          AMAZONSPEARMAN,
+          AMAZONCHIEF,
+          MUMMY,
+          ARCHERMUMMY,
+          PHARAO,
+          PIRATE,
+          ARCHERPIRATE,
+          CHIEFPIRATE,
+          SHIELDMAIDEN,
+          NORSEMEN_ARCHER,
+          NORSEMEN_CHIEF
+        );
+    }
 }

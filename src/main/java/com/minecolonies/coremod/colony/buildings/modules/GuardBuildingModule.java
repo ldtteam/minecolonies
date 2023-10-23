@@ -85,6 +85,10 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
 
             for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
             {
+                if (trainee.getJob() == null)
+                {
+                    continue;
+                }
                 if ((getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
                        || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()))
                       && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)

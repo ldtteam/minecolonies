@@ -71,7 +71,7 @@ public interface IQuestInstance extends INBTSerializable<CompoundTag>
      * Get the current objective index.
      * @return the index number.
      */
-    int getIndex();
+    int getObjectiveIndex();
 
     /**
      * Get one of the other participants by index.

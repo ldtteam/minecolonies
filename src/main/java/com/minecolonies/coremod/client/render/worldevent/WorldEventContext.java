@@ -27,14 +27,14 @@ public class WorldEventContext
         // singleton
     }
 
-    BufferSource bufferSource;
-    PoseStack poseStack;
-    float partialTicks;
-    ClientLevel clientLevel;
-    LocalPlayer clientPlayer;
-    ItemStack mainHandItem;
+    public BufferSource bufferSource;
+    public PoseStack poseStack;
+    public float partialTicks;
+    public ClientLevel clientLevel;
+    public LocalPlayer clientPlayer;
+    public ItemStack mainHandItem;
     @Nullable
-    IColonyView nearestColony;
+    public IColonyView nearestColony;
 
     /**
      * In chunks

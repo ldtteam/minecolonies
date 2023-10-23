@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.citizen.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTable;
@@ -49,12 +50,10 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
-import net.minecraft.world.entity.Entity.RemovalReason;
-
 /**
- * Abstract for all Barbarian entities.
+ * Abstract for all raider entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuckHandlerEntity, IThreatTableEntity, Enemy
+public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {
     /**
      * Difficulty at which raiders team up
@@ -152,11 +151,6 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     private int collisionCounter = 0;
 
     /**
-     * Whether the entity is possibly stuck
-     */
-    private boolean canBeStuck = true;
-
-    /**
      * The collision threshold
      */
     private final static int    COLL_THRESHOLD = 50;
@@ -183,7 +177,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final Level world)
+    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
@@ -553,7 +547,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob)
+        if (damageSource.getEntity() instanceof AbstractEntityRaiderMob)
         {
             return false;
         }
@@ -736,22 +730,6 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
         return difficulty;
     }
 
-    @Override
-    public boolean canBeStuck()
-    {
-        return canBeStuck;
-    }
-
-    /**
-     * Sets whether the entity currently could be stuck
-     *
-     * @param canBeStuck true if its possible to be stuck
-     */
-    public void setCanBeStuck(final boolean canBeStuck)
-    {
-        this.canBeStuck = canBeStuck;
-    }
-
     /**
      * Disallow pushing from fluids to prevent stuck
      *
@@ -760,16 +738,6 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     public boolean isPushedByFluid()
     {
         return false;
-    }
-
-    /**
-     * Do not allow bubble movement
-     *
-     * @param down
-     */
-    public void onInsideBubbleColumn(boolean down)
-    {
-
     }
 
     @Override

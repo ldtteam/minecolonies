@@ -83,3 +83,9 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
     versionRange="[${project.jmapVersion},)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.minecolonies]]
+    modId="dynamictrees"
+    mandatory=false
+    versionRange="[${project.minecraftVersion}-${project.dynamicTreesVersion},)"
+    ordering="NONE"
+    side="BOTH"
