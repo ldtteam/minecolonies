@@ -158,7 +158,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     /**
      * Tick the data to update values.
      */
-    void tick();
+    void update();
 
     /**
      * Trigger a possible interaction.

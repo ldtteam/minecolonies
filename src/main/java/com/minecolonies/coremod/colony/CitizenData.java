@@ -60,6 +60,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -799,6 +800,15 @@ public class CitizenData implements ICitizenData
         {
             dirty = Integer.MAX_VALUE;
         }
+
+        if (dirty > 0)
+        {
+            dirty -= UPDATE_SUBSCRIBERS_INTERVAL;
+            if (isDirty())
+            {
+                colony.getCitizenManager().markDirty();
+            }
+        }
     }
 
     @Override
@@ -1450,20 +1460,11 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void tick()
+    public void update()
     {
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
             return;
-        }
-
-        if (dirty > 0)
-        {
-            dirty--;
-            if (isDirty())
-            {
-                colony.getCitizenManager().markDirty();
-            }
         }
 
         if (!isWorking && job != null && inactivityTimer != DISABLED && ++inactivityTimer >= job.getInactivityLimit())

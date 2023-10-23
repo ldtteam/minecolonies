@@ -553,7 +553,7 @@ public class CitizenManager implements ICitizenManager
     {
         for (ICitizenData iCitizenData : this.getCitizens())
         {
-            iCitizenData.tick();
+            iCitizenData.update();
         }
         return false;
     }
