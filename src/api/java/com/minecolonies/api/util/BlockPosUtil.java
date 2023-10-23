@@ -716,18 +716,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * Calculate in which direction a pos is facing. Ignoring y.
-     *
-     * @param pos      the pos.
-     * @param neighbor the block its facing.
-     * @return the directions its facing.
-     */
-    public static Direction getXZFacing(final int pos1X, final int pos1Z, final int pos2X, final int pos2Z)
-    {
-        return Direction.getNearest(pos1X - pos2X, 0, pos1Z - pos2Z);
-    }
-
-    /**
      * Calculates the direction a position is from the building.
      *
      * @param building the building.
