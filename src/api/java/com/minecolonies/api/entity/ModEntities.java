@@ -1,15 +1,18 @@
 package com.minecolonies.api.entity;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.projectile.*;
+
+import java.util.List;
 
 public class ModEntities
 {
@@ -19,9 +22,9 @@ public class ModEntities
 
     public static EntityType<? extends Projectile> FISHHOOK;
 
-    public static EntityType<? extends AbstractEntityBarbarian> BARBARIAN;
-
     public static EntityType<? extends PathfinderMob> MERCENARY;
+
+    public static EntityType<? extends AbstractEntityBarbarian> BARBARIAN;
 
     public static EntityType<? extends AbstractEntityBarbarian> ARCHERBARBARIAN;
 
@@ -62,4 +65,25 @@ public class ModEntities
     public static EntityType<? extends ThrownPotion> DRUID_POTION;
 
     public static EntityType<? extends ThrownTrident> SPEAR;
+
+    public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders()
+    {
+        return List.of(
+          BARBARIAN,
+          ARCHERBARBARIAN,
+          CHIEFBARBARIAN,
+          AMAZON,
+          AMAZONSPEARMAN,
+          AMAZONCHIEF,
+          MUMMY,
+          ARCHERMUMMY,
+          PHARAO,
+          PIRATE,
+          ARCHERPIRATE,
+          CHIEFPIRATE,
+          SHIELDMAIDEN,
+          NORSEMEN_ARCHER,
+          NORSEMEN_CHIEF
+        );
+    }
 }

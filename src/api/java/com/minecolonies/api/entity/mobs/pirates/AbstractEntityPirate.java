@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.pirates;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import net.minecraft.world.entity.EntityType;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
+public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
 {
     /**
      * Swim speed for pirates

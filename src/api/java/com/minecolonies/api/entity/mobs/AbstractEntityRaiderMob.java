@@ -11,12 +11,11 @@ import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
-import com.minecolonies.api.entity.citizen.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.entity.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
@@ -39,23 +38,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import java.util.List;
-
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
- * Abstract for all Barbarian entities.
+ * Abstract for all raider entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
+public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {
     /**
      * Difficulty at which raiders team up
@@ -179,7 +175,7 @@ public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecolo
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final Level world)
+    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
@@ -198,22 +194,12 @@ public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecolo
     @Override
     public void pushEntities()
     {
-        if (this.level().isClientSide())
+        if (collisionCounter > COLL_THRESHOLD)
         {
-            this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
+            return;
         }
-        else
-        {
-            List<Entity> list = this.level().getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this));
-            if (!list.isEmpty())
-            {
-                for (int l = 0; l < list.size(); ++l)
-                {
-                    Entity entity = list.get(l);
-                    this.doPush(entity);
-                }
-            }
-        }
+
+        super.pushEntities();
     }
 
     @Override
@@ -226,7 +212,7 @@ public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecolo
 
         if ((collisionCounter += 3) > COLL_THRESHOLD)
         {
-            if (collisionCounter > (COLL_THRESHOLD * 2))
+            if (collisionCounter > (COLL_THRESHOLD * 3))
             {
                 collisionCounter = 0;
             }
@@ -549,7 +535,7 @@ public abstract class AbstractEntityMinecoloniesMob extends AbstractFastMinecolo
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob)
+        if (damageSource.getEntity() instanceof AbstractEntityRaiderMob)
         {
             return false;
         }

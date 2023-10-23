@@ -62,6 +62,8 @@ public class ModTags
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);
 
+    public static final TagKey<EntityType<?>> raiders = TagKey.create(Registries.ENTITY_TYPE, TagConstants.RAIDERS);
+
     public static final TagKey<Item> ignoreNBT = ItemTags.create(TagConstants.IGNORE_NBT);
 
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
