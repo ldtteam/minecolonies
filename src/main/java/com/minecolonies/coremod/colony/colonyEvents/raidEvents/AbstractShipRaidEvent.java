@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -349,7 +349,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive() || status != EventStatus.PROGRESSING)
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive() || status != EventStatus.PROGRESSING)
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;

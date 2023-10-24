@@ -153,6 +153,7 @@ public class BuildingUniversity extends AbstractBuilding
             {
                 onSuccess(research);
             }
+            colony.getResearchManager().markDirty();
             i++;
         }
     }

@@ -142,6 +142,19 @@
         "children": [
           {
             "key": "minecraft:block/oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:dark_brick"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
           },
           {
             "key": "minecraft:block/dark_oak_planks"
@@ -325,6 +338,19 @@
   },
   {
     "item": "domum_ornamentum:light_blue_floating_carpet"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:light_brick"
   },
   {
     "item": "domum_ornamentum:light_gray_brick_extra"
@@ -521,9 +547,6 @@
     "checkednbtkeys": [
       {
         "children": [
-          {
-            "key": "minecraft:block/acacia_planks"
-          },
           {
             "key": "minecraft:block/oak_planks"
           },

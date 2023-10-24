@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
@@ -267,6 +268,12 @@ public interface IColonyView extends IColony
      */
     @Nullable
     IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
+
+    /**
+     * Handle the colony view research manager updating.
+     * @param compoundTag the tag to update the research manager with.
+     */
+    void handleColonyViewResearchManagerUpdate(CompoundTag compoundTag);
 
     /**
      * Update all field instances in the colony view.

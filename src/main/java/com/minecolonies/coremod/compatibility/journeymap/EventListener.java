@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import journeymap.client.api.display.Context;
@@ -152,7 +152,7 @@ public class EventListener
                 wrapper.setColor(entity.getTeamColor());
             }
         }
-        else if (entity instanceof AbstractEntityMinecoloniesMob)
+        else if (entity instanceof AbstractEntityRaiderMob)
         {
             final JourneymapOptions.RaiderColor color = JourneymapOptions.getRaiderColor(this.jmap.getOptions());
 

@@ -48,7 +48,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -140,7 +139,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param type  the Entity type.
      * @param world the world.
      */
-    public AbstractEntityCitizen(final EntityType<? extends AgeableMob> type, final Level world)
+    public AbstractEntityCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
     }
@@ -289,18 +288,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return modelId;
     }
 
-    /**
-     * For the time being we don't want any childrens of our colonists.
-     *
-     * @return the child.
-     */
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(final ServerLevel world, final AgeableMob parent)
-    {
-        return null;
-    }
-
     @Override
     protected void defineSynchedData()
     {
@@ -353,6 +340,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
         }
         return pathNavigate;
+    }
+
+    /**
+     * Don't push if we're ignoring being pushed
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (collisionCounter > COLL_THRESHOLD)
+        {
+            return;
+        }
+
+        super.pushEntities();
     }
 
     /**
@@ -421,24 +422,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         {
             collisionCounter--;
         }
-    }
-
-    @Override
-    protected void tryAddSoulSpeed()
-    {
-
-    }
-
-    @Override
-    protected void removeSoulSpeed()
-    {
-
-    }
-
-    @Override
-    public boolean canSpawnSoulSpeedParticle()
-    {
-        return false;
     }
 
     /**
@@ -701,7 +684,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void detectEquipmentUpdates()
     {
-        if (this.isEquipmentDirty)
+        if (this.isEquipmentDirty && tickCount % 20 == randomVariance)
         {
             this.isEquipmentDirty = false;
             List<Pair<EquipmentSlot, ItemStack>> list = Lists.newArrayListWithCapacity(6);
@@ -759,16 +742,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Do not allow bubble movement
-     *
-     * @param down
-     */
-    public void onInsideBubbleColumn(boolean down)
-    {
-
-    }
-
-    /**
      * Queue a sound at the citizen.
      *
      * @param soundEvent  the sound event to play.
@@ -794,5 +767,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public ITickRateStateMachine<IState> getEntityStateController()
     {
         return entityStateController;
+    }
+
+    @Override
+    public boolean isSleeping()
+    {
+        return getCitizenSleepHandler().isAsleep();
     }
 }

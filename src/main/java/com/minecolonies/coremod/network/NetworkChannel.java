@@ -121,6 +121,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
+        registerMessage(++idx, ColonyViewResearchManagerViewMessage.class, ColonyViewResearchManagerViewMessage::new);
 
         //  Permission Request messages
         registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
