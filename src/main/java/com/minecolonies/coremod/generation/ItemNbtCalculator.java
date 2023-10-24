@@ -7,7 +7,7 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.CraftingUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -17,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,48 +54,32 @@ public class ItemNbtCalculator implements DataProvider
     {
         final List<ItemStack> allStacks;
         final HolderLookup.Provider provider = lookupProvider.join();
-        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlags.REGISTRY.allFlags(), true, provider);
-
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
+        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlags.REGISTRY.allFlags(), false, provider);
 
-        for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
+        CraftingUtils.forEachCreativeTabItems(tempDisplayParams, (tab, stacks) ->
         {
-            if (tab.getType() == CreativeModeTab.Type.CATEGORY)
+            for (final ItemStack item : stacks)
             {
-                if (tab.getDisplayItems().isEmpty())
+                if (item.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IMateriallyTexturedBlock texturedBlock)
                 {
-                    try
+                    final CompoundTag tag = item.hasTag() ? item.getTag() : new CompoundTag();
+                    final CompoundTag textureData = new CompoundTag();
+                    for (final IMateriallyTexturedBlockComponent key : texturedBlock.getComponents())
                     {
-                        tab.buildContents(tempDisplayParams);
+                        textureData.putString(key.getId().toString(), key.getDefault().builtInRegistryHolder().key().location().toString());
                     }
-                    catch (final Throwable ex)
-                    {
-                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString(), ex);
-                    }
+                    tag.put("textureData", textureData);
+                    final ItemStack copy = item.copy();
+                    copy.setTag(tag);
+                    listBuilder.add(copy);
                 }
-
-                for (final ItemStack item : tab.getDisplayItems())
+                else
                 {
-                    if (item.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IMateriallyTexturedBlock texturedBlock)
-                    {
-                        final CompoundTag tag = item.hasTag() ? item.getTag() : new CompoundTag();
-                        final CompoundTag textureData = new CompoundTag();
-                        for (final IMateriallyTexturedBlockComponent key : texturedBlock.getComponents())
-                        {
-                            textureData.putString(key.getId().toString(), key.getDefault().builtInRegistryHolder().key().location().toString());
-                        }
-                        tag.put("textureData", textureData);
-                        final ItemStack copy = item.copy();
-                        copy.setTag(tag);
-                        listBuilder.add(copy);
-                    }
-                    else
-                    {
-                        listBuilder.add(item);
-                    }
+                    listBuilder.add(item);
                 }
             }
-        }
+        });
 
         allStacks = listBuilder.build();
 

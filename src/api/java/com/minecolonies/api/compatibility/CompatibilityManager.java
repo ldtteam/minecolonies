@@ -18,9 +18,7 @@ import com.minecolonies.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -628,48 +626,31 @@ public class CompatibilityManager implements ICompatibilityManager
 
         final Set<ItemStorage> tempFlowers = new HashSet<>();
 
-        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), true, level.registryAccess());
+        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), false, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
-        final Registry<CreativeModeTab> registry = level.registryAccess().registryOrThrow(Registries.CREATIVE_MODE_TAB);
 
-        for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
+        CraftingUtils.forEachCreativeTabItems(tempDisplayParams, (tab, stacks) ->
         {
-            if (tab.getType() == CreativeModeTab.Type.CATEGORY)
+            final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
+            for (final ItemStack item : stacks)
             {
-                if (tab.getDisplayItems().isEmpty())
+                if (mapping.addTo(item.getItem(), 1) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxItemSubTypeScan.get())
                 {
-                    try
-                    {
-                        tab.buildContents(new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), false, level.registryAccess()));
-                    }
-                    catch (final Throwable ex)
-                    {
-                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString(), ex);
-                    }
+                    continue;
                 }
 
-                final Collection<ItemStack> stacks = tab.getDisplayItems();
-                final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
-                for (final ItemStack item : stacks)
-                {
-                    if (mapping.addTo(item.getItem(), 1) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxItemSubTypeScan.get())
-                    {
-                        continue;
-                    }
+                listBuilder.add(item);
+                discoverSaplings(item);
+                discoverOres(item);
+                discoverPlantables(item);
+                discoverFood(item);
+                discoverFuel(item);
+                discoverBeekeeperFlowers(item, tempFlowers);
 
-                    listBuilder.add(item);
-                    discoverSaplings(item);
-                    discoverOres(item);
-                    discoverPlantables(item);
-                    discoverFood(item);
-                    discoverFuel(item);
-                    discoverBeekeeperFlowers(item, tempFlowers);
-
-                    creativeModeTabMap.put(new ItemStorage(item), tab);
-                }
+                creativeModeTabMap.put(new ItemStorage(item), tab);
             }
-        }
+        });
 
         beekeeperflowers = ImmutableSet.copyOf(tempFlowers);
         Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
