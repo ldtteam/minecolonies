@@ -90,6 +90,22 @@
     "item": "domum_ornamentum:cactus_extra"
   },
   {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/glowstone"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:center_light"
+  },
+  {
     "item": "domum_ornamentum:cobblestone_extra"
   },
   {
@@ -205,6 +221,22 @@
       }
     ],
     "item": "domum_ornamentum:fancy_trapdoors"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/glowstone"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:four_light"
   },
   {
     "checkednbtkeys": [
@@ -452,6 +484,38 @@
       }
     ],
     "item": "domum_ornamentum:shingle"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/clay"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:shingle_flat"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/clay"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:shingle_flat_lower"
   },
   {
     "checkednbtkeys": [
@@ -1071,6 +1135,9 @@
     "item": "minecolonies:plate_armor_legs"
   },
   {
+    "item": "minecolonies:questlog"
+  },
+  {
     "item": "minecolonies:raw_pumpkin_pie"
   },
   {
@@ -1367,9 +1434,6 @@
   },
   {
     "item": "minecraft:barrel"
-  },
-  {
-    "item": "minecraft:barrier"
   },
   {
     "item": "minecraft:basalt"
@@ -1711,6 +1775,9 @@
     "item": "minecraft:budding_amethyst"
   },
   {
+    "item": "minecraft:bundle"
+  },
+  {
     "item": "minecraft:burn_pottery_sherd"
   },
   {
@@ -1765,9 +1832,6 @@
   },
   {
     "item": "minecraft:chain"
-  },
-  {
-    "item": "minecraft:chain_command_block"
   },
   {
     "checkednbtkeys": [
@@ -1977,12 +2041,6 @@
   },
   {
     "item": "minecraft:cod_spawn_egg"
-  },
-  {
-    "item": "minecraft:command_block"
-  },
-  {
-    "item": "minecraft:command_block_minecart"
   },
   {
     "item": "minecraft:comparator"
@@ -2303,9 +2361,6 @@
   },
   {
     "item": "minecraft:dead_tube_coral_fan"
-  },
-  {
-    "item": "minecraft:debug_stick"
   },
   {
     "item": "minecraft:decorated_pot"
@@ -3232,9 +3287,6 @@
     "item": "minecraft:jack_o_lantern"
   },
   {
-    "item": "minecraft:jigsaw"
-  },
-  {
     "item": "minecraft:jukebox"
   },
   {
@@ -3373,19 +3425,6 @@
   },
   {
     "item": "minecraft:lever"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "level"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
-    ],
-    "item": "minecraft:light"
   },
   {
     "item": "minecraft:light_blue_banner"
@@ -4068,16 +4107,6 @@
     "item": "minecraft:packed_mud"
   },
   {
-    "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "variant"
-          }
-        ],
-        "key": "EntityTag"
-      }
-    ],
     "item": "minecraft:painting"
   },
   {
@@ -4546,9 +4575,6 @@
   },
   {
     "item": "minecraft:repeater"
-  },
-  {
-    "item": "minecraft:repeating_command_block"
   },
   {
     "item": "minecraft:respawn_anchor"
@@ -5036,12 +5062,6 @@
   },
   {
     "item": "minecraft:stripped_warped_stem"
-  },
-  {
-    "item": "minecraft:structure_block"
-  },
-  {
-    "item": "minecraft:structure_void"
   },
   {
     "item": "minecraft:sugar"
