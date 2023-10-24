@@ -545,7 +545,16 @@ public class CitizenData implements ICitizenData
     {
         for (final EquipmentSlot slot : EquipmentSlot.values())
         {
-            final ItemStack stack = citizen.getItemBySlot(slot);
+            final ItemStack stack;
+            if (slot.isArmor())
+            {
+                stack = citizen.getInventoryCitizen().getArmorInSlot(slot);
+            }
+            else
+            {
+                stack = citizen.getItemBySlot(slot);
+            }
+
             if (!ItemStackUtils.isEmpty(stack))
             {
                 citizen.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(slot));
@@ -969,7 +978,7 @@ public class CitizenData implements ICitizenData
         buf.writeInt(colony.getID());
 
         final CompoundTag compound = new CompoundTag();
-        compound.put("inventory", inventory.write(new ListTag()));
+        inventory.write(compound);
         buf.writeNbt(compound);
         buf.writeBlockPos(lastPosition);
 
@@ -1212,7 +1221,7 @@ public class CitizenData implements ICitizenData
         citizenHappinessHandler.write(nbtTagCompound);
         citizenMournHandler.write(nbtTagCompound);
 
-        nbtTagCompound.put(TAG_INVENTORY, inventory.write(new ListTag()));
+        inventory.write(nbtTagCompound);
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.MAIN_HAND));
         nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.OFF_HAND));
 
@@ -1328,8 +1337,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_INVENTORY))
         {
-            final ListTag nbttaglist = nbtTagCompound.getList(TAG_INVENTORY, 10);
-            this.inventory.read(nbttaglist);
+            this.inventory.read(nbtTagCompound);
             this.inventory.setHeldItem(InteractionHand.MAIN_HAND, nbtTagCompound.getInt(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(InteractionHand.OFF_HAND, nbtTagCompound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
         }

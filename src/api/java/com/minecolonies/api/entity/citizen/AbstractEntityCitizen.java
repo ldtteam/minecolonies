@@ -695,32 +695,40 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             list.add(new Pair<>(EquipmentSlot.LEGS, getItemBySlot(EquipmentSlot.LEGS)));
             list.add(new Pair<>(EquipmentSlot.OFFHAND, getItemBySlot(EquipmentSlot.OFFHAND)));
             list.add(new Pair<>(EquipmentSlot.MAINHAND, getItemBySlot(EquipmentSlot.MAINHAND)));
-            ((ServerLevel) this.level()).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
+            ((ServerLevel) this.level).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
         }
     }
 
     @Override
     public void setItemSlot(final EquipmentSlot slot, @NotNull final ItemStack newItem)
     {
-        if (!level().isClientSide)
+        if (!level.isClientSide)
         {
             final ItemStack previous = getItemBySlot(slot);
             if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true))
             {
-                if (!previous.isEmpty())
-                {
-                    this.getAttributes().removeAttributeModifiers(previous.getAttributeModifiers(slot));
-                }
-
-                if (!newItem.isEmpty())
-                {
-                    this.getAttributes().addTransientAttributeModifiers(newItem.getAttributeModifiers(slot));
-                }
-
                 markEquipmentDirty();
             }
         }
         super.setItemSlot(slot, newItem);
+    }
+
+    /**
+     * On armor removal.
+     * @param stack the removed armor.
+     */
+    public void onArmorRemove(final ItemStack stack)
+    {
+        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers(stack.getEquipmentSlot()));
+    }
+
+    /**
+     * On armor equip.
+     * @param stack the added armor.
+     */
+    public void onArmorAdd(final ItemStack stack)
+    {
+        this.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(stack.getEquipmentSlot()));
     }
 
     /**
