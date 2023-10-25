@@ -129,6 +129,13 @@ public class EntityAIInteractToggleAble extends Goal
         return false;
     }
 
+    @Override
+    public void start()
+    {
+        super.start();
+        updateTimer = 0;
+    }
+
     /**
      * Checks if there exists a path.
      *
