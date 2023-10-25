@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -384,7 +385,7 @@ public class EntityAIInteractToggleAble extends Goal
         {
             return;
         }
-        updateTimer = 20 + offSet;
+        updateTimer = ColonyConstants.rand.nextInt(40 + offSet);
 
         if (!checkPath())
         {
