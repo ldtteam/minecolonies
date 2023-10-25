@@ -717,18 +717,18 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * On armor removal.
      * @param stack the removed armor.
      */
-    public void onArmorRemove(final ItemStack stack)
+    public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot)
     {
-        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers(stack.getEquipmentSlot()));
+        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
     }
 
     /**
      * On armor equip.
      * @param stack the added armor.
      */
-    public void onArmorAdd(final ItemStack stack)
+    public void onArmorAdd(final ItemStack stack, final EquipmentSlot equipmentSlot)
     {
-        this.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(stack.getEquipmentSlot()));
+        this.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
     }
 
     /**

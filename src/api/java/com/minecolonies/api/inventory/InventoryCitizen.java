@@ -283,7 +283,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
         armorInventory.set(equipmentSlot.getIndex(), stack);
         if (citizen != null)
         {
-            citizen.getEntity().ifPresent(citizen -> citizen.onArmorAdd(stack));
+            citizen.getEntity().ifPresent(citizen -> citizen.onArmorAdd(stack, equipmentSlot));
             markDirty();
         }
     }
@@ -300,7 +300,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             armorInventory.set(equipmentSlot.getIndex(), ItemStack.EMPTY);
             if (citizen != null)
             {
-                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(stack));
+                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(stack, equipmentSlot));
                 markDirty();
             }
         }
@@ -321,11 +321,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
 
             if (!oldArmorStack.isEmpty())
             {
-                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(oldArmorStack));
+                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(oldArmorStack, equipmentSlot));
             }
 
             armorInventory.set(equipmentSlot.getIndex(), newArmorStack);
-            citizen.getEntity().ifPresent(citizen -> citizen.onArmorAdd(newArmorStack));
+            citizen.getEntity().ifPresent(citizen -> citizen.onArmorAdd(newArmorStack, equipmentSlot));
             setStackInSlot(slot, oldArmorStack);
         }
     }
@@ -343,7 +343,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 markDirty();
                 armorInventory.set(equipmentSlot.getIndex(), ItemStack.EMPTY);
-                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(armorStack));
+                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(armorStack, equipmentSlot));
             }
         }
     }

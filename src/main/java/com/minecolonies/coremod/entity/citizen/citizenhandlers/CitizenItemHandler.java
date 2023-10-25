@@ -346,7 +346,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
             final ItemStack equipment = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
             equipment.hurtAndBreak(armorDmg, citizen, (s) -> {
             s.broadcastBreakEvent(equipmentSlot);
-            citizen.onArmorRemove(equipment);
+            citizen.onArmorRemove(equipment, equipmentSlot);
+            citizen.getInventoryCitizen().markDirty();
         });
         }
     }
