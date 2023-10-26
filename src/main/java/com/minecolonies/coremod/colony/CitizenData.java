@@ -1376,8 +1376,14 @@ public class CitizenData implements ICitizenData
     @Override
     public void onBuildingLoad()
     {
-        if (job == null || job.getBuildingPos() == null)
+        if (job == null)
         {
+            return;
+        }
+
+        if (job.getBuildingPos() == null)
+        {
+            setJob(null);
             return;
         }
 
@@ -1606,7 +1612,8 @@ public class CitizenData implements ICitizenData
               ChatPriority.CHITCHAT));
         }
 
-        decreaseSaturation(job == null || job.getWorkBuilding().getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, job.getWorkBuilding().getBuildingLevel())) * 2);
+        decreaseSaturation(
+          job == null || job.getWorkBuilding().getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, job.getWorkBuilding().getBuildingLevel())) * 2);
     }
 
     @Override
