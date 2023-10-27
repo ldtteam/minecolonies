@@ -1,13 +1,14 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
@@ -24,11 +25,15 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public final class FireworkUtils
 {
     /**
+     * Name for fireworks, declaring them as dealing no damage.
+     */
+    public static final String NO_DAMAGE_NAME = "NO_DAMAGE";
+
+    /**
      * Private constructor to hide the public one
      */
     private FireworkUtils()
     {
-
     }
 
     /**
@@ -40,16 +45,28 @@ public final class FireworkUtils
      */
     public static void spawnFireworksAtAABBCorners(final Tuple<BlockPos, BlockPos> realaabb, final Level world, final int explosionLevel)
     {
-        final FireworkRocketEntity firework = new NoDamageFireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity firework =
+          new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
+        firework.setCustomName(Component.literal(NO_DAMAGE_NAME));
+        firework.setCustomNameVisible(false);
         world.addFreshEntity(firework);
 
-        final FireworkRocketEntity fireworka = new NoDamageFireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity fireworka =
+          new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
+        fireworka.setCustomName(Component.literal(NO_DAMAGE_NAME));
+        fireworka.setCustomNameVisible(false);
         world.addFreshEntity(fireworka);
 
-        final FireworkRocketEntity fireworkb = new NoDamageFireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity fireworkb =
+          new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
+        fireworkb.setCustomName(Component.literal(NO_DAMAGE_NAME));
+        fireworkb.setCustomNameVisible(false);
         world.addFreshEntity(fireworkb);
 
-        final FireworkRocketEntity fireworkc = new NoDamageFireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity fireworkc =
+          new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
+        fireworkc.setCustomName(Component.literal(NO_DAMAGE_NAME));
+        fireworkc.setCustomNameVisible(false);
         world.addFreshEntity(fireworkc);
     }
 

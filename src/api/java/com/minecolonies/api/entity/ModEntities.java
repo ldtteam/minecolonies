@@ -7,7 +7,6 @@ import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
-import com.minecolonies.api.util.NoDamageFireworkRocketEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -69,8 +68,6 @@ public class ModEntities
     public static EntityType<? extends ThrownPotion> DRUID_POTION;
 
     public static EntityType<? extends ThrownTrident> SPEAR;
-
-    public static EntityType<NoDamageFireworkRocketEntity> NO_DAMAGE_FIREWORK_ENTITY;
 
     public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders()
     {

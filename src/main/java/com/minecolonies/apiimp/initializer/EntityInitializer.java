@@ -2,7 +2,6 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.util.NoDamageFireworkRocketEntity;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.*;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -202,10 +201,6 @@ public class EntityInitializer
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                 .sized(0.5F, 0.5F)
-                .setShouldReceiveVelocityUpdates(true));
-
-            ModEntities.NO_DAMAGE_FIREWORK_ENTITY = build(registry, "nodamagefirework",
-              EntityType.Builder.<NoDamageFireworkRocketEntity>of(NoDamageFireworkRocketEntity::new, MobCategory.MISC)
                 .setShouldReceiveVelocityUpdates(true));
         }
     }
