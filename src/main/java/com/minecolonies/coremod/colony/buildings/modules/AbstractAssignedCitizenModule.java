@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +24,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HIRING_MODE
 /**
  * Abstract assignment module.
  */
-public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModule implements IAssignsCitizen, IPersistentModule
+public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModule implements IAssignsCitizen, IPersistentModule, IBuildingEventsModule
 {
     /**
      * List of worker assosiated to the building.
@@ -73,6 +75,15 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
      * @param citizen the assigned citizen.
      */
     abstract void onRemoval(final ICitizenData citizen);
+
+    @Override
+    public void onDestroyed()
+    {
+        for(final ICitizenData citizenData: new ArrayList<>(assignedCitizen))
+        {
+            removeCitizen(citizenData);
+        }
+    }
 
     @Override
     public List<ICitizenData> getAssignedCitizen()
