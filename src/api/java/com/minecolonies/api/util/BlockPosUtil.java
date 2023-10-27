@@ -702,6 +702,20 @@ public final class BlockPosUtil
         return Direction.getNearest(vector.getX(), 0, vector.getZ());
     }
 
+
+    /**
+     * Get facing from x,y
+     * @param pos1X start-x
+     * @param pos1Z start-z
+     * @param pos2X end-x
+     * @param pos2Z end-z
+     * @return the direction.
+     */
+    public static Direction getXZFacing(final int pos1X, final int pos1Z, final int pos2X, final int pos2Z)
+    {
+        return Direction.getNearest(pos1X - pos2X, 0, pos1Z - pos2Z);
+    }
+
     /**
      * Calculates the direction a position is from the building.
      *

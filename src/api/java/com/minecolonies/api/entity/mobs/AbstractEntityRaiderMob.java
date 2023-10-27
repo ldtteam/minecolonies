@@ -11,27 +11,28 @@ import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
-import com.minecolonies.api.entity.citizen.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.entity.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.Log;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
@@ -43,8 +44,6 @@ import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
-import java.util.List;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -196,22 +195,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     @Override
     public void pushEntities()
     {
-        if (this.level.isClientSide())
+        if (collisionCounter > COLL_THRESHOLD)
         {
-            this.level.getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntitySelector.pushableBy(this)).forEach(this::doPush);
+            return;
         }
-        else
-        {
-            List<Entity> list = this.level.getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this));
-            if (!list.isEmpty())
-            {
-                for (int l = 0; l < list.size(); ++l)
-                {
-                    Entity entity = list.get(l);
-                    this.doPush(entity);
-                }
-            }
-        }
+
+        super.pushEntities();
     }
 
     @Override
@@ -224,7 +213,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
         if ((collisionCounter += 3) > COLL_THRESHOLD)
         {
-            if (collisionCounter > (COLL_THRESHOLD * 2))
+            if (collisionCounter > (COLL_THRESHOLD * 3))
             {
                 collisionCounter = 0;
             }
