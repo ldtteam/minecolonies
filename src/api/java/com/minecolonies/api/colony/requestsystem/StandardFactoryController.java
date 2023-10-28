@@ -30,6 +30,8 @@ public final class StandardFactoryController implements IFactoryController
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     public static final String NBT_TYPE = "Type";
     public static final String NBT_DATA = "Data";
+    public static final String NEW_NBT_TYPE = "NType";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
@@ -270,7 +272,7 @@ public final class StandardFactoryController implements IFactoryController
         final CompoundTag compound = new CompoundTag();
 
         final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
-        compound.putString(NBT_TYPE, object.getClass().getName());
+        compound.putShort(NEW_NBT_TYPE, factory.getSerializationId());
         compound.put(NBT_DATA, factory.serialize(this, object));
 
         return compound;
@@ -279,18 +281,33 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <OUTPUT> OUTPUT deserialize(@NotNull final CompoundTag compound) throws IllegalArgumentException
     {
-        String className = compound.getString(NBT_TYPE);
-        className = processClassRenaming(className);
-
         final IFactory<?, OUTPUT> factory;
+        if (compound.contains(NEW_NBT_TYPE))
+        {
+            short classId = compound.getShort(NEW_NBT_TYPE);
 
-        try
-        {
-            factory = getFactoryForOutput(className);
+            try
+            {
+                factory = getFactoryForOutput(classId);
+            }
+            catch (final IllegalArgumentException e)
+            {
+                throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+            }
         }
-        catch (final IllegalArgumentException e)
+        else
         {
-            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller: " + className).initCause(e);
+            String className = compound.getString(NBT_TYPE);
+            className = processClassRenaming(className);
+            try
+            {
+                factory = getFactoryForOutput(className);
+            }
+            catch (final IllegalArgumentException e)
+            {
+                throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller: " + className).initCause(e);
+            }
+
         }
 
         try
