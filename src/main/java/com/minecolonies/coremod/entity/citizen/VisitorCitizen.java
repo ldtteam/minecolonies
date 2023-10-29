@@ -270,11 +270,11 @@ VisitorCitizen extends AbstractEntityCitizen
      * Mark the citizen dirty to synch the data with the client.
      */
     @Override
-    public void markDirty()
+    public void markDirty(final int time)
     {
         if (citizenData != null)
         {
-            citizenData.markDirty();
+            citizenData.markDirty(time);
         }
     }
 
@@ -302,7 +302,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 20);
         }
     }
 
@@ -315,7 +315,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 60 * 2);
         }
     }
 
@@ -588,7 +588,7 @@ VisitorCitizen extends AbstractEntityCitizen
 
         if (lastHurtByPlayerTime > 0)
         {
-            markDirty();
+            markDirty(0);
         }
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)

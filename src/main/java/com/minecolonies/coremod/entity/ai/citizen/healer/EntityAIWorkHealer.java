@@ -330,7 +330,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             currentPatient = null;
             citizen.heal(10);
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-            citizen.markDirty();
             return DECIDE;
         }
 
@@ -486,7 +485,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             1), worker);
 
         citizen.heal(citizen.getMaxHealth() - citizen.getHealth() - 5 - building.getBuildingLevel());
-        citizen.markDirty();
+        citizen.markDirty(10);
         worker.getCitizenExperienceHandler().addExperience(1);
 
         remotePatient = null;

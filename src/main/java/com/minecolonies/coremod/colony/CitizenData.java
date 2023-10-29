@@ -62,6 +62,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -172,7 +173,7 @@ public class CitizenData implements ICitizenData
     /**
      * If the citizen is dirty (Has to be updated on client side).
      */
-    private boolean dirty;
+    private int dirty = Integer.MAX_VALUE;
 
     /**
      * Its entitity.
@@ -327,7 +328,7 @@ public class CitizenData implements ICitizenData
         if (citizenChatOptions.containsKey(key))
         {
             citizenChatOptions.get(key).onServerResponseTriggered(responseId, player, this);
-            markDirty();
+            markDirty(0);
         }
     }
 
@@ -366,10 +367,13 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void markDirty()
+    public void markDirty(final int time)
     {
-        dirty = true;
-        colony.getCitizenManager().markDirty();
+        dirty = Math.min(dirty, time);
+        if (isDirty())
+        {
+            colony.getCitizenManager().markDirty();
+        }
     }
 
     /**
@@ -452,7 +456,7 @@ public class CitizenData implements ICitizenData
 
         citizenSkillHandler.init(levelCap);
 
-        markDirty();
+        markDirty(0);
     }
 
     /**
@@ -505,7 +509,7 @@ public class CitizenData implements ICitizenData
 
         applyItemModifiers(citizen);
 
-        markDirty();
+        markDirty(0);
     }
 
     /**
@@ -727,7 +731,7 @@ public class CitizenData implements ICitizenData
     {
         this.female = isFemale;
         this.name = generateName(random, isFemale, getColony(), getColony().getCitizenNameFile());
-        markDirty();
+        markDirty(0);
     }
 
     @Override
@@ -740,7 +744,7 @@ public class CitizenData implements ICitizenData
     public void setPaused(final boolean p)
     {
         this.paused = p;
-        markDirty();
+        markDirty(40);
     }
 
     @Override
@@ -758,13 +762,25 @@ public class CitizenData implements ICitizenData
     @Override
     public boolean isDirty()
     {
-        return dirty;
+        return dirty <= 0;
     }
 
     @Override
     public void clearDirty()
     {
-        dirty = false;
+        if (isDirty())
+        {
+            dirty = Integer.MAX_VALUE;
+        }
+
+        if (dirty > 0)
+        {
+            dirty -= UPDATE_SUBSCRIBERS_INTERVAL;
+            if (isDirty())
+            {
+                colony.getCitizenManager().markDirty();
+            }
+        }
     }
 
     @Override
@@ -792,7 +808,7 @@ public class CitizenData implements ICitizenData
         }
 
         homeBuilding = building;
-        markDirty();
+        markDirty(0);
 
         if (getEntity().isPresent() && getEntity().get().getCitizenJobHandler().getColonyJob() == null)
         {
@@ -855,7 +871,7 @@ public class CitizenData implements ICitizenData
 
         getEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
-        markDirty();
+        markDirty(0);
     }
 
     @Override
@@ -1094,7 +1110,7 @@ public class CitizenData implements ICitizenData
     public void setIsChild(final boolean isChild)
     {
         this.isChild = isChild;
-        markDirty();
+        markDirty(0);
 
         if (colony != null)
         {
@@ -1415,7 +1431,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void tick()
+    public void update()
     {
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
@@ -1448,7 +1464,7 @@ public class CitizenData implements ICitizenData
 
         if (!toRemove.isEmpty())
         {
-            markDirty();
+            markDirty(20 * 10);
         }
 
         for (final IInteractionResponseHandler handler : toRemove)
@@ -1474,7 +1490,7 @@ public class CitizenData implements ICitizenData
             {
                 this.citizenChatOptions.put(childHandler.getId(), (ServerCitizenInteraction) childHandler);
             }
-            markDirty();
+            markDirty(20 * 5);
         }
     }
 
@@ -1546,7 +1562,7 @@ public class CitizenData implements ICitizenData
     {
         if (this.status != status)
         {
-            markDirty();
+            markDirty(20);
         }
         this.status = status;
     }
@@ -1775,7 +1791,7 @@ public class CitizenData implements ICitizenData
         {
             citizenChatOptions.put(comp, new QuestDialogueInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
         }
-        this.markDirty();
+        this.markDirty(0);
     }
 
     @Override
