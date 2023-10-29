@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -19,9 +18,7 @@ import com.minecolonies.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -51,8 +48,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -631,56 +626,31 @@ public class CompatibilityManager implements ICompatibilityManager
 
         final Set<ItemStorage> tempFlowers = new HashSet<>();
 
-        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), true, level.registryAccess());
+        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), false, level.registryAccess());
 
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
-        final Registry<CreativeModeTab> registry = level.registryAccess().registryOrThrow(Registries.CREATIVE_MODE_TAB);
 
-        for (CreativeModeTab tab : CreativeModeTabs.allTabs())
+        CraftingUtils.forEachCreativeTabItems(tempDisplayParams, (tab, stacks) ->
         {
-            if (tab != registry.get(CreativeModeTabs.SEARCH) && tab != registry.get(CreativeModeTabs.HOTBAR))
+            final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
+            for (final ItemStack item : stacks)
             {
-                final Collection<ItemStack> stacks;
-                if (tab.getDisplayItems().isEmpty())
+                if (mapping.addTo(item.getItem(), 1) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxItemSubTypeScan.get())
                 {
-                    stacks = new HashSet<>();
-                    try
-                    {
-                        tab.displayItemsGenerator.accept(tempDisplayParams, (stack, vis) -> {
-                            stacks.add(stack);
-                        });
-                    }
-                    catch (final Throwable ex)
-                    {
-                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString() + "; using fallback", ex);
-                    }
-
-                }
-                else
-                {
-                    stacks = tab.getDisplayItems();
+                    continue;
                 }
 
-                final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
-                for (final ItemStack item : stacks)
-                {
-                    if (mapping.addTo(item.getItem(), 1) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxItemSubTypeScan.get())
-                    {
-                        continue;
-                    }
+                listBuilder.add(item);
+                discoverSaplings(item);
+                discoverOres(item);
+                discoverPlantables(item);
+                discoverFood(item);
+                discoverFuel(item);
+                discoverBeekeeperFlowers(item, tempFlowers);
 
-                    listBuilder.add(item);
-                    discoverSaplings(item);
-                    discoverOres(item);
-                    discoverPlantables(item);
-                    discoverFood(item);
-                    discoverFuel(item);
-                    discoverBeekeeperFlowers(item, tempFlowers);
-
-                    creativeModeTabMap.put(new ItemStorage(item), tab);
-                }
+                creativeModeTabMap.put(new ItemStorage(item), tab);
             }
-        }
+        });
 
         beekeeperflowers = ImmutableSet.copyOf(tempFlowers);
         Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
