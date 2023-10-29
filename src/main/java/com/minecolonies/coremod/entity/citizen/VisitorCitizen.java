@@ -618,9 +618,10 @@ VisitorCitizen extends AbstractEntityCitizen
     public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
-        if (citizenColonyHandler.getColony() != null && citizenData != null)
+
+        compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
+        if (citizenData != null)
         {
-            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
 
@@ -632,12 +633,14 @@ VisitorCitizen extends AbstractEntityCitizen
     {
         super.readAdditionalSaveData(compound);
 
-        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
-        citizenId = compound.getInt(TAG_CITIZEN);
-
-        if (isEffectiveAi())
+        if (compound.contains(TAG_COLONY_ID))
         {
-            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+            if (compound.contains(TAG_CITIZEN))
+            {
+                citizenId = compound.getInt(TAG_CITIZEN);
+                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            }
         }
 
         citizenDiseaseHandler.read(compound);

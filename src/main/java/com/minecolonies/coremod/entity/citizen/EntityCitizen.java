@@ -688,9 +688,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
-        if (citizenColonyHandler.getColony() != null && citizenData != null)
+
+        // Avoid accessing chunks in here, may cause loads during unload
+        compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
+        if (citizenData != null)
         {
-            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
         citizenDiseaseHandler.write(compound);
@@ -701,8 +703,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         super.readAdditionalSaveData(compound);
 
-        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
-        citizenId = compound.getInt(TAG_CITIZEN);
+        if (compound.contains(TAG_COLONY_ID))
+        {
+            citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+            if (compound.contains(TAG_CITIZEN))
+            {
+                citizenId = compound.getInt(TAG_CITIZEN);
+                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            }
+        }
         citizenDiseaseHandler.read(compound);
         setPose(Pose.STANDING);
     }
