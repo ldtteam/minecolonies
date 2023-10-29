@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.npc.Npc;
@@ -65,7 +66,7 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     /**
      * Mark the citizen dirty to synch the data with the client.
      */
-    public abstract void markDirty();
+    public abstract void markDirty(final int time);
 
     /**
      * Getter for the citizen id.
@@ -99,11 +100,14 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
             return true;
         }
 
-        // todo make university its own synch message.
-        return this.getSleepingPos().map(pos-> {
-            BlockState state = this.level.getBlockState(pos);
-            return state.getBlock().isBed(state, this.level, pos, this);
-        }).orElse(false);
+        if (getSleepingPos().isPresent())
+        {
+            final BlockPos pos = getSleepingPos().get();
+            final BlockState state = level.getBlockState(getSleepingPos().get());
+            return state.getBlock().isBed(state,level,pos,this);
+        }
+
+        return false;
     }
 
     @Override

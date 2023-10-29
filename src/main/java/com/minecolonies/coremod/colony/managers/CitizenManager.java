@@ -551,7 +551,10 @@ public class CitizenManager implements ICitizenManager
     @Override
     public boolean tickCitizenData()
     {
-        this.getCitizens().forEach(ICitizenData::tick);
+        for (ICitizenData iCitizenData : this.getCitizens())
+        {
+            iCitizenData.update();
+        }
         return false;
     }
 

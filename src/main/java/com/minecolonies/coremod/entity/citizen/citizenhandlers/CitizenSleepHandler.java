@@ -66,6 +66,11 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean isAsleep()
     {
+        if (citizen.getCitizenData() != null)
+        {
+            return citizen.getCitizenData().isAsleep();
+        }
+
         return citizen.getEntityData().get(DATA_IS_ASLEEP);
     }
 
