@@ -285,7 +285,6 @@ public final class StandardFactoryController implements IFactoryController
         if (compound.contains(NEW_NBT_TYPE))
         {
             short classId = compound.getShort(NEW_NBT_TYPE);
-
             try
             {
                 factory = getFactoryForOutput(classId);
@@ -307,7 +306,6 @@ public final class StandardFactoryController implements IFactoryController
             {
                 throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller: " + className).initCause(e);
             }
-
         }
 
         try
