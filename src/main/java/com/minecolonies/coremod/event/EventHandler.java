@@ -682,6 +682,7 @@ public class EventHandler
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
         {
+            // Re-enable for ghostly halloween
             RenderBipedCitizen.isItGhostTime = false;
         }
     }
