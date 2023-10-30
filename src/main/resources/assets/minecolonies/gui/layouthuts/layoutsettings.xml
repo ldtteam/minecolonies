@@ -3,6 +3,6 @@
     <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
 
     <list id="settingslist" size="164 170" pos="13 40">
-        <box size="100% 36" linewidth="1" id="box"/>
+        <box size="100% 45" linewidth="1" id="box"/>
     </list>
 </window>
