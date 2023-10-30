@@ -9,11 +9,9 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
@@ -21,9 +19,9 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 public class CommandDeleteColony implements IMCColonyOfficerCommand
 {
     /**
-     * Formatable string to use the command
+     * Formattable string to use the command
      */
-    private static final String DELETE_BUILDNGS_ARG = "delete Buildings?";
+    private static final String DELETE_BUILDINGS_ARG = "delete buildings?";
 
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -48,7 +46,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final boolean deleteBuildings = BoolArgumentType.getBool(context, DELETE_BUILDNGS_ARG);
+        final boolean deleteBuildings = BoolArgumentType.getBool(context, DELETE_BUILDINGS_ARG);
 
         BackUpHelper.backupColonyData();
         IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getLevel().dimension());
@@ -68,16 +66,9 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     @Override
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
-        String[] s = new String[2];
-        s[0] = "true delete buildings";
-        s[1] = "false keep buildings";
-
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(DELETE_BUILDNGS_ARG, BoolArgumentType.bool())
-                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(s, builder))
-                                 .then(IMCCommand.newArgument("", StringArgumentType.string())
-                                         .then(IMCCommand.newArgument("", StringArgumentType.string())
-                                                 .executes(this::checkPreConditionAndExecute)))));
+                         .then(IMCCommand.newArgument(DELETE_BUILDINGS_ARG, BoolArgumentType.bool())
+                                 .executes(this::checkPreConditionAndExecute)));
     }
 }
