@@ -157,7 +157,6 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                 {
                     // Recruits visitor as new citizen and respawns entity
                     colony.getVisitorManager().removeCivilian(data);
-                    data.setWorkBuilding(null);
                     data.setHomeBuilding(null);
                     data.setJob(null);
 

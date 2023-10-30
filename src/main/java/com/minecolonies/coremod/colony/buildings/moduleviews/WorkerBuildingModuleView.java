@@ -145,7 +145,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         return !citizen.isChild() &&
                  (citizen.getWorkBuilding() == null
                     || workerIDs.contains(citizen.getId())
-                    || buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
+                    || buildingView.getColony().getBuilding(citizen.getWorkBuilding()) != null && buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
                          != null);
     }
 
