@@ -90,6 +90,7 @@ public class RaiderWalkAI implements IStateAI
                 final List<BlockPos> wayPoints = ((IColonyRaidEvent) event).getWayPoints();
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
                 raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), !moveToPos.equals(targetBlock) && moveToPos.distManhattan(wayPoints.get(0)) > 50 ? 1.8 : 1.1);
+                walkInBuildingState = false;
             }
             else if (walkInBuildingState)
             {
@@ -107,6 +108,7 @@ public class RaiderWalkAI implements IStateAI
                         else
                         {
                             randomPathResult = null;
+                            walkTimer = raider.level.getGameTime() + TICKS_SECOND * 30;
                             findRandomPositionToWalkTo();
                         }
                     }
@@ -115,6 +117,7 @@ public class RaiderWalkAI implements IStateAI
             else if (raider.blockPosition().distSqr(targetBlock) < 25)
             {
                 findRandomPositionToWalkTo();
+                walkTimer = raider.level.getGameTime() + TICKS_SECOND * 30;
                 walkInBuildingState = true;
             }
             else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
