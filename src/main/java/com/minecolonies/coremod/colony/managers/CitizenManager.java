@@ -550,7 +550,10 @@ public class CitizenManager implements ICitizenManager
     @Override
     public boolean tickCitizenData()
     {
-        this.getCitizens().forEach(ICitizenData::tick);
+        for (ICitizenData iCitizenData : this.getCitizens())
+        {
+            iCitizenData.update();
+        }
         return false;
     }
 
@@ -681,6 +684,17 @@ public class CitizenManager implements ICitizenManager
                     citizenData.getCitizenMournHandler().setMourning(true);
                 }
             }
+        }
+    }
+
+    @Override
+    public void afterBuildingLoad()
+    {
+        calculateMaxCitizens();
+
+        for(final ICitizenData data: citizens.values())
+        {
+            data.onBuildingLoad();
         }
     }
 }

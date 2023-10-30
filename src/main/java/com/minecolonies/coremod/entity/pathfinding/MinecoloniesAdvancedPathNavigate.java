@@ -755,8 +755,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 //  Any other value is going down, so lets not move at all
                 default:
                     newSpeed = 0;
-                    mob.setShiftKeyDown(true);
-                    isSneaking = true;
+                    if (!isSneaking)
+                    {
+                        mob.setShiftKeyDown(true);
+                        isSneaking = true;
+                    }
                     this.ourEntity.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, 0.2);
                     break;
             }
