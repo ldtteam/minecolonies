@@ -376,7 +376,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
                     gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
                     gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
-                    view.getChildren().add(0, gradient);
+                    view.addChild(gradient, 0);
                     timeLabel.setColors(COLOR_TEXT_NEGATIVE);
                 }
                 else
