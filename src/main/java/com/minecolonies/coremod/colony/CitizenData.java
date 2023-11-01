@@ -1579,7 +1579,7 @@ public class CitizenData implements ICitizenData
         if (!Objects.equals(this.statusPosition, pos))
         {
             this.statusPosition = pos;
-            markDirty();
+            markDirty(20);
         }
     }
 
