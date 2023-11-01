@@ -532,7 +532,10 @@ public class CustomRecipe
         if (!recipeJson.has(RECIPE_RESULT_PROP) && !recipeJson.has(RECIPE_LOOTTABLE_PROP) &&
                 (!recipeJson.has(RECIPE_ALTERNATE_PROP) || recipeJson.getAsJsonArray(RECIPE_ALTERNATE_PROP).isEmpty()))
         {
-            Log.getLogger().error("Template {} with {}: rejecting, no outputs", templateId, itemId);
+            if (logStatus)
+            {
+                Log.getLogger().warn("Template {} with {}: rejecting, no outputs", templateId, itemId);
+            }
             return null;
         }
 
