@@ -5,8 +5,10 @@ import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.server.colony.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
@@ -48,10 +50,11 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         int startX = 160;
         final int startY = 40;
 
-        for (int i = 0; i < amountOfMercenaries; i++)
+        for (int i = 0; i < Math.min(amountOfMercenaries, 9); i++)
         {
+
             final Image newImage = new Image();
-            newImage.setImage(new ResourceLocation("minecolonies:textures/entity_icon/citizenmale3.png"), false);
+            newImage.setImage(new ResourceLocation("minecolonies:textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
             newImage.setSize(10, 10);
             newImage.setPosition(startX, startY);
             this.addChild(newImage);
