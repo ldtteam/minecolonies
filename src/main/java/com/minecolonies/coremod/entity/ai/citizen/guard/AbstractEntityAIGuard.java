@@ -173,7 +173,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
-          new AITarget(CombatAIStates.ATTACKING, this::shouldFlee, () -> GUARD_REGEN, GUARD_REGEN_INTERVAL),
+          new AITarget(GUARD_FLEE, this::flee, 20),
+          new AITarget(CombatAIStates.ATTACKING, this::shouldFlee, () -> GUARD_FLEE, GUARD_REGEN_INTERVAL),
           new AITarget(CombatAIStates.NO_TARGET, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
 
@@ -348,7 +349,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldFlee()
     {
-        if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D))
+        if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D) && worker.distanceToSqr(building.getID().getCenter()) > 20)
         {
             return worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RETREAT) > 0;
         }
@@ -363,18 +364,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState regen()
     {
-        if (!worker.hasEffect(MobEffects.MOVEMENT_SPEED))
+        if (((EntityCitizen)worker).getThreatTable().getTargetMob() != null && ((EntityCitizen)worker).getThreatTable().getTargetMob().distanceTo(worker) < 10)
         {
-            final double effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_SPEED);
-            if (effect > 0)
-            {
-                worker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, (int) (0 + effect)));
-            }
-        }
-
-        if (walkToBuilding())
-        {
-            return GUARD_REGEN;
+            return CombatAIStates.ATTACKING;
         }
 
         if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.75D) && buildingGuards.shallRetrieveOnLowHealth())
@@ -387,6 +379,30 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         return START_WORKING;
+    }
+
+    /**
+     * Flee to the building.
+     *
+     * @return next state to go to.
+     */
+    private IAIState flee()
+    {
+        if (!worker.hasEffect(MobEffects.MOVEMENT_SPEED))
+        {
+            final double effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_SPEED);
+            if (effect > 0)
+            {
+                worker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, (int) (0 + effect)));
+            }
+        }
+
+        if (walkToBuilding())
+        {
+            return GUARD_FLEE;
+        }
+
+        return GUARD_REGEN;
     }
 
     /**
