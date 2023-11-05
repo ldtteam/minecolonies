@@ -327,40 +327,28 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void updateArmorDamage(final double damage)
     {
-        for (final ItemStack stack : citizen.getArmorSlots())
+        if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
         {
-            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ArmorItem))
+            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
+                                                               .getColony()
+                                                               .getResearchManager()
+                                                               .getResearchEffects()
+                                                               .getEffectStrength(ARMOR_DURABILITY))))
             {
-                continue;
+                return;
             }
+        }
 
-            if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
-            {
-                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                  .getColony()
-                  .getResearchManager()
-                  .getResearchEffects()
-                  .getEffectStrength(ARMOR_DURABILITY))))
-                {
-                    return;
-                }
-            }
-
-            final int armorDmg = Math.max(1, (int) (damage / 4));
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(),
-              invStack -> invStack != stack && ItemStackUtils.compareItemStacksIgnoreStackSize(invStack, stack, false, true));
-            if (slot != -1)
-            {
-                if (citizen.getInventoryCitizen().damageInventoryItem(slot, armorDmg, citizen, (entityCitizen) -> {entityCitizen.broadcastBreakEvent(InteractionHand.MAIN_HAND);}))
-                {
-                    stack.setCount(0);
-                    return;
-                }
-            }
-
-            stack.hurtAndBreak(armorDmg, citizen, (i) -> {
-                i.broadcastBreakEvent(InteractionHand.MAIN_HAND);
-            });
+        final int armorDmg = Math.max(1, (int) (damage / 4));
+        for (int i = 0; i < 4; i++)
+        {
+            final EquipmentSlot equipmentSlot = EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, i);
+            final ItemStack equipment = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
+            equipment.hurtAndBreak(armorDmg, citizen, (s) -> {
+            s.broadcastBreakEvent(equipmentSlot);
+            citizen.onArmorRemove(equipment, equipmentSlot);
+            citizen.getInventoryCitizen().markDirty();
+        });
         }
     }
 

@@ -1,7 +1,10 @@
 package com.minecolonies.api.inventory;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_INV_SLOTS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Basic inventory for the citizens.
@@ -42,9 +45,10 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     private int freeSlots = DEFAULT_INV_SIZE;
 
     /**
-     * The inventory. (27 main inventory, 4 armor slots, 1 offhand slot)
+     * The inventory. (27 main inventory, 4 armor slots)
      */
     private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE, ItemStackUtils.EMPTY);
+    private NonNullList<ItemStack> armorInventory = NonNullList.withSize(4, ItemStackUtils.EMPTY);
 
     /**
      * The index of the currently held items (0-8).
@@ -256,6 +260,95 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     }
 
     /**
+     * Get the armor from a specific equipment slot.
+     * @param equipmentSlot the slot to get it from.
+     * @return the stack.
+     */
+    public ItemStack getArmorInSlot(final EquipmentSlot equipmentSlot)
+    {
+        if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR)
+        {
+            return armorInventory.get(equipmentSlot.getIndex());
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Force an armor stack in a slot. This is for container interaction only.
+     * @param equipmentSlot the slot to pick.
+     * @param stack the stack to set.
+     */
+    public void forceArmorStackToSlot(final EquipmentSlot equipmentSlot, final ItemStack stack)
+    {
+        armorInventory.set(equipmentSlot.getIndex(), stack);
+        if (citizen != null)
+        {
+            citizen.getEntity().ifPresent(citizen -> citizen.onArmorAdd(stack, equipmentSlot));
+            markDirty();
+        }
+    }
+
+    /**
+     * Force remove armor stack from a slot. This is for container interaction only.
+     * @param equipmentSlot the slot to clear.
+     * @param stack the stack being removed.
+     */
+    public void forceClearArmorInSlot(final EquipmentSlot equipmentSlot, final ItemStack stack)
+    {
+        if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR)
+        {
+            armorInventory.set(equipmentSlot.getIndex(), ItemStack.EMPTY);
+            if (citizen != null)
+            {
+                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(stack, equipmentSlot));
+                markDirty();
+            }
+        }
+    }
+
+    /**
+     * Transfer from inventory slot to armor.
+     * @param equipmentSlot the slot to transfer it to.
+     * @param slot the slot to transfer it from.
+     */
+    public void transferArmorToSlot(final EquipmentSlot equipmentSlot, final int slot)
+    {
+        if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR)
+        {
+            markDirty();
+            final ItemStack oldArmorStack = armorInventory.get(equipmentSlot.getIndex());
+            final ItemStack newArmorStack = getStackInSlot(slot);
+
+            if (!oldArmorStack.isEmpty())
+            {
+                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(oldArmorStack, equipmentSlot));
+            }
+
+            armorInventory.set(equipmentSlot.getIndex(), newArmorStack);
+            citizen.getEntity().ifPresent(citizen -> citizen.onArmorAdd(newArmorStack, equipmentSlot));
+            setStackInSlot(slot, oldArmorStack);
+        }
+    }
+
+    /**
+     * Move armor from armor slots to inventory.
+     * @param equipmentSlot the origin slot.
+     */
+    public void moveArmorToInventory(final EquipmentSlot equipmentSlot)
+    {
+        if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR)
+        {
+            final ItemStack armorStack = armorInventory.get(equipmentSlot.getIndex());
+            if (InventoryUtils.addItemStackToItemHandler(this, armorStack))
+            {
+                markDirty();
+                armorInventory.set(equipmentSlot.getIndex(), ItemStack.EMPTY);
+                citizen.getEntity().ifPresent(citizen -> citizen.onArmorRemove(armorStack, equipmentSlot));
+            }
+        }
+    }
+
+    /**
      * Damage an item within the inventory
      *
      * @param slot     slot to damage
@@ -428,12 +521,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     }
 
     /**
-     * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80 for crafting).
+     * Writes the inventory to nbt.
      *
-     * @param nbtTagList the taglist in.
-     * @return the filled list.
+     * @param nbtTagCompound the compound to store it in.
      */
-    public ListTag write(final ListTag nbtTagList)
+    public void write(final CompoundTag nbtTagCompound)
     {
         if (citizen != null && citizen.getColony() != null)
         {
@@ -444,10 +536,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             }
         }
 
-        final CompoundTag sizeNbt = new CompoundTag();
-        sizeNbt.putInt(TAG_SIZE, this.mainInventory.size());
-        nbtTagList.add(sizeNbt);
+        nbtTagCompound.putInt(TAG_INV_SIZE, this.mainInventory.size());
 
+        final ListTag invTagList = new ListTag();
         freeSlots = mainInventory.size();
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
@@ -456,43 +547,103 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
                 final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putByte("Slot", (byte) i);
                 (this.mainInventory.get(i)).save(compoundNBT);
-                nbtTagList.add(compoundNBT);
+                invTagList.add(compoundNBT);
                 freeSlots--;
             }
         }
+        nbtTagCompound.put(TAG_INVENTORY, invTagList);
 
-        return nbtTagList;
+        final ListTag armorTagList = new ListTag();
+        for (int i = 0; i < this.armorInventory.size(); ++i)
+        {
+            if (!(this.armorInventory.get(i)).isEmpty())
+            {
+                final CompoundTag compoundNBT = new CompoundTag();
+                compoundNBT.putByte("Slot", (byte) i);
+                (this.armorInventory.get(i)).save(compoundNBT);
+                armorTagList.add(compoundNBT);
+            }
+        }
+        nbtTagCompound.put(TAG_ARMOR_INVENTORY, armorTagList);
     }
 
     /**
-     * Reads from the given tag list and fills the slots in the inventory with the correct items.
+     * Reads from the given compound and fills the slots in the inventory with the correct items.
      *
-     * @param nbtTagList the tag list.
+     * @param nbtTagCompound the compound.
      */
-    public void read(final ListTag nbtTagList)
+    public void read(final CompoundTag nbtTagCompound)
     {
-        if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
+        if (nbtTagCompound.contains(TAG_ARMOR_INVENTORY))
         {
-            int size = nbtTagList.getCompound(0).getInt(TAG_SIZE);
-            size -= size % ROW_SIZE;
-            this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
-        }
-
-        freeSlots = mainInventory.size();
-
-        for (int i = 1; i < nbtTagList.size(); ++i)
-        {
-            final CompoundTag compoundNBT = nbtTagList.getCompound(i);
-
-            final int j = compoundNBT.getByte("Slot") & 255;
-            final ItemStack itemstack = ItemStack.of(compoundNBT);
-
-            if (!itemstack.isEmpty())
+            int size = nbtTagCompound.getInt(TAG_INV_SIZE);
+            if (this.mainInventory.size() < size)
             {
-                if (j < this.mainInventory.size())
+                size -= size % ROW_SIZE;
+                this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
+            }
+
+            freeSlots = mainInventory.size();
+
+            final ListTag nbtTagList = nbtTagCompound.getList(TAG_INVENTORY, 10);
+            for (int i = 0; i < nbtTagList.size(); i++)
+            {
+                final CompoundTag compoundNBT = nbtTagList.getCompound(i);
+                final int j = compoundNBT.getByte("Slot") & 255;
+                final ItemStack itemstack = ItemStack.of(compoundNBT);
+
+                if (!itemstack.isEmpty())
                 {
-                    this.mainInventory.set(j, itemstack);
-                    freeSlots--;
+                    if (j < this.mainInventory.size())
+                    {
+                        this.mainInventory.set(j, itemstack);
+                        freeSlots--;
+                    }
+                }
+            }
+
+            final ListTag armorTagList = nbtTagCompound.getList(TAG_ARMOR_INVENTORY, 10);
+            for (int i = 0; i < armorTagList.size(); ++i)
+            {
+                final CompoundTag compoundNBT = armorTagList.getCompound(i);
+                final int j = compoundNBT.getByte("Slot") & 255;
+                final ItemStack itemstack = ItemStack.of(compoundNBT);
+
+                if (!itemstack.isEmpty())
+                {
+                    if (j < this.armorInventory.size())
+                    {
+                        this.armorInventory.set(j, itemstack);
+                    }
+                }
+            }
+        }
+        else
+        {
+            final ListTag nbtTagList = nbtTagCompound.getList(TAG_INVENTORY, 10);
+            if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
+            {
+                int size = nbtTagList.getCompound(0).getInt(TAG_SIZE);
+                size -= size % ROW_SIZE;
+                this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
+            }
+
+            freeSlots = mainInventory.size();
+
+            for (int i = 1; i < nbtTagList.size(); i++)
+            {
+                final CompoundTag compoundNBT = nbtTagList.getCompound(i);
+
+                final int j = compoundNBT.getByte("Slot") & 255;
+                final ItemStack itemstack = ItemStack.of(compoundNBT);
+
+                if (!itemstack.isEmpty())
+                {
+                    if (j < this.mainInventory.size())
+                    {
+                        this.mainInventory.set(j, itemstack);
+                        freeSlots--;
+                    }
                 }
             }
         }

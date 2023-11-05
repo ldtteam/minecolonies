@@ -267,6 +267,11 @@ public final class NbtTagConstants
     public static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag to store the armor inventory to nbt.
+     */
+    public static final String TAG_ARMOR_INVENTORY = "armorinventory";
+
+    /**
      * Tag to store the content to nbt.
      */
     public static final String TAG_CONTENT = "content";
@@ -414,6 +419,11 @@ public final class NbtTagConstants
      * Tag used to store the size.
      */
     public static final String TAG_SIZE = "tagSIze";
+
+    /**
+     * Tag used to store the inventory size.
+     */
+    public static final String TAG_INV_SIZE = "invsize";
 
     /**
      * Tag used to store if the entity is the main.

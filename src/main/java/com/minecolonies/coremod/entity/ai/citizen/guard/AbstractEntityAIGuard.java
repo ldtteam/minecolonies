@@ -40,6 +40,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -349,7 +350,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldFlee()
     {
-        if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D) && worker.distanceToSqr(building.getID().getCenter()) > 20)
+        if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D) && worker.distanceToSqr(Vec3.atCenterOf(building.getID())) > 20)
         {
             return worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RETREAT) > 0;
         }
