@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.CitizenNameFile;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -60,6 +62,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -163,12 +166,6 @@ public class CitizenData implements ICitizenData
     private IBuilding homeBuilding;
 
     /**
-     * The work building of the citizen.
-     */
-    @Nullable
-    private IBuilding workBuilding;
-
-    /**
      * The job of the citizen.
      */
     private IJob<?> job;
@@ -176,7 +173,7 @@ public class CitizenData implements ICitizenData
     /**
      * If the citizen is dirty (Has to be updated on client side).
      */
-    private boolean dirty;
+    private int dirty = Integer.MAX_VALUE;
 
     /**
      * Its entitity.
@@ -326,7 +323,7 @@ public class CitizenData implements ICitizenData
         if (citizenChatOptions.containsKey(key))
         {
             citizenChatOptions.get(key).onServerResponseTriggered(responseId, player, this);
-            markDirty();
+            markDirty(0);
         }
     }
 
@@ -365,10 +362,13 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void markDirty()
+    public void markDirty(final int time)
     {
-        dirty = true;
-        colony.getCitizenManager().markDirty();
+        dirty = Math.min(dirty, time);
+        if (isDirty())
+        {
+            colony.getCitizenManager().markDirty();
+        }
     }
 
     /**
@@ -451,7 +451,7 @@ public class CitizenData implements ICitizenData
 
         citizenSkillHandler.init(levelCap);
 
-        markDirty();
+        markDirty(0);
     }
 
     /**
@@ -494,46 +494,17 @@ public class CitizenData implements ICitizenData
             citizen.getCitizenSleepHandler().onWakeUp();
         }
 
-        // Safety check that ensure the citizen its job matches the work building job
-        if (getJob() != null && workBuilding != null)
-        {
-            boolean hasCorrectJob = false;
-            for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
-            {
-                if (module.getJobEntry().equals(getJob().getJobRegistryEntry()))
-                {
-                    hasCorrectJob = true;
-                    break;
-                }
-            }
-
-            if (!hasCorrectJob)
-            {
-                MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony).forAllPlayers();
-                Log.getLogger().log(Level.ERROR, String.format("Worker %s has been unassigned from his job, a problem was found during load. Worker job: %s; Building: %s",
-                  citizen.getName().getString(),
-                  getJob().getJobRegistryEntry().getKey().toString(),
-                  workBuilding.getBuildingType().getRegistryName().toString()));
-
-                // Remove the citizen from the building to prevent failures in the future.
-                for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
-                {
-                    module.removeCitizen(this);
-                }
-            }
-        }
-
         citizen.getCitizenExperienceHandler().updateLevel();
 
         setLastPosition(citizen.blockPosition());
 
-        citizen.getCitizenJobHandler().onJobChanged(workBuilding == null ? null : citizen.getCitizenJobHandler().getColonyJob());
+        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
 
         applyResearchEffects();
 
         applyItemModifiers(citizen);
 
-        markDirty();
+        markDirty(0);
     }
 
     /**
@@ -764,7 +735,7 @@ public class CitizenData implements ICitizenData
     {
         this.female = isFemale;
         this.name = generateName(random, isFemale, getColony(), getColony().getCitizenNameFile());
-        markDirty();
+        markDirty(0);
     }
 
     @Override
@@ -777,7 +748,7 @@ public class CitizenData implements ICitizenData
     public void setPaused(final boolean p)
     {
         this.paused = p;
-        markDirty();
+        markDirty(40);
     }
 
     @Override
@@ -795,13 +766,25 @@ public class CitizenData implements ICitizenData
     @Override
     public boolean isDirty()
     {
-        return dirty;
+        return dirty <= 0;
     }
 
     @Override
     public void clearDirty()
     {
-        dirty = false;
+        if (isDirty())
+        {
+            dirty = Integer.MAX_VALUE;
+        }
+
+        if (dirty > 0)
+        {
+            dirty -= UPDATE_SUBSCRIBERS_INTERVAL;
+            if (isDirty())
+            {
+                colony.getCitizenManager().markDirty();
+            }
+        }
     }
 
     @Override
@@ -810,11 +793,6 @@ public class CitizenData implements ICitizenData
         if (homeBuilding != null && homeBuilding.getID().equals(building.getID()))
         {
             setHomeBuilding(null);
-        }
-
-        if (workBuilding != null && workBuilding.getID().equals(building.getID()))
-        {
-            setWorkBuilding(null);
         }
     }
 
@@ -834,7 +812,7 @@ public class CitizenData implements ICitizenData
         }
 
         homeBuilding = building;
-        markDirty();
+        markDirty(0);
 
         if (getEntity().isPresent() && getEntity().get().getCitizenJobHandler().getColonyJob() == null)
         {
@@ -848,45 +826,11 @@ public class CitizenData implements ICitizenData
     @Nullable
     public IBuilding getWorkBuilding()
     {
-        if (job == null && workBuilding != null)
+        if (job == null)
         {
-            setWorkBuilding(null);
+            return null;
         }
-        return workBuilding;
-    }
-
-    @Override
-    public void setWorkBuilding(@Nullable final IBuilding building)
-    {
-        if (workBuilding != null && building != null && workBuilding != building)
-        {
-            Log.getLogger().warn("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
-        }
-        else if (workBuilding != building)
-        {
-            workBuilding = building;
-
-            if (workBuilding != null)
-            {
-                //  We have a place to work, do we have the assigned Job?
-                if (job == null)
-                {
-                    // If this is null, something is very wrong!
-                    final WorkerBuildingModule module = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getAssignedCitizen().contains(this));
-                    //  No job, create one!
-                    setJob(module.createJob(this));
-                    colony.getWorkManager().clearWorkForCitizen(this);
-                }
-            }
-            else if (job != null)
-            {
-                //  No place of employment, get rid of our job
-                setJob(null);
-                colony.getWorkManager().clearWorkForCitizen(this);
-            }
-
-            markDirty();
-        }
+        return job.getWorkBuilding();
     }
 
     @Override
@@ -923,13 +867,15 @@ public class CitizenData implements ICitizenData
     {
         if (this.job != null && job == null)
         {
-            this.job.onRemoval();
+            final IJob oldJob = this.job;
+            this.job = null;
+            oldJob.onRemoval();
         }
         this.job = job;
 
         getEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
-        markDirty();
+        markDirty(0);
     }
 
     @Override
@@ -962,10 +908,10 @@ public class CitizenData implements ICitizenData
             buf.writeBlockPos(homeBuilding.getID());
         }
 
-        buf.writeBoolean(workBuilding != null);
-        if (workBuilding != null)
+        buf.writeBoolean(getWorkBuilding() != null);
+        if (getWorkBuilding() != null)
         {
-            buf.writeBlockPos(workBuilding.getID());
+            buf.writeBlockPos(getWorkBuilding().getID());
         }
 
         buf.writeDouble(getSaturation());
@@ -1162,7 +1108,7 @@ public class CitizenData implements ICitizenData
     public void setIsChild(final boolean isChild)
     {
         this.isChild = isChild;
-        markDirty();
+        markDirty(0);
 
         if (colony != null)
         {
@@ -1452,7 +1398,43 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void tick()
+    public void onBuildingLoad()
+    {
+        if (job == null)
+        {
+            return;
+        }
+
+        if (job.getBuildingPos() == null)
+        {
+            setJob(null);
+            return;
+        }
+
+        if (job.getBuildingPos() != null && job.getWorkBuilding() == null)
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(job.getBuildingPos());
+
+            if (building != null)
+            {
+                for (final IAssignsJob module : building.getModules(IAssignsJob.class))
+                {
+                    if (module.getJobEntry().equals(job.getJobRegistryEntry()) && module.assignCitizen(this))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (building == null || job.getWorkBuilding() == null)
+            {
+                setJob(null);
+            }
+        }
+    }
+
+    @Override
+    public void update()
     {
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
@@ -1485,7 +1467,7 @@ public class CitizenData implements ICitizenData
 
         if (!toRemove.isEmpty())
         {
-            markDirty();
+            markDirty(20 * 10);
         }
 
         for (final IInteractionResponseHandler handler : toRemove)
@@ -1511,7 +1493,7 @@ public class CitizenData implements ICitizenData
             {
                 this.citizenChatOptions.put(childHandler.getId(), (ServerCitizenInteraction) childHandler);
             }
-            markDirty();
+            markDirty(20 * 5);
         }
     }
 
@@ -1583,7 +1565,7 @@ public class CitizenData implements ICitizenData
     {
         if (this.status != status)
         {
-            markDirty();
+            markDirty(20);
         }
         this.status = status;
     }
@@ -1640,7 +1622,7 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (workBuilding != null && !workBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
+        if (job != null && job.getWorkBuilding() != null && !job.getWorkBuilding().isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
               Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
@@ -1654,7 +1636,8 @@ public class CitizenData implements ICitizenData
               ChatPriority.CHITCHAT));
         }
 
-        decreaseSaturation(workBuilding == null || workBuilding.getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, workBuilding.getBuildingLevel())) * 2);
+        decreaseSaturation(
+          job == null || job.getWorkBuilding().getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, job.getWorkBuilding().getBuildingLevel())) * 2);
     }
 
     @Override
@@ -1689,9 +1672,8 @@ public class CitizenData implements ICitizenData
     @Override
     public void onResurrect()
     {
-        this.workBuilding = null;
         this.homeBuilding = null;
-        this.job = null;
+        setJob(null);
     }
 
     @Override
@@ -1797,7 +1779,7 @@ public class CitizenData implements ICitizenData
         {
             citizenChatOptions.put(comp, new QuestDialogueInteraction(comp, ChatPriority.CHITCHAT, quest.getId(), index, this));
         }
-        this.markDirty();
+        this.markDirty(0);
     }
 
     @Override

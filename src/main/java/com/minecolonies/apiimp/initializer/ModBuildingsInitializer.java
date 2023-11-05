@@ -97,10 +97,10 @@ public final class ModBuildingsInitializer
                                        .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                        .addBuildingModuleProducer(() -> new SettingsModule()
                                                                           .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW))
+                                                                          .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
+                                                                          .with(AbstractBuildingGuards.FOLLOW_MODE, new GuardFollowModeSetting())
                                                                           .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
-                                                                          .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
-                                                                          .with(AbstractBuildingGuards.PATROL_MODE, new PatrolModeSetting())
-                                                                          .with(AbstractBuildingGuards.FOLLOW_MODE, new FollowModeSetting()), () -> SettingsModuleView::new)
+                                                                          .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true)), () -> SettingsModuleView::new)
                                        .createBuildingEntry());
 
         ModBuildings.blacksmith = DEFERRED_REGISTER.register(ModBuildings.BLACKSMITH_ID, () -> new BuildingEntry.Builder()
@@ -259,10 +259,10 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                     .addBuildingModuleProducer(() -> new SettingsModule()
                                                                        .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting())
+                                                                       .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
+                                                                       .with(AbstractBuildingGuards.FOLLOW_MODE, new GuardFollowModeSetting())
                                                                        .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
-                                                                       .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
-                                                                       .with(AbstractBuildingGuards.PATROL_MODE, new PatrolModeSetting())
-                                                                       .with(AbstractBuildingGuards.FOLLOW_MODE, new FollowModeSetting()), () -> SettingsModuleView::new)
+                                                                       .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true)), () -> SettingsModuleView::new)
                                     .createBuildingEntry());
 
         ModBuildings.home = DEFERRED_REGISTER.register(ModBuildings.HOME_ID, () -> new BuildingEntry.Builder()

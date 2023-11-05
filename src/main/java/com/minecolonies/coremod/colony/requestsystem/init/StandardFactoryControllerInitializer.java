@@ -84,12 +84,12 @@ public final class StandardFactoryControllerInitializer
 
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BoolSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.StringSettingsFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.StringWithDescSettingsFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BlockSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.IntSettingFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.StringWithDescSettingsFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.PatrolModeSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardPatrolModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardTaskSettingFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.FollowModeSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardFollowModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.CrafterRecipeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BuilderModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.DynamicTreesSettingFactory());
