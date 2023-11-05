@@ -88,6 +88,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
 
         findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(Component.literal(townHall.getColony().getStructurePack()));
         registerButton("bannerPicker", this::openBannerPicker);
+        registerButton("resettexture", this::resetTextureStyle);
 
         this.colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
         this.textureDropDownList.setSelectedIndex(TEXTURE_PACKS.indexOf(townHall.getColony().getTextureStyleId()));
@@ -97,6 +98,14 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         this.initialNamePackIndex = nameStyleDropDownList.getSelectedIndex();
 
         checkFeatureUnlock();
+    }
+
+    /**
+     * Reset the texture style.
+     */
+    private void resetTextureStyle()
+    {
+        Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)));
     }
 
     /**

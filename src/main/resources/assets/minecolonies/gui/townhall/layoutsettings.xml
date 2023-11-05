@@ -34,7 +34,7 @@
     <label label="$(com.minecolonies.coremod.gui.townhall.picktexturestyle)" pos="276 100" size="148 11" textalign="MIDDLE" color="black"/>
     <dropdown id="textureStylePicker"
               size="86 17"
-              pos="306 114"
+              pos="270 114"
               maxContentHeight="75"
               dropDownSize="86 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
@@ -47,6 +47,7 @@
             <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </view>
     </dropdown>
+    <buttonimage id="resettexture" size="64 17" pos="360 114" source="minecolonies:textures/gui/builderhut/builder_button_small.png" textcolor="black" text="reset"/>
 
     <label label="$(com.minecolonies.coremod.gui.townhall.pickcolonystyle)" pos="276 140" size="148 11" textalign="MIDDLE" color="black"/>
     <buttonimage id="colonyStylePicker"

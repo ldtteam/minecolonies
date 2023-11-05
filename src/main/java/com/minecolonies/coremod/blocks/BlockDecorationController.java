@@ -2,11 +2,10 @@ package com.minecolonies.coremod.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesDirectional;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
@@ -24,6 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -46,8 +46,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
 /**
  * Creates a decoration controller block.
  */
-public class BlockDecorationController extends AbstractBlockMinecoloniesHorizontal<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock,
-                                                                                                                           ILeveledBlueprintAnchorBlock
+public class BlockDecorationController extends AbstractBlockMinecoloniesDirectional<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock
 {
     /**
      * The hardness this block has.
@@ -72,10 +71,17 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * The bounding boxes.
      */
-    protected static final VoxelShape AABB_SOUTH = Shapes.box(0.25D, 0.314D, 0.97D, 0.75D, 0.86D, 1.0D);
+    protected static final VoxelShape AABB_SOUTH = Shapes.box(0.25D, 0.314D, 0.7D, 0.75D, 0.86D, 1.0D);
     protected static final VoxelShape AABB_NORTH = Shapes.box(0.25D, 0.314D, 0.0D, 0.75D, 0.86D, 0.3D);
-    protected static final VoxelShape AABB_EAST  = Shapes.box(0.97D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
+
+
+    protected static final VoxelShape AABB_EAST  = Shapes.box(0.7D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
     protected static final VoxelShape AABB_WEST  = Shapes.box(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
+
+
+
+    protected static final VoxelShape AABB_UP = Shapes.box(0.25D, 0.7D, 0.14D, 0.75D, 1.0D, 0.686D);
+    protected static final VoxelShape AABB_DOWN = Shapes.box(0.25D, 0.0D, 0.314D, 0.75D, 0.3D, 0.86D);
 
     /**
      * Constructor for the deco controller.
@@ -93,21 +99,64 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    public VoxelShape getShape(final BlockState decoController, final BlockGetter level, final BlockPos pos, final CollisionContext context)
     {
-        Direction Direction = state.getValue(FACING);
-        switch (Direction)
+        final Direction direction = decoController.getValue(BlockDecorationController.FACING);
+        final BlockPos offsetPos = pos.relative(direction);
+        final BlockState state = level.getBlockState(offsetPos);
+        final VoxelShape shape = state.getShape(level, offsetPos);
+        if (shape.isEmpty() || Block.isShapeFullBlock(shape))
         {
-            case EAST:
-                return AABB_EAST;
-            case WEST:
-                return AABB_WEST;
-            case SOUTH:
-                return AABB_SOUTH;
-            case NORTH:
-            default:
-                return AABB_NORTH;
+            return switch (direction)
+                     {
+                         case EAST -> AABB_EAST;
+                         case WEST -> AABB_WEST;
+                         case SOUTH -> AABB_SOUTH;
+                         case NORTH -> AABB_NORTH;
+                         case UP -> AABB_UP;
+                         case DOWN -> AABB_DOWN;
+                     };
         }
+
+        final Vec3 translateVec;
+        switch (direction)
+        {
+            case UP ->
+            {
+                translateVec = new Vec3(0, shape.min(Direction.Axis.Y), 0);
+            }
+            case DOWN ->
+            {
+                translateVec = new Vec3(0, shape.max(Direction.Axis.Y) - 1, 0);
+            }
+            case NORTH ->
+            {
+                translateVec = new Vec3(0, 0, shape.max(Direction.Axis.Z) - 1);
+            }
+            case SOUTH ->
+            {
+                translateVec = new Vec3(0, 0, shape.min(Direction.Axis.Z));
+            }
+            case EAST ->
+            {
+                translateVec = new Vec3(shape.min(Direction.Axis.X), 0, 0);
+            }
+            case WEST ->
+            {
+                translateVec = new Vec3(shape.max(Direction.Axis.X) - 1, 0, 0);
+            }
+            default -> translateVec = new Vec3(0, 0, 0);
+        }
+
+        return switch (direction)
+                 {
+                     case EAST -> AABB_EAST.move(translateVec.x, translateVec.y, translateVec.z);
+                     case WEST -> AABB_WEST.move(translateVec.x, translateVec.y, translateVec.z);
+                     case SOUTH -> AABB_SOUTH.move(translateVec.x, translateVec.y, translateVec.z);
+                     case NORTH -> AABB_NORTH.move(translateVec.x, translateVec.y, translateVec.z);
+                     case UP -> AABB_UP.move(translateVec.x, translateVec.y, translateVec.z);
+                     case DOWN -> AABB_DOWN.move(translateVec.x, translateVec.y, translateVec.z);
+                 };
     }
 
     @Override
@@ -128,6 +177,12 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public RenderShape getRenderShape(final BlockState state)
+    {
+        return RenderShape.INVISIBLE;
     }
 
     @Override
@@ -171,7 +226,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
-        return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
+        return super.getStateForPlacement(context).setValue(FACING, context.getClickedFace().getOpposite());
     }
 
     @NotNull
