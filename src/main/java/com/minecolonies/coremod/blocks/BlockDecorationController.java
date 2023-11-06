@@ -118,45 +118,15 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
                      };
         }
 
-        final Vec3 translateVec;
-        switch (direction)
-        {
-            case UP ->
-            {
-                translateVec = new Vec3(0, shape.min(Direction.Axis.Y), 0);
-            }
-            case DOWN ->
-            {
-                translateVec = new Vec3(0, shape.max(Direction.Axis.Y) - 1, 0);
-            }
-            case NORTH ->
-            {
-                translateVec = new Vec3(0, 0, shape.max(Direction.Axis.Z) - 1);
-            }
-            case SOUTH ->
-            {
-                translateVec = new Vec3(0, 0, shape.min(Direction.Axis.Z));
-            }
-            case EAST ->
-            {
-                translateVec = new Vec3(shape.min(Direction.Axis.X), 0, 0);
-            }
-            case WEST ->
-            {
-                translateVec = new Vec3(shape.max(Direction.Axis.X) - 1, 0, 0);
-            }
-            default -> translateVec = new Vec3(0, 0, 0);
-        }
-
         return switch (direction)
-                 {
-                     case EAST -> AABB_EAST.move(translateVec.x, translateVec.y, translateVec.z);
-                     case WEST -> AABB_WEST.move(translateVec.x, translateVec.y, translateVec.z);
-                     case SOUTH -> AABB_SOUTH.move(translateVec.x, translateVec.y, translateVec.z);
-                     case NORTH -> AABB_NORTH.move(translateVec.x, translateVec.y, translateVec.z);
-                     case UP -> AABB_UP.move(translateVec.x, translateVec.y, translateVec.z);
-                     case DOWN -> AABB_DOWN.move(translateVec.x, translateVec.y, translateVec.z);
-                 };
+        {
+            case UP -> AABB_UP.move(0, shape.min(Direction.Axis.Y), 0);
+            case DOWN -> AABB_DOWN.move(0, shape.max(Direction.Axis.Y) - 1, 0);
+            case NORTH -> AABB_NORTH.move(0, 0, shape.max(Direction.Axis.Z) - 1);
+            case SOUTH -> AABB_SOUTH.move(0, 0, shape.min(Direction.Axis.Z));
+            case EAST -> AABB_EAST.move(shape.min(Direction.Axis.X), 0, 0);
+            case WEST -> AABB_WEST.move(shape.max(Direction.Axis.X) - 1, 0, 0);
+        };
     }
 
     @Override

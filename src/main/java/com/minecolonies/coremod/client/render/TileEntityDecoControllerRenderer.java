@@ -67,35 +67,15 @@ public class TileEntityDecoControllerRenderer implements BlockEntityRenderer<Blo
                     return;
                 }
 
-                final Vec3 translateVec;
-                switch (direction)
+                final Vec3 translateVec = switch (direction)
                 {
-                    case UP ->
-                    {
-                        translateVec = new Vec3(0, shape.min(Direction.Axis.Y), 0);
-                    }
-                    case DOWN ->
-                    {
-                        translateVec = new Vec3(0, shape.max(Direction.Axis.Y)-1, 0);
-                    }
-                    case NORTH ->
-                    {
-                        translateVec = new Vec3(0, 0, shape.max(Direction.Axis.Z)-1);
-                    }
-                    case SOUTH ->
-                    {
-                        translateVec = new Vec3(0, 0, shape.min(Direction.Axis.Z));
-                    }
-                    case EAST ->
-                    {
-                        translateVec = new Vec3( shape.min(Direction.Axis.X), 0, 0);
-                    }
-                    case WEST ->
-                    {
-                        translateVec = new Vec3(shape.max(Direction.Axis.X)-1, 0, 0);
-                    }
-                    default -> translateVec = new Vec3(0,0,0);
-                }
+                    case UP -> new Vec3(0, shape.min(Direction.Axis.Y), 0);
+                    case DOWN -> new Vec3(0, shape.max(Direction.Axis.Y)-1, 0);
+                    case NORTH -> new Vec3(0, 0, shape.max(Direction.Axis.Z)-1);
+                    case SOUTH -> new Vec3(0, 0, shape.min(Direction.Axis.Z));
+                    case EAST -> new Vec3( shape.min(Direction.Axis.X), 0, 0);
+                    case WEST -> new Vec3(shape.max(Direction.Axis.X)-1, 0, 0);
+                };
 
                 if (!decoController.isAir())
                 {
