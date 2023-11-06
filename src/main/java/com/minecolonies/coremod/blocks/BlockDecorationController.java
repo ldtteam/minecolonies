@@ -8,11 +8,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +24,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -38,15 +44,17 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_SCHEMATIC_NAME;
+import static com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape.WATERLOGGED;
 import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
 
 /**
  * Creates a decoration controller block.
  */
-public class BlockDecorationController extends AbstractBlockMinecoloniesDirectional<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock
+public class BlockDecorationController extends AbstractBlockMinecoloniesDirectional<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock, SimpleWaterloggedBlock
 {
     /**
      * The hardness this block has.
@@ -129,6 +137,25 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
         };
     }
 
+    @NotNull
+    @Override
+    public BlockState updateShape(
+      @NotNull final BlockState stateIn,
+      final Direction dir,
+      final BlockState state,
+      final LevelAccessor worldIn,
+      @NotNull final BlockPos currentPos,
+      final BlockPos pos)
+    {
+        if (stateIn.getValue(WATERLOGGED))
+        {
+            worldIn.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+        }
+
+
+        return super.updateShape(stateIn, dir, state, worldIn, currentPos, pos);
+    }
+
     @Override
     public InteractionResult use(
       final BlockState state,
@@ -182,7 +209,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
-        builder.add(FACING, MIRROR);
+        builder.add(FACING, MIRROR, WATERLOGGED);
     }
 
     @Nullable
@@ -196,7 +223,14 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
-        return super.getStateForPlacement(context).setValue(FACING, context.getClickedFace().getOpposite());
+        Fluid fluid = context.getLevel().getFluidState(context.getClickedPos()).getType();
+        return super.getStateForPlacement(context).setValue(FACING, context.getClickedFace().getOpposite()).setValue(WATERLOGGED, fluid == Fluids.WATER);
+    }
+
+    @Override
+    public FluidState getFluidState(final BlockState state)
+    {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @NotNull
