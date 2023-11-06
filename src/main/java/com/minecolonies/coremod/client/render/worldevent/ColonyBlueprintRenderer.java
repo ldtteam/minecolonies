@@ -20,6 +20,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import net.minecraft.client.Minecraft;
@@ -395,8 +396,11 @@ public class ColonyBlueprintRenderer
                     {
                         String schemPath = buildingView.getStructurePath();
                         schemPath = schemPath.replace(".blueprint", "");
-                        schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
-
+                        try{
+                            schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
+                        }catch(Exception e){
+                            continue;
+                        }
                         final String structurePack = buildingView.getStructurePack();
                         final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath,
                                 RotationMirror.of(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
