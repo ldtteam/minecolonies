@@ -697,19 +697,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return rally(rallyLocation);
         }
 
-        switch (buildingGuards.getTask())
-        {
-            case GuardTaskSetting.PATROL:
-                return patrol();
-            case GuardTaskSetting.GUARD:
-                return guard();
-            case GuardTaskSetting.FOLLOW:
-                return follow();
-            case GuardTaskSetting.PATROL_MINE:
-                return patrolMine();
-            default:
-                return PREPARING;
-        }
+        return switch (buildingGuards.getTask())
+                 {
+                     case GuardTaskSetting.PATROL -> patrol();
+                     case GuardTaskSetting.GUARD -> guard();
+                     case GuardTaskSetting.FOLLOW -> follow();
+                     case GuardTaskSetting.PATROL_MINE -> patrolMine();
+                     default -> PREPARING;
+                 };
     }
 
     /**
