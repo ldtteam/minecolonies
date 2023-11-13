@@ -227,7 +227,7 @@ public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickabl
     /**
      * Log a debug message.
      *
-     * @message the message to log.
+     * @param message the message to log.
      */
     void log(final String message);
 

@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -24,17 +21,18 @@ import static com.minecolonies.api.util.constant.WindowConstants.ON;
 public class BoolSetting implements ISetting
 {
     /**
+     * Default value of the setting.
+     */
+    private final boolean defaultValue;
+
+    /**
      * The value of the setting.
      */
     private boolean value;
 
     /**
-     * Default value of the setting.
-     */
-    private boolean defaultValue;
-
-    /**
      * Create a new boolean setting.
+     *
      * @param init the initial value.
      */
     public BoolSetting(final boolean init)
@@ -45,8 +43,9 @@ public class BoolSetting implements ISetting
 
     /**
      * Create a new boolean setting.
+     *
      * @param value the value.
-     * @param def the default value.
+     * @param def   the default value.
      */
     public BoolSetting(final boolean value, final boolean def)
     {
@@ -56,6 +55,7 @@ public class BoolSetting implements ISetting
 
     /**
      * Get the setting value.
+     *
      * @return the set value.
      */
     public boolean getValue()
@@ -65,11 +65,18 @@ public class BoolSetting implements ISetting
 
     /**
      * Get the default value.
+     *
      * @return the default value.
      */
     public boolean getDefault()
     {
         return defaultValue;
+    }
+
+    @Override
+    public ResourceLocation getLayoutItem()
+    {
+        return new ResourceLocation("minecolonies:gui/layouthuts/layoutboolsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -80,16 +87,21 @@ public class BoolSetting implements ISetting
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutboolsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
-        pane.findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
+    public void render(
+      final ISettingKey<?> key,
+      final Pane pane,
+      final ISettingsModuleView settingsModuleView,
+      final IBuildingView building,
+      final BOWindow window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(Component.translatable(value ? ON : OFF));
+        ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
+        triggerButton.setEnabled(isActive(settingsModuleView));
+        triggerButton.setText(Component.translatable(value ? ON : OFF));
+        setInActiveHoverPane(triggerButton, settingsModuleView);
     }
 
     @Override
@@ -99,9 +111,9 @@ public class BoolSetting implements ISetting
     }
 
     @Override
-    public void copyValue(final ISetting iSetting)
+    public void copyValue(final ISetting setting)
     {
-        if (iSetting instanceof final BoolSetting other)
+        if (setting instanceof final BoolSetting other)
         {
             this.value = other.value;
         }

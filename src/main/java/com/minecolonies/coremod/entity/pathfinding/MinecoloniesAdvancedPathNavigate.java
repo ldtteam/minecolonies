@@ -114,7 +114,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speedFactor, final boolean safeDestination)
+    public PathResult<AbstractPathJob> moveAwayFromXYZ(final BlockPos avoid, final double range, final double speedFactor, final boolean safeDestination)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
@@ -127,7 +127,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveToRandomPos(final double range, final double speedFactor)
+    public PathResult<AbstractPathJob> moveToRandomPos(final double range, final double speedFactor)
     {
         if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {
@@ -146,7 +146,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
+    public PathResult<AbstractPathJob> moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
     {
         if (pathResult != null
               && pathResult.getJob() instanceof PathJobRandomPos
@@ -165,7 +165,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public PathResult moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType)
+    public PathResult<AbstractPathJob> moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType)
     {
         if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {
@@ -187,7 +187,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult setPathJob(
+    public PathResult<AbstractPathJob> setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
       final double speedFactor, final boolean safeDestination)
@@ -343,7 +343,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveToXYZ(final double x, final double y, final double z, final double speedFactor)
+    public PathResult<AbstractPathJob> moveToXYZ(final double x, final double y, final double z, final double speedFactor)
     {
         final int newX = Mth.floor(x);
         final int newY = (int) y;
@@ -755,8 +755,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 //  Any other value is going down, so lets not move at all
                 default:
                     newSpeed = 0;
-                    mob.setShiftKeyDown(true);
-                    isSneaking = true;
+                    if (!isSneaking)
+                    {
+                        mob.setShiftKeyDown(true);
+                        isSneaking = true;
+                    }
                     this.ourEntity.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, 0.2);
                     break;
             }
@@ -1015,14 +1018,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     @Nullable
     @Override
-    public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
+    public PathResult<AbstractPathJob> moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
         return moveToXYZ(e.getX(), e.getY(), e.getZ(), speed);
     }
 
     @Nullable
     @Override
-    public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
+    public PathResult<AbstractPathJob> moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(new BlockPos(e.position()), distance, speed, true);
     }

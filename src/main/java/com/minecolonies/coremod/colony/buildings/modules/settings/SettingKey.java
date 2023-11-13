@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Objects;
 
 /**
- * Specific Settingskey implementation.
+ * Specific Settings key implementation.
  */
 public class SettingKey<T extends ISetting> implements ISettingKey<T>
 {
@@ -55,7 +55,7 @@ public class SettingKey<T extends ISetting> implements ISettingKey<T>
         {
             return false;
         }
-        final SettingKey that = (SettingKey) o;
+        final SettingKey<?> that = (SettingKey<?>) o;
         return Objects.equals(type, that.type) && Objects.equals(id, that.id);
     }
 

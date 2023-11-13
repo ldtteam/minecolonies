@@ -566,7 +566,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 luckyOresInLevel = luckyOres.get(buildingLevel);
             }
 
-            return luckyOresInLevel.get(random.nextInt(luckyOres.size())).getItemStack().copy();
+            return luckyOresInLevel.get(random.nextInt(luckyOresInLevel.size())).getItemStack().copy();
         }
         return ItemStack.EMPTY;
     }
@@ -819,7 +819,7 @@ public class CompatibilityManager implements ICompatibilityManager
                         buildingLevel = Integer.parseInt(split[2]);
                     }
 
-                    final int rarity = Integer.parseInt(split[split.length - 1]);
+                    final int rarity = Integer.parseInt(split[1]);
 
                     luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
 
@@ -842,6 +842,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty())
                 {
                     alternative = luckyOres.get(levelToTest);
+                    break;
                 }
             }
 

@@ -172,4 +172,9 @@ public interface ICitizenManager extends IEntityManager
      * Called in the morning.
      */
     void onWakeUp();
+
+    /**
+     * Post building load actions
+     */
+    void afterBuildingLoad();
 }

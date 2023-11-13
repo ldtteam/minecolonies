@@ -92,7 +92,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
                 .stream()
                 .filter(iBuilding -> iBuilding.getBuildingLevel() != 0)
                 .collect(
-                  Collectors.summingInt(ibuilding -> ibuilding.getBuildingLevel() / colony.getBuildingManager().getBuildings().size()))), false);
+                  Collectors.summingInt(ibuilding -> ibuilding.getBuildingLevel())) / colony.getBuildingManager().getBuildings().size()), false);
             context.getSource()
               .sendSuccess(literalAndRemember(colony.getBuildingManager()
                 .getBuildings()

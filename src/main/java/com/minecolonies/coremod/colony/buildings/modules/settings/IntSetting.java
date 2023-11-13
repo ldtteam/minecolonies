@@ -1,16 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
-import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,14 +17,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class IntSetting implements ISetting
 {
     /**
+     * Default value of the setting.
+     */
+    private final int defaultValue;
+
+    /**
      * The value of the setting.
      */
     private int value;
-
-    /**
-     * Default value of the setting.
-     */
-    private int defaultValue;
 
     /**
      * Create a new boolean setting.
@@ -69,6 +65,12 @@ public class IntSetting implements ISetting
         return defaultValue;
     }
 
+    @Override
+    public ResourceLocation getLayoutItem()
+    {
+        return new ResourceLocation("minecolonies:gui/layouthuts/layoutintsetting.xml");
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void setupHandler(
@@ -77,11 +79,7 @@ public class IntSetting implements ISetting
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutintsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
-        pane.findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", TextField.class).setHandler(input -> {
-
             try
             {
                 if (input.getText().isEmpty())
@@ -102,9 +100,16 @@ public class IntSetting implements ISetting
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
+    public void render(
+      final ISettingKey<?> key,
+      final Pane pane,
+      final ISettingsModuleView settingsModuleView,
+      final IBuildingView building,
+      final BOWindow window)
     {
         final TextField field = pane.findPaneOfTypeByID("trigger", TextField.class);
+        field.setEnabled(isActive(settingsModuleView));
+        setInActiveHoverPane(field, settingsModuleView);
         if (!field.getText().equals(String.valueOf(this.value)))
         {
             field.setText(String.valueOf(value));
@@ -112,15 +117,9 @@ public class IntSetting implements ISetting
     }
 
     @Override
-    public void trigger()
+    public void copyValue(final ISetting setting)
     {
-
-    }
-
-    @Override
-    public void copyValue(final ISetting iSetting)
-    {
-        if (iSetting instanceof final IntSetting other)
+        if (setting instanceof final IntSetting other)
         {
             setValue(other.getValue());
         }
