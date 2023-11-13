@@ -54,6 +54,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -431,7 +432,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
+                                recipeStorage.getAlternateOutputs().stream())
+                        .filter(ItemStackUtils::isNotEmpty);
+
+                building.getColony().getRequestManager().onColonyUpdate(request ->
+                        request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
             }
             return true;
         }

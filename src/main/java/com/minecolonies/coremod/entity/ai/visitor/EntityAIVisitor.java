@@ -92,7 +92,7 @@ public class EntityAIVisitor implements IState
     private boolean reduceTime()
     {
         citizen.getCitizenData().decreaseSaturation(0.02);
-        citizen.getCitizenData().markDirty();
+        citizen.getCitizenData().markDirty(20 * 20);
         if (citizen.getCitizenData().getSaturation() <= 0)
         {
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());

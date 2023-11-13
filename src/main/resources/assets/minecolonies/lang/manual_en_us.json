@@ -572,8 +572,8 @@
 
   "com.minecolonies.coremod.gui.workerhuts.mobslist": "Mob Attack List",
 
-  "com.minecolonies.core.builder.setting.manual": "Manual Mode",
-  "com.minecolonies.core.builder.setting.automatic": "Automatic Mode",
+  "com.minecolonies.core.builder.setting.manual": "Manual",
+  "com.minecolonies.core.builder.setting.automatic": "Automatic",
   "com.minecolonies.coremod.gui.builder.select": "Assign",
   "com.minecolonies.coremod.gui.builder.cancel": "Cancel",
 
@@ -1857,9 +1857,9 @@
   "com.minecolonies.coremod.gui.chat.noguardnearwork": "There are no Guard or Barrack Towers near my workplace, so I don't feel safe there!",
   "com.minecolonies.coremod.gui.chat.noguardnearhome": "There are no Guard or Barrack Towers near my home, so I don't feel safe there!",
 
-  "com.minecolonies.core.apiary.setting.honey": "Collect honey",
-  "com.minecolonies.core.apiary.setting.honeycomb": "Collect honeycomb",
-  "com.minecolonies.core.apiary.setting.both": "Collect comb and honey",
+  "com.minecolonies.core.apiary.setting.honey": "Honey",
+  "com.minecolonies.core.apiary.setting.honeycomb": "Honeycomb",
+  "com.minecolonies.core.apiary.setting.both": "Honeycomb and Honey",
   "com.minecolonies.coremod.beekeeper.noflowers": "Please tell me what kind of flowers I should feed to the Bees!",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
   "entity.beekeeper.messagenohives": "Either there are no hives for me to work at, or you haven't assigned me any. Use the hive tool available from my hut to do so.",
@@ -2057,6 +2057,8 @@
 
   "com.minecolonies.coremod.setting.minecolonies:closeportal": "Close portal on return:",
 
+  "com.minecolonies.coremod.setting.minecolonies:beekeeper": "Collect:",
+
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool",
   "com.minecolonies.coremod.gui.blocks.distance": "%d blocks",
   "com.minecolonies.coremod.gui.progress.step": "Step %d/%d",
@@ -2076,6 +2078,13 @@
   "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
   "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:",
   "com.minecolonies.coremod.setting.minecolonies:guardjob": "Job:",
+
+  "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:",
+  "com.minecolonies.coremod.setting.minecolonies:fillblock": "Fill block:",
+  "com.minecolonies.coremod.setting.minecolonies:mode": "Task Assignment Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:buildmode": "Construction Strategy:",
+
+  "com.minecolonies.coremod.settings.reason.needsresearch": "Please research \"%s\" in the university to unlock this",
 
   "com.minecolonies.coremod.gui.citizen.family": "Family",
   "com.minecolonies.coremod.gui.citizen.job": "Job",
@@ -2224,8 +2233,6 @@
   "com.minecolonies.coremod.building.missingcolony": "No colony was founded in this land yet, seek out the townhall to start a new colony here!",
   "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state.",
   "com.minecolonies.coremod.gui.reactivate.button": "Reactivate",
-  "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:",
-  "com.minecolonies.coremod.setting.minecolonies:fillblock": "Fill block:",
   "block.minecolonies.simplequarry": "Simple Quarry",
   "block.minecolonies.simplequarry.name": "Simple Quarry",
   "block.minecolonies.mediumquarry": "Medium Quarry",
@@ -2372,7 +2379,7 @@
   "com.minecolonies.building.archery.desc": "Teaches Archers-To-Be to Take a Bow.",
   "com.minecolonies.building.combatacademy.desc": "Teaches Knights-To-Be Which End is the Pointy End.",
   "com.minecolonies.building.sawmill.desc": "Turns Logs into Wood-based Products. Source: I Saw It Online.",
-  "com.minecolonies.building.blacksmith.desc": "Hammers Out The Details of Making Tools, Weaspons, and Armor.",
+  "com.minecolonies.building.blacksmith.desc": "Hammers Out The Details of Making Tools, Weapons, and Armor.",
   "com.minecolonies.building.stonemason.desc": "Not Michelangelo, but Can Still Craft Stone-based Items",
   "com.minecolonies.building.hospital.desc": "Heals Colonists from Illness. There's a Doctor In This House!",
   "com.minecolonies.building.school.desc": "Teaches Children to Be Smarter! No Standardized Tests, Either!",

@@ -24,7 +24,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -37,7 +36,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The worker module for citizen where they are assigned to if they work at it.
  */
-public class WorkerBuildingModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class WorkerBuildingModule extends AbstractAssignedCitizenModule
+  implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
      * Module specific skills.
@@ -77,23 +77,23 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
-        if (citizen.getWorkBuilding() != null && citizen.getEntity().isPresent() && !citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
+        if (assignedCitizen.contains(citizen) || isFull() || citizen == null)
         {
-            for (final WorkerBuildingModule module : citizen.getWorkBuilding().getModules(WorkerBuildingModule.class))
-            {
-                if (module.hasAssignedCitizen(citizen))
-                {
-                    module.removeCitizen(citizen);
-                }
-            }
-        }
-
-        if (!super.assignCitizen(citizen))
-        {
-            Log.getLogger().warn("Unable to assign citizen:" + citizen.getName() + " to building:" + building.getSchematicName() + " jobname:" + getJobDisplayName());
             return false;
         }
-        return true;
+
+        IJob job = citizen.getJob();
+        if (job == null)
+        {
+            job = createJob(citizen);
+        }
+
+        if (!job.assignTo(this))
+        {
+            return false;
+        }
+
+        return super.assignCitizen(citizen);
     }
 
     @Override
@@ -124,7 +124,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
                     assignCitizen(citizen);
                 }
             }
-
         }
     }
 
@@ -172,7 +171,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     void onAssignment(final ICitizenData citizen)
     {
-        citizen.setWorkBuilding(building);
         for (final AbstractCraftingBuildingModule module : building.getModules(AbstractCraftingBuildingModule.class))
         {
             module.updateWorkerAvailableForRecipes();
@@ -186,7 +184,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     void onRemoval(final ICitizenData citizen)
     {
-        citizen.setWorkBuilding(null);
+        if (citizen.getJob() != null)
+        {
+            citizen.getJob().onRemoval();
+        }
+
         building.cancelAllRequestsOfCitizen(citizen);
         citizen.setVisibleStatus(null);
     }
@@ -250,11 +252,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
         builder.add(new BuildingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+            .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
           new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
+            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
           new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                               .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
+            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
         return builder.build();
     }
 

@@ -247,7 +247,7 @@ public class EntityAIEatTask implements IStateAI
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
         }
 
-        citizenData.markDirty();
+        citizenData.markDirty(60);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
