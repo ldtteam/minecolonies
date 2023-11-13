@@ -395,11 +395,7 @@ public class ColonyBlueprintRenderer
                     {
                         String schemPath = buildingView.getStructurePath();
                         schemPath = schemPath.replace(".blueprint", "");
-                        try{
-                            schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
-                        }catch(Exception e){
-                            continue;
-                        }
+                        schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
 
                         final String structurePack = buildingView.getStructurePack();
                         final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath,
