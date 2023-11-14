@@ -94,6 +94,18 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         return PREPARING;
     }
 
+    @Override
+    public IAIState afterRequestPickUp()
+    {
+        return PREPARING;
+    }
+
+    @Override
+    public IAIState getStateAfterPickUp()
+    {
+        return PREPARING;
+    }
+
     /**
      * Prepares the guard. Fills his required armor and tool lists and transfer from building chest if required.
      *

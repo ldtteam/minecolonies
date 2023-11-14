@@ -2476,5 +2476,6 @@
   "com.minecolonies.coremod.placement.noperm": "Error on placement! You don't have the permission in this colony!",
   "com.minecolonies.coremod.placement.townhalltooclose": "Error on placement! You are too close to an existing colony!",
 
-  "com.minecolonies.research.effects.citizencapaddition.description.over": "(%1$s, reduced to configuration limit)"
+  "com.minecolonies.research.effects.citizencapaddition.description.over": "(%1$s, reduced to configuration limit)",
+  "com.minecolonies.gui.reset": "reset"
 }
