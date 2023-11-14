@@ -1113,7 +1113,6 @@ public final class WindowConstants
     public static final String TOWNHALL_PERM_MODE_TOGGLE  = "permissionsModeToggle";
     public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
     public static final String TOWNHALL_RANK_TYPE_PICKER  = "rankTypePicker";
-    public static final String TOWNHALL_PERMISSION_ERROR  = "permissionError";
 
     /**
      * Input filter id.

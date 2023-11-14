@@ -82,7 +82,7 @@
         <view size="100% 17">
             <buttonimage id="name" pos="9 0" size="129 17" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                         disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_dark.png"/>
+                         disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
         </view>
     </list>
 </window>
