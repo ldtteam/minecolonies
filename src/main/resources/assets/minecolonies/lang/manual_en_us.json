@@ -986,7 +986,7 @@
   "com.minecolonies.coremod.pvp.attack.guardgroupsize": "§eBeware, %s §ehas now: %d §eguards!",
   "com.minecolonies.coremod.pvp.townhall.break.start": "Beware! %s started breaking your Town Hall!",
   "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100%% it will be lost!!!",
-  "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Team Color:",
+  "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Colony Color:",
 
   "item.minecolonies.resourcescroll": "Resource Scroll",
 
@@ -1923,6 +1923,8 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
+  "com.minecolonies.coremod.gui.townhalltab.alliances": "Alliances",
+
   "com.minecolonies.coremod.gui.townhalltab.stats": "Statistics",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
@@ -2476,6 +2478,7 @@
   "com.minecolonies.coremod.placement.townhalltooclose": "Error on placement! You are too close to an existing colony!",
 
   "com.minecolonies.research.effects.citizencapaddition.description.over": "(%1$s, reduced to configuration limit)",
+  "com.minecolonies.gui.reset": "reset",
 
   "com.minecolonies.coremod.gui.townhall.housing.tooltip": "If citizens should be assigned manually or automatically to housing.",
   "com.minecolonies.coremod.gui.townhall.movein.tooltip": "Stops kids from being born and initial citizen from spawning",
@@ -2485,7 +2488,6 @@
   "com.minecolonies.core.townhall.patreon.textures": "Adjust the Citizen Skins (E.g. To East Asian, Nordic, Undead, etc).",
   "com.minecolonies.core.building.help": "Help",
   "com.minecolonies.core.building.inv_sum": "Building Inventory Summary",
-  "com.minecolonies.core.gui.townhall.rank_permission_error": "You are not permitted to add new ranks. Ask a colony manager to turn on \"Edit permissions\" for your rank."
-
-  "com.minecolonies.gui.reset": "reset"
+  "com.minecolonies.core.gui.townhall.rank_permission_error": "You are not permitted to add new ranks. Ask a colony manager to turn on \"Edit permissions\" for your rank.",
+  "com.minecolonies.coremod.gui.townhall.permevents": "Permission Events"
 }

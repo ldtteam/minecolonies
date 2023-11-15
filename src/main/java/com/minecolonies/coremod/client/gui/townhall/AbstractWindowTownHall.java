@@ -39,6 +39,7 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
         registerButton(BUTTON_CITIZENS, () -> new WindowCitizenPage(townHall).open());
         registerButton(BUTTON_WORKORDER, () -> new WindowWorkOrderPage(townHall).open());
         registerButton(BUTTON_STATS, () -> new WindowStatsPage(townHall).open());
+        registerButton(BUTTON_ALLIANCE, () -> new WindowAlliancePage(townHall).open());
 
         findPaneOfTypeByID(getWindowId() + "0", Image.class).hide();
         findPaneOfTypeByID(getWindowId(), ButtonImage.class).hide();

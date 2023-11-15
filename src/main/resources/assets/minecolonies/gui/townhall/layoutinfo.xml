@@ -4,8 +4,7 @@
     <label size="148 11" pos="276 25" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.townhall.currenthappiness)"/>
     <label id="happinessLevel" size="148 11" pos="276 35" color="black" textalign="MIDDLE"/>
-    <button id="permissionEvents" size="148 14" pos="276 45" textalign="MIDDLE"
-            label="$(com.minecolonies.coremod.gui.townhall.permissionevents)"/>
+
     <label size="148 11" pos="276 59" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.townhall.events):"/>
 

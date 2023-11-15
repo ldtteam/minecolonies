@@ -11,18 +11,14 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
-import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
-import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -46,11 +42,6 @@ public class WindowInfoPage extends AbstractWindowTownHall
     private ScrollingList eventList;
 
     /**
-     * Whether the event list should display permission events, or colony events.
-     */
-    private boolean permissionEvents;
-
-    /**
      * Constructor for the town hall window.
      *
      * @param building {@link BuildingTownHall.View}.
@@ -58,9 +49,6 @@ public class WindowInfoPage extends AbstractWindowTownHall
     public WindowInfoPage(final BuildingTownHall.View building)
     {
         super(building, "layoutinfo.xml");
-
-        registerButton(BUTTON_PERMISSION_EVENTS, this::permissionEventsClicked);
-        registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
     }
 
     /**
@@ -217,7 +205,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
             @Override
             public int getElementCount()
             {
-                return permissionEvents ? building.getPermissionEvents().size() : building.getColonyEvents().size();
+                return building.getColonyEvents().size();
             }
 
             @Override
@@ -225,72 +213,32 @@ public class WindowInfoPage extends AbstractWindowTownHall
             {
                 final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
-                if (permissionEvents)
+
+                final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
+                Collections.reverse(colonyEvents);
+                final IColonyEventDescription event = colonyEvents.get(index);
+                if (event instanceof CitizenDiedEvent)
                 {
-                    final List<PermissionEvent> permissionEvents = building.getPermissionEvents();
-                    Collections.reverse(permissionEvents);
-                    final PermissionEvent event = permissionEvents.get(index);
-
-                    nameLabel.setText(Component.literal(event.getName() + (event.getId() == null ? " <fake>" : "")));
-                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ()));
-
-                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
-
-                    actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
+                    actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
                 }
                 else
                 {
-                    final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
-                    Collections.reverse(colonyEvents);
-                    final IColonyEventDescription event = colonyEvents.get(index);
-                    if (event instanceof CitizenDiedEvent)
-                    {
-                        actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
-                    }
-                    else
-                    {
-                        actionLabel.setText(Component.literal(event.getName()));
-                    }
-                    if (event instanceof ICitizenEventDescription)
-                    {
-                        nameLabel.setText(Component.literal(((ICitizenEventDescription) event).getCitizenName()));
-                    }
-                    else if (event instanceof IBuildingEventDescription)
-                    {
-                        IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
-                        nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(" " + buildEvent.getLevel()).create());
-                    }
-                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
-                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
+                    actionLabel.setText(Component.literal(event.getName()));
                 }
+                if (event instanceof ICitizenEventDescription)
+                {
+                    nameLabel.setText(Component.literal(((ICitizenEventDescription) event).getCitizenName()));
+                }
+                else if (event instanceof IBuildingEventDescription)
+                {
+                    IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
+                    nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(" " + buildEvent.getLevel()).create());
+                }
+                rowPane.findPaneOfTypeByID(POS_LABEL, Text.class)
+                  .setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
+                rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
             }
         });
-    }
-
-    /**
-     * Action performed when remove player button is clicked.
-     *
-     * @param button Button that holds the user clicked on.
-     */
-    private void addPlayerToColonyClicked(@NotNull final Button button)
-    {
-        final int row = eventList.getListElementIndexByPane(button);
-        if (row >= 0 && row < building.getPermissionEvents().size())
-        {
-            final PermissionEvent user = building.getPermissionEvents().get(row);
-            Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(building.getColony(), user.getName(), user.getId()));
-        }
-    }
-
-    /**
-     * Switching between permission and colony events.
-     *
-     * @param button the clicked button.
-     */
-    public void permissionEventsClicked(@NotNull final Button button)
-    {
-        permissionEvents = !permissionEvents;
-        button.setText(Component.translatable(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 
     @Override

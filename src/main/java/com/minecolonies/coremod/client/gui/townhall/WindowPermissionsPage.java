@@ -8,12 +8,8 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.blockui.views.SwitchView;
 import com.minecolonies.api.colony.CompactColonyReference;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.ColonyPlayer;
-import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -30,7 +26,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -98,13 +93,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private Map<Integer, String> rankTypes = new HashMap<>();
 
     /**
-     * The ScrollingList of all feuds.
+     * The ScrollingList of the events.
      */
-    private final ScrollingList feudsList;
-    /**
-     * The ScrollingList of all allies.
-     */
-    private final ScrollingList alliesList;
+    private ScrollingList eventList;
 
     /**
      * Constructor for the town hall window.
@@ -138,83 +129,24 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
         registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
         registerButton(TOWNHALL_BUTTON_SUBSCRIBER, this::setSubscriber);
+        registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
 
-        alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
-        feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
-
-        registerButton(BUTTON_TP, this::teleportToColony);
-        fillAlliesAndFeudsList();
+        fillEventsList();
     }
 
     /**
-     * On Button click teleport to the colony..
+     * Action performed when remove player button is clicked.
      *
-     * @param button the clicked button.
+     * @param button Button that holds the user clicked on.
      */
-    private void teleportToColony(@NotNull final Button button)
+    private void addPlayerToColonyClicked(@NotNull final Button button)
     {
-        final int row = alliesList.getListElementIndexByPane(button);
-        final CompactColonyReference ally = building.getColony().getAllies().get(row);
-
-        MessageUtils.format(DO_REALLY_WANNA_TP, ally.name)
-          .with(Style.EMPTY.withClickEvent(new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND,
-            "",
-            () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.dimension, ally.id)))))
-          .with(ChatFormatting.BOLD, ChatFormatting.GOLD)
-          .sendTo(Minecraft.getInstance().player);
-        this.close();
-    }
-
-    /**
-     * Fills the allies and feuds lists.
-     */
-    private void fillAlliesAndFeudsList()
-    {
-        alliesList.setDataProvider(new ScrollingList.DataProvider()
+        final int row = eventList.getListElementIndexByPane(button);
+        if (row >= 0 && row < building.getPermissionEvents().size())
         {
-            @Override
-            public int getElementCount()
-            {
-                return building.getColony().getAllies().size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final CompactColonyReference colonyReference = building.getColony().getAllies().get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(colonyReference.name));
-                final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(Component.literal((int) distance + "b"));
-                final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
-                {
-                    button.setText(Component.translatable(TH_TOO_LOW));
-                    button.disable();
-                }
-                else
-                {
-                    button.enable();
-                }
-            }
-        });
-
-        feudsList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return building.getColony().getFeuds().size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final CompactColonyReference colonyReference = building.getColony().getFeuds().get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(colonyReference.name));
-                final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(Component.literal(String.valueOf((int) distance)));
-            }
-        });
+            final PermissionEvent user = building.getPermissionEvents().get(row);
+            Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(building.getColony(), user.getName(), user.getId()));
+        }
     }
 
     /**
@@ -442,6 +374,37 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                                                                                                           ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                                                                           : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
+    }
+
+    private void fillEventsList()
+    {
+        eventList = findPaneOfTypeByID(EVENTS_LIST, ScrollingList.class);
+        eventList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return building.getPermissionEvents().size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
+                final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
+
+                    final List<PermissionEvent> permissionEvents = building.getPermissionEvents();
+                    Collections.reverse(permissionEvents);
+                    final PermissionEvent event = permissionEvents.get(index);
+
+                    nameLabel.setText(Component.literal(event.getName() + (event.getId() == null ? " <fake>" : "")));
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ()));
+
+                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
+
+                    actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
+            }
+        });
     }
 
     private void removeBlock(final Button button)

@@ -90,6 +90,8 @@
             <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </view>
     </dropdown>
+    <buttonimage id="resettexture" size="86 17" pos="337 165" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 visible="false" textcolor="black" text="$(com.minecolonies.gui.reset)"/>
 
     <label label="$(com.minecolonies.coremod.gui.townhall.picknamestyle)" pos="269 193" size="148 11" color="black"/>
     <dropdown id="nameStylePicker"

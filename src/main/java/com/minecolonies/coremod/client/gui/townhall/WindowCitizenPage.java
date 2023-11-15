@@ -50,6 +50,9 @@ public class WindowCitizenPage extends AbstractWindowTownHall
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
+
+        //todo in onUpdate, render the citizen at pos.
+        //todo, maybe show skills on hover or so?
     }
 
     /**
@@ -78,6 +81,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         findPaneByID(CITIZEN_INFO).show();
         button.disable();
         final ICitizenDataView view = citizens.get(row);
+        CitizenWindowUtils.createHealthBar(view, this);
         CitizenWindowUtils.createHappinessBar(view, this);
         CitizenWindowUtils.createSkillContent(view, this);
         String jobKey = view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob();

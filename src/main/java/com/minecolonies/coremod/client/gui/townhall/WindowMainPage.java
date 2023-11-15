@@ -109,7 +109,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
         findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(Component.literal(building.getColony().getStructurePack()));
-        registerButton("bannerPicker", this::openBannerPicker);
+        registerButton(BUTTON_BANNER_PICKER, this::openBannerPicker);
+        registerButton(BUTTON_RESET_TEXTURE, this::resetTextureStyle);
 
         this.colorDropDownList.setSelectedIndex(building.getColony().getTeamColonyColor().ordinal());
         this.textureDropDownList.setSelectedIndex(TEXTURE_PACKS.indexOf(building.getColony().getTextureStyleId()));
@@ -356,22 +357,35 @@ public class WindowMainPage extends AbstractWindowTownHall
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(window));
     }
 
+    /**
+     * Reset the texture style.
+     */
+    private void resetTextureStyle()
+    {
+        Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)));
+    }
+
     @Override
     public void onUpdate()
     {
         super.onUpdate();
         final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
         final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
+        final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
 
         if (isFeatureUnlocked.get())
         {
             textPane.enable();
             namePane.enable();
+            textPane.show();
+            resetButton.hide();
         }
         else
         {
             textPane.disable();
             namePane.disable();
+            textPane.hide();
+            resetButton.show();
 
             AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(textPane);
             hoverText.append(Component.translatable("com.minecolonies.core.townhall.patreon.textures")).paragraphBreak();

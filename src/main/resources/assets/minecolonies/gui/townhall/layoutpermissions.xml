@@ -29,23 +29,15 @@
                 </box>
             </list>
 
+            <label size="148 11" pos="196 39" color="black" textalign="MIDDLE"
+                   label="$(com.minecolonies.coremod.gui.townhall.permevents):"/>
 
-            <label size="148 11" pos="201 30" style="bold" color="green"
-                   label="$(com.minecolonies.coremod.gui.townhall.allies)"/>
-            <list id="allies" size="150 75" pos="201 40">
-                <box size="100% 25" linewidth="1">
-                    <label id="name" size="100 12" pos="5 0" color="black"/>
-                    <label id="dist" size="40 13" pos="112 12" color="black"/>
-                    <button id="tp" size="100 12" pos="5 12" label="$(com.minecolonies.coremod.permission.teleport_to_colony)"/>
-                </box>
-            </list>
-
-            <label size="148 11" pos="201 130" style="bold" color="red"
-                   label="$(com.minecolonies.coremod.gui.townhall.feuds)"/>
-            <list id="feuds" size="150 50" pos="201 140">
-                <box size="100% 25" linewidth="1">
-                    <label id="name" size="100 12" pos="5 0" color="black"/>
-                    <label id="dist" size="40 12" pos="105 0" color="black"/>
+            <list id="eventsList" size="148 152" pos="196 50">
+                <box size="100% 36" linewidth="1">
+                    <label id="action" size="140 12" pos="1 1" color="black"/>
+                    <label id="name" size="100 12" pos="1 12" color="blue"/>
+                    <label id="pos" size="70 12" pos="1 24" color="black"/>
+                    <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
                 </box>
             </list>
         </view>

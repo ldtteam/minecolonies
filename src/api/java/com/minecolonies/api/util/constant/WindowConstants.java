@@ -30,6 +30,11 @@ public final class WindowConstants
     public static final String BUTTON_ACTIONS = "actions";
 
     /**
+     * Id of the alliance button in the GUI.
+     */
+    public static final String BUTTON_ALLIANCE = "alliances";
+
+    /**
      * Id of the settings button in the GUI.
      */
     public static final String BUTTON_SETTINGS = "settings";
@@ -113,6 +118,16 @@ public final class WindowConstants
      * Id of the toggle to switch colony styl.e
      */
     public static final String BUTTON_COLONY_SWITCH_STYLE = "colonyStylePicker";
+
+    /**
+     * Id of the toggle to reset texture.
+     */
+    public static final String BUTTON_RESET_TEXTURE = "resettexture";
+
+    /**
+     * Id of the toggle to select a banner.
+     */
+    public static final String BUTTON_BANNER_PICKER = "bannerPicker";
 
     /**
      * Id of the remove player button in the GUI.

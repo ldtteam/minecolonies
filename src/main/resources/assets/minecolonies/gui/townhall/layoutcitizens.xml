@@ -72,13 +72,19 @@
         </scrollgroup>
 
         <image id="deco3" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_up.png" pos="37 112"/>
-        <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="30 132" size="86 17"
-                     source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+
     </box>
 
+
+    <!-- Health/Happiness/Saturation/Job/Recall   -->
+    <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="30 132" size="86 17"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+
+
+    <input id="search" size="129 17" pos="285 90" maxlength="32"/>
     <label size="148 11" pos="276 28" textalign="MIDDLE" color="black"
            label="§n§4$(com.minecolonies.coremod.gui.townhall.citizens):"/>
-    <list id="citizenList" size="148 166" pos="276 50">
+    <list id="citizenList" size="148 106" pos="276 110">
         <view size="100% 17">
             <buttonimage id="name" pos="9 0" size="129 17" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
