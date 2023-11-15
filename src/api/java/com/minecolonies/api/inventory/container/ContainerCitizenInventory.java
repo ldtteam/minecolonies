@@ -2,6 +2,8 @@ package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,9 +21,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.ARMOR_LEVEL_GOLD;
 
 /**
  * Container for Mie
@@ -37,6 +44,11 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
      * Amount of rows.
      */
     private final int              inventorySize;
+
+    /**
+     * Citizen related data.
+     */
+    private ICitizen citizenData;
 
     /**
      * Related entity.
@@ -91,13 +103,19 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         final InventoryCitizen inventory;
         final BlockPos workBuilding;
 
+        int workBuildingLevel = 0;
         if (inv.player.level().isClientSide)
         {
             final ICitizenDataView data = ((IColonyView) colony).getCitizen(citizenId);
             this.entity = Optional.of(inv.player.level.getEntity(data.getEntityId()));
+            this.citizenData = data;
             inventory = data.getInventory();
             this.displayName = data.getName();
             workBuilding = data.getWorkBuilding();
+            if (workBuilding != null)
+            {
+                workBuildingLevel = ((IColonyView) colony).getBuilding(workBuilding).getBuildingLevel();
+            }
         }
         else
         {
@@ -111,10 +129,15 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                 data = colony.getVisitorManager().getCivilian(citizenId);
             }
             this.entity = data.getEntity();
+            this.citizenData = data;
 
             inventory = data.getInventory();
             this.displayName = data.getName();
             workBuilding = data.getWorkBuilding() == null ? null : data.getWorkBuilding().getID();
+            if (workBuilding != null)
+            {
+                workBuildingLevel = data.getWorkBuilding().getBuildingLevel();
+            }
         }
 
         this.inventorySize = inventory.getSlots() / INVENTORY_COLUMNS;
@@ -124,6 +147,17 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         final int extraOffset = (inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2) + 1;
         final int newOffset = 5;
         int index = 0;
+
+
+        List<GuardGear> guardGear = switch (workBuildingLevel)
+        {
+            case 5-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_MAX, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE);
+            case 4-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE);
+            case 3-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE);
+            case 2-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE);
+            case 1-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE);
+            default-> Collections.emptyList();
+        };
 
         for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j)
         {
@@ -141,7 +175,6 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                           {
                               if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
                                   final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
                                   final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
@@ -169,7 +202,6 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                           {
                               if (workBuilding != null && !playerInventory.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
                                   final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
                                   final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
@@ -190,7 +222,18 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                           @Override
                           public boolean mayPlace(final ItemStack stack)
                           {
-                              return stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot;
+                              if (stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot)
+                              {
+                                  for (final GuardGear gear : guardGear)
+                                  {
+                                      if (gear.test(stack))
+                                      {
+                                        return true;
+                                      }
+                                  }
+                                  return false;
+                              }
+                              return false;
                           }
                       });
                     index--;

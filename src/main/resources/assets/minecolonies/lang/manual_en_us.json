@@ -2487,4 +2487,5 @@
   "com.minecolonies.core.building.inv_sum": "Building Inventory Summary",
   "com.minecolonies.core.gui.townhall.rank_permission_error": "You are not permitted to add new ranks. Ask a colony manager to turn on \"Edit permissions\" for your rank."
 
+  "com.minecolonies.gui.reset": "reset"
 }
