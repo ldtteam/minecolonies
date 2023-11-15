@@ -97,7 +97,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
     public BlockDecorationController()
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false).setValue(WATERLOGGED, false));
     }
 
     @Override
