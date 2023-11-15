@@ -109,7 +109,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
                 tagData.putString(TAG_NAME, location);
                 tagData.putString(TAG_PACK, blueprint.getPackName());
 
-                if (te instanceof AbstractTileEntityColonyBuilding colonyBuilding)
+                if (te instanceof AbstractTileEntityColonyBuilding colonyBuilding && colonyBuilding.getBuilding() != null)
                 {
                     colonyBuilding.getBuilding().setDeconstructed();
                 }
