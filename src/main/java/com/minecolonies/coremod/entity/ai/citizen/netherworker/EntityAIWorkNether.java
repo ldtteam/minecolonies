@@ -27,6 +27,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherW
 import com.minecolonies.coremod.colony.jobs.JobNetherWorker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.items.ItemAdventureToken;
+import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -183,8 +184,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         BlockPos vaultPos = building.getVaultLocation();
         if (vaultPos != null)
         {
-            worker.moveTo(vaultPos.getX() + 0.5, vaultPos.getY(), vaultPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
-            worker.getNavigation().stop();
+            TeleportHelper.teleportCitizen(worker, world, vaultPos);
         }
     }
 
