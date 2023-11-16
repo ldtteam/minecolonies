@@ -192,8 +192,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         BlockPos portalPos = building.getPortalLocation();
         if (portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
         {
-            worker.moveTo(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
-            worker.getNavigation().stop();
+            TeleportHelper.teleportCitizen(worker, world, portalPos);
             worker.setSilent(false);
             worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
 
