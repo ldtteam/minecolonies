@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -198,7 +199,7 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if (damageSource == DamageSource.LAVA || damageSource == DamageSource.IN_FIRE || damageSource == DamageSource.ON_FIRE)
+        if (damageSource.typeHolder().is(DamageTypes.LAVA) || damageSource.typeHolder().is(DamageTypes.IN_FIRE) || damageSource.typeHolder().is(DamageTypes.ON_FIRE))
         {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }
