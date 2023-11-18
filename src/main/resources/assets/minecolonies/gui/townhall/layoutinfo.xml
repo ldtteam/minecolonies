@@ -1,10 +1,6 @@
 <window size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <label size="148 11" pos="276 25" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.townhall.currenthappiness)"/>
-    <label id="happinessLevel" size="148 11" pos="276 35" color="black" textalign="MIDDLE"/>
-
     <label size="148 11" pos="276 59" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.townhall.events):"/>
 
@@ -17,11 +13,5 @@
         </box>
     </list>
 
-    <label size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
-    <label id="totalCitizens" size="50 11" pos="215 61" color="black"/>
-    <list id="citizen-stats" size="148 136" pos="100 83">
-        <box size="100% 11" linewidth="0">
-            <label id="citizensAmount" size="100% 11" color="black"/>
-        </box>
-    </list>
+
 </window>

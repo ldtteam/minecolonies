@@ -12,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
@@ -83,14 +85,18 @@ public class WindowStatsPage extends AbstractWindowTownHall
             }
         }
 
+        final DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+
         final View pane = findPaneOfTypeByID("happinesspage", View.class);
         final Text titleLabel = new Text();
         titleLabel.setSize(136, 11);
         titleLabel.setPosition(25, 42);
         titleLabel.setColors(BLACK);
-        titleLabel.setText(Component.translatable("com.minecolonies.coremod.gui.townhall.currenthappiness"));
+        titleLabel.setText(Component.translatable("com.minecolonies.coremod.gui.townhall.currenthappiness", roundedHappiness));
         pane.addChild(titleLabel);
-
 
         int yPos = 60;
         for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
@@ -108,19 +114,19 @@ public class WindowStatsPage extends AbstractWindowTownHall
 
             if (value > 1.0)
             {
-                image.setImage(new ResourceLocation(GREEN_ICON), false);
+                image.setImage(new ResourceLocation(HAPPY_ICON), false);
             }
             else if (value == 1)
             {
-                image.setImage(new ResourceLocation(BLUE_ICON), false);
+                image.setImage(new ResourceLocation(SATISFIED_ICON), false);
             }
             else if (value > 0.75)
             {
-                image.setImage(new ResourceLocation(YELLOW_ICON), false);
+                image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
             }
             else
             {
-                image.setImage(new ResourceLocation(RED_ICON), false);
+                image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
             }
             pane.addChild(image);
             pane.addChild(label);

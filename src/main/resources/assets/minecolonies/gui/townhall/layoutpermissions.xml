@@ -87,6 +87,7 @@
 
             <buttonimage id="removeRank" size="129 17" pos="201 200" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red"/>
         </view>
+        <!-- todo adjust this, separate blocks and pos, and make pos list a pos-start to pos-end -->
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townhall.freeblocks)"/>
 
@@ -94,7 +95,7 @@
             <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
             <button id="addBlock" size="19 19" pos="130 76" label="+"/>
 
-            <!-- todo move this to the left side, Somehow improve title, Add tooltip with guide how to add to input -->
+
             <list id="blocks" size="148 171" pos="201 36">
                 <box size="100% 30" linewidth="1">
                     <label id="name" size="100 12" pos="5 2" color="black"/>

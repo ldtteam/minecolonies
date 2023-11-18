@@ -549,7 +549,7 @@
   "com.minecolonies.coremod.gui.townhall.permissionevents": "Permission Events",
   "com.minecolonies.coremod.gui.townhall.colonyevents": "Colony Events",
   "com.minecolonies.coremod.gui.townhall.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall Happiness:",
+  "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall Happiness: %d",
 
   "com.minecolonies.coremod.gui.townhall.allies": "Allies:",
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
@@ -2489,5 +2489,9 @@
   "com.minecolonies.core.building.help": "Help",
   "com.minecolonies.core.building.inv_sum": "Building Inventory Summary",
   "com.minecolonies.core.gui.townhall.rank_permission_error": "You are not permitted to add new ranks. Ask a colony manager to turn on \"Edit permissions\" for your rank.",
-  "com.minecolonies.coremod.gui.townhall.permevents": "Permission Events"
+  "com.minecolonies.coremod.gui.townhall.permevents": "Permission Events",
+  "com.minecolonies.core.townhall.citizen.filter": "Enter the Citizen Name or Job you are searching for",
+  "com.minecolonies.core.gui.nextpage": "Next Page",
+  "com.minecolonies.core.gui.prevpage": "Previous Page"
+
 }
