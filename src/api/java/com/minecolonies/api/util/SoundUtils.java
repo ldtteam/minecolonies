@@ -202,6 +202,10 @@ public final class SoundUtils
               (float) 1.0,
               player.level.random.nextLong()));
         }
+        else
+        {
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL, SoundSource.NEUTRAL, 1.0f, 1.0f);
+        }
     }
 
     /**
@@ -221,6 +225,10 @@ public final class SoundUtils
               (float) VOLUME * 2,
               (float) 0.3,
               player.level.random.nextLong()));
+        }
+        else
+        {
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_DIDGERIDOO, SoundSource.NEUTRAL, 1.0f, 0.3f);
         }
     }
 

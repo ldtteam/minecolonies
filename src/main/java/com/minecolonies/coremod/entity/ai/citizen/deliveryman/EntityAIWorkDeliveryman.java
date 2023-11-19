@@ -291,13 +291,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState dump()
     {
-        if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
+        final @Nullable IWareHouse warehouse = getAndCheckWareHouse();
+        if (warehouse == null)
+        {
+            return START_WORKING;
+        }
+
+        if (!worker.isWorkerAtSiteWithMove(warehouse.getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
         {
             setDelay(WALK_DELAY);
             return DUMPING;
         }
 
-        getAndCheckWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
+        warehouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
 
         return START_WORKING;
