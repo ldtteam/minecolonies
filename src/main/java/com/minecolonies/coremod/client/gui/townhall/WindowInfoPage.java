@@ -83,9 +83,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
 
-                final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
-                Collections.reverse(colonyEvents);
-                final IColonyEventDescription event = colonyEvents.get(index);
+                final IColonyEventDescription event = building.getColonyEvents().get(index);
                 if (event instanceof CitizenDiedEvent)
                 {
                     actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
@@ -210,15 +208,8 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
                 if (index == 0)
                 {
-                    if (numElements == 1)
-                    {
-                        rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
-                    }
-                    else
-                    {
-                        rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).show();
-                    }
-                    rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).setVisible(numElements != 1);
+                    rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).show();
                 }
                 else if (index == numElements - 1)
                 {

@@ -14,8 +14,6 @@
         </box>
     </list>
 
-
-
     <label size="148 11" pos="276 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
 
     <list id="workOrderList" size="148 166" pos="276 50">

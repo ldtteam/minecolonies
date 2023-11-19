@@ -150,7 +150,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void toggleHiring(@NotNull final Button button)
     {
-        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
@@ -173,7 +173,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void toggleHousing(@NotNull final Button button)
     {
-        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
@@ -196,7 +196,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void toggleMoveIn(@NotNull final Button button)
     {
-        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(OFF_STRING))
@@ -219,7 +219,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void togglePrintProgress(@NotNull final Button button)
     {
-        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         if (key.equals(OFF_STRING))
         {
@@ -355,7 +355,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void openBannerPicker(@NotNull final Button button)
     {
         Screen window = new WindowBannerPicker(building.getColony(), this, isFeatureUnlocked);
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(window));
+        Minecraft.getInstance().setScreen(window);
     }
 
     /**
@@ -396,17 +396,18 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(textPane);
-            hoverText.append(Component.translatable("com.minecolonies.core.townhall.patreon.textures")).paragraphBreak();
-            hoverText.appendNL(Component.empty());
-            hoverText.appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
-            hoverText.build();
+            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+              .paragraphBreak()
+              .appendNL(Component.empty())
+              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
+              .paragraphBreak()
+              .build();
 
-            AbstractTextBuilder.TooltipBuilder hoverText2 = PaneBuilders.tooltipBuilder().hoverPane(namePane);
-            hoverText2.append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak();
-            hoverText2.appendNL(Component.empty());
-            hoverText2.appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
-            hoverText2.build();
+            PaneBuilders.tooltipBuilder().hoverPane(namePane)
+              .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
+              .appendNL(Component.empty())
+              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak()
+              .build();
         }
     }
 

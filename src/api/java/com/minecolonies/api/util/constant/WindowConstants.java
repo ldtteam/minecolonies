@@ -220,6 +220,11 @@ public final class WindowConstants
     public static final String LIST_CITIZENS = "citizenList";
 
     /**
+     * Id of the happiness list in the GUI.
+     */
+    public static final String LIST_HAPPINESS = "happinessList";
+
+    /**
      * Id of the allies list in the GUI.
      */
     public static final String LIST_ALLIES = "allies";

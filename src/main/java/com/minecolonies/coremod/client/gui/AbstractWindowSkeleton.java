@@ -74,8 +74,8 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         {
             buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
             buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-            PaneBuilders.tooltipBuilder().hoverPane(buttonNextPage).build().setText(Component.translatable("com.minecolonies.core.gui.nextpage"));
-            PaneBuilders.tooltipBuilder().hoverPane(buttonPrevPage).build().setText(Component.translatable("com.minecolonies.core.gui.prevpage"));
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.nextpage"), buttonNextPage);
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.prevpage"), buttonPrevPage);
 
             pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
             registerButton(BUTTON_NEXTPAGE, () -> setPage(true, 1));

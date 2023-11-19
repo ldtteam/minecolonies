@@ -1,8 +1,13 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <view size="200 243" id="happinesspage" pos="105 25"/>
-
+    <label id="happinessTitle" size="120 11" color="black" pos="100 61" textalign="MIDDLE"/>
+    <list id="happinessList" size="148 136" pos="100 83">
+        <view size="100% 11">
+            <image id="icon" pos="0 0" size="11 11"/>
+            <label id="name" pos="15 0" size="120 11" color="black"/>
+        </view>
+    </list>
 
     <label id="job" size="120 11" color="black" pos="276 28" textalign="MIDDLE"/>
     <image id="gender" size="11 11" pos="396 28" source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>

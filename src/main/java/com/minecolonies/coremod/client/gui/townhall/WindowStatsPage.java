@@ -8,6 +8,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CombinedHiringLimitModuleView;
@@ -123,7 +124,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
         PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
 
         int children = 0;
-        final Map<String, com.minecolonies.api.util.Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
+        final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : building.getColony().getBuildings())
         {
             if (building instanceof AbstractBuildingView)
@@ -143,8 +144,8 @@ public class WindowStatsPage extends AbstractWindowTownHall
 
                     final String jobName = module.getJobDisplayName().toLowerCase(Locale.ENGLISH);
 
-                    final com.minecolonies.api.util.Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new com.minecolonies.api.util.Tuple<>(0, 0));
-                    jobMaxCountMap.put(jobName, new com.minecolonies.api.util.Tuple<>(tuple.getA() + workers, tuple.getB() + max));
+                    final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
+                    jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
                 }
             }
         }
@@ -173,7 +174,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
         }
 
         final int maxJobs = jobMaxCountMap.size();
-        final List<Map.Entry<String, com.minecolonies.api.util.Tuple<Integer, Integer>>> theList = new ArrayList<>(jobMaxCountMap.entrySet());
+        final List<Map.Entry<String, Tuple<Integer, Integer>>> theList = new ArrayList<>(jobMaxCountMap.entrySet());
         theList.sort(Map.Entry.comparingByKey());
 
         list.setDataProvider(new ScrollingList.DataProvider()
@@ -192,7 +193,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
 
                 if (index < theList.size())
                 {
-                    final Map.Entry<String, com.minecolonies.api.util.Tuple<Integer, Integer>> entry = theList.get(index);
+                    final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
                     final String jobString = Component.translatable(entry.getKey()).getString();
                     final String formattedJobString = jobString.substring(0, 1).toUpperCase(Locale.US) + jobString.substring(1);
 

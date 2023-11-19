@@ -7,7 +7,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -79,7 +78,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         registerButton(NAME_LABEL, this::citizenSelected);
         registerButton(RECALL_ONE, this::recallOneClicked);
         fillCitizenInfo();
-        updateHappiness();
+        fillHappinessList();
 
         window.findPaneOfTypeByID(SEARCH_INPUT, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
@@ -89,72 +88,6 @@ public class WindowCitizenPage extends AbstractWindowTownHall
                 updateCitizens();
             }
         });
-    }
-
-    /**
-     * Update the display for the happiness.
-     */
-    private void updateHappiness()
-    {
-        final Map<String, Double> happinessMap = new HashMap<>();
-
-        for (final ICitizenDataView data : building.getColony().getCitizens().values())
-        {
-            for (final String modifier : data.getHappinessHandler().getModifiers())
-            {
-                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor(null));
-            }
-        }
-
-        final DecimalFormat df = new DecimalFormat("#.#");
-        df.setRoundingMode(RoundingMode.CEILING);
-
-        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
-
-        final View pane = findPaneOfTypeByID("happinesspage", View.class);
-        final Text titleLabel = new Text();
-        titleLabel.setSize(136, 11);
-        titleLabel.setPosition(25, 42);
-        titleLabel.setColors(BLACK);
-        titleLabel.setText(Component.translatable("com.minecolonies.coremod.gui.townhall.currenthappiness", roundedHappiness));
-        pane.addChild(titleLabel);
-
-        int yPos = 60;
-        for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
-        {
-            final double value = entry.getValue() / building.getColony().getCitizenCount();
-            final Image image = new Image();
-            image.setSize(11, 11);
-            image.setPosition(0, yPos);
-
-            final Text label = new Text();
-            label.setSize(136, 11);
-            label.setPosition(25, yPos);
-            label.setColors(BLACK);
-            label.setText(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
-
-            if (value > 1.0)
-            {
-                image.setImage(new ResourceLocation(HAPPY_ICON), false);
-            }
-            else if (value == 1)
-            {
-                image.setImage(new ResourceLocation(SATISFIED_ICON), false);
-            }
-            else if (value > 0.75)
-            {
-                image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
-            }
-            else
-            {
-                image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
-            }
-            pane.addChild(image);
-            pane.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatable("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
-
-            yPos += 12;
-        }
     }
 
     /**
@@ -265,8 +198,6 @@ public class WindowCitizenPage extends AbstractWindowTownHall
                     textBuilder.append(Component.translatable("com.minecolonies.coremod.gui.citizen.skills." + skillName));
                     textBuilder.append(Component.literal(": " + skillLevel + " "));
                 }
-                textBuilder.newLine();
-
                 PaneBuilders.tooltipBuilder().hoverPane(button).build().setText(textBuilder.build().getText());
                 if (selectedCitizen == citizen)
                 {
@@ -276,6 +207,70 @@ public class WindowCitizenPage extends AbstractWindowTownHall
                 {
                     button.enable();
                 }
+            }
+        });
+    }
+
+
+    /**
+     * Fills the citizens list in the GUI.
+     */
+    private void fillHappinessList()
+    {
+        final Map<String, Double> happinessMap = new HashMap<>();
+
+        for (final ICitizenDataView data : building.getColony().getCitizens().values())
+        {
+            for (final String modifier : data.getHappinessHandler().getModifiers())
+            {
+                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor(null));
+            }
+        }
+
+        final DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+        findPaneOfTypeByID("happinessTitle", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.townhall.currenthappiness", roundedHappiness));
+
+        final List<Map.Entry<String, Double>> happinessList = new ArrayList<>(happinessMap.entrySet());
+
+        final ScrollingList happinessScrollingList = findPaneOfTypeByID(LIST_HAPPINESS, ScrollingList.class);
+        happinessScrollingList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return happinessList.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Map.Entry<String, Double> entry = happinessList.get(index);
+                final double value = entry.getValue() / building.getColony().getCitizenCount();
+                final Image image = rowPane.findPaneOfTypeByID("icon", Image.class);
+
+                final Text label = rowPane.findPaneOfTypeByID("name", Text.class);
+                label.setText(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
+
+                if (value > 1.0)
+                {
+                    image.setImage(new ResourceLocation(HAPPY_ICON), false);
+                }
+                else if (value == 1)
+                {
+                    image.setImage(new ResourceLocation(SATISFIED_ICON), false);
+                }
+                else if (value > 0.75)
+                {
+                    image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
+                }
+                else
+                {
+                    image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
+                }
+                PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatable("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
             }
         });
     }
