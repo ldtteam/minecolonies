@@ -223,7 +223,7 @@ public class CitizenAI implements IStateAI
             {
                 citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
-            return CitizenAIState.SLEEP;
+            return CitizenAIState.IDLE;
         }
 
         // Work
