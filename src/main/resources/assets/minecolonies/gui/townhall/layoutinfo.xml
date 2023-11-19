@@ -1,10 +1,11 @@
 <window size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <label size="148 11" pos="276 59" color="black" textalign="MIDDLE"
+
+    <label size="148 11" pos="106 65" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.townhall.events):"/>
 
-    <list id="eventsList" size="148 152" pos="276 70">
+    <list id="eventsList" size="148 140" pos="106 80">
         <box size="100% 36" linewidth="1">
             <label id="action" size="140 12" pos="1 1" color="black"/>
             <label id="name" size="100 12" pos="1 12" color="blue"/>
@@ -14,4 +15,20 @@
     </list>
 
 
+
+    <label size="148 11" pos="276 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
+
+    <list id="workOrderList" size="148 166" pos="276 50">
+        <view size="100% 30">
+            <box size="100% 30" linewidth="1">
+                <button id="plus" size="15 15" label="↥" pos="0 0"/>
+                <button id="minus" size="15 15" label="↧" pos="0 15"/>
+                <label id="assignee" size="80 8" pos="25 18" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>
+
+                <label id="work" size="90 12" pos="20 5" textalign="MIDDLE_LEFT" color="black"  />
+                <button id="delete" size="15 15" label="§n§4X" pos="115 8"/>
+                <label id="hiddenId" size="1 1" pos="100 100"/>
+            </box>
+        </view>
+    </list>
 </window>

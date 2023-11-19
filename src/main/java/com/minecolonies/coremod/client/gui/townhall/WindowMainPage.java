@@ -19,6 +19,7 @@ import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.ON_STRING;
@@ -384,8 +385,16 @@ public class WindowMainPage extends AbstractWindowTownHall
         {
             textPane.disable();
             namePane.disable();
-            textPane.hide();
-            resetButton.show();
+
+            if (!building.getColony().getTextureStyleId().equals("default"))
+            {
+                resetButton.show();
+                textPane.hide();
+            }
+            else
+            {
+                textPane.show();
+            }
 
             AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(textPane);
             hoverText.append(Component.translatable("com.minecolonies.core.townhall.patreon.textures")).paragraphBreak();

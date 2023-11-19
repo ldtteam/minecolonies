@@ -1,25 +1,17 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-
-    <label size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
-    <label id="totalCitizens" size="50 11" pos="215 61" color="black"/>
-    <list id="citizen-stats" size="148 136" pos="100 83">
-        <box size="100% 11" linewidth="0">
-            <label id="citizensAmount" size="100% 11" color="black"/>
-        </box>
-    </list>
-
+    <view size="200 243" id="happinesspage" pos="105 25"/>
 
 
     <label id="job" size="120 11" color="black" pos="276 28" textalign="MIDDLE"/>
     <image id="gender" size="11 11" pos="396 28" source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
 
-    <label id="health" size="25 8" color="black" pos="286 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
+    <label id="health" size="35 8" color="black" pos="271 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
     <label id="happinessLevel" size="25 8" color="black" pos="316 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
     <label id="saturation" size="25 8" color="black" pos="351 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
 
-    <image source="minecraft:textures/gui/icons.png" size="9 9" pos="311 46" imageoffset="52 0" imagesize="9 9"/>
+    <image source="minecraft:textures/gui/icons.png" size="9 9" pos="306 46" imageoffset="52 0" imagesize="9 9"/>
     <image source="minecolonies:textures/gui/citizen/icons.png" size="9 9" pos="341 46" imageoffset="52 0" imagesize="9 9"/>
     <image source="minecraft:textures/gui/icons.png" size="9 9" pos="376 46" imageoffset="52 27" imagesize="9 9"/>
 

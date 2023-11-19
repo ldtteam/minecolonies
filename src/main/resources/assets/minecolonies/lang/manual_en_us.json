@@ -2486,6 +2486,8 @@
   "com.minecolonies.coremod.gui.townhall.jobhiring.tooltip": "If citizens should be assigned manually or automatically to jobs.",
   "com.minecolonies.coremod.gui.townhall.visual": "§lCosmetic Options:",
   "com.minecolonies.core.townhall.patreon.textures": "Adjust the Citizen Skins (E.g. To East Asian, Nordic, Undead, etc).",
+  "com.minecolonies.core.townhall.patreon.names": "Adjust the Citizen Nameing Scheme (E.g. To East Asian, German, Spanish, French, etc).",
+
   "com.minecolonies.core.building.help": "Help",
   "com.minecolonies.core.building.inv_sum": "Building Inventory Summary",
   "com.minecolonies.core.gui.townhall.rank_permission_error": "You are not permitted to add new ranks. Ask a colony manager to turn on \"Edit permissions\" for your rank.",
