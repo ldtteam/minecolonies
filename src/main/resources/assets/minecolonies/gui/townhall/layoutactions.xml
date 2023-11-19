@@ -3,35 +3,110 @@
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <label size="148 11" color="green" pos="100 24"
            label="$(com.minecolonies.coremod.gui.townhall.currtownhallname)"/>
-    <label size="148 11" id="name" color="black" pos="100 35"/>
+    <label size="148 11" id="name" color="black" pos="120 35"/>
 
-    <button id="build" size="120 19" pos="113 84"
-            label="$(com.minecolonies.coremod.gui.townhall.build)"/>
-    <button id="rename" size="120 19" pos="113 107"
-            label="$(com.minecolonies.coremod.gui.townhall.rename)"/>
-    <button id="mercenaries" size="120 19" pos="113 130"
-            label="$(com.minecolonies.coremod.gui.townhall.mercenary)"/>
-    <buttonimage id="patreon" size="120 19" pos="113 153" source="minecolonies:textures/gui/patreonwidget.png"
-                 label="$(com.minecolonies.coremod.gui.townhall.patreon)" tooltip="$(com.minecolonies.coremod.gui.townhall.patreon.hover)"/>
-    <button id="map" size="120 19" pos="113 186"
-            label="$(com.minecolonies.coremod.gui.townHall.map)"/>
+    <buttonimage id="rename" size="15 15" pos="100 32" source="minecolonies:textures/gui/builderhut/edit.png"
+                 tooltip="$(com.minecolonies.gui.edit)"/>
 
-    <label size="148 11" pos="271 30" style="bold" color="green"
-           label="$(com.minecolonies.coremod.gui.townhall.allies)"/>
-    <list id="allies" size="150 75" pos="271 40">
-        <box size="100% 25" linewidth="1">
-            <label id="name" size="100 12" pos="5 0" color="black"/>
-            <label id="dist" size="40 13" pos="112 12" color="black"/>
-            <button id="tp" size="100 12" pos="5 12" label="$(com.minecolonies.coremod.permission.teleport_to_colony)"/>
-        </box>
-    </list>
+    <!-- Body left side-->
 
-    <label size="148 11" pos="271 130" style="bold" color="red"
-           label="$(com.minecolonies.coremod.gui.townhall.feuds)"/>
-    <list id="feuds" size="150 50" pos="271 140">
-        <box size="100% 25" linewidth="1">
-            <label id="name" size="100 12" pos="5 0" color="black"/>
-            <label id="dist" size="40 12" pos="105 0" color="black"/>
-        </box>
-    </list>
+    <!-- todo search for "current pack" -->
+
+    <buttonimage id="build" size="129 17" pos="110 67"  textcolor="black"
+            label="🔨🔨🔨🔨$(com.minecolonies.coremod.gui.townhall.build)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_build.png"/>
+
+    <buttonimage id="map" size="129 17" pos="110 86"  textcolor="black"
+                 label="$(com.minecolonies.coremod.gui.townHall.map)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_map.png"/>
+
+    <buttonimage id="mercenaries" size="129 17" pos="110 106"  textcolor="black"
+                 label="$(com.minecolonies.coremod.gui.townhall.mercenary)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_merc.png"/>
+
+
+    <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townhall.jobhiring)" pos="100 133" size="148 11" color="black"/>
+    <buttonimage id="toggleJob" size="64 17" pos="175 130" label="$(com.minecolonies.coremod.gui.hiring.off)" textcolor="black"
+                 tooltip="$(com.minecolonies.coremod.gui.townhall.jobhiring.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+
+    <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townhall.housing)" pos="100 155" size="148 11" color="black"/>
+    <buttonimage id="toggleHousing" size="64 17" pos="175 152" label="$(com.minecolonies.coremod.gui.hiring.off)" textcolor="black"
+                 tooltip="$(com.minecolonies.coremod.gui.townhall.housing.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+
+    <label id="movingIn" label="$(com.minecolonies.coremod.gui.townhall.movein)" pos="100 177" size="148 11" color="black"/>
+    <buttonimage id="toggleMoveIn" size="29 17" pos="205 174" label="$(com.minecolonies.coremod.gui.townhall.off)" textcolor="black"
+                 tooltip="$(com.minecolonies.coremod.gui.townhall.movein.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
+
+    <label id="printProgress" label="$(com.minecolonies.coremod.gui.townhall.printprogress)" pos="100 199" size="148 11" color="black"/>
+    <buttonimage id="togglePrintProgress" size="28 17" pos="205 196" label="$(com.minecolonies.coremod.gui.townhall.on)" textcolor="black"
+                 tooltip="$(com.minecolonies.coremod.gui.townhall.printprogress.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
+
+
+
+    <!-- Visual Changes, Right Side -->
+
+    <label label="$(com.minecolonies.coremod.gui.townhall.visual)" textalign="MIDDLE" pos="280 35" size="129 11" color="black"/>
+
+    <buttonimage id="bannerPicker" label="$(com.minecolonies.coremod.gui.townhall.edit_flag)" pos="280 57" size="129 17"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large_banner.png"  textcolor="black"/>bu
+
+    <label id="pickColor" label="$(com.minecolonies.coremod.gui.townhall.pickteamcolor)" pos="269 83" size="148 11" color="black"/>
+    <dropdown id="colorPicker"
+              size="86 17"
+              pos="337 80"
+              maxContentHeight="75"
+              dropDownSize="86 75"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+              textcolor="black"
+              scrollbarOffset="9 0"
+              dropfixx="75">
+        <view size="100% 15">
+            <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+        </view>
+    </dropdown>
+
+    <label label="$(com.minecolonies.coremod.gui.townhall.pickcolonystyle)" pos="269 108" size="148 11"  color="black"/>
+    <buttonimage id="colonyStylePicker"
+                 size="86 17"
+                 pos="337 105"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
+                 textcolor="black"/>
+
+    <buttonimage id="patreon" size="120 19" pos="288 133" source="minecolonies:textures/gui/patreonwidget.png"
+                 label="$(com.minecolonies.coremod.gui.townhall.patreon)" tooltip="$(com.minecolonies.coremod.gui.townhall.patreon.hover)" />
+
+
+    <label label="$(com.minecolonies.coremod.gui.townhall.picktexturestyle)" pos="269 168" size="148 11" color="black"/>
+    <dropdown id="textureStylePicker"
+              size="86 17"
+              pos="337 165"
+              maxContentHeight="75"
+              dropDownSize="86 75"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+              disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
+              textcolor="black"
+              scrollbarOffset="9 0"
+              dropfixx="75"
+              enabled="false">
+        <view size="100% 15">
+            <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+        </view>
+    </dropdown>
+    <buttonimage id="resettexture" size="86 17" pos="337 165" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 visible="false" textcolor="black" text="$(com.minecolonies.gui.reset)"/>
+
+    <label label="$(com.minecolonies.coremod.gui.townhall.picknamestyle)" pos="269 193" size="148 11" color="black"/>
+    <dropdown id="nameStylePicker"
+              size="86 17"
+              pos="337 190"
+              maxContentHeight="30"
+              dropDownSize="86 30"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+              disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
+              textcolor="black"
+              scrollbarOffset="9 0"
+              dropfixx="30"
+              enabled="false">
+        <view size="100% 15">
+            <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+        </view>
+    </dropdown>
 </window>

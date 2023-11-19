@@ -205,7 +205,14 @@ public class EntityAICitizenWander implements IStateAI
         if (randomBit < LEISURE_CHANCE)
         {
             leisureSite = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite();
-            if (leisureSite != null)
+            if (leisureSite == null)
+            {
+                if (citizen.getCitizenData().getHomeBuilding() != null)
+                {
+                    leisureSite = citizen.getCitizenData().getHomeBuilding().getPosition();
+                }
+            }
+            else
             {
                 citizen.getCitizenAI().setCurrentDelay(60 * 20);
                 return GO_TO_LEISURE_SITE;
