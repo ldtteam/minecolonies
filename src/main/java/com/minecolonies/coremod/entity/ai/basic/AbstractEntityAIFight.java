@@ -94,6 +94,18 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         return PREPARING;
     }
 
+    @Override
+    public IAIState afterRequestPickUp()
+    {
+        return PREPARING;
+    }
+
+    @Override
+    public IAIState getStateAfterPickUp()
+    {
+        return PREPARING;
+    }
+
     /**
      * Prepares the guard. Fills his required armor and tool lists and transfer from building chest if required.
      *
@@ -168,7 +180,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 if (items.isEmpty())
                 {
                         // None found, check for equipped
-                    if ((item.getType().getType() == EquipmentSlot.Type.ARMOR && ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType()))) || ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
+                    if ((item.getType().getType() == EquipmentSlot.Type.ARMOR && ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType()))) || (item.getType().getType() != EquipmentSlot.Type.ARMOR && ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType()))))
                     {
                         // create request
                         checkForToolorWeaponASync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());

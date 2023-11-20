@@ -1,88 +1,36 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <box id="citizenInfoBox" size="148 148" pos="100 63" linewidth="0" visible="false">
-        <label id="hiddenCitizenId" visible="false"/>
-        <label id="job" size="100% 11" color="black" pos="0 5" textalign="MIDDLE"/>
-        <view id="xpBar" size="100% 11" pos="12 10"/>
-        <label id="xpLabel" size="100% 11" color="black" pos="128 18"/>
-        <view id="happinessBar" size="100% 11" pos="12 20"/>
-        <label id="happinessLabel" size="100% 11" color="black" pos="128 28"/>
+    <label id="happinessTitle" size="120 11" color="black" pos="100 61" textalign="MIDDLE"/>
+    <list id="happinessList" size="148 136" pos="100 83">
+        <view size="100% 11">
+            <image id="icon" pos="0 0" size="11 11"/>
+            <label id="name" pos="15 0" size="120 11" color="black"/>
+        </view>
+    </list>
 
-        <image id="deco2" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_down.png" pos="37 40"/>
-        <label id="title" size="100% 11" pos="0 48" color="black" textalign="MIDDLE"
-               label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
+    <label id="job" size="120 11" color="black" pos="276 28" textalign="MIDDLE"/>
+    <image id="gender" size="11 11" pos="396 28" source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
 
-        <scrollgroup pos="20 58" size="108 52">
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.athletics)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/athletics.png"/>
-                <label pos="82 1" size="15 12" id="athletics" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.dexterity)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/dexterity.png"/>
-                <label pos="82 1" size="15 12" id="dexterity" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.strength)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/strength.png"/>
-                <label pos="82 1" size="15 12" id="strength" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.agility)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/agility.png"/>
-                <label pos="82 1" size="15 12" id="agility" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.stamina)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/stamina.png"/>
-                <label pos="82 1" size="15 12" id="stamina" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.mana)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/mana.png"/>
-                <label pos="82 1" size="15 12" id="mana" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.adaptability)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/adaptability.png"/>
-                <label pos="82 1" size="15 12" id="adaptability" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.focus)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/focus.png"/>
-                <label pos="82 1" size="15 12" id="focus" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.creativity)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/creativity.png"/>
-                <label pos="82 1" size="15 12" id="creativity" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.knowledge)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/knowledge.png"/>
-                <label pos="82 1" size="15 12" id="knowledge" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-            <view size="100% 13">
-                <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.intelligence)"/>
-                <image pos="70 2" size="9 9" source="minecolonies:textures/entity/skills/small/intelligence.png"/>
-                <label pos="82 1" size="15 12" id="intelligence" color="black" textalign="MIDDLE_LEFT"/>
-            </view>
-        </scrollgroup>
+    <label id="health" size="35 8" color="black" pos="271 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
+    <label id="happinessLevel" size="25 8" color="black" pos="316 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
+    <label id="saturation" size="25 8" color="black" pos="351 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
 
-        <image id="deco3" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_up.png" pos="37 112"/>
-        <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="30 132" size="86 17"
-                     source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
-    </box>
+    <image source="minecraft:textures/gui/icons.png" size="9 9" pos="306 46" imageoffset="52 0" imagesize="9 9"/>
+    <image source="minecolonies:textures/gui/citizen/icons.png" size="9 9" pos="341 46" imageoffset="52 0" imagesize="9 9"/>
+    <image source="minecraft:textures/gui/icons.png" size="9 9" pos="376 46" imageoffset="52 27" imagesize="9 9"/>
 
-    <label size="148 11" pos="276 28" textalign="MIDDLE" color="black"
-           label="§n§4$(com.minecolonies.coremod.gui.townhall.citizens):"/>
-    <list id="citizenList" size="148 166" pos="276 50">
+    <entityicon id="entity" size="25 50" pos="396 38" visible="false" />
+
+    <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="306 70" size="86 17"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+
+    <input id="search" size="129 17" pos="285 90" maxlength="32" tooltip="$(com.minecolonies.core.townhall.citizen.filter)"/>
+    <list id="citizenList" size="148 106" pos="276 110">
         <view size="100% 17">
             <buttonimage id="name" pos="9 0" size="129 17" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                         disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_dark.png"/>
+                         disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
         </view>
     </list>
 </window>
