@@ -1,14 +1,17 @@
 package com.minecolonies.api.colony.workorders;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
@@ -55,6 +58,12 @@ public interface IWorkOrder
      * @return the pack name.
      */
     String getStructurePack();
+
+    /**
+     * Get a blueprint future.
+     * @return the blueprint future (might contain null).
+     */
+    Future<Blueprint> getBlueprintFuture();
 
     /**
      * Get the current level of the structure of the work order.
