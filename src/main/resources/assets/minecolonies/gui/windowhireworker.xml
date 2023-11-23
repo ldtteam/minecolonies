@@ -20,7 +20,7 @@
     <label id="buildingHireMode" size="200 11" pos="110 165" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
     <button id="mode" size="200 20" pos="110 175"/>
     <label id="showEmployedLabel" size="120 11" pos="110 200" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.showemployed)"/>
-    <button id="showEmployed" size="20 11" pos="250 200" label="N" textalign="MIDDLE" color="white"/>
+    <button id="showEmployed" size="20 17" pos="250 200" label="N" textalign="MIDDLE" color="white"/>
 
     <button id="cancel" size="200 20" pos="110 215" label="$(gui.cancel)"/>
 </window>

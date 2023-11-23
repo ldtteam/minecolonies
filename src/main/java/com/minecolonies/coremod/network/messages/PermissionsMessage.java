@@ -330,7 +330,6 @@ public class PermissionsMessage
                 colony.getPermissions().addRank(rankName);
             }
         }
-
     }
 
     /**

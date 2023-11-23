@@ -536,7 +536,7 @@ public class PathingStuckHandler implements IStuckHandler
     private void tryPlaceLadderAt(final Level world, final BlockPos pos)
     {
         final BlockState state = world.getBlockState(pos);
-        if (state.getBlock() != Blocks.LADDER && world.getFluidState(pos).isEmpty())
+        if (state.getBlock() != Blocks.LADDER && !(state.getBlock() instanceof IBuilderUndestroyable) && !state.is(ModTags.indestructible))
         {
             for (final Direction dir : HORIZONTAL_DIRS)
             {

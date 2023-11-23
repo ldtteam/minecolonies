@@ -523,14 +523,14 @@
   "com.minecolonies.coremod.gui.townhall.rename.title": "Rename your Colony",
 
   "com.minecolonies.coremod.gui.townhall.addplayer": "Add Player:",
-  "com.minecolonies.coremod.gui.townhall.addrank": "Add Rank:",
+  "com.minecolonies.coremod.gui.townhall.addrank": "Add New Rank:",
   "com.minecolonies.coremod.gui.townhall.removerank": "Remove Rank",
   "com.minecolonies.coremod.gui.townhall.invalidrankname": "This rank name is invalid",
   "com.minecolonies.coremod.gui.townhall.addblock": "Add Block/Position:",
   "com.minecolonies.coremod.gui.townhall.permissions": "Permissions",
   "com.minecolonies.coremod.gui.townhall.togglespec": "Toggle Specialization",
-  "com.minecolonies.coremod.gui.townhall.actions": "Actions",
-  "com.minecolonies.coremod.gui.townhall.jobhiring": "Worker Hiring Mode:",
+  "com.minecolonies.coremod.gui.townhall.actions": "Home",
+  "com.minecolonies.coremod.gui.townhall.jobhiring": "Hiring Mode:",
   "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: ",
   "com.minecolonies.coremod.gui.townhall.population.totalcitizens.count": "%d/%d",
   "com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited": "Needs Housing",
@@ -540,7 +540,7 @@
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
   "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
-  "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager": "Colony Manager",
+  "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager": "Manager",
   "com.minecolonies.coremod.gui.townhall.ranktype.hostile": "Hostile",
   "com.minecolonies.coremod.gui.townhall.ranktype.none": "None",
 
@@ -550,7 +550,7 @@
   "com.minecolonies.coremod.gui.townhall.permissionevents": "Permission Events",
   "com.minecolonies.coremod.gui.townhall.colonyevents": "Colony Events",
   "com.minecolonies.coremod.gui.townhall.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall Happiness:",
+  "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall Happiness: %d",
 
   "com.minecolonies.coremod.gui.townhall.allies": "Allies:",
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
@@ -751,7 +751,7 @@
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
   "com.minecolonies.coremod.gui.workerhuts.hostilelist": "Hostiles",
 
-  "com.minecolonies.coremod.gui.townhall.housing": "Housing Assignment Mode:",
+  "com.minecolonies.coremod.gui.townhall.housing": "Housing Mode:",
   "com.minecolonies.coremod.gui.townhall.movein": "Kids will be born:",
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
   "com.minecolonies.coremod.gui.workerhuts.managehousing": "Manage Housing",
@@ -987,7 +987,7 @@
   "com.minecolonies.coremod.pvp.attack.guardgroupsize": "§eBeware, %s §ehas now: %d §eguards!",
   "com.minecolonies.coremod.pvp.townhall.break.start": "Beware! %s started breaking your Town Hall!",
   "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100%% it will be lost!!!",
-  "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Pick Team Color:",
+  "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Colony Color:",
 
   "item.minecolonies.resourcescroll": "Resource Scroll",
 
@@ -1883,7 +1883,7 @@
 
   "com.minecolonies.coremod.gui.flag.choose": "Choose a color and pattern for up to 6 layers",
   "com.minecolonies.coremod.gui.flag.base_layer": "Base",
-  "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
+  "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit Colony Flag",
   "block.minecolonies.colony_banner": "Colony Flag Banner",
   "com.minecolonies.coremod.gui.locate": "Locate",
   "com.minecolonies.coremod.locating": "Successfully located rack with respective item(s).",
@@ -1919,11 +1919,13 @@
   "com.minecolonies.coremod.gui.happiness.positive": "Positive",
 
   "com.minecolonies.coremod.gui.townhalltab.information": "Information",
-  "com.minecolonies.coremod.gui.townhalltab.actions": "Actions",
+  "com.minecolonies.coremod.gui.townhalltab.actions": "Home",
   "com.minecolonies.coremod.gui.townhalltab.permissions": "Permissions",
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
+  "com.minecolonies.coremod.gui.townhalltab.alliances": "Alliances",
+
   "com.minecolonies.coremod.gui.townhalltab.stats": "Statistics",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
@@ -2110,8 +2112,8 @@
   "com.minecolonies.coremod.gui.miner.levels": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
   "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
-  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style",
-  "com.minecolonies.coremod.gui.townhall.picknamestyle": "Pick Naming Convention",
+  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Citizen Style:",
+  "com.minecolonies.coremod.gui.townhall.picknamestyle": "Name Pack:",
   "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
   "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
   "com.minecolonies.coremod.gui.chat.arston": "I am Arston, former military advisor and general of the draconian army. I can offer my expertise to run and strengthen your army",
@@ -2413,7 +2415,7 @@
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
   "com.minecolonies.coremod.structures.buildingmissing": "The builder had a problem locating this blueprint, please try again.",
 
-  "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
+  "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Colony Pack:",
   "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s",
   "com.minecolonies.command.gui.browsebuilding.loading": "searching ...",
 
@@ -2476,5 +2478,23 @@
   "com.minecolonies.coremod.placement.noperm": "Error on placement! You don't have the permission in this colony!",
   "com.minecolonies.coremod.placement.townhalltooclose": "Error on placement! You are too close to an existing colony!",
 
-  "com.minecolonies.research.effects.citizencapaddition.description.over": "(%1$s, reduced to configuration limit)"
+  "com.minecolonies.research.effects.citizencapaddition.description.over": "(%1$s, reduced to configuration limit)",
+  "com.minecolonies.gui.reset": "reset",
+
+  "com.minecolonies.coremod.gui.townhall.housing.tooltip": "If citizens should be assigned manually or automatically to housing.",
+  "com.minecolonies.coremod.gui.townhall.movein.tooltip": "Stops kids from being born and initial citizen from spawning",
+  "com.minecolonies.coremod.gui.townhall.printprogress.tooltip": "Print guide messages to aid progression",
+  "com.minecolonies.coremod.gui.townhall.jobhiring.tooltip": "If citizens should be assigned manually or automatically to jobs.",
+  "com.minecolonies.coremod.gui.townhall.visual": "§lCosmetic Options:",
+  "com.minecolonies.core.townhall.patreon.textures": "Adjust the Citizen Skins (E.g. To East Asian, Nordic, Undead, etc).",
+  "com.minecolonies.core.townhall.patreon.names": "Adjust the Citizen Nameing Scheme (E.g. To East Asian, German, Spanish, French, etc).",
+
+  "com.minecolonies.core.building.help": "Help",
+  "com.minecolonies.core.building.inv_sum": "Building Inventory Summary",
+  "com.minecolonies.core.gui.townhall.rank_permission_error": "You are not permitted to add new ranks. Ask a colony manager to turn on \"Edit permissions\" for your rank.",
+  "com.minecolonies.coremod.gui.townhall.permevents": "Permission Events",
+  "com.minecolonies.core.townhall.citizen.filter": "Enter the Citizen Name or Job you are searching for",
+  "com.minecolonies.core.gui.nextpage": "Next Page",
+  "com.minecolonies.core.gui.prevpage": "Previous Page"
+
 }

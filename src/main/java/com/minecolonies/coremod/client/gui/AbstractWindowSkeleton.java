@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
@@ -73,6 +74,9 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         {
             buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
             buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.nextpage"), buttonNextPage);
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.prevpage"), buttonPrevPage);
+
             pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
             registerButton(BUTTON_NEXTPAGE, () -> setPage(true, 1));
             registerButton(BUTTON_PREVPAGE, () -> setPage(true, -1));
