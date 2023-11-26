@@ -288,6 +288,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             this.newNavigator.getPathingOptions().setEnterDoors(true);
             newNavigator.getPathingOptions().withDropCost(1.3D);
+            newNavigator.getPathingOptions().setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()

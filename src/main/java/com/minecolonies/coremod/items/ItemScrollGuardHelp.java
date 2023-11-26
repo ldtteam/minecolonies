@@ -11,7 +11,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.modules.settings.FollowModeSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardFollowModeSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
@@ -44,8 +44,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Magic scroll which summons guards to the users aid, with a limited duration. Only works within the same world as the colony.
@@ -116,8 +114,8 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
 
                 ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
                 ((AbstractBuildingGuards) building).setPlayerToFollow(player);
-                final FollowModeSetting grouping = ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.FOLLOW_MODE);
-                if (grouping.getValue().equals(FollowModeSetting.LOOSE))
+                final GuardFollowModeSetting grouping = ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.FOLLOW_MODE);
+                if (grouping.getValue().equals(GuardFollowModeSetting.LOOSE))
                 {
                     grouping.trigger();
                 }

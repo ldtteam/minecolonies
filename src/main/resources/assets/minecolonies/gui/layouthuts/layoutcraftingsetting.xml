@@ -1,7 +1,8 @@
 <window size="100% 100%" pause="false" lightbox="false">
     <text id="id" size="0 0" pos="0 0" visible="false"/>
-    <itemicon id="iconfrom" size="16 16" pos="100 10"/>
-    <itemicon id="iconto" size="16 16" pos="130 10"/>
+    <text id="desc" size="100% 15" pos="5 5" color="black" textalign="vertical left" wrap="true"/>
 
-    <buttonimage  id="trigger" pos="5 10" size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+    <buttonimage  id="trigger" pos="5 25" size="80 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+    <itemicon id="iconfrom" size="16 16" pos="100 25"/>
+    <itemicon id="iconto" size="16 16" pos="130 25"/>
 </window>

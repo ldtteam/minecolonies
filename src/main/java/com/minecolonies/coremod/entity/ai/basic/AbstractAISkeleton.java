@@ -146,6 +146,11 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
         worker.setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+
+        worker.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.CHEST);
+        worker.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.FEET);
+        worker.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.HEAD);
+        worker.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.LEGS);
     }
 
     /**

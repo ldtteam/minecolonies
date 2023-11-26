@@ -36,7 +36,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     /**
      * Marks the instance dirty.
      */
-    void markDirty();
+    void markDirty(final int time);
 
     /**
      * Initializes a new citizen, when not read from nbt
@@ -158,7 +158,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     /**
      * Tick the data to update values.
      */
-    void tick();
+    void update();
 
     /**
      * Trigger a possible interaction.

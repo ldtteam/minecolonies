@@ -4,10 +4,7 @@ import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.entity.pathfinding.PathingOptions;
-import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -51,7 +48,7 @@ import static com.minecolonies.api.util.constant.PathingConstants.*;
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
-public abstract class AbstractPathJob implements Callable<Path>
+public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 {
     /**
      * Start position to path from.
@@ -603,9 +600,16 @@ public abstract class AbstractPathJob implements Callable<Path>
         return (node == null) ? SurfaceType.isWater(world, pos.below()) : node.isSwimming();
     }
 
+    @Override
     public PathResult getResult()
     {
         return result;
+    }
+
+    @Override
+    public PathingOptions getPathingOptions()
+    {
+        return pathingOptions;
     }
 
     /**
@@ -1567,7 +1571,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public void setPathingOptions(final PathingOptions pathingOptions)
     {
-        this.pathingOptions = pathingOptions;
+        this.pathingOptions.importFrom(pathingOptions);
     }
 
     /**

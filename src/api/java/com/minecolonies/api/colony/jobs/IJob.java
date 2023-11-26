@@ -2,10 +2,13 @@ package com.minecolonies.api.colony.jobs;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -287,4 +290,28 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
     {
         return false;
     }
+
+    /**
+     * Gets the position of the building the job is assigned to
+     * @return
+     */
+    public BlockPos getBuildingPos();
+
+    /**
+     * Gets the work building
+     * @return
+     */
+    public IBuilding getWorkBuilding();
+
+    /**
+     * Gets the module this job is assigned to
+     */
+    IAssignsJob getWorkModule();
+
+    /**
+     * Assigns the job to its specific work module
+     * @param module
+     * @return
+     */
+    boolean assignTo(IAssignsJob module);
 }

@@ -4,12 +4,21 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.util.MutableHashedLinkedMap;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * Utility class that handles crafting duties
@@ -162,4 +171,71 @@ public final class CraftingUtils
                 () -> recipe.matchesInput(getIngredientValidatorBasedOnTags(crafterJobName)));
     }
 
+    /**
+     * Find all items registered in creative tabs and do something with them.
+     *
+     * @param displayParams the display parameters.
+     * @param consumer      the action to perform.
+     */
+    public static void forEachCreativeTabItems(@NotNull final CreativeModeTab.ItemDisplayParameters displayParams,
+                                               @NotNull final BiConsumer<CreativeModeTab, Collection<ItemStack>> consumer)
+    {
+        final HolderLookup.RegistryLookup<CreativeModeTab> registry = displayParams.holders().lookup(Registries.CREATIVE_MODE_TAB).get();
+        final Map<CreativeModeTab, ResourceKey<CreativeModeTab>> tabKeys = registry.listElements()
+                .distinct()     // some mods are dumb
+                .collect(Collectors.toMap(Holder::get, Holder.Reference::key));
+
+        for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
+        {
+            if (tab.getType() == CreativeModeTab.Type.CATEGORY)
+            {
+                final Collection<ItemStack> stacks;
+                if (tab.getDisplayItems().isEmpty())
+                {
+                    stacks = new HashSet<>();
+                    try
+                    {
+                        onCreativeModeTabBuildContents(tab, Objects.requireNonNull(tabKeys.get(tab), "unregistered tab"),
+                                tab.displayItemsGenerator, displayParams, (stack, vis) -> stacks.add(stack));
+                    }
+                    catch (final Throwable ex)
+                    {
+                        Log.getLogger().warn("Error populating items for " + tab.getDisplayName().getString(), ex);
+                    }
+                }
+                else
+                {
+                    stacks = tab.getDisplayItems();
+                }
+
+                consumer.accept(tab, stacks);
+            }
+        }
+    }
+
+    /**
+     * Extracted from Forge {@link ForgeHooksClient} to avoid classloading problems (since we call on server).
+     */
+    private static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
+    {
+        final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
+                (key, left, right) -> {
+                    //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
+                    // Vanilla adds enchanting books twice in both visibilities.
+                    // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.
+                    return CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+                }
+        );
+
+        originalGenerator.accept(params, (stack, vis) -> {
+            if (stack.getCount() != 1)
+                throw new IllegalArgumentException("The stack count must be 1");
+            entries.put(stack, vis);
+        });
+
+        ModLoader.get().postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
+
+        for (var entry : entries)
+            output.accept(entry.getKey(), entry.getValue());
+    }
 }

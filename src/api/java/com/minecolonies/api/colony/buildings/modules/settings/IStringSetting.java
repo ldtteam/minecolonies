@@ -38,9 +38,9 @@ public interface IStringSetting extends ISetting
     void set(final String value);
 
     @Override
-    default void copyValue(final ISetting iSetting)
+    default void copyValue(final ISetting setting)
     {
-        if (iSetting instanceof final IStringSetting other)
+        if (setting instanceof final IStringSetting other)
         {
             set(other.getValue());
         }

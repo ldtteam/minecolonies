@@ -3,18 +3,17 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -58,6 +57,13 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         {
             buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getBuildingType().getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
         }
+    }
+
+    @Override
+    public void setPage(final boolean relative, final int page)
+    {
+        super.setPage(relative, page);
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
     }
 
     /**
