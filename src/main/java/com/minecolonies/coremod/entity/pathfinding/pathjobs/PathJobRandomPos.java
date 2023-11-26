@@ -167,56 +167,7 @@ public class PathJobRandomPos extends AbstractPathJob
     {
         return 0;
     }
-
-    @Override
-    protected double computeCost(
-      @NotNull final BlockPos dPos,
-      final boolean isSwimming,
-      final boolean onPath,
-      final boolean onRails,
-      final boolean railsExit,
-      final boolean swimStart,
-      final boolean corner,
-      final BlockState state,
-      final BlockPos blockPos)
-    {
-        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
-
-        if (onPath)
-        {
-            cost *= getPathingOptions().onPathCost;
-        }
-
-        if (onRails)
-        {
-            cost *= getPathingOptions().onRailCost;
-        }
-
-        if (railsExit)
-        {
-            cost *= getPathingOptions().railsExitCost;
-        }
-
-        if (state.getBlock() instanceof VineBlock)
-        {
-            cost *= getPathingOptions().vineCost;
-        }
-
-        if (isSwimming)
-        {
-            if (swimStart)
-            {
-                cost *= getPathingOptions().swimCostEnter;
-            }
-            else
-            {
-                cost *= getPathingOptions().swimCost;
-            }
-        }
-
-        return cost;
-    }
-
+    
     /**
      * Checks if position and range match the given parameters
      *
