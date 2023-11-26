@@ -622,7 +622,7 @@ public class RaidManager implements IRaiderManager
     {
         for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            if (event instanceof IColonyRaidEvent && (event.getStatus() == EventStatus.PROGRESSING || event.getStatus() == EventStatus.PREPARING))
+            if (event instanceof IColonyRaidEvent raidEvent && raidEvent.isRaidActive())
             {
                 return true;
             }
@@ -841,9 +841,10 @@ public class RaidManager implements IRaiderManager
         {
             for (final IColonyEvent event : colony.getEventManager().getEvents().values())
             {
-                if (event instanceof IColonyRaidEvent)
+                if (event instanceof IColonyRaidEvent raidEvent)
                 {
-                    event.setStatus(EventStatus.DONE);
+                    raidEvent.setStatus(EventStatus.DONE);
+                    raidEvent.setMercyEnd();
                 }
             }
         }
