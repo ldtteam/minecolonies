@@ -164,7 +164,7 @@ public final class SoundUtils
         }
         else
         {
-            playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen);
+            playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen, EventType.NOISE.getChance(), VOLUME/2);
         }
     }
 
@@ -262,7 +262,7 @@ public final class SoundUtils
       @NotNull final Level worldIn,
       @NotNull final BlockPos position,
       @Nullable final EventType type,
-      @Nullable final ICivilianData citizenData, final double chance)
+      @Nullable final ICivilianData citizenData, final double chance, final double volume)
     {
         if (citizenData == null)
         {
@@ -296,9 +296,26 @@ public final class SoundUtils
               position,
               event,
               SoundSource.NEUTRAL,
-              (float) VOLUME,
+              (float) volume,
               (float) PITCH);
         }
+    }
+
+    /**
+     * Plays a sound with a certain chance at a certain position.
+     *
+     * @param worldIn     the world to play the sound in.
+     * @param position    position to play the sound at.
+     * @param type        sound to play.
+     * @param citizenData the citizen.
+     */
+    public static void playSoundAtCitizenWith(
+      @NotNull final Level worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICivilianData citizenData, final double chance)
+    {
+        playSoundAtCitizenWith(worldIn, position, type, citizenData, chance, VOLUME);
     }
 
     /**
