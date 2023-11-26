@@ -432,12 +432,17 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
+                if (recipeStorage.getAlternateOutputs().isEmpty())
+                {
+                    //building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    //return true;
+                }
+
                 final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                                recipeStorage.getAlternateOutputs().stream())
-                        .filter(ItemStackUtils::isNotEmpty);
+                    recipeStorage.getAlternateOutputs().stream()).filter(ItemStackUtils::isNotEmpty);
 
                 building.getColony().getRequestManager().onColonyUpdate(request ->
-                        request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
+                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
             }
             return true;
         }
