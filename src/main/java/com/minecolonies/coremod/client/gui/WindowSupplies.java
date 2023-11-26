@@ -24,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,7 +188,8 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             {
                 HighlightManager.addHighlight(RENDER_BOX_CATEGORY + i++, new TimedBoxRenderData(error.getPos())
                   .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
-                  .setColor(0x80FF0000));
+                  .setColor(0x80FF0000)
+                  .setDuration(Duration.ofSeconds(60)));
             }
         }
     }
