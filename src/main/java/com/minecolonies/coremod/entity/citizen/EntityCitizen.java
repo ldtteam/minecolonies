@@ -645,8 +645,22 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getEyeHeight()), this);
         }
 
+        final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+        if (!remainingItem.isEmpty())
+        {
+            if (!player.getInventory().add(remainingItem))
+            {
+                InventoryUtils.spawnItemStack(
+                  player.level,
+                  player.getX(),
+                  player.getY(),
+                  player.getZ(),
+                  remainingItem
+                );
+            }
+        }
+
         usedStack.shrink(1);
-        player.setItemInHand(hand, usedStack);
         interactionCooldown = 100;
     }
 
