@@ -430,12 +430,17 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
+                if (recipeStorage.getAlternateOutputs().isEmpty())
+                {
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
+                    return true;
+                }
+
                 final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                                recipeStorage.getAlternateOutputs().stream())
-                        .filter(ItemStackUtils::isNotEmpty);
+                    recipeStorage.getAlternateOutputs().stream()).filter(ItemStackUtils::isNotEmpty);
 
                 building.getColony().getRequestManager().onColonyUpdate(request ->
-                        request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
+                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
             }
             return true;
         }
@@ -516,14 +521,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 if(duplicateFound == null)
                 {
                     addRecipeToList(recipeToken, true);
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
                     markDirty();
                 }
                 else if((forceReplace || newRecipe.getMustExist()) && !(duplicateFound.equals(recipeToken)))
                 {
                     //We found the base recipe for a multi-recipe, replace it with the multi-recipe
                     replaceRecipe(duplicateFound, recipeToken);
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
 
                     //Clean up old 'classic' recipes that the new multi-recipe replaces
                     final List<ItemStack> alternates = recipeStorage.getAlternateOutputs();
@@ -535,7 +540,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                             removeRecipe(token);
                         }
                     }
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
                     markDirty();
                 }
             }
@@ -809,7 +814,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
             }
         }
     }
@@ -891,7 +896,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(key);
             if (recipeStorage != null)
             {
-                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
             }
         }
         else

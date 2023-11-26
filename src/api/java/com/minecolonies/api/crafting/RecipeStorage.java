@@ -237,7 +237,7 @@ public class RecipeStorage implements IRecipeStorage
                 continue;
             }
 
-            final ItemStack container = inputItem.getItem().getCraftingRemainingItem(inputItem.getItemStack());
+            final ItemStack container = inputItem.getItemStack().getCraftingRemainingItem();
             if (!ItemStackUtils.isEmpty(container))
             {
                 container.setCount(inputItem.getAmount());
@@ -352,7 +352,7 @@ public class RecipeStorage implements IRecipeStorage
         }
         else
         {
-            final ItemStack container = stack.getItem().getCraftingRemainingItem(stack);
+            final ItemStack container = stack.getCraftingRemainingItem();
             if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
             {
                 neededCount = storage.getAmount() * qty;
@@ -487,7 +487,7 @@ public class RecipeStorage implements IRecipeStorage
         {
             for (final ItemStorage stack : input)
             {
-                final ItemStack container = stack.getItem().getCraftingRemainingItem(stack.getItemStack());
+                final ItemStack container = stack.getItemStack().getCraftingRemainingItem();
                 if (!ItemStackUtils.isEmpty(container))
                 {
                     container.setCount(stack.getAmount());
