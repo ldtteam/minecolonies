@@ -434,8 +434,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             {
                 if (recipeStorage.getAlternateOutputs().isEmpty())
                 {
-                    //building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
-                    //return true;
+                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    return true;
                 }
 
                 final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
