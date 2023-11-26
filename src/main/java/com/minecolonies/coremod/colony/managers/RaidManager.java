@@ -58,6 +58,7 @@ import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -192,6 +193,11 @@ public class RaidManager implements IRaiderManager
      * If ships will be allowed or not.
      */
     private boolean allowShips = true;
+
+    /**
+     * Passing through raid timer.
+     */
+    private long raidPassingThroughEndTime = 0;
 
     /**
      * Creates the RaidManager for a colony.
@@ -620,6 +626,10 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean isRaided()
     {
+        if (colony.getWorld().getGameTime() <= raidPassingThroughEndTime)
+        {
+            return true;
+        }
         for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
             if (event instanceof IColonyRaidEvent raidEvent && raidEvent.isRaidActive())
@@ -821,7 +831,6 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
-
         if (raidHistories.isEmpty())
         {
             return;
@@ -929,6 +938,12 @@ public class RaidManager implements IRaiderManager
         }
 
         return raidHistories.get(raidHistories.size() - 1);
+    }
+
+    @Override
+    public void setPassThroughRaid()
+    {
+        raidPassingThroughEndTime = colony.getWorld().getGameTime() + TICKS_SECOND * 20;
     }
 
     /**

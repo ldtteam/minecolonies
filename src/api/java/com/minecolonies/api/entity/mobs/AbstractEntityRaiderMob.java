@@ -4,6 +4,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
@@ -36,14 +37,17 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
@@ -76,7 +80,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     /**
      * 1 in X Chance that thorns effect happens
      */
-    private static final int THORNS_CHANCE = 5;
+    private static final int THORNS_CHANCE            = 5;
+
+    /**
+     * Set the colony raided if raider is in the wrong colony.
+     */
+    private static final int COLONY_SET_RAIDED_CHANCE = 20;
 
     /**
      * The New PathNavigate navigator.
@@ -168,6 +177,11 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      * The threattable of the mob
      */
     private ThreatTable threatTable = new ThreatTable<>(this);
+
+    /**
+     * Last chunk pos.
+     */
+    private ChunkPos lastChunkPos = null;
 
     /**
      * Raiders AI statemachine
@@ -441,6 +455,15 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
                 worldTimeAtSpawn = level().getGameTime();
             }
 
+            if (this.chunkPosition() != lastChunkPos)
+            {
+                this.lastChunkPos = this.chunkPosition();
+                if (random.nextInt(COLONY_SET_RAIDED_CHANCE) <= 0)
+                {
+                    this.onEnterChunk(this.lastChunkPos);
+                }
+            }
+
             if (shouldDespawn())
             {
                 this.die(level().damageSources().source(DamageSourceKeys.DESPAWN));
@@ -478,6 +501,17 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         }
 
         super.aiStep();
+    }
+
+    private void onEnterChunk(final ChunkPos lastChunkPos)
+    {
+        final LevelChunk chunk = colony.getWorld().getChunk(lastChunkPos.x, lastChunkPos.z);
+        final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (chunkCapability != null && chunkCapability.getOwningColony() != 0 && colony.getID() != chunkCapability.getOwningColony())
+        {
+            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), level);
+            tempColony.getRaiderManager().setPassThroughRaid();
+        }
     }
 
     @org.jetbrains.annotations.Nullable
