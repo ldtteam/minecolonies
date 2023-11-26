@@ -504,9 +504,13 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         super.aiStep();
     }
 
-    private void onEnterChunk(final ChunkPos lastChunkPos)
+    /**
+     * Even on when a raider entered a new chunk.
+     * @param newChunkPos the new chunk pos.
+     */
+    private void onEnterChunk(final ChunkPos newChunkPos)
     {
-        final LevelChunk chunk = colony.getWorld().getChunk(lastChunkPos.x, lastChunkPos.z);
+        final LevelChunk chunk = colony.getWorld().getChunk(newChunkPos.x, newChunkPos.z);
         final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (chunkCapability != null && chunkCapability.getOwningColony() != 0 && colony.getID() != chunkCapability.getOwningColony())
         {

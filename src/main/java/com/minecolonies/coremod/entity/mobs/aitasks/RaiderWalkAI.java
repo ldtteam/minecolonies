@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
@@ -91,6 +92,8 @@ public class RaiderWalkAI implements IStateAI
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
                 raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), !moveToPos.equals(targetBlock) && moveToPos.distManhattan(wayPoints.get(0)) > 50 ? 1.8 : 1.1);
                 walkInBuildingState = false;
+                randomPathResult = null;
+                Log.getLogger().warn("Next building");
             }
             else if (walkInBuildingState)
             {
@@ -104,12 +107,15 @@ public class RaiderWalkAI implements IStateAI
                         {
                             walkInBuildingState = false;
                             targetBlock = null;
+                            Log.getLogger().warn("Stop in build");
                         }
                         else
                         {
                             randomPathResult = null;
                             walkTimer = raider.level.getGameTime() + TICKS_SECOND * 30;
                             findRandomPositionToWalkTo();
+                            Log.getLogger().warn("Contine in build");
+
                         }
                     }
                 }
@@ -119,6 +125,7 @@ public class RaiderWalkAI implements IStateAI
                 findRandomPositionToWalkTo();
                 walkTimer = raider.level.getGameTime() + TICKS_SECOND * 30;
                 walkInBuildingState = true;
+                Log.getLogger().warn("Start in build");
             }
             else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
             {
@@ -136,7 +143,7 @@ public class RaiderWalkAI implements IStateAI
     {
         if (randomPathResult == null || randomPathResult.failedToReachDestination())
         {
-            if (raider.getColony().getBuildingManager().getBuilding(targetBlock) instanceof AbstractBuilding building)
+            if (raider.getColony().getBuildingManager().getBuilding(targetBlock) instanceof AbstractBuilding building && !building.getCorners().getA().equals(building.getCorners().getB()))
             {
                 randomPathResult = raider.getNavigation().moveToRandomPos(20, 0.9, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
             }

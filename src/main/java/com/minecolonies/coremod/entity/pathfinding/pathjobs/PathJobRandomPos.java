@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -10,10 +9,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.VineBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
@@ -144,7 +139,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return Math.sqrt(destination.distSqr(new BlockPos(pos.getX(), destination.getY(), pos.getZ())));
+        return Math.sqrt(destination.distSqr(new BlockPos(pos.getX(), pos.getY(), pos.getZ())));
     }
 
     @Override
