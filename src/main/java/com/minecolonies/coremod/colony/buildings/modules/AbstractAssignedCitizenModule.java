@@ -129,9 +129,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundTag assignedCompound = new CompoundTag();
-        assignedCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        compound.put(getModuleSerializationIdentifier(), assignedCompound);
+        compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
     }
 
     @Override
@@ -144,6 +142,10 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
         else if (compound.contains(getModuleSerializationIdentifier()))
         {
             this.hiringMode = HiringMode.values()[compound.getCompound(getModuleSerializationIdentifier()).getInt(TAG_HIRING_MODE)];
+        }
+        else
+        {
+            this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
         }
     }
 
@@ -177,5 +179,6 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
      * Use for deserialize/serialize only!
      * @return a string identifier.
      */
+    @Deprecated
     protected abstract String getModuleSerializationIdentifier();
 }

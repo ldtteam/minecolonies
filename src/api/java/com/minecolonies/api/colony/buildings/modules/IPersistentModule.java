@@ -19,10 +19,4 @@ public interface IPersistentModule extends IBuildingModule
      * @param compound the compound.
      */
     default void serializeNBT(final CompoundTag compound) { }
-
-    /**
-     * Serialization method to send the module data to the client side.
-     * @param buf the buffer to write it to.
-     */
-    default void serializeToView(FriendlyByteBuf buf) { }
 }

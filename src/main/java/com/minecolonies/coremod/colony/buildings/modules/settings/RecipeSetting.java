@@ -109,7 +109,7 @@ public class RecipeSetting implements ICraftingSetting
     public List<ItemStack> getSettings(final IBuildingView building)
     {
         final List<ItemStack> settings = new ArrayList<>();
-        for (final IRecipeStorage recipe : building.getModuleView(CraftingModuleView.class).getRecipes())
+        for (final IRecipeStorage recipe : building.getModuleViewByType(CraftingModuleView.class).getRecipes())
         {
             settings.add(recipe.getPrimaryOutput());
         }
@@ -132,7 +132,7 @@ public class RecipeSetting implements ICraftingSetting
       final BOWindow window)
     {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(input -> {
-            final List<IRecipeStorage> list = building.getModuleView(CraftingModuleView.class).getRecipes();
+            final List<IRecipeStorage> list = building.getModuleViewByType(CraftingModuleView.class).getRecipes();
             int currentIntIndex = 0;
 
             int index = 0;

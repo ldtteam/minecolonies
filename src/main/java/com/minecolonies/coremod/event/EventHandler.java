@@ -44,7 +44,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -76,7 +75,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -731,12 +729,12 @@ public class EventHandler
                 if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
                     IVisitorData visitorData = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
-                    BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModules(TavernBuildingModule.class).isEmpty());
+                    BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
                     IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
 
                     visitorData.setHomeBuilding(tavern);
                     visitorData.setBedPos(tavernPos);
-                    tavern.getModules(TavernBuildingModule.class).forEach(mod -> mod.getExternalCitizens().add(visitorData.getId()));
+                    tavern.getModulesByType(TavernBuildingModule.class).forEach(mod -> mod.getExternalCitizens().add(visitorData.getId()));
 
                     int recruitLevel = world.random.nextInt(10 * tavern.getBuildingLevel()) + 15;
                     List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();

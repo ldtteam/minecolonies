@@ -65,7 +65,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public void addCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.add(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getJobEntry()));
+        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()));
         citizen.setWorkBuilding(buildingView.getPosition());
         citizen.setJobView(getJobEntry().getJobViewProducer().get().apply(buildingView.getColony(), citizen));
         citizen.getJobView().setEntry(getJobEntry());
@@ -75,7 +75,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public void removeCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.remove(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getJobEntry()));
+        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()));
         citizen.setWorkBuilding(null);
     }
 
@@ -136,7 +136,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, jobEntry));
+        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()));
     }
 
     @Override

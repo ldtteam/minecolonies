@@ -447,14 +447,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
               usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
         {
             final BuildingEntry entry = ((AbstractBlockHut<?>) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
-            for (final Supplier<IBuildingModule> module : entry.getModuleProducers())
+         /**   for (final BuildingEntry.ModuleProducer module : entry.getModuleProducers())
             {
                 if (module.get() instanceof WorkerBuildingModule)
                 {
                     getCitizenJobHandler().setModelDependingOnJob(((WorkerBuildingModule) module.get()).getJobEntry().produceJob(null));
                     return InteractionResult.SUCCESS;
                 }
-            }
+            }**/
         }
 
         if (isInteractionItem(usedStack) && interactionCooldown > 0)

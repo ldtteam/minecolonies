@@ -105,7 +105,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     {
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
-        this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
+        this.module = (CraftingModuleView) building.getModuleView(container.getModuleId());
         completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get());
     }
 
@@ -161,7 +161,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
                     Network.getNetwork()
-                      .sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getId()));
+                      .sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getProducer().getRuntimeID()));
                 }
             }
         }

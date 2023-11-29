@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -112,10 +111,22 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
                 }
             }
         }
-        else if (compound.contains(jobEntry.getKey().toString()))
+        else if (compound.contains(getModuleSerializationIdentifier()))
         {
             final CompoundTag jobCompound = compound.getCompound(jobEntry.getKey().toString());
             final int[] residentIds = jobCompound.getIntArray(TAG_WORKING_RESIDENTS);
+            for (final int citizenId : residentIds)
+            {
+                final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
+                if (citizen != null)
+                {
+                    assignCitizen(citizen);
+                }
+            }
+        }
+        else
+        {
+            final int[] residentIds = compound.getIntArray(TAG_WORKING_RESIDENTS);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -146,7 +157,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     public void serializeNBT(final CompoundTag compound)
     {
         super.serializeNBT(compound);
-        final CompoundTag jobCompound = compound.contains(getModuleSerializationIdentifier()) ? compound.getCompound(getModuleSerializationIdentifier()) : new CompoundTag();
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -154,9 +164,8 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
             {
                 residentIds[i] = assignedCitizen.get(i).getId();
             }
-            jobCompound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
+            compound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
         }
-        compound.put(getModuleSerializationIdentifier(), jobCompound);
     }
 
     @Override
@@ -171,7 +180,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     @Override
     void onAssignment(final ICitizenData citizen)
     {
-        for (final AbstractCraftingBuildingModule module : building.getModules(AbstractCraftingBuildingModule.class))
+        for (final AbstractCraftingBuildingModule module : building.getModulesByType(AbstractCraftingBuildingModule.class))
         {
             module.updateWorkerAvailableForRecipes();
         }

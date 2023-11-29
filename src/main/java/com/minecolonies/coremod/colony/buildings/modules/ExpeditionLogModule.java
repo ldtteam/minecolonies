@@ -33,15 +33,13 @@ public class ExpeditionLogModule extends AbstractBuildingModule implements IPers
     @Override
     public void serializeNBT(@NotNull final CompoundTag compound)
     {
-        final CompoundTag log = new CompoundTag();
-        this.log.serializeNBT(log);
-        compound.put(TAG_LOG, log);
+        this.log.serializeNBT(compound);
     }
 
     @Override
     public void deserializeNBT(@NotNull final CompoundTag compound)
     {
-        final CompoundTag log = compound.getCompound(TAG_LOG);
+        final CompoundTag log = compound.contains(TAG_LOG) ? compound.getCompound(TAG_LOG) : compound;
         this.log.deserializeNBT(log);
     }
 

@@ -54,7 +54,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        final CompoundTag settingsCompound = compound.getCompound("settings");
+        final CompoundTag settingsCompound = compound.contains("settings") ? compound.getCompound("settings") : compound;
         final ListTag list = settingsCompound.getList("settingslist", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
@@ -80,8 +80,6 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundTag settingsCompound = new CompoundTag();
-
         final ListTag list = new ListTag();
         for (final Map.Entry<ISettingKey<?>, ISetting> setting : settings.entrySet())
         {
@@ -90,9 +88,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
             entryCompound.put("value", StandardFactoryController.getInstance().serialize(setting.getValue()));
             list.add(entryCompound);
         }
-        settingsCompound.put("settingslist", list);
-
-        compound.put("settings", settingsCompound);
+        compound.put("settingslist", list);
     }
 
     @Override

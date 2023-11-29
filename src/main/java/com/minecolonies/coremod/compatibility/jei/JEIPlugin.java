@@ -65,6 +65,7 @@ public class JEIPlugin implements IModPlugin
         {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
 
+            /*
             for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
                 final IBuildingModule module = producer.get();
@@ -94,7 +95,7 @@ public class JEIPlugin implements IModPlugin
                     }
                     category.addModule(herding);
                 }
-            }
+            }*/
 
             for (final GenericRecipeCategory category : craftingCategories.values())
             {

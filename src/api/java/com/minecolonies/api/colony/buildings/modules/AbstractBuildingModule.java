@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.util.Log;
 
 /**
  * Abstract class for all modules. Has base methods for all the necessary methods that have to be called from the building.
@@ -16,6 +18,11 @@ public abstract class AbstractBuildingModule implements IBuildingModule
      * The building this module belongs to.
      */
     protected IBuilding building;
+
+    /**
+     * Creator and Identifier of this module
+     */
+    private BuildingEntry.ModuleProducer producer = null;
 
     @Override
     public void markDirty()
@@ -50,5 +57,23 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     {
         this.building = building;
         return this;
+    }
+
+    @Override
+    public IBuildingModule setProducer(final BuildingEntry.ModuleProducer moduleSet)
+    {
+        if (producer != null)
+        {
+            Log.getLogger().error("Changing a producer is not allowed, trace:", new Exception());
+            return this;
+        }
+        producer = moduleSet;
+        return this;
+    }
+
+    @Override
+    public BuildingEntry.ModuleProducer getProducer()
+    {
+        return producer;
     }
 }

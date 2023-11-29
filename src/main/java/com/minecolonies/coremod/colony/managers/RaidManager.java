@@ -101,7 +101,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Min required raidlevel
      */
-    private static final int MIN_REQUIRED_RAIDLEVEL = 75;
+    public static final int MIN_REQUIRED_RAIDLEVEL = 75;
 
     /**
      * Percentage increased amount of spawns per player

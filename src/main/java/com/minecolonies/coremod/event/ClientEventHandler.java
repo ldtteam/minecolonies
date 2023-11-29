@@ -261,6 +261,7 @@ public class ClientEventHandler
         final ImmutableMap.Builder<String, BuildingEntry> builder = new ImmutableMap.Builder<>();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
+            /*
             building.getModuleProducers().stream()
               .map(Supplier::get)
               .filter(m -> m instanceof ICraftingBuildingModule)
@@ -269,7 +270,7 @@ public class ClientEventHandler
               .forEach(crafting ->
               {
                   builder.put(crafting.getCustomRecipeKey(), building);
-              });
+              });*/
         }
         return builder.build();
     }

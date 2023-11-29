@@ -11,6 +11,7 @@ public final class NbtTagConstants
     public static final String TAG_DIMENSION         = "dimension";
     public static final String TAG_CENTER            = "center";
     public static final String TAG_BUILDINGS         = "buildings";
+    public static final String TAG_BUILDING_MODULES         = "building_modules";
     public static final String TAG_BUILDING          = "building";
     public static final String TAG_BUILDINGS_CLAIM   = "buildingsClaim";
     public static final String TAG_BUILDINGS_UNCLAIM = "buildingUnclaim";

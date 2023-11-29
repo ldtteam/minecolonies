@@ -106,7 +106,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
     public void setHiringMode(final HiringMode value)
     {
         this.hiringMode = value;
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode, null));
+        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode, -1));
     }
 
     @Override

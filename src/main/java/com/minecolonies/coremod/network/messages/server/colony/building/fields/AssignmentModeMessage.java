@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignmentModeMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    private int id;
     private boolean assignmentMode;
 
     /**
@@ -30,29 +32,33 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<IBuildi
      * @param assignmentMode assignmentMode of the particular farmer.
      * @param building       the building we're executing on.
      */
-    public AssignmentModeMessage(@NotNull final IBuildingView building, final boolean assignmentMode)
+    public AssignmentModeMessage(@NotNull final IBuildingView building, final boolean assignmentMode , final int runtimeID)
     {
         super(building);
         this.assignmentMode = assignmentMode;
+        this.id = runtimeID;
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
+        buf.writeInt(id);
         buf.writeBoolean(assignmentMode);
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
+        id = buf.readInt();
         assignmentMode = buf.readBoolean();
     }
 
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.setAssignManually(assignmentMode));
+        if (building.hasModule(FieldsModule.class))
+        {
+            ((FieldsModule)building.getModule(id)).setAssignManually(assignmentMode);
+        }
     }
 }

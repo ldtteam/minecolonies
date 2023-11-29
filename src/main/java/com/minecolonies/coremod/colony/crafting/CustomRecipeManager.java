@@ -313,7 +313,7 @@ public class CustomRecipeManager
 
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            building.getModuleProducers().stream().map(Supplier::get).forEach(module ->
+           /* building.getModuleProducers().stream().map(Supplier::get).forEach(module ->
             {
                 if (module instanceof AnimalHerdingModule herding)
                 {
@@ -329,7 +329,7 @@ public class CustomRecipeManager
                 {
                     lootIds.addAll(crafting.getAdditionalLootTables());
                 }
-            });
+            });*/
         }
 
         lootIds.add(ModLootTables.FISHING);

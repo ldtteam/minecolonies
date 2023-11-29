@@ -148,7 +148,7 @@ public class BuildingPlantation extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
-        for (FieldsModule module : getModules(FieldsModule.class))
+        for (FieldsModule module : getModulesByType(FieldsModule.class))
         {
             for (final IField field : module.getOwnedFields())
             {
@@ -178,7 +178,7 @@ public class BuildingPlantation extends AbstractBuilding
             return false;
         }
 
-        for (FieldsModule module : getModules(FieldsModule.class))
+        for (FieldsModule module : getModulesByType(FieldsModule.class))
         {
             for (final IField field : module.getOwnedFields())
             {

@@ -30,6 +30,11 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     private ISetting value;
 
     /**
+     * The module id
+     */
+    private int moduleID;
+
+    /**
      * Empty standard constructor.
      */
     public TriggerSettingMessage()
@@ -43,16 +48,18 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
      * @param key the unique key of it.
      * @param value the value of the setting.
      */
-    public TriggerSettingMessage(final IBuildingView building, final ISettingKey<?> key, final ISetting value)
+    public TriggerSettingMessage(final IBuildingView building, final ISettingKey<?> key, final ISetting value, final int moduleID)
     {
         super(building);
         this.key = key.getUniqueId();
         this.value = value;
+        this.moduleID = moduleID;
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
+        this.moduleID = buf.readInt();
         this.key = buf.readResourceLocation();
         this.value = StandardFactoryController.getInstance().deserialize(buf);
     }
@@ -60,6 +67,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
+        buf.writeInt(moduleID);
         buf.writeResourceLocation(this.key);
         StandardFactoryController.getInstance().serialize(buf, this.value);
     }
@@ -67,7 +75,10 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
-        building.getFirstOptionalModuleOccurance(SettingsModule.class).ifPresent(m -> m.updateSetting(new SettingKey<>(this.value.getClass(), this.key), this.value, ctxIn.getSender()));
+        if (building.getModule(moduleID) instanceof SettingsModule module)
+        {
+            module.updateSetting(new SettingKey<>(this.value.getClass(), this.key), this.value, ctxIn.getSender());
+        }
     }
 }
 

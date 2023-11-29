@@ -399,7 +399,7 @@ public class CraftingTagAuditor
 
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
+          /*  for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
                 final IBuildingModule module = producer.get();
 
@@ -407,7 +407,7 @@ public class CraftingTagAuditor
                 {
                     modules.add(crafting);
                 }
-            }
+            }*/
         }
 
         return modules;
@@ -419,7 +419,7 @@ public class CraftingTagAuditor
 
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
+          /*  for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
                 final IBuildingModule module = producer.get();
 
@@ -427,7 +427,7 @@ public class CraftingTagAuditor
                 {
                     modules.add(herding);
                 }
-            }
+            }*/
         }
 
         return modules;
