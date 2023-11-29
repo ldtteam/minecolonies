@@ -197,7 +197,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Passing through raid timer.
      */
-    private long raidPassingThroughEndTime = 0;
+    private long passingThroughRaidTime = 0;
 
     /**
      * Creates the RaidManager for a colony.
@@ -626,7 +626,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean isRaided()
     {
-        if (colony.getWorld().getGameTime() <= raidPassingThroughEndTime)
+        if (colony.getWorld().getGameTime() <= passingThroughRaidTime)
         {
             return true;
         }
@@ -943,7 +943,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void setPassThroughRaid()
     {
-        raidPassingThroughEndTime = colony.getWorld().getGameTime() + TICKS_SECOND * 20;
+        passingThroughRaidTime = colony.getWorld().getGameTime() + TICKS_SECOND * 20;
     }
 
     /**
