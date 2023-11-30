@@ -132,9 +132,10 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param range the range he should move out of.
      * @param speed the speed to run at.
      * @param corners the corners they can't leave.
+     * @param prioDoors if doors should have higher path prio.
      * @return the result of the pathing.
      */
-    public abstract PathResult<? extends IPathJob> moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType);
+    public abstract PathResult<? extends IPathJob> moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType, boolean prioDoors);
 
     /**
      * Used to find a tree.

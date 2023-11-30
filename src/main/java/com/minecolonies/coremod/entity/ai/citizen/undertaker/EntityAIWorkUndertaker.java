@@ -140,7 +140,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             if (building.isInBuilding(worker.blockPosition()))
             {
-                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
             }
             else
             {
