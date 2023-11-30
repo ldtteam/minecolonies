@@ -646,7 +646,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
 
         final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
-        if (!remainingItem.isEmpty())
+        if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
         {
             if (!player.getInventory().add(remainingItem))
             {
@@ -660,7 +660,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        usedStack.shrink(1);
         interactionCooldown = 100;
     }
 
