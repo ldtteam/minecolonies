@@ -887,10 +887,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
               itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
             citizenData.increaseSaturation(satIncrease / 2.0);
-            citizenData.getInventory().extractItem(slot, 1, false);
 
             final ItemStack containerItem = stack.finishUsingItem(world, worker);
-            if (!containerItem.isEmpty())
+            if (!containerItem.isEmpty() && containerItem.getItem() != stack.getItem())
             {
                 if (citizenData.getInventory().isFull())
                 {
