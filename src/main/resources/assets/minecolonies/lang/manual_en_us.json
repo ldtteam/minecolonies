@@ -2135,6 +2135,7 @@
   "com.minecolonies.coremod.gui.chat.chewbacca": "After losing my village, I am travelling from city to city offering my services as a knight to protect others so that they do not suffer the same fate as my village.",
   "com.minecolonies.coremod.gui.chat.moobien": "Just a simple bloke from the deep south looking for somewhere to build",
   "com.minecolonies.coremod.gui.chat.cammy": "I am an elven brewmaster from the fallen Silverleaf Realm, roaming MineColonies offering exotic brews, seeking allies to reclaim his homeland's lost magic and glory",
+  "com.minecolonies.coremod.gui.chat.duran": "Hi! I'm not sure how I got here.....BUT HECC YOU IM STAYIN!",
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",
@@ -2495,6 +2496,7 @@
   "com.minecolonies.coremod.gui.townhall.permevents": "Permission Events",
   "com.minecolonies.core.townhall.citizen.filter": "Enter the Citizen Name or Job you are searching for",
   "com.minecolonies.core.gui.nextpage": "Next Page",
-  "com.minecolonies.core.gui.prevpage": "Previous Page"
+  "com.minecolonies.core.gui.prevpage": "Previous Page",
 
+  "com.minecolonies.core.barbarians.mercy": "§4Defeat! The raiders finished what they came here for to return another day!"
 }

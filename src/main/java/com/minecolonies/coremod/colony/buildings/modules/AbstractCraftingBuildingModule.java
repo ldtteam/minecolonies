@@ -437,7 +437,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 }
 
                 final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                    recipeStorage.getAlternateOutputs().stream()).filter(ItemStackUtils::isNotEmpty);
+                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty());
 
                 building.getColony().getRequestManager().onColonyUpdate(request ->
                                                                           request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));

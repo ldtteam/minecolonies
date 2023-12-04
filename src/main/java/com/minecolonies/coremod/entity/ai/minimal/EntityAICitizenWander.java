@@ -163,7 +163,7 @@ public class EntityAICitizenWander implements IStateAI
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
                 citizen.getNavigation()
-                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                   && citizen.getRandom().nextInt(100) < 5)

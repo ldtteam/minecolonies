@@ -526,7 +526,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (ISFOOD.test(usedStack))
         {
             final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
-            if (!remainingItem.isEmpty())
+            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
             {
                 if (!player.getInventory().add(remainingItem))
                 {
@@ -540,7 +540,6 @@ VisitorCitizen extends AbstractEntityCitizen
                 }
             }
 
-            usedStack.shrink(1);
             if (!level.isClientSide())
             {
                 getCitizenData().increaseSaturation(usedStack.getItem().getFoodProperties(usedStack, this).getNutrition());

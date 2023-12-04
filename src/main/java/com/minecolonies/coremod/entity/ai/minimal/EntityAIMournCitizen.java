@@ -161,7 +161,7 @@ public class EntityAIMournCitizen implements IStateAI
         // Wander around randomly.
         if (MathUtils.RANDOM.nextInt(100) < 90)
         {
-            citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+            citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
             return MourningState.WANDER_AT_GRAVEYARD;
         }
 

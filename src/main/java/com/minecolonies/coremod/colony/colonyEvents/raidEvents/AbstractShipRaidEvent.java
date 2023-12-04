@@ -295,6 +295,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
+    public void setMercyEnd()
+    {
+        // Noop, the sailing away message is fine.
+    }
+
+    @Override
     public void onFinish()
     {
         MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
@@ -529,5 +535,15 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public void setSpawnPath(final PathResult result)
     {
         this.spawnPathResult = result;
+    }
+
+    @Override
+    public boolean isRaidActive()
+    {
+        if (getStatus() == EventStatus.PROGRESSING)
+        {
+            return !spawners.isEmpty() || !raiders.isEmpty() || !respawns.isEmpty();
+        }
+        return getStatus() == EventStatus.PROGRESSING ||getStatus() == EventStatus.PREPARING;
     }
 }
