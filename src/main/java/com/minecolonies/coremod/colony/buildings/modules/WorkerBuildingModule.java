@@ -276,6 +276,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
+    @Deprecated
     protected String getModuleSerializationIdentifier()
     {
         return jobEntry.getKey().toString();

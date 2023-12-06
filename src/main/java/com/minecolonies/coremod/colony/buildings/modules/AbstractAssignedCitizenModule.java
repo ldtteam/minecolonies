@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -177,8 +178,14 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     /**
      * Get the identifier for unique serialization.
      * Use for deserialize/serialize only!
+     *
      * @return a string identifier.
      */
     @Deprecated
-    protected abstract String getModuleSerializationIdentifier();
+    protected String getModuleSerializationIdentifier()
+    {
+        return null;
+    }
+
+    ;
 }

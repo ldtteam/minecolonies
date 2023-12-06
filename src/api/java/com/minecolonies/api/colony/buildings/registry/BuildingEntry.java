@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.buildings.registry;
 
+import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -7,10 +8,10 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,11 +135,11 @@ public class BuildingEntry
     public IBuilding produceBuilding(final BlockPos position, final IColony colony)
     {
         final IBuilding building = buildingProducer.apply(colony, position);
-        for (final ModuleProducer<IBuildingModule,IBuildingModuleView> moduleSet : buildingModuleProducers)
+        for (final ModuleProducer<IBuildingModule, IBuildingModuleView> moduleTuple : buildingModuleProducers)
         {
-            if (moduleSet.moduleProducer != null)
+            if (moduleTuple.moduleProducer != null)
             {
-                building.registerModule(moduleSet.moduleProducer.get().setBuilding(building).setProducer(moduleSet));
+                building.registerModule(moduleTuple.moduleProducer.get().setBuilding(building).setProducer(moduleTuple));
             }
         }
         building.setBuildingType(this);
@@ -191,15 +192,22 @@ public class BuildingEntry
      */
     public static class ModuleProducer<MODULECLASS extends IBuildingModule, VIEWCLASS extends IBuildingModuleView>
     {
-        public static Map<String, ModuleProducer> ALL_MODULES = new HashMap<>();
+        /**
+         * Map of all modules, by serialization key
+         */
+        private final static Map<String, ModuleProducer<? extends IBuildingModule, ? extends IBuildingModuleView>> ALL_MODULES = new HashMap<>();
 
-        private static int IDS = 0;
+        /**
+         * Static supplier of runtime int ID's, used for networking
+         */
+        private static int runtimeIdGenerator = 0;
+
         public ModuleProducer(
           final String key, final Supplier<IBuildingModule> moduleProducer,
           final Supplier<Supplier<IBuildingModuleView>> viewProducer)
         {
             this.key = key;
-            this.id = ++IDS;
+            this.id = ++runtimeIdGenerator;
             this.viewProducer = viewProducer;
             this.moduleProducer = moduleProducer;
 
@@ -276,5 +284,51 @@ public class BuildingEntry
             final ModuleProducer that = (ModuleProducer) o;
             return id == that.id;
         }
+    }
+
+    /**
+     * Produces a module without a respective building, mostly used for display or other purposes
+     *
+     * @param key
+     * @return
+     */
+    @Nullable
+    public static IBuildingModule produceModuleWithoutBuilding(final String key)
+    {
+        final var producer = ModuleProducer.ALL_MODULES.get(key);
+        if (producer.hasServerModule())
+        {
+            return producer.moduleProducer.get();
+        }
+
+        return null;
+    }
+
+    /**
+     * Produces a module view without a respective building, mostly used for display or other purposes
+     *
+     * @param key
+     * @return
+     */
+    @Nullable
+    public static IBuildingModuleView produceViewWithoutBuilding(final String key)
+    {
+        final var producer = ModuleProducer.ALL_MODULES.get(key);
+        if (producer.hasView())
+        {
+            return producer.viewProducer.get().get();
+        }
+
+        return null;
+    }
+
+    /**
+     * Retreives all existing module producers and their IDs
+     *
+     * @return
+     */
+    public static Map<String, ModuleProducer> getALlModuleProducers()
+    {
+        return ImmutableMap.copyOf(ModuleProducer.ALL_MODULES);
     }
 }

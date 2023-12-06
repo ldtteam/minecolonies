@@ -27,8 +27,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -693,7 +693,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public List<IBuildingModuleView> getAllModuleViews()
     {
-        return new ArrayList<>(this.moduleViews.values());
+        return Collections.unmodifiableList(new ArrayList<>(this.moduleViews.values()));
     }
 
     @Override

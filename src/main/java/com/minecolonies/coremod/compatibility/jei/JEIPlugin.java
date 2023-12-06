@@ -2,7 +2,6 @@ package com.minecolonies.coremod.compatibility.jei;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -35,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 @mezz.jei.api.JeiPlugin
 public class JEIPlugin implements IModPlugin
@@ -65,10 +63,15 @@ public class JEIPlugin implements IModPlugin
         {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
 
-            /*
-            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
+
+            for (final String producerKey : BuildingEntry.getALlModuleProducers().keySet())
             {
-                final IBuildingModule module = producer.get();
+                final var module = BuildingEntry.produceModuleWithoutBuilding(producerKey);
+
+                if (module == null)
+                {
+                    continue;
+                }
 
                 if (module instanceof final ICraftingBuildingModule crafting)
                 {
@@ -95,7 +98,7 @@ public class JEIPlugin implements IModPlugin
                     }
                     category.addModule(herding);
                 }
-            }*/
+            }
 
             for (final GenericRecipeCategory category : craftingCategories.values())
             {

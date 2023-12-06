@@ -16,15 +16,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
@@ -37,7 +33,6 @@ import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSme
 
 public class BuildingModules
 {
-    // TODO: change registratrion to new type, pass producer along to module, change lookups to moduleproducer based, change sync to producer ID based, compare all entries with the replaced constant in building init to make sure
     /**
      * Global
      */
