@@ -3,13 +3,11 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.moduleviews.LivingBuildingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,19 +15,6 @@ import java.util.List;
  */
 public abstract class LivingBuildingView extends AbstractBuildingView
 {
-    @NotNull
-    private final List<Integer> residents = new ArrayList<>();
-
-    /**
-     * Max number of citizens that can live here.
-     */
-    private int max;
-
-    /**
-     * The set hiring mode for the view.
-     */
-    private HiringMode hiringMode;
-
     /**
      * Creates an instance of the citizen hut window.
      *
@@ -49,7 +34,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
     @NotNull
     public List<Integer> getResidents()
     {
-        return Collections.unmodifiableList(residents);
+        return getModuleViewByType(LivingBuildingModuleView.class).getAssignedCitizens();
     }
 
     /**
@@ -57,9 +42,9 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      *
      * @param index the index to remove it from.
      */
-    public void removeResident(final int index)
+    public void removeResident(final int id)
     {
-        residents.removeIf(v -> v == index);
+        getModuleViewByType(LivingBuildingModuleView.class).remove(id);
     }
 
     /**
@@ -69,16 +54,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      */
     public void addResident(final int id)
     {
-        residents.add(id);
-    }
-
-    /**
-     * Set the max citizens.
-     * @param max the max.
-     */
-    public void setMax(final int max)
-    {
-        this.max = max;
+        getModuleViewByType(LivingBuildingModuleView.class).add(id);
     }
 
     /**
@@ -87,7 +63,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      */
     public int getMax()
     {
-        return this.max;
+        return getModuleViewByType(LivingBuildingModuleView.class).getMax();
     }
 
     /**
@@ -96,7 +72,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      */
     public HiringMode getHiringMode()
     {
-        return hiringMode;
+        return getModuleViewByType(LivingBuildingModuleView.class).getHiringMode();
     }
 
     /**
@@ -105,22 +81,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      */
     public void setHiringMode(final HiringMode value)
     {
-        this.hiringMode = value;
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode, -1));
-    }
-
-    @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
-    {
-        super.deserialize(buf);
-
-        residents.clear();
-        final int numResidents = buf.readInt();
-        for (int i = 0; i < numResidents; ++i)
-        {
-            residents.add(buf.readInt());
-        }
-        hiringMode = HiringMode.values()[buf.readInt()];
-        max = buf.readInt();
+        getModuleViewByType(LivingBuildingModuleView.class).setHiringMode(value);
+        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, value, getModuleViewByType(LivingBuildingModuleView.class).getProducer().getRuntimeID()));
     }
 }

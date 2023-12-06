@@ -63,10 +63,14 @@ public class JEIPlugin implements IModPlugin
         {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
 
-
-            for (final String producerKey : BuildingEntry.getALlModuleProducers().keySet())
+            for (final BuildingEntry.ModuleProducer producer : building.getModuleProducers())
             {
-                final var module = BuildingEntry.produceModuleWithoutBuilding(producerKey);
+                if (!producer.hasServerModule())
+                {
+                    continue;
+                }
+
+                final var module = BuildingEntry.produceModuleWithoutBuilding(producer.key);
 
                 if (module == null)
                 {

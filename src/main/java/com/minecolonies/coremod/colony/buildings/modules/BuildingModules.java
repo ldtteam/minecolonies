@@ -442,8 +442,10 @@ public class BuildingModules
         () -> new HospitalAssignmentModule(ModJobs.healer.get(), Skill.Mana, Skill.Knowledge, true, (b) -> 1),
         () -> WorkerBuildingModuleView::new);
 
-    public static final BuildingEntry.ModuleProducer<HomeBuildingModule,IBuildingModuleView> HOME                    = new BuildingEntry.ModuleProducer<>("home", HomeBuildingModule::new, null);
-    public static final BuildingEntry.ModuleProducer<LivingBuildingModule,IBuildingModuleView> LIVING                  = new BuildingEntry.ModuleProducer<>("living", LivingBuildingModule::new, null);
+    public static final BuildingEntry.ModuleProducer<HomeBuildingModule, IBuildingModuleView>        HOME   =
+      new BuildingEntry.ModuleProducer<>("home", HomeBuildingModule::new, null);
+    public static final BuildingEntry.ModuleProducer<LivingBuildingModule, LivingBuildingModuleView> LIVING =
+      new BuildingEntry.ModuleProducer<>("living", LivingBuildingModule::new, () -> LivingBuildingModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<MinerBuildingModule,CombinedHiringLimitModuleView> MINER_WORK            =
       new BuildingEntry.ModuleProducer<>("miner_work",
@@ -470,9 +472,9 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<QuarryModule,MinerAssignmentModuleView> MEDIUM_QUARRY           =
       new BuildingEntry.ModuleProducer<>("medium_quarry", () -> new QuarryModule(64), () -> MinerAssignmentModuleView::new);
 
-    public static final BuildingEntry.ModuleProducer<TavernLivingBuildingModule,IBuildingModuleView> TAVERN_LIVING         =
-      new BuildingEntry.ModuleProducer<>("tavern_living", TavernLivingBuildingModule::new, null);
-    public static final BuildingEntry.ModuleProducer<TavernBuildingModule,IBuildingModuleView> TAVERN_VISITOR        =
+    public static final BuildingEntry.ModuleProducer<TavernLivingBuildingModule, IBuildingModuleView> TAVERN_LIVING  =
+      new BuildingEntry.ModuleProducer<>("tavern_living", TavernLivingBuildingModule::new, () -> LivingBuildingModuleView::new);
+    public static final BuildingEntry.ModuleProducer<TavernBuildingModule, IBuildingModuleView>       TAVERN_VISITOR =
       new BuildingEntry.ModuleProducer<>("tavern_visitor", TavernBuildingModule::new, null);
 
     /**

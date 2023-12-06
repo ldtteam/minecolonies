@@ -153,6 +153,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     @Override
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
+        super.serializeToView(buf);
         buf.writeInt(assignedCitizen.size());
         for (@NotNull final ICitizenData citizen : assignedCitizen)
         {

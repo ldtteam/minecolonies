@@ -360,9 +360,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             for (IPersistentModule module : getModulesByType(IPersistentModule.class))
             {
-                if ( compound.getCompound(TAG_BUILDING_MODULES).contains(module.getProducer().key))
+                if (compound.getCompound(TAG_BUILDING_MODULES).contains(module.getProducer().key))
                 {
-                    module.deserializeNBT(compound.getCompound(module.getProducer().key));
+                    module.deserializeNBT(compound.getCompound(TAG_BUILDING_MODULES).getCompound(module.getProducer().key));
                 }
                 else
                 {

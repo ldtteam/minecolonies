@@ -1,14 +1,10 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.worker;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -67,18 +63,9 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (moduleId == -1)
-        {
-            final IAssignsCitizen module = building.getFirstModuleOccurance(LivingBuildingModule.class);
-            if (module != null)
-            {
-                module.setHiringMode(mode);
-            }
-        }
-        else if (building.getModule(moduleId) instanceof IAssignsCitizen module)
+        if (building.getModule(moduleId) instanceof IAssignsCitizen module)
         {
             module.setHiringMode(mode);
         }
-
     }
 }
