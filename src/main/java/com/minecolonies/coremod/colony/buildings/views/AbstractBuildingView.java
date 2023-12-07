@@ -434,7 +434,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
             if (moduleView == null)
             {
-                Log.getLogger().error("Problem during sync: Client side does not have matching module views to sent module data, missing id:"+ id);
+                Log.getLogger().error("Problem during sync: Client side does not have matching module views to sent module data, missing:" + BuildingEntry.getProducer(id).key);
                 return;
             }
 

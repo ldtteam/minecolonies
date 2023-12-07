@@ -3,8 +3,6 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.modules.ToolModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -13,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * Client side version of the abstract class for all buildings which allows to select tools.
+ * Client side version of the living building module.
  */
 public class LivingBuildingModuleView extends AbstractBuildingModuleView
 {
     /**
-     * List of the worker ids.
+     * List of the residents assigned.
      */
     private final Set<Integer> residents = new HashSet<>();
 
@@ -37,16 +35,31 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
         super();
     }
 
+    /**
+     * Get the list of residents
+     *
+     * @return
+     */
     public List<Integer> getAssignedCitizens()
     {
         return Collections.unmodifiableList(new ArrayList<>(residents));
     }
 
+    /**
+     * Remove a resident by citizen data id
+     *
+     * @param id
+     */
     public void remove(final int id)
     {
         residents.remove(id);
     }
 
+    /**
+     * Add a resident by citizen data id
+     *
+     * @param id
+     */
     public void add(final int id)
     {
         residents.add(id);
@@ -55,7 +68,7 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
     @Override
     public String getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.tools";
+        return null;
     }
 
     @Override
@@ -75,13 +88,13 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new ToolModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layouttool.xml", buildingView, null);
+        return null;
     }
 
     @Override
     public String getIcon()
     {
-        return "scepter";
+        return null;
     }
 
     public boolean isPageVisible() {return false;}

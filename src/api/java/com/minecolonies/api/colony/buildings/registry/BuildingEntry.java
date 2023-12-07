@@ -331,4 +331,34 @@ public class BuildingEntry
     {
         return ImmutableMap.copyOf(ModuleProducer.ALL_MODULES);
     }
+
+    /**
+     * Gets a producer by its string key identity
+     *
+     * @param key
+     * @return
+     */
+    public static ModuleProducer getProducer(String key)
+    {
+        return ModuleProducer.ALL_MODULES.get(key);
+    }
+
+    /**
+     * get a producer by its runtime identity
+     *
+     * @param runtimeID
+     * @return
+     */
+    public static ModuleProducer getProducer(int runtimeID)
+    {
+        for (final ModuleProducer producer : ModuleProducer.ALL_MODULES.values())
+        {
+            if (producer.getRuntimeID() == runtimeID)
+            {
+                return producer;
+            }
+        }
+
+        return null;
+    }
 }
