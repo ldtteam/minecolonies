@@ -79,7 +79,7 @@
               size="86 17"
               pos="337 165"
               maxContentHeight="75"
-              dropDownSize="86 75"
+              dropDownSize="86 55"
               source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
               disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
               textcolor="black"
