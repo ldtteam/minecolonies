@@ -19,6 +19,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -297,6 +299,15 @@ public class GraveManager implements IGraveManager
             {
                 InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
             }
+            for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
+            {
+                final ItemStack stack = citizenData.getInventory().getArmorInSlot(equipmentSlot);
+                if (!InventoryUtils.addItemStackToItemHandler(graveEntity.getInventory(), stack))
+                {
+                    InventoryUtils.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                }
+            }
+
 
             graveEntity.delayDecayTimer(colony.getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
 
