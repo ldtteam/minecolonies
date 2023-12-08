@@ -1110,11 +1110,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (!isChild && this.child)
             {
+                this.child = isChild;
                 getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
             }
         }
         this.child = isChild;
         this.getEntityData().set(DATA_IS_CHILD, isChild);
+        refreshDimensions();
         markDirty(0);
     }
 
