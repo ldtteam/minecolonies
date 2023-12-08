@@ -105,6 +105,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
             if (trainingCitizen != null)
             {
                 hiredFromTraining = true;
+                trainingCitizen.setJob(null);
                 assignCitizen(trainingCitizen);
             }
         }
