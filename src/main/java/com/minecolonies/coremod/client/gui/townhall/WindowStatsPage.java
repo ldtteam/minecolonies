@@ -131,15 +131,21 @@ public class WindowStatsPage extends AbstractWindowTownHall
             {
                 for (final WorkerBuildingModuleView module : building.getModuleViews(WorkerBuildingModuleView.class))
                 {
-                    int alreadyAssigned = 0;
+                    int alreadyAssigned = -1;
                     if (module instanceof CombinedHiringLimitModuleView)
                     {
+                        alreadyAssigned = 0;
                         for (final WorkerBuildingModuleView combinedModule : building.getModuleViews(WorkerBuildingModuleView.class))
                         {
                             alreadyAssigned += combinedModule.getAssignedCitizens().size();
                         }
                     }
-                    int max = module.getMaxInhabitants() - alreadyAssigned + module.getAssignedCitizens().size();
+                    int max = module.getMaxInhabitants();
+                    if (alreadyAssigned != -1)
+                    {
+                        max -= alreadyAssigned;
+                        max += module.getAssignedCitizens().size();
+                    }
                     int workers = module.getAssignedCitizens().size();
 
                     final String jobName = module.getJobDisplayName().toLowerCase(Locale.ENGLISH);

@@ -240,16 +240,19 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
                 if (!ItemStackUtils.isEmpty(user.getInventoryCitizen().extractItem(slot, 1, true)))
                 {
                     damage += ARROW_EXTRA_DAMAGE;
-                    ((CustomArrowEntity) arrow).setOnHitCallback(entityRayTraceResult ->
+                    if (arrow instanceof CustomArrowEntity customArrowEntity)
                     {
-                        final int arrowSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
-                        if (arrowSlot != -1)
+                        customArrowEntity.setOnHitCallback(entityRayTraceResult ->
                         {
-                            user.getInventoryCitizen().extractItem(arrowSlot, 1, false);
-                        }
+                            final int arrowSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
+                            if (arrowSlot != -1)
+                            {
+                                user.getInventoryCitizen().extractItem(arrowSlot, 1, false);
+                            }
 
-                        return true;
-                    });
+                            return true;
+                        });
+                    }
                 }
             }
         }
