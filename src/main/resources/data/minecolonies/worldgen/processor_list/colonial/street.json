@@ -65,6 +65,17 @@
         }
       ],
       "processor_type": "minecraft:rule"
+    },
+    {
+      "blocks": [
+        {
+          "Name": "structurize:blocksubstitution"
+        },
+        {
+          "Name": "minecolonies:blockwaypoint"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
     }
   ]
 }
