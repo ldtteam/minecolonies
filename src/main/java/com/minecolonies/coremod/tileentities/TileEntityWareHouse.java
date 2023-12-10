@@ -6,12 +6,13 @@ import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
-import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,6 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse.MAX_STORAGE_UPGRADE;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class which handles the tileEntity of our colony warehouse.
@@ -132,7 +132,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     lastNotification = level.getGameTime();
                     if (getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
                     {
-                        if (getBuilding().getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
+                        if (getBuilding().getModule(BuildingModules.WAREHOUSE_OPTIONS).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
                         {
                             MessageUtils.format(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_LEVEL5_UPGRADE).sendTo(getColony()).forAllPlayers();
                         }

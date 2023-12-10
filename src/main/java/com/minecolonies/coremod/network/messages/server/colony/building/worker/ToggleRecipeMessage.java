@@ -22,7 +22,7 @@ public class ToggleRecipeMessage extends AbstractBuildingServerMessage<IBuilding
     /**
      * Type of the owning module.
      */
-    private String id;
+    private int id;
 
     /**
      * Empty public constructor.
@@ -38,7 +38,7 @@ public class ToggleRecipeMessage extends AbstractBuildingServerMessage<IBuilding
      * @param location the recipeLocation.
      * @param id the unique id of the crafting module.
      */
-    public ToggleRecipeMessage(@NotNull final IBuildingView building, final int location, final String id)
+    public ToggleRecipeMessage(@NotNull final IBuildingView building, final int location, final int id)
     {
         super(building);
         this.recipeLocation = location;
@@ -49,20 +49,23 @@ public class ToggleRecipeMessage extends AbstractBuildingServerMessage<IBuilding
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         this.recipeLocation = buf.readInt();
-        this.id = buf.readUtf(32767);
+        this.id = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(this.recipeLocation);
-        buf.writeUtf(this.id);
+        buf.writeInt(this.id);
     }
 
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
-        module.toggle(recipeLocation);
+        if (building.getModule(id)!= null)
+        {
+            final AbstractCraftingBuildingModule module = (AbstractCraftingBuildingModule) building.getModule(id);
+            module.toggle(recipeLocation);
+        }
     }
 }

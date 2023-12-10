@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -23,7 +22,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
-public interface IBuildingView extends IRequester
+public interface IBuildingView extends IRequester, IModuleContainerView
 {
     /**
      * Gets the id for this building.
@@ -219,46 +218,6 @@ public interface IBuildingView extends IRequester
      * @return true if so.
      */
     boolean isDeconstructed();
-
-    /**
-     * Get the first module view matching the class.
-     * @param clazz the class to match.
-     * @param <T> the type of module returned.
-     * @return the module.
-     */
-    @NotNull
-    <T extends IBuildingModuleView> T getModuleView(Class<T> clazz);
-
-    /**
-     * Get the module view matching a certain predicate.
-     * @param clazz the class of the module.
-     * @param modulePredicate the predicate to match.
-     * @param <T> the optional type.
-     * @return the module.
-     */
-    @Nullable
-    <T extends IBuildingModuleView> T getModuleViewMatching(Class<T> clazz, Predicate<? super T> modulePredicate);
-
-    /**
-     * Get a list of all modules matching a specific class.
-     * @param clazz the class to match.
-     * @param <T> the type of module.
-     * @return the list or empty if doesn't exist.
-     */
-    @NotNull
-    <T extends IBuildingModuleView> List<T> getModuleViews(Class<T> clazz);
-
-    /**
-     * Register a view module with the building.
-     * @param iModuleView the view.
-     */
-    void registerModule(IBuildingModuleView iModuleView);
-
-    /**
-     * Get all module views in a list.
-     * @return the list of views.
-     */
-    List<IBuildingModuleView> getAllModuleViews();
 
     /**
      * Get the Building type

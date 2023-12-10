@@ -5,20 +5,16 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Log;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed/blocked items.
@@ -70,24 +66,26 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(CompoundTag compound)
     {
-        final List<ItemStorage> allowedItems = new ArrayList<>();
         if (compound.contains(id))
         {
-            final ListTag filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
+            compound = compound.getCompound(id);
+        }
+
+        final List<ItemStorage> allowedItems = new ArrayList<>();
+            final ListTag filterableList = compound.getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
                 allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));
             }
-        }
+
         this.itemsAllowed = ImmutableList.copyOf(allowedItems);
     }
 
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundTag moduleCompound = new CompoundTag();
         @NotNull final ListTag filteredItems = new ListTag();
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
@@ -95,8 +93,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
             item.getItemStack().save(itemCompound);
             filteredItems.add(itemCompound);
         }
-        moduleCompound.put(TAG_ITEMLIST, filteredItems);
-        compound.put(id, moduleCompound);
+        compound.put(TAG_ITEMLIST, filteredItems);
     }
 
     @Override

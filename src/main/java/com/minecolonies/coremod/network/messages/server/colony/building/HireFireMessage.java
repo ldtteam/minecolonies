@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.network.messages.server.colony.building;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -28,9 +26,9 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     private int citizenID;
 
     /**
-     * The job entry,
+     * The module id
      */
-    private JobEntry entry;
+    private int moduleId;
 
     /**
      * Empty public constructor.
@@ -47,12 +45,12 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final IBuildingView building, final boolean hire, final int citizenID, final JobEntry entry)
+    public HireFireMessage(@NotNull final IBuildingView building, final boolean hire, final int citizenID, final int moduleId)
     {
         super(building);
         this.hire = hire;
         this.citizenID = citizenID;
-        this.entry = entry;
+        this.moduleId = moduleId;
     }
 
     /**
@@ -65,7 +63,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         hire = buf.readBoolean();
         citizenID = buf.readInt();
-        entry = buf.readRegistryId();
+        moduleId = buf.readRegistryId();
     }
 
     /**
@@ -78,21 +76,24 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
-        buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), entry);
+        buf.writeInt(moduleId);
     }
 
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
-        citizen.setPaused(false);
-        if (hire)
+        if (building.getModule(moduleId) instanceof IAssignsJob module)
         {
-            building.getModuleMatching(IAssignsJob.class, m -> m.getJobEntry() == entry).assignCitizen(citizen);
-        }
-        else
-        {
-            building.getModuleMatching(IAssignsJob.class, m -> m.getJobEntry() == entry).removeCitizen(citizen);
+            final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
+            citizen.setPaused(false);
+            if (hire)
+            {
+                module.assignCitizen(citizen);
+            }
+            else
+            {
+                module.removeCitizen(citizen);
+            }
         }
     }
 }

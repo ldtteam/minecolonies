@@ -15,6 +15,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.LookAtEntityGoal;
@@ -33,14 +34,16 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.level.Level;
@@ -176,9 +179,9 @@ VisitorCitizen extends AbstractEntityCitizen
             if (damageSource.getEntity() instanceof LivingEntity && damage > 1.01f)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
-                if (home.hasModule(TavernBuildingModule.class))
+                if (home.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
-                    final TavernBuildingModule module = home.getFirstModuleOccurance(TavernBuildingModule.class);
+                    final TavernBuildingModule module = home.getModule(BuildingModules.TAVERN_VISITOR);
                     for (final Integer id : module.getExternalCitizens())
                     {
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);

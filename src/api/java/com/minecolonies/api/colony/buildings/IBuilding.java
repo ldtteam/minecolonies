@@ -34,7 +34,8 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.BASIC_TOOL_LEVEL;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 
 public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
 {
@@ -475,15 +476,6 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @return the setting.
      */
     <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key);
-
-    /**
-     * Get setting for key. Utility function.
-     * @param key the key.
-     * @param <T> the key type.
-     * @return the optional wrapping the value.
-     */
-    @NotNull
-    <T extends ISetting> Optional<T> getOptionalSetting(@NotNull final ISettingKey<T> key);
 
     /**
      * Check if the assigned citizens are allowed to eat the following stack.

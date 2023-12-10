@@ -3,8 +3,8 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.ColonyProgressType;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 public interface IProgressManager
@@ -35,10 +35,8 @@ public interface IProgressManager
      * Notifies progress on building built.
      *
      * @param building     the built building.
-     * @param totalLevels  total building levels.
-     * @param totalHousing total housing.
      */
-    void progressBuildBuilding(IBuilding building, int totalLevels, int totalHousing);
+    void progressBuildBuilding(IBuilding building);
 
     /**
      * Notifies progress on employing citizen.

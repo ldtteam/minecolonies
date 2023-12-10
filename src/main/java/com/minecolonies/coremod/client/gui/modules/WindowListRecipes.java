@@ -107,7 +107,7 @@ public class WindowListRecipes extends AbstractModuleWindow
     {
         final int row = recipeList.getListElementIndexByPane(button);
         module.toggle(row);
-        Network.getNetwork().sendToServer(new ToggleRecipeMessage(buildingView, row, module.getId()));
+        Network.getNetwork().sendToServer(new ToggleRecipeMessage(buildingView, row, module.getProducer().getRuntimeID()));
     }
 
     /**
@@ -119,7 +119,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         final boolean shift = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         final int row = recipeList.getListElementIndexByPane(button);
         module.switchOrder(row, row + 1, shift);
-        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getId(), shift));
+        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getProducer().getRuntimeID(), shift));
         recipeList.refreshElementPanes();
     }
 
@@ -132,7 +132,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         final boolean shift = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         final int row = recipeList.getListElementIndexByPane(button);
         module.switchOrder(row, row - 1, shift);
-        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getId(), shift));
+        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getProducer().getRuntimeID(), shift));
         recipeList.refreshElementPanes();
     }
 
@@ -146,7 +146,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         final IRecipeStorage data = module.getRecipes().get(row);
         module.removeRecipe(row);
         recipeList.refreshElementPanes();
-        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, true, data, module.getId()));
+        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, true, data, module.getProducer().getRuntimeID()));
     }
 
     /**

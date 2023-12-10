@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -129,9 +130,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundTag assignedCompound = new CompoundTag();
-        assignedCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        compound.put(getModuleSerializationIdentifier(), assignedCompound);
+        compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
     }
 
     @Override
@@ -145,11 +144,16 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
         {
             this.hiringMode = HiringMode.values()[compound.getCompound(getModuleSerializationIdentifier()).getInt(TAG_HIRING_MODE)];
         }
+        else
+        {
+            this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
+        }
     }
 
     @Override
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
+        super.serializeToView(buf);
         buf.writeInt(assignedCitizen.size());
         for (@NotNull final ICitizenData citizen : assignedCitizen)
         {
@@ -175,7 +179,14 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     /**
      * Get the identifier for unique serialization.
      * Use for deserialize/serialize only!
+     *
      * @return a string identifier.
      */
-    protected abstract String getModuleSerializationIdentifier();
+    @Deprecated
+    protected String getModuleSerializationIdentifier()
+    {
+        return null;
+    }
+
+    ;
 }

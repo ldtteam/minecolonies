@@ -141,7 +141,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (building.getSetting(AbstractBuilding.BREEDING).getValue() ||
                 building.getSetting(AbstractBuilding.FEEDING).getValue())
         {
-            for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
+            for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
             {
                 list.addAll(getRequestBreedingItems(module));
             }
@@ -182,7 +182,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
+        for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
         {
             final List<? extends Animal> animals = searchForAnimals(module::isCompatible);
             if (animals.isEmpty())
