@@ -18,6 +18,11 @@ import org.jetbrains.annotations.NotNull;
 public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
+     * The modules ID
+     */
+    private int       moduleID = 0;
+
+    /**
      * The field to (un)assign.
      */
     private FriendlyByteBuf fieldData;
@@ -42,11 +47,12 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param field    the field.
      * @param building the building we're executing on.
      */
-    public AssignFieldMessage(final IBuildingView building, final IField field, final boolean assign)
+    public AssignFieldMessage(final IBuildingView building, final IField field, final boolean assign, final int moduleID)
     {
         super(building);
         this.assign = assign;
         this.fieldData = FieldDataManager.fieldToBuffer(field);
+        this.moduleID = moduleID;
     }
 
     @Override
@@ -55,6 +61,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         fieldData.resetReaderIndex();
         buf.writeBoolean(assign);
         buf.writeBytes(fieldData);
+        buf.writeInt(moduleID);
     }
 
     @Override
@@ -63,6 +70,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         assign = buf.readBoolean();
         fieldData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(fieldData, buf.readableBytes());
+        moduleID = buf.readInt();
     }
 
     @Override
@@ -71,13 +79,17 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         final IField parsedField = FieldDataManager.bufferToField(fieldData);
         colony.getBuildingManager().getField(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
-            if (assign)
+
+            if (building.getModule(moduleID) instanceof FieldsModule fieldsModule)
             {
-                building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.assignField(field));
-            }
-            else
-            {
-                building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.freeField(field));
+                if (assign)
+                {
+                    fieldsModule.assignField(field);
+                }
+                else
+                {
+                    fieldsModule.freeField(field);
+                }
             }
         });
     }

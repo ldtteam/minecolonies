@@ -70,7 +70,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     public void onOpened()
     {
         super.onOpened();
-        manualMode = buildingView.getModuleView(SettingsModuleView.class).getSetting(BuildingBuilder.MODE).getValue().equals(BuildingBuilder.MANUAL_SETTING);
+        manualMode = buildingView.getModuleViewByType(SettingsModuleView.class).getSetting(BuildingBuilder.MODE).getValue().equals(BuildingBuilder.MANUAL_SETTING);
 
         workOrdersList = findPaneOfTypeByID(LIST_WORK_ORDERS, ScrollingList.class);
         workOrdersList.setDataProvider(new ScrollingList.DataProvider()

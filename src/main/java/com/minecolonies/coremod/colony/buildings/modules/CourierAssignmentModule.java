@@ -45,11 +45,16 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final CompoundTag jobCompound = compound.getCompound(getModuleSerializationIdentifier());
-        final int[] residentIds = jobCompound.getIntArray(TAG_COURIERS);
+
+        if (compound.contains(getModuleSerializationIdentifier()))
+        {
+            compound = compound.getCompound(getModuleSerializationIdentifier());
+        }
+
+        final int[] residentIds = compound.getIntArray(TAG_COURIERS);
         for (final int citizenId : residentIds)
         {
             final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -64,7 +69,6 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     public void serializeNBT(final CompoundTag compound)
     {
         super.serializeNBT(compound);
-        final CompoundTag jobCompound = compound.contains(getModuleSerializationIdentifier()) ? compound.getCompound(getModuleSerializationIdentifier()) : new CompoundTag();
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -72,9 +76,8 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
             {
                 residentIds[i] = assignedCitizen.get(i).getId();
             }
-            jobCompound.putIntArray(TAG_COURIERS, residentIds);
+            compound.putIntArray(TAG_COURIERS, residentIds);
         }
-        compound.put(getModuleSerializationIdentifier(), jobCompound);
     }
 
     @Override

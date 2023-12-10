@@ -49,9 +49,7 @@ public class BuilderModeSetting extends StringSetting
     @NotNull
     public static String getActualValue(@NotNull final IBuilding building)
     {
-        return building.getOptionalSetting(BuildingBuilder.BUILDING_MODE)
-                 .map(StringSetting::getValue)
-                 .orElse(Structurize.getConfig().getServer().iteratorType.get());
+        return building.getSetting(BuildingBuilder.BUILDING_MODE).getValue();
     }
 
     @Override

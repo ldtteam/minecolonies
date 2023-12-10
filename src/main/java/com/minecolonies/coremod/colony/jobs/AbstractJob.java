@@ -153,7 +153,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 
         if (workBuilding != null && workBuilding != module.getBuilding())
         {
-            for(final IAssignsJob oldJobModule : workBuilding.getModules(IAssignsJob.class))
+            for(final IAssignsJob oldJobModule : workBuilding.getModulesByType(IAssignsJob.class))
             {
                 if (oldJobModule.hasAssignedCitizen(citizen))
                 {
@@ -418,7 +418,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 
         if (workBuilding != null)
         {
-            for(final IAssignsJob oldJobModule : workBuilding.getModules(IAssignsJob.class))
+            for(final IAssignsJob oldJobModule : workBuilding.getModulesByType(IAssignsJob.class))
             {
                 if (oldJobModule.hasAssignedCitizen(citizen))
                 {

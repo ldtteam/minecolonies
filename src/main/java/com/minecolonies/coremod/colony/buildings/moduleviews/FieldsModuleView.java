@@ -70,7 +70,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     public void setAssignFieldManually(final boolean assignFieldManually)
     {
         this.shouldAssignFieldManually = assignFieldManually;
-        Network.getNetwork().sendToServer(new AssignmentModeMessage(buildingView, assignFieldManually));
+        Network.getNetwork().sendToServer(new AssignmentModeMessage(buildingView, assignFieldManually, getProducer().getRuntimeID()));
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (buildingView != null && canAssignField(field))
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, true));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, true, getProducer().getRuntimeID()));
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
@@ -157,7 +157,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (buildingView != null)
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, false));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, false, getProducer().getRuntimeID()));
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)

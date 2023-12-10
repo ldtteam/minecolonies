@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -17,7 +18,7 @@ public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<Ab
     /**
      * The id of the list.
      */
-    private String id;
+    private int id;
 
     /**
      * Empty standard constructor.
@@ -33,7 +34,7 @@ public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<Ab
      * @param id       the id of the list of filterables.
      * @param building the building we're executing on.
      */
-    public ResetFilterableItemMessage(final IBuildingView building, final String id)
+    public ResetFilterableItemMessage(final IBuildingView building, final int id)
     {
         super(building);
         this.id = id;
@@ -42,22 +43,22 @@ public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<Ab
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-        this.id = buf.readUtf(32767);
+        this.id = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-        buf.writeUtf(this.id);
+        buf.writeInt(this.id);
     }
 
     @Override
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
-        if (building.hasModule(ItemListModule.class))
+        if (building.getModule(id) instanceof ItemListModule module)
         {
-            building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).resetToDefaults();
+            module.resetToDefaults();
         }
     }
 }

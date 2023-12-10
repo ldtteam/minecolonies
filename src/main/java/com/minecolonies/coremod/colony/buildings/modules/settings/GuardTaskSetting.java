@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ToolModuleView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -85,7 +86,7 @@ public class GuardTaskSetting extends StringSettingWithDesc
         super.setupHandler(key, pane, settingsModuleView, building, window);
 
         final ButtonImage setPositionsButton = pane.findPaneOfTypeByID("setPositions", ButtonImage.class);
-        setPositionsButton.setHandler(button -> building.getModuleView(ToolModuleView.class).getWindow().open());
+        setPositionsButton.setHandler(button -> building.getModuleView(BuildingModules.GUARD_TOOL).getWindow().open());
     }
 
     @Override

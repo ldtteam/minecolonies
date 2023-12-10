@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -59,7 +61,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @Override
     public void addEntity(final ResourceLocation entity)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, id, entity, true));
+        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, true));
         listOfEntities.add(entity);
     }
 
@@ -78,7 +80,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @Override
     public void removeEntity(final ResourceLocation entity)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, id, entity, false));
+        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, false));
         listOfEntities.remove(entity);
     }
 
