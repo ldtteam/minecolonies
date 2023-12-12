@@ -47,7 +47,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
     /**
      * The module id.
      */
-    private String moduleId;
+    private int moduleId;
 
     /**
      * Deserialize packet buffer to container instance.
@@ -60,7 +60,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
     public static ContainerCraftingFurnace fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
-        final String moduleId = packetBuffer.readUtf(32767);
+        final int moduleId = packetBuffer.readInt();
         return new ContainerCraftingFurnace(windowId, inv, tePos, moduleId);
     }
 
@@ -71,7 +71,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      * @param inv      the player inventory.
      * @param pos      te world pos
      */
-    public ContainerCraftingFurnace(final int windowId, final Inventory inv, final BlockPos pos, final String moduleId)
+    public ContainerCraftingFurnace(final int windowId, final Inventory inv, final BlockPos pos, final int moduleId)
     {
         super(ModContainers.craftingFurnace.get(), windowId);
         this.moduleId = moduleId;
@@ -385,7 +385,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      * Get the module if of the container.
      * @return the module id.
      */
-    public String getModuleId()
+    public int getModuleId()
     {
         return this.moduleId;
     }

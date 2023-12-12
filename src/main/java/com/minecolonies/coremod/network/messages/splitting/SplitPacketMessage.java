@@ -125,7 +125,17 @@ public class SplitPacketMessage implements IMessage
                 return;
             }
             // boolean param MUST equals true if packet arrived at logical server
-            ctxIn.enqueueWork(() -> message.onExecute(ctxIn, packetOrigin.equals(LogicalSide.CLIENT)));
+            ctxIn.enqueueWork(() ->
+            {
+                try
+                {
+                    message.onExecute(ctxIn, packetOrigin.equals(LogicalSide.CLIENT));
+                }
+                catch (Exception e)
+                {
+                    Log.getLogger().error("Packet error:" ,e);
+                }
+            });
         }
         catch (ExecutionException e)
         {

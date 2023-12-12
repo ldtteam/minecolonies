@@ -49,9 +49,14 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(CompoundTag compound)
     {
-        final ListTag filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Tag.TAG_STRING);
+        if (compound.contains(id))
+        {
+            compound = compound.getCompound(id);
+        }
+
+        final ListTag filterableList = compound.getList(TAG_MOBLIST, Tag.TAG_STRING);
         for (int i = 0; i < filterableList.size(); ++i)
         {
             final ResourceLocation res = new ResourceLocation(filterableList.getString(i));
@@ -65,14 +70,12 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundTag moduleCompound = new CompoundTag();
         @NotNull final ListTag filteredMobs = new ListTag();
         for (@NotNull final ResourceLocation mob : mobsAllowed)
         {
             filteredMobs.add(StringTag.valueOf(mob.toString()));
         }
-        moduleCompound.put(TAG_MOBLIST, filteredMobs);
-        compound.put(id, moduleCompound);
+        compound.put(TAG_MOBLIST, filteredMobs);
     }
 
     @Override

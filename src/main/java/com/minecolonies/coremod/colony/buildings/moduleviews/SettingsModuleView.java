@@ -114,7 +114,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         if (setting.isActive(this))
         {
             setting.trigger();
-            Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting));
+            Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()));
         }
     }
 }

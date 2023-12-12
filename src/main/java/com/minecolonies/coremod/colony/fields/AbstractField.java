@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.colony.fields;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
@@ -64,6 +68,12 @@ public abstract class AbstractField implements IField
         return ModuleContainerUtils.hasModule(modules, clazz);
     }
 
+    @Override
+    public boolean hasModule(final BuildingEntry.ModuleProducer producer)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
     @NotNull
     @Override
     public <T extends IFieldModule> T getFirstModuleOccurance(final Class<T> clazz)
@@ -73,16 +83,22 @@ public abstract class AbstractField implements IField
           "The module of class: " + clazz.toString() + "should never be null! Field:" + getFieldType().getRegistryName() + " pos:" + getPosition());
     }
 
-    @NotNull
     @Override
-    public <T extends IFieldModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
+    public <M extends IBuildingModule, V extends IBuildingModuleView> @NotNull M getModule(
+      final BuildingEntry.ModuleProducer<M, V> producer)
     {
-        return ModuleContainerUtils.getFirstOptionalModuleOccurance(modules, clazz);
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public IBuildingModule getModule(final int id)
+    {
+        throw new RuntimeException("Not implemented");
     }
 
     @NotNull
     @Override
-    public <T extends IFieldModule> List<T> getModules(final Class<T> clazz)
+    public <T extends IFieldModule> List<T> getModulesByType(final Class<T> clazz)
     {
         return ModuleContainerUtils.getModules(modules, clazz);
     }

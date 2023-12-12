@@ -125,7 +125,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
             return;
         }
 
-        @NotNull final WindowAssignCitizen window = new WindowAssignCitizen(building.getColony(), building);
+        final WindowAssignCitizen window = new WindowAssignCitizen(building.getColony(), building);
         window.open();
     }
 }

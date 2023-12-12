@@ -35,10 +35,8 @@ public interface IProgressManager
      * Notifies progress on building built.
      *
      * @param building     the built building.
-     * @param totalLevels  total building levels.
-     * @param totalHousing total housing.
      */
-    void progressBuildBuilding(IBuilding building, int totalLevels, int totalHousing);
+    void progressBuildBuilding(IBuilding building);
 
     /**
      * Notifies progress on employing citizen.

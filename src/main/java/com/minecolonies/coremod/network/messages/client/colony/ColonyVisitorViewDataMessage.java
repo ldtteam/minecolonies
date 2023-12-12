@@ -84,14 +84,6 @@ public class ColonyVisitorViewDataMessage implements IMessage
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
-
-        if (colony == null)
-        {
-            Log.getLogger().warn("Received visitor data for nonexisting colony:" + colonyId + " dim:" + dimension);
-            return;
-        }
-
         this.visitorBuf = new FriendlyByteBuf(buf.retain());
     }
 
@@ -121,10 +113,11 @@ public class ColonyVisitorViewDataMessage implements IMessage
         if (colony == null)
         {
             Log.getLogger().warn("Received visitor data for nonexisting colony:" + colonyId + " dim:" + dimension);
-            return;
         }
-
-        colony.handleColonyViewVisitorMessage(visitorBuf, refresh);
+        else
+        {
+            colony.handleColonyViewVisitorMessage(visitorBuf, refresh);
+        }
         visitorBuf.release();
     }
 }

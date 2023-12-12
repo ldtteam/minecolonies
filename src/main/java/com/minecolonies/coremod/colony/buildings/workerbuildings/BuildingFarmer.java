@@ -92,7 +92,7 @@ public class BuildingFarmer extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        for (FieldsModule module : getModules(FieldsModule.class))
+        for (FieldsModule module : getModulesByType(FieldsModule.class))
         {
             for (final IField field : module.getOwnedFields())
             {
@@ -108,7 +108,7 @@ public class BuildingFarmer extends AbstractBuilding
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        for (FieldsModule module : getModules(FieldsModule.class))
+        for (FieldsModule module : getModulesByType(FieldsModule.class))
         {
             for (final IField field : module.getOwnedFields())
             {

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.compatibility;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -397,16 +395,18 @@ public class CraftingTagAuditor
     {
         final List<ICraftingBuildingModule> modules = new ArrayList<>();
 
-        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
+        for (final String producerKey : BuildingEntry.getALlModuleProducers().keySet())
         {
-            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
-            {
-                final IBuildingModule module = producer.get();
+            final var module = BuildingEntry.produceModuleWithoutBuilding(producerKey);
 
-                if (module instanceof ICraftingBuildingModule crafting)
-                {
-                    modules.add(crafting);
-                }
+            if (module == null)
+            {
+                continue;
+            }
+
+            if (module instanceof ICraftingBuildingModule crafting)
+            {
+                modules.add(crafting);
             }
         }
 
@@ -419,7 +419,7 @@ public class CraftingTagAuditor
 
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
+          /*  for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
                 final IBuildingModule module = producer.get();
 
@@ -427,7 +427,7 @@ public class CraftingTagAuditor
                 {
                     modules.add(herding);
                 }
-            }
+            }*/
         }
 
         return modules;

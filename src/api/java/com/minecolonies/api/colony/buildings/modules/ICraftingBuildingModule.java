@@ -71,6 +71,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return The disambiguating id suffix.
      */
     @NotNull
+    @Deprecated
     String getId();
 
     /**
@@ -293,6 +294,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return The unique id or null.
      */
     @Nullable
+    @Deprecated
     default ResourceLocation getUid()
     {
         final IJob<?> job = getCraftingJob();
