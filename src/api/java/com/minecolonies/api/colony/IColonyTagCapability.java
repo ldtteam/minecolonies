@@ -186,7 +186,11 @@ public interface IColonyTagCapability
         {
             if (chunk.getPos().equals(ChunkPos.ZERO))
             {
-                Log.getLogger().warn("Claiming id:" + colonyId + " building at zero pos!" + pos, new Exception());
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, chunk.getLevel().dimension());
+                if (colony == null || BlockPosUtil.getDistance2D(colony.getCenter(), BlockPos.ZERO) > 200)
+                {
+                    Log.getLogger().warn("Claiming id:" + colonyId + " building at zero pos!" + pos, new Exception());
+                }
             }
 
             if (owningColony == NO_COLONY_ID)
