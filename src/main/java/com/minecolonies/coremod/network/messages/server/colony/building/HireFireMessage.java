@@ -63,7 +63,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         hire = buf.readBoolean();
         citizenID = buf.readInt();
-        moduleId = buf.readRegistryId();
+        moduleId = buf.readInt();
     }
 
     /**

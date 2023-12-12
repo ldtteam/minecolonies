@@ -459,6 +459,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("miner_settings", () -> new SettingsModule()
         .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
         .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE))
+        .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
         .with(BuildingMiner.MAX_DEPTH, new IntSetting(-100))
         .with(AbstractBuilding.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,MinerGuardAssignModuleView> MINER_GUARD_ASSIGN    =
@@ -513,7 +514,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("tool_scepterguard_view", null, () -> () -> new ToolModuleView(
         ModItems.scepterGuard));
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> GUARD_SETTINGS = new BuildingEntry.ModuleProducer<>("guard_settings", () -> new SettingsModule()
-      .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW))
+      .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW, GuardTaskSetting.PATROL_MINE))
       .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
       .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
       .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
