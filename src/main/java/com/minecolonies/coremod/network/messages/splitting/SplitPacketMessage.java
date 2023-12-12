@@ -104,7 +104,7 @@ public class SplitPacketMessage implements IMessage
                                         .stream()
                                         .sorted(Map.Entry.comparingByKey())
                                         .map(Map.Entry::getValue)
-                                        .reduce(new byte[0], Bytes::concat);
+              .reduce(new byte[0], Bytes::concat);
 
             //Grab the entry from the inner message id.
             final NetworkChannel.NetworkingMessageEntry<?> messageEntry = Network.getNetwork().getMessagesTypes().get(this.innerMessageId);
@@ -114,7 +114,17 @@ public class SplitPacketMessage implements IMessage
 
             //Create a new buffer that reads from the packet data and then deserialize the inner message.
             final ByteBuf buffer = Unpooled.wrappedBuffer(packetData);
-            message.fromBytes(new FriendlyByteBuf(buffer));
+            try
+            {
+                message.fromBytes(new FriendlyByteBuf(buffer));
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().error("Packet error:", e);
+                buffer.release();
+                return;
+            }
+
             buffer.release();
 
             //Execute the message.

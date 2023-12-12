@@ -1815,6 +1815,10 @@ public class CitizenData implements ICitizenData
     @Override
     public void onInteractionClosed(final Component key, final ServerPlayer sender)
     {
-        citizenChatOptions.get(key).onClosed();
+        final IInteractionResponseHandler chatOption = citizenChatOptions.get(key);
+        if (chatOption != null)
+        {
+            chatOption.onClosed();
+        }
     }
 }
