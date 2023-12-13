@@ -5,10 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.util.ChunkLoadStorage;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
@@ -445,7 +442,13 @@ public final class ChunkDataHelper
 
         if (chunk.getPos().equals(ChunkPos.ZERO))
         {
-            Log.getLogger().warn("Trying to claim at zero chunk pos!:", new Exception());
+            if (chunk.getPos().equals(ChunkPos.ZERO))
+            {
+                if (colony == null || BlockPosUtil.getDistance2D(colony.getCenter(), BlockPos.ZERO) > 200)
+                {
+                    Log.getLogger().warn("Trying to claim at zero chunk pos!:", new Exception());
+                }
+            }
         }
 
         // Before directly adding cap data, apply data from our cache.

@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.network.messages.server.colony.building;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -65,7 +63,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         hire = buf.readBoolean();
         citizenID = buf.readInt();
-        moduleId = buf.readRegistryId();
+        moduleId = buf.readInt();
     }
 
     /**
