@@ -110,7 +110,7 @@ public class SettingsFactories
     /**
      * Specific factory for the bool setting.
      */
-    public static abstract class AbstractStringSettingsFactory<T extends IStringSetting> implements IStringSettingFactory<T>
+    public static abstract class AbstractStringSettingsFactory<T extends StringSetting> implements IStringSettingFactory<T>
     {
         /**
          * Compound tag for the value.
@@ -131,7 +131,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting storage)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_VALUE, storage.getCurrentIndex());
@@ -163,7 +163,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.getCurrentIndex());
             packetBuffer.writeInt(input.getSettings().size());
@@ -617,9 +617,9 @@ public class SettingsFactories
         public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
-            if (storage.currentIndex != null)
+            if (storage.selectedRecipe != null)
             {
-                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.currentIndex));
+                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.selectedRecipe));
             }
             compound.putString(TAG_MODULE, storage.craftingModuleId);
             return compound;
@@ -641,10 +641,10 @@ public class SettingsFactories
         @Override
         public void serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
-            packetBuffer.writeBoolean(input.currentIndex != null);
-            if (input.currentIndex != null)
+            packetBuffer.writeBoolean(input.selectedRecipe != null);
+            if (input.selectedRecipe != null)
             {
-                StandardFactoryController.getInstance().serialize(packetBuffer, input.currentIndex);
+                StandardFactoryController.getInstance().serialize(packetBuffer, input.selectedRecipe);
             }
             packetBuffer.writeUtf(input.craftingModuleId);
         }
