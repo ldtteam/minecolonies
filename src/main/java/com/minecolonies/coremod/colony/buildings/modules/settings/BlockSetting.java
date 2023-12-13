@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.SWITCH;
 /**
  * Stores a solid block setting.
  */
-public class BlockSetting implements ISetting
+public class BlockSetting implements ISetting<BlockItem>
 {
     /**
      * Default value of the setting.

@@ -1187,10 +1187,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key)
+    public <T extends ISetting<S>, S> T getSetting(@NotNull final ISettingKey<T> key)
     {
         return getFirstModuleOccurance(ISettingsModule.class).getSetting(key);
     }
+
+    @Override
+    public <T extends ISetting<S>, S> S getSettingValueOrDefault(@NotNull final ISettingKey<T> key, @NotNull final S def)
+    {
+        return getFirstModuleOccurance(ISettingsModule.class).getSettingValueOrDefault(key, def);
+    }
+
 
     /**
      * Get the right module for the recipe.

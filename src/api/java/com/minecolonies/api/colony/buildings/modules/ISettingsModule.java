@@ -18,7 +18,7 @@ public interface ISettingsModule extends IBuildingModule
      * @param setting the setting.
      * @return the instance of the module.
      */
-    ISettingsModule with(final ISettingKey<?> key, final ISetting setting);
+    ISettingsModule with(final ISettingKey<?> key, final ISetting<?> setting);
 
     /**
      * Get a specific setting.
@@ -26,7 +26,7 @@ public interface ISettingsModule extends IBuildingModule
      * @param <T> the type of setting.
      * @return the setting.
      */
-    <T extends ISetting> T getSetting(final ISettingKey<T> key);
+    <T extends ISetting<?>> T getSetting(final ISettingKey<T> key);
 
     /**
      * Get a specific setting.
@@ -35,7 +35,7 @@ public interface ISettingsModule extends IBuildingModule
      * @return the setting, if it exists and is active.
      */
     @NotNull
-    <T extends ISetting> Optional<T> getOptionalSetting(final ISettingKey<T> key);
+    <T extends ISetting<?>> Optional<T> getOptionalSetting(final ISettingKey<T> key);
 
     /**
      * Update a given settings value.
@@ -43,5 +43,15 @@ public interface ISettingsModule extends IBuildingModule
      * @param value the value.
      * @param sender the player that updated the setting.
      */
-    void updateSetting(ISettingKey<?> settingKey, ISetting value, final ServerPlayer sender);
+    void updateSetting(ISettingKey<?> settingKey, ISetting<?> value, final ServerPlayer sender);
+
+    /**
+     * Get setting value or default.
+     * @param key the key of the setting.
+     * @param <T> the type of setting.
+     * @param <S> the setting value type.
+     * @param def the default.
+     * @return the setting value or the default.
+     */
+    <S, T extends ISetting<S>> S getSettingValueOrDefault(ISettingKey<T> key, S def);
 }

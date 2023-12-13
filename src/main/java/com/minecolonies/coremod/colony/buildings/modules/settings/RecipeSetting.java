@@ -33,7 +33,7 @@ public class RecipeSetting implements ICraftingSetting
     /**
      * Current index of the setting.
      */
-    protected IToken<?> currentIndex;
+    protected IToken<?> selectedRecipe;
 
     /**
      * The specific crafting module.
@@ -52,12 +52,12 @@ public class RecipeSetting implements ICraftingSetting
     /**
      * Create a new string list setting.
      *
-     * @param currentIndex the current selected index.
+     * @param selectedRecipe the current selected recipe.
      * @param craftingModuleId the crafting module id.
      */
-    public RecipeSetting(final IToken<?> currentIndex, final String craftingModuleId)
+    public RecipeSetting(final IToken<?> selectedRecipe, final String craftingModuleId)
     {
-        this.currentIndex = currentIndex;
+        this.selectedRecipe = selectedRecipe;
         this.craftingModuleId = craftingModuleId;
     }
 
@@ -67,14 +67,14 @@ public class RecipeSetting implements ICraftingSetting
         final ICraftingBuildingModule craftingModule = building.getModuleMatching(ICraftingBuildingModule.class, m -> m.getId().equals(craftingModuleId));
         for (final IToken<?> token : craftingModule.getRecipes())
         {
-            if (token.equals(currentIndex))
+            if (token.equals(selectedRecipe))
             {
-                return IColonyManager.getInstance().getRecipeManager().getRecipe(currentIndex);
+                return IColonyManager.getInstance().getRecipeManager().getRecipe(selectedRecipe);
             }
         }
 
-        currentIndex = building.getFirstModuleOccurance(ICraftingBuildingModule.class).getRecipes().get(0);
-        return IColonyManager.getInstance().getRecipeManager().getRecipe(currentIndex);
+        selectedRecipe = building.getFirstModuleOccurance(ICraftingBuildingModule.class).getRecipes().get(0);
+        return IColonyManager.getInstance().getRecipeManager().getRecipe(selectedRecipe);
     }
 
     @Override
@@ -84,13 +84,13 @@ public class RecipeSetting implements ICraftingSetting
 
         for (final IRecipeStorage recipe : craftingModule.getRecipes())
         {
-            if (recipe.getToken().equals(currentIndex))
+            if (recipe.getToken().equals(selectedRecipe))
             {
                 return recipe;
             }
         }
 
-        currentIndex = craftingModule.getRecipes().get(0).getToken();
+        selectedRecipe = craftingModule.getRecipes().get(0).getToken();
         return craftingModule.getRecipes().get(0);
     }
 
@@ -138,7 +138,7 @@ public class RecipeSetting implements ICraftingSetting
             int index = 0;
             for (final IRecipeStorage recipe : list)
             {
-                if (recipe.getToken().equals(currentIndex))
+                if (recipe.getToken().equals(selectedRecipe))
                 {
                     currentIntIndex = index;
                     break;
@@ -151,7 +151,7 @@ public class RecipeSetting implements ICraftingSetting
                 newIndex = 0;
             }
 
-            currentIndex = list.get(newIndex).getToken();
+            selectedRecipe = list.get(newIndex).getToken();
             settingsModuleView.trigger(key);
         });
     }
@@ -176,7 +176,7 @@ public class RecipeSetting implements ICraftingSetting
     @Override
     public void set(final IRecipeStorage value)
     {
-        currentIndex = value.getToken();
+        selectedRecipe = value.getToken();
     }
 
     @Override
@@ -194,6 +194,12 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
+    public IToken<?> getValue()
+    {
+        return selectedRecipe;
+    }
+
+    @Override
     public boolean shouldHideWhenInactive()
     {
         return true;
@@ -204,7 +210,7 @@ public class RecipeSetting implements ICraftingSetting
     {
         if (setting instanceof final RecipeSetting other)
         {
-            currentIndex = other.currentIndex;
+            selectedRecipe = other.selectedRecipe;
         }
     }
 }
