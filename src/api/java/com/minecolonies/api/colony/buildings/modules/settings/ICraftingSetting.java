@@ -2,15 +2,16 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
 /**
- * String Setting.
+ * Crafting Setting.
  */
-public interface ICraftingSetting extends ISetting
+public interface ICraftingSetting extends ISetting<IToken<?>>
 {
     /**
      * Get the setting value.
