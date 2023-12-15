@@ -60,17 +60,17 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         fieldData.resetReaderIndex();
         buf.writeBoolean(assign);
-        buf.writeBytes(fieldData);
         buf.writeInt(moduleID);
+        buf.writeBytes(fieldData);
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         assign = buf.readBoolean();
+        moduleID = buf.readInt();
         fieldData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(fieldData, buf.readableBytes());
-        moduleID = buf.readInt();
     }
 
     @Override
