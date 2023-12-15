@@ -459,7 +459,6 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("miner_settings", () -> new SettingsModule()
         .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
         .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE))
-        .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
         .with(BuildingMiner.MAX_DEPTH, new IntSetting(-100))
         .with(AbstractBuilding.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,MinerGuardAssignModuleView> MINER_GUARD_ASSIGN    =

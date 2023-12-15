@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Generic ISetting that represents all possible setting objects (string, numbers, boolean, etc).
  */
-public interface ISetting
+public interface ISetting<S>
 {
     /**
      * Get the resource location of the view you want to use for this setting.
@@ -95,14 +95,14 @@ public interface ISetting
      *
      * @param setting the setting with new data
      */
-    default void updateSetting(final ISetting setting) {}
+    default void updateSetting(final ISetting<S> setting) {}
 
     /**
      * Copy value from another instance.
      *
      * @param setting the setting to copy from
      */
-    void copyValue(final ISetting setting);
+    void copyValue(final ISetting<S> setting);
 
     /**
      * Generates the hover pane for inactive settings.
@@ -146,4 +146,10 @@ public interface ISetting
     {
         return true;
     }
+
+    /**
+     * Get the setting value.
+     * @return the value.
+     */
+    S getValue();
 }
