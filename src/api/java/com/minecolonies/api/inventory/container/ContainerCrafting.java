@@ -69,7 +69,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     /**
      * The module id of the container.
      */
-    private final String moduleId;
+    private final int moduleId;
 
     /**
      * Deserialize packet buffer to container instance.
@@ -83,7 +83,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     {
         final boolean complete = packetBuffer.readBoolean();
         final BlockPos tePos = packetBuffer.readBlockPos();
-        final String moduleId = packetBuffer.readUtf(32767);
+        final int moduleId = packetBuffer.readInt();
         return new ContainerCrafting(windowId, inv, complete, tePos, moduleId);
     }
 
@@ -94,7 +94,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param inv      the inventory.
      * @param moduleId the module id.
      */
-    public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final String moduleId)
+    public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final int moduleId)
     {
         super(ModContainers.craftingGrid.get(), windowId);
         this.moduleId = moduleId;
@@ -407,7 +407,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * Getter for the module id.
      * @return the id.
      */
-    public String getModuleId()
+    public int getModuleId()
     {
         return this.moduleId;
     }

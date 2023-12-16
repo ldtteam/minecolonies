@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -27,7 +28,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     /**
      * Map of setting id (string) to generic setting.
      */
-    final Map<ISettingKey<?>, ISetting> settings = new LinkedHashMap<>();
+    final Map<ISettingKey<? extends ISetting>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
@@ -38,15 +39,15 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         {
             final ResourceLocation key = buf.readResourceLocation();
             final ISetting setting = StandardFactoryController.getInstance().deserialize(buf);
-            final SettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
-            tempSettings.put(settingsKey, setting);
-            if (!settings.containsKey(settingsKey))
+            if (setting != null)
             {
-                settings.put(settingsKey, setting);
+                final SettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
+                tempSettings.put(settingsKey, setting);
+                settings.putIfAbsent(settingsKey, setting);
             }
         }
 
-        for (final Map.Entry<ISettingKey<?>, ISetting> entry : new ArrayList<>(settings.entrySet()))
+        for (final Map.Entry<ISettingKey<? extends ISetting>, ISetting> entry : new ArrayList<>(settings.entrySet()))
         {
             final ISetting syncSetting = tempSettings.get(entry.getKey());
             if (syncSetting == null)
@@ -63,32 +64,25 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
 
     /**
      * Get the full settings map.
-     * @return the map of string key and ISetting value.
+     *
+     * @return the list of string key and ISetting value.
      */
-    public Map<ISettingKey<?>, ISetting> getSettings()
+    public List<ISettingKey<? extends ISetting>> getSettingsToShow()
     {
-        return settings;
-    }
-
-    /**
-     * Get a list of all valid settings.
-     * @return the list of settings.
-     */
-    public List<ISettingKey<?>> getActiveSettings()
-    {
-        final List<ISettingKey<?>> activeSettings = new ArrayList<>();
-        for (final Map.Entry<ISettingKey<?>, ISetting> setting : settings.entrySet())
+        List<ISettingKey<? extends ISetting>> filteredSettings = new ArrayList<>();
+        for (Map.Entry<ISettingKey<? extends ISetting>, ISetting> setting : settings.entrySet())
         {
-            if (setting.getValue().isActive(this))
+            if (setting.getValue().isActive(this) || !setting.getValue().shouldHideWhenInactive())
             {
-                activeSettings.add(setting.getKey());
+                filteredSettings.add(setting.getKey());
             }
         }
-
-        return activeSettings;
+        return filteredSettings;
     }
 
     @Override
+    @Nullable
+    @SuppressWarnings("unchecked")
     public <T extends ISetting> T getSetting(final ISettingKey<T> key)
     {
         return (T) settings.getOrDefault(key, null);
@@ -117,7 +111,10 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     public void trigger(final ISettingKey<?> key)
     {
         final ISetting setting = settings.get(key);
-        setting.trigger();
-        Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting));
+        if (setting.isActive(this))
+        {
+            setting.trigger();
+            Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()));
+        }
     }
 }

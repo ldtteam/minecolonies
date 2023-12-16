@@ -474,16 +474,16 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @param <T> the key type.
      * @return the setting.
      */
-    <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key);
+    <T extends ISetting<S>, S> T getSetting(@NotNull final ISettingKey<T> key);
 
     /**
-     * Get setting for key. Utility function.
+     * Get setting value for key or some default. Utility function.
      * @param key the key.
      * @param <T> the key type.
-     * @return the optional wrapping the value.
+     * @param def the default.
+     * @return the setting.
      */
-    @NotNull
-    <T extends ISetting> Optional<T> getOptionalSetting(@NotNull final ISettingKey<T> key);
+    <T extends ISetting<S>, S> S getSettingValueOrDefault(@NotNull final ISettingKey<T> key, @NotNull final S def);
 
     /**
      * Check if the assigned citizens are allowed to eat the following stack.

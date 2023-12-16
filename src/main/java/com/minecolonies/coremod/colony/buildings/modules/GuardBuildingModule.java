@@ -47,16 +47,20 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     {
         super.onRemoval(citizen);
         final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-        if (optCitizen.isPresent())
-        {
-            AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
-            optCitizen.get().setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
-        }
+        optCitizen.ifPresent(cit -> {
+            AttributeModifierUtils.removeAllHealthModifiers(cit);
+            cit.setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
+
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.CHEST);
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.LEGS);
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.HEAD);
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.FEET);
+        });
     }
 
     @Override
@@ -69,7 +73,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     public void onColonyTick(@NotNull final IColony colony)
     {
         // Give the other assignment module also a chance.
-        if (random.nextInt(building.getModules(GuardBuildingModule.class).size()) > 0)
+        if (random.nextInt(building.getModulesByType(GuardBuildingModule.class).size()) == 0)
         {
             return;
         }
@@ -101,6 +105,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
             if (trainingCitizen != null)
             {
                 hiredFromTraining = true;
+                trainingCitizen.setJob(null);
                 assignCitizen(trainingCitizen);
             }
         }

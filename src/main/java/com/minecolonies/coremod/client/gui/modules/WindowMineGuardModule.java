@@ -82,7 +82,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
         {
             guardsInfo.clear();
             assignedGuards = 0;
-            final List<IBuildingView> buildings = buildingView.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && entry.getModuleView(
+            final List<IBuildingView> buildings = buildingView.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && entry.getModuleViewByType(
               SettingsModuleView.class).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(
               GuardTaskSetting.PATROL_MINE)).collect(Collectors.toList());
             for (final IBuildingView building : buildings)

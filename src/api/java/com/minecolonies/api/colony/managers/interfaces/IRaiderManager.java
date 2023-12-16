@@ -224,4 +224,9 @@ public interface IRaiderManager
      * @param entity
      */
     void onRaiderDeath(AbstractEntityRaiderMob entity);
+
+    /**
+     * Notify raid manager of a passing through raid.
+     */
+    void setPassThroughRaid();
 }

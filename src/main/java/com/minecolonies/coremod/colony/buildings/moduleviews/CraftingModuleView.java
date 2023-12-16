@@ -163,6 +163,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      * Unique id of the crafting module view.
      * @return the id.
      */
+    @Deprecated
     public String getId()
     {
         return this.id;
@@ -246,7 +247,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     {
         final BlockPos pos = buildingView.getPosition();
         Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getId()));
+        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getProducer().getRuntimeID()));
     }
 
     /**

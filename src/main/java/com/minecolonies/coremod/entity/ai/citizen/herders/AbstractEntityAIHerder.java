@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -141,7 +140,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (building.getSetting(AbstractBuilding.BREEDING).getValue() ||
                 building.getSetting(AbstractBuilding.FEEDING).getValue())
         {
-            for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
+            for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
             {
                 list.addAll(getRequestBreedingItems(module));
             }
@@ -182,7 +181,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
+        for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
         {
             final List<? extends Animal> animals = searchForAnimals(module::isCompatible);
             if (animals.isEmpty())

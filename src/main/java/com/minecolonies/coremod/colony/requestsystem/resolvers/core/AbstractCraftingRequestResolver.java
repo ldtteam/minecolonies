@@ -145,7 +145,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         }
 
         final boolean isFood = request.getRequest() instanceof Food;
-        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
+        for (final ICraftingBuildingModule module : building.getModulesByType(ICraftingBuildingModule.class))
         {
             final IRecipeStorage recipe = module.getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
 
@@ -264,7 +264,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
       final int count,
       final int minCount)
     {
-        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
+        for (final ICraftingBuildingModule module : building.getModulesByType(ICraftingBuildingModule.class))
         {
             final IRecipeStorage craftableCrafting = module.getFirstRecipe(stackPrecicate);
             if (craftableCrafting == null)

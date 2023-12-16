@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
-import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -277,26 +275,22 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         final String structurePack = buildingMiner.getStructurePack();
         int rotateCount;
-        final boolean needsFallback;
         final String style;
 
         if (mineNode == null)
         {
             rotateCount = getRotationFromVector(buildingMiner);
             style = Node.NodeType.SHAFT.getSchematicName();
-            needsFallback = needsFallBack(structurePack, style) ;
         }
-
         else
         {
             rotateCount = rotateTimes;
             style = mineNode.getStyle().getSchematicName();
-            needsFallback = needsFallBack(structurePack, style);
         }
 
         if (job == null || job.getWorkOrder() == null)
         {
-            final WorkOrderMiner wo = new WorkOrderMiner(needsFallback ? STORAGE_STYLE : structurePack, style + ".blueprint", style, rotateCount, structurePos, false, buildingMiner.getPosition());
+            final WorkOrderMiner wo = new WorkOrderMiner(structurePack, style + ".blueprint", style, rotateCount, structurePos, false, buildingMiner.getPosition());
             wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
             if (job != null)
@@ -337,17 +331,5 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             return 4;
         }
         return 0;
-    }
-
-    /**
-     * Get the correct style for the shaft. Return default back.
-     *
-     * @param structurePacks the structurePacks to check.
-     * @param shaft the shaft.
-     * @return the correct location.
-     */
-    private static boolean needsFallBack(final String structurePacks, final String shaft)
-    {
-        return StructurePacks.getBlueprint(structurePacks, shaft + ".blueprint", true) == null;
     }
 }

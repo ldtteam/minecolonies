@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.miner;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.MinerLevelManagementModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
@@ -51,6 +52,6 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingMiner building)
     {
-        building.getFirstModuleOccurance(MinerLevelManagementModule.class).setCurrentLevel(level);
+        building.getModule(BuildingModules.MINER_LEVELS).setCurrentLevel(level);
     }
 }

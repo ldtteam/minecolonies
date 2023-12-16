@@ -198,6 +198,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
             citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED);
         }
+
+        citizen.markDirty(0);
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import net.minecraft.sounds.SoundEvents;
+
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -33,11 +35,10 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
 
         registerButton(BUTTON_ACTIONS, () -> new WindowMainPage(townHall).open());
         registerButton(BUTTON_INFOPAGE, () -> new WindowInfoPage(townHall).open());
-        registerButton(BUTTON_SETTINGS, () -> new WindowSettingsPage(townHall).open());
         registerButton(BUTTON_PERMISSIONS, () -> new WindowPermissionsPage(townHall).open());
         registerButton(BUTTON_CITIZENS, () -> new WindowCitizenPage(townHall).open());
-        registerButton(BUTTON_WORKORDER, () -> new WindowWorkOrderPage(townHall).open());
         registerButton(BUTTON_STATS, () -> new WindowStatsPage(townHall).open());
+        registerButton(BUTTON_ALLIANCE, () -> new WindowAlliancePage(townHall).open());
 
         findPaneOfTypeByID(getWindowId() + "0", Image.class).hide();
         findPaneOfTypeByID(getWindowId(), ButtonImage.class).hide();

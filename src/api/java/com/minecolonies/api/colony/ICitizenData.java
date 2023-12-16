@@ -59,13 +59,6 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
     IBuilding getWorkBuilding();
 
     /**
-     * Sets the work building of a citizen.
-     *
-     * @param building work building.
-     */
-    void setWorkBuilding(@Nullable IBuilding building);
-
-    /**
      * Returns the job of the citizen.
      *
      * @return Job of the citizen.
@@ -393,4 +386,9 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @param sender the player closing it.
      */
     void onInteractionClosed(Component key, ServerPlayer sender);
+
+    /**
+     * Called after buildings loaded
+     */
+    void onBuildingLoad();
 }

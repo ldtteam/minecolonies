@@ -22,10 +22,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
-import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.WorkAtHomeBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
@@ -369,7 +366,7 @@ public class CitizenManager implements ICitizenManager
 
         for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            for (final AbstractAssignedCitizenModule assignedCitizenModule : building.getModules(AbstractAssignedCitizenModule.class))
+            for (final AbstractAssignedCitizenModule assignedCitizenModule : building.getModulesByType(AbstractAssignedCitizenModule.class))
             {
                 assignedCitizenModule.removeCitizen((ICitizenData) citizen);
             }
@@ -412,7 +409,7 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b.hasModule(BedHandlingModule.class) && b.hasModule(WorkAtHomeBuildingModule.class))
+                if (b.hasModule(BuildingModules.BED) && b.hasModule(WorkAtHomeBuildingModule.class))
                 {
                     final WorkAtHomeBuildingModule module = b.getFirstModuleOccurance(WorkAtHomeBuildingModule.class);
                     newMaxCitizens += b.getAllAssignedCitizen().size();
@@ -551,7 +548,10 @@ public class CitizenManager implements ICitizenManager
     @Override
     public boolean tickCitizenData()
     {
-        this.getCitizens().forEach(ICitizenData::tick);
+        for (ICitizenData iCitizenData : this.getCitizens())
+        {
+            iCitizenData.update();
+        }
         return false;
     }
 
@@ -682,6 +682,17 @@ public class CitizenManager implements ICitizenManager
                     citizenData.getCitizenMournHandler().setMourning(true);
                 }
             }
+        }
+    }
+
+    @Override
+    public void afterBuildingLoad()
+    {
+        calculateMaxCitizens();
+
+        for(final ICitizenData data: citizens.values())
+        {
+            data.onBuildingLoad();
         }
     }
 }

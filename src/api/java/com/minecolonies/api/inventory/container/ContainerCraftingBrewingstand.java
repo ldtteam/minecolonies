@@ -44,7 +44,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
     /**
      * The module id.
      */
-    private String moduleId;
+    private int moduleId;
 
     /**
      * Deserialize packet buffer to container instance.
@@ -57,7 +57,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
     public static ContainerCraftingBrewingstand fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
-        final String moduleId = packetBuffer.readUtf(32767);
+        final int moduleId = packetBuffer.readInt();
         return new ContainerCraftingBrewingstand(windowId, inv, tePos, moduleId);
     }
 
@@ -68,7 +68,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
      * @param inv      the player inventory.
      * @param pos      te world pos
      */
-    public ContainerCraftingBrewingstand(final int windowId, final Inventory inv, final BlockPos pos, final String moduleId)
+    public ContainerCraftingBrewingstand(final int windowId, final Inventory inv, final BlockPos pos, final int moduleId)
     {
         super(ModContainers.craftingBrewingstand.get(), windowId);
         this.moduleId = moduleId;
@@ -387,7 +387,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
      * Get the module if of the container.
      * @return the module id.
      */
-    public String getModuleId()
+    public int getModuleId()
     {
         return this.moduleId;
     }

@@ -3,7 +3,11 @@
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <switch id="pages" size="374 100%" pos="75 0">
         <view id="pageAddPlayer">
-            <list id="users" size="148 171" pos="201 36">
+            <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
+            <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
+            <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
+
+            <list id="users" size="148 121" pos="26 100">
                 <box size="100% 35" linewidth="1">
                     <label id="name" size="100 11" pos="5 2" color="black"/>
                     <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
@@ -25,69 +29,79 @@
                 </box>
             </list>
 
-            <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
-            <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
-            <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
-            <label id="permissionError" size="148 100" pos="26 100" color="red" label="$(com.minecolonies.coremod.gui.townhall.player_permission_error)" textalign="TOP_MIDDLE" />
-        </view>
-        <view id="managePermissions">
-            <switch id="permissionsManagement" size="148 171" pos="201 36">
-                <view id="permissionsList">
-                    <buttonimage id="permissionsModeToggle" label="Settings" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
-                    <list id="rankList" size="148 150" pos="0 19">
-                        <box size="100% 21" linewidth="1">
-                            <label id="name" size="110 18" pos="2 2" color="black" />
-                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveoff)" />
-                            <label id="index" pos="100 100" />
-                        </box>
-                    </list>
-                </view>
-                <view id="permissionsSettings">
-                    <buttonimage id="permissionsModeToggle" label="Permissions" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
-                    <label id="rankType" size="50 11" pos="0 19" label="Type:" color="black" />
-                    <dropdown id="rankTypePicker"
-                              size="129 17"
-                              pos="0 32"
-                              maxContentHeight="100"
-                              dropDownSize="129 100"
-                              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                              textcolor="black"
-                              scrollbarOffset="9 0"
-                              dropfixx="276">
-                        <view size="100% 15">
-                            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
-                            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
-                        </view>
-                    </dropdown>
-                    <label id="isSubscriber" size="98 11" pos="0 52" label="Is Subscriber:" color="black" />
-                    <buttonimage id="setSubscriber" size="29 15" pos="100 52" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" />
-                    <buttonimage id="removeRank" size="129 17" pos="0 70" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red" />
-                </view>
-            </switch>
+            <label size="148 11" pos="196 39" color="black" textalign="MIDDLE"
+                   label="$(com.minecolonies.coremod.gui.townhall.permevents):"/>
 
-            <list id="rankButtonList" size="148 100" pos="26 65">
-                <box size="100% 17" linewidth="0">
-                    <label id="rankId" />
-                    <button id="rankButton" size="120 15" pos="2 2" align="TOP_MIDDLE" />
+            <list id="eventsList" size="148 152" pos="196 50">
+                <box size="100% 36" linewidth="1">
+                    <label id="action" size="140 12" pos="1 1" color="black"/>
+                    <label id="name" size="100 12" pos="1 12" color="blue"/>
+                    <label id="pos" size="70 12" pos="1 24" color="black"/>
+                    <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
                 </box>
             </list>
-            <label size="148 11" pos="36 167" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
-            <input id="addRankName" size="100 18" pos="36 179" maxlength="32"/>
-            <button id="buttonAddRank" size="19 19" pos="140 179" label="+"/>
-            <label id="rankNameError" size="148 11" pos="36 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" visible="false" />
         </view>
+        <view id="managePermissions">
+            <label size="148 11" pos="36 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
+            <input id="addRankName" size="100 18" pos="36 80" maxlength="32"/>
+            <button id="buttonAddRank" size="19 19" pos="140 80" label="+"/>
+
+            <list id="rankButtonList" size="100 110" pos="46 105">
+                <box size="100% 15" linewidth="0">
+                    <label id="rankId" />
+                    <buttonimage id="rankButton" size="86 15" pos="2 2" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                </box>
+            </list>
+
+            <label id="rankType" size="50 11" pos="201 41" label="Type:" color="black"/>
+            <dropdown id="rankTypePicker"
+                      size="86 17"
+                      pos="244 38"
+                      maxContentHeight="100"
+                      dropDownSize="129 100"
+                      source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                      textcolor="black"
+                      scrollbarOffset="9 0"
+                      dropfixx="276">
+                <view size="100% 15">
+                    <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
+                    <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                </view>
+            </dropdown>
+
+            <label id="isSubscriber" size="98 11" pos="201 60" label="Is Subscriber:" color="black"/>
+            <buttonimage id="setSubscriber"
+                         size="29 15"
+                         pos="301 57"
+                         color="black"
+                         label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"
+                         source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
+
+            <list id="rankList" size="138 120" pos="201 77">
+                <box size="100% 21" linewidth="1">
+                    <label id="name" size="110 18" pos="2 2" color="black"/>
+                    <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveoff)"/>
+                    <label id="index" pos="100 100"/>
+                </box>
+            </list>
+
+            <buttonimage id="removeRank" size="129 17" pos="201 200" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red"/>
+        </view>
+        <!-- todo adjust this, separate blocks and pos, and make pos list a pos-start to pos-end -->
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townhall.freeblocks)"/>
+
+            <label size="146 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addblock)"/>
+            <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
+            <button id="addBlock" size="19 19" pos="130 76" label="+"/>
+
+
             <list id="blocks" size="148 171" pos="201 36">
                 <box size="100% 30" linewidth="1">
                     <label id="name" size="100 12" pos="5 2" color="black"/>
                     <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
                 </box>
             </list>
-
-            <label size="146 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addblock)"/>
-            <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
-            <button id="addBlock" size="19 19" pos="130 76" label="+"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="100 24" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

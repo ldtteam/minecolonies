@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.IOPool;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -11,6 +14,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.Future;
+
+import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
@@ -53,6 +59,26 @@ public class WorkOrderMiner extends AbstractWorkOrder
     {
         super(packName, structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
         this.minerBuilding = minerBuilding;
+    }
+
+    @Override
+    public Future<Blueprint> getBlueprintFuture()
+    {
+        return IOPool.submit(() ->
+        {
+            Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getStructurePath(), true);
+            if (blueprint == null)
+            {
+                // automatic fallback to default style
+                blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, getStructurePath());
+                if (blueprint != null)
+                {
+                    packName = STORAGE_STYLE;
+                    changed = true;
+                }
+            }
+            return blueprint;
+        });
     }
 
     @Override

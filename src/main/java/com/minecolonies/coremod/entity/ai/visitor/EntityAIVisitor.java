@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.VisitorData;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
@@ -92,7 +93,7 @@ public class EntityAIVisitor implements IState
     private boolean reduceTime()
     {
         citizen.getCitizenData().decreaseSaturation(0.02);
-        citizen.getCitizenData().markDirty();
+        citizen.getCitizenData().markDirty(20 * 20);
         if (citizen.getCitizenData().getSaturation() <= 0)
         {
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
@@ -168,9 +169,9 @@ public class EntityAIVisitor implements IState
         }
 
         final int random = citizen.getRandom().nextInt(5);
-        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()) && tavern.hasModule(TavernBuildingModule.class))
+        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()) && tavern.hasModule(BuildingModules.TAVERN_VISITOR))
         {
-            final BlockPos pos = tavern.getFirstModuleOccurance(TavernBuildingModule.class).getFreeSitPosition();
+            final BlockPos pos = tavern.getModule(BuildingModules.TAVERN_VISITOR).getFreeSitPosition();
             if (pos != null)
             {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
@@ -228,7 +229,7 @@ public class EntityAIVisitor implements IState
         }
 
         IBuilding building = citizen.getCitizenData().getHomeBuilding();
-        if (building.hasModule(TavernBuildingModule.class))
+        if (building.hasModule(BuildingModules.TAVERN_VISITOR))
         {
             tavern = (DefaultBuildingInstance) building;
         }

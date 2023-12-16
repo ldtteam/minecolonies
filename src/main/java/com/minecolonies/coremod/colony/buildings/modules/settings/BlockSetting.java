@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -13,12 +10,12 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -35,22 +32,22 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.SWITCH;
 
 /**
  * Stores a solid block setting.
  */
-public class BlockSetting implements ISetting
+public class BlockSetting implements ISetting<BlockItem>
 {
+    /**
+     * Default value of the setting.
+     */
+    private final BlockItem defaultValue;
+
     /**
      * The value of the setting.
      */
     private BlockItem value;
-
-    /**
-     * Default value of the setting.
-     */
-    private BlockItem defaultValue;
 
     /**
      * Create a new boolean setting.
@@ -98,11 +95,17 @@ public class BlockSetting implements ISetting
     /**
      * Set a new block value.
      *
-     * @param value the itemblock to set.
+     * @param value the item block to set.
      */
     public void setValue(final BlockItem value)
     {
         this.value = value;
+    }
+
+    @Override
+    public ResourceLocation getLayoutItem()
+    {
+        return new ResourceLocation("minecolonies:gui/layouthuts/layoutblocksetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -111,16 +114,12 @@ public class BlockSetting implements ISetting
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final BOWindow window)
+      final IBuildingView building,
+      final BOWindow window)
     {
-
-        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutblocksetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
-        pane.findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
-
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
-          (stack) -> {
+          stack -> {
               final Item item = stack.getItem();
               if (!( item instanceof BlockItem ))
               {
@@ -147,22 +146,24 @@ public class BlockSetting implements ISetting
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
+    public void render(
+      final ISettingKey<?> key,
+      final Pane pane,
+      final ISettingsModuleView settingsModuleView,
+      final IBuildingView building,
+      final BOWindow window)
     {
         pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(new ItemStack(value));
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(Component.translatable(SWITCH));
+        ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
+        triggerButton.setEnabled(isActive(settingsModuleView));
+        triggerButton.setText(Component.translatable(SWITCH));
+        setInActiveHoverPane(triggerButton, settingsModuleView);
     }
 
     @Override
-    public void trigger()
+    public void copyValue(final ISetting setting)
     {
-
-    }
-
-    @Override
-    public void copyValue(final ISetting iSetting)
-    {
-        if (iSetting instanceof final BlockSetting other)
+        if (setting instanceof final BlockSetting other)
         {
             setValue(other.getValue());
         }

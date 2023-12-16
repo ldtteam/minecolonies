@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -40,12 +41,12 @@ public class StationRequestResolver extends BuildingRequestResolver
                 if (theBuilding instanceof BuildingWareHouse
                       || theBuilding.getCitizenForRequest(request.getId()).isPresent()
                       || theBuilding.hasModule(WorkerBuildingModule.class)
-                      || !theBuilding.hasModule(AbstractAssignedCitizenModule.class))
+                      || !theBuilding.hasModule(IAssignsCitizen.class))
                 {
                     return false;
                 }
 
-                for (final AbstractAssignedCitizenModule module : theBuilding.getModules(AbstractAssignedCitizenModule.class))
+                for (final IAssignsCitizen module : theBuilding.getModulesByType(IAssignsCitizen.class))
                 {
                     for (final ICitizenData citizen : module.getAssignedCitizen())
                     {
@@ -72,7 +73,7 @@ public class StationRequestResolver extends BuildingRequestResolver
         }
 
         boolean foundMatch = false;
-        for (final AbstractAssignedCitizenModule module : building.getModules(AbstractAssignedCitizenModule.class))
+        for (final AbstractAssignedCitizenModule module : building.getModulesByType(AbstractAssignedCitizenModule.class))
         {
             for (final ICitizenData citizen : module.getAssignedCitizen())
             {

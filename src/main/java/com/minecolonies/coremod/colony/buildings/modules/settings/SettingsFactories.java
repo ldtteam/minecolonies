@@ -110,7 +110,7 @@ public class SettingsFactories
     /**
      * Specific factory for the bool setting.
      */
-    public static abstract class AbstractStringSettingsFactory<T extends IStringSetting> implements IStringSettingFactory<T>
+    public static abstract class AbstractStringSettingsFactory<T extends StringSetting> implements IStringSettingFactory<T>
     {
         /**
          * Compound tag for the value.
@@ -131,7 +131,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting storage)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_VALUE, storage.getCurrentIndex());
@@ -163,7 +163,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.getCurrentIndex());
             packetBuffer.writeInt(input.getSettings().size());
@@ -371,6 +371,7 @@ public class SettingsFactories
 
     /**
      * Specific factory for the string setting with desc.
+     * TODO: Remove in future versions as this only exists right now for settings parsing purposes, this one is not necessary anymore because {@link StringSetting} contains a description by default now.
      */
     public static class StringWithDescSettingsFactory extends AbstractStringSettingsFactory<StringSettingWithDesc>
     {
@@ -396,22 +397,22 @@ public class SettingsFactories
     }
 
     /**
-     * Specific factory for the string setting with desc.
+     * Specific factory for the guard patrol mode setting.
      */
-    public static class PatrolModeSettingFactory extends AbstractStringSettingsFactory<PatrolModeSetting>
+    public static class GuardPatrolModeSettingFactory extends AbstractStringSettingsFactory<GuardPatrolModeSetting>
     {
         @NotNull
         @Override
-        public TypeToken<PatrolModeSetting> getFactoryOutputType()
+        public TypeToken<GuardPatrolModeSetting> getFactoryOutputType()
         {
-            return TypeToken.of(PatrolModeSetting.class);
+            return TypeToken.of(GuardPatrolModeSetting.class);
         }
 
         @NotNull
         @Override
-        public PatrolModeSetting getNewInstance(final List<String> value, final int curr)
+        public GuardPatrolModeSetting getNewInstance(final List<String> value, final int curr)
         {
-            return new PatrolModeSetting(value, curr);
+            return new GuardPatrolModeSetting(value, curr);
         }
 
         @Override
@@ -448,22 +449,22 @@ public class SettingsFactories
     }
 
     /**
-     * Specific factory for the string setting with desc.
+     * Specific factory for the guard follow mode setting.
      */
-    public static class FollowModeSettingFactory extends AbstractStringSettingsFactory<FollowModeSetting>
+    public static class GuardFollowModeSettingFactory extends AbstractStringSettingsFactory<GuardFollowModeSetting>
     {
         @NotNull
         @Override
-        public TypeToken<FollowModeSetting> getFactoryOutputType()
+        public TypeToken<GuardFollowModeSetting> getFactoryOutputType()
         {
-            return TypeToken.of(FollowModeSetting.class);
+            return TypeToken.of(GuardFollowModeSetting.class);
         }
 
         @NotNull
         @Override
-        public FollowModeSetting getNewInstance(final List<String> value, final int curr)
+        public GuardFollowModeSetting getNewInstance(final List<String> value, final int curr)
         {
-            return new FollowModeSetting(value, curr);
+            return new GuardFollowModeSetting(value, curr);
         }
 
         @Override
@@ -616,9 +617,9 @@ public class SettingsFactories
         public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
-            if (storage.currentIndex != null)
+            if (storage.selectedRecipe != null)
             {
-                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.currentIndex));
+                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.selectedRecipe));
             }
             compound.putString(TAG_MODULE, storage.craftingModuleId);
             return compound;
@@ -640,10 +641,10 @@ public class SettingsFactories
         @Override
         public void serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
-            packetBuffer.writeBoolean(input.currentIndex != null);
-            if (input.currentIndex != null)
+            packetBuffer.writeBoolean(input.selectedRecipe != null);
+            if (input.selectedRecipe != null)
             {
-                StandardFactoryController.getInstance().serialize(packetBuffer, input.currentIndex);
+                StandardFactoryController.getInstance().serialize(packetBuffer, input.selectedRecipe);
             }
             packetBuffer.writeUtf(input.craftingModuleId);
         }

@@ -138,7 +138,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
         }
         else
         {
-            if (this.tickCount % 5 == randomVariance % 5)
+            if (this.tickCount % 10 == randomVariance % 10)
             {
                 entityPushCache.clear();
                 entityPushCache = this.level.getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
@@ -267,5 +267,17 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     @Override
     protected void sendDebugPackets()
     {
+    }
+
+    @Override
+    public void setTicksFrozen(int p_146918_)
+    {
+
+    }
+
+    @Override
+    public void updateSwimAmount()
+    {
+
     }
 }

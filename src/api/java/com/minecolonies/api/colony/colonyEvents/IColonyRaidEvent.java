@@ -42,4 +42,18 @@ public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
      * Gets the list of waypoints
      */
     List<BlockPos> getWayPoints();
+
+    /**
+     * Whether or not the raid is still active.
+     * @return true if so.
+     */
+    default boolean isRaidActive()
+    {
+        return getStatus() == EventStatus.PROGRESSING ||getStatus() == EventStatus.PREPARING;
+    }
+
+    /**
+     * Set the raid event to mercy.
+     */
+    void setMercyEnd();
 }
