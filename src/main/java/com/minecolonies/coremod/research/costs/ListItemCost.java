@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.coremod.research.GlobalResearch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -97,7 +98,7 @@ public class ListItemCost implements IResearchCost
         {
             this.items.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(arrayItem.getAsJsonPrimitive().getAsString())));
         }
-        this.count = CostUtils.getCount(jsonObject);
+        this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 
     @Override
