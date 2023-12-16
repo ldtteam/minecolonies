@@ -38,18 +38,51 @@ public enum SurfaceType
     @NotNull
     public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos)
     {
+        return getSurfaceType(world,blockState,pos,null);
+    }
+
+    /**
+     * Is the block solid and can be stood upon.
+     *
+     * @param blockState Block to check.
+     * @param pos        the position.
+     * @param pathingOptions the pathing options to consider
+     * @return true if the block at that location can be walked on.
+     */
+    @NotNull
+    public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos,@Nullable final PathingOptions pathingOptions)
+    {
         final Block block = blockState.getBlock();
+
+        if (block instanceof FireBlock)
+        {
+            if (pathingOptions != null && pathingOptions.canPassDanger())
+            {
+                return SurfaceType.DROPABLE;
+            }
+
+            return SurfaceType.NOT_PASSABLE;
+        }
+
+        if (block instanceof CampfireBlock
+              || block instanceof AbstractBlockBarrel
+              || block instanceof MagmaBlock
+              || block instanceof PowderSnowBlock)
+        {
+            if (pathingOptions != null && pathingOptions.canPassDanger())
+            {
+                return SurfaceType.WALKABLE;
+            }
+
+            return SurfaceType.NOT_PASSABLE;
+        }
+
         if (block instanceof FenceBlock
               || block instanceof FenceGateBlock
               || block instanceof WallBlock
-              || block instanceof FireBlock
-              || block instanceof CampfireBlock
               || block instanceof AbstractBlockMinecoloniesDefault
-              || block instanceof AbstractBlockBarrel
               || block instanceof BambooBlock
-              || block instanceof DoorBlock
-              || block instanceof MagmaBlock
-              || block instanceof PowderSnowBlock)
+              || block instanceof DoorBlock)
         {
             return SurfaceType.NOT_PASSABLE;
         }

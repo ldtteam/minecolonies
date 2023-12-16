@@ -1,17 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
-import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,6 +14,9 @@ import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BEEKEEP_2;
 
+/**
+ * Stores the beekeeper collection setting.
+ */
 public class BeekeeperCollectionSetting extends StringSetting
 {
     /**
@@ -53,11 +51,10 @@ public class BeekeeperCollectionSetting extends StringSetting
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final BOWindow window)
+      final IBuildingView building,
+      final BOWindow window)
     {
         hasResearch = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(BEEKEEP_2) > 0;
-        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 

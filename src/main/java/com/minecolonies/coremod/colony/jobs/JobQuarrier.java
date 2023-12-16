@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.jobs.IJobWithExternalWorkStations;
 import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIQuarrier;
@@ -73,6 +74,22 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
         }
 
         return null;
+    }
+
+    @Override
+    public boolean assignTo(final IAssignsJob module)
+    {
+        if (module == null || !module.getJobEntry().equals(getJobRegistryEntry()))
+        {
+            return false;
+        }
+
+        if (module instanceof QuarryModule)
+        {
+            return true;
+        }
+
+        return super.assignTo(module);
     }
 
     @Override

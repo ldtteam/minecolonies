@@ -135,7 +135,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     // mixing equation: alpha | red part | green part 
                     final int color = 0x40000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
                         | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
-                    HighlightManager.addHighlight("inventoryHighlight",
+                    HighlightManager.addHighlight("inventoryHighlight" + blockPos,
                       new TimedBoxRenderData(blockPos)
                         .setDuration(Duration.ofSeconds(60))
                         .addText("" + count)

@@ -713,20 +713,28 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             final ItemStack previous = getItemBySlot(slot);
             if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true))
             {
-                if (!previous.isEmpty())
-                {
-                    this.getAttributes().removeAttributeModifiers(previous.getAttributeModifiers(slot));
-                }
-
-                if (!newItem.isEmpty())
-                {
-                    this.getAttributes().addTransientAttributeModifiers(newItem.getAttributeModifiers(slot));
-                }
-
                 markEquipmentDirty();
             }
         }
         super.setItemSlot(slot, newItem);
+    }
+
+    /**
+     * On armor removal.
+     * @param stack the removed armor.
+     */
+    public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot)
+    {
+        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
+    }
+
+    /**
+     * On armor equip.
+     * @param stack the added armor.
+     */
+    public void onArmorAdd(final ItemStack stack, final EquipmentSlot equipmentSlot)
+    {
+        this.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
     }
 
     /**

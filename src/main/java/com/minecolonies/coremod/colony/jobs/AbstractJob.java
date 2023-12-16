@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -11,9 +13,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -40,6 +44,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 {
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
     private static final String TAG_ACTIONS_DONE   = "actionsDone";
+    private static final String TAG_WORK_POS   = "workPos";
 
     /**
      * Job associated to the abstract job.
@@ -70,6 +75,21 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
      * Check if the worker has searched for food today.
      */
     private boolean searchedForFoodToday;
+
+    /**
+     * Position of the work building
+     */
+    protected BlockPos workBuildingPos = null;
+
+    /**
+     * The work building
+     */
+    protected IBuilding workBuilding = null;
+
+    /**
+     * The work module we're assigned to
+     */
+    protected IAssignsJob workModule =  null;
 
     /**
      * Initialize citizen data.
@@ -106,6 +126,51 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     }
 
     @Override
+    public BlockPos getBuildingPos()
+    {
+        return workBuildingPos;
+    }
+
+    @Override
+    public IBuilding getWorkBuilding()
+    {
+        return workBuilding;
+    }
+
+    @Override
+    public IAssignsJob getWorkModule()
+    {
+        return workModule;
+    }
+
+    @Override
+    public boolean assignTo(final IAssignsJob module)
+    {
+        if (module == null || !module.getJobEntry().equals(getJobRegistryEntry()))
+        {
+            return false;
+        }
+
+        if (workBuilding != null && workBuilding != module.getBuilding())
+        {
+            for(final IAssignsJob oldJobModule : workBuilding.getModules(IAssignsJob.class))
+            {
+                if (oldJobModule.hasAssignedCitizen(citizen))
+                {
+                    oldJobModule.removeCitizen(citizen);
+                }
+            }
+        }
+
+        workBuilding = module.getBuilding();
+        workBuildingPos = workBuilding.getID();
+        workModule = module;
+
+        citizen.setJob(this);
+        return true;
+    }
+
+    @Override
     final public JobEntry getJobRegistryEntry()
     {
         return this.entry;
@@ -124,6 +189,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
             .collect(NBTUtils.toListNBT()));
         compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
+        if (workBuildingPos != null)
+        {
+            BlockPosUtil.write(compound, TAG_WORK_POS, workBuildingPos);
+        }
+
         return compound;
     }
 
@@ -141,6 +211,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
         if (compound.contains(TAG_ACTIONS_DONE))
         {
             actionsDone = compound.getInt(TAG_ACTIONS_DONE);
+        }
+
+        if (compound.contains(TAG_WORK_POS))
+        {
+            workBuildingPos = BlockPosUtil.read(compound,TAG_WORK_POS);
         }
     }
 
@@ -334,10 +409,26 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     @Override
     public void onRemoval()
     {
+        citizen.setJob(null);
+
         if (getWorkerAI() != null)
         {
             getWorkerAI().onRemoval();
         }
+
+        if (workBuilding != null)
+        {
+            for(final IAssignsJob oldJobModule : workBuilding.getModules(IAssignsJob.class))
+            {
+                if (oldJobModule.hasAssignedCitizen(citizen))
+                {
+                    oldJobModule.removeCitizen(citizen);
+                }
+            }
+        }
+
+        workBuilding = null;
+        workModule = null;
     }
 
     @Override

@@ -40,6 +40,7 @@ import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.level.Level;
@@ -270,11 +271,11 @@ VisitorCitizen extends AbstractEntityCitizen
      * Mark the citizen dirty to synch the data with the client.
      */
     @Override
-    public void markDirty()
+    public void markDirty(final int time)
     {
         if (citizenData != null)
         {
-            citizenData.markDirty();
+            citizenData.markDirty(time);
         }
     }
 
@@ -302,7 +303,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 20);
         }
     }
 
@@ -315,7 +316,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 60 * 2);
         }
     }
 
@@ -524,8 +525,20 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            usedStack.setCount(usedStack.getCount() - 1);
-            player.setItemInHand(hand, usedStack);
+            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+            {
+                if (!player.getInventory().add(remainingItem))
+                {
+                    InventoryUtils.spawnItemStack(
+                      player.level,
+                      player.getX(),
+                      player.getY(),
+                      player.getZ(),
+                      remainingItem
+                    );
+                }
+            }
 
             if (!level.isClientSide())
             {
@@ -588,7 +601,7 @@ VisitorCitizen extends AbstractEntityCitizen
 
         if (lastHurtByPlayerTime > 0)
         {
-            markDirty();
+            markDirty(0);
         }
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
@@ -618,9 +631,10 @@ VisitorCitizen extends AbstractEntityCitizen
     public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
-        if (citizenColonyHandler.getColony() != null && citizenData != null)
+
+        compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
+        if (citizenData != null)
         {
-            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
 
@@ -632,12 +646,14 @@ VisitorCitizen extends AbstractEntityCitizen
     {
         super.readAdditionalSaveData(compound);
 
-        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
-        citizenId = compound.getInt(TAG_CITIZEN);
-
-        if (isEffectiveAi())
+        if (compound.contains(TAG_COLONY_ID))
         {
-            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+            if (compound.contains(TAG_CITIZEN))
+            {
+                citizenId = compound.getInt(TAG_CITIZEN);
+                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            }
         }
 
         citizenDiseaseHandler.read(compound);

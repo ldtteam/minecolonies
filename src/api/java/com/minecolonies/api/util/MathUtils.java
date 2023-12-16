@@ -50,4 +50,17 @@ public final class MathUtils
         //Hypot returns sqrt(x²+ y²) without intermediate overflow or underflow.
         return Math.hypot((double) x2 - x1, (double) z2 - z1);
     }
+
+    /**
+     * Clamped a value between a lower and upper bound.
+     *
+     * @param value the input value to clamp.
+     * @param min   the lower bound.
+     * @param max   the upper bound.
+     * @return the value, clamped between the lower and upper bound.
+     */
+    public static int clamp(int value, int min, int max)
+    {
+        return Math.max(min, Math.min(max, value));
+    }
 }

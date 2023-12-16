@@ -4,6 +4,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
@@ -31,8 +32,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
@@ -45,6 +48,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
@@ -77,7 +81,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     /**
      * 1 in X Chance that thorns effect happens
      */
-    private static final int THORNS_CHANCE = 5;
+    private static final int THORNS_CHANCE            = 5;
+
+    /**
+     * Set the colony raided if raider is in the wrong colony.
+     */
+    private static final int COLONY_SET_RAIDED_CHANCE = 20;
 
     /**
      * The New PathNavigate navigator.
@@ -145,6 +154,11 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     private boolean envDamageImmunity = false;
 
     /**
+     * Temporary Environmental damage immunity shortly after spawning.
+     */
+    private boolean tempEnvDamageImmunity = true;
+
+    /**
      * Counts entity collisions
      */
     private int collisionCounter = 0;
@@ -164,6 +178,11 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      * The threattable of the mob
      */
     private ThreatTable threatTable = new ThreatTable<>(this);
+
+    /**
+     * Last chunk pos.
+     */
+    private ChunkPos lastChunkPos = null;
 
     /**
      * Raiders AI statemachine
@@ -268,8 +287,9 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             this.navigation = newNavigator;
             this.newNavigator.setCanFloat(true);
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
-            this.newNavigator.getNodeEvaluator().setCanPassDoors(true);
+            this.newNavigator.getPathingOptions().setEnterDoors(true);
             newNavigator.getPathingOptions().withDropCost(1.3D);
+            newNavigator.getPathingOptions().setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()
@@ -431,9 +451,19 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
         if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
+            envDmgCooldown--;
             if (worldTimeAtSpawn == 0)
             {
                 worldTimeAtSpawn = level.getGameTime();
+            }
+
+            if (this.chunkPosition() != lastChunkPos)
+            {
+                this.lastChunkPos = this.chunkPosition();
+                if (random.nextInt(COLONY_SET_RAIDED_CHANCE) <= 0)
+                {
+                    this.onEnterChunk(this.lastChunkPos);
+                }
             }
 
             if (shouldDespawn())
@@ -473,6 +503,21 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         }
 
         super.aiStep();
+    }
+
+    /**
+     * Even on when a raider entered a new chunk.
+     * @param newChunkPos the new chunk pos.
+     */
+    private void onEnterChunk(final ChunkPos newChunkPos)
+    {
+        final LevelChunk chunk = colony.getWorld().getChunk(newChunkPos.x, newChunkPos.z);
+        final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (chunkCapability != null && chunkCapability.getOwningColony() != 0 && colony.getID() != chunkCapability.getOwningColony())
+        {
+            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), level);
+            tempColony.getRaiderManager().setPassThroughRaid();
+        }
     }
 
     @org.jetbrains.annotations.Nullable
@@ -553,7 +598,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
         if (damageSource.getDirectEntity() == null)
         {
-            if (envDamageImmunity)
+            if (envDamageImmunity || tempEnvDamageImmunity)
             {
                 return false;
             }
@@ -652,6 +697,17 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     public void setEnvDamageImmunity(final boolean immunity)
     {
         envDamageImmunity = immunity;
+    }
+
+
+    /**
+     * Sets the temporary immunity to environmental damage
+     *
+     * @param immunity whether immune
+     */
+    public void setTempEnvDamageImmunity(final boolean immunity)
+    {
+        tempEnvDamageImmunity = immunity;
     }
 
     /**

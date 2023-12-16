@@ -665,7 +665,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected WorkerBuildingModule getModuleForJob()
     {
-        return building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == job.getJobRegistryEntry());
+        return (WorkerBuildingModule) job.getWorkModule();
     }
 
     /**

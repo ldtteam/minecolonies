@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -588,7 +589,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (!(event.getTarget() instanceof Mob) && !perms.hasPermission(event.getEntity(), Action.ATTACK_ENTITY))
+            if (!(event.getTarget() instanceof Enemy) && !perms.hasPermission(event.getEntity(), Action.ATTACK_ENTITY))
             {
                 cancelEvent(event, event.getEntity(), colony, Action.ATTACK_ENTITY, new BlockPos(event.getTarget().position()));
             }

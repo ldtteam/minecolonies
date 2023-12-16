@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.monster.Monster;
 
@@ -175,9 +176,20 @@ public class CitizenAI implements IStateAI
         }
         else
         {
-            if (citizen.getCitizenSleepHandler().isAsleep() && !citizen.getCitizenDiseaseHandler().isSick())
+            if (citizen.getCitizenSleepHandler().isAsleep())
             {
-                citizen.getCitizenSleepHandler().onWakeUp();
+                if (citizen.getCitizenDiseaseHandler().isSick())
+                {
+                    final BlockPos bedPos = citizen.getCitizenSleepHandler().getBedLocation();
+                    if (bedPos == null || bedPos.distSqr(citizen.blockPosition()) > 5)
+                    {
+                        citizen.getCitizenSleepHandler().onWakeUp();
+                    }
+                }
+                else
+                {
+                    citizen.getCitizenSleepHandler().onWakeUp();
+                }
             }
         }
 
@@ -223,7 +235,7 @@ public class CitizenAI implements IStateAI
             {
                 citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
-            return CitizenAIState.SLEEP;
+            return CitizenAIState.IDLE;
         }
 
         // Work

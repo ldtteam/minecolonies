@@ -27,7 +27,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     /**
      * It's colony id.
      */
-    protected int colonyId;
+    protected int colonyId = 0;
 
     /**
      * The colony reference.

@@ -6,9 +6,10 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BUILDER_MODE;
@@ -19,23 +20,44 @@ import static com.minecolonies.api.research.util.ResearchConstants.BUILDER_MODE;
 public class BuilderModeSetting extends StringSetting
 {
     /**
+     * Reason display constants.
+     */
+    public static final String NEEDS_RESEARCH_REASON  = "com.minecolonies.coremod.settings.reason.needsresearch";
+    public static final String BUILDER_MODES_RESEARCH = "com.minecolonies.research.technology.buildermodes.name";
+
+    /**
      * Create the builder mode setting.
      */
     public BuilderModeSetting()
     {
-        super(new ArrayList<>(StructureIterators.getKeySet()), 0);
+        super(StructureIterators.getKeySet().stream().sorted(String::compareToIgnoreCase).toList(), 0);
         set(Structurize.getConfig().getServer().iteratorType.get());
     }
 
     /**
      * Create the builder mode setting.
+     *
      * @param value the list of possible settings.
-     * @param curr the current setting.
+     * @param curr  the current setting.
      */
     public BuilderModeSetting(final List<String> value, final int curr)
     {
-        super(new ArrayList<>(StructureIterators.getKeySet()), 0);
+        super(StructureIterators.getKeySet().stream().sorted(String::compareToIgnoreCase).toList(), 0);
         set(value.get(curr));
+    }
+
+    @NotNull
+    public static String getActualValue(@NotNull final IBuilding building)
+    {
+        return building.getOptionalSetting(BuildingBuilder.BUILDING_MODE)
+                 .map(StringSetting::getValue)
+                 .orElse(Structurize.getConfig().getServer().iteratorType.get());
+    }
+
+    @Override
+    protected Component getDisplayText()
+    {
+        return Component.translatable("com.ldtteam.structurize.iterators." + getSettings().get(getCurrentIndex()));
     }
 
     @Override
@@ -50,11 +72,9 @@ public class BuilderModeSetting extends StringSetting
         return module.getColony().getResearchManager().getResearchEffects().getEffectStrength(BUILDER_MODE) > 0;
     }
 
-    @NotNull
-    public static String getActualValue(@NotNull final IBuilding building)
+    @Override
+    public @Nullable Component getInactiveReason()
     {
-        return building.getOptionalSetting(BuildingBuilder.BUILDING_MODE)
-                .map(StringSetting::getValue)
-                .orElse(Structurize.getConfig().getServer().iteratorType.get());
+        return Component.translatable(NEEDS_RESEARCH_REASON, Component.translatable(BUILDER_MODES_RESEARCH));
     }
 }

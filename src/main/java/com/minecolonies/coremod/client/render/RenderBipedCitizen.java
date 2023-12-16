@@ -14,7 +14,6 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +22,6 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
 
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +41,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     public RenderBipedCitizen(final EntityRendererProvider.Context context)
     {
         super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
-        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
+        this.addLayer(new CitizenArmorLayer(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
         super.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
         ModModelTypeInitializer.init(context);
     }

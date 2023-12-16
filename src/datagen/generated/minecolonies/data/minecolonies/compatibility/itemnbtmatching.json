@@ -90,6 +90,22 @@
     "item": "domum_ornamentum:cactus_extra"
   },
   {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/glowstone"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:center_light"
+  },
+  {
     "item": "domum_ornamentum:cobblestone_extra"
   },
   {
@@ -119,6 +135,19 @@
   },
   {
     "item": "domum_ornamentum:cyan_floating_carpet"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:dark_brick"
   },
   {
     "checkednbtkeys": [
@@ -214,6 +243,22 @@
             "key": "minecraft:block/oak_planks"
           },
           {
+            "key": "minecraft:block/glowstone"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:four_light"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
             "key": "minecraft:block/dark_oak_planks"
           }
         ],
@@ -293,6 +338,19 @@
   },
   {
     "item": "domum_ornamentum:light_blue_floating_carpet"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:light_brick"
   },
   {
     "item": "domum_ornamentum:light_gray_brick_extra"
@@ -436,8 +494,37 @@
       {
         "children": [
           {
-            "key": "minecraft:block/acacia_planks"
+            "key": "minecraft:block/oak_planks"
           },
+          {
+            "key": "minecraft:block/clay"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:shingle_flat"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/clay"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:shingle_flat_lower"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
           {
             "key": "minecraft:block/oak_planks"
           },

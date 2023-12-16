@@ -27,24 +27,30 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     private final IColonyManagerCapability colonyManager;
 
     /**
+     * Is this the main overworld cap?
+     */
+    private final boolean overworld;
+
+    /**
      * Constructor of the provider.
      */
-    public MinecoloniesWorldColonyManagerCapabilityProvider()
+    public MinecoloniesWorldColonyManagerCapabilityProvider(final boolean overworld)
     {
         this.colonyManager = new IColonyManagerCapability.Impl();
         this.colonyManagerOptional = LazyOptional.of(() -> colonyManager);
+        this.overworld = overworld;
     }
 
     @Override
     public Tag serializeNBT()
     {
-        return IColonyManagerCapability.Storage.writeNBT(COLONY_MANAGER_CAP, colonyManager, null);
+        return IColonyManagerCapability.Storage.writeNBT(COLONY_MANAGER_CAP, colonyManager, overworld);
     }
 
     @Override
     public void deserializeNBT(final Tag nbt)
     {
-        IColonyManagerCapability.Storage.readNBT(COLONY_MANAGER_CAP, colonyManager, null, nbt);
+        IColonyManagerCapability.Storage.readNBT(COLONY_MANAGER_CAP, colonyManager, overworld, nbt);
     }
 
     @Nonnull

@@ -40,6 +40,7 @@ import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
@@ -60,6 +61,7 @@ import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.PlaySoundForCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -409,6 +411,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
+        if (!level.isClientSide && getCitizenData() != null)
+        {
+            final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
+            Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
+        }
+
         if (citizenData != null && citizenData.getJob() != null)
         {
             ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
@@ -635,8 +643,21 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getEyeHeight()), this);
         }
 
-        usedStack.shrink(1);
-        player.setItemInHand(hand, usedStack);
+        final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+        if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+        {
+            if (!player.getInventory().add(remainingItem))
+            {
+                InventoryUtils.spawnItemStack(
+                  player.level,
+                  player.getX(),
+                  player.getY(),
+                  player.getZ(),
+                  remainingItem
+                );
+            }
+        }
+
         interactionCooldown = 100;
     }
 
@@ -678,9 +699,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
-        if (citizenColonyHandler.getColony() != null && citizenData != null)
+
+        // Avoid accessing chunks in here, may cause loads during unload
+        compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
+        if (citizenData != null)
         {
-            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
         citizenDiseaseHandler.write(compound);
@@ -691,8 +714,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         super.readAdditionalSaveData(compound);
 
-        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
-        citizenId = compound.getInt(TAG_CITIZEN);
+        if (compound.contains(TAG_COLONY_ID))
+        {
+            citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+            if (compound.contains(TAG_CITIZEN))
+            {
+                citizenId = compound.getInt(TAG_CITIZEN);
+                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            }
+        }
         citizenDiseaseHandler.read(compound);
         setPose(Pose.STANDING);
     }
@@ -1054,11 +1084,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * Mark the citizen dirty to synch the data with the client.
      */
     @Override
-    public void markDirty()
+    public void markDirty(final int time)
     {
         if (citizenData != null)
         {
-            citizenData.markDirty();
+            citizenData.markDirty(time);
         }
     }
 
@@ -1078,12 +1108,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (!isChild && this.child)
             {
+                this.child = isChild;
                 getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
             }
         }
         this.child = isChild;
         this.getEntityData().set(DATA_IS_CHILD, isChild);
-        markDirty();
+        refreshDimensions();
+        markDirty(0);
     }
 
     @Override
@@ -1124,7 +1156,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 20);
         }
     }
 
@@ -1137,7 +1169,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 60 * 2);
         }
     }
 
@@ -1806,7 +1838,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                         }
                     }
                     this.citizenData.setName(name.getString());
-                    this.citizenData.markDirty();
+                    this.citizenData.markDirty(0);
                     super.setCustomName(name);
                 }
                 return;

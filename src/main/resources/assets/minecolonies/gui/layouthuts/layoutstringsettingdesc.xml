@@ -1,5 +1,0 @@
-<window size="100% 100%" pause="false" lightbox="false">
-    <text id="id" size="0 0" pos="0 0" visible="false"/>
-    <text id="desc" size="120 15" pos="5 10" color="black"/>
-    <buttonimage  id="trigger" pos="67 10" size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
-</window>

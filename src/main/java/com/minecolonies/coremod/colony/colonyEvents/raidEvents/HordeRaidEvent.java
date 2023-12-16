@@ -135,6 +135,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     private PathResult spawnPathResult;
 
     /**
+     * If this was a mercy end.
+     */
+    private boolean mercyEnd = false;
+
+    /**
      * Waypoints helping raiders travel
      */
     private List<BlockPos> wayPoints = new ArrayList<>();
@@ -239,6 +244,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         RaiderMobUtils.spawn(getArcherRaiderType(), numberOfArchers, spawnPos, colony.getWorld(), colony, id);
     }
 
+    @Override
+    public void setMercyEnd()
+    {
+        this.mercyEnd = true;
+    }
+
     /**
      * Prepares the horde event, makes them wait at campfires for a while,deciding on their plans.
      */
@@ -292,7 +303,14 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (horde.hordeSize > 0)
         {
-            MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            if (mercyEnd)
+            {
+                MessageUtils.format(ALL_BARBARIANS_MERCY_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            }
+            else
+            {
+                MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            }
         }
     }
 

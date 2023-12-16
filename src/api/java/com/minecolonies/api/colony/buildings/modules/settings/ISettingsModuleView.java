@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Client side part of the settings module.
@@ -19,5 +20,6 @@ public interface ISettingsModuleView extends IBuildingModuleView
      * @param <T> the type of setting.
      * @return the setting.
      */
+    @Nullable
     <T extends ISetting> T getSetting(final ISettingKey<T> key);
 }

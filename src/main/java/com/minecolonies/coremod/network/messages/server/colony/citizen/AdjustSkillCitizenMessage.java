@@ -105,6 +105,6 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
         }
 
         citizenData.getCitizenSkillHandler().incrementLevel(skill, quantity);
-        citizenData.markDirty();
+        citizenData.markDirty(0);
     }
 }
