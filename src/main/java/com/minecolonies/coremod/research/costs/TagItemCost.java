@@ -2,6 +2,7 @@ package com.minecolonies.coremod.research.costs;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.research.costs.IResearchCost;
+import com.minecolonies.coremod.research.GlobalResearch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -91,7 +92,7 @@ public class TagItemCost implements IResearchCost
     {
         final String tagKey = jsonObject.getAsJsonObject(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive(RESEARCH_ITEM_TAG_PROP).getAsString();
         this.tag = ForgeRegistries.ITEMS.tags().createTagKey(new ResourceLocation(tagKey));
-        this.count = CostUtils.getCount(jsonObject);
+        this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 
     @Override

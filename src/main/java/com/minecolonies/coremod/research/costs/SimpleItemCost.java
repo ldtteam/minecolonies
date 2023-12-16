@@ -2,6 +2,7 @@ package com.minecolonies.coremod.research.costs;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.research.costs.IResearchCost;
+import com.minecolonies.coremod.research.GlobalResearch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -100,7 +101,7 @@ public class SimpleItemCost implements IResearchCost
     public void parseFromJson(final JsonObject jsonObject)
     {
         this.item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(jsonObject.getAsJsonPrimitive(RESEARCH_ITEM_NAME_PROP).getAsString()));
-        this.count = CostUtils.getCount(jsonObject);
+        this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 
     @Override

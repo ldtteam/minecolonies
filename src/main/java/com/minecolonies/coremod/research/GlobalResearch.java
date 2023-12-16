@@ -980,4 +980,22 @@ public class GlobalResearch implements IGlobalResearch
             }
         }
     }
+
+    /**
+     * Parse the research item requirement count value from the provided json object.
+     *
+     * @param jsonObject the input json object.
+     * @return the count number.
+     */
+    public static int parseItemCount(final JsonObject jsonObject)
+    {
+        int count = 1;
+        if (jsonObject.has(RESEARCH_QUANTITY_PROP) &&
+              jsonObject.get(RESEARCH_QUANTITY_PROP).isJsonPrimitive() &&
+              jsonObject.get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
+        {
+            count = Math.max(jsonObject.get(RESEARCH_QUANTITY_PROP).getAsInt(), 1);
+        }
+        return count;
+    }
 }
