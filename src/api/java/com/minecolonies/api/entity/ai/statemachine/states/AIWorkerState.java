@@ -368,6 +368,11 @@ public enum AIWorkerState implements IAIState
     /**
      * Pickup items within area.
      */
+    HERDER_FEED_CHILDREN(false),
+
+    /**
+     * Feed animals.
+     */
     HERDER_FEED(false),
 
     /*
