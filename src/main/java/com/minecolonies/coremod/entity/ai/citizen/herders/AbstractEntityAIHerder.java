@@ -448,7 +448,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (breedables.size() < 2)
         {
             worker.getCitizenItemHandler().removeHeldItem();
-            breedTimeOut = 20 * 60;
+            breedTimeOut = TICKS_SECOND * 60;
             return DECIDE;
         }
 
@@ -472,7 +472,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (animalTwo == null)
         {
             worker.getCitizenItemHandler().removeHeldItem();
-            breedTimeOut = 20 * 20;
+            breedTimeOut = TICKS_SECOND * 20;
             return DECIDE;
         }
 
@@ -491,7 +491,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return getState();
         }
 
-        breedTimeOut = 20 * 60;
+        breedTimeOut = TICKS_SECOND * 60;
         worker.getCitizenItemHandler().removeHeldItem();
         return IDLE;
     }
@@ -555,7 +555,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (!walkingToAnimal(animalOne))
         {
             // Values taken from vanilla.
-            animalOne.ageUp((int)((float)(-animalOne.getAge() / 20) * 0.1F), true);
+            animalOne.ageUp((int)((float)(-animalOne.getAge() / TICKS_SECOND) * 0.1F), true);
             worker.swing(InteractionHand.MAIN_HAND);
             worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
@@ -591,7 +591,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         for(final Animal animal:animals)
         {
-            if (worker.level.getGameTime() -  fedRecently.getOrDefault(animal.getUUID(),0L) > 20 * 60 * 5)
+            if (worker.level.getGameTime() -  fedRecently.getOrDefault(animal.getUUID(),0L) > TICKS_SECOND * 60 * 5)
             {
                 toFeed = animal;
                 break;
