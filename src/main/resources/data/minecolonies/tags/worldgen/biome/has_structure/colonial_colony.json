@@ -1,0 +1,28 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:plains",
+    "#forge:is_plains",
+    "minecraft:sunflower_plains",
+    "minecraft:snowy_plains",
+    "minecraft:forest",
+    "#minecraft:is_forest",
+    "minecraft:flower_forest",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_gravelly_hills",
+    "minecraft:windswept_forest",
+    "minecraft:meadow",
+    "minecraft:snowy_slopes",
+    "minecraft:frozen_peaks",
+    "minecraft:jagged_peaks",
+    "minecraft:stony_peaks",
+    "#forge:is_peak",
+    "minecraft:river",
+    "minecraft:frozen_river",
+    "minecraft:beach",
+    "#minecraft:is_beach",
+    "minecraft:snowy_beach",
+    "minecraft:stony_shore",
+    "minecraft:mushroom_fields"
+  ]
+}
