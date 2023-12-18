@@ -100,14 +100,14 @@ public class SimpleItemCost implements IResearchCost
     public void serialize(final @NotNull FriendlyByteBuf buf)
     {
         buf.writeInt(this.count);
-        buf.writeItem(new ItemStack(this.item));
+        buf.writeRegistryId(ForgeRegistries.ITEMS, this.item);
     }
 
     @Override
     public void deserialize(final @NotNull FriendlyByteBuf buf)
     {
         this.count = buf.readInt();
-        this.item = buf.readItem().getItem();
+        this.item = buf.readRegistryIdSafe(Item.class);
     }
 
     @Override
