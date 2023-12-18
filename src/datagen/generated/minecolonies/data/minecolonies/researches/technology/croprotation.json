@@ -13,11 +13,21 @@
       "level": 3
     },
     {
-      "item": "minecraft:sugar_cane",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:sugar_cane"
+        ]
+      },
       "quantity": 32
     },
     {
-      "item": "minecraft:cactus",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:cactus"
+        ]
+      },
       "quantity": 32
     }
   ],

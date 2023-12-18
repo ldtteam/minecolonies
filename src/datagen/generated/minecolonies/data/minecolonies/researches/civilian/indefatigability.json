@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:civilian/fortitude",
   "requirements": [
     {
-      "item": "minecraft:golden_apple",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:golden_apple"
+        ]
+      },
       "quantity": 64
     }
   ],

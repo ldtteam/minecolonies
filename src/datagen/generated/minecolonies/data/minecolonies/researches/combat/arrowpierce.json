@@ -13,11 +13,21 @@
       "level": 1
     },
     {
-      "item": "minecraft:arrow",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:arrow"
+        ]
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:redstone",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:redstone"
+        ]
+      },
       "quantity": 64
     }
   ],

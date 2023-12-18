@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:glass",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:glass"
+        ]
+      },
       "quantity": 64
     }
   ],

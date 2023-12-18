@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:white_wool",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:white_wool"
+        ]
+      },
       "quantity": 32
     }
   ],
