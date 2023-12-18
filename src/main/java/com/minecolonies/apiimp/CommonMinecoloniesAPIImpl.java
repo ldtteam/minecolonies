@@ -68,9 +68,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> colonyEventDescriptionRegistry;
     private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
     private        IForgeRegistry<ResearchRequirementEntry>                researchRequirementRegistry;
-    private        IForgeRegistry<ResearchEffectEntry> researchEffectRegistry;
-    private        IForgeRegistry<ResearchCostType>    researchCostRegistry;
-    private        IForgeRegistry<RecipeTypeEntry>     recipeTypeEntryRegistry;
+    private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
+    private        IForgeRegistry<ResearchCostType>                        researchCostRegistry;
+    private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
     private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
     private        IForgeRegistry<QuestRegistries.ObjectiveEntry>          questObjectiveRegistry;
     private        IForgeRegistry<QuestRegistries.RewardEntry>             questRewardRegistry;
