@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.ON;
 /**
  * Stores a boolean setting.
  */
-public class BoolSetting implements ISetting
+public class BoolSetting implements ISetting<Boolean>
 {
     /**
      * Default value of the setting.
@@ -58,7 +58,7 @@ public class BoolSetting implements ISetting
      *
      * @return the set value.
      */
-    public boolean getValue()
+    public Boolean getValue()
     {
         return value;
     }

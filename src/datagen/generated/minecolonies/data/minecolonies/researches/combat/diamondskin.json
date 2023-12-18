@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:combat/steelarmor",
   "requirements": [
     {
-      "item": "minecraft:diamond",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:diamond"
+        ]
+      },
       "quantity": 64
     }
   ],

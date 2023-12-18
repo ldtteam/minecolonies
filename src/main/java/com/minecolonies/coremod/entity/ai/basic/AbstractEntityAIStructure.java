@@ -8,7 +8,6 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -18,6 +17,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -568,23 +568,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Loads the structure given the name, rotation and position.
      *
-     * @param packName the pack name.
-     * @param blueprintPath the path of the blueprint.
+     * @param workOrder   the work order.
      * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
      * @param isMirrored  is the structure mirroed?
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final String packName, final String blueprintPath, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    public void loadStructure(@NotNull final IWorkOrder workOrder, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
     {
-        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
+        final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
-                Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " in: " + packName + ". Aborting loading procedure");
+                Log.getLogger().warn("Couldn't find structure with name: " + workOrder.getStructurePath() + " in: " + workOrder.getStructurePack() + ". Aborting loading procedure");
                 this.loadingBlueprint = false;
                 return;
             }

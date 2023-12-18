@@ -5,19 +5,26 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.blockui.views.View;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.moduleviews.CombinedHiringLimitModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
-import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_STATS_MODIFIER_NAME;
+import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 
 /**
  * BOWindow for the town hall.
@@ -64,70 +71,154 @@ public class WindowStatsPage extends AbstractWindowTownHall
     public void onOpened()
     {
         super.onOpened();
-        updateHappiness();
         updateStats();
+        createAndSetStatistics();
     }
 
     /**
-     * Update the display for the happiness.
+     *
+     * Creates several statistics and sets them in the building GUI.
      */
-    private void updateHappiness()
+    private void createAndSetStatistics()
     {
-        final Map<String, Double> happinessMap = new HashMap<>();
+        final int citizensSize = building.getColony().getCitizens().size();
+        final int citizensCap;
 
-        for (final ICitizenDataView data : building.getColony().getCitizens().values())
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
-            for (final String modifier : data.getHappinessHandler().getModifiers())
-            {
-                happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor(null));
-            }
+            final int max = Math.max(CitizenConstants.CITIZEN_LIMIT_DEFAULT, (int) this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP));
+            citizensCap = Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
+        }
+        else
+        {
+            citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
         }
 
-        final View pane = findPaneOfTypeByID("happinesspage", View.class);
-        final Text titleLabel = new Text();
-        titleLabel.setSize(136, 11);
-        titleLabel.setPosition(25, 42);
-        titleLabel.setColors(BLACK);
-        titleLabel.setText(Component.translatable("com.minecolonies.coremod.gui.townhall.currenthappiness"));
-        pane.addChild(titleLabel);
-
-
-        int yPos = 60;
-        for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
+        final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
+        totalCitizenLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+          citizensSize,
+          Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
+        List<MutableComponent> hoverText = new ArrayList<>();
+        if(citizensSize < (citizensCap * 0.9) && citizensSize < (building.getColony().getCitizenCountLimit() * 0.9))
         {
-            final double value = entry.getValue() / building.getColony().getCitizenCount();
-            final Image image = new Image();
-            image.setSize(11, 11);
-            image.setPosition(0, yPos);
-
-            final Text label = new Text();
-            label.setSize(136, 11);
-            label.setPosition(25, yPos);
-            label.setColors(BLACK);
-            label.setText(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
-
-            if (value > 1.0)
+            totalCitizenLabel.setColors(DARKGREEN);
+        }
+        else if(citizensSize < citizensCap)
+        {
+            hoverText.add(Component.translatable(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
+            totalCitizenLabel.setColors(ORANGE);
+        }
+        else
+        {
+            if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
-                image.setImage(new ResourceLocation(GREEN_ICON), false);
-            }
-            else if (value == 1)
-            {
-                image.setImage(new ResourceLocation(BLUE_ICON), false);
-            }
-            else if (value > 0.75)
-            {
-                image.setImage(new ResourceLocation(YELLOW_ICON), false);
+                hoverText.add(Component.translatable(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
             }
             else
             {
-                image.setImage(new ResourceLocation(RED_ICON), false);
+                hoverText.add(Component.translatable( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
             }
-            pane.addChild(image);
-            pane.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatable("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
-
-            yPos += 12;
+            totalCitizenLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
+            totalCitizenLabel.setColors(RED);
         }
+        PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
+
+        int children = 0;
+        final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
+        for (@NotNull final IBuildingView building : building.getColony().getBuildings())
+        {
+            if (building instanceof AbstractBuildingView)
+            {
+                for (final WorkerBuildingModuleView module : building.getModuleViews(WorkerBuildingModuleView.class))
+                {
+                    int alreadyAssigned = -1;
+                    if (module instanceof CombinedHiringLimitModuleView)
+                    {
+                        alreadyAssigned = 0;
+                        for (final WorkerBuildingModuleView combinedModule : building.getModuleViews(WorkerBuildingModuleView.class))
+                        {
+                            alreadyAssigned += combinedModule.getAssignedCitizens().size();
+                        }
+                    }
+                    int max = module.getMaxInhabitants();
+                    if (alreadyAssigned != -1)
+                    {
+                        max -= alreadyAssigned;
+                        max += module.getAssignedCitizens().size();
+                    }
+                    int workers = module.getAssignedCitizens().size();
+
+                    final String jobName = module.getJobDisplayName().toLowerCase(Locale.ENGLISH);
+
+                    final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
+                    jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
+                }
+            }
+        }
+
+        //calculate number of children
+        int unemployed = 0;
+        for (ICitizenDataView iCitizenDataView : building.getColony().getCitizens().values())
+        {
+            if (iCitizenDataView.isChild())
+            {
+                children++;
+            }
+            else if (iCitizenDataView.getJobView() == null)
+            {
+                unemployed++;
+            }
+        }
+
+        final int childCount = children;
+        final int unemployedCount = unemployed;
+
+        final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
+        if (list == null)
+        {
+            return;
+        }
+
+        final int maxJobs = jobMaxCountMap.size();
+        final List<Map.Entry<String, Tuple<Integer, Integer>>> theList = new ArrayList<>(jobMaxCountMap.entrySet());
+        theList.sort(Map.Entry.comparingByKey());
+
+        list.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return maxJobs + 2;
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Text label = rowPane.findPaneOfTypeByID(CITIZENS_AMOUNT_LABEL, Text.class);
+                // preJobsHeaders = number of all unemployed citizens
+
+                if (index < theList.size())
+                {
+                    final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
+                    final String jobString = Component.translatable(entry.getKey()).getString();
+                    final String formattedJobString = jobString.substring(0, 1).toUpperCase(Locale.US) + jobString.substring(1);
+
+                    final Component numberOfWorkers = Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, formattedJobString, entry.getValue().getA(), entry.getValue().getB());
+                    label.setText(numberOfWorkers);
+                }
+                else
+                {
+                    if (index == maxJobs + 1)
+                    {
+                        label.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount));
+                    }
+                    else
+                    {
+                        label.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, childCount));
+                    }
+                }
+            }
+        });
     }
 
     /**

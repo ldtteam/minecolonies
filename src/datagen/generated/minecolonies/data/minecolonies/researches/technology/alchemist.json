@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:technology/opennether",
   "requirements": [
     {
-      "item": "minecraft:nether_wart",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:nether_wart"
+        ]
+      },
       "quantity": 16
     }
   ],

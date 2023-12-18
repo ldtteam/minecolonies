@@ -430,7 +430,7 @@ public class CitizenWindowUtils
 
             if (value > 1.0)
             {
-                image.setImage(new ResourceLocation(GREEN_ICON), false);
+                image.setImage(new ResourceLocation(HAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatable(LABEL_HAPPINESS_POSITIVE))
                     .hoverPane(image)
@@ -438,7 +438,7 @@ public class CitizenWindowUtils
             }
             else if (value == 1)
             {
-                image.setImage(new ResourceLocation(BLUE_ICON), false);
+                image.setImage(new ResourceLocation(SATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatable(LABEL_HAPPINESS_NEUTRAL))
                     .hoverPane(image)
@@ -446,7 +446,7 @@ public class CitizenWindowUtils
             }
             else if (value > 0.75)
             {
-                image.setImage(new ResourceLocation(YELLOW_ICON), false);
+                image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatable(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
                     .hoverPane(image)
@@ -454,7 +454,7 @@ public class CitizenWindowUtils
             }
             else
             {
-                image.setImage(new ResourceLocation(RED_ICON), false);
+                image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatable(LABEL_HAPPINESS_NEGATIVE))
                     .hoverPane(image)

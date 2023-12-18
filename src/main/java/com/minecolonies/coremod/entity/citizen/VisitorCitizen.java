@@ -15,6 +15,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.LookAtEntityGoal;
@@ -40,6 +41,7 @@ import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.level.Level;
@@ -175,9 +177,9 @@ VisitorCitizen extends AbstractEntityCitizen
             if (damageSource.getEntity() instanceof LivingEntity && damage > 1.01f)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
-                if (home.hasModule(TavernBuildingModule.class))
+                if (home.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
-                    final TavernBuildingModule module = home.getFirstModuleOccurance(TavernBuildingModule.class);
+                    final TavernBuildingModule module = home.getModule(BuildingModules.TAVERN_VISITOR);
                     for (final Integer id : module.getExternalCitizens())
                     {
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
@@ -524,8 +526,20 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            usedStack.setCount(usedStack.getCount() - 1);
-            player.setItemInHand(hand, usedStack);
+            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+            {
+                if (!player.getInventory().add(remainingItem))
+                {
+                    InventoryUtils.spawnItemStack(
+                      player.level,
+                      player.getX(),
+                      player.getY(),
+                      player.getZ(),
+                      remainingItem
+                    );
+                }
+            }
 
             if (!level.isClientSide())
             {

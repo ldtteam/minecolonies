@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -26,7 +25,6 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.interactionhandling.QuestDeliveryInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.QuestDialogueInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
@@ -49,7 +47,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +63,6 @@ import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIB
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.DEBUG_WARNING_CITIZEN_LOAD_FAILURE;
 
 /**
  * Extra data for Citizens.
@@ -808,7 +804,7 @@ public class CitizenData implements ICitizenData
     {
         if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
-            homeBuilding.getFirstOptionalModuleOccurance(LivingBuildingModule.class).ifPresent(b -> b.removeCitizen(this));
+            homeBuilding.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(this);
         }
 
         homeBuilding = building;
@@ -1417,7 +1413,7 @@ public class CitizenData implements ICitizenData
 
             if (building != null)
             {
-                for (final IAssignsJob module : building.getModules(IAssignsJob.class))
+                for (final IAssignsJob module : building.getModulesByType(IAssignsJob.class))
                 {
                     if (module.getJobEntry().equals(job.getJobRegistryEntry()) && module.assignCitizen(this))
                     {
@@ -1819,6 +1815,10 @@ public class CitizenData implements ICitizenData
     @Override
     public void onInteractionClosed(final Component key, final ServerPlayer sender)
     {
-        citizenChatOptions.get(key).onClosed();
+        final IInteractionResponseHandler chatOption = citizenChatOptions.get(key);
+        if (chatOption != null)
+        {
+            chatOption.onClosed();
+        }
     }
 }

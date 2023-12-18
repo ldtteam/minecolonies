@@ -51,7 +51,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     public void addCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.add(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getJobEntry()));
+        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     public void removeCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.remove(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getJobEntry()));
+        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new CourierHiringModeMessage(buildingView, hiringMode));
+        Network.getNetwork().sendToServer(new CourierHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()));
     }
 
     @Override

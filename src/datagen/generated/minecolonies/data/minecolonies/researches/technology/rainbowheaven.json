@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:poppy",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:poppy"
+        ]
+      },
       "quantity": 64
     }
   ],

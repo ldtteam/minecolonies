@@ -24,6 +24,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherW
 import com.minecolonies.coremod.colony.jobs.JobNetherWorker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.items.ItemAdventureToken;
+import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -181,8 +182,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         BlockPos vaultPos = building.getVaultLocation();
         if (vaultPos != null)
         {
-            worker.moveTo(vaultPos.getX() + 0.5, vaultPos.getY(), vaultPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
-            worker.getNavigation().stop();
+            TeleportHelper.teleportCitizen(worker, world, vaultPos);
         }
     }
 
@@ -192,8 +192,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         BlockPos portalPos = building.getPortalLocation();
         if (portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
         {
-            worker.moveTo(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
-            worker.getNavigation().stop();
+            TeleportHelper.teleportCitizen(worker, world, portalPos);
             worker.setSilent(false);
             worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
 
@@ -885,11 +884,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
               itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
             citizenData.increaseSaturation(satIncrease / 2.0);
-            citizenData.getInventory().extractItem(slot, 1, false);
 
-            final ItemStack containerItem = stack.getCraftingRemainingItem();
-
-            if (containerItem != null && !(containerItem.getItem() instanceof AirItem))
+            final ItemStack containerItem = stack.finishUsingItem(world, worker);
+            if (!containerItem.isEmpty() && containerItem.getItem() != stack.getItem())
             {
                 if (citizenData.getInventory().isFull())
                 {

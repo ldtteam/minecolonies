@@ -11,8 +11,12 @@ import com.minecolonies.coremod.entity.ai.citizen.netherworker.EntityAIWorkNethe
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
 public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobNetherWorker>
 {
@@ -190,5 +194,16 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     public boolean addProcessedResultsList(Collection<ItemStack> newResults)
     {
         return processedResults.addAll(newResults);
+    }
+
+    @Override
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
+    {
+        if (damageSource.typeHolder().is(DamageTypes.LAVA) || damageSource.typeHolder().is(DamageTypes.IN_FIRE) || damageSource.typeHolder().is(DamageTypes.ON_FIRE))
+        {
+            return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
+        }
+
+        return super.ignoresDamage(damageSource);
     }
 }

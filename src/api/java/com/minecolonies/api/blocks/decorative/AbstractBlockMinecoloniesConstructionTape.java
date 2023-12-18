@@ -23,8 +23,7 @@ import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
-  implements SimpleWaterloggedBlock
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements SimpleWaterloggedBlock
 {
     public static final BooleanProperty NORTH       = PipeBlock.NORTH;
     public static final BooleanProperty EAST        = PipeBlock.EAST;

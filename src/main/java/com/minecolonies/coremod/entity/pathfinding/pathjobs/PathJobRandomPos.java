@@ -139,13 +139,13 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return Math.sqrt(destination.distSqr(new BlockPos(pos.getX(), destination.getY(), pos.getZ())));
+        return Math.sqrt(destination.distSqr(new BlockPos(pos.getX(), pos.getY(), pos.getZ())));
     }
 
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        if (random.nextInt(10) == 0
+        if (random.nextInt(minDistFromStart*minDistFromStart) == 0
               && isInRestrictedArea(n.pos)
               && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
               && SurfaceType.getSurfaceType(world, world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
@@ -162,7 +162,7 @@ public class PathJobRandomPos extends AbstractPathJob
     {
         return 0;
     }
-
+    
     /**
      * Checks if position and range match the given parameters
      *

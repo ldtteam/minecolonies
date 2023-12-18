@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -25,6 +27,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
@@ -94,7 +97,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * The structurize schematic name.
      */
-    private String packName;
+    protected String packName;
 
     /**
      * The work order name.
@@ -154,7 +157,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * Internal flag to see if anything has been changed.
      */
-    private boolean changed;
+    protected boolean changed;
 
     /**
      * Add a given Work Order mapping.
@@ -396,6 +399,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public String getStructurePack()
     {
         return packName;
+    }
+
+    @Override
+    public Future<Blueprint> getBlueprintFuture()
+    {
+        return StructurePacks.getBlueprintFuture(getStructurePack(), getStructurePath());
     }
 
     @Override

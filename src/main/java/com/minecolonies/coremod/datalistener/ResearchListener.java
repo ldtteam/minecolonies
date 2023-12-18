@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -226,7 +226,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             {
                 Log.getLogger().debug("Requirement: " + requirement.getDesc());
             }
-            for (ItemStorage itemS : research.getCostList())
+            for (IResearchCost itemS : research.getCostList())
             {
                 Log.getLogger().debug("Cost: " + itemS.toString());
             }

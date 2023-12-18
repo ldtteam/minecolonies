@@ -35,8 +35,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate.RestrictionType;
-
 /**
  * Minecolonies async PathNavigate.
  */
@@ -156,16 +154,18 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         desiredPos = BlockPos.ZERO;
-        return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+        final PathResult<AbstractPathJob> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           AbstractPathJob.prepareStart(ourEntity),
           3,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           range,
           ourEntity, pos), pos, speedFactor, true);
+        result.getJob().getPathingOptions().withToggleCost(1).withJumpCost(1).withDropCost(1);
+        return result;
     }
 
     @Override
-    public PathResult<AbstractPathJob> moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType)
+    public PathResult<AbstractPathJob> moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType, final boolean prioDoors)
     {
         if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {
@@ -173,10 +173,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         desiredPos = BlockPos.ZERO;
-        final int theRange = (int) (mob.getRandom().nextInt((int) range) + range / 2);
+        final int theRange = (mob.getRandom().nextInt(range) + range / 2);
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
-        return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+        final PathResult<AbstractPathJob> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           start,
           theRange,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
@@ -184,6 +184,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           corners.getA(),
           corners.getB(),
           restrictionType), null, speedFactor, true);
+
+        result.getJob().getPathingOptions().withToggleCost(prioDoors ? 5 : 1).withJumpCost(1).withDropCost(1);
+        return result;
     }
 
     @Nullable
@@ -362,6 +365,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         desiredPos = new BlockPos(newX, newY, newZ);
+
+        if (start.distSqr(desiredPos) > 500 * 500)
+        {
+            Log.getLogger()
+              .error(
+                "Entity: " + ourEntity.getDisplayName().getString() + " is trying to walk too far! distance:" + Math.sqrt(start.distSqr(desiredPos)) + " from:" + start + " to:"
+                  + desiredPos, new Exception());
+            return null;
+        }
 
         return setPathJob(
           new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),

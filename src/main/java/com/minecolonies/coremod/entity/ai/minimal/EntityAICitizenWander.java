@@ -163,7 +163,7 @@ public class EntityAICitizenWander implements IStateAI
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
                 citizen.getNavigation()
-                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                   && citizen.getRandom().nextInt(100) < 5)
@@ -205,7 +205,14 @@ public class EntityAICitizenWander implements IStateAI
         if (randomBit < LEISURE_CHANCE)
         {
             leisureSite = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite();
-            if (leisureSite != null)
+            if (leisureSite == null)
+            {
+                if (citizen.getCitizenData().getHomeBuilding() != null)
+                {
+                    leisureSite = citizen.getCitizenData().getHomeBuilding().getPosition();
+                }
+            }
+            else
             {
                 citizen.getCitizenAI().setCurrentDelay(60 * 20);
                 return GO_TO_LEISURE_SITE;

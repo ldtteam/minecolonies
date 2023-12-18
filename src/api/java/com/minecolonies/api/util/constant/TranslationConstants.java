@@ -200,6 +200,8 @@ public final class TranslationConstants
     @NonNls
     public static final String ALL_BARBARIANS_KILLED_MESSAGE                                        = "com.minecolonies.coremod.barbarians.killed";
     @NonNls
+    public static final String ALL_BARBARIANS_MERCY_MESSAGE                                        = "com.minecolonies.core.barbarians.mercy";
+    @NonNls
     public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                 = "com.minecolonies.coremod.tooclose";
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.coremod.toofar";

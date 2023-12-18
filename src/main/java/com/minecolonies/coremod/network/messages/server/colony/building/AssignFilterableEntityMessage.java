@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.EntityListModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,9 +27,9 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     private ResourceLocation entity;
 
     /**
-     * The id of the list.
+     * The id of the module.
      */
-    private String id;
+    private int id;
 
     /**
      * Empty standard constructor.
@@ -46,7 +47,7 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
      * @param entity     the entity to assign
      * @param building the building we're executing on.
      */
-    public AssignFilterableEntityMessage(final IBuildingView building, final String id, final ResourceLocation entity, final boolean assign)
+    public AssignFilterableEntityMessage(final IBuildingView building, final int id, final ResourceLocation entity, final boolean assign)
     {
         super(building);
         this.assign = assign;
@@ -57,19 +58,17 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         this.assign = buf.readBoolean();
         this.entity =buf.readResourceLocation();
-        this.id = buf.readUtf(32767);
+        this.id = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         buf.writeBoolean(this.assign);
         buf.writeResourceLocation(this.entity);
-        buf.writeUtf(this.id);
+        buf.writeInt(id);
     }
 
     @Override

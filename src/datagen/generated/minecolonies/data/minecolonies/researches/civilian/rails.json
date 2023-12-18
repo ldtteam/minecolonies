@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:rail",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:rail"
+        ]
+      },
       "quantity": 64
     }
   ],

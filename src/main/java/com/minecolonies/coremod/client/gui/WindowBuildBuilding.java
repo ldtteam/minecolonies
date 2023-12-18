@@ -298,6 +298,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
 
         String name = building.getStructurePath().replace(".blueprint", "");
+        if (name.isEmpty())
+        {
+            return;
+        }
+
         name = name.substring(0, name.length() - 1) + nextLevel + ".blueprint";
         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name), (blueprint -> {
             resources.clear();

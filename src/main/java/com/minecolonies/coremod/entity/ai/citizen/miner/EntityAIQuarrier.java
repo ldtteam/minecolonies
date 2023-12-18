@@ -11,6 +11,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -202,21 +203,20 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
     @Override
     public void loadStructure(
-      @NotNull final String packName,
-      final String blueprintPath,
-      final int rotateTimes,
-      final BlockPos position,
-      final boolean isMirrored,
-      final boolean removal)
+            @NotNull final IWorkOrder workOrder,
+            final int rotateTimes,
+            final BlockPos position,
+            final boolean isMirrored,
+            final boolean removal)
     {
-        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
+        final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
-                Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " in: " + packName + ". Aborting loading procedure");
+                Log.getLogger().warn("Couldn't find structure with name: " + workOrder.getStructurePath() + " in: " + workOrder.getStructurePack() + ". Aborting loading procedure");
                 this.loadingBlueprint = false;
                 return;
             }
@@ -232,7 +232,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             if (!structure.hasBluePrint())
             {
                 handleSpecificCancelActions();
-                Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " aborting loading procedure");
+                Log.getLogger().warn("Couldn't find structure with name: " + workOrder.getStructurePath() + " aborting loading procedure");
                 this.loadingBlueprint = false;
                 return;
             }

@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:glow_berries",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:glow_berries"
+        ]
+      },
       "quantity": 32
     }
   ],

@@ -47,7 +47,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     /**
      * Type of the owning module.
      */
-    private String id;
+    private int id;
 
     /**
      * Empty default constructor.
@@ -65,7 +65,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param storage  the recipe storage.
      * @param id the unique id of the module.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final boolean remove, final IRecipeStorage storage, final String id)
+    public AddRemoveRecipeMessage(final IBuildingView building, final boolean remove, final IRecipeStorage storage, final int id)
     {
         super(building);
         this.remove = remove;
@@ -84,7 +84,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param id module id.
      * @param additionalOutputs the additional outputs.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove, final String id)
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove, final int id)
     {
         super(building);
         this.remove = remove;
@@ -120,7 +120,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param intermediary intermediate block.
      * @param id the module id.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final boolean remove, final Block intermediary, final String id)
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final boolean remove, final Block intermediary, final int id)
     {
         super(building);
         this.remove = remove;
@@ -146,7 +146,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     {
         storage = StandardFactoryController.getInstance().deserialize(buf);
         remove = buf.readBoolean();
-        this.id = buf.readUtf(32767);
+        this.id = buf.readInt();
     }
 
     /**
@@ -159,7 +159,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     {
         StandardFactoryController.getInstance().serialize(buf, storage);
         buf.writeBoolean(remove);
-        buf.writeUtf(id);
+        buf.writeInt(id);
     }
 
     @Override
@@ -171,7 +171,12 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             return;
         }
 
-        final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
+        if (!(building.getModule(id) instanceof AbstractCraftingBuildingModule))
+        {
+            return;
+        }
+
+        final AbstractCraftingBuildingModule module = (AbstractCraftingBuildingModule) building.getModule(id);
         if (remove)
         {
             module.removeRecipe(storage.getToken());

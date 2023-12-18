@@ -536,15 +536,15 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final BlockState state,
       final BlockPos blockPos)
     {
-        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
+        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getZ() * dPos.getZ());
 
         if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairBlock))
         {
-            if (dPos.getY() > 0)
+            if (dPos.getY() > 0 && pathingOptions.jumpCost != 1)
             {
                 cost *= pathingOptions.jumpCost * Math.abs(dPos.getY());
             }
-            else
+            else if (pathingOptions.dropCost != 1)
             {
                 cost *= pathingOptions.dropCost * Math.abs(dPos.getY());
             }

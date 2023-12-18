@@ -1,0 +1,10 @@
+{
+  "texture": "5a50e125-0d9c-41c8-b3b8-09dc5457830c",
+  "citizensuffix": "_w",
+  "name": "Duran",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.duran",
+  "recruitcost": "minecraft:pufferfish",
+  "recruitcostcount": 7,
+  "gender": "female"
+}

@@ -68,7 +68,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @Override
     public void addItem(final ItemStorage item)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, true));
+        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, getProducer().getRuntimeID(), item, true));
         listsOfItems.add(item);
     }
 
@@ -87,7 +87,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @Override
     public void removeItem(final ItemStorage item)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, false));
+        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, getProducer().getRuntimeID(), item, false));
         listsOfItems.remove(item);
     }
 
@@ -112,7 +112,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @Override
     public void clearItems()
     {
-        Network.getNetwork().sendToServer(new ResetFilterableItemMessage(this.buildingView, id));
+        Network.getNetwork().sendToServer(new ResetFilterableItemMessage(this.buildingView, getProducer().getRuntimeID()));
         listsOfItems.clear();
     }
 
