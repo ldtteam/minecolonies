@@ -12,7 +12,12 @@
       "level": 1
     },
     {
-      "item": "minecraft:leather",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:leather"
+        ]
+      },
       "quantity": 32
     }
   ],

@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:cooked_chicken",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:cooked_chicken"
+        ]
+      },
       "quantity": 128
     }
   ],

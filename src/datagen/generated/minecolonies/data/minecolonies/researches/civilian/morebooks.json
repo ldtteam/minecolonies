@@ -13,7 +13,12 @@
       "level": 1
     },
     {
-      "item": "minecraft:book",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:book"
+        ]
+      },
       "quantity": 6
     }
   ],

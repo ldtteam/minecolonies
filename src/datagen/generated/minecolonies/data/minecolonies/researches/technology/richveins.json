@@ -13,7 +13,10 @@
       "level": 4
     },
     {
-      "item": "minecraft:gold_ore",
+      "type": "minecolonies:item_tag",
+      "item": {
+        "tag": "minecraft:gold_ores"
+      },
       "quantity": 32
     }
   ],

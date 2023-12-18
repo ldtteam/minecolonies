@@ -13,7 +13,12 @@
       "level": 4
     },
     {
-      "item": "minecraft:cake",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:cake"
+        ]
+      },
       "quantity": 18
     }
   ],

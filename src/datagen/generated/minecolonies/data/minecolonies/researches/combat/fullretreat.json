@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:combat/retreat",
   "requirements": [
     {
-      "item": "minecraft:emerald",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:emerald"
+        ]
+      },
       "quantity": 64
     }
   ],

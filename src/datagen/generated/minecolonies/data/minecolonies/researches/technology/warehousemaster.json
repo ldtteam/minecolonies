@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecolonies:blockminecoloniesrack",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecolonies:blockminecoloniesrack"
+        ]
+      },
       "quantity": 3
     }
   ],
