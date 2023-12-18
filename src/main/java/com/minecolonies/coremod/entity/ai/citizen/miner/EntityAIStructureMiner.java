@@ -643,7 +643,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         @Nullable final MinerLevel currentLevel = module.getCurrentLevel();
         if (currentLevel == null)
         {
-            Log.getLogger().warn("Current Level not set, resetting...");
             module.setCurrentLevel(module.getNumberOfLevels() - 1);
             return executeNodeMining();
         }

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -22,11 +23,12 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,7 +143,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     /**
      * Set of building modules this building has.
      */
-    protected List<IBuildingModuleView> moduleViews = new ArrayList<>();
+    protected Int2ObjectOpenHashMap<IBuildingModuleView> moduleViews = new Int2ObjectOpenHashMap<>();
 
     /**
      * Building type
@@ -425,9 +427,18 @@ public abstract class AbstractBuildingView implements IBuildingView
         loadRequestSystemFromNBT(buf.readNbt());
         isDeconstructed = buf.readBoolean();
 
-        for (final IBuildingModuleView module: moduleViews)
+        for (int i = 0, size = buf.readInt(); i < size; i++)
         {
-            module.deserialize(buf);
+            int id = buf.readInt();
+            final IBuildingModuleView moduleView = moduleViews.get(id);
+
+            if (moduleView == null)
+            {
+                Log.getLogger().error("Problem during sync: Client side does not have matching module views to sent module data, missing:" + BuildingEntry.getProducer(id).key);
+                return;
+            }
+
+            moduleView.deserialize(buf);
         }
     }
 
@@ -617,11 +628,29 @@ public abstract class AbstractBuildingView implements IBuildingView
         return isDeconstructed;
     }
 
+    @Override
+    public IBuildingModuleView getModuleView(final int id)
+    {
+        return moduleViews.get(id);
+    }
+
+    @Override
+    public <M extends IBuildingModule, V extends IBuildingModuleView> V getModuleView(final BuildingEntry.ModuleProducer<M, V> producer)
+    {
+        return (V) moduleViews.get(producer.getRuntimeID());
+    }
+
+    @Override
+    public boolean hasModuleView(final BuildingEntry.ModuleProducer producer)
+    {
+        return moduleViews.containsKey(producer.getRuntimeID());
+    }
+
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> T getModuleView(final Class<T> clazz)
+    public <T extends IBuildingModuleView> T getModuleViewByType(final Class<T> clazz)
     {
-        for (final IBuildingModuleView view : moduleViews)
+        for (final IBuildingModuleView view : moduleViews.values())
         {
             if (clazz.isInstance(view))
             {
@@ -634,7 +663,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
-        for (final IBuildingModuleView module : moduleViews)
+        for (final IBuildingModuleView module : moduleViews.values())
         {
             if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module)))
             {
@@ -648,7 +677,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public <T extends IBuildingModuleView> List<T> getModuleViews(final Class<T> clazz)
     {
-        return this.moduleViews.stream()
+        return this.moduleViews.values().stream()
                  .filter(clazz::isInstance)
                  .map(c -> (T) c)
                  .collect(Collectors.toList());
@@ -658,13 +687,13 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void registerModule(final IBuildingModuleView iModuleView)
     {
         iModuleView.setBuildingView(this);
-        this.moduleViews.add(iModuleView);
+        this.moduleViews.put(iModuleView.getProducer().getRuntimeID(),iModuleView);
     }
 
     @Override
     public List<IBuildingModuleView> getAllModuleViews()
     {
-        return this.moduleViews;
+        return Collections.unmodifiableList(new ArrayList<>(this.moduleViews.values()));
     }
 
     @Override
