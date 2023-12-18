@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.research.ModResearchCosts;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static com.minecolonies.api.research.ModResearchCosts.SIMPLE_ITEM_COST_ID;
+import static com.minecolonies.api.research.ModResearchCostTypes.SIMPLE_ITEM_COST_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
@@ -78,10 +78,9 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putBoolean(TAG_HIDDEN, research.isHidden());
         @NotNull final ListTag costTagList = research.getCostList().stream().map(cost ->
         {
-            final ModResearchCosts.ResearchCostEntry researchCostEntry = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getValue(cost.getId());
-            final IResearchCost instance = researchCostEntry.createInstance();
-            compound.putString(TAG_COST_TYPE, cost.getId().toString());
-            instance.write(compound);
+            final CompoundTag costCompound = new CompoundTag();
+            costCompound.putString(TAG_COST_TYPE, cost.getType().getId().toString());
+            cost.write(costCompound);
             return compound;
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_COSTS, costTagList);
@@ -141,8 +140,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Tag.TAG_COMPOUND)).forEach(compound ->
         {
             final ResourceLocation res = compound.contains(TAG_COST_TYPE) ? new ResourceLocation(compound.getString(TAG_COST_TYPE)) : SIMPLE_ITEM_COST_ID;
-            final ModResearchCosts.ResearchCostEntry researchCostEntry = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getValue(res);
-            final IResearchCost instance = researchCostEntry.createInstance();
+            final ResearchCostType researchCostType = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getValue(res);
+            final IResearchCost instance = researchCostType.createInstance();
             instance.read(compound);
             research.addCost(instance);
         });
@@ -177,9 +176,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeBoolean(input.isImmutable());
         packetBuffer.writeBoolean(input.isHidden());
         packetBuffer.writeVarInt(input.getCostList().size());
-        for (IResearchCost is : input.getCostList())
+        for (IResearchCost cost : input.getCostList())
         {
-            controller.serialize(packetBuffer, is);
+            packetBuffer.writeRegistryId(IMinecoloniesAPI.getInstance().getResearchCostRegistry(), cost.getType());
+            cost.serialize(packetBuffer);
         }
         packetBuffer.writeVarInt(input.getResearchRequirement().size());
         for (IResearchRequirement req : input.getResearchRequirement())
@@ -224,7 +224,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int costSize = buffer.readVarInt();
         for(int i = 0; i < costSize; i++)
         {
-            research.addCost(controller.deserialize(buffer));
+            final ResearchCostType researchCostType = buffer.readRegistryIdSafe(ResearchCostType.class);
+            final IResearchCost cost = researchCostType.createInstance();
+            cost.deserialize(buffer);
+            research.addCost(cost);
         }
 
         final int reqCount = buffer.readVarInt();
