@@ -109,8 +109,8 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
         final Component keepButton = braceButtonComponent(Component.translatable(COMMAND_COLONY_DELETE_CONFIRM_BUILDING_KEEP).setStyle(keepButtonStyle));
         final Component deleteButton = braceButtonComponent(Component.translatable(COMMAND_COLONY_DELETE_CONFIRM_BUILDING_DELETE).setStyle(deleteButtonStyle));
 
-        final TranslatableContents contents = new TranslatableContents(COMMAND_COLONY_DELETE_CONFIRM_BUILDING, keepButton, deleteButton);
-        context.getSource().sendSuccess(MutableComponent.create(contents).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)), true);
+        final TranslatableContents contents = new TranslatableContents(COMMAND_COLONY_DELETE_CONFIRM_BUILDING, null, new Component[] { keepButton, deleteButton });
+        context.getSource().sendSuccess(() -> MutableComponent.create(contents).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)), true);
         return 1;
     }
 
@@ -139,8 +139,8 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
             deleteBuildingsComponent = Component.translatable(COMMAND_COLONY_DELETE_CONFIRM_FINAL_BUILDING).append(" ").setStyle(Style.EMPTY.withBold(true));
         }
 
-        final TranslatableContents contents = new TranslatableContents(COMMAND_COLONY_DELETE_CONFIRM_FINAL, deleteBuildingsComponent, confirmButton);
-        context.getSource().sendSuccess(MutableComponent.create(contents).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)), true);
+        final TranslatableContents contents = new TranslatableContents(COMMAND_COLONY_DELETE_CONFIRM_FINAL, null, new Component[] { deleteBuildingsComponent, confirmButton });
+        context.getSource().sendSuccess(() -> MutableComponent.create(contents).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)), true);
         return 1;
     }
 
@@ -150,7 +150,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
         {
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
-            return 0;
+            return false;
         }
 
         return IMCColonyOfficerCommand.super.checkPreCondition(context);
