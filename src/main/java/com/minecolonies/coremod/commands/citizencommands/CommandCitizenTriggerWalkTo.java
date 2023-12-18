@@ -104,6 +104,6 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
                          .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1))
                                  .then(IMCCommand.newArgument(POS_ARG, Vec3Argument.vec3())
-                                         .executes(executePreConditionCheck().then(this::onExecute)))));
+                                         .executes(this::checkPreConditionAndExecute))));
     }
 }
