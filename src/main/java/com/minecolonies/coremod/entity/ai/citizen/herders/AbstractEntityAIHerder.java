@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -198,7 +197,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             breedTimeOut -= DECIDING_DELAY;
         }
 
-        for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
+        for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
         {
             final List<? extends Animal> animals = searchForAnimals(module::isCompatible);
             if (animals.isEmpty())
