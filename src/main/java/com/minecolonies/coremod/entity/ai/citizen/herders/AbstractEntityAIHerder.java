@@ -421,7 +421,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             avg = avg.add(animal.position());
         }
 
-        return BlockPos.containing(avg.multiply(1.0/animals.size(), 1.0/animals.size(), 1.0/animals.size()));
+        return new BlockPos(avg.multiply(1.0/animals.size(), 1.0/animals.size(), 1.0/animals.size()));
     }
 
     /**
