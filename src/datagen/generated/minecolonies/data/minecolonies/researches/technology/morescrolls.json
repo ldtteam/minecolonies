@@ -12,15 +12,30 @@
       "level": 3
     },
     {
-      "item": "minecraft:paper",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:paper"
+        ]
+      },
       "quantity": 64
     },
     {
-      "item": "minecolonies:ancienttome",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecolonies:ancienttome"
+        ]
+      },
       "quantity": 1
     },
     {
-      "item": "minecraft:lapis_lazuli",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:lapis_lazuli"
+        ]
+      },
       "quantity": 64
     }
   ],

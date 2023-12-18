@@ -25,6 +25,7 @@ import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.ModResearchCosts;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
@@ -44,6 +45,7 @@ import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.research.ModResearchCosts.LIST_ITEM_COST_ID;
 import static com.minecolonies.api.research.ModResearchRequirements.RESEARCH_RESEARCH_REQ_ID;
 import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
@@ -67,6 +69,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
     private        IForgeRegistry<ResearchRequirementEntry>                researchRequirementRegistry;
     private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
+    private        IForgeRegistry<ModResearchCosts.ResearchCostEntry>      researchCostRegistry;
     private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
     private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
     private        IForgeRegistry<QuestRegistries.ObjectiveEntry>          questObjectiveRegistry;
@@ -191,6 +194,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
 
+    @Override
+    public IForgeRegistry<ModResearchCosts.ResearchCostEntry> getResearchCostRegistry()
+    {
+        return researchCostRegistry;
+    }
+
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         event.create(new RegistryBuilder<BuildingEntry>()
@@ -264,6 +273,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .setDefaultKey(GLOBAL_EFFECT_ID)
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
+
+        event.create(new RegistryBuilder<ModResearchCosts.ResearchCostEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "researchcosttypes"))
+                       .setDefaultKey(LIST_ITEM_COST_ID)
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchCostRegistry = b);
 
 
         event.create(new RegistryBuilder<QuestRegistries.ObjectiveEntry>()

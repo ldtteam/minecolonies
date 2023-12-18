@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:technology/fertilizer",
   "requirements": [
     {
-      "item": "minecraft:wheat_seeds",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:wheat_seeds"
+        ]
+      },
       "quantity": 2048
     }
   ],

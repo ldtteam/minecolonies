@@ -13,7 +13,12 @@
       "level": 2
     },
     {
-      "item": "minecraft:arrow",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:arrow"
+        ]
+      },
       "quantity": 64
     }
   ],

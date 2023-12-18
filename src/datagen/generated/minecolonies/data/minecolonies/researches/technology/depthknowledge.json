@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:deepslate",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:deepslate"
+        ]
+      },
       "quantity": 64
     }
   ],
