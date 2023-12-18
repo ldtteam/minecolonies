@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -199,7 +198,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return null;
         }
 
-        final BuildingResourcesModuleView resourcesModule = buildingView.getModuleView(BuildingResourcesModuleView.class);
+        final BuildingResourcesModuleView resourcesModule = buildingView.getModuleViewByType(BuildingResourcesModuleView.class);
 
         final Map<String, Integer> items = new HashMap<>();
         for (final BlockPos container : warehouse.getContainerList())
