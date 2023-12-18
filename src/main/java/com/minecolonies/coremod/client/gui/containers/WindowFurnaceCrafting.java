@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
@@ -27,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * Furnace crafting gui.
@@ -84,7 +82,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
         super(container, playerInventory, iTextComponent);
         this.container = container;
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
-        this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
+        this.module =(CraftingModuleView) building.getModuleView(container.getModuleId());
     }
 
     @NotNull
@@ -122,7 +120,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.FURNACE, module.getId()));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.FURNACE, module.getProducer().getRuntimeID()));
                 }
             }
         }

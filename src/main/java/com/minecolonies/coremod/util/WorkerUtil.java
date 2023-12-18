@@ -14,7 +14,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.SettingsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -175,7 +175,7 @@ public final class WorkerUtil
      */
     public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building)
     {
-        if (building.getOptionalSetting(USE_SHEARS).orElse(new BoolSetting(true)).getValue() && state.getBlock() instanceof IForgeShearable)
+        if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
             return ToolType.SHEARS;
         }

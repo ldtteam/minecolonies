@@ -1,8 +1,10 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.Log;
 
 /**
  * Abstract class for all modules. Has base methods for all the necessary methods that have to be called from the building.
@@ -13,6 +15,11 @@ public abstract class AbstractBuildingModuleView implements IBuildingModuleView
      * The building this module belongs to.
      */
     protected IBuildingView buildingView;
+
+    /**
+     * The creator and identity of this module
+     */
+    private BuildingEntry.ModuleProducer producer = null;
 
     @Override
     public IBuildingModuleView setBuildingView(final IBuildingView buildingView)
@@ -41,5 +48,23 @@ public abstract class AbstractBuildingModuleView implements IBuildingModuleView
     public IBuildingView getBuildingView()
     {
         return buildingView;
+    }
+
+    @Override
+    public <M extends IBuildingModule, V extends IBuildingModuleView> IBuildingModuleView setProducer(final BuildingEntry.ModuleProducer<M,V> moduleSet)
+    {
+        if (producer != null)
+        {
+            Log.getLogger().error("Changing a producer is not allowed, trace:", new Exception());
+            return this;
+        }
+        this.producer = moduleSet;
+        return this;
+    }
+
+    @Override
+    public <M extends IBuildingModule, V extends IBuildingModuleView> BuildingEntry.ModuleProducer<M,V> getProducer()
+    {
+        return producer;
     }
 }

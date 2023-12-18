@@ -14,7 +14,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import net.minecraft.core.BlockPos;
@@ -172,7 +172,11 @@ public class EntityAISleep implements IStateAI
             {
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getRestrictCenter());
                 List<BlockPos> bedList = new ArrayList<>();
-                hut.getFirstOptionalModuleOccurance(BedHandlingModule.class).ifPresent(module -> bedList.addAll(module.getRegisteredBlocks()));
+
+                if (hut.hasModule(BuildingModules.BED))
+                {
+                    bedList.addAll(hut.getModule(BuildingModules.BED).getRegisteredBlocks());
+                }
 
                 for (final BlockPos pos : bedList)
                 {

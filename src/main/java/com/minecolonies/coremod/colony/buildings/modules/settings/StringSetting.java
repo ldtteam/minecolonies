@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Stores a string-list setting (Like enum, but easily serializable).
  */
-public class StringSetting implements IStringSetting
+public class StringSetting implements IStringSetting<String>
 {
     /**
      * The maximum possible width of the trigger button.

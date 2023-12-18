@@ -84,7 +84,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
         final int row = resourceList.getListElementIndexByPane(button);
         final Tuple<ItemStorage, Integer> tuple = moduleView.getStock().get(row);
         moduleView.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack()));
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack(), moduleView.getProducer().getRuntimeID()));
         updateStockList();
     }
 

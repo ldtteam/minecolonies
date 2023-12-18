@@ -74,12 +74,16 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
-        final CompoundTag quarryCompound = compound.getCompound(getModuleSerializationIdentifier());
-        final int[] residentIds = quarryCompound.getIntArray(TAG_MINERS);
+        if (compound.contains(getModuleSerializationIdentifier()))
+        {
+            compound = compound.getCompound(getModuleSerializationIdentifier());
+        }
+
+        final int[] residentIds = compound.getIntArray(TAG_MINERS);
         for (final int citizenId : residentIds)
         {
             final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -88,7 +92,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
                 assignCitizen(citizen);
             }
         }
-        this.isFinished = quarryCompound.getBoolean(TAG_IS_FINISHED);
+        this.isFinished = compound.getBoolean(TAG_IS_FINISHED);
     }
 
     @Override
@@ -96,7 +100,6 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     {
         super.serializeNBT(compound);
 
-        final CompoundTag quarrycompound = compound.contains(getModuleSerializationIdentifier()) ? compound.getCompound(getModuleSerializationIdentifier()) : new CompoundTag();
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -104,10 +107,9 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
             {
                 residentIds[i] = assignedCitizen.get(i).getId();
             }
-            quarrycompound.putIntArray(TAG_MINERS, residentIds);
+            compound.putIntArray(TAG_MINERS, residentIds);
         }
-        compound.put(getModuleSerializationIdentifier(), quarrycompound);
-        quarrycompound.putBoolean(TAG_IS_FINISHED, isFinished);
+        compound.putBoolean(TAG_IS_FINISHED, isFinished);
     }
 
     @Override
