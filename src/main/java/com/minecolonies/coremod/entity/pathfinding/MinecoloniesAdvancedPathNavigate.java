@@ -366,6 +366,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         desiredPos = new BlockPos(newX, newY, newZ);
 
+        if (start.distSqr(desiredPos) > 500 * 500)
+        {
+            Log.getLogger()
+              .error(
+                "Entity: " + ourEntity.getDisplayName().getString() + " is trying to walk too far! distance:" + Math.sqrt(start.distSqr(desiredPos)) + " from:" + start + " to:"
+                  + desiredPos, new Exception());
+            return null;
+        }
+
         return setPathJob(
           new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),
             start,
