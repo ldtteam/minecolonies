@@ -40,17 +40,26 @@ public final class FireworkUtils
      */
     public static void spawnFireworksAtAABBCorners(final Tuple<BlockPos, BlockPos> realaabb, final Level world, final int explosionLevel)
     {
-        final FireworkRocketEntity firework = new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
-        world.addFreshEntity(firework);
+        fireRocket(world, new BlockPos(realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ()), explosionLevel);
+        fireRocket(world, new BlockPos(realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ()), explosionLevel);
+        fireRocket(world, new BlockPos(realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ()), explosionLevel);
+        fireRocket(world, new BlockPos(realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getA().getZ()), explosionLevel);
+    }
 
-        final FireworkRocketEntity fireworka = new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
-        world.addFreshEntity(fireworka);
-
-        final FireworkRocketEntity fireworkb = new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
-        world.addFreshEntity(fireworkb);
-
-        final FireworkRocketEntity fireworkc = new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
-        world.addFreshEntity(fireworkc);
+    /**
+     * Fires a rocket at the given position, only if the sky is visible.
+     *
+     * @param world          which world to spawn it in.
+     * @param position       the position to fire the rocket from.
+     * @param explosionLevel how many fireworks to spawn in each corner.
+     */
+    private static void fireRocket(final Level world, final BlockPos position, final int explosionLevel)
+    {
+        if (world.canSeeSky(position))
+        {
+            final FireworkRocketEntity firework = new FireworkRocketEntity(world, position.getX(), position.getY(), position.getZ(), genFireworkItemStack(explosionLevel));
+            world.addFreshEntity(firework);
+        }
     }
 
     /**
