@@ -1,0 +1,120 @@
+{
+  "name": "minecolonies:colonial/buildings",
+  "fallback": "minecolonies:colonial/roads",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:colonial/builder1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+		    "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:colonial/builder2",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:colonial/farm1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:colonial/forester1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:colonial/forester2",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 12,
+      "element": {
+        "location": "minecolonies:colonial/guardtower1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:colonial/guardtower2",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 15,
+      "element": {
+        "location": "minecolonies:colonial/house1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 2,
+      "element": {
+        "location": "minecolonies:colonial/house2",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 8,
+      "element": {
+        "location": "minecolonies:colonial/mine1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 2,
+      "element": {
+        "location": "minecolonies:colonial/mine2",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:colonial/warehouse1",
+        "processors": "minecolonies:colonial/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+ ]
+}

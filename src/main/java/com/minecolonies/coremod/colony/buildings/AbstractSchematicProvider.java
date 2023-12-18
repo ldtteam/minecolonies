@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.FireworkUtils;
@@ -546,9 +547,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void upgradeBuildingLevelToSchematicData()
     {
         final BlockEntity tileEntity = colony.getWorld().getBlockEntity(getID());
-        if (tileEntity instanceof IBlueprintDataProviderBE)
+        if (tileEntity instanceof IBlueprintDataProviderBE blueprintDataProvider)
         {
-            final IBlueprintDataProviderBE blueprintDataProvider = (IBlueprintDataProviderBE) tileEntity;
             if (blueprintDataProvider.getSchematicName().isEmpty())
             {
                 return;
@@ -563,14 +563,22 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             }
             catch (NumberFormatException e)
             {
-
             }
 
             if (level > 0 && (level > getBuildingLevel() || isDeconstructed) && level <= getMaxBuildingLevel())
             {
                 if (level > getBuildingLevel())
                 {
-                    FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), level);
+                    Tuple<BlockPos, BlockPos> corners = getCorners();
+                    if (getParent() != BlockPos.ZERO)
+                    {
+                        final BlockEntity parentTileEntity = colony.getWorld().getBlockEntity(getParent());
+                        if (parentTileEntity instanceof AbstractTileEntityColonyBuilding parentBuildingTileEntity)
+                        {
+                            corners = parentBuildingTileEntity.getBuilding().getCorners();
+                        }
+                    }
+                    FireworkUtils.spawnFireworksAtAABBCorners(corners, colony.getWorld(), level);
                 }
 
                 setBuildingLevel(level);

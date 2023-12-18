@@ -304,7 +304,9 @@ public class ColonyBlueprintRenderer
 
             for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
             {
-                if (buildingView.getBuildingType() == ModBuildings.postBox.get() || buildingView.getBuildingType() == ModBuildings.stash.get())
+                if (buildingView.getBuildingType() == ModBuildings.postBox.get()
+                      || buildingView.getBuildingType() == ModBuildings.stash.get()
+                      || buildingView.getStructurePath().replace(".blueprint", "").isEmpty())
                 {
                     continue;
                 }
