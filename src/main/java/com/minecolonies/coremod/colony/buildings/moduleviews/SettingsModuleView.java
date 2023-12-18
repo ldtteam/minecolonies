@@ -18,7 +18,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Module containing all settings (client side).
@@ -114,7 +117,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         if (setting.isActive(this))
         {
             setting.trigger();
-            Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting));
+            Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()));
         }
     }
 }

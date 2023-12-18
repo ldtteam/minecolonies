@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * Stores an integer setting.
  */
-public class IntSetting implements ISetting
+public class IntSetting implements ISetting<Integer>
 {
     /**
      * Default value of the setting.
@@ -51,7 +51,7 @@ public class IntSetting implements ISetting
      * Get the setting value.
      * @return the set value.
      */
-    public int getValue()
+    public Integer getValue()
     {
         return value;
     }

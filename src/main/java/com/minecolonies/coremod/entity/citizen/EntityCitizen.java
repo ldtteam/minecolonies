@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.citizens.event.CitizenRemovedEvent;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -109,7 +108,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
-import java.util.function.Supplier;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
@@ -445,11 +443,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
               usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
         {
             final BuildingEntry entry = ((AbstractBlockHut<?>) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
-            for (final Supplier<IBuildingModule> module : entry.getModuleProducers())
+            for (final BuildingEntry.ModuleProducer moduleProducer : entry.getModuleProducers())
             {
-                if (module.get() instanceof WorkerBuildingModule)
+                if (BuildingEntry.produceModuleWithoutBuilding(moduleProducer.key) instanceof WorkerBuildingModule module)
                 {
-                    getCitizenJobHandler().setModelDependingOnJob(((WorkerBuildingModule) module.get()).getJobEntry().produceJob(null));
+                    getCitizenJobHandler().setModelDependingOnJob(module.getJobEntry().produceJob(null));
                     return InteractionResult.SUCCESS;
                 }
             }

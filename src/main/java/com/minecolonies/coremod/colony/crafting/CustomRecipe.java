@@ -778,7 +778,7 @@ public class CustomRecipe
         {
             final IRecipeStorage compareStorage = this.getRecipeStorage();
             final ResourceLocation recipeSource = this.getRecipeId();
-            for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
+            for (final ICraftingBuildingModule module : building.getModulesByType(ICraftingBuildingModule.class))
             {
                 for (IToken<?> recipeToken : module.getRecipes())
                 {

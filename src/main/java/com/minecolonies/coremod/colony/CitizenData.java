@@ -809,7 +809,7 @@ public class CitizenData implements ICitizenData
     {
         if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
-            homeBuilding.getFirstOptionalModuleOccurance(LivingBuildingModule.class).ifPresent(b -> b.removeCitizen(this));
+            homeBuilding.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(this);
         }
 
         homeBuilding = building;
@@ -1418,7 +1418,7 @@ public class CitizenData implements ICitizenData
 
             if (building != null)
             {
-                for (final IAssignsJob module : building.getModules(IAssignsJob.class))
+                for (final IAssignsJob module : building.getModulesByType(IAssignsJob.class))
                 {
                     if (module.getJobEntry().equals(job.getJobRegistryEntry()) && module.assignCitizen(this))
                     {
@@ -1835,6 +1835,10 @@ public class CitizenData implements ICitizenData
     @Override
     public void onInteractionClosed(final Component key, final ServerPlayer sender)
     {
-        citizenChatOptions.get(key).onClosed();
+        final IInteractionResponseHandler chatOption = citizenChatOptions.get(key);
+        if (chatOption != null)
+        {
+            chatOption.onClosed();
+        }
     }
 }

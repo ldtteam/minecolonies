@@ -28,7 +28,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     /**
      * The id of the list.
      */
-    private String id;
+    private int id;
 
     /**
      * Empty standard constructor.
@@ -46,7 +46,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
      * @param item     the item to assign
      * @param building the building we're executing on.
      */
-    public AssignFilterableItemMessage(final IBuildingView building, final String id, final ItemStorage item, final boolean assign)
+    public AssignFilterableItemMessage(final IBuildingView building, final int id, final ItemStorage item, final boolean assign)
     {
         super(building);
         this.assign = assign;
@@ -60,7 +60,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
 
         this.assign = buf.readBoolean();
         this.item = new ItemStorage(buf.readItem());
-        this.id = buf.readUtf(32767);
+        this.id = buf.readInt();
     }
 
     @Override
@@ -69,22 +69,22 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
 
         buf.writeBoolean(this.assign);
         buf.writeItem(this.item.getItemStack());
-        buf.writeUtf(this.id);
+        buf.writeInt(this.id);
     }
 
     @Override
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
-        if (building.hasModule(ItemListModule.class))
+        if (building.getModule(id) instanceof ItemListModule module)
         {
             if (assign)
             {
-                building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).addItem(item);
+                module.addItem(item);
             }
             else
             {
-                building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).removeItem(item);
+                module.removeItem(item);
             }
         }
     }
