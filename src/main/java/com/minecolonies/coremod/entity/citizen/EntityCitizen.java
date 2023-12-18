@@ -643,8 +643,21 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getEyeHeight()), this);
         }
 
-        usedStack.shrink(1);
-        player.setItemInHand(hand, usedStack);
+        final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+        if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+        {
+            if (!player.getInventory().add(remainingItem))
+            {
+                InventoryUtils.spawnItemStack(
+                  player.level,
+                  player.getX(),
+                  player.getY(),
+                  player.getZ(),
+                  remainingItem
+                );
+            }
+        }
+
         interactionCooldown = 100;
     }
 
@@ -1095,11 +1108,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (!isChild && this.child)
             {
+                this.child = isChild;
                 getCitizenJobHandler().setModelDependingOnJob(citizenJobHandler.getColonyJob());
             }
         }
         this.child = isChild;
         this.getEntityData().set(DATA_IS_CHILD, isChild);
+        refreshDimensions();
         markDirty(0);
     }
 

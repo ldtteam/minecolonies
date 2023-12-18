@@ -275,6 +275,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             closeSubscribers.add(subscriber);
             newSubscribers.add(subscriber);
+            updateColonyViews();
         }
     }
 

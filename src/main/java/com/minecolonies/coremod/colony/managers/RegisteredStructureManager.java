@@ -364,6 +364,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public BlockPos getRandomLeisureSite()
     {
+        final boolean isRaining = colony.getWorld().isRaining();
+
         BlockPos pos = null;
         final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
@@ -377,7 +379,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         if (randomDist < 2)
         {
-            if (RANDOM.nextBoolean())
+            if (!isRaining && RANDOM.nextBoolean())
             {
                 pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
                 if (pos != null)
@@ -402,6 +404,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 return pos;
             }
+        }
+
+        if (isRaining)
+        {
+            return null;
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));

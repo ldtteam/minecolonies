@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:combat/rapidshot",
   "requirements": [
     {
-      "item": "minecraft:bow",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:bow"
+        ]
+      },
       "quantity": 27
     }
   ],

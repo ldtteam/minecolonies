@@ -12,5 +12,5 @@
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.buildrepair)"/>
     <buttonimage id="info" size="17 17" pos="14 214"
-                 source="minecolonies:textures/gui/red_wax_information.png"/>
+                 source="minecolonies:textures/gui/red_wax_information.png" tooltip="$(com.minecolonies.core.building.help)"/>
 </window>

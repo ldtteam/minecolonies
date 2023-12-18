@@ -73,7 +73,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     public void onColonyTick(@NotNull final IColony colony)
     {
         // Give the other assignment module also a chance.
-        if (random.nextInt(building.getModules(GuardBuildingModule.class).size()) > 0)
+        if (random.nextInt(building.getModules(GuardBuildingModule.class).size()) == 0)
         {
             return;
         }
@@ -105,6 +105,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
             if (trainingCitizen != null)
             {
                 hiredFromTraining = true;
+                trainingCitizen.setJob(null);
                 assignCitizen(trainingCitizen);
             }
         }

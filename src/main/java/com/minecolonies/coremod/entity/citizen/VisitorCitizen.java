@@ -40,6 +40,7 @@ import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.level.Level;
@@ -524,8 +525,20 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            usedStack.setCount(usedStack.getCount() - 1);
-            player.setItemInHand(hand, usedStack);
+            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+            {
+                if (!player.getInventory().add(remainingItem))
+                {
+                    InventoryUtils.spawnItemStack(
+                      player.level,
+                      player.getX(),
+                      player.getY(),
+                      player.getZ(),
+                      remainingItem
+                    );
+                }
+            }
 
             if (!level.isClientSide())
             {

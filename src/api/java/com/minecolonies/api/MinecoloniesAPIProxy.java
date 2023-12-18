@@ -23,6 +23,7 @@ import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.ModResearchCosts;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -154,6 +155,12 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
 
     @Override
     public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
+
+    @Override
+    public IForgeRegistry<ModResearchCosts.ResearchCostEntry> getResearchCostRegistry()
+    {
+        return apiInstance.getResearchCostRegistry();
+    }
 
     @Override
     public IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()

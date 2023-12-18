@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.commands.commandTypes;
 
 import com.minecolonies.api.util.Log;
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -14,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
  */
 public interface IMCCommand
 {
-    static final int OP_PERM_LEVEL = 4;
+    int OP_PERM_LEVEL = 4;
 
     /**
      * Builds the command, overwrite and add further arguments etc for nonsimple commands. When overwriting this make sure to check the preconditions.
@@ -67,18 +66,6 @@ public interface IMCCommand
         return 0;
     }
 
-    default ICommandCallbackBuilder<CommandSourceStack> executePreConditionCheck()
-    {
-        return executeCallback -> context -> {
-            if (!checkPreCondition(context))
-            {
-                return 0;
-            }
-
-            return executeCallback.run(context);
-        };
-    }
-
     /**
      * Preconditions to check before executing
      *
@@ -113,11 +100,5 @@ public interface IMCCommand
         }
 
         return player.getServer().getPlayerList().isOp(player.getGameProfile());
-    }
-
-    interface ICommandCallbackBuilder<S>
-    {
-
-        Command<S> then(final Command<CommandSourceStack> executeCallback);
     }
 }
