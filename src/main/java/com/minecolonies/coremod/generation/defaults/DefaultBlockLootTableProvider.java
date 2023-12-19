@@ -157,10 +157,4 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
               ));
         }
     }
-
-    private void needsSilkTouch(final LootPoolEntryContainer.Builder<?> lootPoolEntry)
-    {
-        final EnchantmentPredicate silkTouchPredicate = new EnchantmentPredicate(Enchantments.SILK_TOUCH, Ints.exactly(1));
-        lootPoolEntry.when(MatchTool.toolMatches(ItemPredicate.Builder.item().hasEnchantment(silkTouchPredicate)));
-    }
 }
