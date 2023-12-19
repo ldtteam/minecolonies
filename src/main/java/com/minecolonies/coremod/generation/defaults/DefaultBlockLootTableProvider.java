@@ -64,17 +64,13 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
         saveBlock(ModBlocks.blockColonyWallBanner, registrar);
         saveBlock(ModBlocks.blockIronGate, registrar);
         saveBlock(ModBlocks.blockWoodenGate, registrar);
-        saveBlock(ModBlocks.blockCompostedDirt, lootPool -> {
-            final AlternativesEntry.Builder alternatives = AlternativesEntry.alternatives();
-
-            final LootPoolSingletonContainer.Builder<?> compostedDirt = LootItem.lootTableItem(ModBlocks.blockCompostedDirt);
-            needsSilkTouch(compostedDirt);
-            alternatives.otherwise(compostedDirt);
-
-            alternatives.otherwise(LootItem.lootTableItem(Blocks.DIRT).when(ExplosionCondition.survivesExplosion()));
-
-            lootPool.add(alternatives);
-        }, registrar);
+        saveBlock(ModBlocks.blockCompostedDirt, registrar,
+          lootPool -> lootPool.add(AlternativesEntry.alternatives()
+                                     .otherwise(LootItem.lootTableItem(ModBlocks.blockCompostedDirt)
+                                                  .when(MatchTool.toolMatches(ItemPredicate.Builder.item()
+                                                                                .hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, Ints.exactly(1))))))
+                                     .otherwise(LootItem.lootTableItem(Blocks.DIRT)
+                                                  .when(ExplosionCondition.survivesExplosion()))));
 
         // intentionally no drops -- creative only
         //saveBlock(ModBlocks.blockDecorationPlaceholder);
@@ -130,10 +126,10 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
             item.apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY));
         }
 
-        this.saveBlock(block, lootPool -> lootPool.add(item).when(ExplosionCondition.survivesExplosion()), registrar);
+        this.saveBlock(block, registrar, lootPool -> lootPool.add(item).when(ExplosionCondition.survivesExplosion()));
     }
 
-    private void saveBlock(@NotNull final Block block, final Consumer<Builder> lootPoolConfigurer, @NotNull final LootTableRegistrar registrar)
+    private void saveBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar, final Consumer<Builder> lootPoolConfigurer)
     {
         final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
         if (location != null)
