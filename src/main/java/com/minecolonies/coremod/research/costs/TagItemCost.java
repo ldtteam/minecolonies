@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.research.costs;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.coremod.research.GlobalResearch;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -13,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.research.ModResearchCosts.TAG_ITEM_COST_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.TAG_COST_COUNT;
 import static com.minecolonies.api.research.util.ResearchConstants.TAG_COST_TAG;
 import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_NAME_PROP;
@@ -24,6 +25,11 @@ import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_TAG
  */
 public class TagItemCost implements IResearchCost
 {
+    /**
+     * The cost type.
+     */
+    private final ResearchCostType type;
+
     /**
      * The count of items.
      */
@@ -37,14 +43,15 @@ public class TagItemCost implements IResearchCost
     /**
      * Default constructor.
      */
-    public TagItemCost()
+    public TagItemCost(final ResearchCostType type)
     {
+        this.type = type;
     }
 
     @Override
-    public ResourceLocation getId()
+    public ResearchCostType getType()
     {
-        return TAG_ITEM_COST_ID;
+        return type;
     }
 
     @Override
@@ -77,6 +84,20 @@ public class TagItemCost implements IResearchCost
     {
         compound.putInt(TAG_COST_COUNT, this.count);
         compound.putString(TAG_COST_TAG, this.tag.location().toString());
+    }
+
+    @Override
+    public void serialize(final @NotNull FriendlyByteBuf buf)
+    {
+        buf.writeInt(this.count);
+        buf.writeResourceLocation(this.tag.location());
+    }
+
+    @Override
+    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    {
+        this.count = buf.readInt();
+        this.tag = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), buf.readResourceLocation());
     }
 
     @Override
