@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.colony.requestsystem.StandardFactoryController.NBT_TYPE;
+import static com.minecolonies.api.colony.requestsystem.StandardFactoryController.NEW_NBT_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
 
 /**
@@ -174,7 +176,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (int i = 0; i < inputTagList.size(); ++i)
         {
             final CompoundTag inputTag = inputTagList.getCompound(i);
-            if(inputTag.contains("Type")) //Check to see if it's something the factorycontroller can handle
+            if(inputTag.contains(NEW_NBT_TYPE) || inputTag.contains(NBT_TYPE)) //Check to see if it's something the factorycontroller can handle
             {
                 input.add(StandardFactoryController.getInstance().deserialize(inputTag));
             }
