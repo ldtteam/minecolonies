@@ -1,10 +1,11 @@
 package com.minecolonies.api.research.costs;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,11 +17,11 @@ import java.util.List;
 public interface IResearchCost
 {
     /**
-     * The ID for this cost.
+     * The type for this cost.
      *
-     * @return the id.
+     * @return the type.
      */
-    ResourceLocation getId();
+    ResearchCostType getType();
 
     /**
      * Get the count for this cost.
@@ -59,6 +60,20 @@ public interface IResearchCost
      * @param compound the compound.
      */
     void write(@NotNull final CompoundTag compound);
+
+    /**
+     * Serialize the cost instance to the given {@link FriendlyByteBuf}.
+     *
+     * @param buf the network buffer.
+     */
+    void serialize(@NotNull final FriendlyByteBuf buf);
+
+    /**
+     * Deserialize the {@link FriendlyByteBuf} to this cost instance.
+     *
+     * @param buf the network buffer.
+     */
+    void deserialize(@NotNull final FriendlyByteBuf buf);
 
     /**
      * Checks if this json object has the correct fields for this cost instance.

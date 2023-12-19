@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.research.costs;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.coremod.research.GlobalResearch;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.research.ModResearchCosts.SIMPLE_ITEM_COST_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_NAME_PROP;
 
@@ -21,6 +22,11 @@ import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_NAM
  */
 public class SimpleItemCost implements IResearchCost
 {
+    /**
+     * The cost type.
+     */
+    private final ResearchCostType type;
+
     /**
      * The count of items.
      */
@@ -34,14 +40,15 @@ public class SimpleItemCost implements IResearchCost
     /**
      * Default constructor.
      */
-    public SimpleItemCost()
+    public SimpleItemCost(final ResearchCostType type)
     {
+        this.type = type;
     }
 
     @Override
-    public ResourceLocation getId()
+    public ResearchCostType getType()
     {
-        return SIMPLE_ITEM_COST_ID;
+        return type;
     }
 
     @Override
@@ -87,6 +94,20 @@ public class SimpleItemCost implements IResearchCost
     {
         compound.putString(TAG_COST_ITEM, ForgeRegistries.ITEMS.getKey(this.item).toString());
         compound.putInt(TAG_COST_COUNT, this.count);
+    }
+
+    @Override
+    public void serialize(final @NotNull FriendlyByteBuf buf)
+    {
+        buf.writeInt(this.count);
+        buf.writeRegistryId(ForgeRegistries.ITEMS, this.item);
+    }
+
+    @Override
+    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    {
+        this.count = buf.readInt();
+        this.item = buf.readRegistryIdSafe(Item.class);
     }
 
     @Override

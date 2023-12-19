@@ -6,39 +6,55 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * Registry entries for item cost types.
  */
-public class ModResearchCosts
+public class ModResearchCostTypes
 {
     public static final ResourceLocation SIMPLE_ITEM_COST_ID = new ResourceLocation(Constants.MOD_ID, "item_simple");
     public static final ResourceLocation LIST_ITEM_COST_ID   = new ResourceLocation(Constants.MOD_ID, "item_list");
     public static final ResourceLocation TAG_ITEM_COST_ID    = new ResourceLocation(Constants.MOD_ID, "item_tag");
 
-    public static RegistryObject<ResearchCostEntry> simpleItemCost;
+    public static RegistryObject<ResearchCostType> simpleItemCost;
 
-    public static RegistryObject<ResearchCostEntry> listItemCost;
+    public static RegistryObject<ResearchCostType> listItemCost;
 
-    public static RegistryObject<ResearchCostEntry> tagItemCost;
+    public static RegistryObject<ResearchCostType> tagItemCost;
 
     /**
      * Quest reward entry type.
      */
-    public static class ResearchCostEntry
+    public static class ResearchCostType
     {
+        /**
+         * The ID of the cost type.
+         */
+        private final ResourceLocation id;
+
         /**
          * The producer for the cost instance.
          */
-        private final Supplier<IResearchCost> producer;
+        private final Function<ResearchCostType, IResearchCost> producer;
 
         /**
          * Default constructor.
          */
-        public ResearchCostEntry(final Supplier<IResearchCost> productionFunction)
+        public ResearchCostType(final ResourceLocation id, final Function<ResearchCostType, IResearchCost> productionFunction)
         {
+            this.id = id;
             this.producer = productionFunction;
+        }
+
+        /**
+         * The ID of this cost type.
+         *
+         * @return the id.
+         */
+        public ResourceLocation getId()
+        {
+            return id;
         }
 
         /**
@@ -48,7 +64,7 @@ public class ModResearchCosts
          */
         public IResearchCost createInstance()
         {
-            return producer.get();
+            return producer.apply(this);
         }
 
         /**
