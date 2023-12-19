@@ -17,7 +17,6 @@ import net.minecraft.world.level.storage.loot.LootPool.Builder;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.CopyNameFunction;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
@@ -156,11 +155,5 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
                                                .when(ExplosionCondition.survivesExplosion())
               ));
         }
-    }
-
-    private void needsSilkTouch(final LootPoolEntryContainer.Builder<?> lootPoolEntry)
-    {
-        final EnchantmentPredicate silkTouchPredicate = new EnchantmentPredicate(Enchantments.SILK_TOUCH, Ints.exactly(1));
-        lootPoolEntry.when(MatchTool.toolMatches(ItemPredicate.Builder.item().hasEnchantment(silkTouchPredicate)));
     }
 }
