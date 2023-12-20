@@ -401,7 +401,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             assert !anchor.hasTileEntityData() || anchor.getTileEntityData() != null;   // quiet warnings
             if (anchor.hasTileEntityData() && anchor.getTileEntityData().contains(TAG_BLUEPRINTDATA))
             {
-                final Map<BlockPos, List<String>> tagMap = IBlueprintDataProviderBE.readTagPosMapFrom(anchor.getTileEntityData());
+                final Map<BlockPos, List<String>> tagMap = IBlueprintDataProviderBE.readTagPosMapFrom(anchor.getTileEntityData().getCompound(TAG_BLUEPRINTDATA));
                 final List<String> anchorTags = tagMap.computeIfAbsent(BlockPos.ZERO, k -> new ArrayList<>());
                 if (anchorTags.contains(INVISIBLE_TAG))
                 {
