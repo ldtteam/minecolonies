@@ -24,9 +24,9 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -195,7 +195,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 continue;
             }
 
-            final FieldsModule fieldsModule = building.getFirstOptionalModuleOccurance(FieldsModule.class).orElse(null);
+            final FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
             if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
             {
                 field.resetOwningBuilding();
@@ -399,7 +399,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         if (randomDist < 3)
         {
-            pos = getFirstBuildingMatching(b -> b.hasModule(TavernBuildingModule.class) && b.getBuildingLevel() >= 1);
+            pos = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
             if (pos != null)
             {
                 return pos;
@@ -900,7 +900,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             for (final IBuilding building : buildings.values())
             {
-                if (building.hasModule(TavernBuildingModule.class))
+                if (building.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
                     MessageUtils.format(WARNING_DUPLICATE_TAVERN).sendTo(player);
                     return false;

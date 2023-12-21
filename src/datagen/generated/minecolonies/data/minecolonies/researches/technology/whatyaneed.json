@@ -13,7 +13,12 @@
       "level": 3
     },
     {
-      "item": "minecraft:redstone",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:redstone"
+        ]
+      },
       "quantity": 64
     }
   ],

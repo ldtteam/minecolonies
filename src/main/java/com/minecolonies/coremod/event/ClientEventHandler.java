@@ -8,6 +8,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
@@ -56,7 +57,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -261,15 +261,14 @@ public class ClientEventHandler
         final ImmutableMap.Builder<String, BuildingEntry> builder = new ImmutableMap.Builder<>();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            building.getModuleProducers().stream()
-              .map(Supplier::get)
-              .filter(m -> m instanceof ICraftingBuildingModule)
-              .map(m -> (ICraftingBuildingModule) m)
-              .filter(m -> m.getCraftingJob() != null)
-              .forEach(crafting ->
-              {
-                  builder.put(crafting.getCustomRecipeKey(), building);
-              });
+            for (final BuildingEntry.ModuleProducer moduleProducer : building.getModuleProducers())
+            {
+                final IBuildingModule module = BuildingEntry.produceModuleWithoutBuilding(moduleProducer.key);
+                if (module instanceof ICraftingBuildingModule craftingBuildingModule && craftingBuildingModule.getCraftingJob() != null)
+                {
+                    builder.put(craftingBuildingModule.getCustomRecipeKey(), building);
+                }
+            }
         }
         return builder.build();
     }

@@ -13,15 +13,30 @@
       "level": 4
     },
     {
-      "item": "minecraft:redstone",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:redstone"
+        ]
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:gold_ingot",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:gold_ingot"
+        ]
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:lapis_lazuli",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:lapis_lazuli"
+        ]
+      },
       "quantity": 128
     }
   ],

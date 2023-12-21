@@ -9,14 +9,13 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.colony.ColonyProgressType.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_PROGRESSION_NAME;
+import static com.minecolonies.coremod.colony.managers.RaidManager.MIN_REQUIRED_RAIDLEVEL;
 
 /**
  * The Progress manager which tracks the colony progress to send help messages to the player.
@@ -118,7 +118,7 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void progressBuildBuilding(final IBuilding building, final int totalLevels, final int totalHousing)
+    public void progressBuildBuilding(final IBuilding building)
     {
         if (building instanceof BuildingBuilder)
         {
@@ -136,17 +136,30 @@ public class ProgressManager implements IProgressManager
         {
             trigger(WAREHOUSE_BUILT);
         }
-        else if (building.hasModule(TavernBuildingModule.class))
+        else if (building.hasModule(BuildingModules.TAVERN_VISITOR))
         {
             trigger(TAVERN_BUILT);
         }
 
-        if (totalHousing == 4 && building.hasModule(LivingBuildingModule.class))
+        if (building.hasModule(LivingBuildingModule.class))
         {
+            int housingSpots = building.getFirstModuleOccurance(LivingBuildingModule.class).getModuleMax();
+            for(final IBuilding colonyBuilding:colony.getBuildingManager().getBuildings().values())
+            {
+                if (housingSpots >= 4)
+                {
+                    break;
+                }
+
+                if (colonyBuilding.hasModule(LivingBuildingModule.class))
+                {
+                    housingSpots += colonyBuilding.getFirstModuleOccurance(LivingBuildingModule.class).getModuleMax();
+                }
+            }
             trigger(ALL_CITIZENS_HOMED);
         }
 
-        if (totalLevels == 20)
+        if (building.getColony().getRaiderManager().getColonyRaidLevel() >= MIN_REQUIRED_RAIDLEVEL)
         {
             trigger(TWENTY_BUILDING_LEVELS);
         }

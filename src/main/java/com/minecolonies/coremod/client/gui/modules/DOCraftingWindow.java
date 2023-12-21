@@ -227,7 +227,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
           additionalOutput,
           new ArrayList<>());
 
-        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getId()));
+        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getProducer().getRuntimeID()));
     }
 
     @Override

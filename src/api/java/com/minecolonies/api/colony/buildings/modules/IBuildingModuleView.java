@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.buildings.modules;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -63,4 +63,17 @@ public interface IBuildingModuleView
      * @return the building view.
      */
     IBuildingView getBuildingView();
+
+    /**
+     * Set the producer of this module
+     * @param moduleSet
+     * @return
+     */
+    <M extends IBuildingModule, V extends IBuildingModuleView> IBuildingModuleView  setProducer(BuildingEntry.ModuleProducer<M,V> moduleSet);
+
+    /**
+     * Get the producer of this module
+     * @return
+     */
+    <M extends IBuildingModule, V extends IBuildingModuleView> BuildingEntry.ModuleProducer<M,V> getProducer();
 }

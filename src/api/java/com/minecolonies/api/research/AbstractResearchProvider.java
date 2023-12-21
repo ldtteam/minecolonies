@@ -7,6 +7,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -15,6 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
+
+import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
+import static com.minecolonies.api.research.ModResearchCostTypes.TAG_ITEM_COST_ID;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
@@ -508,42 +513,83 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Adds an item cost to the research.  This will be consumed when beginning the research, and will not be refunded.
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
          * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
-         * @param item   The item stack to require, including count.
+         *
+         * @param item  The item to require.
+         * @param count The number of the item to require.
          * @return this.
          */
-        public Research addItemCost(final ItemStack item)
+        public Research addItemCost(final Item item, final int count)
         {
-            final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            return addItemCost(List.of(item), count);
+        }
+
+        /**
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
+         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
+         *
+         * @param items The item to require.
+         * @param count The number of the item to require.
+         * @return this.
+         */
+        public Research addItemCost(final List<Item> items, final int count)
+        {
+            final JsonArray reqArray = getRequirementsArray();
+
+            JsonArray itemArr = new JsonArray();
+            for (Item item : items)
             {
-                reqArray = this.json.getAsJsonArray("requirements");
-                this.json.remove("requirements");
+                itemArr.add(ForgeRegistries.ITEMS.getKey(item).toString());
             }
-            else
-            {
-                reqArray = new JsonArray();
-            }
+
+            JsonObject itemObj = new JsonObject();
+            itemObj.add("items", itemArr);
+
             JsonObject req = new JsonObject();
-            req.addProperty("item", ForgeRegistries.ITEMS.getKey(item.getItem()).toString());
-            req.addProperty("quantity", item.getCount());
+            req.addProperty("type", LIST_ITEM_COST_ID.toString());
+            req.add("item",itemObj);
+            req.addProperty("quantity", count);
             reqArray.add(req);
+
             this.json.add("requirements", reqArray);
             return this;
         }
 
         /**
-         * Adds an item cost to the research.  This will be consumed when beginning the research, and will not be refunded.
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
          * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
-         * @param item   The item to require.
-         * @param count  The number of the item to require.
+         *
+         * @param tag   The tag to require.
+         * @param count The number of the item to require.
          * @return this.
          */
-        public Research addItemCost(final Item item, final int count)
+        public Research addItemCost(final TagKey<Item> tag, final int count)
+        {
+            final JsonArray reqArray = getRequirementsArray();
+
+            JsonObject itemObj = new JsonObject();
+            itemObj.addProperty("tag", tag.location().toString());
+
+            JsonObject req = new JsonObject();
+            req.addProperty("type", TAG_ITEM_COST_ID.toString());
+            req.add("item", itemObj);
+            req.addProperty("quantity", count);
+            reqArray.add(req);
+
+            this.json.add("requirements", reqArray);
+            return this;
+        }
+
+        /**
+         * Internal method to ensure the requirements array exists.
+         *
+         * @return the requirements array.
+         */
+        private JsonArray getRequirementsArray()
         {
             final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            if (this.json.has("requirements") && this.json.get("requirements").isJsonArray())
             {
                 reqArray = this.json.getAsJsonArray("requirements");
                 this.json.remove("requirements");
@@ -552,12 +598,7 @@ public abstract class AbstractResearchProvider implements DataProvider
             {
                 reqArray = new JsonArray();
             }
-            JsonObject req = new JsonObject();
-            req.addProperty("item", ForgeRegistries.ITEMS.getKey(item).toString());
-            req.addProperty("quantity", count);
-            reqArray.add(req);
-            this.json.add("requirements", reqArray);
-            return this;
+            return reqArray;
         }
 
         /**

@@ -13,7 +13,12 @@
       "level": 1
     },
     {
-      "item": "minecraft:iron_ingot",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:iron_ingot"
+        ]
+      },
       "quantity": 16
     }
   ],

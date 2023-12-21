@@ -1,0 +1,93 @@
+{
+  "name": "minecolonies:colonial/roads",
+  "fallback": "minecolonies:colonial/buildings",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:colonial/junctiona1",
+        "processors": "minecolonies:colonial/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:colonial/junctionb1",
+        "processors": "minecolonies:colonial/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:colonial/junctionc1",
+        "processors": "minecolonies:colonial/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:colonial/straighta1",
+        "processors": "minecolonies:colonial/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:colonial/straightb1",
+        "processors": "minecolonies:colonial/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:colonial/straightc1",
+        "processors": "minecolonies:colonial/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:colonial/fountain",
+        "processors": "minecolonies:colonial/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:colonial/park",
+        "processors": "minecolonies:colonial/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:colonial/parkway",
+        "processors": "minecolonies:colonial/decoration",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

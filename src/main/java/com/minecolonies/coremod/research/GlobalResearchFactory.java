@@ -1,31 +1,33 @@
 package com.minecolonies.coremod.research;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import static com.minecolonies.api.research.ModResearchCostTypes.SIMPLE_ITEM_COST_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
@@ -74,15 +76,12 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putBoolean(TAG_AUTOSTART, research.isAutostart());
         compound.putBoolean(TAG_IMMUTABLE, research.isImmutable());
         compound.putBoolean(TAG_HIDDEN, research.isHidden());
-        @NotNull final ListTag costTagList = research.getCostList().stream().map(is ->
+        @NotNull final ListTag costTagList = research.getCostList().stream().map(cost ->
         {
             final CompoundTag costCompound = new CompoundTag();
-            costCompound.putString(TAG_COST_ITEM, ForgeRegistries.ITEMS.getKey(Objects.requireNonNull(is.getItem())).toString() + ":" + is.getItemStack().getCount());
-            if(is.getItemStack().getTag() != null)
-            {
-                costCompound.put(TAG_COST_NBT, is.getItemStack().getTag());
-            }
-            return costCompound;
+            costCompound.putString(TAG_COST_TYPE, cost.getType().getId().toString());
+            cost.write(costCompound);
+            return compound;
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_COSTS, costTagList);
 
@@ -140,17 +139,11 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Tag.TAG_COMPOUND)).forEach(compound ->
         {
-            String[] costParts = compound.getString(TAG_COST_ITEM).split(":");
-            if(costParts.length == 3)
-            {
-                final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
-                is.setCount(Integer.parseInt(costParts[2]));
-                if (compound.contains(TAG_COST_NBT))
-                {
-                    is.setTag(compound.getCompound(TAG_COST_NBT));
-                }
-                research.addCost(new ItemStorage(is, false, !ItemStackUtils.hasTag(is)));
-            }
+            final ResourceLocation res = compound.contains(TAG_COST_TYPE) ? new ResourceLocation(compound.getString(TAG_COST_TYPE)) : SIMPLE_ITEM_COST_ID;
+            final ResearchCostType researchCostType = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getValue(res);
+            final IResearchCost instance = researchCostType.createInstance();
+            instance.read(compound);
+            research.addCost(instance);
         });
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Tag.TAG_COMPOUND)).
              forEach(compound ->
@@ -183,18 +176,19 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeBoolean(input.isImmutable());
         packetBuffer.writeBoolean(input.isHidden());
         packetBuffer.writeVarInt(input.getCostList().size());
-        for(ItemStorage is : input.getCostList())
+        for (IResearchCost cost : input.getCostList())
         {
-            controller.serialize(packetBuffer, is);
+            packetBuffer.writeRegistryId(IMinecoloniesAPI.getInstance().getResearchCostRegistry(), cost.getType());
+            cost.serialize(packetBuffer);
         }
         packetBuffer.writeVarInt(input.getResearchRequirement().size());
-        for(IResearchRequirement req : input.getResearchRequirement())
+        for (IResearchRequirement req : input.getResearchRequirement())
         {
             packetBuffer.writeResourceLocation(req.getRegistryEntry().getRegistryName());
             packetBuffer.writeNbt(req.writeToNBT());
         }
         packetBuffer.writeVarInt(input.getEffects().size());
-        for(IResearchEffect<?> effect : input.getEffects())
+        for (IResearchEffect<?> effect : input.getEffects())
         {
             packetBuffer.writeResourceLocation(effect.getRegistryEntry().getRegistryName());
             packetBuffer.writeNbt(effect.writeToNBT());
@@ -230,7 +224,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int costSize = buffer.readVarInt();
         for(int i = 0; i < costSize; i++)
         {
-            research.addCost(controller.deserialize(buffer));
+            final ResearchCostType researchCostType = buffer.readRegistryIdSafe(ResearchCostType.class);
+            final IResearchCost cost = researchCostType.createInstance();
+            cost.deserialize(buffer);
+            research.addCost(cost);
         }
 
         final int reqCount = buffer.readVarInt();

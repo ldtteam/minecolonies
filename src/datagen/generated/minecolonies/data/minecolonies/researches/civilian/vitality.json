@@ -13,7 +13,12 @@
       "level": 4
     },
     {
-      "item": "minecraft:golden_apple",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:golden_apple"
+        ]
+      },
       "quantity": 16
     }
   ],

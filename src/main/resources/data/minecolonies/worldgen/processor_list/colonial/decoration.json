@@ -1,0 +1,26 @@
+{
+  "processors": [
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:coarse_dirt"
+          },
+          "input_predicate": {
+            "block": "minecraft:terracotta",
+            "predicate_type": "minecraft:random_block_match",
+            "probability":0.15
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
+    },
+    {
+      "processor_type": "minecraft:block_age",
+      "mossiness": 0.15
+    }
+  ]
+}

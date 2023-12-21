@@ -45,7 +45,6 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         this.up = buf.readBoolean();
     }
 
@@ -57,7 +56,6 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         buf.writeBoolean(this.up);
     }
 

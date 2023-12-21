@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:civilian/opera",
   "requirements": [
     {
-      "item": "minecraft:enchanted_golden_apple",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:enchanted_golden_apple"
+        ]
+      },
       "quantity": 16
     }
   ],
