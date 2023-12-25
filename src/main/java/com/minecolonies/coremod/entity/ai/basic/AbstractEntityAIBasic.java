@@ -1271,7 +1271,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (toolType == ToolType.NONE)
         {
-            final int heldSlot = worker.getInventoryCitizen().getHeldItemSlot(InteractionHand.MAIN_HAND);
+            final int heldSlot = InventoryUtils.getFirstOpenSlotFromItemHandler(worker.getInventoryCitizen());
             return heldSlot >= 0 ? heldSlot : 0;
         }
 
