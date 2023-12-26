@@ -237,7 +237,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     public void onBlockDropReception(final List<ItemStack> blockDrops)
     {
-
+        //Override if needed
     }
 
     /**

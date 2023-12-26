@@ -897,7 +897,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         super.onBlockDropReception(blockDrops);
         for (final ItemStack stack : blockDrops)
         {
-            building.getModule(STATS_MODULE).incrementBy( ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+            building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
         }
     }
 

@@ -362,6 +362,6 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColony().getDay());
-        parentAI.building.getModule(STATS_MODULE).increment( MOB_KILLED + ";" + entity.getType().getDescription().toString());
+        parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + entity.getType().getDescription().toString());
     }
 }

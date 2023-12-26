@@ -602,7 +602,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         super.onBlockDropReception(blockDrops);
         for (final ItemStack stack : blockDrops)
         {
-            building.getModule(STATS_MODULE).incrementBy( ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+            building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
         }
     }
 

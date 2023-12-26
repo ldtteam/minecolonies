@@ -163,7 +163,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             if (world.random.nextInt(100) <= chosenItem.getBreakPct())
             {
                 data.getInventory().extractItem(chosenItem.getSlot(), 1, false);
-                building.getModule(STATS_MODULE).increment( ITEM_USED + ";" + chosenItem.getItem().getDescriptionId());
+                building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + chosenItem.getItem().getDescriptionId());
             }
         }
 
