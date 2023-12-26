@@ -311,9 +311,7 @@ public class ColonyBlueprintRenderer
                     continue;
                 }
                 final BlockPos currentPosition = buildingView.getPosition();
-
-                final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) ctx.clientLevel.getBlockEntity(buildingView.getPosition());
-                if (tileEntityColonyBuilding != null)
+                if (ctx.clientLevel.getBlockEntity(currentPosition) instanceof final TileEntityColonyBuilding tileEntityColonyBuilding)
                 {
                     final Tuple<BlockPos, BlockPos> corners = tileEntityColonyBuilding.getInWorldCorners();
                     BlockPos cornerA = corners.getA();
