@@ -58,10 +58,10 @@ import static com.minecolonies.api.research.util.ResearchConstants.FARMING;
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.CROPS_HARVESTED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.LAND_TILLED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
  * Farmer AI class. Created: December 20, 2014
@@ -554,7 +554,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 world.setBlockAndUpdate(position, Blocks.FARMLAND.defaultBlockState());
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(LAND_TILLED);
+                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(LAND_TILLED, worker.getCitizenColonyHandler().getColony().getDay());
 
                 return true;
             }
@@ -578,14 +578,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
                 harvestCrop(position.above());
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CROPS_HARVESTED);
+                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColony().getDay());
 
                 return true;
             }
 
             if (mineBlock(position.above()))
             {
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CROPS_HARVESTED);
+                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColony().getDay());
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             }
             else
@@ -594,6 +594,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
         }
         return true;
+    }
+
+    @Override
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        super.onBlockDropReception(blockDrops);
+        for (final ItemStack stack : blockDrops)
+        {
+            building.getModule(STATS_MODULE).incrementBy( ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+        }
     }
 
     protected int getLevelDelay()

@@ -39,10 +39,10 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_MINED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_MINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.initStructure;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
@@ -891,6 +891,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         job.setBlueprint(null);
     }
 
+    @Override
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        super.onBlockDropReception(blockDrops);
+        for (final ItemStack stack : blockDrops)
+        {
+            building.getModule(STATS_MODULE).incrementBy( ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+        }
+    }
+
     /**
      * Calculates the working position.
      * <p>
@@ -960,9 +970,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))
         {
-            building.getColony().getStatisticsManager().increment(ORES_MINED);
+            building.getColony().getStatisticsManager().increment(ORES_MINED, building.getColony().getDay());
         }
-        building.getColony().getStatisticsManager().increment(BLOCKS_MINED);
+        building.getColony().getStatisticsManager().increment(BLOCKS_MINED, building.getColony().getDay());
     }
 
     @Override

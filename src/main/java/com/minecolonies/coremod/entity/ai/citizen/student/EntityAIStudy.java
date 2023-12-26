@@ -22,6 +22,9 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.INT_LEVELED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 /**
@@ -152,11 +155,15 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             final StudyItem chosenItem = currentItems.get(world.random.nextInt(currentItems.size()));
 
             worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
-            data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (100D / chosenItem.getSkillIncreasePct()), data);
+            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (100D / chosenItem.getSkillIncreasePct()), data))
+            {
+                building.getModule(STATS_MODULE).increment(INT_LEVELED);
+            }
             // Break item rand
             if (world.random.nextInt(100) <= chosenItem.getBreakPct())
             {
                 data.getInventory().extractItem(chosenItem.getSlot(), 1, false);
+                building.getModule(STATS_MODULE).increment( ITEM_USED + ";" + chosenItem.getItem().getDescriptionId());
             }
         }
 

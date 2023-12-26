@@ -245,7 +245,7 @@ public final class ColonyView implements IColonyView
     /**
      * Statistic manager associated to the view.
      */
-    private IStatisticsManager statisticManager = new StatisticsManager(this);
+    private IStatisticsManager statisticManager = new StatisticsManager();
 
     /**
      * Client side quest manager.
