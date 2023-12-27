@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.coremod.client.render.worldevent.ColonyBlueprintRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -42,5 +43,9 @@ public class ItemBuildGoggles extends ArmorItem
                         Component.translatable("item.minecolonies.build_goggles.lore")
                                 .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC))
                 .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+
+        components.add(Component.translatable(ColonyBlueprintRenderer.willRenderBlueprints()
+                ? "item.minecolonies.build_goggles.enabled" : "item.minecolonies.build_goggles.disabled")
+                .withStyle(ChatFormatting.GRAY));
     }
 }
