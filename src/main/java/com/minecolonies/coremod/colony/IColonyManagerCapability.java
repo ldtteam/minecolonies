@@ -9,7 +9,6 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.util.BackUpHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
@@ -127,19 +126,22 @@ public interface IColonyManagerCapability
     class Storage
     {
 
-        public static Tag writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
+        public static Tag writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, final boolean overworld)
         {
             final CompoundTag compound = new CompoundTag();
             compound.put(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
-            final CompoundTag managerCompound = new CompoundTag();
-            IColonyManager.getInstance().write(managerCompound);
-            compound.put(TAG_COLONY_MANAGER, managerCompound);
+
+            if (overworld)
+            {
+                final CompoundTag managerCompound = new CompoundTag();
+                IColonyManager.getInstance().write(managerCompound);
+                compound.put(TAG_COLONY_MANAGER, managerCompound);
+            }
             return compound;
         }
 
         public static void readNBT(
-          @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
-          @Nullable final Direction side, @NotNull final Tag nbt)
+          @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, final boolean overworld, @NotNull final Tag nbt)
         {
             // Notify that we did load the cap for this world
             IColonyManager.getInstance().setCapLoaded();
@@ -189,7 +191,7 @@ public interface IColonyManagerCapability
                     }
                 }
 
-                if (compound.contains(TAG_COLONY_MANAGER))
+                if (compound.contains(TAG_COLONY_MANAGER) && overworld)
                 {
                     IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
                 }

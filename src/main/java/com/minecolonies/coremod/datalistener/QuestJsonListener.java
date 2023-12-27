@@ -305,72 +305,180 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             triggerMap.put(String.valueOf(i+1), triggers.get(i));
         }
 
-        return colony -> evaluate(colony, triggerMap, new ArrayList<>(values), new ArrayList<>(), true);
+        if (values.isEmpty())
+        {
+            return colony -> new ArrayList<>();
+        }
+        else
+        {
+            ExpressionNode expressionTree = null;
+
+            int[] depth = new int[100];
+            int current = 0;
+            for (int i = values.size() - 1; i >= 0; i--)
+            {
+                final String arg = values.get(i);
+                switch (arg)
+                {
+                    case BRACE_OPEN:
+                        for (int d = 0; d < depth[current]; d++)
+                        {
+                            expressionTree = expressionTree.parent;
+                        }
+
+                        depth[current] = 0;
+                        current--;
+                        break;
+                    case BRACE_CLOSE:
+                        current++;
+                        break;
+                    case OR:
+                    case AND:
+                    case NOT:
+                        // make this depth dependent, and allow between insertion.
+                        final ExpressionNode node = new ExpressionNode(arg);
+                        if (expressionTree.parent != null)
+                        {
+                            ExpressionNode previous = expressionTree.parent;
+                            while (true)
+                            {
+                                if (previous.childB == expressionTree)
+                                {
+                                    previous.childB = node;
+                                    break;
+                                }
+                                else if (previous.childA == expressionTree)
+                                {
+                                    previous.childA = node;
+                                    break;
+                                }
+                                else
+                                {
+                                    previous = previous.parent;
+                                }
+                            }
+                            node.parent = previous;
+                        }
+
+                        depth[current]++;
+
+                        node.childA = expressionTree;
+                        node.childA.parent = node;
+
+                        expressionTree = node;
+
+                        break;
+                    default:
+                        if (expressionTree == null)
+                        {
+                            expressionTree = new ExpressionNode(arg);
+                        }
+                        else
+                        {
+                            expressionTree = expressionTree.append(arg);
+                        }
+                        break;
+                }
+            }
+            ExpressionNode root = expressionTree;
+            while (root.parent != null)
+            {
+                root = root.parent;
+            }
+            final ExpressionNode finalExpressionTree = root;
+            return colony -> evaluate(colony, triggerMap, finalExpressionTree);
+        }
     }
 
     /**
      * Recursively parses a string condition to a predicate
      *
      * @param colony the colony.
-     * @param data split string data
      * @return predicate from data
      */
-    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final List<String> data, final List<ITriggerReturnData<?>> lastReturnData, final boolean recursive)
+    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final ExpressionNode expressionTree)
     {
-        // first we evaluate all and handle negation
-        // then find deepest brace open, solve deepest brace open
-        // then recursive until they are gone
-        // substitute deepest brace open with its result
-        if (data.isEmpty())
+        switch (expressionTree.expression)
         {
-            return lastReturnData;
-        }
-
-        final String current = data.get(0);
-        data.remove(0);
-        switch (current)
-        {
-            case OR:
-                //
-                return lastReturnData != null ? lastReturnData : evaluate(colony, triggerMap, data, lastReturnData, recursive);
-            case AND:
-                return lastReturnData == null ? null : evaluate(colony, triggerMap, data, lastReturnData, recursive);
-            case NOT:
-                return evaluate(colony, triggerMap, data, lastReturnData, false) == null ? evaluate(colony, triggerMap, data, lastReturnData, true) : null;
-            case BRACE_OPEN:
-                List<ITriggerReturnData<?>> currentReturnData = lastReturnData;
-                List<ITriggerReturnData<?>> result = evaluate(colony, triggerMap, data, new ArrayList<>(), recursive);
-                if (result == null)
-                {
-                    return evaluate(colony, triggerMap, data, null, recursive);
-                }
-
-                result.addAll(currentReturnData);
-                return evaluate(colony, triggerMap, data, result, recursive);
-            case BRACE_CLOSE:
-                return lastReturnData;
-            case EMPTY:
-                return evaluate(colony, triggerMap, data, lastReturnData, recursive);
-            default:
+            case OR ->
             {
-                final IQuestTriggerTemplate trigger = triggerMap.get(current);
+                if (expressionTree.childA != null)
+                {
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA);
+                    if (immReturn != null)
+                    {
+                        return immReturn;
+                    }
+                }
+                if (expressionTree.childB != null)
+                {
+                    return evaluate(colony, triggerMap, expressionTree.childB);
+                }
+                return null;
+            }
+            case AND ->
+            {
+                final List<ITriggerReturnData<?>> returnDataList = new ArrayList<>();
+                if (expressionTree.childA != null)
+                {
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA);
+                    if (immReturn == null)
+                    {
+                        return null;
+                    }
+                    returnDataList.addAll(immReturn);
+                }
+                if (expressionTree.childB != null)
+                {
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB);
+                    if (immReturn == null)
+                    {
+                        return null;
+                    }
+                    returnDataList.addAll(immReturn);
+                }
+                return returnDataList;
+            }
+            default ->
+            {
+                final IQuestTriggerTemplate trigger = triggerMap.get(expressionTree.expression);
                 final ITriggerReturnData<?> returnData = trigger.canTriggerQuest(colony);
                 if (returnData.isPositive())
                 {
-                    if (lastReturnData == null)
-                    {
-                        final List<ITriggerReturnData<?>> newReturnData = new ArrayList<>();
-                        newReturnData.add(returnData);
-                        return recursive ? evaluate(colony, triggerMap, data, newReturnData, recursive) : newReturnData;
-                    }
-                    else
-                    {
-                        lastReturnData.add(returnData);
-                        return recursive ? evaluate(colony, triggerMap, data, lastReturnData, recursive) : lastReturnData;
-                    }
+                    return List.of(returnData);
                 }
-                return recursive ? evaluate(colony, triggerMap, data, null, recursive) : null;
+                return null;
             }
+        }
+    }
+
+    public static class ExpressionNode
+    {
+        public String expression;
+        public ExpressionNode childA;
+        public ExpressionNode childB;
+        public ExpressionNode parent;
+
+        public ExpressionNode(final String expression)
+        {
+            this.expression = expression;
+        }
+
+        public ExpressionNode append(String expression)
+        {
+            if (childA == null)
+            {
+                childA = new ExpressionNode(expression);
+                childA.parent = this;
+                return childA;
+            }
+            else if (childB == null)
+            {
+                childB = new ExpressionNode(expression);
+                childB.parent = this;
+                return childB;
+            }
+            return null;
         }
     }
 }

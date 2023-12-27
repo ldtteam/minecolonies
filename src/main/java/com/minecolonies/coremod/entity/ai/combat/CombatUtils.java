@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.items.ItemSpear;
@@ -43,7 +43,6 @@ public class CombatUtils
     public static AbstractArrow createArrowForShooter(final LivingEntity shooter)
     {
         AbstractArrow arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level);
-        arrowEntity.setOwner(shooter);
 
         final ItemStack rangedWeapon = shooter.getItemInHand(InteractionHand.MAIN_HAND);
         final Item rangedWeaponItem = rangedWeapon.getItem();
@@ -60,6 +59,7 @@ public class CombatUtils
             arrowEntity = EntityType.TRIDENT.create(shooter.level);
         }
 
+        arrowEntity.setOwner(shooter);
         arrowEntity.setPos(shooter.getX(), shooter.getY() + 1, shooter.getZ());
         return arrowEntity;
     }
@@ -95,7 +95,7 @@ public class CombatUtils
             }
         }
 
-        if (target instanceof AbstractEntityMinecoloniesMob)
+        if (target instanceof AbstractEntityRaiderMob)
         {
             for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
             {

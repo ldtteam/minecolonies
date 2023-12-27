@@ -48,7 +48,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -129,7 +128,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The AI for citizens, controlling different global states
      */
-    protected ITickRateStateMachine<IState> entityStateController = new TickRateStateMachine<>(EntityState.INIT, e -> Log.getLogger().warn(e));
+    protected ITickRateStateMachine<IState> entityStateController = new TickRateStateMachine<>(EntityState.INIT,
+      e -> Log.getLogger()
+        .warn("Citizen " + getDisplayName().getString() + " id:" + (getCitizenData() != null ? getCitizenData().getId() : -1) + "from colony: "
+                + getCitizenColonyHandler().getColonyId() + " state controller exception", e));
 
     /**
      * Constructor for a new citizen typed entity.
@@ -137,7 +139,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param type  the Entity type.
      * @param world the world.
      */
-    public AbstractEntityCitizen(final EntityType<? extends AgeableMob> type, final Level world)
+    public AbstractEntityCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
     }
@@ -292,18 +294,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return modelId;
     }
 
-    /**
-     * For the time being we don't want any childrens of our colonists.
-     *
-     * @return the child.
-     */
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(final ServerLevel world, final AgeableMob parent)
-    {
-        return null;
-    }
-
     @Override
     protected void defineSynchedData()
     {
@@ -359,6 +349,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
+     * Don't push if we're ignoring being pushed
+     */
+    @Override
+    public void pushEntities()
+    {
+        if (collisionCounter > COLL_THRESHOLD)
+        {
+            return;
+        }
+
+        super.pushEntities();
+    }
+
+    /**
      * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
      *
      * @param entityIn entity to collide with
@@ -391,7 +395,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             super.onPlayerCollide(player);
             return;
         }
-        
+
         final IJob<?> job = getCitizenData().getJob();
         if (job == null || !job.isGuard())
         {
@@ -424,24 +428,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         {
             collisionCounter--;
         }
-    }
-
-    @Override
-    protected void tryAddSoulSpeed()
-    {
-
-    }
-
-    @Override
-    protected void removeSoulSpeed()
-    {
-
-    }
-
-    @Override
-    public boolean canSpawnSoulSpeedParticle()
-    {
-        return false;
     }
 
     /**
@@ -704,7 +690,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void detectEquipmentUpdates()
     {
-        if (this.isEquipmentDirty)
+        if (this.isEquipmentDirty && tickCount % 20 == randomVariance)
         {
             this.isEquipmentDirty = false;
             List<Pair<EquipmentSlot, ItemStack>> list = Lists.newArrayListWithCapacity(6);
@@ -727,20 +713,28 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             final ItemStack previous = getItemBySlot(slot);
             if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true))
             {
-                if (!previous.isEmpty())
-                {
-                    this.getAttributes().removeAttributeModifiers(previous.getAttributeModifiers(slot));
-                }
-
-                if (!newItem.isEmpty())
-                {
-                    this.getAttributes().addTransientAttributeModifiers(newItem.getAttributeModifiers(slot));
-                }
-
                 markEquipmentDirty();
             }
         }
         super.setItemSlot(slot, newItem);
+    }
+
+    /**
+     * On armor removal.
+     * @param stack the removed armor.
+     */
+    public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot)
+    {
+        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
+    }
+
+    /**
+     * On armor equip.
+     * @param stack the added armor.
+     */
+    public void onArmorAdd(final ItemStack stack, final EquipmentSlot equipmentSlot)
+    {
+        this.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
     }
 
     /**
@@ -762,37 +756,36 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Do not allow bubble movement
-     *
-     * @param down
-     */
-    public void onInsideBubbleColumn(boolean down)
-    {
-
-    }
-
-    /**
      * Queue a sound at the citizen.
-     * @param soundEvent the sound event to play.
-     * @param length the length of the event.
+     *
+     * @param soundEvent  the sound event to play.
+     * @param length      the length of the event.
      * @param repetitions the number of times to play it.
      */
     public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions);
 
     /**
      * Queue a sound at the citizen.
-     * @param soundEvent the sound event to play.
-     * @param length the length of the event.
+     *
+     * @param soundEvent  the sound event to play.
+     * @param length      the length of the event.
      * @param repetitions the number of times to play it.
      */
     public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch);
 
     /**
      * Get the entities state controller
+     *
      * @return
      */
     public ITickRateStateMachine<IState> getEntityStateController()
     {
         return entityStateController;
+    }
+
+    @Override
+    public boolean isSleeping()
+    {
+        return getCitizenSleepHandler().isAsleep();
     }
 }

@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -14,29 +14,28 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PACK;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
@@ -101,7 +100,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
         {
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
-            if (te != null)
+            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
             {
                 final CompoundTag tagData = teData.getCompound(TAG_BLUEPRINTDATA);
                 final String schematicPath = tagData.getString(TAG_NAME);
@@ -110,7 +109,12 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
                 tagData.putString(TAG_NAME, location);
                 tagData.putString(TAG_PACK, blueprint.getPackName());
 
-                ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(teData);
+                if (te instanceof AbstractTileEntityColonyBuilding colonyBuilding && colonyBuilding.getBuilding() != null)
+                {
+                    colonyBuilding.getBuilding().setDeconstructed();
+                }
+
+                blueprintDataProviderBE.readSchematicDataFromNBT(teData);
                 ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
                 te.setChanged();
             }

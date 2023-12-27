@@ -1,6 +1,5 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -11,8 +10,6 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.util.constant.translation.JobTranslationConstants.*;
 
@@ -44,7 +41,7 @@ public final class ModGuardTypesInitializer
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
-                                 .setJobEntry(() -> ModJobs.ranger.get())
+                                 .setJobEntry(() -> ModJobs.archer.get())
                                  .setRegistryName(ModGuardTypes.RANGER_ID)
                                  .setClazz(JobRanger.class)
                                  .createGuardType());

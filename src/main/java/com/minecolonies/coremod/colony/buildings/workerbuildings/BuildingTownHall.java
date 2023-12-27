@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
@@ -26,10 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -192,7 +190,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         /**
          * List of colony events.
          */
-        private final List<IColonyEventDescription> colonyEvents = new LinkedList<>();
+        private ImmutableList<IColonyEventDescription> colonyEvents = ImmutableList.of();
 
         /**
          * If the player is allowed to do townHall teleport.
@@ -235,7 +233,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
                 permissionEvents.add(new PermissionEvent(buf));
             }
 
-            colonyEvents.clear();
+            final List<IColonyEventDescription> tempEvents = new ArrayList<>();
             final int colonyEventsSize = buf.readInt();
             for (int i = 0; i < colonyEventsSize; i++)
             {
@@ -248,8 +246,10 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
                     continue;
                 }
 
-                colonyEvents.add(registryEntry.deserializeEventDescriptionFromFriendlyByteBuf(buf));
+                tempEvents.add(registryEntry.deserializeEventDescriptionFromFriendlyByteBuf(buf));
             }
+            Collections.reverse(tempEvents);
+            colonyEvents = ImmutableList.copyOf(tempEvents);
 
             final int size = buf.readInt();
             mapDataList.clear();
@@ -269,7 +269,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         @Override
         public List<IColonyEventDescription> getColonyEvents()
         {
-            return new LinkedList<>(colonyEvents);
+            return colonyEvents;
         }
 
         @Override

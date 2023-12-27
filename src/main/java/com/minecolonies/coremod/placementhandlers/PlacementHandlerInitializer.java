@@ -35,5 +35,6 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.add(new NetherrackPlacementHandler());
         PlacementHandlers.add(new LecternPlacementHandler());
         PlacementHandlers.add(new HutPlacementHandler());
+        PlacementHandlers.add(new InfestedBlocksPlacementHandler());
     }
 }

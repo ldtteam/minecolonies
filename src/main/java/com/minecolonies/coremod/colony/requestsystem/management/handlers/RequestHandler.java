@@ -51,7 +51,7 @@ public class RequestHandler implements IRequestHandler
           .getNewInstance(TypeToken.of((Class<? extends IRequest<Request>>) RequestMappingHandler.getRequestableMappings()
             .get(request.getClass())), request, token, requester);
 
-        manager.getLogger().debug("Creating request for: " + request + ", token: " + token + " and output: " + constructedRequest);
+        manager.log("Creating request for: " + request + ", token: " + token + " and output: " + constructedRequest);
 
         registerRequest(constructedRequest);
 
@@ -67,7 +67,7 @@ public class RequestHandler implements IRequestHandler
             throw new IllegalArgumentException("The given request is already known to this manager");
         }
 
-        manager.getLogger().debug("Registering request: " + request);
+        manager.log("Registering request: " + request);
 
         manager.getRequestIdentitiesDataStore().getIdentities().put(request.getId(), request);
     }
@@ -125,7 +125,7 @@ public class RequestHandler implements IRequestHandler
         //Check if the request is registered
         getRequest(request.getId());
 
-        manager.getLogger().debug("Starting resolver assignment search for request: " + request);
+        manager.log("Starting resolver assignment search for request: " + request);
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
@@ -232,7 +232,7 @@ public class RequestHandler implements IRequestHandler
       @Nullable final List<IToken<?>> attemptResult)
     {
         //Successfully found a resolver. Registering
-        manager.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
+        manager.log("Finished resolver assignment search for request: " + request + " successfully");
 
         manager.getResolverHandler().addRequestToResolver(resolver, request);
         //TODO: Change this false to simulation.
@@ -560,7 +560,7 @@ public class RequestHandler implements IRequestHandler
     @Override
     public void cleanRequestData(final IToken<?> token)
     {
-        manager.getLogger().debug("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
+        manager.log("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
         getRequest(token);
 
         if (isAssigned(token))
@@ -614,7 +614,7 @@ public class RequestHandler implements IRequestHandler
     @Override
     public IRequest<?> getRequestOrNull(final IToken<?> token)
     {
-        manager.getLogger().debug("Retrieving the request for: " + token);
+        manager.log("Retrieving the request for: " + token);
 
         return manager.getRequestIdentitiesDataStore().getIdentities().get(token);
     }

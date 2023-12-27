@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
@@ -21,7 +21,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for melee attacking a target
  */
-public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
+public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntity> extends AttackMoveAI<T>
 {
     /**
      * Extended reach based on difficulty
@@ -53,7 +53,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
     protected void doAttack(final LivingEntity target)
     {
         double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue();
-        target.hurt(new NamedDamageSource("death.attack." + ((TranslatableContents) user.getName().getContents()).getKey(), user), (float) damageToBeDealt);
+        target.hurt(new NamedDamageSource(((TranslatableContents) user.getName().getContents()).getKey(), user), (float) damageToBeDealt);
         user.swing(InteractionHand.MAIN_HAND);
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(user.getRandom()));
         target.setLastHurtByMob(user);

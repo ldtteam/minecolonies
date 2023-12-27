@@ -15,8 +15,10 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
+import com.minecolonies.coremod.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.coremod.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -32,13 +34,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -128,7 +129,7 @@ VisitorCitizen extends AbstractEntityCitizen
      * @param type  the Entity type.
      * @param world the world.
      */
-    public VisitorCitizen(final EntityType<? extends AgeableMob> type, final Level world)
+    public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -156,7 +157,7 @@ VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
-        this.goalSelector.addGoal(++priority, new LookAtPlayerGoal(this, LivingEntity.class, WATCH_CLOSEST));
+        this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
         new EntityAIVisitor(this);
     }
 
@@ -178,9 +179,9 @@ VisitorCitizen extends AbstractEntityCitizen
             if (damageSource.getEntity() instanceof LivingEntity && damage > 1.01f)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
-                if (home.hasModule(TavernBuildingModule.class))
+                if (home.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
-                    final TavernBuildingModule module = home.getFirstModuleOccurance(TavernBuildingModule.class);
+                    final TavernBuildingModule module = home.getModule(BuildingModules.TAVERN_VISITOR);
                     for (final Integer id : module.getExternalCitizens())
                     {
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
@@ -273,11 +274,11 @@ VisitorCitizen extends AbstractEntityCitizen
      * Mark the citizen dirty to synch the data with the client.
      */
     @Override
-    public void markDirty()
+    public void markDirty(final int time)
     {
         if (citizenData != null)
         {
-            citizenData.markDirty();
+            citizenData.markDirty(time);
         }
     }
 
@@ -305,7 +306,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 20);
         }
     }
 
@@ -318,7 +319,7 @@ VisitorCitizen extends AbstractEntityCitizen
         if (citizenData != null)
         {
             citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
-            citizenData.markDirty();
+            citizenData.markDirty(20 * 60 * 2);
         }
     }
 
@@ -527,8 +528,20 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            usedStack.setCount(usedStack.getCount() - 1);
-            player.setItemInHand(hand, usedStack);
+            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+            {
+                if (!player.getInventory().add(remainingItem))
+                {
+                    InventoryUtils.spawnItemStack(
+                      player.level,
+                      player.getX(),
+                      player.getY(),
+                      player.getZ(),
+                      remainingItem
+                    );
+                }
+            }
 
             if (!level.isClientSide())
             {
@@ -591,7 +604,7 @@ VisitorCitizen extends AbstractEntityCitizen
 
         if (lastHurtByPlayerTime > 0)
         {
-            markDirty();
+            markDirty(0);
         }
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
@@ -621,9 +634,10 @@ VisitorCitizen extends AbstractEntityCitizen
     public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
-        if (citizenColonyHandler.getColony() != null && citizenData != null)
+
+        compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
+        if (citizenData != null)
         {
-            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
 
@@ -635,12 +649,14 @@ VisitorCitizen extends AbstractEntityCitizen
     {
         super.readAdditionalSaveData(compound);
 
-        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
-        citizenId = compound.getInt(TAG_CITIZEN);
-
-        if (isEffectiveAi())
+        if (compound.contains(TAG_COLONY_ID))
         {
-            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+            if (compound.contains(TAG_CITIZEN))
+            {
+                citizenId = compound.getInt(TAG_CITIZEN);
+                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            }
         }
 
         citizenDiseaseHandler.read(compound);

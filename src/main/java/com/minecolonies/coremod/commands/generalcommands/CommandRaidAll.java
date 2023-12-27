@@ -54,7 +54,7 @@ public class CommandRaidAll implements IMCOPCommand
         {
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                colony.getRaiderManager().raiderEvent(raidType);
+                colony.getRaiderManager().raiderEvent(raidType, true);
             }
             context.getSource().sendSuccess(Component.translatable(COMMAND_RAID_TONIGHT_WARNING), true);
             return 1;

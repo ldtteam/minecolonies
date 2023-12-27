@@ -68,7 +68,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
             button.setText(Component.translatable(LABEL_LIMIT_REACHED));
-            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"), false);
+            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_disabled.png"), false);
         }
 
         registerButton(STOCK_REMOVE, this::removeStock);
@@ -84,7 +84,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
         final int row = resourceList.getListElementIndexByPane(button);
         final Tuple<ItemStorage, Integer> tuple = moduleView.getStock().get(row);
         moduleView.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack()));
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack(), moduleView.getProducer().getRuntimeID()));
         updateStockList();
     }
 

@@ -13,8 +13,6 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
-import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -49,16 +47,20 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     {
         super.onRemoval(citizen);
         final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-        if (optCitizen.isPresent())
-        {
-            AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
-            optCitizen.get().setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-            optCitizen.get().setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
-        }
+        optCitizen.ifPresent(cit -> {
+            AttributeModifierUtils.removeAllHealthModifiers(cit);
+            cit.setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+            cit.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
+
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.CHEST);
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.LEGS);
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.HEAD);
+            cit.getInventoryCitizen().moveArmorToInventory(EquipmentSlot.FEET);
+        });
     }
 
     @Override
@@ -71,7 +73,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     public void onColonyTick(@NotNull final IColony colony)
     {
         // Give the other assignment module also a chance.
-        if (random.nextInt(building.getModules(GuardBuildingModule.class).size()) > 0)
+        if (random.nextInt(building.getModulesByType(GuardBuildingModule.class).size()) == 0)
         {
             return;
         }
@@ -87,9 +89,13 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
 
             for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
             {
-                if ((getJobEntry() == ModJobs.archer.get() && trainee.getJob() instanceof JobArcherTraining
-                      || getJobEntry() == ModJobs.knight.get() && trainee.getJob() instanceof JobCombatTraining)
-                           && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
+                if (trainee.getJob() == null)
+                {
+                    continue;
+                }
+                if ((getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
+                       || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()))
+                      && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());
                     trainingCitizen = trainee;
@@ -99,6 +105,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
             if (trainingCitizen != null)
             {
                 hiredFromTraining = true;
+                trainingCitizen.setJob(null);
                 assignCitizen(trainingCitizen);
             }
         }

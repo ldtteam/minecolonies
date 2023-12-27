@@ -643,7 +643,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         @Nullable final MinerLevel currentLevel = module.getCurrentLevel();
         if (currentLevel == null)
         {
-            Log.getLogger().warn("Current Level not set, resetting...");
             module.setCurrentLevel(module.getNumberOfLevels() - 1);
             return executeNodeMining();
         }
@@ -954,7 +953,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
         {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance),
+            final int level = building.getBuildingLevel();
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance, level),
               worker.getInventoryCitizen());
         }
 

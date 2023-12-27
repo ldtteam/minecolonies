@@ -8,13 +8,11 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
@@ -26,7 +24,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -138,6 +135,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     private PathResult spawnPathResult;
 
     /**
+     * If this was a mercy end.
+     */
+    private boolean mercyEnd = false;
+
+    /**
      * Waypoints helping raiders travel
      */
     private List<BlockPos> wayPoints = new ArrayList<>();
@@ -216,6 +218,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
     }
 
+    @Override
+    public void onEntityDeath(final LivingEntity entity)
+    {
+        if (entity instanceof AbstractEntityRaiderMob)
+        {
+            colony.getRaiderManager().onRaiderDeath((AbstractEntityRaiderMob) entity);
+        }
+    }
+
     /**
      * Spawn a specific horde.
      *
@@ -231,6 +242,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         RaiderMobUtils.spawn(getNormalRaiderType(), numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(getBossRaiderType(), numberOfBosses, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(getArcherRaiderType(), numberOfArchers, spawnPos, colony.getWorld(), colony, id);
+    }
+
+    @Override
+    public void setMercyEnd()
+    {
+        this.mercyEnd = true;
     }
 
     /**
@@ -286,7 +303,14 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (horde.hordeSize > 0)
         {
-            MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            if (mercyEnd)
+            {
+                MessageUtils.format(ALL_BARBARIANS_MERCY_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            }
+            else
+            {
+                MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            }
         }
     }
 
@@ -358,6 +382,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(),
                         BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
                 .with(ChatFormatting.DARK_RED).sendTo(colony).forManagers();
+        Log.getLogger().debug("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);

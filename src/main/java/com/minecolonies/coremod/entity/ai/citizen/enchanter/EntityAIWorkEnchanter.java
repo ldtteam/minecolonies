@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -99,9 +102,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, TICKS_SECOND),
-          new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
           new AITarget(ENCHANTER_DRAIN, this::gatherAndDrain, 10),
           new AITarget(ENCHANT, this::enchant, TICKS_SECOND)
         );
@@ -113,18 +113,25 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
      *
      * @return the next state to go to.
      */
+    @Override
     protected IAIState decide()
     {
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         if (walkToBuilding())
         {
-            return DECIDE;
+            return START_WORKING;
         }
 
         final IAIState craftState = getNextCraftingState();
-        if (craftState != getState() && !WorldUtil.isPastTime(world, 13000))
+        if (craftState != START_WORKING && !WorldUtil.isPastTime(world, 6000))
         {
             return craftState;
+        }
+
+        if (wantInventoryDumped())
+        {
+            // Wait to dump before continuing.
+            return getState();
         }
 
         if (getPrimarySkillLevel() < building.getBuildingLevel() * MANA_REQ_PER_LEVEL)
@@ -163,17 +170,31 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return ENCHANTER_DRAIN;
         }
 
-        final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
-        if (ancientTomesInInv <= 0)
+        final BuildingEnchanter.@NotNull CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
+        boolean ancientTomeCraftingDisabled = false;
+        for (final IToken<?> token : craftingModule.getRecipes())
         {
-            final int amountOfAncientTomes = InventoryUtils.hasBuildingEnoughElseCount(building, IS_ANCIENT_TOME, 1);
-            if (amountOfAncientTomes > 0)
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (storage != null && !storage.getInput().isEmpty() && storage.getInput().get(0).getItem() == ModItems.ancientTome && craftingModule.isDisabled(token))
             {
-                needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
-                return GATHERING_REQUIRED_MATERIALS;
+                ancientTomeCraftingDisabled = true;
             }
-            checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.ancientTome, 1), 1, 1, false);
-            return IDLE;
+        }
+
+        if (!ancientTomeCraftingDisabled)
+        {
+            final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
+            if (ancientTomesInInv <= 0)
+            {
+                final int amountOfAncientTomes = InventoryUtils.hasBuildingEnoughElseCount(building, IS_ANCIENT_TOME, 1);
+                if (amountOfAncientTomes > 0)
+                {
+                    needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
+                    return GATHERING_REQUIRED_MATERIALS;
+                }
+                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.ancientTome, 1), 1, 1, false);
+                return IDLE;
+            }
         }
 
         return ENCHANT;
@@ -197,7 +218,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (currentRecipeStorage == null)
         {
             progressTicks = 0;
-            return DECIDE;
+            return START_WORKING;
         }
 
         if (progressTicks++ < MAX_ENCHANTMENT_TICKS / building.getBuildingLevel())
@@ -309,7 +330,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 if (workers.isEmpty())
                 {
                     resetDraining();
-                    return DECIDE;
+                    return START_WORKING;
                 }
                 citizen = workers.get(0);
             }
@@ -333,7 +354,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 if (!job.incrementWaitingTicks())
                 {
                     resetDraining();
-                    return DECIDE;
+                    return START_WORKING;
                 }
                 return getState();
             }
@@ -393,7 +414,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             worker.getInventoryCitizen().extractItem(bookSlot, 1, false);
             worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_DRAIN);
-            worker.getCitizenData().markDirty();
+            worker.getCitizenData().markDirty(80);
         }
         resetDraining();
         return IDLE;

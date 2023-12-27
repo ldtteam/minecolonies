@@ -1,39 +1,37 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.dimension.DimensionType;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.lighting.LevelLightEngine;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class ChunkCache implements LevelReader
 {
@@ -53,6 +51,12 @@ public class ChunkCache implements LevelReader
      */
     protected Level     world;
 
+    /**
+     * Dimension limits
+     */
+    private final int minBuildHeight;
+    private final int maxBuildHeight;
+
     public ChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn, final DimensionType type)
     {
         this.world = worldIn;
@@ -67,9 +71,9 @@ public class ChunkCache implements LevelReader
         {
             for (int l = this.chunkZ; l <= j; ++l)
             {
-                if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)))
+                if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)) && worldIn.getChunkSource() instanceof ServerChunkCache serverChunkCache)
                 {
-                    final ChunkHolder holder = ((ServerChunkCache) worldIn.getChunkSource()).chunkMap.visibleChunkMap.get(ChunkPos.asLong(k, l));
+                    final ChunkHolder holder = serverChunkCache.chunkMap.visibleChunkMap.get(ChunkPos.asLong(k, l));
                     if (holder != null)
                     {
                         this.chunkArray[k - this.chunkX][l - this.chunkZ] = holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().orElse(null);
@@ -78,6 +82,9 @@ public class ChunkCache implements LevelReader
             }
         }
         this.dimType = type;
+
+        minBuildHeight = worldIn.getMinBuildHeight();
+        maxBuildHeight = worldIn.getMaxBuildHeight();
     }
 
     /**
@@ -108,6 +115,18 @@ public class ChunkCache implements LevelReader
             return null;
         }
         return this.chunkArray[i][j].getBlockEntity(pos, createType);
+    }
+
+    @Override
+    public int getMinBuildHeight()
+    {
+        return minBuildHeight;
+    }
+
+    @Override
+    public int getMaxBuildHeight()
+    {
+        return maxBuildHeight;
     }
 
     @NotNull

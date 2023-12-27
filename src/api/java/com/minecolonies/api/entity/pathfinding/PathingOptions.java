@@ -43,7 +43,7 @@ public class PathingOptions
     /**
      * Cost to traverse trap doors
      */
-    public double traverseToggleAbleCost = 2D;
+    public double traverseToggleAbleCost = 10D;
 
     /**
      * Cost to climb a vine.
@@ -70,6 +70,11 @@ public class PathingOptions
      * Whether to path through vines.
      */
     private boolean canClimbVines  = false;
+
+    /**
+     * Whether to path through dangerous blocks.
+     */
+    private boolean canPassDanger  = false;
 
     public PathingOptions()
     {}
@@ -122,6 +127,16 @@ public class PathingOptions
     public void setEnterDoors(final boolean enterDoors)
     {
         this.enterDoors = enterDoors;
+    }
+
+    public void setPassDanger(final boolean danger)
+    {
+        this.canPassDanger = danger;
+    }
+
+    public boolean canPassDanger()
+    {
+        return canPassDanger;
     }
 
     public PathingOptions withStartSwimCost(final double startSwimCost)
@@ -200,4 +215,28 @@ public class PathingOptions
         setEnterDoors(canEnter);
         return this;
     }
+
+    /**
+     * Imports all options from the given other pathing options
+     * @param pathingOptions
+     */
+    public void importFrom(final PathingOptions pathingOptions)
+    {
+        jumpCost = pathingOptions.jumpCost;
+        dropCost = pathingOptions.dropCost;
+        onPathCost = pathingOptions.onPathCost;
+        onRailCost = pathingOptions.onRailCost;
+        railsExitCost = pathingOptions.railsExitCost;
+        swimCost = pathingOptions.swimCost;
+        swimCostEnter = pathingOptions.swimCostEnter;
+        traverseToggleAbleCost = pathingOptions.traverseToggleAbleCost;
+        vineCost = pathingOptions.vineCost;
+        canUseRails = pathingOptions.canUseRails;
+        canSwim = pathingOptions.canSwim;
+        enterDoors = pathingOptions.enterDoors;
+        canOpenDoors = pathingOptions.canOpenDoors;
+        canClimbVines = pathingOptions.canClimbVines;
+        canPassDanger = pathingOptions.canPassDanger;
+    }
+
 }

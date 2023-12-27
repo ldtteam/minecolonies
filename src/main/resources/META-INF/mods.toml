@@ -25,7 +25,7 @@ displayName="MineColonies" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://minecolonies.com" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="minecolonies.png" #optional
+logoFile="minecolonies_logo.png" #optional
 # A text field displayed in the mod UI
 credits="All the coffees!" #optional
 # A text field displayed in the mod UI
@@ -81,5 +81,11 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
     modId="journeymap"
     mandatory=false
     versionRange="[${project.jmapVersion},)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="dynamictrees"
+    mandatory=false
+    versionRange="[${project.minecraftVersion}-${project.dynamicTreesVersion},)"
     ordering="NONE"
     side="BOTH"

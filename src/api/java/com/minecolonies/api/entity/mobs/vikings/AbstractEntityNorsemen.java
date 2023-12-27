@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.vikings;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import net.minecraft.world.entity.EntityType;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all norsemen entities.
  */
-public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesMob
+public abstract class AbstractEntityNorsemen extends AbstractEntityRaiderMob
 {
     /**
      * Swim speed for pirates

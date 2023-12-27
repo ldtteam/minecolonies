@@ -184,13 +184,13 @@ public class EntityAIEatTask implements IStateAI
         }
 
         final ICitizenData citizenData = citizen.getCitizenData();
-        final ItemStack stack = citizenData.getInventory().getStackInSlot(foodSlot);
-        if (!CAN_EAT.test(stack) || !canEat(citizenData, stack))
+        final ItemStack foodStack = citizenData.getInventory().getStackInSlot(foodSlot);
+        if (!CAN_EAT.test(foodStack) || !canEat(citizenData, foodStack))
         {
             return CHECK_FOR_FOOD;
         }
 
-        citizen.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, foodStack);
 
         citizen.swing(InteractionHand.MAIN_HAND);
         citizen.playSound(SoundEvents.GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
@@ -209,21 +209,16 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
-        final FoodProperties itemFood = stack.getItem().getFoodProperties(stack, citizen);
+        final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
 
-        Item containerItem = stack.getItem().getCraftingRemainingItem();
-        if (containerItem == null && stack.getItem() instanceof BowlFoodItem)
-        {
-            containerItem = Items.BOWL;
-        }
+        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level, citizen);
 
         final double satIncrease =
           itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
-        citizenData.getInventory().extractItem(foodSlot, 1, false);
 
-        if (containerItem != null && !(containerItem instanceof AirItem))
+        if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
         {
             if (citizenData.getInventory().isFull())
             {
@@ -232,22 +227,22 @@ public class EntityAIEatTask implements IStateAI
                   citizen.getX(),
                   citizen.getY(),
                   citizen.getZ(),
-                  new ItemStack(containerItem, 1)
+                  itemUseReturn
                 );
             }
             else
             {
-                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(containerItem, 1));
+                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), itemUseReturn);
             }
         }
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
         if (citizenColony != null)
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
         }
 
-        citizenData.markDirty();
+        citizenData.markDirty(60);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())

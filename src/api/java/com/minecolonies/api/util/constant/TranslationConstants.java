@@ -86,6 +86,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER                           = "com.minecolonies.coremod.item.scroll.no_builder";
     @NonNls
+    public static final String COM_MINECOLONIES_QUEST_LOG_NEED_COLONY                               = "com.minecolonies.coremod.item.questlog.needcolony";
+    @NonNls
+    public static final String COM_MINECOLONIES_QUEST_LOG_COLONY_SET                                = "com.minecolonies.coremod.item.questlog.registered";
+    @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED                        = "com.minecolonies.coremod.item.bannerrallyguards.selected";
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED                      = "com.minecolonies.coremod.item.bannerrallyguards.deselected";
@@ -193,6 +197,8 @@ public final class TranslationConstants
     public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                       = "com.minecolonies.coremod.barbarians.left";
     @NonNls
     public static final String ALL_BARBARIANS_KILLED_MESSAGE                                        = "com.minecolonies.coremod.barbarians.killed";
+    @NonNls
+    public static final String ALL_BARBARIANS_MERCY_MESSAGE                                        = "com.minecolonies.core.barbarians.mercy";
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                 = "com.minecolonies.coremod.tooclose";
     @NonNls
@@ -318,6 +324,8 @@ public final class TranslationConstants
     @NonNls
     public static final String NO_COLONY_YET                                                        = "com.minecolonies.coremod.workorder.nocolonyyet";
     @NonNls
+    public static final String DOCRAFTING_BLOCK                                                     = "com.minecolonies.coremod.gui.docrafting.block";
+    @NonNls
     public static final String OUT_OF_COLONY                                                        = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
     public static final String NO                                                                   = "com.minecolonies.coremod.entity.citizen.no.";
@@ -374,11 +382,14 @@ public final class TranslationConstants
     @NonNls
     public static final String RANK_TYPE_NONE                                                       = "com.minecolonies.coremod.gui.townhall.ranktype.none";
     @NonNls
-    public static final String NO_HUT_IN_INVENTORY                                                  = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
+    public static final String TOWNHALL_TOO_CLOSE                                                   = "com.minecolonies.coremod.placement.townhalltooclose";
     @NonNls
     public static final String WRONG_COLONY                                                         = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
     @NonNls
-    public static final String INDESTRUCTIBLE_BLOCK_AT_POS                                          = "com.minecolonies.coremod.buildtool.indestructible";
+    public static final String BP_OUTSIDE_COLONY                                                    ="com.minecolonies.coremod.placement.outofcolony";
+
+    @NonNls
+    public static final String BP_NO_PERM                                                           = "com.minecolonies.coremod.placement.noperm";
     @NonNls
     public static final String BUILDER_ACTION_BUILDING                                              = "com.minecolonies.coremod.action.builder.building";
     @NonNls

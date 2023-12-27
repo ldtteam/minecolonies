@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
@@ -73,6 +74,9 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         {
             buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
             buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.nextpage"), buttonNextPage);
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.prevpage"), buttonPrevPage);
+
             pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
             registerButton(BUTTON_NEXTPAGE, () -> setPage(true, 1));
             registerButton(BUTTON_PREVPAGE, () -> setPage(true, -1));
@@ -95,7 +99,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      */
     public final void registerButton(final String id, final Runnable action)
     {
-        registerButton(id, (button) -> action.run());
+        registerButton(id, button -> action.run());
     }
 
     /**
@@ -163,15 +167,18 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
 
         buttonNextPage.on();
         buttonPrevPage.on();
-        if (curPage == 1)
+        if (curPage == 1 && !switchView.isEndlessScrollingEnabled())
         {
             buttonPrevPage.off();
         }
-        if (curPage == switchPagesSize)
+        if (curPage == switchPagesSize && !switchView.isEndlessScrollingEnabled())
         {
             buttonNextPage.off();
         }
-        pageNum.setText(Component.literal(curPage + "/" + switchPagesSize));
+        if (pageNum != null)
+        {
+            pageNum.setText(Component.literal(curPage + "/" + switchPagesSize));
+        }
     }
 
     @Override

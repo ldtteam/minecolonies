@@ -17,7 +17,7 @@ public final class ResearchConstants
     /**
      * Base research time, default to 3h playtime.
      */
-    public static final int BASE_RESEARCH_TIME = 60 * 60 / 25;
+    public static final int BASE_RESEARCH_TIME = 60 * 60 / 25 / 2;
 
     /**
      * Constants to write the research to NBT.
@@ -28,8 +28,12 @@ public final class ResearchConstants
     public static final String TAG_BRANCH         = "branch";
     public static final String TAG_NAME           = "name";
     public static final String TAG_COSTS          = "cost";
+    public static final String TAG_COST_TYPE      = "cost-type";
+    public static final String TAG_COST_ITEMS     = "cost-items";
     public static final String TAG_COST_ITEM      = "cost-item";
+    public static final String TAG_COST_TAG       = "cost-tag";
     public static final String TAG_COST_NBT       = "cost-nbt";
+    public static final String TAG_COST_COUNT     = "cost-count";
     public static final String TAG_REQS           = "requirements";
     public static final String TAG_REQ_TYPE       = "requirement-type";
     public static final String TAG_REQ_ITEM       = "requirement-item";

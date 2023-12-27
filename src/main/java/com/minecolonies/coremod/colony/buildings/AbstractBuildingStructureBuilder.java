@@ -8,16 +8,17 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -174,7 +175,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     {
         final Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
-        for (final BuildingBuilderResource stack : getFirstModuleOccurance(BuildingResourcesModule.class).getNeededResources().values())
+        for (final BuildingBuilderResource stack : getModule(BuildingModules.BUILDING_RESOURCES).getNeededResources().values())
         {
             toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, false),
               new net.minecraft.util.Tuple<>(stack.getAmount(), true));
@@ -254,7 +255,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
-        getFirstOptionalModuleOccurance(WorkerBuildingModule.class).ifPresent(m -> buf.writeUtf((m.getFirstCitizen() == null || colony.getCitizenManager().getCivilian(m.getFirstCitizen().getId()) == null) ? "" : m.getFirstCitizen().getName()));
+
+        final WorkerBuildingModule module = getFirstModuleOccurance(WorkerBuildingModule.class);
+        buf.writeUtf(module.getFirstCitizen() != null ? module.getFirstCitizen().getName() : "");
     }
 
     /**
@@ -264,7 +267,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public Map<String, BuildingBuilderResource> getNeededResources()
     {
-        return getFirstModuleOccurance(BuildingResourcesModule.class).getNeededResources();
+        return getModule(BuildingModules.BUILDING_RESOURCES).getNeededResources();
     }
 
     /**
@@ -275,7 +278,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return getFirstModuleOccurance(BuildingResourcesModule.class).getRequiredResources();
+        return getModule(BuildingModules.BUILDING_RESOURCES).getRequiredResources();
     }
 
     /**
@@ -299,7 +302,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        getFirstModuleOccurance(BuildingResourcesModule.class).addNeededResource(res, amount);
+        getModule(BuildingModules.BUILDING_RESOURCES).addNeededResource(res, amount);
         this.markDirty();
     }
 
@@ -311,7 +314,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
-        getFirstModuleOccurance(BuildingResourcesModule.class).reduceNeededResource(res, amount);
+        getModule(BuildingModules.BUILDING_RESOURCES).reduceNeededResource(res, amount);
         this.markDirty();
     }
 

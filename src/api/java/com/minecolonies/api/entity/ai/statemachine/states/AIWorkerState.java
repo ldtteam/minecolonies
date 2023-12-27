@@ -246,6 +246,11 @@ public enum AIWorkerState implements IAIState
     GUARD_REGEN(true),
 
     /**
+     * Flee to work building.
+     */
+    GUARD_FLEE(false),
+
+    /**
      * Helping out a citizen in danger
      */
     HELP_CITIZEN(false),
@@ -362,6 +367,11 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Pickup items within area.
+     */
+    HERDER_FEED_CHILDREN(false),
+
+    /**
+     * Feed animals.
      */
     HERDER_FEED(false),
 

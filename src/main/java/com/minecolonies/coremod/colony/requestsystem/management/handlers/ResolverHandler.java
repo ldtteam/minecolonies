@@ -95,7 +95,7 @@ public class ResolverHandler implements IResolverHandler
                 manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().put(c, new ArrayList<>());
             }
 
-            manager.getLogger().debug("Registering resolver: " + resolver + " with request type: " + c);
+            manager.log("Registering resolver: " + resolver + " with request type: " + c);
             manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).add(resolver.getId());
         });
 
@@ -201,7 +201,7 @@ public class ResolverHandler implements IResolverHandler
     @VisibleForTesting
     void removeResolverWithoutAssignedRequests(@NotNull final IToken<?> resolverToken)
     {
-        manager.getLogger().debug("Removing resolver without assigned requests: " + resolverToken);
+        manager.log("Removing resolver without assigned requests: " + resolverToken);
         manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);
 
         manager.getResolverHandler().removeResolver(resolverToken);
@@ -222,7 +222,7 @@ public class ResolverHandler implements IResolverHandler
 
         //Clone the original list to modify it during iteration, if need be.
         Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
-        manager.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        manager.log("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
         tempBlackList.addAll(assignedResolvers);
 
         for (final IToken<?> requestToken : assignedRequests)
@@ -245,7 +245,7 @@ public class ResolverHandler implements IResolverHandler
 
         removeResolverWithoutAssignedRequests(resolverToken);
 
-        manager.getLogger().debug("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        manager.log("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
     }
 
     /**
@@ -284,7 +284,7 @@ public class ResolverHandler implements IResolverHandler
             throw new IllegalArgumentException("The given token for a resolver is not known to this manager!");
         }
 
-        manager.getLogger().debug("Retrieving resolver for: " + token);
+        manager.log("Retrieving resolver for: " + token);
 
         return manager.getRequestResolverIdentitiesDataStore().getIdentities().get(token);
     }
@@ -296,7 +296,7 @@ public class ResolverHandler implements IResolverHandler
         final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
-            manager.getLogger().debug("Removing resolver: " + resolver + " with request type: " + c);
+            manager.log("Removing resolver: " + resolver + " with request type: " + c);
             manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).remove(resolver.getId());
         });
     }
@@ -348,7 +348,7 @@ public class ResolverHandler implements IResolverHandler
             manager.getRequestResolverRequestAssignmentDataStore().getAssignments().put(resolver.getId(), new HashSet<>());
         }
 
-        manager.getLogger().debug("Adding request: " + request + " to resolver: " + resolver);
+        manager.log("Adding request: " + request + " to resolver: " + resolver);
 
         manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).add(request.getId());
 
@@ -378,7 +378,7 @@ public class ResolverHandler implements IResolverHandler
             throw new IllegalArgumentException("The given request is not registered to the given resolver.");
         }
 
-        manager.getLogger().debug("Removing request: " + request + " from resolver: " + resolver);
+        manager.log("Removing request: " + request + " from resolver: " + resolver);
 
         manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(request.getId());
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())

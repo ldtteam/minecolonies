@@ -360,6 +360,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             final int timeout = EXCEPTION_TIMEOUT * exceptionTimer;
             this.setDelay(FMLEnvironment.production ? timeout : EXCEPTION_TIMEOUT);
+            setCurrentDelay(FMLEnvironment.production ? timeout : EXCEPTION_TIMEOUT);
             // wait for longer now
             exceptionTimer *= 2;
             if (worker != null)
@@ -368,7 +369,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 final BlockPos workerPosition = worker.blockPosition();
                 final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getJobRegistryEntry().getTranslationKey();
-                Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
+                Log.getLogger().error("Pausing Citizen " + name + " (" + jobName + ") in colony:"+worker.getCitizenData().getColony().getID() +" at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
             else
             {
@@ -664,7 +665,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected WorkerBuildingModule getModuleForJob()
     {
-        return building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == job.getJobRegistryEntry());
+        return (WorkerBuildingModule) job.getWorkModule();
     }
 
     /**

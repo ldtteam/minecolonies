@@ -11,6 +11,6 @@
     <label id="amount" size="15 15" pos="45 96" color="black"/>
     <buttonimage id="hireSpies" size="86 17" pos="65 98" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
                  label="$(com.minecolonies.coremod.gui.barracks.spieshire)"/>
 </window>

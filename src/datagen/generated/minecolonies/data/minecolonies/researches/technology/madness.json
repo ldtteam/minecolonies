@@ -9,7 +9,12 @@
   "parentResearch": "minecolonies:technology/seemsautomatic",
   "requirements": [
     {
-      "item": "minecraft:iron_ingot",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:iron_ingot"
+        ]
+      },
       "quantity": 1024
     }
   ],

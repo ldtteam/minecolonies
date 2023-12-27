@@ -88,7 +88,6 @@ public class CustomArrowEntity extends Arrow
                 {
                     source = DamageSource.arrow(this, shooter);
                 }
-                source.bypassArmor();
                 player.hurt(source, (float) getBaseDamage());
                 setBaseDamage(0);
             }

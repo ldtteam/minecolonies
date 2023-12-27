@@ -9,7 +9,12 @@
   "icon": "minecolonies:blockhuthospital",
   "requirements": [
     {
-      "item": "minecraft:carrot",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:carrot"
+        ]
+      },
       "quantity": 1
     }
   ],

@@ -2,8 +2,8 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.*;
-import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -11,21 +11,22 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
+import com.minecolonies.coremod.client.render.worldevent.highlightmanager.TimedBoxRenderData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -117,7 +118,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         final ItemStorage storage = allItems.get(row);
         final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
         containerList.add(building.getID());
-        HighlightManager.clearCategory("inventoryHighlight");
+        HighlightManager.clearHighlightsForKey("inventoryHighlight");
 
         MessageUtils.format(MESSAGE_LOCATING_ITEMS).sendTo(Minecraft.getInstance().player);
         close();
@@ -134,9 +135,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     // mixing equation: alpha | red part | green part 
                     final int color = 0x40000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
                         | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
-                    HighlightManager.addRenderBox("inventoryHighlight",
-                      new HighlightManager.TimedBoxRenderData().setPos(blockPos)
-                        .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 60 * 20)
+                    HighlightManager.addHighlight("inventoryHighlight" + blockPos,
+                      new TimedBoxRenderData(blockPos)
+                        .setDuration(Duration.ofSeconds(60))
                         .addText("" + count)
                         .setColor(color));
                 }

@@ -14,7 +14,12 @@
       "level": 2
     },
     {
-      "item": "minecraft:emerald",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:emerald"
+        ]
+      },
       "quantity": 1
     }
   ],

@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.monster.Monster;
 
@@ -125,7 +126,7 @@ public class CitizenAI implements IStateAI
      */
     private IState calculateNextState()
     {
-        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardJob)
         {
             if (shouldEat())
             {
@@ -133,7 +134,7 @@ public class CitizenAI implements IStateAI
             }
 
             // Sick
-            if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+            if (citizen.getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted())
             {
                 citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
                 return CitizenAIState.SICK;
@@ -175,9 +176,20 @@ public class CitizenAI implements IStateAI
         }
         else
         {
-            if (citizen.getCitizenSleepHandler().isAsleep() && !citizen.getCitizenDiseaseHandler().isSick())
+            if (citizen.getCitizenSleepHandler().isAsleep())
             {
-                citizen.getCitizenSleepHandler().onWakeUp();
+                if (citizen.getCitizenDiseaseHandler().isSick())
+                {
+                    final BlockPos bedPos = citizen.getCitizenSleepHandler().getBedLocation();
+                    if (bedPos == null || bedPos.distSqr(citizen.blockPosition()) > 5)
+                    {
+                        citizen.getCitizenSleepHandler().onWakeUp();
+                    }
+                }
+                else
+                {
+                    citizen.getCitizenSleepHandler().onWakeUp();
+                }
             }
         }
 
@@ -223,7 +235,7 @@ public class CitizenAI implements IStateAI
             {
                 citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
-            return CitizenAIState.SLEEP;
+            return CitizenAIState.IDLE;
         }
 
         // Work
@@ -249,17 +261,7 @@ public class CitizenAI implements IStateAI
      */
     public boolean shouldEat()
     {
-        if (lastState == CitizenAIState.EATING && !citizen.getCitizenData().justAte())
-        {
-            return true;
-        }
-
         if (citizen.getCitizenData().justAte())
-        {
-            return false;
-        }
-
-        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
         {
             return false;
         }
@@ -269,13 +271,19 @@ public class CitizenAI implements IStateAI
             return false;
         }
 
-        if (citizen.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION &&
-              (citizen.getCitizenData().getSaturation() <= RESTAURANT_LIMIT ||
-                 (citizen.getCitizenData().getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH)))
+        if (lastState == CitizenAIState.EATING)
         {
             return true;
         }
-        return false;
+
+        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
+        {
+            return false;
+        }
+
+        return citizen.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION &&
+                 (citizen.getCitizenData().getSaturation() <= RESTAURANT_LIMIT ||
+                    (citizen.getCitizenData().getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH));
     }
 
     /**

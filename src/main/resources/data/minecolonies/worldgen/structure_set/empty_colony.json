@@ -39,6 +39,10 @@
     {
       "structure": "minecolonies:incan_colony",
       "weight": 1
+    },
+    {
+      "structure": "minecolonies:colonial_colony",
+      "weight": 1
     }
   ],
   "placement": {

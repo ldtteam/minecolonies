@@ -3,13 +3,15 @@ package com.minecolonies.coremod.generation.defaults;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +78,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(BLOCK_ATTACKS).setTranslatedName("Knight Shield Blocking Chance +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5}));
         effects.add(new ResearchEffect(BLOCK_BREAK_SPEED).setTranslatedName("Citizen Block Break Speed +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(BLOCK_PLACE_SPEED).setTranslatedName("Citizen Block Place Speed +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
-        effects.add(new ResearchEffect(CITIZEN_CAP).setTranslatedName("Max Citizens +%s")
+        effects.add(new ResearchEffect(CITIZEN_CAP).setTranslatedName("Max Citizens to %2$s")
                       .setLevels(new double[] {CitizenConstants.CITIZEN_LIMIT_DEFAULT, CitizenConstants.CITIZEN_LIMIT_OUTPOST, CitizenConstants.CITIZEN_LIMIT_HAMLET,
                         CitizenConstants.CITIZEN_LIMIT_VILLAGE,
                         CitizenConstants.CITIZEN_LIMIT_MAX}));
@@ -84,7 +86,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(DOUBLE_ARROWS).setTranslatedName("Archer Multishot +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5}));
         effects.add(new ResearchEffect(MECHANIC_ENHANCED_GATES).setTranslatedName("Gates Gain +100% Raider Swarm Resistance").setLevels(new double[] {5, 15}));
         effects.add(new ResearchEffect(FARMING).setTranslatedName("Farmers Harvest +%3$s%% Crops").setLevels(new double[] {0.1, 0.25, 0.5, 0.75, 2}));
-        effects.add(new ResearchEffect(FLEEING_DAMAGE).setTranslatedName("Guards Take -%3$s%% Damage When Fleeing").setLevels(new double[] {0.2, 0.3, 0.4, 1}));
+        effects.add(new ResearchEffect(FLEEING_DAMAGE).setTranslatedName("Guards Take -%3$s%% Damage When Fleeing").setLevels(new double[] {0.2, 0.3, 0.4, 0.75}));
         effects.add(new ResearchEffect(FLEEING_SPEED).setTranslatedName("Fleeing Guards Gain Swiftness %2$s").setLevels(new double[] {1, 2, 3, 5}));
         effects.add(new ResearchEffect(GROWTH).setTranslatedName("Child Growth Rate +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
         effects.add(new ResearchEffect(HAPPINESS).setTranslatedName("Citizen Happiness +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.2, 0.5}));
@@ -1457,7 +1459,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setSortOrder(2)
           .setIcon(ModBlocks.blockHutConcreteMixer.asItem())
           .addBuildingRequirement("crusher", 1)
-          .addItemCost(Items.WHITE_CONCRETE, 32)
+          .addItemCost(ModTags.concreteItems, 32)
           .addEffect(ModBuildings.concreteMixer.get().getBuildingBlock(), 1)
           .addToList(r);
 
@@ -1467,7 +1469,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setSortOrder(5)
                                     .setIcon(ModBlocks.blockHutSawmill.asItem())
                                     .addBuildingRequirement("lumberjack", 3)
-                                    .addItemCost(Items.OAK_PLANKS, 64)
+                                    .addItemCost(ItemTags.PLANKS, 64)
                                     .addEffect(ModBuildings.sawmill.get().getBuildingBlock(), 1)
                                     .addToList(r);
         final Research stringWork = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stringwork"), TECH).setParentResearch(woodwork)
@@ -1760,34 +1762,34 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Veinminer")
                                      .setIcon(Items.IRON_BLOCK)
                                      .addBuildingRequirement(ModBuildings.MINER_ID, 1)
-                                     .addItemCost(Items.IRON_ORE, 32)
+                                     .addItemCost(ItemTags.IRON_ORES, 32)
                                      .addEffect(MORE_ORES, 1)
                                      .addToList(r);
         final Research goodVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/goodveins"), TECH).setParentResearch(veinminer)
                                      .setTranslatedName("Good Veins")
                                      .setIcon(Items.COAL_BLOCK)
                                      .addBuildingRequirement(ModBuildings.MINER_ID, 2)
-                                     .addItemCost(Items.IRON_ORE, 64)
+                                     .addItemCost(ItemTags.IRON_ORES, 64)
                                      .addEffect(MORE_ORES, 2)
                                      .addToList(r);
         final Research richVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/richveins"), TECH).setParentResearch(goodVeins)
                                      .setTranslatedName("Rich Veins")
                                      .setIcon(Items.GOLD_BLOCK)
                                      .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
-                                     .addItemCost(Items.GOLD_ORE, 32)
+                                     .addItemCost(ItemTags.GOLD_ORES, 32)
                                      .addEffect(MORE_ORES, 3)
                                      .addToList(r);
         final Research amazingVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/amazingveins"), TECH).setParentResearch(richVeins)
                                         .setTranslatedName("Amazing Veins")
                                         .setIcon(Items.LAPIS_BLOCK)
                                         .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 5)
-                                        .addItemCost(Items.GOLD_ORE, 64)
+                                        .addItemCost(ItemTags.GOLD_ORES, 64)
                                         .addEffect(MORE_ORES, 4)
                                         .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/motherlode"), TECH).setParentResearch(amazingVeins)
           .setTranslatedName("Motherlode")
           .setIcon(Items.DIAMOND_BLOCK)
-          .addItemCost(Items.DIAMOND_ORE, 64)
+          .addItemCost(ItemTags.DIAMOND_ORES, 64)
           .addEffect(MORE_ORES, 5)
           .addToList(r);
 

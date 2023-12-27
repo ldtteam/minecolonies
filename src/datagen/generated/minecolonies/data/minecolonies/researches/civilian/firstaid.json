@@ -12,7 +12,12 @@
       "level": 1
     },
     {
-      "item": "minecraft:hay_block",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:hay_block"
+        ]
+      },
       "quantity": 8
     }
   ],

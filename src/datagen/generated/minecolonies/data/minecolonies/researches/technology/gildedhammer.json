@@ -13,15 +13,30 @@
       "level": 3
     },
     {
-      "item": "minecraft:gravel",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:gravel"
+        ]
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:sand",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:sand"
+        ]
+      },
       "quantity": 64
     },
     {
-      "item": "minecraft:clay",
+      "type": "minecolonies:item_list",
+      "item": {
+        "items": [
+          "minecraft:clay"
+        ]
+      },
       "quantity": 64
     }
   ],

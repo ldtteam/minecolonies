@@ -225,11 +225,11 @@ public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickabl
     void markDirty();
 
     /**
-     * Get a logger.
+     * Log a debug message.
      *
-     * @return a logger.
+     * @param message the message to log.
      */
-    Logger getLogger();
+    void log(final String message);
 
     /**
      * serialize this request manager to the give {@link FriendlyByteBuf}

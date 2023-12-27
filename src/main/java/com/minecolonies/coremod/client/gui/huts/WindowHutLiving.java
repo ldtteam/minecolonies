@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.gui.huts;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -125,7 +124,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
             return;
         }
 
-        @NotNull final WindowAssignCitizen window = new WindowAssignCitizen(building.getColony(), building);
+        final WindowAssignCitizen window = new WindowAssignCitizen(building.getColony(), building);
         window.open();
     }
 }

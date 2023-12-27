@@ -24,8 +24,6 @@ public class ModTags
     public static boolean tagsLoaded = false;
 
     public static final TagKey<Block> decorationItems = BlockTags.create(TagConstants.DECORATION_ITEMS);
-    public static final TagKey<Item>  concretePowder  = ItemTags.create(TagConstants.CONCRETE_POWDER);
-    public static final TagKey<Block> concreteBlock   = BlockTags.create(TagConstants.CONCRETE_BLOCK);
     public static final TagKey<Block> pathingBlocks   = BlockTags.create(TagConstants.PATHING_BLOCKS);
     public static final TagKey<Block> tier1blocks     = BlockTags.create(TagConstants.TIER1_BLOCKS);
     public static final TagKey<Block> tier2blocks     = BlockTags.create(TagConstants.TIER2_BLOCKS);
@@ -35,6 +33,11 @@ public class ModTags
     public static final TagKey<Block> tier6blocks     = BlockTags.create(TagConstants.TIER6_BLOCKS);
     public static final TagKey<Block> mangroveTree    = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
     public static final TagKey<Block> tree            = BlockTags.create(TagConstants.TREE_BLOCKS);
+
+    public static final TagKey<Block> concreteBlocks       = BlockTags.create(TagConstants.CONCRETE_BLOCK);
+    public static final TagKey<Item>  concreteItems        = ItemTags.create(TagConstants.CONCRETE_BLOCK);
+    public static final TagKey<Block> concretePowderBlocks = BlockTags.create(TagConstants.CONCRETE_POWDER);
+    public static final TagKey<Item>  concretePowderItems  = ItemTags.create(TagConstants.CONCRETE_POWDER);
 
     public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
     public static final TagKey<Block> indestructible            = BlockTags.create(TagConstants.INDESTRUCTIBLE);
@@ -59,11 +62,16 @@ public class ModTags
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.MOB_ATTACK_BLACKLIST);
 
+    public static final TagKey<EntityType<?>> raiders = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.RAIDERS);
+
+    public static final TagKey<Item> ignoreNBT = ItemTags.create(TagConstants.IGNORE_NBT);
+
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredient           = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredientExclusions = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterDoIngredient         = new HashMap<>();
+
 
     /**
      * Tag specifier for Products to Include

@@ -24,9 +24,9 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -195,7 +195,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 continue;
             }
 
-            final FieldsModule fieldsModule = building.getFirstOptionalModuleOccurance(FieldsModule.class).orElse(null);
+            final FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
             if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
             {
                 field.resetOwningBuilding();
@@ -364,6 +364,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public BlockPos getRandomLeisureSite()
     {
+        final boolean isRaining = colony.getWorld().isRaining();
+
         BlockPos pos = null;
         final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
@@ -377,7 +379,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         if (randomDist < 2)
         {
-            if (RANDOM.nextBoolean())
+            if (!isRaining && RANDOM.nextBoolean())
             {
                 pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
                 if (pos != null)
@@ -397,11 +399,16 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         if (randomDist < 3)
         {
-            pos = getFirstBuildingMatching(b -> b.hasModule(TavernBuildingModule.class) && b.getBuildingLevel() >= 1);
+            pos = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
             if (pos != null)
             {
                 return pos;
             }
+        }
+
+        if (isRaining)
+        {
+            return null;
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
@@ -893,7 +900,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             for (final IBuilding building : buildings.values())
             {
-                if (building.hasModule(TavernBuildingModule.class))
+                if (building.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
                     MessageUtils.format(WARNING_DUPLICATE_TAVERN).sendTo(player);
                     return false;
@@ -913,12 +920,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             markBuildingsDirty();
             if (buildBuildingObjectives.containsKey(building.getBuildingType()))
             {
-                for (final IQuestInstance instance : buildBuildingObjectives.get(building.getBuildingType()))
+                for (final IQuestInstance instance : new ArrayList<>(buildBuildingObjectives.get(building.getBuildingType())))
                 {
-                    final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getIndex());
-                    if (objective instanceof IBuildingUpgradeObjectiveTemplate)
+                    final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
+                    if (objective instanceof IBuildingUpgradeObjectiveTemplate buildingTemplate)
                     {
-                        ((IBuildingUpgradeObjectiveTemplate) objective).onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
+                        buildingTemplate.onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
                     }
                 }
             }

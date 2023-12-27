@@ -188,6 +188,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             colony.getCitizenManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getVisitorManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getBuildingManager().sendPackets(closeSubscribers, newSubscribers);
+            colony.getResearchManager().sendPackets(closeSubscribers, newSubscribers);
         }
 
         if (newSubscribers.isEmpty())
@@ -197,6 +198,8 @@ public class ColonyPackageManager implements IColonyPackageManager
         colony.getPermissions().clearDirty();
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
+        colony.getVisitorManager().clearDirty();
+        colony.getResearchManager().clearDirty();
         newSubscribers = new HashSet<>();
     }
 
@@ -272,6 +275,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             closeSubscribers.add(subscriber);
             newSubscribers.add(subscriber);
+            updateColonyViews();
         }
     }
 

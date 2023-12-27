@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.*;
@@ -136,7 +138,9 @@ public class LocalResearchTree implements ILocalResearchTree
                       .getResearch(research.getBranch(), research.getId())
                       .setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
                 }
+                colony.getResearchManager().markDirty();
                 SoundUtils.playSuccessSound(player, player.blockPosition());
+                colony.getResearchManager().markDirty();
                 return;
             }
             final InvWrapper playerInv = new InvWrapper(player.getInventory());
@@ -159,22 +163,26 @@ public class LocalResearchTree implements ILocalResearchTree
                 }
             }
             // We know the player has the items, so now we can remove them safely.
-            for (ItemStorage cost : research.getCostList())
+            for (IResearchCost cost : research.getCostList())
             {
-                final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv,
-                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
-                int amount = cost.getAmount();
-                for (Integer slotNum : slotsWithMaterial)
+                int toRemoveLeft = cost.getCount();
+
+                for (Item item : cost.getItems())
                 {
-                    amount = amount - playerInv.extractItem(slotNum, amount, false).getCount();
-                    if (amount <= 0)
+                    final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv, stack -> stack.getItem().equals(item));
+                    for (Integer slotNum : slotsWithMaterial)
                     {
-                        break;
+                        toRemoveLeft = toRemoveLeft - playerInv.extractItem(slotNum, toRemoveLeft, false).getCount();
+                        if (toRemoveLeft <= 0)
+                        {
+                            break;
+                        }
                     }
                 }
             }
             MessageUtils.format(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName())).sendTo(player);
             research.startResearch(colony.getResearchManager().getResearchTree());
+            colony.getResearchManager().markDirty();
             SoundUtils.playSuccessSound(player, player.blockPosition());
         }
         else
@@ -187,6 +195,7 @@ public class LocalResearchTree implements ILocalResearchTree
                       .getResearchTree()
                       .getResearch(research.getBranch(), research.getId())
                       .setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
+                    colony.getResearchManager().markDirty();
                 }
             }
             else
@@ -209,6 +218,7 @@ public class LocalResearchTree implements ILocalResearchTree
               .sendTo(player);
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
+            colony.getResearchManager().markDirty();
         }
         // If complete, it's a request to undo the research.
         else if (research.getState() == ResearchState.FINISHED)
@@ -260,6 +270,7 @@ public class LocalResearchTree implements ILocalResearchTree
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
             resetEffects(colony);
+            colony.getResearchManager().markDirty();
         }
         colony.markDirty();
     }
@@ -307,6 +318,7 @@ public class LocalResearchTree implements ILocalResearchTree
                         for (final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(branch.getKey(), research.getValue().getId()).getEffects())
                         {
                             colony.getResearchManager().getResearchEffects().applyEffect(effect);
+                            colony.getResearchManager().markDirty();
                         }
                     }
                 }
@@ -386,5 +398,15 @@ public class LocalResearchTree implements ILocalResearchTree
               }
               addResearch(research.getBranch(), research);
           });
+    }
+
+    /**
+     * Get the list of all finished researches
+     *
+     * @return
+     */
+    public List<ResourceLocation> getCompletedList()
+    {
+        return new ArrayList<>(isComplete);
     }
 }

@@ -8,12 +8,15 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.blockui.RotatingItemIcon;
 import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
@@ -375,7 +378,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
                     gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
                     gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
-                    view.getChildren().add(0, gradient);
+                    view.addChild(gradient, 0);
                     timeLabel.setColors(COLOR_TEXT_NEGATIVE);
                 }
                 else
@@ -629,22 +632,27 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
+            final IResearchEffect<?> researchEffect = research.getEffects().get(txt);
             // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
             // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
             // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
-            if (research.getEffects().get(txt).getId().equals(CITIZEN_CAP)
-                  && (((GlobalResearchEffect) research.getEffects().get(txt)).getEffect()) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
+            if (researchEffect instanceof GlobalResearchEffect globalResearchEffect && researchEffect.getId().equals(CITIZEN_CAP)
+                  && globalResearchEffect.getEffect() > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverPaneBuilder.paragraphBreak().append(Component.translatable("com.minecolonies.research.effects.citizencapaddition.description", Component.translatable(
-                  "com.minecolonies.coremod.research.limit.maxeffect")));
+                final MutableComponent mainText =
+                  Component.translatable(researchEffect.getDesc().getKey(), 0, IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get());
+                // This call to `Math.round` doesn't serve any purpose, it's only meant to convert the double into a long, so that it will display correctly without any trailing zeroes.
+                final MutableComponent finishText = Component.translatable(researchEffect.getDesc().getKey() + ".over", Math.round(globalResearchEffect.getEffect()));
+                hoverPaneBuilder.paragraphBreak().append(mainText).append(Component.literal(" ")).append(finishText);
             }
             else
             {
-                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(research.getEffects().get(txt).getDesc()));
+                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(researchEffect.getDesc()));
             }
-            if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
+
+            if (!researchEffect.getSubtitle().getKey().isEmpty())
             {
-                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(MutableComponent.create(research.getEffects().get(txt).getSubtitle())).italic().colorName("GRAY");
+                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(MutableComponent.create(researchEffect.getSubtitle())).italic().colorName("GRAY");
             }
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
@@ -662,19 +670,18 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
-            for(final ItemStorage is : research.getCostList())
+            for (final IResearchCost cost : research.getCostList())
             {
                 hoverPaneBuilder.paragraphBreak()
                   .append(Component.literal(" - "))
-                  .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getDescription()));
-                if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-                  stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount()))
+                  .append(Component.translatable("com.minecolonies.coremod.research.limit.requirement", cost.getCount(), cost.getTranslatedName()));
+                if (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())))
                 {
-                    hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
+                    hoverPaneBuilder.color(COLOR_TEXT_FULFILLED);
                 }
                 else
                 {
-                    hoverPaneBuilder.color(COLOR_TEXT_FULFILLED);
+                    hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
                 }
             }
             if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.UNLOCKABLES)
@@ -860,79 +867,45 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         int storageXOffset = ICON_WIDTH;
 
-        for (final IResearchRequirement requirement : research.getResearchRequirement())
-        {
-            if (requirement instanceof AlternateBuildingResearchRequirement)
+        final List<AlternateBuildingResearchRequirement> alternateBuildingRequirements = new ArrayList<>();
+        final List<BuildingResearchRequirement> buildingRequirements = new ArrayList<>();
+        final List<IResearchCost> itemRequirements = research.getCostList();
+
+        research.getResearchRequirement().forEach(requirement -> {
+            // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
+            if (requirement instanceof AlternateBuildingResearchRequirement alternateBuildingRequirement && alternateBuildingRequirements.isEmpty())
             {
-                for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
-                {
-                    final Item item;
-                    if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                      new ResourceLocation(Constants.MOD_ID, building.getKey())))
-                    {
-                        item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                          new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
-                    }
-                    else
-                    {
-                        item = Items.AIR.asItem();
-                    }
-                    final ItemStack stack = new ItemStack(item);
-                    stack.setCount(building.getValue());
-                    final ItemIcon icon = new ItemIcon();
-                    icon.setItem(stack);
-                    icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
-                    icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                    view.addChild(icon);
-                    if(requirement.isFulfilled(this.building.getColony()))
-                    {
-                        PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
-                    }
-                    else
-                    {
-                        PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_UNFULFILLED).build();
-                    }
-
-                    storageXOffset += COST_OFFSET;
-                }
-                // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
-                break;
+                alternateBuildingRequirements.add(alternateBuildingRequirement);
             }
-        }
-        // If there are more than one requirement, we want a clear divider before normal building research requirements.
-        if (storageXOffset > ICON_WIDTH + COST_OFFSET)
-        {
-            final Image divider = new Image();
-            divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"), false);
-            divider.setSize(ICON_X_OFFSET, Y_SPACING);
-            divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
-            view.addChild(divider);
-            storageXOffset += ICON_X_OFFSET;
-        }
+            else if (requirement instanceof BuildingResearchRequirement buildingRequirement)
+            {
+                buildingRequirements.add(buildingRequirement);
+            }
+        });
 
-        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        for (final AlternateBuildingResearchRequirement requirement : alternateBuildingRequirements)
         {
-            if (requirement instanceof BuildingResearchRequirement)
+            for (Map.Entry<String, Integer> building : requirement.getBuildings().entrySet())
             {
                 final Item item;
                 if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                  new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                  new ResourceLocation(Constants.MOD_ID, building.getKey())))
                 {
                     item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                      new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+                      new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
                 }
                 else
                 {
                     item = Items.AIR.asItem();
                 }
                 final ItemStack stack = new ItemStack(item);
-                stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+                stack.setCount(building.getValue());
                 final ItemIcon icon = new ItemIcon();
                 icon.setItem(stack);
-                icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+                icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
                 icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                 view.addChild(icon);
-                if(requirement.isFulfilled(this.building.getColony()))
+                if (requirement.isFulfilled(this.building.getColony()))
                 {
                     PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
                 }
@@ -944,39 +917,61 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 storageXOffset += COST_OFFSET;
             }
         }
-        // If there are two or more research requirements, we want a clear divider before the cost side.
-        // Again, there can only be one alternate-building requirement, so this would indicate at least two of building or research requirements.
-        if (research.getResearchRequirement().size() >= 2)
+
+        // If there are more than one requirement, we want a clear divider before normal building research requirements.
+        if (!alternateBuildingRequirements.isEmpty() && !buildingRequirements.isEmpty())
         {
             final Image divider = new Image();
             divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"), false);
             divider.setSize(ICON_X_OFFSET, Y_SPACING);
             divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
             view.addChild(divider);
+            storageXOffset += ICON_X_OFFSET;
         }
 
-        storageXOffset = COST_OFFSET;
-        for (final ItemStorage storage : research.getCostList())
+        for (final BuildingResearchRequirement requirement : buildingRequirements)
         {
-            // This must be a copy, to avoid potential serialization issues with large item stack counts.
-            final ItemStack is = storage.getItemStack().copy();
-            is.setCount(storage.getAmount());
-            final ItemIcon icon = new ItemIcon();
-            icon.setItem(is);
-            icon.setPosition(offsetX + RESEARCH_WIDTH - storageXOffset - INITIAL_X_OFFSET, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
-            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            view.addChild(icon);
-            if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-              stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(storage.getItemStack())) < storage.getAmount()))
+            final Item item;
+            if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+              new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())))
             {
-                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(Component.translatable("com.minecolonies.coremod.research.limit.requirement",
-                  storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_UNFULFILLED).build();
+                item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                  new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())).getBuildingBlock().asItem();
             }
             else
             {
-                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(Component.translatable("com.minecolonies.coremod.research.limit.requirement",
-                  storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_FULFILLED).build();
+                item = Items.AIR.asItem();
             }
+            final ItemStack stack = new ItemStack(item);
+            stack.setCount(requirement.getBuildingLevel());
+            final ItemIcon icon = new ItemIcon();
+            icon.setItem(stack);
+            icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+            view.addChild(icon);
+            if (requirement.isFulfilled(this.building.getColony()))
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
+            }
+            else
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_UNFULFILLED).build();
+            }
+
+            storageXOffset += COST_OFFSET;
+        }
+
+        storageXOffset = COST_OFFSET;
+        for (final IResearchCost cost : itemRequirements)
+        {
+            final RotatingItemIcon icon = new RotatingItemIcon();
+            icon.setPosition(offsetX + RESEARCH_WIDTH - storageXOffset - INITIAL_X_OFFSET, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+            icon.setItems(cost.getItems().stream().map(ItemStack::new).map(stack -> {
+                stack.setCount(cost.getCount());
+                return stack;
+            }).toList());
+            view.addChild(icon);
             storageXOffset += COST_OFFSET;
         }
     }

@@ -2,13 +2,12 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -18,7 +17,6 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
-import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -172,15 +170,9 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE, "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
-            CreativeRaiderStructureHandler structure =
-              new CreativeRaiderStructureHandler(colony.getWorld(),
-                spawnPoint,
-                blueprint,
-                new PlacementSettings(),
-                true,
-                this, colony.getID());
-            structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
+          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
+            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
             {
@@ -188,27 +180,20 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
                 if (path != null && path.canReach())
                 {
                     final BlockPos endpoint = path.getEndNode().asBlockPos().below();
-                    if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, structure.getBluePrint(), colony.getWorld()))
+                    if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, blueprint, colony.getWorld()))
                     {
                         spawnPoint = endpoint;
-                        structure =
-                          new CreativeRaiderStructureHandler(colony.getWorld(),
-                            spawnPoint,
-                            blueprint,
-                            new PlacementSettings(),
-                            true, this, colony.getID());
-                        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
                     }
                 }
                 this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
             }
 
-            if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
+            if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, blueprint, colony.getWorld()))
             {
                 spawnPoint = spawnPoint.below();
             }
 
-            if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony, structure.getBluePrint(), this))
+            if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony, blueprint, this))
             {
                 // Ship event not successfully started.
                 status = EventStatus.CANCELED;
@@ -218,9 +203,9 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             updateRaidBar();
 
             MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID,
-                                    BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
-                    .with(ChatFormatting.DARK_RED)
-                    .sendTo(colony).forManagers();
+                BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+              .with(ChatFormatting.DARK_RED)
+              .sendTo(colony).forManagers();
             colony.markDirty();
         })));
     }
@@ -310,6 +295,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
+    public void setMercyEnd()
+    {
+        // Noop, the sailing away message is fine.
+    }
+
+    @Override
     public void onFinish()
     {
         MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
@@ -364,7 +355,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive() || status != EventStatus.PROGRESSING)
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive() || status != EventStatus.PROGRESSING)
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
@@ -474,7 +465,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public List<Tuple<String, BlockPos>> getSchematicSpawns()
     {
         final List<Tuple<String, BlockPos>> paths = new ArrayList<>();
-        paths.add(new Tuple<>("decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc()  + ".blueprint", spawnPoint));
+        paths.add(new Tuple<>("decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", spawnPoint));
         return paths;
     }
 
@@ -544,5 +535,15 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public void setSpawnPath(final PathResult result)
     {
         this.spawnPathResult = result;
+    }
+
+    @Override
+    public boolean isRaidActive()
+    {
+        if (getStatus() == EventStatus.PROGRESSING)
+        {
+            return !spawners.isEmpty() || !raiders.isEmpty() || !respawns.isEmpty();
+        }
+        return getStatus() == EventStatus.PROGRESSING ||getStatus() == EventStatus.PREPARING;
     }
 }

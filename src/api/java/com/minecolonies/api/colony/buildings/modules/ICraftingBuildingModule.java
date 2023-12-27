@@ -70,6 +70,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return The disambiguating id suffix.
      */
     @NotNull
+    @Deprecated
     String getId();
 
     /**
@@ -292,6 +293,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return The unique id or null.
      */
     @Nullable
+    @Deprecated
     default ResourceLocation getUid()
     {
         final IJob<?> job = getCraftingJob();
@@ -324,4 +326,11 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param recipeLocation the location of the recipe.
      */
     void toggle(int recipeLocation);
+
+    /**
+     * Check if a recipe is disabled.
+     * @param token the recipe id to check for.
+     * @return true if so.
+     */
+    boolean isDisabled(final IToken<?> token);
 }

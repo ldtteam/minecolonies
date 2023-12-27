@@ -5,19 +5,19 @@ import java.util.List;
 /**
  * String Setting.
  */
-public interface IStringSetting extends ISetting
+public interface IStringSetting<S> extends ISetting<S>
 {
     /**
      * Get the setting value.
      * @return the current value.
      */
-    String getValue();
+    S getValue();
 
     /**
      * Get the default value.
      * @return the default value.
      */
-    String getDefault();
+    S getDefault();
 
     /**
      * Get the current index of the setting.
@@ -35,12 +35,12 @@ public interface IStringSetting extends ISetting
      * Set the setting to a specific index.
      * @param value the value to set.
      */
-    void set(final String value);
+    void set(final S value);
 
     @Override
-    default void copyValue(final ISetting iSetting)
+    default void copyValue(final ISetting<S> setting)
     {
-        if (iSetting instanceof final IStringSetting other)
+        if (setting instanceof final IStringSetting<S> other)
         {
             set(other.getValue());
         }

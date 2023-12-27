@@ -338,6 +338,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     @Override
     public void onRemoval()
     {
+        super.onRemoval();
         cancelAssignedRequests();
         getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
     }

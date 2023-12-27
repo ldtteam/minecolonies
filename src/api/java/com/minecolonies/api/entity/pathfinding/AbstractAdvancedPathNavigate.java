@@ -66,7 +66,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param safeDestination if the destination is save and should be set.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveAwayFromXYZ(final BlockPos currentPosition, final double range, final double speed, final boolean safeDestination);
+    public abstract PathResult<? extends IPathJob> moveAwayFromXYZ(final BlockPos currentPosition, final double range, final double speed, final boolean safeDestination);
 
     /**
      * Try to move to a certain position.
@@ -77,7 +77,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param speed the speed to walk.
      * @return the PathResult.
      */
-    public abstract PathResult moveToXYZ(final double x, final double y, final double z, final double speed);
+    public abstract PathResult<? extends IPathJob> moveToXYZ(final double x, final double y, final double z, final double speed);
 
     /**
      * Used to find a water.
@@ -97,7 +97,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param combatMovementSpeed    the speed to run at.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveAwayFromLivingEntity(final Entity target, final double distance, final double combatMovementSpeed);
+    public abstract PathResult<? extends IPathJob> moveAwayFromLivingEntity(final Entity target, final double distance, final double combatMovementSpeed);
 
     /**
      * Attempt to move to a specific pos.
@@ -114,7 +114,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param speed the speed to run at.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveToRandomPos(final double range, final double speed);
+    public abstract PathResult<? extends IPathJob> moveToRandomPos(final double range, final double speed);
 
     /**
      * Used to path towards a random pos.
@@ -124,7 +124,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param pos the pos to circle around.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
+    public abstract PathResult<? extends IPathJob> moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
 
     /**
      * Used to path towards a random pos within some restrictions
@@ -132,9 +132,10 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param range the range he should move out of.
      * @param speed the speed to run at.
      * @param corners the corners they can't leave.
+     * @param prioDoors if doors should have higher path prio.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType);
+    public abstract PathResult<? extends IPathJob> moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType, boolean prioDoors);
 
     /**
      * Used to find a tree.
@@ -170,7 +171,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param speed the speed.
      * @return the result.
      */
-    public abstract PathResult moveToLivingEntity(@NotNull final Entity e, final double speed);
+    public abstract PathResult<? extends IPathJob> moveToLivingEntity(@NotNull final Entity e, final double speed);
 
     /**
      * Get the pathing options

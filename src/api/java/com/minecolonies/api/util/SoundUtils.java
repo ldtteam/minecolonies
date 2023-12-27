@@ -163,7 +163,7 @@ public final class SoundUtils
         }
         else
         {
-            playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen);
+            playSoundAtCitizenWith(worldIn, pos, EventType.NOISE, citizen, EventType.NOISE.getChance(), VOLUME/2);
         }
     }
 
@@ -202,6 +202,10 @@ public final class SoundUtils
               (float) 1.0,
               player.level.random.nextLong()));
         }
+        else
+        {
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL, SoundSource.NEUTRAL, 1.0f, 1.0f);
+        }
     }
 
     /**
@@ -221,6 +225,10 @@ public final class SoundUtils
               (float) VOLUME * 2,
               (float) 0.3,
               player.level.random.nextLong()));
+        }
+        else
+        {
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_DIDGERIDOO, SoundSource.NEUTRAL, 1.0f, 0.3f);
         }
     }
 
@@ -253,7 +261,7 @@ public final class SoundUtils
       @NotNull final Level worldIn,
       @NotNull final BlockPos position,
       @Nullable final EventType type,
-      @Nullable final ICivilianData citizenData, final double chance)
+      @Nullable final ICivilianData citizenData, final double chance, final double volume)
     {
         if (citizenData == null)
         {
@@ -287,9 +295,26 @@ public final class SoundUtils
               position,
               event,
               SoundSource.NEUTRAL,
-              (float) VOLUME,
+              (float) volume,
               (float) PITCH);
         }
+    }
+
+    /**
+     * Plays a sound with a certain chance at a certain position.
+     *
+     * @param worldIn     the world to play the sound in.
+     * @param position    position to play the sound at.
+     * @param type        sound to play.
+     * @param citizenData the citizen.
+     */
+    public static void playSoundAtCitizenWith(
+      @NotNull final Level worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICivilianData citizenData, final double chance)
+    {
+        playSoundAtCitizenWith(worldIn, position, type, citizenData, chance, VOLUME);
     }
 
     /**

@@ -1,8 +1,9 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import net.minecraft.nbt.CompoundTag;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.List;
 
@@ -11,6 +12,15 @@ import java.util.List;
  */
 public interface IRaiderManager
 {
+    public enum RaidSpawnResult
+    {
+        SUCCESS,
+        TOO_SMALL,
+        CANNOT_RAID,
+        NO_SPAWN_POINT,
+        ERROR
+    }
+
     /**
      * Checks if the raider manager can have raider events.
      *
@@ -33,18 +43,21 @@ public interface IRaiderManager
     void setCanHaveRaiderEvents(final boolean canHave);
 
     /**
-     * Add a spawnPoint to the last raiders spawns.
+     * Set if raiders will raid tonight.
      *
-     * @param pos the position to set.
+     * @param willRaid true or false.
      */
-    void addRaiderSpawnPoint(final BlockPos pos);
+    default void setRaidNextNight(final boolean willRaid)
+    {
+        setRaidNextNight(willRaid, "", true);
+    }
 
     /**
      * Set if raiders will raid tonight.
      *
      * @param willRaid true or false.
      */
-    void setRaidNextNight(final boolean willRaid);
+    void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips);
 
     /**
      * Set if a specific type of raiders will raid tonight.
@@ -54,7 +67,10 @@ public interface IRaiderManager
      *               Accepted names include "pirate", "egyptian", "norsemen", "barbarian", and "amazon".
      *               Defaults to "barbarian" if unsupported type is attempted.
      */
-    void setRaidNextNight(final boolean willRaid, final String raidType);
+    default void setRaidNextNight(final boolean willRaid, final String raidType)
+    {
+        setRaidNextNight(willRaid, raidType, true);
+    }
 
     /**
      * Returns whether spies are enabled
@@ -77,8 +93,21 @@ public interface IRaiderManager
 
     /**
      * Trigger a specific type of raid on a colony.
+     * @param raidType the type of raid (or empty).
+     * @param overrideConfig if it should override the config to allow raiders.
      */
-    void raiderEvent(String raidType);
+    default RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig)
+    {
+        return raiderEvent(raidType, overrideConfig, true);
+    }
+
+    /**
+     * Trigger a specific type of raid on a colony.
+     * @param raidType the type of raid (or empty).
+     * @param overrideConfig if it should override the config to allow raiders.
+     * @param allowShips if ship spawns are allowed.
+     */
+    RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig, final boolean allowShips);
 
     /**
      * Calculates the spawn position for raids
@@ -136,6 +165,14 @@ public interface IRaiderManager
     boolean canRaid();
 
     /**
+     * Whether the colony can be raided.
+     *
+     * @param overrideConfig if the config should be overriden.
+     * @return true if possible.
+     */
+    boolean canRaid(final boolean overrideConfig);
+
+    /**
      * calculates the colonies raid level
      *
      * @return the raid level.
@@ -180,4 +217,16 @@ public interface IRaiderManager
      * @return weighted amount of list citizen
      */
     int getLostCitizen();
+
+    /**
+     * Called when a raider mob dies
+     *
+     * @param entity
+     */
+    void onRaiderDeath(AbstractEntityRaiderMob entity);
+
+    /**
+     * Notify raid manager of a passing through raid.
+     */
+    void setPassThroughRaid();
 }

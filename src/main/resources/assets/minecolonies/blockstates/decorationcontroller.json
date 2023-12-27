@@ -31,6 +31,22 @@
     "facing=north,mirror=false": {
       "model": "minecolonies:block/decorationcontroller",
       "y": 180
+    },
+    "facing=up,mirror=false": {
+      "model": "minecolonies:block/decorationcontroller",
+      "x": 90
+    },
+    "facing=up,mirror=true": {
+      "model": "minecolonies:block/decorationcontroller",
+      "x": 90
+    },
+    "facing=down,mirror=false": {
+      "model": "minecolonies:block/decorationcontroller",
+      "x": 270
+    },
+    "facing=down,mirror=true": {
+      "model": "minecolonies:block/decorationcontroller",
+      "x": 270
     }
   }
 }
