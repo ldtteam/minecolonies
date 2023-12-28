@@ -74,15 +74,15 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
-        if (building.hasModule(EntityListModule.class))
+        if (building.getModule(id) instanceof EntityListModule module)
         {
             if (assign)
             {
-                building.getModuleMatching(EntityListModule.class, m -> m.getId().equals(id)).addEntity(entity);
+                module.addEntity(entity);
             }
             else
             {
-                building.getModuleMatching(EntityListModule.class, m -> m.getId().equals(id)).removeEntity(entity);
+                module.removeEntity(entity);
             }
         }
     }
