@@ -95,7 +95,6 @@ public class ReactivateBuildingMessage implements IMessage
 
                     hut.reactivate();
                     colony.getBuildingManager().addNewBuilding(hut, world);
-                    colony.getProgressManager().progressBuildingPlacement(tileEntity.getBlockState().getBlock());
                 }
             }
         }

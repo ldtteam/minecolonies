@@ -296,9 +296,6 @@ public class CitizenManager implements ICitizenManager
         world.addFreshEntity(entity);
 
         entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
-
-        colony.getProgressManager()
-          .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
         markDirty();
         return citizenData;
     }

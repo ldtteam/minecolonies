@@ -185,9 +185,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
             module.updateWorkerAvailableForRecipes();
         }
         citizen.getJob().onLevelUp();
-        building.getColony()
-          .getProgressManager()
-          .progressEmploy((int) building.getColony().getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).count());
     }
 
     @Override

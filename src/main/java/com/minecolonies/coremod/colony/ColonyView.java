@@ -40,7 +40,6 @@ import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -367,8 +366,6 @@ public final class ColonyView implements IColonyView
         CompoundTag flagNBT = new CompoundTag();
         flagNBT.put(TAG_BANNER_PATTERNS, colony.getColonyFlag());
         buf.writeNbt(flagNBT);
-
-        buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
         buf.writeLong(colony.getMercenaryUseTime());
 
@@ -877,8 +874,6 @@ public final class ColonyView implements IColonyView
 
         this.teamColonyColor = ChatFormatting.values()[buf.readInt()];
         this.colonyFlag = buf.readNbt().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
-
-        this.printProgress = buf.readBoolean();
 
         this.mercenaryLastUseTime = buf.readLong();
 
@@ -1415,17 +1410,6 @@ public final class ColonyView implements IColonyView
         return new ArrayList<>(lastSpawnPoints);
     }
 
-    /**
-     * Get if progress should be printed.
-     *
-     * @return true if so.
-     */
-    @Override
-    public boolean isPrintingProgress()
-    {
-        return printProgress;
-    }
-
     @Override
     public boolean isRemote()
     {
@@ -1554,12 +1538,6 @@ public final class ColonyView implements IColonyView
 
     @Override
     public IColonyPackageManager getPackageManager()
-    {
-        return null;
-    }
-
-    @Override
-    public IProgressManager getProgressManager()
     {
         return null;
     }

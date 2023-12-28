@@ -176,11 +176,6 @@ public class Colony implements IColony
     private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
 
     /**
-     * The progress manager of the colony.
-     */
-    private final IProgressManager progressManager = new ProgressManager(this);
-
-    /**
      * Event manager of the colony.
      */
     private final IStatisticsManager statisticManager = new StatisticsManager(this);
@@ -757,11 +752,6 @@ public class Colony implements IColony
 
         graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
 
-        if (compound.contains(TAG_PROGRESS_MANAGER))
-        {
-            progressManager.read(compound);
-        }
-
         eventManager.readFromNBT(compound);
         statisticManager.readFromNBT(compound);
 
@@ -920,7 +910,6 @@ public class Colony implements IColony
         workManager.write(workManagerCompound);
         compound.put(TAG_WORK, workManagerCompound);
 
-        progressManager.write(compound);
         eventManager.writeToNBT(compound);
         statisticManager.writeToNBT(compound);
 
@@ -1421,7 +1410,6 @@ public class Colony implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
-        progressManager.progressEmploymentModeChange();
         markDirty();
     }
 
@@ -1647,17 +1635,6 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
-    }
-
-    /**
-     * Get the progress manager of the colony.
-     *
-     * @return the manager.
-     */
-    @Override
-    public IProgressManager getProgressManager()
-    {
-        return progressManager;
     }
 
     /**
