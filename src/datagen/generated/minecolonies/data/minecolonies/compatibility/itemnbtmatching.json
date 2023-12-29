@@ -25,13 +25,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:blockpaperwall"
@@ -41,10 +49,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:blockpillar"
@@ -54,10 +70,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:blockypillar"
@@ -94,13 +118,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:center_light"
@@ -119,13 +151,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:crossed_light"
@@ -141,10 +181,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:dark_brick"
@@ -154,13 +202,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:double_crossed"
@@ -170,13 +226,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:down_gated"
@@ -186,16 +250,29 @@
       {
         "children": [
           {
-            "key": "minecraft:block/acacia_planks"
+            "key": "id"
           },
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/acacia_planks"
+              },
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       },
       {
-        "key": "type"
+        "children": [
+          {
+            "key": "type"
+          }
+        ],
+        "key": "BlockStateTag"
       }
     ],
     "item": "domum_ornamentum:fancy_door"
@@ -205,13 +282,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:fancy_light"
@@ -221,16 +306,29 @@
       {
         "children": [
           {
-            "key": "minecraft:block/acacia_planks"
+            "key": "id"
           },
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/acacia_planks"
+              },
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       },
       {
-        "key": "type"
+        "children": [
+          {
+            "key": "type"
+          }
+        ],
+        "key": "BlockStateTag"
       }
     ],
     "item": "domum_ornamentum:fancy_trapdoors"
@@ -240,13 +338,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:four_light"
@@ -256,13 +362,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:framed"
@@ -272,13 +386,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:framed_light"
@@ -306,13 +428,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:horizontal_light"
@@ -322,13 +452,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:horizontal_plain"
@@ -344,10 +482,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:light_brick"
@@ -378,13 +524,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:one_crossed_lr"
@@ -394,13 +548,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:one_crossed_rl"
@@ -416,13 +578,26 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       },
       {
-        "key": "type"
+        "children": [
+          {
+            "key": "type"
+          }
+        ],
+        "key": "BlockStateTag"
       }
     ],
     "item": "domum_ornamentum:panel"
@@ -441,13 +616,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:plain"
@@ -457,13 +640,26 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       },
       {
-        "key": "type"
+        "children": [
+          {
+            "key": "type"
+          }
+        ],
+        "key": "BlockStateTag"
       }
     ],
     "item": "domum_ornamentum:post"
@@ -500,13 +696,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/clay"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/clay"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:shingle"
@@ -516,13 +720,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/clay"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/clay"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:shingle_flat"
@@ -532,13 +744,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/clay"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/clay"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:shingle_flat_lower"
@@ -548,13 +768,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:shingle_slab"
@@ -564,13 +792,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:side_framed"
@@ -580,13 +816,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:side_framed_horizontal"
@@ -596,10 +840,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:squarepillar"
@@ -609,13 +861,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/dark_oak_planks"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/dark_oak_planks"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:up_gated"
@@ -625,13 +885,26 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       },
       {
-        "key": "type"
+        "children": [
+          {
+            "key": "type"
+          }
+        ],
+        "key": "BlockStateTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_doors_compat"
@@ -641,10 +914,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_fence_compat"
@@ -654,10 +935,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_fence_gate_compat"
@@ -667,10 +956,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_slab_compat"
@@ -680,10 +977,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_stairs_compat"
@@ -693,13 +998,26 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       },
       {
-        "key": "type"
+        "children": [
+          {
+            "key": "type"
+          }
+        ],
+        "key": "BlockStateTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_trapdoors_compat"
@@ -709,10 +1027,18 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              }
+            ],
+            "key": "textureData"
+          },
+          {
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:vanilla_wall_compat"
@@ -722,13 +1048,21 @@
       {
         "children": [
           {
-            "key": "minecraft:block/oak_planks"
+            "children": [
+              {
+                "key": "minecraft:block/oak_planks"
+              },
+              {
+                "key": "minecraft:block/glowstone"
+              }
+            ],
+            "key": "textureData"
           },
           {
-            "key": "minecraft:block/glowstone"
+            "key": "id"
           }
         ],
-        "key": "textureData"
+        "key": "BlockEntityTag"
       }
     ],
     "item": "domum_ornamentum:vertical_light"
@@ -919,7 +1253,15 @@
   {
     "checkednbtkeys": [
       {
-        "key": "textureData"
+        "children": [
+          {
+            "key": "textureData"
+          },
+          {
+            "key": "id"
+          }
+        ],
+        "key": "BlockEntityTag"
       }
     ],
     "item": "minecolonies:blockminecoloniesrack"
