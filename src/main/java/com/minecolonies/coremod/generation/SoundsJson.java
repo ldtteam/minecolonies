@@ -41,6 +41,14 @@ public class SoundsJson implements IJsonSerializable
         sound.addProperty("category", category);
 
         final JsonArray containedSoundList = new JsonArray();
+        try
+        {
+            names.sort(null); // stable output
+        }
+        catch (UnsupportedOperationException e)
+        {
+            // immutable collections are fine
+        }
         for (final String name : names)
         {
             JsonObject sound1 = new JsonObject();
