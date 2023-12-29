@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.minecolonies.coremod.util.DomumOrnamentumUtils.DO_NBT_TEXTURE_DATA;
-
 public class SchemAnalyzerUtil
 {
     /**
@@ -146,7 +144,7 @@ public class SchemAnalyzerUtil
             {
                 final MaterialTextureData textureData = DomumOrnamentumUtils.getTextureDataFromNBT(blockInfo.getTileEntityData());
                 final ItemStack result = new ItemStack(block);
-                if (textureData != null)
+                if (!textureData.isEmpty())
                 {
                     double doComplexity = 0;
                     for (final Block doBlockPart : textureData.getTexturedComponents().values())
@@ -157,7 +155,7 @@ public class SchemAnalyzerUtil
                     // Estimate for do recipes giving higher output per block usually, increased minimum of 2 due to added complexity for crafting
                     blockComplexity = Math.max(2, doComplexity / 3);
 
-                    result.getOrCreateTag().put(DO_NBT_TEXTURE_DATA, blockInfo.getTileEntityData().getCompound(DO_NBT_TEXTURE_DATA));
+                    textureData.writeToItemStack(result);
                 }
 
                 storage = new ItemStorage(result);

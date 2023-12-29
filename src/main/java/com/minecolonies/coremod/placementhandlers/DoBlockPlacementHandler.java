@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,32 +107,36 @@ public class DoBlockPlacementHandler implements IPlacementHandler
                 return Collections.emptyList();
             }
 
-            final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
+            final Property<?> property;
             if (blockState.getBlock() instanceof DoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
+                property = DoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof FancyDoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
+                property = FancyDoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof TrapdoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase());
+                property = TrapdoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase());
+                property = FancyTrapdoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof PanelBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(PanelBlock.TYPE).toString().toUpperCase());
+                property = PanelBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(AbstractPostBlock.TYPE).toString().toUpperCase());
+                property = AbstractPostBlock.TYPE;
             }
-            itemList.add(item);
+            else
+            {
+                property = null;
+            }
+            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity) : BlockUtils.getMaterializedItemStack(tileEntity, property));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;

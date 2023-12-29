@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.google.common.collect.ImmutableMap;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -20,7 +21,6 @@ import com.minecolonies.coremod.client.render.worldevent.ColonyBorderRenderer;
 import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import com.minecolonies.coremod.util.DomumOrnamentumUtils;
 import com.minecolonies.coremod.util.SchemAnalyzerUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -135,12 +135,9 @@ public class ClientEventHandler
             {
                 int tier = SchemAnalyzerUtil.getBlockTier(blockItem.getBlock());
 
-                if (DomumOrnamentumUtils.isDoBlock(blockItem.getBlock()) && event.getItemStack().hasTag())
+                for (Block block : MaterialTextureData.deserializeFromItemStack(event.getItemStack()).getTexturedComponents().values())
                 {
-                    for (Block block : DomumOrnamentumUtils.getTextureData(event.getItemStack()).getTexturedComponents().values())
-                    {
-                        tier = Math.max(tier, SchemAnalyzerUtil.getBlockTier(block));
-                    }
+                    tier = Math.max(tier, SchemAnalyzerUtil.getBlockTier(block));
                 }
 
                 event.getToolTip().add(Component.translatable("com.minecolonies.coremod.tooltip.schematic.tier", tier));
