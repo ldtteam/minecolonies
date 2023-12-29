@@ -46,6 +46,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.StatisticsConstants.FISH_CAUGHT;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_FAR;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.coremod.entity.NewBobberEntity.XP_PER_CATCH;
 
 /**
@@ -433,7 +434,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             playCaughtFishSound();
             this.incrementActionsDoneAndDecSaturation();
-            worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FISH_CAUGHT);
+            worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FISH_CAUGHT, worker.getCitizenColonyHandler().getColony().getDay());
+            building.getModule(STATS_MODULE).increment(FISH_CAUGHT);
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)
             {
@@ -593,7 +595,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false. Else the method will pick up the loot and call the method to
      * retrieve the rod.
      *
-     * @return If the fisherman caught a fish.
+     * @return true when the fisherman caught a fish.
      */
     private boolean caughtFish()
     {

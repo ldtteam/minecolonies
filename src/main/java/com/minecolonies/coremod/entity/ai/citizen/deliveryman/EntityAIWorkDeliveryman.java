@@ -438,7 +438,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Insert the result back into the inventory so we do not lose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
-            worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount());
+            worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount(), worker.getCitizenColonyHandler().getColony().getDay());
         }
 
         if (!extracted)
