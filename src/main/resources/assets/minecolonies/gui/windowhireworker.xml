@@ -5,10 +5,10 @@
     <label size="100% 11" pos="0 15" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.hiring.description)"/>
     <list id="unemployed" size="375 135" pos="20 48">
         <view size="100% 35">
-            <image source="minecolonies:textures/gui/builderhut/shadow.png" size="100% 100%"/>
+            <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
             <label id="citizen" size="175 12" pos="5 0" color="blue"/>
-            <label id="distance" size="300 8" pos="1 10" color="black" textscale="0.8"/>
-            <label id="attributes" size="300 16" pos="1 18" color="black" textscale="0.6"/>
+            <label id="distance" size="300 8" pos="2 10" color="black" textscale="0.8"/>
+            <label id="attributes" size="300 16" pos="2 18" color="black" textscale="0.6"/>
 
             <buttonimage id="done" size="44 10" pos="200 2" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"

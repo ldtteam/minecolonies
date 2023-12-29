@@ -382,7 +382,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 final Skill primary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
                 final Skill secondary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getSecondarySkill() : null;
 
-                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+                final List<Map.Entry<Skill, Tuple<Integer, Double>>> skills = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
+                skills.sort(Comparator.comparingInt(s -> (s.getKey() == primary ? 1 : (s.getKey() == secondary ? 2 : 3))));
+
+                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : skills)
                 {
                     final String skillName = entry.getKey().name().toLowerCase(Locale.US);
                     final int skillLevel = entry.getValue().getA();
