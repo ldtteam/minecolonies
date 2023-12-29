@@ -7,17 +7,16 @@ import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -193,7 +192,10 @@ public class ProgressManager implements IProgressManager
         if (!notifiedProgress.contains(type))
         {
             notifiedProgress.add(type);
-            MessageUtils.format(PARTIAL_PROGRESSION_NAME + type.name().toLowerCase(Locale.US)).sendTo(colony).forAllPlayers();
+            MessageUtils.format(PARTIAL_PROGRESSION_NAME + type.name().toLowerCase(Locale.US))
+              .withPriority(MessagePriority.IMPORTANT)
+              .sendTo(colony)
+              .forAllPlayers();
             colony.markDirty();
         }
     }

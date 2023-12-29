@@ -35,6 +35,7 @@ import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -64,7 +65,6 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizen
 import com.minecolonies.coremod.network.messages.client.colony.PlaySoundForCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -461,7 +461,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 playSound(SoundEvents.VILLAGER_NO, 0.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 MessageUtils.format(WARNING_INTERACTION_CANT_DO_NOW, this.getCitizenData().getName())
-                  .with(ChatFormatting.RED)
+                  .withPriority(MessagePriority.DANGER)
                   .sendTo(player);
             }
             return null;
@@ -607,7 +607,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 playSound(SoundEvents.VILLAGER_NO, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                 MessageUtils.format(MESSAGE_INTERACTION_COOKIE, this.getCitizenData().getName())
-                  .with(ChatFormatting.RED)
+                  .withPriority(MessagePriority.DANGER)
                   .sendTo(player);
             }
         }

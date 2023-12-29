@@ -2,8 +2,13 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +25,7 @@ public class MessageUtils
      * @param args the arguments for the translation component.
      * @return the message builder instance.
      */
-    public static MessageBuilder format(String key, Object... args)
+    public static MessageBuilder format(final String key, final Object... args)
     {
         return format(Component.translatable(key, args));
     }
@@ -31,9 +36,38 @@ public class MessageUtils
      * @param component the component to send.
      * @return the message builder instance.
      */
-    public static MessageBuilder format(Component component)
+    public static MessageBuilder format(final Component component)
     {
         return new MessageBuilder(component);
+    }
+
+    /**
+     * Message priority types handle different types of message displays.
+     */
+    public enum MessagePriority
+    {
+        /**
+         * Normal priority messages, these are not important messages sent to the colony, shown in a dimmed color (gray).
+         */
+        NORMAL(ChatFormatting.GRAY),
+        /**
+         * Important priority messages, these are important events that require player attention, shown in an outstanding color (gold).
+         */
+        IMPORTANT(ChatFormatting.GOLD),
+        /**
+         * Danger priority messages, these are shown for anything involving in serious dangerous events in the colony (ex. raids), shown in the danger color (red).
+         */
+        DANGER(ChatFormatting.RED);
+
+        /**
+         * The color for the message priority.
+         */
+        private final ChatFormatting color;
+
+        MessagePriority(final ChatFormatting color)
+        {
+            this.color = color;
+        }
     }
 
     /**
@@ -42,46 +76,54 @@ public class MessageUtils
     public static class MessageBuilder
     {
         /**
-         * The stored text component to use when sending the message.
-         */
-        private MutableComponent rootComponent;
-
-        /**
          * The current working component.
          */
-        private MutableComponent currentComponent;
+        private final MutableComponent fullComponent;
+
+        /**
+         * The priority for the message.
+         */
+        @NotNull
+        private MessagePriority priority = MessagePriority.NORMAL;
+
+        /**
+         * The click event for this message.
+         */
+        @Nullable
+        private ClickEvent clickEvent;
 
         /**
          * Default constructor.
          *
          * @param component the component to begin with.
          */
-        MessageBuilder(Component component)
+        MessageBuilder(final Component component)
         {
-            this.currentComponent = getFormattableComponent(component);
+            this.fullComponent = getFormattableComponent(component);
         }
 
         /**
-         * Applies a style to the text component. Can be used to color a message, make it bold, italic, etc.
+         * Set the priority of this message, defaults to {@link MessagePriority#NORMAL}.
          *
-         * @param style the style to use.
-         * @return the original message builder object.
+         * @param priority the new priority.
+         * @return the new message builder object.
          */
-        public MessageBuilder with(Style style)
+        @NotNull
+        public MessageBuilder withPriority(final MessagePriority priority)
         {
-            currentComponent.setStyle(style.applyTo(currentComponent.getStyle()));
+            this.priority = priority;
             return this;
         }
 
         /**
-         * Applies formatting to the text component. Can be used to color a message, make it bold, italic, etc.
+         * Set a click event on this message, defaults to null.
          *
-         * @param formatting the text formatting to use.
-         * @return the original message builder object.
+         * @param clickEvent the click event instance.
+         * @return the new message builder object.
          */
-        public MessageBuilder with(ChatFormatting... formatting)
+        public MessageBuilder withClickEvent(final @NotNull ClickEvent clickEvent)
         {
-            currentComponent.setStyle(currentComponent.getStyle().applyFormats(formatting));
+            this.clickEvent = clickEvent;
             return this;
         }
 
@@ -92,7 +134,7 @@ public class MessageUtils
          * @param args the arguments for the translation component.
          * @return the new message builder object.
          */
-        public MessageBuilder append(String key, Object... args)
+        public MessageBuilder append(final String key, final Object... args)
         {
             return append(Component.translatable(key, args));
         }
@@ -103,10 +145,9 @@ public class MessageUtils
          * @param component the component to send.
          * @return the new message builder object.
          */
-        public MessageBuilder append(Component component)
+        public MessageBuilder append(final Component component)
         {
-            mergeComponents();
-            currentComponent = getFormattableComponent(component);
+            fullComponent.append(getFormattableComponent(component));
             return this;
         }
 
@@ -117,8 +158,15 @@ public class MessageUtils
          */
         public MutableComponent create()
         {
-            mergeComponents();
-            return rootComponent;
+            final Style newStyle = Style.EMPTY
+                                     .withColor(priority.color)
+                                     .withClickEvent(clickEvent);
+
+            fullComponent.withStyle(newStyle);
+            fullComponent.getSiblings().stream()
+              .map(this::getFormattableComponent)
+              .forEach(comp -> comp.withStyle(newStyle));
+            return fullComponent;
         }
 
         /**
@@ -126,7 +174,7 @@ public class MessageUtils
          *
          * @param players the players to send the message to.
          */
-        public void sendTo(Player... players)
+        public void sendTo(final Player... players)
         {
             sendTo(Arrays.asList(players));
         }
@@ -136,12 +184,11 @@ public class MessageUtils
          *
          * @param players the players to send the message to.
          */
-        public void sendTo(Collection<Player> players)
+        public void sendTo(final Collection<Player> players)
         {
-            mergeComponents();
             for (Player player : players)
             {
-                player.displayClientMessage(rootComponent, false);
+                player.displayClientMessage(create(), false);
             }
         }
 
@@ -152,7 +199,7 @@ public class MessageUtils
          * @param colony the reference to the colony.
          * @return the message builder colony player selector.
          */
-        public MessageBuilderColonyPlayerSelector sendTo(IColony colony)
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony)
         {
             return sendTo(colony, false);
         }
@@ -165,27 +212,20 @@ public class MessageUtils
          * @param alwaysShowColony whether we always want to include the colony name in front of the message.
          * @return the message builder colony player selector.
          */
-        public MessageBuilderColonyPlayerSelector sendTo(IColony colony, boolean alwaysShowColony)
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony, final boolean alwaysShowColony)
         {
-            mergeComponents();
-            return new MessageBuilderColonyPlayerSelector(rootComponent, colony, alwaysShowColony);
+            return new MessageBuilderColonyPlayerSelector(create(), colony, alwaysShowColony);
         }
 
         /**
-         * Merges the current working component back into the root component,
-         * allowing for a new component to be worked on.
+         * Turns any possible text component into a formattable component.
+         *
+         * @param component the input component.
+         * @return the formattable component.
          */
-        private void mergeComponents()
+        private MutableComponent getFormattableComponent(final Component component)
         {
-            if (rootComponent == null)
-            {
-                rootComponent = currentComponent;
-            }
-            else
-            {
-                rootComponent.append(currentComponent);
-            }
-            currentComponent = null;
+            return component.copy();
         }
     }
 
@@ -241,7 +281,7 @@ public class MessageUtils
          *
          * @param players the collection of players to send the message to.
          */
-        private void sendInternal(Collection<Player> players)
+        private void sendInternal(final Collection<Player> players)
         {
             for (Player player : players)
             {
@@ -254,16 +294,5 @@ public class MessageUtils
                 player.displayClientMessage(fullComponent, false);
             }
         }
-    }
-
-    /**
-     * Turns any possible text component into a formattable component.
-     *
-     * @param component the input component.
-     * @return the formattable component.
-     */
-    private static MutableComponent getFormattableComponent(Component component)
-    {
-        return component.copy();
     }
 }

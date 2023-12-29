@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 
@@ -39,14 +39,10 @@ public class CitizenChatHandler implements ICitizenChatHandler
     {
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
-            MessageUtils.format("")
-              .with(ChatFormatting.RED)
-              .append(citizen.getCombatTracker().getDeathMessage())
+            MessageUtils.format(citizen.getCombatTracker().getDeathMessage())
               .append(Component.literal("! "))
-              .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION,
-                Math.round(citizen.getX()),
-                Math.round(citizen.getY()),
-                Math.round(citizen.getZ())))
+              .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION, Math.round(citizen.getX()), Math.round(citizen.getY()), Math.round(citizen.getZ())))
+              .withPriority(MessagePriority.DANGER)
               .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
     }
