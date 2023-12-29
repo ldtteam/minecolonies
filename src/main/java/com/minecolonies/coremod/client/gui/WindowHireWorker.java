@@ -442,7 +442,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             final ButtonImage jobButton = new ButtonImage();
             jobButton.setImage( new ResourceLocation("minecolonies:textures/gui/builderhut/builder_button_medium.png"), false);
             jobButton.setPosition(xOffset, 30);
-            jobButton.setText(Component.translatable(entry.getTranslationKey()));
+            if (hireModule.getAssignedCitizens().size() > 0)
+            {
+                jobButton.setText(Component.translatable(entry.getTranslationKey()).append(Component.literal(" " + hireModule.getAssignedCitizens().size())));
+            }
+            else
+            {
+                jobButton.setText(Component.translatable(entry.getTranslationKey()));
+            }
             jobButton.setID(hireModule.getJobEntry().getKey().toString());
             jobButton.setHandler(this::jobClicked);
             jobButton.setSize(86, 17);
