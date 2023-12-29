@@ -83,6 +83,7 @@ public interface IGraveManager
      * @param pos    position of the TileEntityGrave to add.
      * @return the grave that was created and added.
      */
+    @Nullable
     boolean addNewGrave(@NotNull final BlockPos pos);
 
     /**

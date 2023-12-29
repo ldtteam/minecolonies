@@ -1242,6 +1242,7 @@ public class InventoryUtils
      * @param provider The provider to check.
      * @return True when the provider has any {@link IItemHandler}, false when not.
      */
+    @NotNull
     public static boolean hasProviderIItemHandler(@NotNull final ICapabilityProvider provider)
     {
         return !getItemHandlersFromProvider(provider).isEmpty();
@@ -1253,6 +1254,7 @@ public class InventoryUtils
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of different sides, false when not
      */
+    @NotNull
     public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
     {
         return getItemHandlersFromProvider(provider).size() > 1;
@@ -1615,7 +1617,7 @@ public class InventoryUtils
      */
     public static boolean transferItemStackIntoNextFreeSlotInProvider(
       @NotNull final IItemHandler sourceHandler,
-      final int sourceIndex,
+      @NotNull final int sourceIndex,
       @NotNull final ICapabilityProvider targetProvider)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(targetProvider))
@@ -1909,7 +1911,7 @@ public class InventoryUtils
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProvider(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      final int amount, @NotNull final ICapabilityProvider targetProvider)
+      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
     {
         return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetProvider) == 0;
     }
@@ -1917,7 +1919,7 @@ public class InventoryUtils
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      final int amount, @NotNull final ICapabilityProvider targetProvider)
+      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
     {
         int currentAmount = amount;
 
@@ -2087,7 +2089,7 @@ public class InventoryUtils
      */
     public static boolean transferItemStackIntoNextFreeSlotFromProvider(
       @NotNull final ICapabilityProvider sourceProvider,
-      final int sourceIndex,
+      @NotNull final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
@@ -2198,9 +2200,9 @@ public class InventoryUtils
      */
     public static boolean swapItemStacksInItemHandlers(
       @NotNull final IItemHandler sourceHandler,
-      final int sourceIndex,
+      @NotNull final int sourceIndex,
       @NotNull final IItemHandler targetHandler,
-      final int targetIndex)
+      @NotNull final int targetIndex)
     {
         final ItemStack targetStack = targetHandler.extractItem(targetIndex, Integer.MAX_VALUE, false);
         final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);

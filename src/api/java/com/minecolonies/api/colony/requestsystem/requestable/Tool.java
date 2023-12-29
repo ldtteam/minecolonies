@@ -318,7 +318,7 @@ public class Tool implements IDeliverable
     }
 
     @Override
-    public IDeliverable copyWithCount(final int newCount)
+    public IDeliverable copyWithCount(@NotNull final int newCount)
     {
         return new Tool(this.toolClass, this.minLevel, this.maxLevel, this.result);
     }

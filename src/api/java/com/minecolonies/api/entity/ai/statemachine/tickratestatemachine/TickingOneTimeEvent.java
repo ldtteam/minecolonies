@@ -25,7 +25,7 @@ public class TickingOneTimeEvent<S extends IState> extends TickingEvent<S> imple
       @NotNull final IStateEventType eventType,
       @NotNull final BooleanSupplier condition,
       @NotNull final Supplier<S> nextState,
-      final int tickRate)
+      @NotNull final int tickRate)
     {
         super(eventType, condition, nextState, tickRate);
     }

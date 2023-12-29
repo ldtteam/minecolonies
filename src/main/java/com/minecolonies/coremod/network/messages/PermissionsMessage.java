@@ -670,7 +670,7 @@ public class PermissionsMessage
          * @param rank the rank
          * @param rankType the new rank type
          */
-        public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, final int rankType)
+        public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final int rankType)
         {
             this.colonyId = colony.getID();
             this.rankId = rank.getId();
@@ -756,7 +756,7 @@ public class PermissionsMessage
          * @param rank the rank
          * @param isSubscriber whether the rank should be a subscriber
          */
-        public SetSubscriber(@NotNull final IColonyView colony, @NotNull final Rank rank, final boolean isSubscriber)
+        public SetSubscriber(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final boolean isSubscriber)
         {
             this.colonyId = colony.getID();
             this.dimension = colony.getDimension();

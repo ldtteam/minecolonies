@@ -18,7 +18,7 @@ public interface ITickingTransition<S extends IState> extends IStateMachineTrans
      *
      * @param tickRate rate at which the AITarget should tick
      */
-    void setTickRate(int tickRate);
+    void setTickRate(@NotNull int tickRate);
 
     /**
      * Returns a preset offset to Ticks
