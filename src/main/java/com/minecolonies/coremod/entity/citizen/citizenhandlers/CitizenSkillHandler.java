@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
-import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
@@ -15,7 +14,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import static com.minecolonies.api.sounds.EventType.GREETING;
 import static com.minecolonies.api.sounds.EventType.SUCCESS;
 import static com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
@@ -145,11 +142,11 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen)
+    public boolean tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen)
     {
         if (customChance > 0 && random.nextDouble() * customChance < 1)
         {
-            return;
+            return false;
         }
 
         final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen);
@@ -157,6 +154,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             addXpToSkill(Skill.Intelligence, 10, citizen);
         }
+        return true;
     }
 
     @Override

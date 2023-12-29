@@ -2511,5 +2511,10 @@
   "com.minecolonies.core.gui.nextpage": "Next Page",
   "com.minecolonies.core.gui.prevpage": "Previous Page",
 
-  "com.minecolonies.core.barbarians.mercy": "§4Defeat! The raiders finished what they came here for to return another day!"
+  "com.minecolonies.core.barbarians.mercy": "§4Defeat! The raiders finished what they came here for to return another day!",
+  "com.minecolonies.core.gui.modules.stats": "Building Statistics",
+  "com.minecolonies.coremod.gui.townhall.stats.item_used": "Used %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.mob_killed": "Killed %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.item_obtained": "Got %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled"
 }

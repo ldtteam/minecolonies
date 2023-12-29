@@ -1647,7 +1647,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
-            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH);
+            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH, getCitizenColonyHandler().getColony().getDay());
 
             if (!isInvisible())
             {

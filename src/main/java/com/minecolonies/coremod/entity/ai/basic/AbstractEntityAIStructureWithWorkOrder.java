@@ -5,6 +5,7 @@ import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.event.BuildingConstructionEvent;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -374,24 +375,24 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             // TODO: Preferably want to use the display name of the building (in order to respect custom name) however this will require an event rework so it stores text components rather than strings
             String workOrderName = wo.getTranslationKey();
             sendCompletionMessage(wo);
-
+            final IColony colony = job.getColony();
             switch (wo.getWorkOrderType())
             {
                 case BUILD:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_BUILT);
+                    colony.getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_BUILT, colony.getDay());
                     break;
                 case UPGRADE:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), workOrderName, wo.getTargetLevel()));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_UPGRADED);
+                    colony.getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), workOrderName, wo.getTargetLevel()));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_UPGRADED, colony.getDay());
                     break;
                 case REPAIR:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REPAIRED);
+                    colony.getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REPAIRED, colony.getDay());
                     break;
                 case REMOVE:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REMOVED);
+                    colony.getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REMOVED, colony.getDay());
                     break;
             }
 
@@ -399,7 +400,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuilding)
             {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                final IBuilding building = colony.getBuildingManager().getBuilding(wo.getLocation());
                 MinecraftForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
                 switch (wo.getWorkOrderType())
                 {

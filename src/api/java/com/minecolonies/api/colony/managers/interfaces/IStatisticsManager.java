@@ -17,7 +17,7 @@ public interface IStatisticsManager
      * Assigns a timestamp to the entry.
      * @param id the id of the stat.
      */
-    void increment(@NotNull final String id);
+    void increment(@NotNull final String id, final int day);
 
     /**
      * Increment a given statistic by some quantity.
@@ -26,7 +26,7 @@ public interface IStatisticsManager
      * @param id the id of the stat.
      * @param qty the quantity.
      */
-    void incrementBy(@NotNull String id, final int qty);
+    void incrementBy(@NotNull String id, final int qty, final int day);
 
     /**
      * Get the total for a given stat,
