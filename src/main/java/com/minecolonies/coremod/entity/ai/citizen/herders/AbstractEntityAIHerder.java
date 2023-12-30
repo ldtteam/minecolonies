@@ -723,7 +723,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     public double chanceToButcher(final List<? extends Animal> allAnimals)
     {
         final int maxAnimals = building.getBuildingLevel() * getMaxAnimalMultiplier();
-        if (allAnimals.size() <= maxAnimals)
+        if (!building.getSetting(AbstractBuilding.BREEDING).getValue() && allAnimals.size() <= maxAnimals)
         {
             return 0;
         }
@@ -735,6 +735,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 grownUp++;
             }
+        }
+
+        if (grownUp <= 3)
+        {
+            return 0;
         }
 
         return 0.5 * (Math.pow(grownUp, 4) / Math.pow(maxAnimals, 4));
