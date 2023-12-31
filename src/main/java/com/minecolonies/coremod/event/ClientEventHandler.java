@@ -53,10 +53,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.Entry;
 
 import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -163,6 +161,8 @@ public class ClientEventHandler
             return;
         }
 
+        final Map<BuildingEntry, Integer> minimumBuildingLevels = new HashMap<>();
+
         for (CustomRecipe rec : recipes)
         {
             if (!rec.getShowTooltip() || rec.getCrafter().length() < 2)
@@ -174,31 +174,10 @@ public class ClientEventHandler
             {
                 continue;
             }
-            final Component craftingBuildingName = getFullBuildingName(craftingBuilding);
-            if (rec.getMinBuildingLevel() > 0)
+            minimumBuildingLevels.putIfAbsent(craftingBuilding, null);
+            if (minimumBuildingLevels.get(craftingBuilding) == null || rec.getMinBuildingLevel() < minimumBuildingLevels.get(craftingBuilding))
             {
-                final String schematicName = craftingBuilding.getRegistryName().getPath();
-                // the above is not guaranteed to match (and indeed doesn't for a few buildings), but
-                // does match for all currently interesting crafters, at least.  there doesn't otherwise
-                // appear to be an easy way to get the schematic name from a BuildingEntry ... or
-                // unless we can change how colony.hasBuilding uses its parameter...
-
-                final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, rec.getMinBuildingLevel());
-                if (colony != null && colony.hasBuilding(schematicName, rec.getMinBuildingLevel(), true))
-                {
-                    reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
-                }
-                else
-                {
-                    reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.RED));
-                }
-                toolTip.add(reqLevelText);
-            }
-            else
-            {
-                final MutableComponent reqBuildingTxt = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
-                  .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
-                toolTip.add(reqBuildingTxt);
+                minimumBuildingLevels.put(craftingBuilding, rec.getMinBuildingLevel());
             }
             if (rec.getRequiredResearchId() != null)
             {
@@ -231,6 +210,37 @@ public class ClientEventHandler
                           MutableComponent.create(research.getName())).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
+            }
+        }
+
+        for (final Entry<BuildingEntry, Integer> crafterBuildingCombination : minimumBuildingLevels.entrySet())
+        {
+            final Component craftingBuildingName = getFullBuildingName(crafterBuildingCombination.getKey());
+            final Integer minimumLevel = crafterBuildingCombination.getValue();
+            if (minimumLevel > 0)
+            {
+                final String schematicName = crafterBuildingCombination.getKey().getRegistryName().getPath();
+                // the above is not guaranteed to match (and indeed doesn't for a few buildings), but
+                // does match for all currently interesting crafters, at least.  there doesn't otherwise
+                // appear to be an easy way to get the schematic name from a BuildingEntry ... or
+                // unless we can change how colony.hasBuilding uses its parameter...
+
+                final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
+                if (colony != null && colony.hasBuilding(schematicName, minimumLevel, true))
+                {
+                    reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
+                }
+                else
+                {
+                    reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.RED));
+                }
+                toolTip.add(reqLevelText);
+            }
+            else
+            {
+                final MutableComponent reqBuildingTxt = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
+                                                          .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
+                toolTip.add(reqBuildingTxt);
             }
         }
     }
