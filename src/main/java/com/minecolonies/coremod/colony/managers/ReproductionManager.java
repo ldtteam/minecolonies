@@ -201,7 +201,7 @@ public class ReproductionManager implements IReproductionManager
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));
-            colony.getStatisticsManager().increment(BIRTH);
+            colony.getStatisticsManager().increment(BIRTH, colony.getDay());
         }
     }
 

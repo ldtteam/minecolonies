@@ -2519,6 +2519,10 @@
   "com.minecolonies.core.gui.hiring.distance": "Lives %d blocks from here",
   "com.minecolonies.core.gui.hiring.homeless": "Currently homeless",
   "com.minecolonies.core.gui.hiring.liveshere": "Lives here",
-  "com.minecolonies.core.gui.hiring.livesatwork": "Lives at current work building"
-
+  "com.minecolonies.core.gui.hiring.livesatwork": "Lives at current work building",
+  "com.minecolonies.core.gui.modules.stats": "Building Statistics",
+  "com.minecolonies.coremod.gui.townhall.stats.item_used": "Used %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.mob_killed": "Killed %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.item_obtained": "Got %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled"
 }
