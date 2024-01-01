@@ -754,7 +754,7 @@
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "Removed block %s.",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "Removed location %d %d %d.",
   "tile.blockhut.warehouse.limit": "The amount of Warehouses is limited to 1 per colony. You cannot place any more in this colony without adjusting the config.",
-  "tile.blockhut.tavern.limit": "The already is a Tavern at %s. You cannot place or activate any more in this colony.",
+  "tile.blockhut.tavern.limit": "A Tavern already exists at %s. You cannot place or activate any more in this colony.",
 
   "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 
