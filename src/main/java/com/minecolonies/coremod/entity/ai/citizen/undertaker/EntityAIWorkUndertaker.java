@@ -26,7 +26,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -419,7 +418,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
 
-        if(burialPos == null || !world.getBlockState(burialPos.getA()).is(BlockTags.REPLACEABLE))
+        if(burialPos == null || !world.getBlockState(burialPos.getA()).canBeReplaced())
         {
             burialPos = building.getRandomFreeVisualGravePos();
         }

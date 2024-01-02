@@ -15,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -209,7 +208,7 @@ public class BuildingGraveyard extends AbstractBuilding
         final List<Tuple<BlockPos, Direction>> availablePos = new ArrayList<Tuple<BlockPos, Direction>>();
         for(final Tuple<BlockPos, Direction> tuple : visualGravePositions)
         {
-            if (getColony().getWorld().getBlockState(tuple.getA()).is(BlockTags.REPLACEABLE))
+            if (getColony().getWorld().getBlockState(tuple.getA()).canBeReplaced())
             {
                 availablePos.add(tuple);
             }
