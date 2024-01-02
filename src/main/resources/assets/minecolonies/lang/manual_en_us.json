@@ -1043,7 +1043,7 @@
   "com.minecolonies.coremod.gui.warehouse.sort.disabled.2": "Warehouse Level %s",
   "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1": "Rack upgrade requires",
   "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2": "Warehouse Level %s",
-  "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
+  "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this building (or colony) to manual to hire or fire workers manually",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
 
   "entity.pirate": "Pirate",
@@ -2512,6 +2512,10 @@
   "com.minecolonies.core.gui.prevpage": "Previous Page",
 
   "com.minecolonies.core.barbarians.mercy": "§4Defeat! The raiders finished what they came here for to return another day!",
+  "com.minecolonies.core.gui.hiring.distance": "Lives %d blocks from here",
+  "com.minecolonies.core.gui.hiring.homeless": "Currently homeless",
+  "com.minecolonies.core.gui.hiring.liveshere": "Lives here",
+  "com.minecolonies.core.gui.hiring.livesatwork": "Lives at current work building",
   "com.minecolonies.core.gui.modules.stats": "Building Statistics",
   "com.minecolonies.coremod.gui.townhall.stats.item_used": "Used %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.mob_killed": "Killed %d %s",

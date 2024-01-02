@@ -146,7 +146,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Override
     public void onSyncDataUpdate(final EntityDataAccessor<?> data)
     {
-        if (data.equals(DATA_COLONY_ID) || data.equals(DATA_CITIZEN_ID) || data.equals(DATA_IS_FEMALE) || data.equals(DATA_IS_CHILD.getId()) || data.equals(DATA_MODEL)
+        if (data.equals(DATA_COLONY_ID) || data.equals(DATA_CITIZEN_ID) || data.equals(DATA_IS_FEMALE) || data.equals(DATA_IS_CHILD) || data.equals(DATA_MODEL)
               || data.equals(DATA_TEXTURE)
               || data.equals(DATA_TEXTURE_SUFFIX) || data.equals(DATA_STYLE) || data.equals(DATA_RENDER_METADATA))
         {
