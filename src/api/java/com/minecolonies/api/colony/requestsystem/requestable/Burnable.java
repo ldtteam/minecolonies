@@ -123,7 +123,7 @@ public class Burnable implements IDeliverable
     }
 
     @Override
-    public IDeliverable copyWithCount(@NotNull final int newCount)
+    public IDeliverable copyWithCount(final int newCount)
     {
         return new Burnable(newCount);
     }
