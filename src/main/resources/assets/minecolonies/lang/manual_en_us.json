@@ -292,7 +292,7 @@
 
   "tile.blockhuttownhall.messageplacedalreadydel": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click:",
   "tile.blockhuttownhall.messageplacedalreadyinfi": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click [DELETE]. If you want to start a new colony but not delete your old one, click [ABANDON].",
-  "tile.blockhuttownhall.messageplacedalready": "You are too close to your existing Town Hall to place another.",
+  "tile.blockhuttownhall.messageplacedalready": "This colony already has a Town Hall placed at: %s",
   "tile.blockhuttownhall.abandonaddofficer": "If you want to add yourself as an officer to the abandoned colony (to retain control), click:",
   "tile.blockhuttownhall.deletemessagelink": "[DELETE]",
   "tile.blockhuttownhall.abandonmessagelink": "[ABANDON]",
@@ -752,7 +752,7 @@
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "Removed block %s.",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "Removed location %d %d %d.",
   "tile.blockhut.warehouse.limit": "The amount of Warehouses is limited to 1 per colony. You cannot place any more in this colony without adjusting the config.",
-  "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place or activate any more in this colony.",
+  "tile.blockhut.tavern.limit": "A Tavern already exists at %s. You cannot place or activate any more in this colony.",
 
   "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 

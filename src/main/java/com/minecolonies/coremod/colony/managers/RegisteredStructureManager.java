@@ -890,7 +890,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (colony.getWorld() != null && !colony.getWorld().isClientSide)
                 {
-                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL).sendTo(player);
+                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
                 }
                 return false;
             }
@@ -902,7 +902,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
-                    MessageUtils.format(WARNING_DUPLICATE_TAVERN).sendTo(player);
+                    MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
                     return false;
                 }
             }
