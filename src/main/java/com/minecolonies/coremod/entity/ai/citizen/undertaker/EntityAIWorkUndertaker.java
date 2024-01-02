@@ -37,6 +37,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE;
@@ -320,6 +321,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             if (effortCounter < EFFORT_RESURRECT)
             {
+                worker.getLookControl().setLookAt(gravePos.getX(), gravePos.getY(), gravePos.getZ(), FACING_DELTA_YAW, worker.getMaxHeadXRot());
                 worker.swing(InteractionHand.MAIN_HAND);
                 Network.getNetwork().sendToTrackingEntity(new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.ENCHANT), worker);
                 effortCounter += getSecondarySkillLevel();
@@ -439,7 +441,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if(effortCounter < EFFORT_BURY)
         {
             equipShovel();
-            worker.swing(InteractionHand.MAIN_HAND);
+            worker.getCitizenItemHandler().hitBlockWithToolInHand(burialPos.getA(), false);
             effortCounter += getPrimarySkillLevel();
             return getState();
         }
