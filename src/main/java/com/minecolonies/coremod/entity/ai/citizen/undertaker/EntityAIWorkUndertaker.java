@@ -14,13 +14,16 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -319,6 +322,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             if (effortCounter < EFFORT_RESURRECT)
             {
                 worker.swing(InteractionHand.MAIN_HAND);
+                Network.getNetwork().sendToTrackingEntity(new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.ENCHANT), worker);
                 effortCounter += getSecondarySkillLevel();
                 return getState();
             }
@@ -335,6 +339,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             if (chance >= random.nextDouble())
             {
+                Network.getNetwork().sendToTrackingEntity(new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.HEART), worker);
+
                 final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).getLastGraveData().getCitizenDataNBT(), true, world, gravePos);
                 MessageUtils.format(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()).sendTo(buildingGraveyard.getColony()).forManagers();
                 worker.getCitizenColonyHandler().getColony().getCitizenManager().updateCitizenMourn(citizenData, false);
