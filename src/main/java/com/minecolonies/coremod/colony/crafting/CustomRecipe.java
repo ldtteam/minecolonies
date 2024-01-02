@@ -28,10 +28,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
@@ -195,14 +192,14 @@ public class CustomRecipe
     private Block intermediate = Blocks.AIR;
 
     /**
-     * ID of the required research. Null if none required
+     * IDs of the required research (AND). Empty if none required
      */
-    private ResourceLocation researchId = null;
+    private Set<ResourceLocation> researchIds = new HashSet<>();
 
     /**
-     * ID of the exclusionary research. Null if nothing excludes this recipe
+     * IDs of the exclusionary research (NAND). Empty if nothing excludes this recipe
      */
-    private ResourceLocation excludedResearchId = null;
+    private Set<ResourceLocation> excludedResearchIds = new HashSet<>();
 
     /**
      * The Minimum Level the building has to be for this recipe to be valid
@@ -351,13 +348,25 @@ public class CustomRecipe
         {
             recipe.intermediate = Blocks.AIR;
         }
-        if (recipeJson.has(RECIPE_RESEARCHID_PROP))
+        final JsonElement researchIds = recipeJson.get(RECIPE_RESEARCHID_PROP);
+        if (researchIds != null && researchIds.isJsonArray())
         {
-            recipe.researchId = new ResourceLocation(recipeJson.get(RECIPE_RESEARCHID_PROP).getAsString());
+            recipe.researchIds.addAll(researchIds.getAsJsonArray().asList().stream()
+                    .map(json -> new ResourceLocation(json.getAsString())).toList());
         }
-        if (recipeJson.has(RECIPE_EXCLUDED_RESEARCHID_PROP))
+        else if (researchIds != null)
         {
-            recipe.excludedResearchId = new ResourceLocation(recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString());
+            recipe.researchIds.add(new ResourceLocation(researchIds.getAsString()));
+        }
+        final JsonElement excludedResearchIds = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP);
+        if (excludedResearchIds != null && excludedResearchIds.isJsonArray())
+        {
+            recipe.excludedResearchIds.addAll(excludedResearchIds.getAsJsonArray().asList().stream()
+                    .map(json -> new ResourceLocation(json.getAsString())).toList());
+        }
+        else if (excludedResearchIds != null)
+        {
+            recipe.excludedResearchIds.add(new ResourceLocation(excludedResearchIds.getAsString()));
         }
         if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
         {
@@ -568,8 +577,8 @@ public class CustomRecipe
      * @param mustExist         If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
      * @param showTooltip       If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
      * @param recipeId          The identifier for the recipe, as a resource location.
-     * @param researchReq       Research ID that the colony must have to begin the research.
-     * @param researchExclude   Research ID that will cause buildings in the colony to remove the recipe, if learned.
+     * @param researchReqs      Research IDs that the colony must have to begin the research.
+     * @param researchExcludes  Research IDs that will cause buildings in the colony to remove the recipe, if learned.
      * @param lootTable         The loot table's resource location, if one is present.
      * @param requiredTool      The tool required for this craft, if any.  (In addition to any tools inferred from the recipe itself.)
      * @param inputs            The consumed items, as ItemStorages.
@@ -578,13 +587,13 @@ public class CustomRecipe
      * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, @Nullable final ResourceLocation lootTable, final IToolType requiredTool,
+      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceLocation lootTable, final IToolType requiredTool,
       final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
         this.recipeId = recipeId;
-        this.researchId = researchReq;
-        this.excludedResearchId = researchExclude;
+        this.researchIds = researchReqs;
+        this.excludedResearchIds = researchExcludes;
         this.minBldgLevel = minBldgLevel;
         this.maxBldgLevel = maxBldgLevel;
         this.mustExist = mustExist;
@@ -673,16 +682,18 @@ public class CustomRecipe
     }
 
     /**
-     * Get the ID of research required before this recipe is valid.
-     * @return The research ID or null if there is no such requirement.
+     * Get the IDs of research required before this recipe is valid.  All researches must be done before this recipe
+     * is valid.
+     * @return The research IDs or empty if there is no such requirement.
      */
-    public ResourceLocation getRequiredResearchId() { return this.researchId; }
+    public Set<ResourceLocation> getRequiredResearchIds() { return this.researchIds; }
 
     /**
-     * Get the ID of research after which this recipe is no longer valid.
-     * @return The research ID or null if there is no such requirement.
+     * Get the IDs of research after which this recipe is no longer valid.  All researches must be done before this
+     * recipe is no longer valid.
+     * @return The research IDs or empty if there is no such requirement.
      */
-    public ResourceLocation getExcludedResearchId() { return this.excludedResearchId; }
+    public Set<ResourceLocation> getExcludedResearchIds() { return this.excludedResearchIds; }
 
     /**
      * Get the minimum (inclusive) building level required before this recipe is valid.
@@ -704,33 +715,17 @@ public class CustomRecipe
     public boolean isValidForBuilding(IBuilding building)
     {
         final IColony colony = building.getColony();
-        final boolean requiredEffectPresent;
-        if (researchId != null)
-        {
-            requiredEffectPresent = isUnlockEffectResearched(researchId, colony);
-        }
-        else
-        {
-            requiredEffectPresent = false;
-        }
-        final boolean excludedEffectPresent;
-        if (excludedResearchId != null)
-        {
-            excludedEffectPresent = isUnlockEffectResearched(excludedResearchId, colony);
-        }
-        else
-        {
-            excludedEffectPresent = false;
-        }
         if (isPrecursorRecipeMissing(building))
         {
             return false;
         }
 
+        final boolean requiredEffectPresent = researchIds.stream().allMatch(r -> isUnlockEffectResearched(r, colony));
+        final boolean excludedEffectPresent = excludedResearchIds.stream().allMatch(r -> isUnlockEffectResearched(r, colony));
         final int bldgLevel = building.getBuildingLevel();
 
-        return (researchId == null || requiredEffectPresent)
-                 && (excludedResearchId == null || !excludedEffectPresent)
+        return requiredEffectPresent
+                 && (excludedResearchIds.isEmpty() || !excludedEffectPresent)
                  && (bldgLevel >= minBldgLevel)
                  && (bldgLevel <= maxBldgLevel);
     }
@@ -854,7 +849,7 @@ public class CustomRecipe
     @Override
     public int hashCode()
     {
-        return Objects.hash(result, researchId, excludedResearchId, lootTable, requiredTool, inputs);
+        return Objects.hash(result, researchIds.hashCode(), excludedResearchIds.hashCode(), lootTable, requiredTool, inputs.hashCode());
     }
 
     @Override
@@ -873,8 +868,8 @@ public class CustomRecipe
 
 
         return ItemStackUtils.compareItemStacksIgnoreStackSize(result, that.result)
-            && Objects.equals(researchId, that.researchId)
-            && Objects.equals(excludedResearchId, that.excludedResearchId)
+            && researchIds.equals(that.researchIds)
+            && excludedResearchIds.equals(that.excludedResearchIds)
             && Objects.equals(lootTable, that.lootTable)
             && Objects.equals(requiredTool, that.requiredTool)
             && inputs.equals(that.inputs);

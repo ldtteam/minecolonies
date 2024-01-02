@@ -3,12 +3,13 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "count": 2,
       "item": "minecraft:tuff"
     }
   ],
   "intermediate": "minecraft:air",
-  "not-research-id": "minecolonies:effects/crushing11unlock",
-  "research-id": "minecolonies:effects/knowledgeofthedepthsunlock",
+  "research-id": [
+    "minecolonies:effects/knowledgeofthedepthsunlock",
+    "minecolonies:effects/crushing11unlock"
+  ],
   "result": "minecraft:cobblestone"
 }

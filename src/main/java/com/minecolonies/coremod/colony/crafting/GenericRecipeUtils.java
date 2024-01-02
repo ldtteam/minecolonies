@@ -44,15 +44,15 @@ public final class GenericRecipeUtils
             restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
                     customRecipe.getMinBuildingLevel(), customRecipe.getMaxBuildingLevel()));
         }
-        if (customRecipe.getRequiredResearchId() != null)
+        for (final ResourceLocation researchId : customRecipe.getRequiredResearchIds())
         {
-            final Component researchName = getResearchDisplayName(customRecipe.getRequiredResearchId());
+            final Component researchName = getResearchDisplayName(researchId);
             restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
                     researchName));
         }
-        if (customRecipe.getExcludedResearchId() != null)
+        for (final ResourceLocation researchId : customRecipe.getExcludedResearchIds())
         {
-            final Component researchName = getResearchDisplayName(customRecipe.getExcludedResearchId());
+            final Component researchName = getResearchDisplayName(researchId);
             restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
                     researchName));
         }

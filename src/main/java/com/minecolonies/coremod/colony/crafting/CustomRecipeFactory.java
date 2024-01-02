@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +21,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 
@@ -45,8 +48,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             throw new IllegalArgumentException("Unsupported context - Invalid Crafter Recipe crafter");
         }
         if (!(context[5] instanceof ResourceLocation) ||
-              !(context[6] instanceof ResourceLocation) ||
-              !(context[7] instanceof ResourceLocation))
+              !(context[6] instanceof Set) ||
+              !(context[7] instanceof Set))
         {
             throw new IllegalArgumentException("Unsupported context - Invalid ResourceLocation");
         }
@@ -67,8 +70,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final boolean mustExist = (boolean)context[3];
         final boolean showTooltip = (boolean)context[4];
         final ResourceLocation recipeId = (ResourceLocation)context[5];
-        final ResourceLocation researchReq = (ResourceLocation)context[6];
-        final ResourceLocation researchExclude = (ResourceLocation)context[7];
+        final Set<ResourceLocation> researchReq = (Set<ResourceLocation>)context[6];
+        final Set<ResourceLocation> researchExclude = (Set<ResourceLocation>)context[7];
         final ResourceLocation lootTable = (ResourceLocation)context[8];
         final IToolType requiredTool = (IToolType)context[9];
         final List<ItemStorage> inputs = (List<ItemStorage>)context[10];
@@ -82,7 +85,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     }
 
     private CustomRecipe getNewInstance(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-                                        final ResourceLocation researchReq, final ResourceLocation researchExclude, final ResourceLocation lootTable, final IToolType toolType, final List<ItemStorage> inputs,
+                                        final Set<ResourceLocation> researchReq, final Set<ResourceLocation> researchExclude, final ResourceLocation lootTable, final IToolType toolType, final List<ItemStorage> inputs,
                                         final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, final Block intermediate)
     {
         return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, toolType, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
@@ -114,14 +117,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final CompoundTag compound = new CompoundTag();
         compound.putString(RECIPE_CRAFTER_PROP, recipe.getCrafter());
         compound.putString(CUSTOM_RECIPE_ID_PROP, recipe.getRecipeStorage().getRecipeSource().toString());
-        if(recipe.getRequiredResearchId() != null)
-        {
-            compound.putString(RECIPE_RESEARCHID_PROP, recipe.getRequiredResearchId().toString());
-        }
-        if(recipe.getExcludedResearchId() != null)
-        {
-            compound.putString(RECIPE_EXCLUDED_RESEARCHID_PROP, recipe.getExcludedResearchId().toString());
-        }
+        serializeIds(compound, RECIPE_RESEARCHID_PROP, recipe.getRequiredResearchIds());
+        serializeIds(compound, RECIPE_EXCLUDED_RESEARCHID_PROP, recipe.getExcludedResearchIds());
         if(recipe.getLootTable() != null)
         {
             compound.putString(RECIPE_LOOTTABLE_PROP, recipe.getLootTable().toString());
@@ -181,24 +178,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             recipeId = null;
         }
-        final ResourceLocation researchReq;
-        if(nbt.hasUUID(RECIPE_RESEARCHID_PROP))
-        {
-            researchReq = new ResourceLocation(nbt.getString(RECIPE_RESEARCHID_PROP));
-        }
-        else
-        {
-            researchReq = null;
-        }
-        final ResourceLocation researchExclude;
-        if(nbt.hasUUID(RECIPE_EXCLUDED_RESEARCHID_PROP))
-        {
-             researchExclude = new ResourceLocation(nbt.getString(RECIPE_EXCLUDED_RESEARCHID_PROP));
-        }
-        else
-        {
-            researchExclude = null;
-        }
+        final Set<ResourceLocation> researchReq = deserializeIds(nbt, RECIPE_RESEARCHID_PROP);
+        final Set<ResourceLocation> researchExclude = deserializeIds(nbt, RECIPE_EXCLUDED_RESEARCHID_PROP);
         final ResourceLocation lootTable;
         if(nbt.hasUUID(RECIPE_LOOTTABLE_PROP))
         {
@@ -260,16 +241,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         // It also avoids populating the RecipeStorage cached inside the CustomRecipe.
         packetBuffer.writeUtf(recipe.getCrafter());
         packetBuffer.writeResourceLocation(recipe.getRecipeStorage().getRecipeSource());
-        packetBuffer.writeBoolean(recipe.getRequiredResearchId() != null);
-        if(recipe.getRequiredResearchId() != null)
-        {
-            packetBuffer.writeResourceLocation(recipe.getRequiredResearchId());
-        }
-        packetBuffer.writeBoolean(recipe.getExcludedResearchId() != null);
-        if(recipe.getExcludedResearchId() != null)
-        {
-            packetBuffer.writeResourceLocation(recipe.getExcludedResearchId());
-        }
+        serializeIds(packetBuffer, recipe.getRequiredResearchIds());
+        serializeIds(packetBuffer, recipe.getExcludedResearchIds());
         packetBuffer.writeBoolean(recipe.getLootTable() != null);
         if(recipe.getLootTable() != null)
         {
@@ -305,24 +278,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     {
         final String crafter = buffer.readUtf();
         final ResourceLocation recipeId = buffer.readResourceLocation();
-        final ResourceLocation researchReq;
-        if(buffer.readBoolean())
-        {
-            researchReq = buffer.readResourceLocation();
-        }
-        else
-        {
-            researchReq = null;
-        }
-        final ResourceLocation researchExclude;
-        if(buffer.readBoolean())
-        {
-            researchExclude = buffer.readResourceLocation();
-        }
-        else
-        {
-            researchExclude = null;
-        }
+        final Set<ResourceLocation> researchReq = deserializeIds(buffer);
+        final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
         final ResourceLocation lootTable;
         if(buffer.readBoolean())
         {
@@ -363,5 +320,86 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     public short getSerializationId()
     {
         return SerializationIdentifierConstants.CUSTOM_RECIPE_ID;
+    }
+
+    /**
+     * Serialize a set of {@link ResourceLocation} as either absent, a single string, or a list of string, as appropriate.
+     * @param compound the compound to serialize into.
+     * @param key      the key to serialize into.
+     * @param ids      the set to be serialized.
+     */
+    private static void serializeIds(@NotNull final CompoundTag compound, @NotNull final String key, @NotNull final Set<ResourceLocation> ids)
+    {
+        final ListTag list = new ListTag();
+        for (final ResourceLocation loc : ids)
+        {
+            list.add(StringTag.valueOf(loc.toString()));
+        }
+
+        if (list.size() == 1)
+        {
+            compound.putString(key, list.getString(0));
+        }
+        else if (list.size() > 1)
+        {
+            compound.put(key, list);
+        }
+    }
+
+    /**
+     * Deserialize a set of {@link ResourceLocation} from either absent, a string, or a list of strings.
+     * @param compound the compound containing the value.
+     * @param key      the key within the compound.
+     * @return         the deserialized set.
+     */
+    private static Set<ResourceLocation> deserializeIds(@NotNull final CompoundTag compound, @NotNull final String key)
+    {
+        final Tag tag = compound.get(key);
+        if (tag instanceof final ListTag list)
+        {
+            final Set<ResourceLocation> ids = new HashSet<>();
+            for (final Tag t : list)
+            {
+                ids.add(new ResourceLocation(t.getAsString()));
+            }
+            return Set.copyOf(ids);
+        }
+        else if (tag instanceof final StringTag string)
+        {
+            return Set.of(new ResourceLocation(string.getAsString()));
+        }
+        return Set.of();
+    }
+
+    /**
+     * Serialize a set of {@link ResourceLocation}.
+     * @param buffer the buffer to serialize into.
+     * @param ids    the set to be serialized.
+     */
+    private static void serializeIds(@NotNull final FriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids)
+    {
+        buffer.writeVarInt(ids.size());
+        for (final ResourceLocation id : ids)
+        {
+            buffer.writeResourceLocation(id);
+        }
+    }
+
+    /**
+     * Deserialize a set of {@link ResourceLocation}.
+     * @param buffer the buffer to deserialize from.
+     * @return       the deserialized set.
+     */
+    private static Set<ResourceLocation> deserializeIds(@NotNull final FriendlyByteBuf buffer)
+    {
+        final Set<ResourceLocation> ids = new HashSet<>();
+
+        final int size = buffer.readVarInt();
+        for (int i = 0; i < size; ++i)
+        {
+            ids.add(buffer.readResourceLocation());
+        }
+
+        return Set.copyOf(ids);
     }
 }
