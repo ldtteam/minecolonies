@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -412,7 +413,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
 
-        if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
+        if(burialPos == null || !world.getBlockState(burialPos.getA()).is(BlockTags.REPLACEABLE))
         {
             burialPos = building.getRandomFreeVisualGravePos();
         }
@@ -440,7 +441,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         effortCounter = 0;
         unequip();
 
-        module.buryCitizenHere(burialPos);
+        module.buryCitizenHere(burialPos, worker);
         //Disabled until Mourning AI update: worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
         AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 
