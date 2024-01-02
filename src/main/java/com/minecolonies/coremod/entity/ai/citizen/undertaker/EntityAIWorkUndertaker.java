@@ -273,11 +273,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (!checkForToolOrWeapon(ToolType.SHOVEL))
         {
             equipShovel();
-            worker.swing(worker.getUsedItemHand());
             if (mineBlock(position))
             {
-                world.setBlockAndUpdate(position, Blocks.AIR.defaultBlockState());
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 building.ClearCurrentGrave();
                 return true;
