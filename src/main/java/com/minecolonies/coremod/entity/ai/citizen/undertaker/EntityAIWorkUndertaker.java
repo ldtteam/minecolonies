@@ -378,15 +378,15 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private double getTotemResurrectChance()
     {
-        final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
-
-        if (totems > 0)
-        {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.UNDERTAKER_TOTEM.trigger(playerMP));
-        }
-
         if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
         {
+            final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
+
+            if (totems > 0)
+            {
+                AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), AdvancementTriggers.UNDERTAKER_TOTEM::trigger);
+            }
+
             if ( totems == 1 )
             {
                 return SINGLE_TOTEM_RESURRECTION_CHANCE_BONUS;
