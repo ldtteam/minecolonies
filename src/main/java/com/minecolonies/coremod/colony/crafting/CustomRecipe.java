@@ -17,6 +17,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.GsonHelper;
@@ -897,5 +898,126 @@ public class CustomRecipe
     public boolean getShowTooltip()
     {
         return showTooltip;
+    }
+
+    /**
+     * Serialize to network.
+     *
+     * @param packetBuffer buffer to serialize into.
+     */
+    public void serialize(@NotNull final FriendlyByteBuf packetBuffer)
+    {
+        packetBuffer.writeUtf(getCrafter());
+        packetBuffer.writeResourceLocation(getRecipeStorage().getRecipeSource());
+        serializeIds(packetBuffer, getRequiredResearchIds());
+        serializeIds(packetBuffer, getExcludedResearchIds());
+        packetBuffer.writeBoolean(getLootTable() != null);
+        if(getLootTable() != null)
+        {
+            packetBuffer.writeResourceLocation(getLootTable());
+        }
+        packetBuffer.writeUtf(getRequiredTool().getName());
+        packetBuffer.writeVarInt(getMinBuildingLevel());
+        packetBuffer.writeVarInt(getMaxBuildingLevel());
+        packetBuffer.writeBoolean(getMustExist());
+        packetBuffer.writeBoolean(getShowTooltip());
+        packetBuffer.writeVarInt(getInputs().size());
+        for(final ItemStorage input : getInputs())
+        {
+            StandardFactoryController.getInstance().serialize(packetBuffer, input);
+        }
+        packetBuffer.writeItem(getPrimaryOutput());
+        packetBuffer.writeVarInt(getSecondaryOutput().size());
+        for(final ItemStack secondary : getSecondaryOutput())
+        {
+            packetBuffer.writeItem(secondary);
+        }
+        packetBuffer.writeVarInt(getAltOutputs().size());
+        for(final ItemStack alts : getAltOutputs())
+        {
+            packetBuffer.writeItem(alts);
+        }
+        packetBuffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(getIntermediate()));
+    }
+
+    /**
+     * Deserialize from network.
+     * @param buffer network buffer.
+     * @return       deserialized recipe.
+     */
+    public static CustomRecipe deserialize(@NotNull final FriendlyByteBuf buffer)
+    {
+        final String crafter = buffer.readUtf();
+        final ResourceLocation recipeId = buffer.readResourceLocation();
+        final Set<ResourceLocation> researchReq = deserializeIds(buffer);
+        final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
+        final ResourceLocation lootTable;
+        if(buffer.readBoolean())
+        {
+            lootTable = buffer.readResourceLocation();
+        }
+        else
+        {
+            lootTable = null;
+        }
+        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
+        final int minBldgLevel = buffer.readVarInt();
+        final int maxBldgLevel = buffer.readVarInt();
+        final boolean mustExist = buffer.readBoolean();
+        final boolean showTooltip = buffer.readBoolean();
+        final List<ItemStorage> inputs = new ArrayList<>();
+        for(int numInputs = buffer.readVarInt(); numInputs > 0; numInputs--)
+        {
+            inputs.add(StandardFactoryController.getInstance().deserialize(buffer));
+        }
+        final ItemStack primaryOutput = buffer.readItem();
+        final List<ItemStack> secondaryOutput = new ArrayList<>();
+        for(int numSec = buffer.readVarInt(); numSec > 0; numSec--)
+        {
+            secondaryOutput.add(buffer.readItem());
+        }
+        final List<ItemStack> altOutputs = new ArrayList<>();
+        for(int numAlts = buffer.readVarInt(); numAlts > 0; numAlts--)
+        {
+            altOutputs.add(buffer.readItem());
+        }
+
+        final Block intermediate = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
+
+        return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId,
+                researchReq, researchExclude, lootTable, requiredTool,
+                inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
+    }
+
+    /**
+     * Serialize a set of {@link ResourceLocation}.
+     * @param buffer the buffer to serialize into.
+     * @param ids    the set to be serialized.
+     */
+    private static void serializeIds(@NotNull final FriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids)
+    {
+        buffer.writeVarInt(ids.size());
+        for (final ResourceLocation id : ids)
+        {
+            buffer.writeResourceLocation(id);
+        }
+    }
+
+    /**
+     * Deserialize a set of {@link ResourceLocation}.
+     * @param buffer the buffer to deserialize from.
+     * @return       the deserialized set.
+     */
+    private static Set<ResourceLocation> deserializeIds(@NotNull final FriendlyByteBuf buffer)
+    {
+        final Set<ResourceLocation> ids = new HashSet<>();
+
+        final int size = buffer.readVarInt();
+        for (int i = 0; i < size; ++i)
+        {
+            ids.add(buffer.readResourceLocation());
+        }
+
+        return Set.copyOf(ids);
     }
 }
