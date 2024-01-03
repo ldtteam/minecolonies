@@ -35,7 +35,9 @@ import java.util.Objects;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
  * Planter AI class.
@@ -138,6 +140,16 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         return IDLE;
+    }
+
+    @Override
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        super.onBlockDropReception(blockDrops);
+        for (final ItemStack stack : blockDrops)
+        {
+            building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+        }
     }
 
     /**

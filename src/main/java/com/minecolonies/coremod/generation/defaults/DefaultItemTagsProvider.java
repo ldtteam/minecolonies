@@ -53,7 +53,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.COCOA_BEANS, Items.LILY_PAD, Items.SEA_PICKLE)
           .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.MUSHROOM_STEM)
           .add(Items.CAKE, Items.RABBIT_FOOT, Items.FERMENTED_SPIDER_EYE)
-          .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK)
+          .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.MANGROVE_ROOTS)
           .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL);
         tag(ModTags.compostables_rich).add(Items.PODZOL, ModBlocks.blockCompostedDirt.asItem());
 

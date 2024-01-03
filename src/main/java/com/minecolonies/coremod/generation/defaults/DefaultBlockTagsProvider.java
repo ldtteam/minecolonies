@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.generation.defaults;
 
+import com.ldtteam.domumornamentum.block.decorative.AllBrickBlock;
+import com.ldtteam.domumornamentum.block.decorative.AllBrickStairBlock;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
@@ -149,6 +152,8 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.DEEPSLATE_TILES)
                 .add(Blocks.DEEPSLATE_TILE_SLAB)
                 .add(Blocks.DEEPSLATE_TILE_STAIRS)
+                .add(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getAllBrickBlocks().toArray(new Block[0]))
+                .add(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getAllBrickStairBlocks().toArray(new Block[0]))
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICKS);
 
         tag(ModTags.mangroveTree)

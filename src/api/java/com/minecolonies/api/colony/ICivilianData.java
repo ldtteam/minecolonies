@@ -52,7 +52,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
      * Sets a gender and generates a new name
      * @param isFemale
      */
-    void setGenderAndGenerateName(@NotNull boolean isFemale);
+    void setGenderAndGenerateName(boolean isFemale);
 
     /**
      * Sets the gender
@@ -153,7 +153,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
      * @param responseId the triggered response.
      * @param player   the world it was triggered in.
      */
-    void onResponseTriggered(@NotNull Component key, @NotNull int responseId, Player player);
+    void onResponseTriggered(@NotNull Component key, int responseId, Player player);
 
     /**
      * Tick the data to update values.

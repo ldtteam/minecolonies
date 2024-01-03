@@ -48,6 +48,10 @@ public class BuildingModules
       () -> new EntityListModule(HOSTILE_LIST),
       () -> () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true));
 
+    public static final BuildingEntry.ModuleProducer<BuildingStatisticsModule, BuildingStatisticsModuleView> STATS_MODULE = new BuildingEntry.ModuleProducer<>(
+      "stats_module", BuildingStatisticsModule::new,
+      () -> BuildingStatisticsModuleView::new);
+
     /**
      * Item Lists
      */
