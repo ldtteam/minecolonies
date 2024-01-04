@@ -440,7 +440,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
 
                 building.getColony().getRequestManager().onColonyUpdate(request ->
-                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(delivery::matches));
+                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
             }
             return true;
         }

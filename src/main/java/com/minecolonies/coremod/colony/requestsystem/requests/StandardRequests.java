@@ -193,7 +193,7 @@ public final class StandardRequests
                                                                                                                      ("namedtag[", "").replace(':', '.').replace("]", "");
             final MutableComponent tagText = Component.translatable(tagKey);
             // test the translated text; if there's a difference, the client has a matching translation key.
-            if (!tagText.getContents().equals(tagKey))
+            if (!tagText.getString().equals(tagKey))
             {
                 combined.append(Component.literal("#").append(tagText));
             }

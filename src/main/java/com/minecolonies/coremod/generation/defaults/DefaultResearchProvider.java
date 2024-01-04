@@ -8,12 +8,9 @@ import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -123,7 +120,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(PLANTATION_JUNGLE).setTranslatedName("Plantations Unlock Fields For: Bamboo, Cocoa and Vines"));
         effects.add(new ResearchEffect(PLANTATION_SEA).setTranslatedName("Plantations Unlock Fields For: Kelp, Seagrass and Sea pickles"));
         effects.add(new ResearchEffect(PLANTATION_EXOTIC).setTranslatedName("Plantations Unlock Fields For: Glowberries"));
-        effects.add(new ResearchEffect(PLANTATION_NETHER).setTranslatedName("Plantations Unlock Fields For: Crimson fungi and Warped fungi"));
+        effects.add(new ResearchEffect(PLANTATION_NETHER).setTranslatedName("Plantations Unlock Fields For: Crimson/Warped fungi, roots and vines"));
         effects.add(new ResearchEffect(BEEKEEP_2).setTranslatedName("Beekeepers Can Harvest Both Honey Bottles and Combs at Once"));
         effects.add(new ResearchEffect(RAILS).setTranslatedName("Citizens use Rails"));
         effects.add(new ResearchEffect(VINES).setTranslatedName("Citizens can climb Vines"));

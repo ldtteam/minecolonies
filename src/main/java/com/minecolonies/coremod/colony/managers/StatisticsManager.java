@@ -28,35 +28,21 @@ public class StatisticsManager implements IStatisticsManager
     private static final String TAG_STAT            = "stat";
 
     /**
-     * Colony reference
-     */
-    private final IColony colony;
-
-    /**
      * The current stats of the colony.
      */
     private final Map<String, Int2IntLinkedOpenHashMap> stats = new HashMap<>();
 
-    /**
-     * Create a new stat manager.
-     * @param colony the colony to check.
-     */
-    public StatisticsManager(final IColony colony)
+    @Override
+    public void increment(final @NotNull String id, final int day)
     {
-        this.colony = colony;
+        incrementBy(id, 1, day);
     }
 
     @Override
-    public void increment(final @NotNull String id)
-    {
-        incrementBy(id, 1);
-    }
-
-    @Override
-    public void incrementBy(final @NotNull String id, int qty)
+    public void incrementBy(final @NotNull String id, int qty, final int day)
     {
         final Int2IntLinkedOpenHashMap innerMap = stats.computeIfAbsent(id, k -> new Int2IntLinkedOpenHashMap());
-        innerMap.addTo(colony.getDay(), qty);
+        innerMap.addTo(day, qty);
     }
 
     @Override

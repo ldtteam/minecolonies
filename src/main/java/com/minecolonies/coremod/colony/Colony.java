@@ -178,12 +178,7 @@ public class Colony implements IColony
     /**
      * Event manager of the colony.
      */
-    private final IStatisticsManager statisticManager = new StatisticsManager(this);
-
-    /**
-     * Reputation manager of the colony.
-     */
-    private final IStatisticsManager reputationManager = new StatisticsManager(this);
+    private final IStatisticsManager statisticManager = new StatisticsManager();
 
     /**
      * Quest manager for this colony

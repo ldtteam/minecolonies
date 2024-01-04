@@ -24,4 +24,15 @@ public final class StatisticsConstants
     public static final String BUILD_REPAIRED  = "build_repaired";
     public static final String BUILD_REMOVED   = "build_removed";
 
+    /**
+     * Generic building Stats
+     */
+    public static final String ITEM_USED = "item_used";
+    public static final String ITEM_OBTAINED = "item_obtained";
+    public static final String MOB_KILLED = "mob_killed";
+
+    /**
+     * Specific building stats.
+     */
+    public static final String INT_LEVELED = "int_leveled";
 }

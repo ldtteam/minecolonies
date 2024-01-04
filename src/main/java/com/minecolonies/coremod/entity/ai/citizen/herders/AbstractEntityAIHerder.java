@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -723,6 +722,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public double chanceToButcher(final List<? extends Animal> allAnimals)
     {
+        final int maxAnimals = building.getBuildingLevel() * getMaxAnimalMultiplier();
+        if (!building.getSetting(AbstractBuilding.BREEDING).getValue() && allAnimals.size() <= maxAnimals)
+        {
+            return 0;
+        }
+
         int grownUp = 0;
         for (Animal animalToButcher : allAnimals)
         {
@@ -737,9 +742,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return 0;
         }
 
-        final int maxAnimals = building.getBuildingLevel() * getMaxAnimalMultiplier();
-
-       return 0.5 * (Math.pow(grownUp, 4)  /  Math.pow(maxAnimals,4));
+        return 0.5 * (Math.pow(grownUp, 4) / Math.pow(maxAnimals, 4));
     }
 
     /**
