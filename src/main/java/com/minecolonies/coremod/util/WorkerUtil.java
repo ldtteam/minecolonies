@@ -217,7 +217,7 @@ public final class WorkerUtil
             TagKey<Block> tag = tier.getTag();
             if (tag != null && target.is(tag))
             {
-                required = tiers.indexOf(tier);
+                required = tier.getLevel();
                 break;
             }
         }
