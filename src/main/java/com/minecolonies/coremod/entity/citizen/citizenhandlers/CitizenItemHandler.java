@@ -16,7 +16,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -247,10 +246,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
         if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-              .getColony()
-              .getResearchManager()
-              .getResearchEffects()
-              .getEffectStrength(TOOL_DURABILITY))))
+                                                               .getColony()
+                                                               .getResearchManager()
+                                                               .getResearchEffects()
+                                                               .getEffectStrength(TOOL_DURABILITY))))
             {
                 return;
             }
@@ -258,8 +257,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
         //check if tool breaks
         if (citizen.getCitizenData()
-          .getInventory()
-          .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
+              .getInventory()
+              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
         {
             if (hand == InteractionHand.MAIN_HAND)
             {
@@ -345,10 +344,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
             final EquipmentSlot equipmentSlot = EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, i);
             final ItemStack equipment = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
             equipment.hurtAndBreak(armorDmg, citizen, (s) -> {
-            s.broadcastBreakEvent(equipmentSlot);
-            citizen.onArmorRemove(equipment, equipmentSlot);
-            citizen.getInventoryCitizen().markDirty();
-        });
+                s.broadcastBreakEvent(equipmentSlot);
+                citizen.onArmorRemove(equipment, equipmentSlot);
+                citizen.getInventoryCitizen().markDirty();
+            });
         }
     }
 
@@ -357,21 +356,26 @@ public class CitizenItemHandler implements ICitizenItemHandler
     {
         double localXp = xp;
 
-        final int toolSlot =
-          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(
-            Enchantments.MENDING));
-        if (toolSlot == -1)
+        for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
         {
-            return localXp;
-        }
+            ItemStack tool;
+            if (equipmentSlot.isArmor())
+            {
+                tool = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
+            }
+            else
+            {
+                tool = citizen.getInventoryCitizen().getHeldItem(equipmentSlot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+            }
 
-        final ItemStack tool = citizen.getInventoryCitizen().getStackInSlot(toolSlot);
-        if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
-        {
-            //2 xp to heal 1 dmg
-            final double dmgHealed = Math.min(localXp / 2, tool.getDamageValue());
-            localXp -= dmgHealed * 2;
-            tool.setDamageValue(tool.getDamageValue() - (int) Math.ceil(dmgHealed));
+            if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged() && tool.isEnchanted() && EnchantmentHelper.getEnchantments(tool).containsKey(Enchantments.MENDING))
+            {
+                //2 xp to heal 1 dmg
+                final double dmgHealed = Math.min(localXp / 2, tool.getDamageValue());
+                localXp -= dmgHealed * 2;
+                tool.setDamageValue(tool.getDamageValue() - (int) Math.ceil(dmgHealed));
+                break;
+            }
         }
 
         return localXp;
