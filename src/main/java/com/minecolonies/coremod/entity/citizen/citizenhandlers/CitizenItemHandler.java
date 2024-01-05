@@ -358,7 +358,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
         for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
         {
-            ItemStack tool;
+            final ItemStack tool;
             if (equipmentSlot.isArmor())
             {
                 tool = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
