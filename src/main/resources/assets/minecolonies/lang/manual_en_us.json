@@ -854,6 +854,21 @@
   "com.minecolonies.coremod.tooltype.boots": "Boots",
   "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
 
+  "com.minecolonies.coremod.armorlevel.0": "Leather",
+  "com.minecolonies.coremod.armorlevel.1": "Gold",
+  "com.minecolonies.coremod.armorlevel.2": "Chain",
+  "com.minecolonies.coremod.armorlevel.3": "Iron",
+  "com.minecolonies.coremod.armorlevel.4": "Diamond",
+  "com.minecolonies.coremod.armorlevel.5": "Netherite",
+  "com.minecolonies.coremod.armorlevel.etc": "Better than Netherite",
+
+  "com.minecolonies.coremod.toollevel.0": "Wood or Gold",
+  "com.minecolonies.coremod.toollevel.1": "Stone",
+  "com.minecolonies.coremod.toollevel.2": "Iron",
+  "com.minecolonies.coremod.toollevel.3": "Diamond",
+  "com.minecolonies.coremod.toollevel.4": "Netherite",
+  "com.minecolonies.coremod.toollevel.etc": "Better than Netherite",
+
   "com.minecolonies.coremod.gui.citizen.requests": "Open requests:",
   "com.minecolonies.coremod.gui.citizen.requesttitle": "Requests",
   "com.minecolonies.coremod.gui.citizen.requestscancel": "Cancel",

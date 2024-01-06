@@ -13,8 +13,9 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
@@ -631,23 +632,15 @@ public final class ItemStackUtils
      * @param toolGrade the number of the grade of a tool
      * @return a string corresponding to the tool
      */
-    public static String swapArmorGrade(final int toolGrade)
+    public static MutableComponent swapArmorGrade(final int toolGrade)
     {
-        switch (toolGrade)
+        if (toolGrade >= 0 && toolGrade <= 5)
         {
-            case 0:
-                return "Leather";
-            case 1:
-                return "Gold";
-            case 2:
-                return "Chain";
-            case 3:
-                return "Iron";
-            case 4:
-                return "Diamond";
-            default:
-                return "Better than Diamond";
+            return Component.translatable("com.minecolonies.coremod.armorlevel." + toolGrade);
         }
+
+        // this shouldn't really ever happen, but just in case...
+        return Component.translatable("com.minecolonies.coremod.armorlevel.etc");
     }
 
     /**
@@ -656,21 +649,14 @@ public final class ItemStackUtils
      * @param toolGrade the number of the grade of an armor
      * @return a string corresponding to the armor
      */
-    public static String swapToolGrade(final int toolGrade)
+    public static MutableComponent swapToolGrade(final int toolGrade)
     {
-        switch (toolGrade)
+        if (toolGrade >= 0 && toolGrade <= 4)
         {
-            case 0:
-                return "Wood or Gold";
-            case 1:
-                return "Stone";
-            case 2:
-                return "Iron";
-            case 3:
-                return "Diamond";
-            default:
-                return "Better than Diamond";
+            return Component.translatable("com.minecolonies.coremod.toollevel." + toolGrade);
         }
+
+        return Component.translatable("com.minecolonies.coremod.toollevel.etc");
     }
 
     /**
