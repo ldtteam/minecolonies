@@ -471,30 +471,6 @@ public final class ItemStackUtils
         return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
     }
 
-    /*
-    private static int getToolLevel(final String material)
-    {
-        if ("WOOD".equals(material)
-              || "GOLD".equals(material))
-        {
-            return 0;
-        }
-        else if ("STONE".equals(material))
-        {
-            return 1;
-        }
-        else if ("IRON".equals(material))
-        {
-            return 2;
-        }
-        else if ("DIAMOND".equals(material))
-        {
-            return 3;
-        }
-        return -1;
-    }
-    */
-
     /**
      * This routine converts the material type of armor into a numerical value for the request system.
      *
