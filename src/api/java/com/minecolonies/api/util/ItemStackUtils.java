@@ -610,7 +610,7 @@ public final class ItemStackUtils
      */
     public static MutableComponent swapArmorGrade(final int toolGrade)
     {
-        if (toolGrade >= 0 && toolGrade <= 5)
+        if (toolGrade >= 0 && toolGrade <= 4)
         {
             return Component.translatable("com.minecolonies.coremod.armorlevel." + toolGrade);
         }

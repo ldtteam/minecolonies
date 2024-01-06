@@ -858,8 +858,7 @@
   "com.minecolonies.coremod.armorlevel.1": "Gold",
   "com.minecolonies.coremod.armorlevel.2": "Chain",
   "com.minecolonies.coremod.armorlevel.3": "Iron",
-  "com.minecolonies.coremod.armorlevel.4": "Diamond",
-  "com.minecolonies.coremod.armorlevel.5": "Netherite",
+  "com.minecolonies.coremod.armorlevel.4": "Diamond or Netherite",
   "com.minecolonies.coremod.armorlevel.etc": "Better than Netherite",
 
   "com.minecolonies.coremod.toollevel.0": "Wood or Gold",
