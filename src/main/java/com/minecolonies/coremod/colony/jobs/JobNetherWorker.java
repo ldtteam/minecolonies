@@ -1,21 +1,20 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
-
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.netherworker.EntityAIWorkNether;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import static com.minecolonies.api.research.util.ResearchConstants.FIRE_DAMAGE_PREDICATE;
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
 public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobNetherWorker>
@@ -199,7 +198,7 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if (damageSource.typeHolder().is(DamageTypes.LAVA) || damageSource.typeHolder().is(DamageTypes.IN_FIRE) || damageSource.typeHolder().is(DamageTypes.ON_FIRE))
+        if (damageSource.typeHolder().is(FIRE_DAMAGE_PREDICATE))
         {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }

@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.research.util.ResearchConstants.FIRE_DAMAGE_PREDICATE;
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
 /**
@@ -55,7 +53,7 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if (damageSource.typeHolder().is(DamageTypes.LAVA) || damageSource.typeHolder().is(DamageTypes.IN_FIRE) || damageSource.typeHolder().is(DamageTypes.ON_FIRE))
+        if (damageSource.typeHolder().is(FIRE_DAMAGE_PREDICATE))
         {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }
