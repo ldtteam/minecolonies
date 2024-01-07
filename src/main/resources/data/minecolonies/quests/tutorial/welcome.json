@@ -208,7 +208,6 @@
     },
     {
       "type": "minecolonies:placeblock",
-      "unlocks-rewards": [0],
       "details": {
         "target": 0,
         "block": "minecolonies:blockhutbuilder",
@@ -217,6 +216,7 @@
       }
     },
     {
+      "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Perfect! The building is placed, and a worker will start working there soon. Take this quest log and shift+right-click it on any of the hut blocks in the colony to stay updated with the next steps!",

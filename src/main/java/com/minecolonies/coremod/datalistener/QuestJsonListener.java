@@ -419,18 +419,18 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             case AND ->
             {
                 final List<ITriggerReturnData<?>> returnDataList = new ArrayList<>();
-                if (expressionTree.childA != null)
+                if (expressionTree.childB != null)
                 {
-                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA);
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB);
                     if (immReturn == null)
                     {
                         return null;
                     }
                     returnDataList.addAll(immReturn);
                 }
-                if (expressionTree.childB != null)
+                if (expressionTree.childA != null)
                 {
-                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB);
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA);
                     if (immReturn == null)
                     {
                         return null;

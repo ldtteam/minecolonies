@@ -28,7 +28,7 @@
       "text": "Hello there! We are producing some wood, but you might have already noticed that us citizens also require food, so we should try to build a farm so that the colony can also be self sufficient on food.",
       "options": [
         {
-          "answer": "I'm ready!",
+          "answer": "Sure!",
           "result": {
             "type": "minecolonies:dialogue",
             "text": "Nice, so as usual we start by crafting the farm hut block. In the crafting bench, surround a wooden or stone hoe with planks and put the Build Tool in the top. Come back to me once you've done that!'",

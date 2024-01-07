@@ -34,14 +34,14 @@
             "text": "Nice, so let's get this builder hut built then. Right click the builder hut block, go into 'Build Options' and click 'Build Building'",
             "options": [
               {
-                "answer": "On it!",
+                "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
               },
               {
-                "answer": "Already done!",
+                "answer": "On it!",
                 "result": {
                   "type": "minecolonies:dialogue",
                   "text": "No Problem! To see what the builder requires for this building you can right click the hut and select the 'Required Resources' tab which is the second tab from the top on the left. You can drop off items there directly or through the inventory available through the inventory button in the bottom middle of the main page or by shift right clicking the block.",
@@ -242,7 +242,6 @@
     },
     {
       "type": "minecolonies:buildbuilding",
-      "unlocks-rewards": [0],
       "details": {
         "type": "minecolonies:builder",
         "count-existing": true,
@@ -253,6 +252,7 @@
       }
     },
     {
+      "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Congratulations. You built the first building of your colony! Come back to me in a bit and I will let you know the next steps! Here, have some cobblestone as a reward!",
