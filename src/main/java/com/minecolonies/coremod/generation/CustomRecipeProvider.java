@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.generation;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
@@ -144,17 +145,61 @@ public abstract class CustomRecipeProvider implements DataProvider
             return this;
         }
 
+        /**
+         * Sets a research id that is required before this recipe is available.  Can be called multiple times to add
+         * additional researches, all of which will be required before this recipe is available.
+         * @param researchId the required research id.
+         */
         @NotNull
         public CustomRecipeBuilder minResearchId(@NotNull final ResourceLocation researchId)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_RESEARCHID_PROP, researchId.toString());
+            JsonElement ids = this.json.get(CustomRecipe.RECIPE_RESEARCHID_PROP);
+            if (ids == null)
+            {
+                this.json.addProperty(CustomRecipe.RECIPE_RESEARCHID_PROP, researchId.toString());
+            }
+            else if (ids.isJsonArray())
+            {
+                ids.getAsJsonArray().add(researchId.toString());
+            }
+            else
+            {
+                final JsonArray array = new JsonArray();
+                array.add(ids.getAsString());
+                array.add(researchId.toString());
+
+                this.json.remove(CustomRecipe.RECIPE_RESEARCHID_PROP);
+                this.json.add(CustomRecipe.RECIPE_RESEARCHID_PROP, array);
+            }
             return this;
         }
 
+        /**
+         * Sets a research id that is required before this recipe is no longer available.  Can be called multiple
+         * times to add additional researches, all of which will be required before this recipe is removed.
+         * @param researchId the excluded research id.
+         */
         @NotNull
         public CustomRecipeBuilder maxResearchId(@NotNull final ResourceLocation researchId)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_EXCLUDED_RESEARCHID_PROP, researchId.toString());
+            JsonElement ids = this.json.get(CustomRecipe.RECIPE_EXCLUDED_RESEARCHID_PROP);
+            if (ids == null)
+            {
+                this.json.addProperty(CustomRecipe.RECIPE_EXCLUDED_RESEARCHID_PROP, researchId.toString());
+            }
+            else if (ids.isJsonArray())
+            {
+                ids.getAsJsonArray().add(researchId.toString());
+            }
+            else
+            {
+                final JsonArray array = new JsonArray();
+                array.add(ids.getAsString());
+                array.add(researchId.toString());
+
+                this.json.remove(CustomRecipe.RECIPE_EXCLUDED_RESEARCHID_PROP);
+                this.json.add(CustomRecipe.RECIPE_EXCLUDED_RESEARCHID_PROP, array);
+            }
             return this;
         }
 
