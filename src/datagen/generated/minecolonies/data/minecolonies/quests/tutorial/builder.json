@@ -229,10 +229,7 @@
         "next-objective": 4,
         "qty": 1,
         "target": 0
-      },
-      "unlocks-rewards": [
-        0
-      ]
+      }
     },
     {
       "type": "minecolonies:dialogue",
@@ -246,7 +243,10 @@
         }
       ],
       "target": 0,
-      "text": "minecolonies.quests.tutorial.builder.obj4"
+      "text": "minecolonies.quests.tutorial.builder.obj4",
+      "unlocks-rewards": [
+        0
+      ]
     }
   ],
   "parents": [

@@ -129,7 +129,7 @@
         "type": "minecolonies:miner",
         "count-existing": true,
         "lvl": 1,
-        "next-objective": 4,
+        "next-objective": 3,
         "qty": 1,
         "target": 0
       }
