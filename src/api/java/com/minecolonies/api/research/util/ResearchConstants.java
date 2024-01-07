@@ -2,7 +2,12 @@ package com.minecolonies.api.research.util;
 
 import com.ldtteam.blockui.Color;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
+
+import java.util.function.Predicate;
 
 /**
  * Class for research constants.
@@ -178,6 +183,14 @@ public final class ResearchConstants
     public static final ResourceLocation SIFTER_FLINT      = new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock");
     public static final ResourceLocation SIFTER_IRON       = new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock");
     public static final ResourceLocation SIFTER_DIAMOND    = new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock");
+
+    /**
+     * Predicate for selecting any fire-related damage
+     */
+    public static final Predicate<ResourceKey<DamageType>> FIRE_DAMAGE_PREDICATE = type -> type.equals(DamageTypes.LAVA)
+                                                                                             || type.equals(DamageTypes.HOT_FLOOR)
+                                                                                             || type.equals(DamageTypes.IN_FIRE)
+                                                                                             || type.equals(DamageTypes.ON_FIRE);
 
     /**
      * Private constructor to hide implicit public one.
