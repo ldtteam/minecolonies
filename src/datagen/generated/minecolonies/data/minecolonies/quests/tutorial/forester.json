@@ -170,7 +170,7 @@
       "type": "minecolonies:citizen",
       "state": {
         "match": {
-          "finpartquests": [
+          "finavquests": [
             "minecolonies:tutorial/tavern"
           ]
         }
