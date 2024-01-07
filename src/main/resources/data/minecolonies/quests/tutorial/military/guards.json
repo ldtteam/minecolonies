@@ -1,0 +1,182 @@
+{
+  "name": "Building Defences",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/military/zombies"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/military/zombies"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "I'm still not feeling very safe. Some might argue that the strongest defense is a swift and decisive offense. How about you build some guard towers?",
+      "options": [
+        {
+          "answer": "Alright, on it!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Nice, so as usual we start by crafting the Guard Tower block. In the crafting bench, surround a bow with planks and put the Build Tool in the top. Come back to me once you've done that!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! Then it's time to place both Guard Towers with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once they are built!",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the Guard Tower block?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! In the crafting bench, surround a bow with planks and put the Build Tool in the top.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Alrighty then! Then it's time to place the Guard Towers with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once both are built!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I already finished building the Guard Towers!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:guardtower",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 2,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Awesome, I feel much safer already. Guards actually life in their guard towers and don't need housing spots. So just make sure they have armors and weapons and they will serve you well. Come back in a bit and I'll help you with the next steps!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:iron_block",
+        "qty": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "name": "Bring Light into the Darkness",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/forester"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/forester"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hello! I see your colony is growing. However, it is quite of dangerous around here. How about you light the area up a little bit to avoid monsters prying on your citizens?",
+      "options": [
+        {
+          "answer": "Sounds like a good idea!!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0,1],
+      "type": "minecolonies:placeblock",
+      "details": {
+        "block": "minecraft:torch",
+        "next-objective": 2,
+        "qty": 16,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Great, thanks! This should definitely help a bit. Here, I found those, I'm sure they will come in handy!",
+      "options": [
+        {
+          "answer": "Thanks!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:iron_sword",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:bow",
+        "qty": 1
+      }
+    }
+  ]
+}

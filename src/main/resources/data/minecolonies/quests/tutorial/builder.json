@@ -1,0 +1,279 @@
+{
+  "name": "Your first Building",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/welcome"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/welcome"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hey there! I saw you got your builder hut placed. Nice! Are you ready for the next step?",
+      "options": [
+        {
+          "answer": "Yes sure!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Nice, so let's get this builder hut built then. Right click the builder hut block, go into 'Build Options' and click 'Build Building'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "No Problem! To see what the builder requires for this building you can right click the hut and select the 'Required Resources' tab which is the second tab from the top on the left. You can drop off items there directly or through the inventory available through the inventory button in the bottom middle of the main page or by shift right clicking the block.",
+                  "options": [
+                    {
+                      "answer": "Okay thanks!",
+                      "result": {
+                        "type": "minecolonies:dialogue",
+                        "text": "Great! Come back to me once you checked that out!",
+                        "options": [
+                          {
+                            "answer": "Understood, be right back!",
+                            "result": {
+                              "type": "minecolonies:advanceobjective",
+                              "go-to": 2
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "answer": "I already finished building the hut!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+                  "options": [
+                    {
+                      "answer": "Awesome!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 5
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to start the build request?",
+      "options": [
+        {
+          "answer": "No, I forgot what I had to do!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "No Problem! Right click the builder hut block, go into 'Build Options' and click 'Build Building'",
+            "options": [
+              {
+                "answer": "Thanks! Will try again!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Nice! To see what the builder requires for this building you can right click the hut and select the 'Required Resources' tab which is the second tab from the top on the left. You can drop off items there directly or through the inventory by shift right clicking on the block.",
+            "options": [
+              {
+                "answer": "Okay thanks!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Great! Come back to me once you checked that out!",
+                  "options": [
+                    {
+                      "answer": "Understood, be right back!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I already finished building the hut!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to check out the resource requirement list?",
+      "options": [
+        {
+          "answer": "No, I forgot how to do it!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "No Problem! To see what the builder requires for this building you can right click the hut and select the 'Required Resources' tab which is the second tab from the top on the left. You can drop off items there directly or through the inventory available through the inventory button in the bottom middle of the main page or by shift right clicking the block.",
+            "options": [
+              {
+                "answer": "Okay thanks!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Great! Come back to me once you checked that out!",
+                  "options": [
+                    {
+                      "answer": "Understood, be right back!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Awesome! Your builder might also need some tools to prepare the building area. You can supervise your builders immediate needs by right clicking them and selecting the 'Open Requests' tab which is the second from the top on the left. You can fulfill the request right there or through their inventory by shift right clicking them.",
+            "options": [
+              {
+                "answer": "Oh nice, good to know!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Great! Come back to me once the builder finished building.",
+                  "options": [
+                    {
+                      "answer": "On it!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 3
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I already finished building the hut!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "unlocks-rewards": [0],
+      "details": {
+        "type": "minecolonies:builder",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Congratulations. You built the first building of your colony! Come back to me in a bit and I will let you know the next steps! Here, have some cobblestone as a reward!",
+      "options": [
+        {
+          "answer": "Thank you!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:cobblestone",
+        "qty": 32
+      }
+    }
+  ]
+}

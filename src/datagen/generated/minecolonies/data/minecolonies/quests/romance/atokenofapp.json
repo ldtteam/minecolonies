@@ -98,7 +98,7 @@
     }
   ],
   "parents": [
-    "minecolonies:aromanticgesture"
+    "minecolonies:romance/aromanticgesture"
   ],
   "rewards": [
     {
@@ -127,7 +127,7 @@
       "state": {
         "match": {
           "finpartquests": [
-            "aromanticgesture"
+            "minecolonies:romance/aromanticgesture"
           ]
         }
       }

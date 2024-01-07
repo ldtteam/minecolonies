@@ -306,4 +306,10 @@ public class QuestManager implements IQuestManager
         }
         return finishedQuestsCache;
     }
+
+    @Override
+    public void injectAvailableQuest(final IQuestInstance questInstance)
+    {
+        this.availableQuests.put(questInstance.getId(), questInstance);
+    }
 }

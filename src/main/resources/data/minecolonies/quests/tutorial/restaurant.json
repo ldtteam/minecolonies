@@ -1,0 +1,166 @@
+{
+  "name": "Feed the masses",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/housing"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/housing"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "While we are getting food from the farm, you still have to manually feed the citizens when they are hungry. How about we build a restaurant so that is taken care of automatically?",
+      "options": [
+        {
+          "answer": "Sounds great!!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "The cook in the restaurant will not only cook food for you in the furnace automatically, but they will also hand out food to citizens that are hungry. You know the drill, craft the restaurant hut block in a crafting bench. This time surround an apple with planks and the build tool at the top.'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! Then it's time to place the Restaurant with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the Restaurant hut block?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "No problem! In the crafting bench, surround an apple with planks and put the Build Tool in the top.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Alrighty then! Then it's time to place the Restaurant with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:cook",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Neat, soon your cook will hand out food to your citizens, just make sure the restaurant is supplied with food and make sure to select some fuel the restaurant is allowed to use in the hut menu. Come back in a bit and I'll help you with the next steps! Here, have some coal to serve as initial fuel!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:coal",
+        "qty": 16
+      }
+    }
+  ]
+}

@@ -355,7 +355,8 @@ public class CitizenDataView implements ICitizenDataView
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
-        sortedInteractions = citizenChatOptions.values().stream().sorted(Comparator.comparingInt(e -> e.getPriority().getPriority())).collect(Collectors.toList());
+        sortedInteractions = new ArrayList<>(citizenChatOptions.values());
+        sortedInteractions.sort(Comparator.comparingInt(e -> -e.getPriority().getPriority()));
 
         citizenHappinessHandler.read(buf.readNbt());
 

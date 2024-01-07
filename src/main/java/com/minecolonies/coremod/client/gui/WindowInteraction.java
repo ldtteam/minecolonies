@@ -104,7 +104,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             button.setTextAlignment(Alignment.MIDDLE);
             button.setText(component);
             group.addChild(button);
-            button.setTextScale(Math.min(1, 20.0 / component.getString().length()));
+            button.setTextScale(Math.min(1, 24.0 / component.getString().length()));
 
             y += button.getHeight();
             if (y + button.getHeight() >= group.getHeight())

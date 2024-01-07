@@ -402,17 +402,17 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         {
             case OR ->
             {
-                if (expressionTree.childA != null)
+                if (expressionTree.childB != null)
                 {
-                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA);
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB);
                     if (immReturn != null)
                     {
                         return immReturn;
                     }
                 }
-                if (expressionTree.childB != null)
+                if (expressionTree.childA != null)
                 {
-                    return evaluate(colony, triggerMap, expressionTree.childB);
+                    return evaluate(colony, triggerMap, expressionTree.childA);
                 }
                 return null;
             }

@@ -1,0 +1,182 @@
+{
+  "name": "A roof over the head",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/builder"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/builder"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi there! Your builder is looking neat! How about we let him build a Tavern so that your citizens don't have to sleep outside and are safe at night?",
+      "options": [
+        {
+          "answer": "Yes sure!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Nice, so as usual we start by crafting the Tavern hut block. In the crafting bench, surround a Barrel with planks and put the Build Tool in the top. Come back to me once you've done that!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! Then it's time to place the Tavern with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the tavern hut block?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! Just surround a Barrel with planks in the crafting table and put the Build Tool in the top slot.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Alrighty then! Then it's time to place the Tavern with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I already finished building the Tavern!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:tavern",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
+      "target": 0,
+      "text": "Amazing, you are now providing housing for all your citizens. The Tavern provides four housing slots but you can have at most one Tavern per colony. Come back a bit later and I will let you know the next steps! Here, have some baked potatoes as a reward to help keep the citizens fed!",
+      "options": [
+        {
+          "answer": "Thank you!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:baked_potato",
+        "qty": 32
+      }
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/product.schema.json",
+  "title": "Quest",
+  "description": "A Minecolonies Quest",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "The unique name of the quest",
+      "type": "string"
+    },
+    "max-occurrences": {
+      "description": "How often this quest is allowed to appear",
+      "type": "integer",
+      "default": 1
+    },
+    "triggerOrder": {
+      "description": "Description of priorities of the triggers. Like 1 && 2 means both triggers have to be fulfilled.",
+      "type": "string"
+    },
+    "parents": {
+      "description": "Parent quests that have to be solved first",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "triggers": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "def": "blah",
+            "$ref": "#/definitions/minecolonies:random"
+          },
+          {
+            "$ref": "#/definitions/minecolonies:citizen"
+          },
+          {
+            "$ref": "#/definitions/minecolonies:state"
+          },
+          {
+            "$ref": "#/definitions/minecolonies:unlock"
+          },
+          {
+            "$ref": "#/definitions/minecolonies:questreputation"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "minecolonies:random": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "minecolonies:random" },
+        "rarity": { "type": "integer" }
+      },
+      "required": ["type", "rarity"]
+    },
+    "minecolonies:state": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "minecolonies:state" },
+        "state": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "match": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "level": { "type": "integer" },
+                "count": { "type": "integer" }
+              },
+              "required": ["type", "level"]
+            }
+          },
+          "required": ["path", "match"]
+        }
+      },
+      "required": ["type", "state"]
+    },
+    "minecolonies:citizen": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "minecolonies:citizen" },
+        "state": {
+          "type": "object",
+          "properties": {
+            "match": {
+              "type": "object",
+              "properties": {
+                "female": { "type": "boolean" },
+                "job": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" }
+                  },
+                  "required": ["type"]
+                }
+              },
+              "required": ["female", "job"]
+            }
+          },
+          "required": ["match"]
+        }
+      },
+      "required": ["type", "state"]
+    },
+    "minecolonies:questreputation": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "minecolonies:questreputation" },
+        "qty": { "type": "number" }
+      },
+      "required": ["type", "qty"]
+    },
+    "minecolonies:unlock": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "minecolonies:unlock" }
+      },
+      "required": ["type"]
+    }
+  },
+  "required": [
+    "name",
+    "triggers"
+  ]
+}

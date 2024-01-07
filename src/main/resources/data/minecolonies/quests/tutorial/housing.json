@@ -1,0 +1,166 @@
+{
+  "name": "Attract a Storch",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/mine"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/mine"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Now that all your 4 basic citizens have a job, it's time to think about expanding the colony to get more citizens. From this point on, you will need open housing space to get more citizens either by hiring visitors from the tavern or waiting for your citizens to have children!",
+      "options": [
+        {
+          "answer": "I'm all ears!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Residences offer one housing spot per building level. So, let's start by crafting 4 Residence hut blocks. In the crafting bench, surround a torch with planks and put the Build Tool in the top. Come back to me once you've done that!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Perfect! Then it's time to place the 4 Residences with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once all 4 are built!",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the 4 Residence hut blocks?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! In the crafting bench, surround a torch with planks and put the Build Tool in the top.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Perfect! Then it's time to place the 4 Residences with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once all 4 are built!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:residence",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 4,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Awesome! Now you should have some space to hire some visitors from the tavern (by right clicking and providing the items they require) or at least have space for your citizens to have some children. Here, have some wool, it will sure come in handy. Will contact you in a bit again!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:white_wool",
+        "qty": 16
+      }
+    }
+  ]
+}

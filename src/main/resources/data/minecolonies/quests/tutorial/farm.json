@@ -1,0 +1,249 @@
+{
+  "name": "Mouths to feed",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/forester"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/forester"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hello there! We are producing some wood, but you might have already noticed that us citizens also require food, so we should try to build a farm so that the colony can also be self sufficient on food.",
+      "options": [
+        {
+          "answer": "I'm ready!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Nice, so as usual we start by crafting the farm hut block. In the crafting bench, surround a wooden or stone hoe with planks and put the Build Tool in the top. Come back to me once you've done that!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! Then it's time to place the Farm with the Build Tool, click build and provide your builder with the necessary items like the last time and come back once it is built!",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I already set up the farm!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the Farm hut block?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! In the crafting bench, surround a wooden or stone hoe with planks and put the Build Tool in the top.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Alrighty then! Then it's time to place the Farm with the Build Tool, click build and provide your builder with the necessary items like the last time and come back once it is built!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:farmer",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Okay great. But before your farmer can start working they need a field. To craft it in the crafting bench put a pumpkin or hay bale at the top, leather in the middle and then sticks to the right and left and below the the leather.",
+      "options": [
+        {
+          "answer": "I'm on it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        },
+        {
+          "answer": "I already set up the field!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the Field block?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! In the crafting bench, put a pumpkin or hay bale at the top, leather in the middle and then sticks to the right and left and below the the leather.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Great! You can either manually place the field by right clicking the block close to the farm in some open space. Or let the Builder build a pre-made field from the build tool menu. Either way, make sure there is water for the field. Come back to me once either of that is done!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:placeblock",
+      "details": {
+        "block": "minecolonies:blockhutfield",
+        "next-objective": 6,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Now all that is missing is setting a crop type for your farmer to plant by right clicking the field block and selecting a type of crop. Here have some seeds, I'll let you know about the next steps soon!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 10
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:wheat_seeds",
+        "qty": 32
+      }
+    }
+  ]
+}

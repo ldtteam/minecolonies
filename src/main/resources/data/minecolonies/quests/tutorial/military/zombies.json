@@ -1,0 +1,100 @@
+{
+  "name": "Dawn of the Undead",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/military/torches"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/military/torches"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { "match": { } }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi, there seem to be a lot of dangerous mobs around here! Would you mind killing some zombies to make us feel more at ease?",
+      "options": [
+        {
+          "answer": "Consider it done!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0,1,2,3],
+      "type": "minecolonies:killentity",
+      "details": {
+        "entity-type": "minecraft:zombie",
+        "next-objective": 2,
+        "qty": 10,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Great, thanks! I feel more at ease already. Here, have some leather armor!",
+      "options": [
+        {
+          "answer": "Thanks!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_chestplate",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_boots",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_helmet",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_leggings",
+        "qty": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,283 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.tutorial.builder",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer1.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:dialogue",
+                        "options": [
+                          {
+                            "answer": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer1.reply.answer0.reply.answer0",
+                            "result": {
+                              "type": "minecolonies:advanceobjective",
+                              "go-to": 2
+                            }
+                          }
+                        ],
+                        "text": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer1.reply.answer0.reply"
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer1.reply"
+                }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer2",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer2.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 5
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.builder.obj0.answer0.reply.answer2.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj0.answer1",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.builder.obj0"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj1.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj1.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj1.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj1.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj1.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.builder.obj1.answer1.reply.answer0.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.builder.obj1.answer1.reply.answer0.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj1.answer1.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj1.answer2",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj1.answer2.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj1.answer2.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj1.answer3",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.builder.obj1"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj2.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj2.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.builder.obj2.answer0.reply.answer0.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.builder.obj2.answer0.reply.answer0.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj2.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj2.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj2.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.builder.obj2.answer1.reply.answer0.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 3
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.builder.obj2.answer1.reply.answer0.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj2.answer1.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj2.answer2",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.builder.obj2.answer2.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.builder.obj2.answer2.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj2.answer3",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.builder.obj2"
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:builder",
+        "count-existing": true,
+        "lvl": 1,
+        "next-objective": 4,
+        "qty": 1,
+        "target": 0
+      },
+      "unlocks-rewards": [
+        0
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.builder.obj4.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.builder.obj4"
+    }
+  ],
+  "parents": [
+    "minecolonies:tutorial/welcome"
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:cobblestone",
+        "qty": 32
+      }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:tutorial/welcome"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {}
+      }
+    }
+  ]
+}
