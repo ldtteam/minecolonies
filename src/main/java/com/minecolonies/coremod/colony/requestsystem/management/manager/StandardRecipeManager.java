@@ -7,11 +7,9 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,7 +99,6 @@ public class StandardRecipeManager implements IRecipeManager
         if (dirty || nbtCache == null)
         {
             nbtCache = recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
-            Log.getLogger().warn("Writing Recipe Manager: " + recipes.size() + " recipes!");
         }
 
         compound.put(TAG_RECIPES, nbtCache);
