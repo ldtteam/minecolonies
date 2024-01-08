@@ -8,15 +8,15 @@ import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.items.ItemSpear;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.TridentItem;
 
 import java.util.Map;
@@ -46,6 +46,9 @@ public class CombatUtils
 
         final ItemStack rangedWeapon = shooter.getItemInHand(InteractionHand.MAIN_HAND);
         final Item rangedWeaponItem = rangedWeapon.getItem();
+
+        // Mod compat, some mods expect it to be set before using their Bows to create a custom arrow *looks at TF*
+        arrowEntity.setOwner(shooter);
         if (rangedWeaponItem instanceof BowItem)
         {
             arrowEntity = ((BowItem) rangedWeaponItem).customArrow(arrowEntity);
