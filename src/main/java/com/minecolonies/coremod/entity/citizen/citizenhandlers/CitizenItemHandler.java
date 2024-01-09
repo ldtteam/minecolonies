@@ -15,6 +15,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -364,7 +365,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             }
 
             final ItemStack tool;
-            if (equipmentSlot.isArmor())
+            if (equipmentSlot.getType().equals(Type.ARMOR))
             {
                 tool = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
             }
