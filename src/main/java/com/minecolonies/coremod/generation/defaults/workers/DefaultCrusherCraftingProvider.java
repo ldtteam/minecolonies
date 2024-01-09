@@ -6,7 +6,6 @@ import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +56,10 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
         crush(consumer, "clay2", new ItemStack(Items.SAND), new ItemStack(Items.CLAY), withGildedHammer);
         crush(consumer, "clay_ball", new ItemStack(Items.CLAY), new ItemStack(Items.CLAY_BALL, 4));
 
-        crush(consumer, "cobble", new ItemStack(Items.TUFF, 2), new ItemStack(Items.COBBLESTONE), withTheDepths);
-        crush(consumer, "tuff", new ItemStack(Items.COBBLED_DEEPSLATE, 2), new ItemStack(Items.TUFF), withTheDepths);
-        // sadly you can't (yet) combine two required researches, so these two don't respect Gilded Hammer
+        crush(consumer, "cobble", new ItemStack(Items.TUFF, 2), new ItemStack(Items.COBBLESTONE), withTheDepths, noGildedHammer);
+        crush(consumer, "cobble2", new ItemStack(Items.TUFF), new ItemStack(Items.COBBLESTONE), withTheDepths, withGildedHammer);
+        crush(consumer, "tuff", new ItemStack(Items.COBBLED_DEEPSLATE, 2), new ItemStack(Items.TUFF), withTheDepths, noGildedHammer);
+        crush(consumer, "tuff2", new ItemStack(Items.COBBLED_DEEPSLATE), new ItemStack(Items.TUFF), withTheDepths, withGildedHammer);
     }
 
     private void crush(@NotNull final Consumer<FinishedRecipe> consumer,
