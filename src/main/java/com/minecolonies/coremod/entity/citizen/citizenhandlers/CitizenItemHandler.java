@@ -358,6 +358,11 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
         for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
         {
+            if (localXp <= 0)
+            {
+                break;
+            }
+
             final ItemStack tool;
             if (equipmentSlot.isArmor())
             {
@@ -374,7 +379,6 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 final double dmgHealed = Math.min(localXp / 2, tool.getDamageValue());
                 localXp -= dmgHealed * 2;
                 tool.setDamageValue(tool.getDamageValue() - (int) Math.ceil(dmgHealed));
-                break;
             }
         }
 
