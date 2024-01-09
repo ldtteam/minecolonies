@@ -108,8 +108,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(TOGGLE_SHOW_EMPLOYED, this::showEmployedToggled);
 
         final Predicate<JobEntry> allowedJobs = BuildingUtils.getAllowedJobs(colony.getWorld(), buildingId);
-        final Predicate<IAssignmentModuleView> allowedModules = m -> !m.getAssignedCitizens().isEmpty() ||
-                allowedJobs.test(m.getJobEntry());
+        final Predicate<IAssignmentModuleView> allowedModules = m -> m.getMaxInhabitants() > 0 &&
+                (!m.getAssignedCitizens().isEmpty() || allowedJobs.test(m.getJobEntry()));
 
         moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class).stream()
                 .filter(allowedModules).toList());
