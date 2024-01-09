@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
@@ -53,7 +52,7 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if (damageSource == DamageSource.LAVA || damageSource == DamageSource.IN_FIRE || damageSource == DamageSource.ON_FIRE)
+        if (damageSource.isFire())
         {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }

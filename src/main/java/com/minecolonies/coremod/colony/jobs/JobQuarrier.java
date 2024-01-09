@@ -102,7 +102,7 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if (damageSource == DamageSource.LAVA || damageSource == DamageSource.IN_FIRE || damageSource == DamageSource.ON_FIRE)
+        if (damageSource.isFire())
         {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }
