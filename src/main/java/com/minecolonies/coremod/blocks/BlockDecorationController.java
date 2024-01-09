@@ -113,7 +113,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
         final Direction direction = decoController.getValue(BlockDecorationController.FACING);
         final BlockPos offsetPos = pos.relative(direction);
         final BlockState state = level.getBlockState(offsetPos);
-        final VoxelShape shape = state.getShape(level, offsetPos);
+        final VoxelShape shape = state.getBlock() != this ? state.getShape(level, offsetPos) : Shapes.block();
         if (shape.isEmpty() || Block.isShapeFullBlock(shape))
         {
             return switch (direction)
