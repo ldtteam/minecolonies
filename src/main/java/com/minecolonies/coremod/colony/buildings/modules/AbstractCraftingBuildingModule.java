@@ -436,11 +436,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     return true;
                 }
 
-                final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty());
+                final List<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
+                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
 
                 building.getColony().getRequestManager().onColonyUpdate(request ->
-                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
+                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
             }
             return true;
         }

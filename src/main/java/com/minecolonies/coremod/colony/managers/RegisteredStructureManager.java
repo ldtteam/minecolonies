@@ -27,7 +27,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -891,7 +890,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (colony.getWorld() != null && !colony.getWorld().isClientSide)
                 {
-                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL).sendTo(player);
+                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
                 }
                 return false;
             }
@@ -903,7 +902,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
-                    MessageUtils.format(WARNING_DUPLICATE_TAVERN).sendTo(player);
+                    MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
                     return false;
                 }
             }

@@ -17,6 +17,13 @@
           "result": {
             "type": "minecolonies:return"
           }
+        },
+        {
+          "answer": "minecolonies.quests.guides.buildergoggles.obj0.answer2",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
         }
       ],
       "target": 0,

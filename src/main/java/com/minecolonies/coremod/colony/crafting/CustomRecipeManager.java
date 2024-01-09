@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.crafting;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
@@ -212,9 +211,18 @@ public class CustomRecipeManager
         for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
         {
             // ItemStorage#equals does the actual comparison work for us, here.
-            if (recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
+            if (new ItemStorage(recipe.getPrimaryOutput()).equals(itemStorage))
             {
                 returnList.add(recipe);
+            }
+
+            for (final ItemStack output : recipe.getAltOutputs())
+            {
+                if (new ItemStorage(output).equals(itemStorage))
+                {
+                    returnList.add(recipe);
+                    break;
+                }
             }
         }
         return returnList;
@@ -363,19 +371,13 @@ public class CustomRecipeManager
      */
     private void serializeNetworkData(final FriendlyByteBuf recipeMgrFriendlyByteBuf)
     {
-        // Custom Recipe Manager packets can potentially get very large, and individual CompoundTags can not be parsed if they exceed 2MB.
-        // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
-        // Including all recipes in transfer results in total transfer size around ~670KB for just Minecolonies + Structurize recipes.
-        // See CustomRecipeFactory.serialize for last tested numbers and more precise breakdown.
         recipeMgrFriendlyByteBuf.writeVarInt(recipeMap.size());
         for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
         {
             recipeMgrFriendlyByteBuf.writeVarInt(crafter.getValue().size());
             for (CustomRecipe recipe : crafter.getValue().values())
             {
-                StandardFactoryController.getInstance().serialize(recipeMgrFriendlyByteBuf, recipe);
-                //// NBT-based serialization for debugging/diagnosis only, as total packet size can be /very/ large.
-                //recipeMgrFriendlyByteBuf.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
+                recipe.serialize(recipeMgrFriendlyByteBuf);
             }
         }
 
@@ -403,9 +405,7 @@ public class CustomRecipeManager
         {
             for (int recipeNum = buff.readVarInt(); recipeNum > 0; recipeNum--)
             {
-                addRecipe(StandardFactoryController.getInstance().deserialize(buff));
-                //// NBT-based serialization for debugging/diagnostics only, as total packet size can be very large.
-                //addRecipe(StandardFactoryController.getInstance().deserialize(buff.readCompoundTag()));
+                addRecipe(CustomRecipe.deserialize(buff));
             }
         }
 

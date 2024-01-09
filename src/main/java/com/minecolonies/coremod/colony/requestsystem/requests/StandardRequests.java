@@ -23,13 +23,12 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -193,7 +192,7 @@ public final class StandardRequests
                                                                                                                      ("namedtag[", "").replace(':', '.').replace("]", "");
             final MutableComponent tagText = Component.translatable(tagKey);
             // test the translated text; if there's a difference, the client has a matching translation key.
-            if (!tagText.getContents().equals(tagKey))
+            if (!tagText.getString().equals(tagKey))
             {
                 combined.append(Component.literal("#").append(tagText));
             }
@@ -570,7 +569,7 @@ public final class StandardRequests
                 result.append(Component.literal(" "));
                 result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
                 result.append(Component.literal(" "));
-                result.append(Component.literal(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
+                result.append(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
             if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
@@ -584,7 +583,7 @@ public final class StandardRequests
                 result.append(Component.literal(" "));
                 result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MAXIMUM_LEVEL_PREFIX));
                 result.append(Component.literal(" "));
-                result.append(Component.literal(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
+                result.append(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
 
             return result;

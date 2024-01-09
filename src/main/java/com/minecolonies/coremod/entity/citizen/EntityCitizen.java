@@ -251,7 +251,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * The citizen AI
      */
-    private ITickRateStateMachine<IState> citizenAI = new TickRateStateMachine<>(CitizenAIState.IDLE, e -> {});
+    private ITickRateStateMachine<IState> citizenAI = new TickRateStateMachine<>(CitizenAIState.IDLE, e -> {}, ENTITY_AI_TICKRATE);
 
     /**
      * Constructor for a new citizen typed entity.
@@ -1649,7 +1649,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
-            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH);
+            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH, getCitizenColonyHandler().getColony().getDay());
 
             if (!isInvisible())
             {

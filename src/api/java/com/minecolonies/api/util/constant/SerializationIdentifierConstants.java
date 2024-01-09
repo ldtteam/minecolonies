@@ -49,7 +49,7 @@ public class SerializationIdentifierConstants
     public static final short PUBLIC_CRAFTING_REQUEST_ID                                         = 41;
     public static final short PRIVATE_CRAFTING_REQUEST_ID                                        = 42;
     public static final short BOOLEAN_SETTINGS_ID                                                = 43;
-    public static final short CUSTOM_RECIPE_ID                                                   = 44;
+    public static final short FREE_TO_USE_PLACEHOLDER_2                                          = 44;
     public static final short IMMUTABLE_ITEM_STORAGE_ID                                          = 45;
     public static final short STRING_SETTINGS_ID                                                 = 46;
     public static final short BLOCK_SETTINGS_ID                                                  = 47;

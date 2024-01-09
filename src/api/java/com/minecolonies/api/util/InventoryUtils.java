@@ -8,22 +8,22 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,6 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Utility methods for the inventories.
@@ -873,6 +872,34 @@ public class InventoryUtils
     }
 
     /**
+     * Calculate the number of empty slots in a given building.
+     *
+     * @param ownBuilding the building to check.
+     * @return the number of empty slots.
+     */
+    public static boolean isBuildingFull(final IBuilding ownBuilding)
+    {
+        final Level world = ownBuilding.getColony().getWorld();
+
+        for (final BlockPos pos : ownBuilding.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    if (((TileEntityRack) entity).getFreeSlots() > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Count the number of items a building has.
      *
      * @param provider  building to check in.
@@ -1242,7 +1269,6 @@ public class InventoryUtils
      * @param provider The provider to check.
      * @return True when the provider has any {@link IItemHandler}, false when not.
      */
-    @NotNull
     public static boolean hasProviderIItemHandler(@NotNull final ICapabilityProvider provider)
     {
         return !getItemHandlersFromProvider(provider).isEmpty();
@@ -1254,7 +1280,6 @@ public class InventoryUtils
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of different sides, false when not
      */
-    @NotNull
     public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
     {
         return getItemHandlersFromProvider(provider).size() > 1;
@@ -1617,7 +1642,7 @@ public class InventoryUtils
      */
     public static boolean transferItemStackIntoNextFreeSlotInProvider(
       @NotNull final IItemHandler sourceHandler,
-      @NotNull final int sourceIndex,
+      final int sourceIndex,
       @NotNull final ICapabilityProvider targetProvider)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(targetProvider))
@@ -1911,7 +1936,7 @@ public class InventoryUtils
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProvider(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
+      final int amount, @NotNull final ICapabilityProvider targetProvider)
     {
         return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetProvider) == 0;
     }
@@ -1919,7 +1944,7 @@ public class InventoryUtils
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(
       @NotNull final ICapabilityProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
+      final int amount, @NotNull final ICapabilityProvider targetProvider)
     {
         int currentAmount = amount;
 
@@ -2089,7 +2114,7 @@ public class InventoryUtils
      */
     public static boolean transferItemStackIntoNextFreeSlotFromProvider(
       @NotNull final ICapabilityProvider sourceProvider,
-      @NotNull final int sourceIndex,
+      final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
@@ -2200,9 +2225,9 @@ public class InventoryUtils
      */
     public static boolean swapItemStacksInItemHandlers(
       @NotNull final IItemHandler sourceHandler,
-      @NotNull final int sourceIndex,
+      final int sourceIndex,
       @NotNull final IItemHandler targetHandler,
-      @NotNull final int targetIndex)
+      final int targetIndex)
     {
         final ItemStack targetStack = targetHandler.extractItem(targetIndex, Integer.MAX_VALUE, false);
         final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);

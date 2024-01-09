@@ -8,11 +8,11 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
+import com.minecolonies.api.entity.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
-import com.minecolonies.api.entity.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTable;
@@ -48,6 +48,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
@@ -186,7 +187,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     /**
      * Raiders AI statemachine
      */
-    private ITickRateStateMachine<IState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e));
+    private ITickRateStateMachine<IState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e), ENTITY_AI_TICKRATE);
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -496,7 +497,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         }
         currentTick++;
 
-        if (isRegistered)
+        if (isRegistered && tickCount % ENTITY_AI_TICKRATE == 0)
         {
             ai.tick();
         }

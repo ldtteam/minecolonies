@@ -73,6 +73,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(GUARD_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(BED)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.blacksmith = DEFERRED_REGISTER.register(ModBuildings.BLACKSMITH_ID, () -> new BuildingEntry.Builder()
@@ -188,6 +189,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(FARMER_SETTINGS)
           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.fisherman = DEFERRED_REGISTER.register(ModBuildings.FISHERMAN_ID, () -> new BuildingEntry.Builder()
@@ -197,6 +199,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FISHERMAN_ID))
           .addBuildingModuleProducer(FISHER_WORK)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.guardTower = DEFERRED_REGISTER.register(ModBuildings.GUARD_TOWER_ID, () -> new BuildingEntry.Builder()
@@ -212,6 +215,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(GUARD_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(BED)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.home = DEFERRED_REGISTER.register(ModBuildings.HOME_ID, () -> new BuildingEntry.Builder()
@@ -231,6 +235,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LIBRARY_ID))
           .addBuildingModuleProducer(STUDENT_WORK)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.lumberjack = DEFERRED_REGISTER.register(ModBuildings.LUMBERJACK_ID, () -> new BuildingEntry.Builder()
@@ -245,6 +250,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(ITEMLIST_SAPLING)
           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.miner = DEFERRED_REGISTER.register(ModBuildings.MINER_ID, () -> new BuildingEntry.Builder()
@@ -260,6 +266,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(MINER_GUARD_ASSIGN)
           .addBuildingModuleProducer(BUILDING_RESOURCES)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.sawmill = DEFERRED_REGISTER.register(ModBuildings.SAWMILL_ID, () -> new BuildingEntry.Builder()
@@ -498,6 +505,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(PLANTATION_FIELDS)
           .addBuildingModuleProducer(PLANTATION_SETTINGS)
           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.rabbitHutch = DEFERRED_REGISTER.register(ModBuildings.RABBIT_ID, () -> new BuildingEntry.Builder()

@@ -1015,6 +1015,11 @@ public final class WindowConstants
     public static final String ATTRIBUTES_LABEL = "attributes";
 
     /**
+     * Id of the distance label in the GUI.
+     */
+    public static final String DISTANCE_LABEL = "distance";
+
+    /**
      * Link to the xml file of the window.
      */
     public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";
@@ -1023,11 +1028,6 @@ public final class WindowConstants
      * Id of the fire button
      */
     public static final String BUTTON_FIRE = "fire";
-
-    /**
-     * Id of the automatic hiring warning
-     */
-    public static final String AUTO_HIRE_WARN = "autoHireWarn";
 
     /**
      * Id of the pause button
