@@ -380,7 +380,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         if (!getModuleViews(WorkerBuildingModuleView.class).isEmpty())
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, getCustomName());
+            return new WindowHutWorkerModulePlaceholder<>(this);
         }
         return new WindowHutMinPlaceholder<>(this);
     }

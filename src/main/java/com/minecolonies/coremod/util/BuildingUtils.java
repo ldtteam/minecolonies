@@ -61,6 +61,7 @@ public final class BuildingUtils
      * @return            a predicate that returns true if the specified job is permitted.  (note
      *                    that there may be other reasons the job isn't allowed, such as being the
      *                    wrong building type for that job; this does not check that.)
+     *                    it returns {@link #UNRESTRICTED} when there are no explicit restrictions.
      */
     @NotNull
     public static Predicate<JobEntry> getAllowedJobs(@NotNull final Level world, @NotNull final BlockPos buildingPos)
@@ -77,8 +78,13 @@ public final class BuildingUtils
             }
         }
 
-        return job -> true;
+        return UNRESTRICTED;
     }
+
+    /**
+     * Indicates that there are no explicit restrictions on which jobs are allowed at a building.
+     */
+    public static final Predicate<JobEntry> UNRESTRICTED = job -> true;
 
     /**
      * Check if the given building should try to automatically hire a new citizen.

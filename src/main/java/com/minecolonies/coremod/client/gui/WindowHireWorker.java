@@ -115,8 +115,24 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         }
         selectedModule = moduleViews.get(0);
 
+        setupDescription(allowedJobs != BuildingUtils.UNRESTRICTED);
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
         setupShowEmployed();
+    }
+
+    private void setupDescription(boolean isDedicated)
+    {
+        MutableComponent description = Component.translatable(building.getBuildingDisplayName());
+
+        if (isDedicated)
+        {
+            final Object[] jobList = moduleViews.stream().map(m -> Component.translatable(m.getJobEntry().getTranslationKey())).toArray();
+            final String format = String.join("/", Collections.nCopies(jobList.length, "%s"));
+            final MutableComponent jobs = Component.translatable(format, jobList);
+            description = Component.translatable("com.minecolonies.coremod.gui.hiring.dedicated", jobs, description);
+        }
+
+        findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.hiring.description", description));
     }
 
     /**

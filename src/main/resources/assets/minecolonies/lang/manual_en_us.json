@@ -513,7 +513,8 @@
   "com.minecolonies.coremod.gui.workerhuts.upgradeunavailable": "No Upgrade Available",
   "com.minecolonies.coremod.gui.workerhuts.information": "Information",
 
-  "com.minecolonies.coremod.gui.hiring.description": "Choose a worker for the job.",
+  "com.minecolonies.coremod.gui.hiring.description": "Choose workers for the %s.",
+  "com.minecolonies.coremod.gui.hiring.dedicated": "%s-only %s",
   "com.minecolonies.coremod.gui.assigning.description": "Choose a citizen to live here.",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
