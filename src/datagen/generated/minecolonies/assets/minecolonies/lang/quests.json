@@ -218,6 +218,7 @@
   "minecolonies.quests.tutorial.housing.obj1.answer2": "Not yet, I will get to it later!",
   "minecolonies.quests.tutorial.housing.obj3": "Awesome! Now you should have some space to hire some visitors from the tavern (by right clicking and providing the items they require) or at least have space for your citizens to have some children. Here, have some wool, it will sure come in handy. Will contact you in a bit again!",
   "minecolonies.quests.tutorial.housing.obj3.answer0": "See you in a bit!",
+  "minecolonies.quests.tutorial.military.guards": "Building Defences",
   "minecolonies.quests.tutorial.military.guards.obj0": "I'm still not feeling very safe. Some might argue that the strongest defense is a swift and decisive offense. How about you build some guard towers?",
   "minecolonies.quests.tutorial.military.guards.obj0.answer0": "Alright, on it!",
   "minecolonies.quests.tutorial.military.guards.obj0.answer0.reply": "Nice, so as usual we start by crafting the Guard Tower block. In the crafting bench, surround a bow with planks and put the Build Tool in the top. Come back to me once you've done that!'",
@@ -363,6 +364,7 @@
   "minecolonies.quests.tutorial.welcome.obj3.answer1": "Yes, all done. What's next?",
   "minecolonies.quests.tutorial.welcome.obj3.answer1.reply": "Perfect! The next step is placing it with the help of the Build Tool. Right click the Build Tool on the ground. Navigate to the Builder's Hut (typically in the fundamentals category) and click on Builder's Hut. Then, you can select a level to preview and in some cases also different alternatives. Use the arrow buttons to adjust the position, rotation, and mirroring. Finally, click the checkmark to place it.",
   "minecolonies.quests.tutorial.welcome.obj3.answer1.reply.answer0": "Alrighty then! Let me check this out!",
+  "minecolonies.quests.tutorial.welcome.obj3.answer1.reply.answer1": "Already done!",
   "minecolonies.quests.tutorial.welcome.obj3.answer2": "Not yet, I will get to it later!",
   "minecolonies.quests.tutorial.welcome.obj5": "Perfect! The building is placed, and a worker will start working there soon. Take this quest log and shift+right-click it on any of the hut blocks in the colony to stay updated with the next steps!",
   "minecolonies.quests.tutorial.welcome.obj5.answer0": "Pefect! Thanks!"

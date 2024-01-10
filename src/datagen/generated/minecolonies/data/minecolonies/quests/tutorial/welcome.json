@@ -185,6 +185,13 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 4
                 }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.welcome.obj3.answer1.reply.answer1",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
               }
             ],
             "text": "minecolonies.quests.tutorial.welcome.obj3.answer1.reply"
