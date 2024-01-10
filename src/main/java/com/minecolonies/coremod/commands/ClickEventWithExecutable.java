@@ -3,8 +3,6 @@ package com.minecolonies.coremod.commands;
 import net.minecraft.network.chat.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.network.chat.ClickEvent.Action;
-
 /**
  * Small utility class to run an executable on a chat click event.
  */
@@ -15,9 +13,14 @@ public class ClickEventWithExecutable extends ClickEvent
      */
     private Runnable[] actions;
 
-    public ClickEventWithExecutable(final ClickEvent.Action action, final String actionString, @NotNull final Runnable... actions)
+    /**
+     * Default constructor.
+     *
+     * @param actions the actions this event should execute.
+     */
+    public ClickEventWithExecutable(@NotNull final Runnable... actions)
     {
-        super(action, actionString);
+        super(ClickEvent.Action.RUN_COMMAND, "");
         this.actions = actions;
     }
 
@@ -25,6 +28,7 @@ public class ClickEventWithExecutable extends ClickEvent
      * Triggered when the chat component is clicked.
      */
     @Override
+    @NotNull
     public Action getAction()
     {
         if (actions != null)
