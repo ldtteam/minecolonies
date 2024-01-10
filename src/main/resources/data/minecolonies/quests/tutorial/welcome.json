@@ -194,6 +194,13 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 4
                 }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
               }
             ]
           }
