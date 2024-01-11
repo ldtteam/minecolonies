@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.Alignment;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -80,6 +81,9 @@ public class WindowInteraction extends AbstractWindowSkeleton
             close();
             return;
         }
+
+        // Make sure this is hidden by default.
+        window.findPaneOfTypeByID("requestItem", ItemIcon.class).hide();
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
         handler.onOpened(Minecraft.getInstance().player);

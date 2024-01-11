@@ -4,9 +4,8 @@
             <gradient id="gradient" size="300 170" pos="20 0"/>
             <text id="chat" size="250 100" color="white" pos="30 15"/>
             <box id="responseOptions" size="270 70" pos="30 100" linewidth="0"/>
-        </view>
-        <view id="requestsView" size="190 100%" pos="95 0">
-            <layout source="minecolonies:gui/citizen/requests.xml"/>
+
+            <itemicon id="requestItem" size="32 32" pos="30 60"/>
         </view>
     </switch>
 </window>
