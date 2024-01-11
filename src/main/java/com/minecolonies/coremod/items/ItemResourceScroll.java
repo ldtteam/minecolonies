@@ -199,7 +199,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return null;
         }
 
-        final BuildingResourcesModuleView resourcesModule = buildingView.getModuleView(BuildingResourcesModuleView.class);
+        final BuildingResourcesModuleView resourcesModule = buildingView.getModuleViewByType(BuildingResourcesModuleView.class);
 
         final Map<String, Integer> items = new HashMap<>();
         for (final BlockPos container : warehouse.getContainerList())
