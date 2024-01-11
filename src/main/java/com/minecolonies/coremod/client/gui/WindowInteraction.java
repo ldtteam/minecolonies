@@ -96,21 +96,32 @@ public class WindowInteraction extends AbstractWindowSkeleton
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES), false);
-            button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+
+
+            final int textLen = mc.font.width(component.getString());
+            int buttonHeight = BUTTON_HEIGHT;
+            if (textLen > BUTTON_LENGTH - 4)
+            {
+                buttonHeight = 2 * BUTTON_HEIGHT;
+            }
+
+            button.setSize(BUTTON_LENGTH, buttonHeight);
             button.setColors(SLIGHTLY_BLUE);
             button.setPosition(x, y);
             button.setID(BUTTON_RESPONSE_ID + responseIndex);
-            button.setTextRenderBox(BUTTON_LENGTH, BUTTON_HEIGHT);
+            button.setTextRenderBox(BUTTON_LENGTH, buttonHeight);
             button.setTextAlignment(Alignment.MIDDLE);
             button.setText(component);
             group.addChild(button);
-            button.setTextScale(Math.min(1, 24.0 / component.getString().length()));
+            button.setTextWrap(true);
+            button.setTextScale(Math.min(1, (BUTTON_LENGTH * 2.0) / textLen));
 
-            y += button.getHeight();
-            if (y + button.getHeight() >= group.getHeight())
+
+            x += button.getWidth() + BUTTON_X_BUFFER;
+            if (x + button.getWidth() >= group.getWidth())
             {
-                y = 0;
-                x += BUTTON_HEIGHT + BUTTON_BUFFER + button.getWidth();
+                x = 0;
+                y += BUTTON_Y_BUFFER + 2 * BUTTON_HEIGHT;
             }
             responseIndex++;
         }

@@ -17,7 +17,7 @@
     },
     {
       "type": "minecolonies:citizen",
-      "state": { "match": { } }
+      "state": { }
     }
   ],
   "triggerOrder": "1 || 2",
@@ -199,6 +199,13 @@
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 5
+                }
+              },
+              {
+                "answer": "Way ahead of you!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 7
                 }
               }
             ]

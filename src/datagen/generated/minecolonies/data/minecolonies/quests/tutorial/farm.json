@@ -177,6 +177,13 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 5
                 }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj4.answer1.reply.answer1",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 7
+                }
               }
             ],
             "text": "minecolonies.quests.tutorial.farm.obj4.answer1.reply"
@@ -245,9 +252,7 @@
     },
     {
       "type": "minecolonies:citizen",
-      "state": {
-        "match": {}
-      }
+      "state": {}
     }
   ]
 }

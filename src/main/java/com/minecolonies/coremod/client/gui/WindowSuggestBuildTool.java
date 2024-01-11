@@ -46,7 +46,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      * Creates a window to suggest the user to use the buildtool.
      *
      * @param pos   the position of the placement.
-     * @param state the block he is trying to place.
+     * @param state the block they are trying to place.
      * @param stack the stack to suggest it for.
      */
     public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)

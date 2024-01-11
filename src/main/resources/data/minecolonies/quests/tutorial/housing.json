@@ -17,7 +17,7 @@
     },
     {
       "type": "minecolonies:citizen",
-      "state": { "match": { } }
+      "state": { }
     }
   ],
   "triggerOrder": "1 || 2",

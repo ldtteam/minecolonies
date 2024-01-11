@@ -8,16 +8,16 @@
     {
       "type": "minecolonies:citizen",
       "state": {
-        "match": {
-          "finavquests": [
-            "minecolonies:tutorial/builder"
-          ]
+        "notmatch": {
+          "job": {
+            "type": "minecolonies:builder"
+          }
         }
       }
     },
     {
       "type": "minecolonies:citizen",
-      "state": { "match": { } }
+      "state": { }
     }
   ],
   "triggerOrder": "1 || 2",
@@ -25,7 +25,7 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Hi there! Your builder is looking neat! How about we let him build a Tavern so that your citizens don't have to sleep outside and are safe at night?",
+      "text": "Hi there! Your builder is looking neat! How about we let them build a Tavern so that your citizens don't have to sleep outside and are safe at night?",
       "options": [
         {
           "answer": "Yes sure!",
@@ -92,7 +92,7 @@
           "answer": "No, I forgot the recipe!",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "A great leap forward often requires taking two steps back! Just surround a Barrel with planks in the crafting table and put the Build Tool in the top slot.",
+            "text": "A great leap forward often requires taking two steps back! Just surround a Barrel with planks in the crafting table and put the Build Tool in the top middle slot.",
             "options": [
               {
                 "answer": "Alright! I'll get back to it!",

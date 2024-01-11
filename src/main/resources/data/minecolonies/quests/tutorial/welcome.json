@@ -4,7 +4,8 @@
   "parents": [],
   "triggers": [
     {
-      "type": "minecolonies:unlock"
+      "type": "minecolonies:citizen",
+      "state": { }
     }
   ],
   "objectives": [
@@ -127,7 +128,7 @@
           "answer": "Yes; mission accomplished!",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "Awesome! Then, before placing it, we first have to craft a Builder's Hut hut block. Just surround a door with planks in the crafting table and put the Build Tool in the top slot. Come back to me after you have crafted the hut block!",
+            "text": "Awesome! Then, before placing it, we first have to craft a Builder's Hut hut block. Just surround a door with planks in the crafting table and put the Build Tool in the middle top slot. Come back to me after you have crafted the hut block!",
             "options": [
               {
                 "answer": "Alright! Let me get to it!",

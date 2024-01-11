@@ -1,7 +1,9 @@
 {
   "name": "The Builder's Glasses",
   "max-occurrences": 1,
-  "parents": [],
+  "parents": [
+    "minecolonies:tutorial/welcome"
+  ],
   "triggers": [
     {
       "type": "minecolonies:state",

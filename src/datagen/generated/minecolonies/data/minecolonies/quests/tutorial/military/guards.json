@@ -178,9 +178,7 @@
     },
     {
       "type": "minecolonies:citizen",
-      "state": {
-        "match": {}
-      }
+      "state": {}
     }
   ]
 }

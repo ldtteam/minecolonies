@@ -56,7 +56,9 @@
       ]
     }
   ],
-  "parents": [],
+  "parents": [
+    "minecolonies:tutorial/welcome"
+  ],
   "rewards": [
     {
       "type": "minecolonies:item",

@@ -69,23 +69,10 @@
       }
     }
   ],
-  "triggerOrder": "1 || 2",
   "triggers": [
     {
       "type": "minecolonies:citizen",
-      "state": {
-        "match": {
-          "finavquests": [
-            "minecolonies:tutorial/forester"
-          ]
-        }
-      }
-    },
-    {
-      "type": "minecolonies:citizen",
-      "state": {
-        "match": {}
-      }
+      "state": {}
     }
   ]
 }

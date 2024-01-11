@@ -992,7 +992,7 @@
   "com.minecolonies.coremod.status.fillingbarrels": "Filling the barrels",
   "com.minecolonies.coremod.status.harvestingbarrels": "Harvesting the barrels",
 
-  "com.minecolonies.coremod.pvp.attack.start": "§cBeware, %s§c is attacking you and he brought guards!",
+  "com.minecolonies.coremod.pvp.attack.start": "§cBeware, %s§c is attacking you and they brought guards!",
   "com.minecolonies.coremod.pvp.defended.success": "§aYou successfully defended your colony against %s§a.",
   "com.minecolonies.coremod.pvp.attack.guardgroupsize": "§eBeware, %s §ehas now: %d §eguards!",
   "com.minecolonies.coremod.pvp.townhall.break.start": "Beware! %s started breaking your Town Hall!",
@@ -1429,7 +1429,7 @@
   "com.minecolonies.coremod.info.miner.4": "As all workers do, Miners level up while working.\n At higher levels, the Miner's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling until you provide them with better housing.",
 
   "com.minecolonies.coremod.info.lumberjack.0.name": "Introduction",
-  "com.minecolonies.coremod.info.lumberjack.0": "The Forester is one of the production workers for your colony. Give them an axe and they'll cut down any trees around them. They'll also replant a sapling where the tree was if he has any.\n If you wish to apply restrictions on what trees they can or can't cut, take a look at the second page.\n Even cooler is the third page. Here you can tell the Forester to not replant saplings and tell them to be restricted to a certain 3D box (selected with the tool given by the third button on the page).",
+  "com.minecolonies.coremod.info.lumberjack.0": "The Forester is one of the production workers for your colony. Give them an axe and they'll cut down any trees around them. They'll also replant a sapling where the tree was if they have any.\n If you wish to apply restrictions on what trees they can or can't cut, take a look at the second page.\n Even cooler is the third page. Here you can tell the Forester to not replant saplings and tell them to be restricted to a certain 3D box (selected with the tool given by the third button on the page).",
   "com.minecolonies.coremod.info.lumberjack.1.name": "Restrictions",
   "com.minecolonies.coremod.info.lumberjack.1": "Now let's cover restrictions:\n\n 1. Foresters unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 3. Diamond Tools\n   lvl 4-5. Enchanted Tools\n\n 2. Foresters are able to search for trees within 150 blocks of them (not their hut). While searching, they start with a 50 block range and then increase that range by 5 if they do not find a tree.",
   "com.minecolonies.coremod.info.lumberjack.2.name": "Tree Detection",
@@ -2499,5 +2499,6 @@
   "com.minecolonies.coremod.gui.townhall.stats.mob_killed": "Killed %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.item_obtained": "Got %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled",
-  "com.minecolonies.coremod.progress.colony_founded": "Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall."
+  "com.minecolonies.coremod.progress.colony_founded": "Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall.",
+  "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?"
 }

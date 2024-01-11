@@ -246,7 +246,8 @@
   ],
   "triggers": [
     {
-      "type": "minecolonies:unlock"
+      "type": "minecolonies:citizen",
+      "state": {}
     }
   ]
 }

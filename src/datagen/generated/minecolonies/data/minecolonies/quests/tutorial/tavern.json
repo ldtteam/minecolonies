@@ -169,18 +169,16 @@
     {
       "type": "minecolonies:citizen",
       "state": {
-        "match": {
-          "finavquests": [
-            "minecolonies:tutorial/builder"
-          ]
+        "notmatch": {
+          "job": {
+            "type": "minecolonies:builder"
+          }
         }
       }
     },
     {
       "type": "minecolonies:citizen",
-      "state": {
-        "match": {}
-      }
+      "state": {}
     }
   ]
 }

@@ -7,20 +7,9 @@
   "triggers": [
     {
       "type": "minecolonies:citizen",
-      "state": {
-        "match": {
-          "finavquests": [
-            "minecolonies:tutorial/forester"
-          ]
-        }
-      }
-    },
-    {
-      "type": "minecolonies:citizen",
-      "state": { "match": { } }
+      "state": { }
     }
   ],
-  "triggerOrder": "1 || 2",
   "objectives": [
     {
       "type": "minecolonies:dialogue",
