@@ -111,7 +111,7 @@ public final class ShipBasedRaiderUtils
      */
     public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName)
     {
-        if (spawnPoint.equals(colony.getCenter()) || spawnPoint.getY() > MineColonies.getConfig().getServer().maxYForBarbarians.get())
+        if (spawnPoint.equals(colony.getCenter()))
         {
             return false;
         }

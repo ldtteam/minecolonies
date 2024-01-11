@@ -312,7 +312,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         }
 
         return MineColonies.getConfig().getServer().pvp_mode.get()
-                 ? MineColonies.getConfig().getServer().blockMiningDelayModifier.get() / 2
+                 ? 250
                  : calculateWorkerMiningDelay(state, pos);
     }
 
@@ -327,7 +327,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     {
         final double reduction = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_BREAK_SPEED);
 
-        return (int) (((MineColonies.getConfig().getServer().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
+        return (int) (((500 * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
                          * (double) world.getBlockState(pos).getDestroySpeed(world, pos) / (double) (worker.getMainHandItem()
                                                                                                         .getItem()
                                                                                                         .getDestroySpeed(worker.getMainHandItem(), state)))

@@ -25,6 +25,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.render.worldevent.ColonyBlueprintRenderer;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.managers.ResearchManager;
@@ -40,7 +41,6 @@ import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -109,21 +109,6 @@ public final class ColonyView implements IColonyView
                                                .toListTag();
 
     private BlockPos center = BlockPos.ZERO;
-
-    /**
-     * Defines if workers are hired manually or automatically.
-     */
-    private boolean manualHiring = false;
-
-    /**
-     * Defines if workers are housed manually or automatically.
-     */
-    private boolean manualHousing = false;
-
-    /**
-     * Defines if citizens can move in or not.
-     */
-    private boolean moveIn = true;
 
     //  Buildings
     @Nullable
@@ -297,7 +282,6 @@ public final class ColonyView implements IColonyView
         buf.writeUtf(colony.getName());
         buf.writeUtf(colony.getDimension().location().toString());
         buf.writeBlockPos(colony.getCenter());
-        buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
         buf.writeInt(colony.getCitizenManager().getMaxCitizens());
         buf.writeInt(colony.getCitizenManager().getPotentialMaxCitizens());
@@ -328,8 +312,6 @@ public final class ColonyView implements IColonyView
         }
 
         buf.writeInt(colony.getLastContactInHours());
-        buf.writeBoolean(colony.isManualHousing());
-        buf.writeBoolean(colony.canMoveIn());
         buf.writeUtf(colony.getTextureStyleId());
 
         buf.writeUtf(colony.getNameStyle());
@@ -539,18 +521,7 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean isManualHiring()
     {
-        return manualHiring;
-    }
-
-    /**
-     * Sets if workers should be hired manually.
-     *
-     * @param manualHiring true if manually.
-     */
-    @Override
-    public void setManualHiring(final boolean manualHiring)
-    {
-        this.manualHiring = manualHiring;
+        return townHall != null && !townHall.getModuleView(BuildingModules.TOWNHALL_SETTINGS).getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
     }
 
     @Override
@@ -573,18 +544,7 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean isManualHousing()
     {
-        return manualHousing;
-    }
-
-    /**
-     * Sets if houses should be assigned manually.
-     *
-     * @param manualHousing true if manually.
-     */
-    @Override
-    public void setManualHousing(final boolean manualHousing)
-    {
-        this.manualHousing = manualHousing;
+        return townHall != null && !townHall.getModuleView(BuildingModules.TOWNHALL_SETTINGS).getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
     }
 
     @Override
@@ -607,7 +567,7 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean canMoveIn()
     {
-        return moveIn;
+        return townHall != null && !townHall.getModuleView(BuildingModules.TOWNHALL_SETTINGS).getSetting(BuildingTownHall.MOVE_IN).getValue();
     }
 
     /**
@@ -680,14 +640,6 @@ public final class ColonyView implements IColonyView
     {
         return this.textureStyle;
     }
-
-    /**
-     * Sets if citizens can move in.
-     *
-     * @param newMoveIn true if citizens can move in.
-     */
-    @Override
-    public void setMoveIn(final boolean newMoveIn) {this.moveIn = newMoveIn;}
 
     /**
      * Get the town hall View for this ColonyView.
@@ -813,7 +765,6 @@ public final class ColonyView implements IColonyView
         name = buf.readUtf(32767);
         dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         center = buf.readBlockPos();
-        manualHiring = buf.readBoolean();
         //  Citizenry
         citizenCount = buf.readInt();
         citizenCountWithEmptyGuardTowers = buf.readInt();
@@ -851,8 +802,6 @@ public final class ColonyView implements IColonyView
             wayPoints.put(buf.readBlockPos(), Block.stateById(buf.readInt()));
         }
         this.lastContactInHours = buf.readInt();
-        this.manualHousing = buf.readBoolean();
-        this.moveIn = buf.readBoolean();
         this.textureStyle = buf.readUtf(32767);
 
         this.nameStyle = buf.readUtf(32767);

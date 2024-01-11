@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -17,7 +18,7 @@ import static com.minecolonies.api.util.constant.translation.CommandTranslationC
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
-public class CommandColonyInfo implements IMCCommand
+public class CommandColonyInfo implements IMCColonyOfficerCommand
 {
     public static final  String ID_TEXT           = "ID: ";
     public static final  String NAME_TEXT         = "Name: ";

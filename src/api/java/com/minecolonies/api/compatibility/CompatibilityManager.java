@@ -3,7 +3,6 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
@@ -61,6 +60,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
  */
 public class CompatibilityManager implements ICompatibilityManager
 {
+    /**
+     * Maximum depth sub items are explored at
+     */
+    private static final int                          MAX_DEPTH          = 100;
+
     /**
      * BiMap of saplings and leaves.
      */
@@ -635,7 +639,7 @@ public class CompatibilityManager implements ICompatibilityManager
             final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
             for (final ItemStack item : stacks)
             {
-                if (mapping.addTo(item.getItem(), 1) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxItemSubTypeScan.get())
+                if (mapping.addTo(item.getItem(), 1) > MAX_DEPTH)
                 {
                     continue;
                 }

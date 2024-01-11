@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
-import com.minecolonies.coremod.MineColonies;
 import net.minecraftforge.fml.ModList;
 
 public class DynamicTreesSetting extends IntSetting
@@ -12,7 +11,7 @@ public class DynamicTreesSetting extends IntSetting
      */
     public DynamicTreesSetting()
     {
-        super(MineColonies.getConfig().getServer().dynamicTreeHarvestSize.get());
+        super(5);
     }
 
     /**

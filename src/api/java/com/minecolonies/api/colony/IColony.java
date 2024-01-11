@@ -344,8 +344,6 @@ public interface IColony
 
     void setColonyFlag(ListTag patterns);
 
-    void setManualHousing(boolean manualHousing);
-
     void addWayPoint(BlockPos pos, BlockState newWayPointState);
 
     void addGuardToAttackers(AbstractEntityCitizen entityCitizen, Player followPlayer);
@@ -360,13 +358,9 @@ public interface IColony
 
     void setCanBeAutoDeleted(boolean canBeDeleted);
 
-    void setManualHiring(boolean manualHiring);
-
     CompoundTag write(CompoundTag colonyCompound);
 
     void read(CompoundTag compound);
-
-    void setMoveIn(boolean newMoveIn);
 
     /**
      * Returns a set of players receiving important messages for the colony.

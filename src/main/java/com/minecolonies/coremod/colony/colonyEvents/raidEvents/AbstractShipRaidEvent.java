@@ -15,7 +15,6 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.core.BlockPos;
@@ -116,7 +115,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The days the event lasts
      */
-    private int daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
+    private int daysToGo = 3;
 
     /**
      * Reference to the currently active pirates for this event.
@@ -168,7 +167,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public void onStart()
     {
         status = EventStatus.PREPARING;
-        daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
+        daysToGo = 3;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
           "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {

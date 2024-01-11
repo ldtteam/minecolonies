@@ -481,6 +481,15 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<TavernBuildingModule, IBuildingModuleView>       TAVERN_VISITOR =
       new BuildingEntry.ModuleProducer<>("tavern_visitor", TavernBuildingModule::new, null);
 
+    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> TOWNHALL_SETTINGS  =
+      new BuildingEntry.ModuleProducer<>("townhall_settings", () -> new SettingsModule()
+        .with(BuildingTownHall.MOVE_IN, new BoolSetting(true))
+        .with(BuildingTownHall.ENTER_LEAVE_MESSAGES, new BoolSetting(true))
+        .with(BuildingTownHall.AUTO_HOUSING_MODE, new BoolSetting(true))
+        .with(BuildingTownHall.AUTO_HIRING_MODE, new BoolSetting(true))
+        .with(BuildingTownHall.CONSTRUCTION_TAPE, new BoolSetting(true)),
+        () -> TownHallSettingsModuleView::new);
+
     /**
      * Military
      */

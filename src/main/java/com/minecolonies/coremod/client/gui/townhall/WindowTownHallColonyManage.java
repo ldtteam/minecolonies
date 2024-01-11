@@ -18,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +29,8 @@ import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SWITCH;
+import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_MANAGEMENT_GUI;
 
 /**
  * TownhallGUI for managing colony creation/deletion
@@ -126,19 +126,17 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             }
         }
 
-        if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
+        final double spawnDistance =
+          Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getLevelData().getXSpawn(), world.getLevelData().getYSpawn(), world.getLevelData().getZSpawn())));
+        if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getLevelData().getXSpawn(), world.getLevelData().getYSpawn(), world.getLevelData().getZSpawn())));
-            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
-            {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
-                  MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()));
-            }
-            else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
-            {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
-                  MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()));
-            }
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
+              MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()));
+        }
+        else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
+        {
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
+              MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()));
         }
 
         if (findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).isTextEmpty())
@@ -177,12 +175,17 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
         if (reactivate)
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(),"", ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(), "", ((TileEntityColonyBuilding) entity).getBlueprintPath()));
             close();
         }
         else if (entity instanceof TileEntityColonyBuilding && !((TileEntityColonyBuilding) entity).getPackName().isEmpty())
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, false, colonyName.getString(), StructurePacks.selectedPack.getName(), ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+            Network.getNetwork()
+              .sendToServer(new CreateColonyMessage(pos,
+                false,
+                colonyName.getString(),
+                StructurePacks.selectedPack.getName(),
+                ((TileEntityColonyBuilding) entity).getBlueprintPath()));
             close();
         }
     }

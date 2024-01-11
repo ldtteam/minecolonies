@@ -101,7 +101,7 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         super.onAdded(colony, readingFromNbt);
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
-            ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
+            ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld(), colony);
             MessageUtils.format(MESSAGE_NEW_DECORATION_REQUEST, colony.getName()).sendTo(colony).forManagers();
         }
     }

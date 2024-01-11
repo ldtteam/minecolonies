@@ -139,25 +139,22 @@ public class CreateColonyMessage implements IMessage
         hut.setStructurePack(StructurePacks.getStructurePack(pack));
         hut.setBlueprintPath(pathName);
 
-        if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
+        final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerLevel) world).getSharedSpawnPos()));
+        if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerLevel) world).getSharedSpawnPos()));
-            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
+            if (!world.isClientSide)
             {
-                if (!world.isClientSide)
-                {
-                    MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()).sendTo(sender);
-                }
-                return;
+                MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()).sendTo(sender);
             }
-            else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
+            return;
+        }
+        else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
+        {
+            if (!world.isClientSide)
             {
-                if (!world.isClientSide)
-                {
-                    MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
-                }
-                return;
+                MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
             }
+            return;
         }
 
         if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
