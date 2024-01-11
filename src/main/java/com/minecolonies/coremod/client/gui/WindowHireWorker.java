@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -21,20 +22,23 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
+import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 
 /**
  * BOWindow for the hiring or firing of a worker.
@@ -60,11 +64,6 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      * Holder of a list element
      */
     protected final ScrollingList citizenList;
-
-    /**
-     * Holder of a list element
-     */
-    protected final ScrollingList jobList;
 
     /**
      * The different job module views.
@@ -94,7 +93,6 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         building = (AbstractBuildingView) colony.getBuilding(buildingId);
 
         citizenList = findPaneOfTypeByID(CITIZEN_LIST_UNEMP, ScrollingList.class);
-        jobList = findPaneOfTypeByID(JOB_LIST, ScrollingList.class);
 
         super.registerButton(BUTTON_CANCEL, this::cancelClicked);
         super.registerButton(BUTTON_DONE, this::doneClicked);
@@ -102,14 +100,38 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(BUTTON_PAUSE, this::pauseClicked);
         super.registerButton(BUTTON_RESTART, this::restartClicked);
         super.registerButton(BUTTON_MODE, this::modeClicked);
-        super.registerButton(BUTTON_JOB, this::jobClicked);
         super.registerButton(TOGGLE_SHOW_EMPLOYED, this::showEmployedToggled);
 
-        moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class));
+        final Predicate<JobEntry> allowedJobs = BuildingUtils.getAllowedJobs(colony.getWorld(), buildingId);
+        final Predicate<IAssignmentModuleView> allowedModules = m -> m.getMaxInhabitants() > 0 &&
+                (!m.getAssignedCitizens().isEmpty() || allowedJobs.test(m.getJobEntry()));
+
+        moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class).stream()
+                .filter(allowedModules).toList());
+        if (moduleViews.isEmpty())
+        {
+            return;
+        }
         selectedModule = moduleViews.get(0);
 
+        setupDescription(allowedJobs != BuildingUtils.UNRESTRICTED);
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
         setupShowEmployed();
+    }
+
+    private void setupDescription(boolean isDedicated)
+    {
+        MutableComponent description = Component.translatable(building.getBuildingDisplayName());
+
+        if (isDedicated)
+        {
+            final Object[] jobList = moduleViews.stream().map(m -> Component.translatable(m.getJobEntry().getTranslationKey())).toArray();
+            final String format = String.join("/", Collections.nCopies(jobList.length, "%s"));
+            final MutableComponent jobs = Component.translatable(format, jobList);
+            description = Component.translatable("com.minecolonies.coremod.gui.hiring.dedicated", jobs, description);
+        }
+
+        findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.hiring.description", description));
     }
 
     /**
@@ -143,7 +165,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     private void switchHiringMode(final Button settingsButton)
     {
         int index = selectedModule.getHiringMode().ordinal() + 1;
-        if (index == HiringMode.LOCKED.ordinal()) { ++index; }  // only homes can be locked, not workplaces
+        if (index == HiringMode.LOCKED.ordinal())
+        {
+            ++index;
+        }  // only homes can be locked, not workplaces
 
         if (index >= HiringMode.values().length)
         {
@@ -220,10 +245,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         // Fire citizen if they already have a job
         if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView)
         {
-            IBuildingView oldJob =  colony.getBuilding(citizen.getWorkBuilding());
+            IBuildingView oldJob = colony.getBuilding(citizen.getWorkBuilding());
             oldJob.getModuleViewMatching(IAssignmentModuleView.class,
-                                         m -> m.getJobEntry() == citizen.getJobView().getEntry())
-                    .removeCitizen(citizen);
+                m -> m.getJobEntry() == citizen.getJobView().getEntry())
+              .removeCitizen(citizen);
         }
 
 
@@ -240,15 +265,22 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     protected int getCitizenPriority(ICitizenDataView citizen)
     {
         if (building.getPosition().equals(citizen.getWorkBuilding()))
+        {
             return 0;
-        else if (citizen.getWorkBuilding() == null)
-            return 1;
-        else if (selectedModule.canAssign(citizen))
-            return 2;
-        else
+        }
+        else if (!selectedModule.canAssign(citizen))
+        {
             return 3;
+        }
+        else if (citizen.getWorkBuilding() == null)
+        {
+            return 1;
+        }
+        else
+        {
+            return 2;
+        }
     }
-
 
     /**
      * Job clicked to select a job a citizen.
@@ -257,23 +289,29 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void jobClicked(@NotNull final Button button)
     {
-        final int row = jobList.getListElementIndexByPane(button);
-        selectedModule = moduleViews.get(row);
-        setupShowEmployed();
-        setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
-        updateCitizens();
-        citizenList.refreshElementPanes();
-        jobList.refreshElementPanes();
+        for (final IAssignmentModuleView moduleView : moduleViews)
+        {
+            if (moduleView.getJobEntry().getKey().toString().equals(button.getID()))
+            {
+                selectedModule = moduleView;
+                setupShowEmployed();
+                setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
+                updateCitizens();
+                citizenList.refreshElementPanes();
+                setupJobButtons();
+                break;
+            }
+        }
     }
 
     /**
      * Show Employed button clicked to show/hide employed citizens
+     *
      * @param button the clicked button
      */
     protected void showEmployedToggled(@NotNull final Button button)
     {
-
-        button.setText(Component.literal(showEmployed ? "N" : "Y"));
+        button.setText(Component.translatable(showEmployed ? "gui.no" : "gui.yes"));
         showEmployed = !showEmployed;
 
         onOpened();
@@ -288,13 +326,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         Button button = findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class);
         button.setEnabled(selectedModule instanceof WorkerBuildingModuleView
-                && !(selectedModule instanceof PupilBuildingModuleView));
-        button.setText(Component.literal("N"));
+                            && !(selectedModule instanceof PupilBuildingModuleView));
+        button.setText(Component.translatable("gui.no"));
         showEmployed = false;
     }
 
     /**
      * Helper function to show _all_ citizens that aren't children if viable.
+     *
      * @param citizen the citizen to check
      * @return whether the citizen can be assigned to the module
      */
@@ -311,11 +350,29 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         citizens.clear();
 
         citizens = colony.getCitizens().values().stream()
-                .filter(this::canAssign)
-                .sorted(Comparator.comparing(this::getCitizenPriority)
-                        .thenComparing(ICitizenDataView::getName))
-                .collect(Collectors.toList());
+          .filter(this::canAssign)
+          .sorted(Comparator.comparing(this::getCitizenPriority)
+            .thenComparing(citizen -> {
+                final BlockPos home = citizen.getHomeBuilding();
+                if (home == null)
+                {
+                    return 100.0;
+                }
 
+                double distance = Math.sqrt(citizen.getHomeBuilding().distSqr(building.getPosition()));
+                if (distance % 40 > 20)
+                {
+                    distance = (distance - (distance % 40)) + 40;
+                }
+                else
+                {
+                    distance = (distance - (distance % 40));
+                }
+
+                return distance;
+            })
+            .thenComparing(ICitizenDataView::getName))
+          .collect(Collectors.toList());
     }
 
     /**
@@ -324,8 +381,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        if (moduleViews.isEmpty())
+        {
+            close();
+            return;
+        }
+
         updateCitizens();
-        findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).off();
 
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -362,12 +424,6 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
 
-                    if ((!selectedModule.getColony().isManualHiring() && selectedModule.getHiringMode() == HiringMode.DEFAULT) || (selectedModule.getHiringMode() == HiringMode.AUTO))
-                    {
-                        rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
-                        findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).on();
-                    }
-
                     isPaused.on();
                     isPaused.setText(Component.translatable(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
@@ -386,10 +442,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 textBuilder.append(Component.literal(""));
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
-                final Skill primary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
-                final Skill secondary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getSecondarySkill() : null;
+                final Skill primary = selectedModule instanceof WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
+                final Skill secondary = selectedModule instanceof WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getSecondarySkill() : null;
 
-                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+                final List<Map.Entry<Skill, Tuple<Integer, Double>>> skills = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
+                skills.sort(Comparator.comparingInt(s -> (s.getKey() == primary ? 1 : (s.getKey() == secondary ? 2 : 3))));
+
+                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : skills)
                 {
                     final String skillName = entry.getKey().name().toLowerCase(Locale.US);
                     final int skillLevel = entry.getValue().getA();
@@ -404,10 +463,30 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 }
                 textBuilder.newLine(); // finish the current line
 
-                Component citizenLabelComponent =
-                  citizen.getJob().isEmpty() ? Component.literal(citizen.getName()) : Component.translatable(citizen.getJob()).append(": ").append(citizen.getName());
+                Component citizenLabelComponent = Component.translatable(citizen.getJob().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : citizen.getJob())
+                  .append(": ")
+                  .append(citizen.getName());
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class).setText(citizenLabelComponent);
+                if (citizen.getHomeBuilding() == null)
+                {
+                    rowPane.findPaneOfTypeByID(DISTANCE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.core.gui.hiring.homeless"));
+                }
+                else if (citizen.getHomeBuilding().equals(building.getPosition()))
+                {
+                    rowPane.findPaneOfTypeByID(DISTANCE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.core.gui.hiring.liveshere"));
+                }
+                else if (citizen.getHomeBuilding().equals(citizen.getWorkBuilding()))
+                {
+                    rowPane.findPaneOfTypeByID(DISTANCE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.core.gui.hiring.livesatwork"));
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(DISTANCE_LABEL, Text.class)
+                      .setText(Component.translatable("com.minecolonies.core.gui.hiring.distance", (int) Math.sqrt(citizen.getHomeBuilding().distSqr(building.getPosition()))));
+                }
+
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
+
                 final JobEntry entry = selectedModule.getJobEntry();
                 PaneBuilders.tooltipBuilder()
                   .hoverPane(rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class))
@@ -416,31 +495,46 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             }
         });
 
-        jobList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return moduleViews.size();
-            }
+        setupJobButtons();
+    }
 
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
+    public void setupJobButtons()
+    {
+        int xOffset = 15;
+        for (final IAssignmentModuleView hireModule : moduleViews)
+        {
+            final JobEntry entry = hireModule.getJobEntry();
+
+            final ButtonImage jobButton = new ButtonImage();
+            jobButton.setImage(new ResourceLocation("minecolonies:textures/gui/builderhut/builder_button_medium.png"), false);
+            jobButton.setPosition(xOffset, 30);
+            if (hireModule.getAssignedCitizens().size() > 0)
             {
-                final JobEntry entry = moduleViews.get(index).getJobEntry();
-                final Button button = rowPane.findPaneOfTypeByID(BUTTON_JOB, Button.class);
-                button.setText(Component.translatable(entry.getTranslationKey()));
-                if (entry.equals(selectedModule.getJobEntry()))
-                {
-                    button.disable();
-                }
-                else
-                {
-                    button.enable();
-                }
-                PaneBuilders.tooltipBuilder().hoverPane(button).build().setText(Component.translatable(entry.getKey().toString() + ".job.desc"));
+                jobButton.setText(Component.translatable(entry.getTranslationKey()).append(Component.literal(" " + hireModule.getAssignedCitizens().size())));
             }
-        });
+            else
+            {
+                jobButton.setText(Component.translatable(entry.getTranslationKey()));
+            }
+            jobButton.setID(hireModule.getJobEntry().getKey().toString());
+            jobButton.setHandler(this::jobClicked);
+            jobButton.setSize(86, 17);
+            jobButton.setTextSize(86, 17);
+
+            this.addChild(jobButton);
+            PaneBuilders.tooltipBuilder().hoverPane(jobButton).build().setText(Component.translatable(entry.getKey().toString() + ".job.desc"));
+            if (entry.equals(selectedModule.getJobEntry()))
+            {
+                jobButton.disable();
+            }
+            else
+            {
+                jobButton.enable();
+            }
+            jobButton.setTextColor(BLACK);
+
+            xOffset += 90;
+        }
     }
 
     /**
@@ -455,11 +549,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         if (primary == current)
         {
-            return Style.EMPTY.applyFormat(ChatFormatting.GREEN).applyFormat(ChatFormatting.BOLD);
+            return Style.EMPTY.applyFormat(ChatFormatting.DARK_GREEN).applyFormat(ChatFormatting.BOLD);
         }
         if (secondary == current)
         {
-            return Style.EMPTY.applyFormat(ChatFormatting.YELLOW).applyFormat(ChatFormatting.ITALIC);
+            return Style.EMPTY.applyFormat(ChatFormatting.GOLD).applyFormat(ChatFormatting.BOLD);
         }
         return Style.EMPTY;
     }

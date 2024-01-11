@@ -27,6 +27,7 @@ import net.minecraft.world.entity.monster.Monster;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.citizen.VisibleCitizenStatus.*;
 import static com.minecolonies.api.research.util.ResearchConstants.WORKING_IN_RAIN;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -98,7 +99,7 @@ public class CitizenAI implements IStateAI
             }
 
             return CitizenAIState.WORKING;
-        }, 1));
+        }, ENTITY_AI_TICKRATE));
     }
 
     /**

@@ -12,12 +12,12 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -202,9 +202,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
             updateRaidBar();
 
-            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID,
-                BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
-              .with(ChatFormatting.DARK_RED)
+            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+              .withPriority(MessagePriority.DANGER)
               .sendTo(colony).forManagers();
             colony.markDirty();
         })));
@@ -215,7 +214,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      */
     protected void updateRaidBar()
     {
-        final Component directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
+        final Component directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText();
         raidBar.setName(getDisplayName().append(" - ").append(directionName));
         for (final Player player : colony.getPackageManager().getCloseSubscribers())
         {

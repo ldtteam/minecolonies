@@ -118,9 +118,9 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @return random
      */
     @Override
-    public int countdownTicksToUpdate()
+    public int countdownTicksToUpdate(final int reduction)
     {
-        return --ticksToUpdate;
+        return ticksToUpdate -= reduction;
     }
 
     @Override

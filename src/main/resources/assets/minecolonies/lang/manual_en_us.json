@@ -1,6 +1,9 @@
 {
   "itemGroup.minecolonies": "MineColonies",
 
+  "key.minecolonies.categories.general": "MineColonies",
+  "key.minecolonies.toggle_goggles": "Toggle Goggles Preview",
+
   "com.minecolonies.configgui.title": "MineColonies Config",
   "minecolonies.config.gameplay": "Gameplay Settings",
   "minecolonies.config.gameplay.comment": "All configuration items related to the core gameplay",
@@ -291,7 +294,7 @@
 
   "tile.blockhuttownhall.messageplacedalreadydel": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click:",
   "tile.blockhuttownhall.messageplacedalreadyinfi": "You have placed a Town Hall already. If you want to delete your colony to start a new one, click [DELETE]. If you want to start a new colony but not delete your old one, click [ABANDON].",
-  "tile.blockhuttownhall.messageplacedalready": "You are too close to your existing Town Hall to place another.",
+  "tile.blockhuttownhall.messageplacedalready": "This colony already has a Town Hall placed at: %s",
   "tile.blockhuttownhall.abandonaddofficer": "If you want to add yourself as an officer to the abandoned colony (to retain control), click:",
   "tile.blockhuttownhall.deletemessagelink": "[DELETE]",
   "tile.blockhuttownhall.abandonmessagelink": "[ABANDON]",
@@ -510,7 +513,8 @@
   "com.minecolonies.coremod.gui.workerhuts.upgradeunavailable": "No Upgrade Available",
   "com.minecolonies.coremod.gui.workerhuts.information": "Information",
 
-  "com.minecolonies.coremod.gui.hiring.description": "Choose a worker for the job.",
+  "com.minecolonies.coremod.gui.hiring.description": "Choose workers for the %s.",
+  "com.minecolonies.coremod.gui.hiring.dedicated": "%s-only %s",
   "com.minecolonies.coremod.gui.assigning.description": "Choose a citizen to live here.",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
@@ -605,8 +609,11 @@
   "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount": "%d/%d fields in use",
   "com.minecolonies.coremod.gui.workerhuts.fields.plantcount": "%d/%d types of plants",
   "com.minecolonies.coremod.gui.workerhuts.fields.fieldcount.reached": "You already reached the limit of fields.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.distance": "Distance: %s %s",
   "com.minecolonies.coremod.gui.workerhuts.fields.plantation.research": "You do not have the required research to assign this field to the plantation.",
+  "com.minecolonies.coremod.gui.workerhuts.fields.plantation.direction.exact": "Current Plantation",
   "com.minecolonies.coremod.gui.workerhuts.fields.farmer.noseed": "Field has no seed set",
+
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.plantcount.reached": "You already reached the limit of concurrent plants.",
@@ -615,14 +622,17 @@
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.rip": "Citizens buried here",
 
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.north": "North",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.south": "South",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.east": "East",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.west": "West",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.up": "Directly above",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.down": "Directly below",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.none": "Same as building location",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.unused": "unused",
+  "com.minecolonies.coremod.gui.direction.north": "North",
+  "com.minecolonies.coremod.gui.direction.north.short": "N",
+  "com.minecolonies.coremod.gui.direction.south": "South",
+  "com.minecolonies.coremod.gui.direction.south.short": "S",
+  "com.minecolonies.coremod.gui.direction.east": "East",
+  "com.minecolonies.coremod.gui.direction.east.short": "E",
+  "com.minecolonies.coremod.gui.direction.west": "West",
+  "com.minecolonies.coremod.gui.direction.west.short": "W",
+  "com.minecolonies.coremod.gui.direction.up": "Directly above",
+  "com.minecolonies.coremod.gui.direction.down": "Directly below",
+  "com.minecolonies.coremod.gui.direction.exact": "Same location",
   "com.minecolonies.coremod.gui.debugscreen.noclosecolony": "No close colony!",
   "com.minecolonies.coremod.gui.debugscreen.nextcolony": "Next colony is %d blocks away (too close to found a new one)!",
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
@@ -751,7 +761,7 @@
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "Removed block %s.",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "Removed location %d %d %d.",
   "tile.blockhut.warehouse.limit": "The amount of Warehouses is limited to 1 per colony. You cannot place any more in this colony without adjusting the config.",
-  "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place or activate any more in this colony.",
+  "tile.blockhut.tavern.limit": "A Tavern already exists at %s. You cannot place or activate any more in this colony.",
 
   "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 
@@ -851,6 +861,20 @@
   "com.minecolonies.coremod.tooltype.boots": "Boots",
   "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
 
+  "com.minecolonies.coremod.armorlevel.0": "Leather",
+  "com.minecolonies.coremod.armorlevel.1": "Gold",
+  "com.minecolonies.coremod.armorlevel.2": "Chain",
+  "com.minecolonies.coremod.armorlevel.3": "Iron",
+  "com.minecolonies.coremod.armorlevel.4": "Diamond or Netherite",
+  "com.minecolonies.coremod.armorlevel.etc": "Better than Netherite",
+
+  "com.minecolonies.coremod.toollevel.0": "Wood or Gold",
+  "com.minecolonies.coremod.toollevel.1": "Stone",
+  "com.minecolonies.coremod.toollevel.2": "Iron",
+  "com.minecolonies.coremod.toollevel.3": "Diamond",
+  "com.minecolonies.coremod.toollevel.4": "Netherite",
+  "com.minecolonies.coremod.toollevel.etc": "Better than Netherite",
+
   "com.minecolonies.coremod.gui.citizen.requests": "Open requests:",
   "com.minecolonies.coremod.gui.citizen.requesttitle": "Requests",
   "com.minecolonies.coremod.gui.citizen.requestscancel": "Cancel",
@@ -863,6 +887,7 @@
   "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak + use the scroll on the Builder's Hut)",
   "com.minecolonies.coremod.item.scroll.registered": "Linked resources for Builder's Hut at %s.",
   "com.minecolonies.coremod.item.scroll.wrong_building": "Cannot link resource scroll to %s at %s",
+  "com.minecolonies.coremod.item.scroll.wrong_colony": "Cannot link resource scroll to warehouse in another colony.",
   "com.minecolonies.coremod.item.scroll.no_builder": "§oNo Builder",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
@@ -1042,7 +1067,7 @@
   "com.minecolonies.coremod.gui.warehouse.sort.disabled.2": "Warehouse Level %s",
   "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1": "Rack upgrade requires",
   "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2": "Warehouse Level %s",
-  "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
+  "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this building (or colony) to manual to hire or fire workers manually",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
 
   "entity.pirate": "Pirate",
@@ -1086,6 +1111,8 @@
   "item.minecolonies.santa_hat": "Santa Hat",
   "item.minecolonies.build_goggles": "Builder's Goggles",
   "item.minecolonies.build_goggles.lore": "They do nothing!",
+  "item.minecolonies.build_goggles.enabled": "Blueprint previews enabled",
+  "item.minecolonies.build_goggles.disabled": "Blueprint previews disabled",
 
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
@@ -1672,7 +1699,6 @@
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
-  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again!",
   "com.minecolonies.coremod.healer.fullinv": "My inventory is full, I can't receive the cure!",
   "com.minecolonies.coremod.job.healer": "Healer",
@@ -2510,5 +2536,14 @@
   "com.minecolonies.core.gui.nextpage": "Next Page",
   "com.minecolonies.core.gui.prevpage": "Previous Page",
 
-  "com.minecolonies.core.barbarians.mercy": "§4Defeat! The raiders finished what they came here for to return another day!"
+  "com.minecolonies.core.barbarians.mercy": "§4Defeat! The raiders finished what they came here for to return another day!",
+  "com.minecolonies.core.gui.hiring.distance": "Lives %d blocks from here",
+  "com.minecolonies.core.gui.hiring.homeless": "Currently homeless",
+  "com.minecolonies.core.gui.hiring.liveshere": "Lives here",
+  "com.minecolonies.core.gui.hiring.livesatwork": "Lives at current work building",
+  "com.minecolonies.core.gui.modules.stats": "Building Statistics",
+  "com.minecolonies.coremod.gui.townhall.stats.item_used": "Used %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.mob_killed": "Killed %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.item_obtained": "Got %d %s",
+  "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled"
 }

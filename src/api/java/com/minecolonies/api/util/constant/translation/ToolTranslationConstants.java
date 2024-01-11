@@ -66,11 +66,6 @@ public class ToolTranslationConstants
     public static final String TOOL_GUARD_SCROLL_NO_GUARD_BUILDING = "minecolonies.scroll.noguardbuilding";
 
     @NonNls
-    public static final String TOOL_RESOURCE_SCROLL_NO_BUILDER = "com.minecolonies.coremod.resourcescroll.nobuilder";
-    @NonNls
-    public static final String TOOL_RESOURCE_SCROLL_ERROR      = "com.minecolonies.coremod.resourcescroll.null";
-
-    @NonNls
     public static final String TOOL_BEEHIVE_SCEPTER_ADD_HIVE    = "item.minecolonies.scepterbeekeeper.addhive";
     @NonNls
     public static final String TOOL_BEEHIVE_SCEPTER_REMOVE_HIVE = "item.minecolonies.scepterbeekeeper.removehive";

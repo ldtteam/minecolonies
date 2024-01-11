@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.ai.statemachine.tickratestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
-import org.jetbrains.annotations.NotNull;
 
 public interface ITickingTransition<S extends IState> extends IStateMachineTransition<S>
 {
@@ -18,14 +17,14 @@ public interface ITickingTransition<S extends IState> extends IStateMachineTrans
      *
      * @param tickRate rate at which the AITarget should tick
      */
-    void setTickRate(@NotNull int tickRate);
+    void setTickRate(int tickRate);
 
     /**
      * Returns a preset offset to Ticks
      *
      * @return random
      */
-    int countdownTicksToUpdate();
+    int countdownTicksToUpdate(final int reduction);
 
     /**
      * Sets the ticks until next update

@@ -142,7 +142,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     public String getBuildingName()
     {
-        return "com." + buildingView.getBuildingType().getRegistryName().getNamespace() + ".building." + buildingView.getBuildingType().getRegistryName().getPath();
+        return buildingView.getBuildingDisplayName();
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
 
         if (title != null)
         {
-            final MutableComponent component = building.getCustomName().isEmpty() ? Component.translatable(getBuildingName()) : Component.literal(building.getCustomName());
+            final MutableComponent component = Component.translatable(building.getBuildingDisplayName());
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);
         }

@@ -1,29 +1,25 @@
 package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.*;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.state.BlockState;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.stats.RecipeBook;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.stats.RecipeBook;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.util.Map;
 
 /**
  * Client side proxy.
@@ -88,13 +84,9 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openResourceScrollWindow(
-      final int colonyId,
-      final BlockPos buildingPos,
-      final @Nullable BlockPos warehousePos,
-      final @Nullable CompoundTag warehouseCompound)
+    public void openResourceScrollWindow(@NotNull final BuildingBuilder.View buildingView, @NotNull final Map<String, Integer> warehouseSnapshot)
     {
-        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos, warehousePos, warehouseCompound);
+        @Nullable final WindowResourceList window = new WindowResourceList(buildingView, warehouseSnapshot);
         window.open();
     }
 
@@ -102,9 +94,9 @@ public class ClientProxy extends CommonProxy
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final Player player)
     {
-        if (player instanceof LocalPlayer)
+        if (player instanceof LocalPlayer localPlayer)
         {
-            return ((LocalPlayer) player).getRecipeBook();
+            return localPlayer.getRecipeBook();
         }
 
         return super.getRecipeBookFromPlayer(player);

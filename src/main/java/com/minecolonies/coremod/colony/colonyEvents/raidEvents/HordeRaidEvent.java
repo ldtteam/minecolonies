@@ -13,11 +13,11 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -379,9 +379,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         updateRaidBar();
 
-        MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(),
-                        BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
-                .with(ChatFormatting.DARK_RED).sendTo(colony).forManagers();
+        MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .withPriority(MessagePriority.DANGER)
+          .sendTo(colony)
+          .forManagers();
         Log.getLogger().debug("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
@@ -403,7 +404,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      */
     protected void updateRaidBar()
     {
-        final Component directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
+        final Component directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText();
         raidBar.setName(getDisplayName().append(" - ").append(directionName));
         for (final Player player : colony.getPackageManager().getCloseSubscribers())
         {
