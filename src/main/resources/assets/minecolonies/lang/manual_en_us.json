@@ -887,6 +887,7 @@
   "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak + use the scroll on the Builder's Hut)",
   "com.minecolonies.coremod.item.scroll.registered": "Linked resources for Builder's Hut at %s.",
   "com.minecolonies.coremod.item.scroll.wrong_building": "Cannot link resource scroll to %s at %s",
+  "com.minecolonies.coremod.item.scroll.wrong_colony": "Cannot link resource scroll to warehouse in another colony.",
   "com.minecolonies.coremod.item.scroll.no_builder": "§oNo Builder",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
@@ -1698,7 +1699,6 @@
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
-  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again!",
   "com.minecolonies.coremod.healer.fullinv": "My inventory is full, I can't receive the cure!",
   "com.minecolonies.coremod.job.healer": "Healer",
