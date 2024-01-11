@@ -169,7 +169,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     @Override
     public BOWindow getWindow()
     {
-        return new WindowHutWorkerModulePlaceholder<>(buildingView, "");
+        return new WindowHutWorkerModulePlaceholder<>(buildingView);
     }
 
     /**

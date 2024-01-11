@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -96,6 +95,17 @@ public interface IBuildingView extends IRequester, IModuleContainerView
      * @return the name.
      */
     String getCustomName();
+
+    /**
+     * Gets the display name (either the custom name or a type-based name).
+     *
+     * @return the name (or translation key).
+     */
+    default String getBuildingDisplayName()
+    {
+        final String customName = getCustomName();
+        return customName.isEmpty() ? getBuildingType().getTranslationKey() : customName;
+    }
 
     /**
      * Getter for the style.

@@ -720,6 +720,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeNbt(requestSystemCompound);
 
         buf.writeBoolean(isDeconstructed());
+        buf.writeBoolean(canAssignCitizens());
 
         final List<IBuildingModule> syncedModules = new ArrayList<>();
         for(final IBuildingModule module:modules)
