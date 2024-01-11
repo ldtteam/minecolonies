@@ -6,17 +6,15 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowsBarracksSpies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -172,7 +170,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
         {
             distanceDesc = REALLY_FAR_DESC;
         }
-        final Component directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
+        final Component directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos).getLongText();
         return Component.translatable(distanceDesc)
                  .append(" ")
                  .append(directionDest);
