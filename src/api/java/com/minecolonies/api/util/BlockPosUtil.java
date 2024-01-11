@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -8,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -34,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.BiPredicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -719,13 +717,13 @@ public final class BlockPosUtil
     /**
      * Calculates the direction a position is from the building.
      *
-     * @param building the building.
-     * @param pos      the position.
+     * @param building          the building.
+     * @param pos               the position.
      * @return a text component describing the direction.
      */
-    public static Component calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
+    public static DirectionResult calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
     {
-        MutableComponent component = null;
+        DirectionResult direction = DirectionResult.SAME;
 
         // When the X and Z coordinates are identical to the building its position
         // then return a component saying that the position is either directly above or directly below
@@ -734,55 +732,111 @@ public final class BlockPosUtil
         {
             if (pos.getY() > building.getY())
             {
-                component = Component.translatable(DIRECTION_UP);
+                direction = DirectionResult.UP;
             }
             else if (pos.getY() < building.getY())
             {
-                component = Component.translatable(DIRECTION_DOWN);
+                direction = DirectionResult.DOWN;
             }
         }
 
         // If a building is greater or smaller in the Z direction, either return north or south
         if (pos.getZ() > building.getZ())
         {
-            component = Component.translatable(DIRECTION_SOUTH);
+            direction = DirectionResult.SOUTH;
         }
         else if (pos.getZ() < building.getZ())
         {
-            component = Component.translatable(DIRECTION_NORTH);
+            direction = DirectionResult.NORTH;
         }
 
         // If a building is greater or smaller in the X direction, either return west or east
         // If previously already north or south was selected, create a compound direction (north/east etc)
         if (pos.getX() > building.getX())
         {
-            if (component != null)
-            {
-                component
-                  .append("/")
-                  .append(Component.translatable(DIRECTION_EAST));
-            }
-            else
-            {
-                component = Component.translatable(DIRECTION_EAST);
-            }
+            direction = switch (direction) {
+                case NORTH -> DirectionResult.NORTH_EAST;
+                case SOUTH -> DirectionResult.SOUTH_EAST;
+                default -> DirectionResult.EAST;
+            };
         }
         else if (pos.getX() < building.getX())
         {
-            if (component != null)
-            {
-                component
-                  .append("/")
-                  .append(Component.translatable(DIRECTION_WEST));
-            }
-            else
-            {
-                component = Component.translatable(DIRECTION_WEST);
-            }
+            direction = switch (direction) {
+                case NORTH -> DirectionResult.NORTH_WEST;
+                case SOUTH -> DirectionResult.SOUTH_WEST;
+                default -> DirectionResult.WEST;
+            };
         }
 
         // In case that none of the checks pass (XYZ fully identical to the building), return a component saying the positions are identical
-        return component != null ? component : Component.translatable(DIRECTION_NONE);
+        return direction;
+    }
+
+    /**
+     * Direction result from {@link BlockPosUtil#calcDirection}.
+     */
+    public enum DirectionResult
+    {
+        NORTH(DIRECTION_NORTH, DIRECTION_NORTH_SHORT),
+        SOUTH(DIRECTION_SOUTH, DIRECTION_SOUTH_SHORT),
+        WEST(DIRECTION_WEST, DIRECTION_WEST_SHORT),
+        EAST(DIRECTION_EAST, DIRECTION_EAST_SHORT),
+        NORTH_WEST(List.of(DIRECTION_NORTH, DIRECTION_WEST), List.of(DIRECTION_NORTH_SHORT, DIRECTION_WEST_SHORT)),
+        NORTH_EAST(List.of(DIRECTION_NORTH, DIRECTION_EAST), List.of(DIRECTION_NORTH_SHORT, DIRECTION_EAST_SHORT)),
+        SOUTH_WEST(List.of(DIRECTION_SOUTH, DIRECTION_WEST), List.of(DIRECTION_SOUTH_SHORT, DIRECTION_WEST_SHORT)),
+        SOUTH_EAST(List.of(DIRECTION_SOUTH, DIRECTION_EAST), List.of(DIRECTION_SOUTH_SHORT, DIRECTION_EAST_SHORT)),
+        UP(DIRECTION_UP, DIRECTION_UP),
+        DOWN(DIRECTION_DOWN, DIRECTION_DOWN),
+        SAME(DIRECTION_EXACT, DIRECTION_EXACT);
+
+        /**
+         * The long display of this direction, for example "North".
+         */
+        private final Component longText;
+
+        /**
+         * The short display of this direction, for example "N".
+         */
+        private final Component shortText;
+
+        /**
+         * Single string constructor.
+         */
+        DirectionResult(final String longText, final String shortText)
+        {
+            this.longText = Component.translatable(longText);
+            this.shortText = Component.translatable(shortText);
+        }
+
+        /**
+         * Multi string constructor.
+         */
+        DirectionResult(final List<String> longText, final List<String> shortText)
+        {
+            this.longText = ComponentUtils.formatList(longText.stream().map(Component::translatable).toList(), Component.literal("/"));
+            this.shortText = ComponentUtils.formatList(shortText.stream().map(Component::translatable).toList(), Component.literal("/"));
+        }
+
+        /**
+         * Get the long display of this direction, for example "North".
+         *
+         * @return the component.
+         */
+        public Component getLongText()
+        {
+            return longText;
+        }
+
+        /**
+         * Get the short display of this direction, for example "N".
+         *
+         * @return the component.
+         */
+        public Component getShortText()
+        {
+            return shortText;
+        }
     }
 
     /**

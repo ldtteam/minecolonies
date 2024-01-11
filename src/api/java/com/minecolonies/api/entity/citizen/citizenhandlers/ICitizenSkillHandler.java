@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
@@ -54,8 +53,9 @@ public interface ICitizenSkillHandler
      * @param random       the random var.
      * @param customChance the custom chance.
      * @param citizen      the citizen that is trying to level up.
+     * @return true if leveled up.
      */
-    void tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen);
+    boolean tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen);
 
     /**
      * Get the level for a certain skill.

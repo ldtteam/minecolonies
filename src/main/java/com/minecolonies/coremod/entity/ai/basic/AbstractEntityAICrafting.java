@@ -530,7 +530,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             // Fallback security blanket. Normally, the craft() method should have dealt with the request.
             if (currentRequest.getState() == RequestState.IN_PROGRESS)
             {
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount());
+                worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColony().getDay());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }

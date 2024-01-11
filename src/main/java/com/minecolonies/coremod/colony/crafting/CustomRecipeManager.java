@@ -212,9 +212,18 @@ public class CustomRecipeManager
         for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
         {
             // ItemStorage#equals does the actual comparison work for us, here.
-            if (recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
+            if (new ItemStorage(recipe.getPrimaryOutput()).equals(itemStorage))
             {
                 returnList.add(recipe);
+            }
+
+            for (final ItemStack output : recipe.getAltOutputs())
+            {
+                if (new ItemStorage(output).equals(itemStorage))
+                {
+                    returnList.add(recipe);
+                    break;
+                }
             }
         }
         return returnList;
