@@ -47,7 +47,8 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.TREE_CUT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
  * The lumberjack AI class.
@@ -505,7 +506,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 checkedInHut = false;
             }
 
-            building.getColony().getStatisticsManager().increment(TREE_CUT);
+            building.getColony().getStatisticsManager().increment(TREE_CUT, building.getColony().getDay());
             worker.getCitizenExperienceHandler().addExperience(XP_PER_TREE);
             incrementActionsDoneAndDecSaturation();
             workFrom = null;
@@ -566,6 +567,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             job.getTree().pollNextLeaf();
         }
         return getState();
+    }
+
+    @Override
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        super.onBlockDropReception(blockDrops);
+        for (final ItemStack stack : blockDrops)
+        {
+            building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+        }
     }
 
     /**

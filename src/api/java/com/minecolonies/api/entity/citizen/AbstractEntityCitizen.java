@@ -59,6 +59,8 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
 public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider
 {
+    public static final int ENTITY_AI_TICKRATE = 5;
+
     /**
      * Citizens swim speed factor
      */
@@ -131,7 +133,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     protected ITickRateStateMachine<IState> entityStateController = new TickRateStateMachine<>(EntityState.INIT,
       e -> Log.getLogger()
         .warn("Citizen " + getDisplayName().getString() + " id:" + (getCitizenData() != null ? getCitizenData().getId() : -1) + "from colony: "
-                + getCitizenColonyHandler().getColonyId() + " state controller exception", e));
+                + getCitizenColonyHandler().getColonyId() + " state controller exception", e), ENTITY_AI_TICKRATE);
 
     /**
      * Constructor for a new citizen typed entity.
@@ -416,7 +418,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void aiStep()
     {
         super.aiStep();
-        entityStateController.tick();
+        if (tickCount % ENTITY_AI_TICKRATE == 0)
+        {
+            entityStateController.tick();
+        }
         updateSwingTime();
         if (collisionCounter > 0)
         {

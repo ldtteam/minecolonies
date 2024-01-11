@@ -38,9 +38,16 @@
           }
         },
         {
-          "answer": "Sorry, I can't help you right now.",
+          "answer": "Sorry, I don't have time to help you right now.",
           "result": {
             "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I already know all about the builder goggles. You'll be fine without them!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
           }
         }
       ]

@@ -46,6 +46,7 @@ import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -53,10 +54,10 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.PROGRESS_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_MINED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_MINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.QUARRY_MINER_FINISHED_QUARRY;
 import static com.minecolonies.api.util.constant.TranslationConstants.QUARRY_MINER_NO_QUARRY;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.RECALC;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_PICKAXE;
@@ -145,6 +146,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
             final Tuple<String, String> shaft = getShaftPath(quarry);
             final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+            wo.setClaimedBy(building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
         }
@@ -199,6 +201,16 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
         final String name = path.substring(path.lastIndexOf('/') + 1).replace(".blueprint", "");
         return new Tuple<>(path, name);
+    }
+
+    @Override
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        super.onBlockDropReception(blockDrops);
+        for (final ItemStack stack : blockDrops)
+        {
+            building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+        }
     }
 
     @Override
@@ -363,6 +375,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 {
                     building.nextStage();
                     building.setProgressPos(null, null);
+                    worker.getCitizenData().setStatusPosition(null);
                     return COMPLETE_BUILD;
                 }
                 else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
@@ -398,10 +411,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             if (currentWorldPos.getY() < worker.level.getMinBuildHeight() + 5)
             {
                 building.setProgressPos(null, null);
+                worker.getCitizenData().setStatusPosition(null);
                 return COMPLETE_BUILD;
             }
 
             blockToMine = currentWorldPos;
+            worker.getCitizenData().setStatusPosition(blockToMine);
             return MINE_BLOCK;
         }
 
@@ -544,21 +559,32 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     protected boolean checkIfCanceled()
     {
+        boolean isCanceled = false;
         if (job.findQuarry() == null)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
-            return true;
+            isCanceled = true;
         }
         else if (job.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
-            return true;
+            isCanceled = true;
         }
         else if(job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
         {
+            isCanceled = true;
+        }
+
+        if (isCanceled)
+        {
+            if (job.hasWorkOrder())
+            {
+                job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+                job.setWorkOrder(null);
+            }
             blockToMine = null;
-            job.complete();
             building.setProgressPos(null, null);
+            worker.getCitizenData().setStatusPosition(null);
             return true;
         }
         return super.checkIfCanceled();
@@ -768,8 +794,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         super.triggerMinedBlock(blockToMine);
         if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))
         {
-            building.getColony().getStatisticsManager().increment(ORES_MINED);
+            building.getColony().getStatisticsManager().increment(ORES_MINED, building.getColony().getDay());
         }
-        building.getColony().getStatisticsManager().increment(BLOCKS_MINED);
+        building.getColony().getStatisticsManager().increment(BLOCKS_MINED, building.getColony().getDay());
     }
 }

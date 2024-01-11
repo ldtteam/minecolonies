@@ -196,7 +196,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
                 immunityTicks = IMMUNITY_TIME;
             }
 
-            citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED);
+            citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED, citizen.getCitizenColonyHandler().getColony().getDay());
         }
 
         citizen.markDirty(0);

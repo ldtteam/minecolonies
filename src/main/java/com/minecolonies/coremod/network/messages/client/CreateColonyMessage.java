@@ -8,8 +8,8 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -115,7 +115,9 @@ public class CreateColonyMessage implements IMessage
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
-            MessageUtils.format(WARNING_TOWN_HALL_NO_TILE_ENTITY).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
+            MessageUtils.format(WARNING_TOWN_HALL_NO_TILE_ENTITY)
+              .withPriority(MessagePriority.DANGER)
+              .sendTo(sender);
             return;
         }
 
@@ -170,7 +172,9 @@ public class CreateColonyMessage implements IMessage
         {
             final IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
             createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-            MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
+            MessageUtils.format(MESSAGE_COLONY_FOUNDED)
+              .withPriority(MessagePriority.IMPORTANT)
+              .sendTo(sender);
 
             if (isLogicalServer)
             {
@@ -181,6 +185,8 @@ public class CreateColonyMessage implements IMessage
 
         ownedColony.getPackageManager().sendColonyViewPackets();
         ownedColony.getPackageManager().sendPermissionsPackets();
-        MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
+        MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED)
+          .withPriority(MessagePriority.DANGER)
+          .sendTo(sender);
     }
 }

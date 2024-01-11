@@ -130,6 +130,11 @@ public class CitizenDataView implements ICitizenDataView
     private VisibleCitizenStatus statusIcon;
 
     /**
+     * The current location of interest.
+     */
+    @Nullable private BlockPos statusPosition;
+
+    /**
      * Parents of the citizen.
      */
     private Tuple<String, String> parents = new Tuple<>("", "");
@@ -356,6 +361,7 @@ public class CitizenDataView implements ICitizenDataView
 
         int statusindex = buf.readInt();
         statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
+        statusPosition = buf.readBoolean() ? buf.readBlockPos() : null;
 
         if (buf.readBoolean())
         {
@@ -524,6 +530,12 @@ public class CitizenDataView implements ICitizenDataView
     public VisibleCitizenStatus getVisibleStatus()
     {
         return statusIcon;
+    }
+
+    @Override
+    public @Nullable BlockPos getStatusPosition()
+    {
+        return statusPosition;
     }
 
     @Nullable

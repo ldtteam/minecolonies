@@ -1,0 +1,15 @@
+{
+  "type": "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+      "item": "minecraft:tuff"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": [
+    "minecolonies:effects/knowledgeofthedepthsunlock",
+    "minecolonies:effects/crushing11unlock"
+  ],
+  "result": "minecraft:cobblestone"
+}

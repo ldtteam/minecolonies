@@ -20,11 +20,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static com.minecolonies.api.research.ModResearchCosts.LIST_ITEM_COST_ID;
-import static com.minecolonies.api.research.ModResearchCosts.TAG_ITEM_COST_ID;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
+import static com.minecolonies.api.research.ModResearchCostTypes.TAG_ITEM_COST_ID;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.

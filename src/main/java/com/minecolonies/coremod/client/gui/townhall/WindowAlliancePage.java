@@ -7,19 +7,18 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.DO_REALLY_WANNA_TP;
+import static com.minecolonies.api.util.constant.TranslationConstants.TH_TOO_LOW;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -63,10 +62,8 @@ public class WindowAlliancePage extends AbstractWindowTownHall
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
 
         MessageUtils.format(DO_REALLY_WANNA_TP, ally.name)
-          .with(Style.EMPTY.withClickEvent(new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND,
-            "",
-            () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.dimension, ally.id)))))
-          .with(ChatFormatting.BOLD, ChatFormatting.GOLD)
+          .withPriority(MessagePriority.IMPORTANT)
+          .withClickEvent(new ClickEventWithExecutable(() -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.dimension, ally.id))))
           .sendTo(Minecraft.getInstance().player);
         this.close();
     }

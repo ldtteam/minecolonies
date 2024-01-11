@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
@@ -132,6 +129,16 @@ public class RaiderWalkAI implements IStateAI
             {
                 final List<BlockPos> wayPoints = ((IColonyRaidEvent) event).getWayPoints();
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
+
+                if (moveToPos.equals(BlockPos.ZERO))
+                {
+                    Log.getLogger().warn("Raider trying to path to zero position, target pos:" + targetBlock + " Waypoints:");
+                    for (final BlockPos pos : wayPoints)
+                    {
+                        Log.getLogger().warn(pos.toShortString());
+                    }
+                }
+
                 raider.getNavigation()
                   .moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), !moveToPos.equals(targetBlock) && moveToPos.distManhattan(wayPoints.get(0)) > 50 ? 1.8 : 1.1);
             }
