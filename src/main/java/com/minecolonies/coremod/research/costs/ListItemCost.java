@@ -2,12 +2,14 @@ package com.minecolonies.coremod.research.costs;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.research.GlobalResearch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.research.ModResearchCosts.LIST_ITEM_COST_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_LIST_PROP;
 import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_NAME_PROP;
@@ -26,6 +27,11 @@ import static com.minecolonies.coremod.research.GlobalResearch.RESEARCH_ITEM_NAM
  */
 public class ListItemCost implements IResearchCost
 {
+    /**
+     * The cost type.
+     */
+    private final ResearchCostType type;
+
     /**
      * The count of items.
      */
@@ -39,14 +45,15 @@ public class ListItemCost implements IResearchCost
     /**
      * Default constructor.
      */
-    public ListItemCost()
+    public ListItemCost(final ResearchCostType type)
     {
+        this.type = type;
     }
 
     @Override
-    public ResourceLocation getId()
+    public ResearchCostType getType()
     {
-        return LIST_ITEM_COST_ID;
+        return type;
     }
 
     @Override
@@ -80,6 +87,29 @@ public class ListItemCost implements IResearchCost
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_COST_ITEMS, itemList);
         compound.putInt(TAG_COST_COUNT, this.count);
+    }
+
+    @Override
+    public void serialize(final @NotNull FriendlyByteBuf buf)
+    {
+        buf.writeInt(this.count);
+        buf.writeInt(this.items.size());
+        for (final Item item : this.items)
+        {
+            buf.writeRegistryId(ForgeRegistries.ITEMS, item);
+        }
+    }
+
+    @Override
+    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    {
+        this.count = buf.readInt();
+        this.items = new ArrayList<>();
+        final int itemCount = buf.readInt();
+        for (int i = 0; i < itemCount; i++)
+        {
+            this.items.add(buf.readRegistryIdSafe(Item.class));
+        }
     }
 
     @Override

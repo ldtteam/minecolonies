@@ -16,6 +16,11 @@ import org.jetbrains.annotations.NotNull;
 public class CourierHiringModeMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
+     * The module id
+     */
+    private int  id;
+
+    /**
      * The Hiring mode to set.
      */
     private HiringMode mode;
@@ -34,27 +39,33 @@ public class CourierHiringModeMessage extends AbstractBuildingServerMessage<IBui
      * @param building View of the building to read data from.
      * @param mode     the hiring mode.
      */
-    public CourierHiringModeMessage(@NotNull final IBuildingView building, final HiringMode mode)
+    public CourierHiringModeMessage(@NotNull final IBuildingView building, final HiringMode mode, final int id)
     {
         super(building);
         this.mode = mode;
+        this.id = id;
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         mode = HiringMode.values()[buf.readInt()];
+        id = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(mode.ordinal());
+        buf.writeInt(id);
     }
 
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getFirstModuleOccurance(CourierAssignmentModule.class).setHiringMode(mode);
+        if (building.getModule(id) instanceof CourierAssignmentModule module)
+        {
+            module.setHiringMode(mode);
+        }
     }
 }

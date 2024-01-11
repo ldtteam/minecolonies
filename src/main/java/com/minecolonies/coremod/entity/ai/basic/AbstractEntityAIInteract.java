@@ -207,6 +207,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             {
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
             }
+            onBlockDropReception(localItems);
         }
 
         triggerMinedBlock(curBlockState);
@@ -228,6 +229,15 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
+    }
+
+    /**
+     * Event triggered after receiving a list of block drops.
+     * @param blockDrops the received items from the block.
+     */
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        //Override if needed
     }
 
     /**

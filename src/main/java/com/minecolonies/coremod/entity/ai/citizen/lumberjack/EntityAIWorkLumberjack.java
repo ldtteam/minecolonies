@@ -12,7 +12,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -48,7 +47,8 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.TREE_CUT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
  * The lumberjack AI class.
@@ -276,7 +276,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState prepareForWoodcutting()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(building.getOptionalSetting(AbstractBuilding.USE_SHEARS).orElse(new BoolSetting(true)).getValue() ? ToolType.SHEARS : ToolType.HOE))
+        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(building.getSetting(AbstractBuilding.USE_SHEARS).getValue() ? ToolType.SHEARS : ToolType.HOE))
         {
             // Reset everything, maybe there are new crafting requests
             return START_WORKING;
@@ -506,7 +506,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 checkedInHut = false;
             }
 
-            building.getColony().getStatisticsManager().increment(TREE_CUT);
+            building.getColony().getStatisticsManager().increment(TREE_CUT, building.getColony().getDay());
             worker.getCitizenExperienceHandler().addExperience(XP_PER_TREE);
             incrementActionsDoneAndDecSaturation();
             workFrom = null;
@@ -567,6 +567,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             job.getTree().pollNextLeaf();
         }
         return getState();
+    }
+
+    @Override
+    public void onBlockDropReception(final List<ItemStack> blockDrops)
+    {
+        super.onBlockDropReception(blockDrops);
+        for (final ItemStack stack : blockDrops)
+        {
+            building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + stack.getItem().getDescriptionId(), stack.getCount());
+        }
     }
 
     /**

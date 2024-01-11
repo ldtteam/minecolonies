@@ -192,11 +192,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public void serializeNBT(@NotNull final CompoundTag compound)
     {
-        final CompoundTag moduleCompound = new CompoundTag();
         @NotNull final ListTag recipesTagList = recipes.stream()
                                                   .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                   .collect(NBTUtils.toListNBT());
-        moduleCompound.put(TAG_RECIPES, recipesTagList);
+        compound.put(TAG_RECIPES, recipesTagList);
 
         @NotNull final ListTag disabledRecipesTag = new ListTag();
         for (@NotNull final IToken<?> recipe : disabledRecipes)
@@ -206,22 +205,21 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 disabledRecipesTag.add(StandardFactoryController.getInstance().serialize(recipe));
             }
         }
-        moduleCompound.put(TAG_DISABLED_RECIPES, disabledRecipesTag);
-        compound.put(getId(), moduleCompound);
+        compound.put(TAG_DISABLED_RECIPES, disabledRecipesTag);
     }
 
     @Override
     public void deserializeNBT(CompoundTag compound)
     {
-        final ListTag recipesTags;
+        if (compound.contains(getId()))
+        {
+            compound = compound.getCompound(getId());
+        }
+
+        ListTag recipesTags = new ListTag();
         if (compound.contains(TAG_RECIPES))
         {
             recipesTags = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
-        }
-        else
-        {
-            final CompoundTag compoundNBT = compound.getCompound(getId());
-            recipesTags = compoundNBT.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
         }
 
         for (int i = 0; i < recipesTags.size(); i++)
@@ -234,9 +232,9 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             }
         }
 
-        if (compound.getCompound(getId()).contains(TAG_DISABLED_RECIPES))
+        if (compound.contains(TAG_DISABLED_RECIPES))
         {
-            final ListTag disabledRecipeTag = compound.getCompound(getId()).getList(TAG_DISABLED_RECIPES, Tag.TAG_COMPOUND);
+            final ListTag disabledRecipeTag = compound.getList(TAG_DISABLED_RECIPES, Tag.TAG_COMPOUND);
             for (int i = 0; i < disabledRecipeTag.size(); i++)
             {
                 final IToken<?> token = StandardFactoryController.getInstance().deserialize(disabledRecipeTag.getCompound(i));
@@ -436,11 +434,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     return true;
                 }
 
-                final Stream<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty());
+                final List<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
+                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
 
                 building.getColony().getRequestManager().onColonyUpdate(request ->
-                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.anyMatch(delivery::matches));
+                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
             }
             return true;
         }
@@ -926,6 +924,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @NotNull
+    @Deprecated
     public abstract String getId();
 
     @NotNull

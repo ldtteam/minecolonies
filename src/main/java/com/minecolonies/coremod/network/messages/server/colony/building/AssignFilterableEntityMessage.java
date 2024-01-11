@@ -26,9 +26,9 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     private ResourceLocation entity;
 
     /**
-     * The id of the list.
+     * The id of the module.
      */
-    private String id;
+    private int id;
 
     /**
      * Empty standard constructor.
@@ -46,7 +46,7 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
      * @param entity     the entity to assign
      * @param building the building we're executing on.
      */
-    public AssignFilterableEntityMessage(final IBuildingView building, final String id, final ResourceLocation entity, final boolean assign)
+    public AssignFilterableEntityMessage(final IBuildingView building, final int id, final ResourceLocation entity, final boolean assign)
     {
         super(building);
         this.assign = assign;
@@ -57,34 +57,32 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         this.assign = buf.readBoolean();
         this.entity =buf.readResourceLocation();
-        this.id = buf.readUtf(32767);
+        this.id = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         buf.writeBoolean(this.assign);
         buf.writeResourceLocation(this.entity);
-        buf.writeUtf(this.id);
+        buf.writeInt(id);
     }
 
     @Override
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
-        if (building.hasModule(EntityListModule.class))
+        if (building.getModule(id) instanceof EntityListModule module)
         {
             if (assign)
             {
-                building.getModuleMatching(EntityListModule.class, m -> m.getId().equals(id)).addEntity(entity);
+                module.addEntity(entity);
             }
             else
             {
-                building.getModuleMatching(EntityListModule.class, m -> m.getId().equals(id)).removeEntity(entity);
+                module.removeEntity(entity);
             }
         }
     }

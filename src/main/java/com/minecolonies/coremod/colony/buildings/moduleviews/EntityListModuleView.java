@@ -59,7 +59,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @Override
     public void addEntity(final ResourceLocation entity)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, id, entity, true));
+        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, true));
         listOfEntities.add(entity);
     }
 
@@ -78,7 +78,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @Override
     public void removeEntity(final ResourceLocation entity)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, id, entity, false));
+        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, false));
         listOfEntities.remove(entity);
     }
 

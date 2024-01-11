@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -214,9 +212,18 @@ public class CustomRecipeManager
         for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
         {
             // ItemStorage#equals does the actual comparison work for us, here.
-            if (recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
+            if (new ItemStorage(recipe.getPrimaryOutput()).equals(itemStorage))
             {
                 returnList.add(recipe);
+            }
+
+            for (final ItemStack output : recipe.getAltOutputs())
+            {
+                if (new ItemStorage(output).equals(itemStorage))
+                {
+                    returnList.add(recipe);
+                    break;
+                }
             }
         }
         return returnList;
@@ -311,25 +318,29 @@ public class CustomRecipeManager
             }
         }
 
-        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
+        for (final String producerKey : BuildingEntry.getALlModuleProducers().keySet())
         {
-            building.getModuleProducers().stream().map(Supplier::get).forEach(module ->
+            final var module = BuildingEntry.produceModuleWithoutBuilding(producerKey);
+
+            if (module == null)
             {
-                if (module instanceof AnimalHerdingModule herding)
+                continue;
+            }
+
+            if (module instanceof AnimalHerdingModule herding)
+            {
+                for (final Animal animal : animals)
                 {
-                    for (final Animal animal : animals)
+                    if (herding.isCompatible(animal))
                     {
-                        if (herding.isCompatible(animal))
-                        {
-                            lootIds.addAll(herding.getLootTables(animal));
-                        }
+                        lootIds.addAll(herding.getLootTables(animal));
                     }
                 }
-                else if (module instanceof ICraftingBuildingModule crafting)
-                {
-                    lootIds.addAll(crafting.getAdditionalLootTables());
-                }
-            });
+            }
+            else if (module instanceof ICraftingBuildingModule crafting)
+            {
+                lootIds.addAll(crafting.getAdditionalLootTables());
+            }
         }
 
         lootIds.add(ModLootTables.FISHING);

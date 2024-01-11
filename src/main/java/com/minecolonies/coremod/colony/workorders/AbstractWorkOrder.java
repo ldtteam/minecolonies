@@ -220,7 +220,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
                 order = (IWorkOrder) constructor.newInstance();
             }
         }
-        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
             Log.getLogger().trace(e);
         }

@@ -74,7 +74,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
      */
     private void pullResourcesFromHut()
     {
-        final BuildingResourcesModuleView moduleView = builder.getModuleView(BuildingResourcesModuleView.class);
+        final BuildingResourcesModuleView moduleView = builder.getModuleViewByType(BuildingResourcesModuleView.class);
         final Inventory inventory = this.mc.player.getInventory();
         final boolean isCreative = this.mc.player.isCreative();
 
@@ -176,7 +176,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             }
         });
 
-        final BuildingResourcesModuleView moduleView = builder.getModuleView(BuildingResourcesModuleView.class);
+        final BuildingResourcesModuleView moduleView = builder.getModuleViewByType(BuildingResourcesModuleView.class);
 
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));

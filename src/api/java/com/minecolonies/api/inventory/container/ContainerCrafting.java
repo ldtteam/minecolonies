@@ -1,25 +1,21 @@
 package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.inventory.ModContainers;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.ResultContainer;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.Container;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ResultSlot;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +70,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     /**
      * The module id of the container.
      */
-    private final String moduleId;
+    private final int moduleId;
 
     /**
      * Deserialize packet buffer to container instance.
@@ -88,7 +84,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     {
         final boolean complete = packetBuffer.readBoolean();
         final BlockPos tePos = packetBuffer.readBlockPos();
-        final String moduleId = packetBuffer.readUtf(32767);
+        final int moduleId = packetBuffer.readInt();
         return new ContainerCrafting(windowId, inv, complete, tePos, moduleId);
     }
 
@@ -99,7 +95,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param inv      the inventory.
      * @param moduleId the module id.
      */
-    public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final String moduleId)
+    public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final int moduleId)
     {
         super(ModContainers.craftingGrid.get(), windowId);
         this.moduleId = moduleId;
@@ -412,7 +408,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * Getter for the module id.
      * @return the id.
      */
-    public String getModuleId()
+    public int getModuleId()
     {
         return this.moduleId;
     }

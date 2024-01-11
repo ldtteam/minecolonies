@@ -104,7 +104,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
             {
                 final BlockPos grave = moduleView.getGraves().get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, buildingView.getPosition())));
-                final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
+                final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave).getLongText();
                 final BlockEntity entity = world.getBlockEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {
