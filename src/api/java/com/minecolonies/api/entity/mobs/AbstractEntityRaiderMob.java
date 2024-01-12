@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -512,7 +513,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     {
         final LevelChunk chunk = colony.getWorld().getChunk(newChunkPos.x, newChunkPos.z);
         final int owningColonyId = ColonyUtils.getOwningColony(chunk);
-        if (owningColonyId != 0 && colony.getID() != owningColonyId)
+        if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level);
             tempColony.getRaiderManager().setPassThroughRaid();

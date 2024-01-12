@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -550,7 +551,7 @@ public class RaidManager implements IRaiderManager
     private boolean isOtherColony(final int x, final int z)
     {
         final int owningColonyId = ColonyUtils.getOwningColony(colony.getWorld().getChunk(x >> 4, z >> 4));
-        return owningColonyId != 0 && owningColonyId != colony.getID();
+        return owningColonyId != NO_COLONY_ID && owningColonyId != colony.getID();
     }
 
     /**
