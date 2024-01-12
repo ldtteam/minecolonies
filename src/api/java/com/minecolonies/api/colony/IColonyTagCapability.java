@@ -92,7 +92,7 @@ public interface IColonyTagCapability
      *
      * @param colonies the set of colonies.
      */
-    void setCloseColonies(final List<Integer> colonies);
+    void setStaticColonyClaim(final List<Integer> colonies);
 
     /**
      * Get the claiming buildings map.
@@ -167,7 +167,7 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public void setCloseColonies(final List<Integer> colonies)
+        public void setStaticColonyClaim(final List<Integer> colonies)
         {
             this.colonies = new HashSet<>(colonies);
         }
@@ -320,6 +320,10 @@ public interface IColonyTagCapability
 
             // Fill claim buildings list
             NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Tag.TAG_COMPOUND)).forEach(this::readClaims);
+            if (owningColony == NO_COLONY_ID && !getStaticClaimColonies().isEmpty())
+            {
+                owningColony = getStaticClaimColonies().get(0);
+            }
         }
 
         /**

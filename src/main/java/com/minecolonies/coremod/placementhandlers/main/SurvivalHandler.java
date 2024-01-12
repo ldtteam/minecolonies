@@ -11,29 +11,24 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.fields.PlantationField;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.OpenDecoBuildWindowMessage;
 import com.minecolonies.coremod.network.messages.client.OpenPlantationFieldBuildWindowMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
@@ -48,10 +43,6 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -317,8 +308,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final int chunkZ = z >> 4;
                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
 
-                final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-                if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
+                if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
                 {
                     return false;
                 }

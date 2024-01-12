@@ -289,12 +289,12 @@ public interface IRegisteredStructureManager
     boolean canPlaceAt(Block block, BlockPos pos, Player player);
 
     /**
-     * Check if the chunk position it within of the building zone of the colony.
+     * Is this chunk claimed by enough buildings to keep it loaded.
      *
      * @param chunk the chunk to check
      * @return true if within.
      */
-    boolean isWithinBuildingZone(final LevelChunk chunk);
+    boolean keepChunkColonyLoaded(final LevelChunk chunk);
 
     /**
      * Get a house with a spare bed.

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
@@ -55,7 +54,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
@@ -475,16 +473,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public boolean isWithinBuildingZone(final LevelChunk chunk)
+    public boolean keepChunkColonyLoaded(final LevelChunk chunk)
     {
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (cap != null)
-        {
-            final Set<BlockPos> capList = cap.getAllClaimingBuildings().get(colony.getID());
-            return capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get();
-        }
-
-        return false;
+        final Set<BlockPos> capList = ColonyUtils.getAllClaimingBuildings(chunk).get(colony.getID());
+        return capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get();
     }
 
     @Override

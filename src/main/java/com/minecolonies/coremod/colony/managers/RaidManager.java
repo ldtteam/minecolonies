@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -36,6 +35,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
+import com.minecolonies.api.util.ColonyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -53,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
@@ -550,8 +549,8 @@ public class RaidManager implements IRaiderManager
      */
     private boolean isOtherColony(final int x, final int z)
     {
-        final IColonyTagCapability cap = colony.getWorld().getChunk(x >> 4, z >> 4).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-        return cap != null && cap.getOwningColony() != 0 && cap.getOwningColony() != colony.getID();
+        final int owningColonyId = ColonyUtils.getOwningColony(colony.getWorld().getChunk(x >> 4, z >> 4));
+        return owningColonyId != 0 && owningColonyId != colony.getID();
     }
 
     /**

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.client;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.util.ChunkCapData;
+import com.minecolonies.api.util.ChunkCapData;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -62,7 +62,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (cap != null)
                     {
-                        caps.add(new ChunkCapData(chunkX, chunkZ, cap.getOwningColony(), cap.getStaticClaimColonies()));
+                        caps.add(new ChunkCapData(chunkX, chunkZ, cap.getOwningColony(), cap.getStaticClaimColonies(), cap.getAllClaimingBuildings()));
                     }
                 }
             }

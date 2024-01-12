@@ -2,8 +2,8 @@ package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -17,10 +17,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.POS_ARG;
 
 public class CommandShowClaim implements IMCOPCommand
@@ -47,34 +47,29 @@ public class CommandShowClaim implements IMCOPCommand
         }
 
         final LevelChunk chunk = (LevelChunk) level.getChunk(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (cap == null)
-        {
-            context.getSource().sendFailure(Component.literal("No capability for chunk found!"));
-            return 0;
-        }
-
         final BlockPos finalPos = pos;
-        context.getSource().sendSuccess(() -> buildClaimCommandResult(cap, finalPos, level), true);
+        context.getSource().sendSuccess(() -> buildClaimCommandResult(chunk, finalPos, level), true);
         return 1;
     }
 
     /**
      * Creates the feedback text from the given cap
      *
-     * @param cap
+     * @param chunk
      * @param pos
      * @param level
      * @return
      */
-    private MutableComponent buildClaimCommandResult(final IColonyTagCapability cap, final BlockPos pos, final ServerLevel level)
+    private MutableComponent buildClaimCommandResult(final LevelChunk chunk, final BlockPos pos, final ServerLevel level)
     {
         final MutableComponent text = Component.translatable("Claim data of chunk at: %sX %sZ\n", pos.getX(), pos.getZ()).withStyle(ChatFormatting.DARK_AQUA);
 
-        if (!cap.getStaticClaimColonies().isEmpty())
+        final List<Integer> staticColonyClaims = ColonyUtils.getStaticClaims(chunk);
+        final int owningColony = ColonyUtils.getOwningColony(chunk);
+        if (!staticColonyClaims.isEmpty())
         {
-            text.append(Component.translatable("OwnerID:%s Direct colony claims:\n", cap.getOwningColony()).withStyle(ChatFormatting.GOLD));
-            for (int colonyID : cap.getStaticClaimColonies())
+            text.append(Component.translatable("OwnerID:%s Direct colony claims:\n", owningColony).withStyle(ChatFormatting.GOLD));
+            for (int colonyID : staticColonyClaims)
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, level.dimension());
                 if (colony == null)
@@ -88,10 +83,11 @@ public class CommandShowClaim implements IMCOPCommand
             }
         }
 
-        if (!cap.getAllClaimingBuildings().isEmpty())
+        final Map<Integer, Set<BlockPos>> buildingClaims = ColonyUtils.getAllClaimingBuildings(chunk);
+        if (!buildingClaims.isEmpty())
         {
             text.append(Component.translatable("Building claims:\n").withStyle(ChatFormatting.GOLD));
-            for (Map.Entry<Integer, Set<BlockPos>> entry : cap.getAllClaimingBuildings().entrySet())
+            for (Map.Entry<Integer, Set<BlockPos>> entry : buildingClaims.entrySet())
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(entry.getKey(), level.dimension());
                 for (final BlockPos buildingPos : entry.getValue())

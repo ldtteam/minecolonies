@@ -12,6 +12,7 @@ import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -38,15 +39,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 import static com.minecolonies.coremod.MineColonies.getConfig;
-
-import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -289,8 +287,8 @@ public final class ColonyManager implements IColonyManager
             return null;
         }
         final LevelChunk centralChunk = w.getChunkAt(pos);
-        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
-        if (id == 0)
+        final int id = ColonyUtils.getOwningColony(centralChunk);
+        if (id == NO_COLONY_ID)
         {
             return null;
         }
@@ -403,7 +401,7 @@ public final class ColonyManager implements IColonyManager
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
 
-        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
+        final int id = ColonyUtils.getOwningColony(centralChunk);
         if (id == 0)
         {
             return null;
@@ -428,35 +426,10 @@ public final class ColonyManager implements IColonyManager
         }
 
         final LevelChunk chunk = w.getChunkAt(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (cap == null)
+        final int owningColony = ColonyUtils.getOwningColony(chunk);
+        if (owningColony != NO_COLONY_ID)
         {
-            return null;
-        }
-
-        if (cap.getOwningColony() != 0)
-        {
-            return getColonyView(cap.getOwningColony(), w.dimension());
-        }
-        else if (!cap.getStaticClaimColonies().isEmpty())
-        {
-            @Nullable IColonyView closestColony = null;
-            long closestDist = Long.MAX_VALUE;
-
-            for (final int cId : cap.getStaticClaimColonies())
-            {
-                final IColonyView c = getColonyView(cId, w.dimension());
-                if (c != null && c.getDimension() == w.dimension())
-                {
-                    final long dist = c.getDistanceSquared(pos);
-                    if (dist < closestDist)
-                    {
-                        closestColony = c;
-                        closestDist = dist;
-                    }
-                }
-            }
-            return closestColony;
+            return getColonyView(owningColony, w.dimension());
         }
 
         @Nullable IColonyView closestColony = null;
@@ -485,35 +458,10 @@ public final class ColonyManager implements IColonyManager
     public IColony getClosestColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk chunk = w.getChunkAt(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (cap == null)
+        final int owningColony = ColonyUtils.getOwningColony(chunk);
+        if (owningColony != NO_COLONY_ID)
         {
-            return null;
-        }
-
-        if (cap.getOwningColony() != 0)
-        {
-            return getColonyByWorld(cap.getOwningColony(), w);
-        }
-        else if (!cap.getStaticClaimColonies().isEmpty())
-        {
-            @Nullable IColony closestColony = null;
-            long closestDist = Long.MAX_VALUE;
-
-            for (final int cId : cap.getStaticClaimColonies())
-            {
-                final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension() == w.dimension())
-                {
-                    final long dist = c.getDistanceSquared(pos);
-                    if (dist < closestDist)
-                    {
-                        closestColony = c;
-                        closestDist = dist;
-                    }
-                }
-            }
-            return closestColony;
+            return getColonyByWorld(owningColony, w);
         }
 
         @Nullable IColony closestColony = null;
@@ -868,7 +816,7 @@ public final class ColonyManager implements IColonyManager
     public boolean isCoordinateInAnyColony(@NotNull final Level world, final BlockPos pos)
     {
         final LevelChunk centralChunk = world.getChunkAt(pos);
-        return centralChunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0) != 0;
+        return ColonyUtils.getOwningColony(centralChunk) != NO_COLONY_ID;
     }
 
     @Override

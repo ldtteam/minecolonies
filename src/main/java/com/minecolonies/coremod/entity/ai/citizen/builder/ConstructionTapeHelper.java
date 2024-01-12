@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
-import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.api.util.ColonyUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;

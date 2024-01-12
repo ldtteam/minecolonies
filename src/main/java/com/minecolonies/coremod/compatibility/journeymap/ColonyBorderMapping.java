@@ -3,9 +3,9 @@ package com.minecolonies.coremod.compatibility.journeymap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.ColonyUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import journeymap.client.api.display.Context;
@@ -18,7 +18,6 @@ import journeymap.client.api.util.PolygonHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
@@ -30,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -122,7 +120,7 @@ public class ColonyBorderMapping
         if (dimensionOverlays == null) return;  // not ready yet
 
         boolean changed = false;
-        final int id = getOwningColonyForChunk(chunk);
+        final int id = ColonyUtils.getOwningColony(chunk);
         if (id == 0)
         {
             for (final Map<Integer, ColonyBorderOverlay> overlayMap : overlays.values())
@@ -160,16 +158,6 @@ public class ColonyBorderMapping
         {
             colonyEntry.getValue().updatePending(jmap, dimension, colonyEntry.getKey(), colonyManager);
         }
-    }
-
-    private static int getOwningColonyForChunk(@NotNull final LevelChunk chunk)
-    {
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP).resolve().orElse(null);
-        if (cap == null || cap.getOwningColony() < 1)
-        {
-            return 0;
-        }
-        return cap.getOwningColony();
     }
 
     /** Overlay tracking information for one entire colony */
