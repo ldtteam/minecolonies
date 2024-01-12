@@ -59,6 +59,11 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
       recruitAnswer,
       new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.notnow"), null)};
 
+    /**
+     * Chance for a bad visitor
+     */
+    private static final int BAD_VISITOR_CHANCE = 2;
+
     public RecruitmentInteraction(final ICitizen data)
     {
         super(data);
@@ -158,7 +163,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     data.setHomeBuilding(null);
                     data.setJob(null);
 
-                    if (colony.getWorld().random.nextInt(100) <= 2)
+                    if (colony.getWorld().random.nextInt(100) <= BAD_VISITOR_CHANCE)
                     {
                         MessageUtils.format(MESSAGE_RECRUITMENT_RAN_OFF, data.getName()).sendTo(colony).forAllPlayers();
                         return;

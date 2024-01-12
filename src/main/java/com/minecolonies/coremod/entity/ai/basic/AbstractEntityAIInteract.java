@@ -102,6 +102,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     protected int pathBackupFactor = 1;
 
     /**
+     * Block mining delay base
+     */
+    public static final int BLOCK_MINING_DELAY = 500;
+
+    /**
      * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
@@ -312,7 +317,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         }
 
         return MineColonies.getConfig().getServer().pvp_mode.get()
-                 ? 250
+                 ? BLOCK_MINING_DELAY / 2
                  : calculateWorkerMiningDelay(state, pos);
     }
 
@@ -327,10 +332,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     {
         final double reduction = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_BREAK_SPEED);
 
-        return (int) (((500 * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
+        return (int) (((BLOCK_MINING_DELAY * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
                          * (double) world.getBlockState(pos).getDestroySpeed(world, pos) / (double) (worker.getMainHandItem()
-                                                                                                        .getItem()
-                                                                                                        .getDestroySpeed(worker.getMainHandItem(), state)))
+          .getItem()
+          .getDestroySpeed(worker.getMainHandItem(), state)))
                         * reduction);
     }
 

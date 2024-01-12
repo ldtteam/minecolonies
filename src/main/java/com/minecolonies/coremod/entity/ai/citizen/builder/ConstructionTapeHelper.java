@@ -45,7 +45,7 @@ public final class ConstructionTapeHelper
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(), world, (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
-            placeConstructionTape(corners, world, colony);
+            placeConstructionTape(corners, colony);
         })));
     }
 
@@ -53,14 +53,16 @@ public final class ConstructionTapeHelper
      * Calculates the borders for the workOrderBuildDecoration and sends it to the placement.
      *
      * @param building the building.
-     * @param world     the world.
+     * @param world    the world.
      */
-    public static void placeConstructionTape(@NotNull final IBuilding building, @NotNull final Level world)
+    public static void placeConstructionTape(@NotNull final IBuilding building)
     {
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(), building.getBlueprintPath()), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(building.getPosition(), world, blueprint, building.getRotation(), building.isMirrored());
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(),
+          building.getBlueprintPath()), building.getColony().getWorld(), (blueprint -> {
+            final Tuple<BlockPos, BlockPos> corners =
+              ColonyUtils.calculateCorners(building.getPosition(), building.getColony().getWorld(), blueprint, building.getRotation(), building.isMirrored());
             building.setCorners(corners.getA(), corners.getB());
-            placeConstructionTape(corners, world, building.getColony());
+            placeConstructionTape(corners, building.getColony());
         })));
     }
 
@@ -70,12 +72,14 @@ public final class ConstructionTapeHelper
      * @param orgCorners the corner positions.
      * @param world   the world.
      */
-    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final Level world, final IColony colony)
+    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, final IColony colony)
     {
         if (colony instanceof Colony && !((Colony) colony).getSettings().getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue())
         {
             return;
         }
+
+        final Level world = colony.getWorld();
 
         final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().offset(-1, 0, -1), orgCorners.getB().offset(1, 0, 1));
         final BlockState constructionTape = ModBlocks.blockConstructionTape.defaultBlockState();

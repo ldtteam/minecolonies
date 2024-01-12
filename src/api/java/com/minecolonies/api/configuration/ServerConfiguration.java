@@ -73,7 +73,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Combat Settings ######## ------------------- *
      *  ------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue enablecolonyraids;
+    public final ForgeConfigSpec.BooleanValue enableColonyRaids;
     public final ForgeConfigSpec.IntValue     raidDifficulty;
     public final ForgeConfigSpec.IntValue     maxRaiders;
     public final ForgeConfigSpec.BooleanValue raidersbreakblocks;
@@ -177,7 +177,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "combat");
 
-        enablecolonyraids = defineBoolean(builder, "dobarbariansspawn", true);
+        enableColonyRaids = defineBoolean(builder, "dobarbariansspawn", true);
         raidDifficulty = defineInteger(builder, "barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
         maxRaiders = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         raidersbreakblocks = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);

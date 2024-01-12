@@ -167,7 +167,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public void onStart()
     {
         status = EventStatus.PREPARING;
-        daysToGo = 3;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
           "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {

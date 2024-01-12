@@ -704,7 +704,7 @@ public class RaidManager implements IRaiderManager
     public boolean canRaid(final boolean override)
     {
         return !WorldUtil.isPeaceful(colony.getWorld())
-                 && (MineColonies.getConfig().getServer().enablecolonyraids.get() || override)
+                 && (MineColonies.getConfig().getServer().enableColonyRaids.get() || override)
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }
