@@ -81,8 +81,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     minimumNumberOfNightsBetweenRaids;
     public final ForgeConfigSpec.BooleanValue raidersbreakdoors;
     public final ForgeConfigSpec.BooleanValue mobAttackCitizens;
-    public final ForgeConfigSpec.DoubleValue  rangerDamageMult;
-    public final ForgeConfigSpec.DoubleValue  knightDamageMult;
+    public final ForgeConfigSpec.DoubleValue  guardDamageMultiplier;
     public final ForgeConfigSpec.DoubleValue  guardHealthMult;
     public final ForgeConfigSpec.BooleanValue pvp_mode;
 
@@ -185,8 +184,7 @@ public class ServerConfiguration extends AbstractConfiguration
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 10, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         raidersbreakdoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
-        rangerDamageMult = defineDouble(builder, "rangerdamagemult", 1.0, 0.1, 5.0);
-        knightDamageMult = defineDouble(builder, "knightdamagemult", 1.0, 0.1, 5.0);
+        guardDamageMultiplier = defineDouble(builder, "guardDamageMultiplier", 1.0, 0.1, 15.0);
         guardHealthMult = defineDouble(builder, "guardhealthmult", 1.0, 0.1, 5.0);
         pvp_mode = defineBoolean(builder, "pvp_mode", false);
 
