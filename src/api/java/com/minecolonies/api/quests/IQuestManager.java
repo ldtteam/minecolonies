@@ -103,4 +103,10 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @return the list of quest templates, and how often they've been completed.
      */
     List<FinishedQuest> getFinishedQuests();
+
+    /**
+     * Inject an available quest manually.
+     * @param questInstance the quest instance to inject.
+     */
+    void injectAvailableQuest(IQuestInstance questInstance);
 }

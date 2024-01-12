@@ -101,8 +101,6 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
         registerButton(BUTTON_PATREON, this::patreonClicked);
-        registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
-
 
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
@@ -118,33 +116,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         this.initialNamePackIndex = nameStyleDropDownList.getSelectedIndex();
 
         checkFeatureUnlock();
-
-        if (!building.getColony().isPrintingProgress())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setText(Component.translatable(OFF_STRING));
-        }
     }
 
-
-    /**
-     * Toggles printing progress.
-     *
-     * @param button the button to toggle.
-     */
-    private void togglePrintProgress(@NotNull final Button button)
-    {
-        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
-
-        if (key.equals(OFF_STRING))
-        {
-            button.setText(Component.translatable(ON_STRING));
-        }
-        else
-        {
-            button.setText(Component.translatable(OFF_STRING));
-        }
-        Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
-    }
 
     /**
      * Switch the structure style pack.

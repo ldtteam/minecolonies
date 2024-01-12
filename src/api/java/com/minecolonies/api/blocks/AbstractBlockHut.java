@@ -297,7 +297,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             if (colony != null)
             {
                 colony.getBuildingManager().addNewBuilding(hut, worldIn);
-                colony.getProgressManager().progressBuildingPlacement(this);
             }
         }
     }

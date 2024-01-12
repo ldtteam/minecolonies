@@ -18,6 +18,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -32,10 +33,13 @@ import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
+import com.minecolonies.coremod.quests.QuestInstance;
+import com.minecolonies.coremod.quests.triggers.CitizenTriggerReturnData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -299,9 +303,6 @@ public class CitizenManager implements ICitizenManager
         world.addFreshEntity(entity);
 
         entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
-
-        colony.getProgressManager()
-          .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
         markDirty();
         return citizenData;
     }
@@ -584,7 +585,13 @@ public class CitizenManager implements ICitizenManager
                 {
                     femaleCount += citizens.isFemale() ? 1 : 0;
                 }
+
+                final boolean firstCitizen = getCitizens().size() == 0;
                 final ICitizenData newCitizen = createAndRegisterCivilianData();
+                if (firstCitizen)
+                {
+                    colony.getQuestManager().injectAvailableQuest(new QuestInstance(new ResourceLocation(MOD_ID, "tutorial/welcome"), colony, List.of(new CitizenTriggerReturnData(newCitizen))));
+                }
 
                 // For first citizen, give a random chance of male or female.
                 if (getCitizens().size() == 1)

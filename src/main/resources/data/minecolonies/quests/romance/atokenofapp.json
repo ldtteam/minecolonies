@@ -1,7 +1,7 @@
 {
   "name": "A Token of Appreciation",
   "parents": [
-    "minecolonies:aromanticgesture"
+    "minecolonies:romance/aromanticgesture"
   ],
   "max-occurrences": 1,
   "triggers": [
@@ -14,7 +14,7 @@
       "state": {
         "match": {
           "finpartquests": [
-            "aromanticgesture"
+            "minecolonies:romance/aromanticgesture"
           ]
         }
       }

@@ -513,7 +513,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         colony.getWorkManager().addWorkOrder(workOrder, false);
-        colony.getProgressManager().progressWorkOrderPlacement(workOrder);
 
         if (workOrder.getID() != 0)
         {
@@ -973,7 +972,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
-        colony.getProgressManager().progressBuildBuilding(this);
         calculateCorners();
         this.isBuilt = true;
 

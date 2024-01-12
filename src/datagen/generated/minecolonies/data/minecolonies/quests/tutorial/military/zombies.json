@@ -1,0 +1,105 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.tutorial.military.zombies",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.zombies.obj0.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.zombies.obj0.answer1",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.zombies.obj0"
+    },
+    {
+      "type": "minecolonies:killentity",
+      "details": {
+        "entity-type": "minecraft:zombie",
+        "next-objective": 2,
+        "qty": 10,
+        "target": 0
+      },
+      "unlocks-rewards": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.zombies.obj2.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.zombies.obj2"
+    }
+  ],
+  "parents": [
+    "minecolonies:tutorial/military/torches"
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_chestplate",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_boots",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_helmet",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:leather_leggings",
+        "qty": 1
+      }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finavquests": [
+            "minecolonies:tutorial/military/torches"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {}
+    }
+  ]
+}

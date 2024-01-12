@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
@@ -136,28 +135,17 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     public void onWindowOpened(final BOWindow window, final ICitizenDataView dataView)
     {
         final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level.dimension());
-
         if (colony != null)
         {
             final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
             if (request != null)
             {
-                final View group = window.findPaneOfTypeByID("interactionView", View.class);
-                ItemIcon icon = window.findPaneOfTypeByID("request_item", ItemIcon.class);
-                if (icon == null)
-                {
-                    icon = new ItemIcon();
-                    group.addChild(icon);
-                }
-
-                icon.setID("request_item");
-                icon.setSize(32, 32);
+                ItemIcon icon = window.findPaneOfTypeByID("requestItem", ItemIcon.class);
                 if (!request.getDisplayStacks().isEmpty())
                 {
                     icon.setItem((request.getDisplayStacks().get(0)));
                 }
-                icon.setPosition(30, 60);
-                icon.setVisible(true);
+                icon.show();
             }
         }
     }

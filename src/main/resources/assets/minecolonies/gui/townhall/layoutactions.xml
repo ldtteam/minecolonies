@@ -21,12 +21,6 @@
     <buttonimage id="mercenaries" size="129 17" pos="110 136"  textcolor="black"
                  label="$(com.minecolonies.coremod.gui.townhall.mercenary)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_merc.png"/>
 
-    <label id="printProgress" label="$(com.minecolonies.coremod.gui.townhall.printprogress)" pos="100 199" size="148 11" color="black"/>
-    <buttonimage id="togglePrintProgress" size="28 17" pos="205 196" label="$(com.minecolonies.coremod.gui.townhall.on)" textcolor="black"
-                 tooltip="$(com.minecolonies.coremod.gui.townhall.printprogress.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
-
-
-
     <!-- Visual Changes, Right Side -->
 
     <label label="$(com.minecolonies.coremod.gui.townhall.visual)" textalign="MIDDLE" pos="280 35" size="129 11" color="black"/>

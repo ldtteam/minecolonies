@@ -290,8 +290,6 @@ public interface IColony
 
     IColonyPackageManager getPackageManager();
 
-    IProgressManager getProgressManager();
-
     /**
      * Add a visiting player.
      *

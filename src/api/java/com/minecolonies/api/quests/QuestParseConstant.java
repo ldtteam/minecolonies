@@ -34,6 +34,7 @@ public class QuestParseConstant
     public static final String BUILDING_KEY = "type";
     public static final String STATE_ID = "state";
     public static final String MATCH_ID = "match";
+    public static final String NOT_MATCH_ID = "notmatch";
     public static final String COUNT_ID = "count";
     public static final String PATH_ID = "path";
     public static final String RARITY_ID = "rarity";
