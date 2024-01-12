@@ -872,6 +872,7 @@
   "com.minecolonies.coremod.item.scroll.wrong_building": "Cannot link resource scroll to %s at %s",
   "com.minecolonies.coremod.item.scroll.wrong_colony": "Cannot link resource scroll to warehouse in another colony.",
   "com.minecolonies.coremod.item.scroll.no_builder": "§oNo Builder",
+  "com.minecolonies.coremod.item.scroll.snapshot": "Snapshot of resources in the warehouse has been saved.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
 
