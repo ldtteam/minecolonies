@@ -54,7 +54,7 @@ public final class BackUpHelper
     /**
      * Maximum amount of backup zips
      */
-    private static final int MAX_BACKUPS       = 20;
+    private static final int MAX_BACKUPS = 20;
 
     /**
      * Last backup timer before the next is allowed
@@ -459,6 +459,7 @@ public final class BackUpHelper
 
     /**
      * Reclaims chunks for a colony
+     *
      * @param colony
      */
     public static void reclaimChunks(final IColony colony)
