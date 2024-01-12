@@ -13,6 +13,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.ChatFormatting;
@@ -238,34 +239,38 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final CompoundTag compound = scroll.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
+        if (ctx.getLevel().isClientSide)
         {
-            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
+            if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
             {
-                compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
-                BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
-
-                if (!ctx.getLevel().isClientSide)
-                {
-                    MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
-                }
-            }
-            else if (buildingEntity instanceof TileEntityWareHouse)
-            {
-                if (ctx.getLevel().isClientSide)
+                if (buildingEntity instanceof TileEntityWareHouse)
                 {
                     updateWarehouseSnapshot(buildingEntity.getTilePos(), compound, ctx.getPlayer());
                 }
             }
             else
             {
+                openWindow(compound, ctx.getPlayer());
+            }
+        }
+        else if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
+        {
+            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
+            {
+                compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
+                BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
+
+                MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+            }
+            else if (buildingEntity.getBuilding() instanceof BuildingWareHouse)
+            {
+                MessageUtils.format(COM_MINECOLONIES_SCROLL_SNAPSHOT).sendTo(ctx.getPlayer());
+            }
+            else
+            {
                 final MutableComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
-        }
-        else if (ctx.getLevel().isClientSide)
-        {
-            openWindow(compound, ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;
