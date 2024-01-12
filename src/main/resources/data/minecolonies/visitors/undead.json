@@ -1,0 +1,10 @@
+{
+  "texture": "7f967b9f-6a74-421b-bc64-b029af7519bc",
+  "citizensuffix": "_b",
+  "name": "Undead",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.undead",
+  "recruitcost": "minecraft:jack_o_lantern",
+  "recruitcostcount": 8,
+  "gender": "male"
+}
