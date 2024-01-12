@@ -392,13 +392,6 @@ public interface IColonyView extends IColony
      */
     List<BlockPos> getLastSpawnPoints();
 
-    /**
-     * Get if progress should be printed.
-     *
-     * @return true if so.
-     */
-    boolean isPrintingProgress();
-
     @Override
     boolean isRemote();
 

@@ -6,12 +6,12 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
+import com.minecolonies.api.util.constant.ColonyConstants;
 
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.api.quests.QuestParseConstant.MATCH_ID;
-import static com.minecolonies.api.quests.QuestParseConstant.STATE_ID;
+import static com.minecolonies.api.quests.QuestParseConstant.*;
 
 /**
  * Random quest trigger.
@@ -21,15 +21,28 @@ public class CitizenQuestTriggerTemplate implements IQuestTriggerTemplate
     /**
      * The tag we are trying to match.
      */
-    public final JsonElement matchTag;
+    public JsonElement matchTag = null;
+
+    /**
+     * The tag we are trying to NOT match.
+     */
+    public JsonElement notMatchTag = null;
 
     /**
      * Create a new state quest trigger.
-     * @param match the state to match.
+     * @param tag the state to match.
      */
-    public CitizenQuestTriggerTemplate(final JsonElement match)
+    public CitizenQuestTriggerTemplate(final JsonObject tag)
     {
-        this.matchTag = match;
+        if (tag.has(MATCH_ID))
+        {
+            this.matchTag = tag.get(MATCH_ID);
+        }
+
+        if (tag.has(NOT_MATCH_ID))
+        {
+            this.notMatchTag = tag.get(NOT_MATCH_ID);
+        }
     }
 
     /**
@@ -39,20 +52,36 @@ public class CitizenQuestTriggerTemplate implements IQuestTriggerTemplate
     public static CitizenQuestTriggerTemplate createStateTrigger(final JsonObject questTriggerJson)
     {
         final JsonObject subObj = questTriggerJson.get(STATE_ID).getAsJsonObject();
-        return new CitizenQuestTriggerTemplate(subObj.get(MATCH_ID));
+        return new CitizenQuestTriggerTemplate(subObj);
     }
 
     @Override
     public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
         final List<ICitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
+        if (matchTag == null && notMatchTag == null)
+        {
+            if (citizenDataList.isEmpty())
+            {
+                return new CitizenTriggerReturnData(null);
+            }
+            return new CitizenTriggerReturnData(citizenDataList.get(ColonyConstants.rand.nextInt(citizenDataList.size())));
+        }
+
         Collections.shuffle(citizenDataList);
         for (final ICitizenData data : citizenDataList)
         {
-            if (IQuestTriggerTemplate.matchNbt(data.serializeNBT(), matchTag))
+            if (matchTag != null && !IQuestTriggerTemplate.matchNbt(data.serializeNBT(), matchTag))
             {
-                return new CitizenTriggerReturnData(data);
+                continue;
             }
+
+            if (notMatchTag != null && IQuestTriggerTemplate.matchNbt(data.serializeNBT(), notMatchTag))
+            {
+                continue;
+            }
+            return new CitizenTriggerReturnData(data);
+
         }
         return new CitizenTriggerReturnData(null);
     }

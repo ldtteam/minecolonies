@@ -1,0 +1,251 @@
+{
+  "name": "Welcome",
+  "max-occurrences": 1,
+  "parents": [],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hello there! I just arrived here and wondered if you wish any guidance setting up the colony?",
+      "options": [
+        {
+          "answer": "Yes please!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "So let's start by picking a style for your colony first! You can pick a unique style for your colony by going to your Town Hall and right clicking the block. This is the main page. Now, on the right hand side, click the button next to 'Colony Pack' to select your colony style.",
+            "options": [
+              {
+                "answer": "Alright! Let me get to it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "I already picked a style!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Okay great. Next, I suggest you to browse the Build Tool to find different buildings you can build. With the Build Tool in your hand, right click on the ground, try to locate the Builder's Hut, then come back to me!",
+                  "options": [
+                    {
+                      "answer": "Okay, let me do that!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    },
+                    {
+                      "answer": "Okay, I'll do that again!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, but not now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I'm a Colony Master! You underestimate my power!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi! Did you choose a colony style already?",
+      "options": [
+        {
+          "answer": "No, I forgot what I had to do!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "No Problem! You can pick a unique style for your colony by going to your Town Hall and right clicking the block. This is the main page. Now, on the right hand side, click the button next to 'Colony Pack' to select your colony style.",
+            "options": [
+              {
+                "answer": "Thanks! Let me check again!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, all done, what is next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Okay great. Next, I suggest you browse the Build Tool a little bit. With the Build Tool in your hand, right click on the ground, try to locate the Builder's Hut, then come back to me!",
+            "options": [
+              {
+                "answer": "Okay, let me do that!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              },
+              {
+                "answer": "Okay, I'll do that again!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back! Were you able to navigate the Build Tool?",
+      "options": [
+        {
+          "answer": "Yes; mission accomplished!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Awesome! Then, before placing it, we first have to craft a Builder's Hut hut block. Just surround a door with planks in the crafting table and put the Build Tool in the middle top slot. Come back to me after you have crafted the hut block!",
+            "options": [
+              {
+                "answer": "Alright! Let me get to it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 3
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "No, what did I have to do again?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Skill is the child of patience. Browse the Build Tool a little bit. With the Build Tool in your hand, right click on the ground, try to locate the Builder's Hut, then come back to me!",
+            "options": [
+              {
+                "answer": "Sure! I'll try!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, but I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back! Did you craft the hut block already?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! Just surround a door with planks in the crafting table and put the Build Tool in the top slot.",
+            "options": [
+              {
+                "answer": "Alright! Let me get to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, all done. What's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Perfect! The next step is placing it with the help of the Build Tool. Right click the Build Tool on the ground. Navigate to the Builder's Hut (typically in the fundamentals category) and click on Builder's Hut. Then, you can select a level to preview and in some cases also different alternatives. Use the arrow buttons to adjust the position, rotation, and mirroring. Finally, click the checkmark to place it.",
+            "options": [
+              {
+                "answer": "Alrighty then! Let me check this out!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 4
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:placeblock",
+      "details": {
+        "target": 0,
+        "block": "minecolonies:blockhutbuilder",
+        "qty": 1,
+        "next-objective": 5
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Perfect! The building is placed, and a worker will start working there soon. Take this quest log and shift+right-click it on any of the hut blocks in the colony to stay updated with the next steps!",
+      "options": [
+        {
+          "answer": "Pefect! Thanks!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 6
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:questlog",
+        "qty": 1
+      }
+    }
+  ]
+}

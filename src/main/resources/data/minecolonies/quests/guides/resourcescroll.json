@@ -1,7 +1,9 @@
 {
   "name": "Best Builders Tool",
   "max-occurrences": 1,
-  "parents": [],
+  "parents": [
+    "minecolonies:tutorial/welcome"
+  ],
   "triggers": [
     {
       "type": "minecolonies:state",

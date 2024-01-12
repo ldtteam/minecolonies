@@ -1090,7 +1090,8 @@ public final class WindowConstants
     public static final int    SLIGHTLY_BLUE           = 100;
     public static final int    BUTTON_HEIGHT           = 17;
     public static final int    BUTTON_LENGTH           = 129;
-    public static final int    BUTTON_BUFFER           = 3;
+    public static final int    BUTTON_Y_BUFFER           = 3;
+    public static final int    BUTTON_X_BUFFER           = 10;
     public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
     public static final String MEDIUM_SIZED_BUTTON_DIS = "textures/gui/builderhut/builder_button_medium_large_disabled.png";

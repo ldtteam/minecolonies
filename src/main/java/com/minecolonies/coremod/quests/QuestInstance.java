@@ -69,7 +69,7 @@ public class QuestInstance implements IQuestInstance
      * @param colony the colony it belongs to.
      * @param triggerReturnData the trigger return data that made this quest available.
      */
-    protected QuestInstance(final ResourceLocation questTemplateID, final IColony colony, final List<ITriggerReturnData<?>> triggerReturnData)
+    public QuestInstance(final ResourceLocation questTemplateID, final IColony colony, final List<ITriggerReturnData<?>> triggerReturnData)
     {
         this.colony = colony;
         this.questTemplateID = questTemplateID;

@@ -82,7 +82,16 @@ import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.
  */
 public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractAISkeleton<J>
 {
-    // /execute in minecraft:the_end run tp @a 1 150 10000
+    /**
+     * The returned slot if a slot hasn't been found.
+     */
+    private static final int TOOL_NOT_FOUND = -1;
+
+    /**
+     * The returned slot if a slot hasn't been found.
+     */
+    private static final int NO_TOOL = -10;
+
     /**
      * The standard delay after each terminated action.
      */
@@ -1214,6 +1223,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, bestSlot);
             return true;
         }
+        else if (bestSlot == NO_TOOL)
+        {
+            worker.getCitizenData().setIdleAtJob(false);
+            worker.getCitizenItemHandler().removeHeldItem();
+            return true;
+        }
         requestTool(target, pos);
         return false;
     }
@@ -1271,11 +1286,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (toolType == ToolType.NONE)
         {
-            final int heldSlot = worker.getInventoryCitizen().getHeldItemSlot(InteractionHand.MAIN_HAND);
-            return heldSlot >= 0 ? heldSlot : 0;
+            return NO_TOOL;
         }
 
-        int bestSlot = -1;
+        int bestSlot = TOOL_NOT_FOUND;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();

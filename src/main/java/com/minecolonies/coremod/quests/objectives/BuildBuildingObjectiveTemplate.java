@@ -139,32 +139,32 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     {
         super.startObjective(colonyQuest);
 
+        final IObjectiveInstance instance = createObjectiveInstance();
         if (countExisting)
         {
-            checkInitialObjectiveProgress(colonyQuest);
-            final IObjectiveInstance progressToNext = advanceIfFinished(colonyQuest);
-            if (progressToNext != null)
+            checkInitialObjectiveProgress(colonyQuest, instance);
+            if (instance.isFulfilled())
             {
-                return progressToNext;
+                return colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
             }
         }
 
         if (colonyQuest.getColony() instanceof Colony)
         {
-            // Only serverside cleanup.
             colonyQuest.getColony().getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
         }
-        return createObjectiveInstance();
+        return instance;
     }
 
     /**
      * Upon start, we want to check if the necessary buildings already exist.
      *
      * @param colonyQuest the quest instance.
+     * @param localInstance the local instance to adjust if necessary.
      */
-    private void checkInitialObjectiveProgress(final IQuestInstance colonyQuest)
+    private void checkInitialObjectiveProgress(final IQuestInstance colonyQuest, final IObjectiveInstance localInstance)
     {
-        if (colonyQuest.getCurrentObjectiveInstance() instanceof BuildingProgressInstance progressInstance)
+        if (localInstance instanceof BuildingProgressInstance progressInstance)
         {
             if (qty > 0)
             {
@@ -195,15 +195,16 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
      * @param colonyQuest the quest instance.
      * @return the next quest or null if not finished.
      */
-    private IObjectiveInstance advanceIfFinished(final IQuestInstance colonyQuest)
+    private boolean advanceIfFinished(final IQuestInstance colonyQuest)
     {
         final IObjectiveInstance objective = colonyQuest.getCurrentObjectiveInstance();
         if (objective instanceof BuildingProgressInstance progressInstance && progressInstance.isFulfilled())
         {
             cleanupListener(colonyQuest);
-            return colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
+            colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
+            return true;
         }
-        return null;
+        return false;
     }
 
     /**
@@ -253,7 +254,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
     public void onWorldLoad(final IQuestInstance colonyQuest)
     {
         super.onWorldLoad(colonyQuest);
-        if (colonyQuest.getColony() instanceof Colony colony && advanceIfFinished(colonyQuest) == null)
+        if (colonyQuest.getColony() instanceof Colony colony && !advanceIfFinished(colonyQuest))
         {
             colony.getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
         }

@@ -1,0 +1,182 @@
+{
+  "name": "Gathering Wood",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/tavern"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finavquests": [
+            "minecolonies:tutorial/tavern"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hello my friend! I see you got the tavern up and running. I think this is a good time to get a Forester to make sure your colony produces enough Wood!",
+      "options": [
+        {
+          "answer": "Yes sure!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Nice, so as usual we start by crafting the Forester hut block. In the crafting bench, surround a wooden or stone axe with planks and put the Build Tool in the top. Come back to me once you've done that!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! Then it's time to place the Forester with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, were you able to craft the Forester hut block?",
+      "options": [
+        {
+          "answer": "No, I forgot the recipe!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "A great leap forward often requires taking two steps back! In the crafting bench, surround a wooden or stone axe with planks and put the Build Tool in the top.",
+            "options": [
+              {
+                "answer": "Alright! I'll get back to it!",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, done, what's next?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Alrighty then! Then it's time to place the Forester with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+            "options": [
+              {
+                "answer": "Consider it done!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I already finished building the Forester!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are already done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Awesome!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not yet, I will get to it later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:lumberjack",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Neat, soon your colony will be mostly autonomous on wood. Make sure to check in on your forester now and then to make sure they got the tools they need and you can grow some different types of trees around the hut to get different types of logs, Come back in a bit and I'll help you with the next steps! Here, have some torches, those will sure come in handy!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:torch",
+        "qty": 32
+      }
+    }
+  ]
+}

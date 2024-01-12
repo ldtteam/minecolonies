@@ -19,7 +19,6 @@ import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.ON_STRING;
@@ -104,8 +103,6 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
         registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
-        registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
-
 
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
@@ -125,11 +122,6 @@ public class WindowMainPage extends AbstractWindowTownHall
         if (building.getColony().isManualHiring())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-        }
-
-        if (!building.getColony().isPrintingProgress())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setText(Component.translatable(OFF_STRING));
         }
 
         if (building.getColony().isManualHousing())
@@ -210,26 +202,6 @@ public class WindowMainPage extends AbstractWindowTownHall
             toggle = false;
         }
         Network.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
-    }
-
-    /**
-     * Toggles printing progress.
-     *
-     * @param button the button to toggle.
-     */
-    private void togglePrintProgress(@NotNull final Button button)
-    {
-        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
-
-        if (key.equals(OFF_STRING))
-        {
-            button.setText(Component.translatable(ON_STRING));
-        }
-        else
-        {
-            button.setText(Component.translatable(OFF_STRING));
-        }
-        Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
     }
 
     /**
