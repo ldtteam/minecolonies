@@ -158,7 +158,7 @@
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Neat, soon your miner will start bringing in all kinds of stones and ores, just make sure that you provide them the necessary tools and materials. The miner will first dog down and build a shaft structure for which they will require some material. Later they will also expand horizontally.",
+      "text": "Neat, soon your miner will start bringing in all kinds of stones and ores, just make sure that you provide them the necessary tools and materials. The miner will first dig down and build a shaft structure for which they will require some material. Later they will also expand horizontally.",
       "options": [
         {
           "answer": "Yay!",

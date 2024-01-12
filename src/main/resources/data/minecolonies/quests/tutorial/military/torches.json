@@ -14,7 +14,7 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Hello! I see your colony is growing. However, it is quite of dangerous around here. How about you light the area up a little bit to avoid monsters prying on your citizens?",
+      "text": "Hello! I see your colony is growing. However, it is quite dangerous around here. How about you light the area up a little bit to avoid monsters prying on your citizens?",
       "options": [
         {
           "answer": "Sounds like a good idea!!",
