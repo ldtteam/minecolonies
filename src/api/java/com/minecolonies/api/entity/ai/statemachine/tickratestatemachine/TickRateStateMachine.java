@@ -5,10 +5,8 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import org.jetbrains.annotations.NotNull;
 
-import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 /**
@@ -22,19 +20,9 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     public static double slownessFactor = 1.0D;
 
     /**
-     * Counter keeping track of ticks
-     */
-    private int tickCounter = 0;
-
-    /**
-     * The rate the statemachine currently ticks at. Sets the amount of ticks - 1 which are skipped.
+     * The rate the statemachine currently expects to be ticked at.
      */
     private int tickRate = 1;
-
-    /**
-     * The counter for the statemachine's tickrate.
-     */
-    private int tickRateCounter = 0;
 
     /**
      * Currently used transition
@@ -68,18 +56,23 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     }
 
     /**
+     * Construct a new StateMachine
+     *
+     * @param exceptionHandler the exception handler.
+     * @param initialState     the initial state.
+     */
+    public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler, final int tickRate)
+    {
+        this(initialState, exceptionHandler);
+        setTickRate(tickRate);
+    }
+
+    /**
      * Tick the statemachine.
      */
     @Override
     public void tick()
     {
-        if (tickRateCounter > 1)
-        {
-            tickRateCounter--;
-            return;
-        }
-        tickRateCounter = tickRate;
-
         for (int i = 0, aiBlockingTransitionsSize = aiBlockingTransitions.size(); i < aiBlockingTransitionsSize; i++)
         {
             if (checkTransition(aiBlockingTransitions.get(i)))
@@ -123,7 +116,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     public boolean checkTransition(@NotNull final ITickingTransition<S> transition)
     {
         // Check if the target should be run this Tick
-        if (transition.countdownTicksToUpdate() > 0)
+        if (transition.countdownTicksToUpdate(tickRate) > 0)
         {
             return false;
         }
@@ -143,7 +136,6 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     public void setTickRate(final int tickRate)
     {
         this.tickRate = tickRate;
-        tickRateCounter = new Random().nextInt(tickRate);
     }
 
     @Override

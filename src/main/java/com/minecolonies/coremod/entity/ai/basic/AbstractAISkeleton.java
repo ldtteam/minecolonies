@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
+
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
  *
@@ -52,7 +54,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
         this.job = job;
         this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
-        stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
+        stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException, ENTITY_AI_TICKRATE);
     }
 
     @Override

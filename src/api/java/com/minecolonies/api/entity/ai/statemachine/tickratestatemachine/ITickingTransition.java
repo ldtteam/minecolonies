@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.ai.statemachine.tickratestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
-import org.jetbrains.annotations.NotNull;
 
 public interface ITickingTransition<S extends IState> extends IStateMachineTransition<S>
 {
@@ -25,7 +24,7 @@ public interface ITickingTransition<S extends IState> extends IStateMachineTrans
      *
      * @return random
      */
-    int countdownTicksToUpdate();
+    int countdownTicksToUpdate(final int reduction);
 
     /**
      * Sets the ticks until next update

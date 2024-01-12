@@ -25,8 +25,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
     /**
      * The position of the builder.
      */
-    @NotNull
-    private BlockPos builderPos = BlockPos.ZERO;
+    private BlockPos builderPos;
 
     /**
      * The warehouse snapshot mapping.
@@ -51,7 +50,15 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
     /**
      * Empty constructor used when registering the message.
      */
-    public ResourceScrollSaveWarehouseSnapshotMessage(@NotNull BlockPos builderPos, @NotNull Map<String, Integer> snapshot, @NotNull String workOrderHash)
+    public ResourceScrollSaveWarehouseSnapshotMessage(BlockPos builderPos)
+    {
+        this(builderPos, Map.of(), "");
+    }
+
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ResourceScrollSaveWarehouseSnapshotMessage(BlockPos builderPos, @NotNull Map<String, Integer> snapshot, @NotNull String workOrderHash)
     {
         super();
         this.builderPos = builderPos;
@@ -62,7 +69,10 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
-        builderPos = buf.readBlockPos();
+        if (buf.readBoolean())
+        {
+            builderPos = buf.readBlockPos();
+        }
         int numItems = buf.readInt();
         snapshot = new HashMap<>();
         for (int i = 0; i < numItems; i++)
@@ -77,7 +87,11 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
-        buf.writeBlockPos(builderPos);
+        buf.writeBoolean(builderPos != null);
+        if (builderPos != null)
+        {
+            buf.writeBlockPos(builderPos);
+        }
         buf.writeInt(snapshot.size());
         snapshot.forEach((key, value) -> {
             buf.writeUtf(key);
@@ -99,7 +113,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
         Objects.requireNonNull(ctxIn.getSender()).getInventory().items.stream()
           .filter(stack -> stack.getItem() instanceof ItemResourceScroll)
           .filter(stack -> stack.getTag() != null)
-          .filter(stack -> builderPos.equals(BlockPosUtil.read(stack.getTag(), TAG_BUILDER)))
+          .filter(stack -> Objects.equals(builderPos, BlockPosUtil.read(stack.getTag(), TAG_BUILDER)))
           .forEach(stack -> {
               CompoundTag data = stack.getTag();
               CompoundTag newData = new CompoundTag();

@@ -15,7 +15,6 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.SettingsModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -89,10 +88,10 @@ public final class WorkerUtil
         if (tools == null)
         {
             tools = new ArrayList<>();
-            tools.add(new Tuple<>(ToolType.HOE, new ItemStack(Items.WOODEN_HOE)));
-            tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.WOODEN_SHOVEL)));
-            tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.WOODEN_AXE)));
-            tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.WOODEN_PICKAXE)));
+            tools.add(new Tuple<>(ToolType.HOE, new ItemStack(Items.NETHERITE_HOE)));
+            tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.NETHERITE_SHOVEL)));
+            tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.NETHERITE_AXE)));
+            tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.NETHERITE_PICKAXE)));
         }
         return tools;
     }
@@ -218,7 +217,7 @@ public final class WorkerUtil
             TagKey<Block> tag = tier.getTag();
             if (tag != null && target.is(tag))
             {
-                required = tiers.indexOf(tier);
+                required = tier.getLevel();
                 break;
             }
         }

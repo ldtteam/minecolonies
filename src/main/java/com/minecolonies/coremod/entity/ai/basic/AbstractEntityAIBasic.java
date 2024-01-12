@@ -1045,7 +1045,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return INVENTORY_FULL;
         }
 
-        if (InventoryUtils.isProviderFull(building))
+        if (InventoryUtils.isBuildingFull(building))
         {
             final ICitizenData citizenData = worker.getCitizenData();
             if (citizenData != null)

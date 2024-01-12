@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -13,6 +12,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
+import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
@@ -52,12 +52,11 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && building.getBuildingLevel() > 0 && building.isBuilt() &&
-                (this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
+        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
-                if (data.getJob() instanceof JobQuarrier && !hasAssignedCitizen(data) && ((JobQuarrier) data.getJob()).findQuarry() == null)
+                if (data.getJob() instanceof JobQuarrier quarrier && !hasAssignedCitizen(data) && quarrier.findQuarry() == null)
                 {
                     assignCitizen(data);
                 }

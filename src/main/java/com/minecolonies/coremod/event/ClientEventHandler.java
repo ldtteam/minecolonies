@@ -179,23 +179,23 @@ public class ClientEventHandler
             {
                 minimumBuildingLevels.put(craftingBuilding, rec.getMinBuildingLevel());
             }
-            if (rec.getRequiredResearchId() != null)
+            for (final ResourceLocation id : rec.getRequiredResearchIds())
             {
                 final Set<IGlobalResearch> researches;
-                if (IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasResearch(rec.getRequiredResearchId()))
+                if (IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasResearch(id))
                 {
                     researches = new HashSet<>();
-                    researches.add(IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearch(rec.getRequiredResearchId()));
+                    researches.add(IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearch(id));
                 }
                 else
                 {
-                    researches = IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearchForEffect(rec.getRequiredResearchId());
+                    researches = IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearchForEffect(id);
                 }
                 if (researches != null)
                 {
                     final ChatFormatting researchFormat;
-                    if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
-                                             colony.getResearchManager().getResearchEffects().getEffectStrength(rec.getRequiredResearchId()) > 0))
+                    if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(id) ||
+                                             colony.getResearchManager().getResearchEffects().getEffectStrength(id) > 0))
                     {
                         researchFormat = ChatFormatting.AQUA;
                     }

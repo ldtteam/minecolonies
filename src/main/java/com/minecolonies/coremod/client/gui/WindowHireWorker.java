@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
@@ -23,6 +22,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
+import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -33,6 +33,7 @@ import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -101,11 +102,36 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(BUTTON_MODE, this::modeClicked);
         super.registerButton(TOGGLE_SHOW_EMPLOYED, this::showEmployedToggled);
 
-        moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class));
+        final Predicate<JobEntry> allowedJobs = BuildingUtils.getAllowedJobs(colony.getWorld(), buildingId);
+        final Predicate<IAssignmentModuleView> allowedModules = m -> m.getMaxInhabitants() > 0 &&
+                (!m.getAssignedCitizens().isEmpty() || allowedJobs.test(m.getJobEntry()));
+
+        moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class).stream()
+                .filter(allowedModules).toList());
+        if (moduleViews.isEmpty())
+        {
+            return;
+        }
         selectedModule = moduleViews.get(0);
 
+        setupDescription(allowedJobs != BuildingUtils.UNRESTRICTED);
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
         setupShowEmployed();
+    }
+
+    private void setupDescription(boolean isDedicated)
+    {
+        MutableComponent description = Component.translatable(building.getBuildingDisplayName());
+
+        if (isDedicated)
+        {
+            final Object[] jobList = moduleViews.stream().map(m -> Component.translatable(m.getJobEntry().getTranslationKey())).toArray();
+            final String format = String.join("/", Collections.nCopies(jobList.length, "%s"));
+            final MutableComponent jobs = Component.translatable(format, jobList);
+            description = Component.translatable("com.minecolonies.coremod.gui.hiring.dedicated", jobs, description);
+        }
+
+        findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.hiring.description", description));
     }
 
     /**
@@ -139,7 +165,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     private void switchHiringMode(final Button settingsButton)
     {
         int index = selectedModule.getHiringMode().ordinal() + 1;
-        if (index == HiringMode.LOCKED.ordinal()) { ++index; }  // only homes can be locked, not workplaces
+        if (index == HiringMode.LOCKED.ordinal())
+        {
+            ++index;
+        }  // only homes can be locked, not workplaces
 
         if (index >= HiringMode.values().length)
         {
@@ -216,10 +245,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         // Fire citizen if they already have a job
         if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView)
         {
-            IBuildingView oldJob =  colony.getBuilding(citizen.getWorkBuilding());
+            IBuildingView oldJob = colony.getBuilding(citizen.getWorkBuilding());
             oldJob.getModuleViewMatching(IAssignmentModuleView.class,
-                                         m -> m.getJobEntry() == citizen.getJobView().getEntry())
-                    .removeCitizen(citizen);
+                m -> m.getJobEntry() == citizen.getJobView().getEntry())
+              .removeCitizen(citizen);
         }
 
 
@@ -236,13 +265,21 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     protected int getCitizenPriority(ICitizenDataView citizen)
     {
         if (building.getPosition().equals(citizen.getWorkBuilding()))
+        {
             return 0;
+        }
+        else if (!selectedModule.canAssign(citizen))
+        {
+            return 3;
+        }
         else if (citizen.getWorkBuilding() == null)
+        {
             return 1;
-        else if (selectedModule.canAssign(citizen))
-            return citizen.getHomeBuilding() == null ? 2 : (int) BlockPosUtil.getDistance2D(building.getPosition(), citizen.getHomeBuilding());
+        }
         else
-            return citizen.getHomeBuilding() == null ? 3 : (int) BlockPosUtil.getDistance2D(building.getPosition(), citizen.getHomeBuilding());
+        {
+            return 2;
+        }
     }
 
     /**
@@ -269,6 +306,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Show Employed button clicked to show/hide employed citizens
+     *
      * @param button the clicked button
      */
     protected void showEmployedToggled(@NotNull final Button button)
@@ -288,13 +326,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         Button button = findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class);
         button.setEnabled(selectedModule instanceof WorkerBuildingModuleView
-                && !(selectedModule instanceof PupilBuildingModuleView));
+                            && !(selectedModule instanceof PupilBuildingModuleView));
         button.setText(Component.translatable("gui.no"));
         showEmployed = false;
     }
 
     /**
      * Helper function to show _all_ citizens that aren't children if viable.
+     *
      * @param citizen the citizen to check
      * @return whether the citizen can be assigned to the module
      */
@@ -311,11 +350,29 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         citizens.clear();
 
         citizens = colony.getCitizens().values().stream()
-                .filter(this::canAssign)
-                .sorted(Comparator.comparing(this::getCitizenPriority)
-                        .thenComparing(ICitizenDataView::getName))
-                .collect(Collectors.toList());
+          .filter(this::canAssign)
+          .sorted(Comparator.comparing(this::getCitizenPriority)
+            .thenComparing(citizen -> {
+                final BlockPos home = citizen.getHomeBuilding();
+                if (home == null)
+                {
+                    return 100.0;
+                }
 
+                double distance = Math.sqrt(citizen.getHomeBuilding().distSqr(building.getPosition()));
+                if (distance % 40 > 20)
+                {
+                    distance = (distance - (distance % 40)) + 40;
+                }
+                else
+                {
+                    distance = (distance - (distance % 40));
+                }
+
+                return distance;
+            })
+            .thenComparing(ICitizenDataView::getName))
+          .collect(Collectors.toList());
     }
 
     /**
@@ -324,6 +381,12 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        if (moduleViews.isEmpty())
+        {
+            close();
+            return;
+        }
+
         updateCitizens();
 
         citizenList.setDataProvider(new ScrollingList.DataProvider()
@@ -379,8 +442,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 textBuilder.append(Component.literal(""));
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
-                final Skill primary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
-                final Skill secondary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getSecondarySkill() : null;
+                final Skill primary = selectedModule instanceof WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
+                final Skill secondary = selectedModule instanceof WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getSecondarySkill() : null;
 
                 final List<Map.Entry<Skill, Tuple<Integer, Double>>> skills = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
                 skills.sort(Comparator.comparingInt(s -> (s.getKey() == primary ? 1 : (s.getKey() == secondary ? 2 : 3))));
@@ -400,7 +463,9 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 }
                 textBuilder.newLine(); // finish the current line
 
-                Component citizenLabelComponent = Component.translatable(citizen.getJob().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : citizen.getJob()).append(": ").append(citizen.getName());
+                Component citizenLabelComponent = Component.translatable(citizen.getJob().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : citizen.getJob())
+                  .append(": ")
+                  .append(citizen.getName());
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class).setText(citizenLabelComponent);
                 if (citizen.getHomeBuilding() == null)
                 {
@@ -416,7 +481,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(DISTANCE_LABEL, Text.class).setText(Component.translatable("com.minecolonies.core.gui.hiring.distance", BlockPosUtil.getDistance2D(citizen.getHomeBuilding(), building.getPosition())));
+                    rowPane.findPaneOfTypeByID(DISTANCE_LABEL, Text.class)
+                      .setText(Component.translatable("com.minecolonies.core.gui.hiring.distance", (int) Math.sqrt(citizen.getHomeBuilding().distSqr(building.getPosition()))));
                 }
 
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
@@ -440,7 +506,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             final JobEntry entry = hireModule.getJobEntry();
 
             final ButtonImage jobButton = new ButtonImage();
-            jobButton.setImage( new ResourceLocation("minecolonies:textures/gui/builderhut/builder_button_medium.png"), false);
+            jobButton.setImage(new ResourceLocation("minecolonies:textures/gui/builderhut/builder_button_medium.png"), false);
             jobButton.setPosition(xOffset, 30);
             if (hireModule.getAssignedCitizens().size() > 0)
             {

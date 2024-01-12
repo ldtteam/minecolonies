@@ -4,8 +4,10 @@
            label="$(com.minecolonies.coremod.gui.workerhuts.fields):"/>
     <label id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode)"/>
-    <button id="assignmentMode" size="60 15" pos="65 42"
-            label="$(com.minecolonies.coremod.gui.hiring.off)"/>
+    <buttonimage id="assignmentMode" size="86 17" pos="52 42" textcolor="black"
+                 label="$(com.minecolonies.coremod.gui.hiring.off)"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"/>
     <label id="fieldCount" size="164 11" pos="13 69" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields.fieldcount)"/>
     <label id="plantCount" size="164 11" pos="13 82" color="black" textalign="MIDDLE"
@@ -13,10 +15,12 @@
 
     <list id="fields" size="164 130" pos="13 95">
         <box size="100% 24" linewidth="1">
-            <itemicon id="icon" size="16 16" pos="1 1"/>
-            <label id="dist" color="black" pos="20 2" size="65 9"/>
-            <label id="dir" color="black" pos="20 12" size="65 9"/>
-            <button id="assignFarm" pos="100 4" size="50 15"/>
+            <itemicon id="icon" size="16 16" pos="4 4"/>
+            <label id="dist" color="black" pos="25 8" size="108 9"/>
+
+            <buttonimage id="assign" pos="137 4" size="14 15"
+                         source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                         disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
         </box>
     </list>
 </window>

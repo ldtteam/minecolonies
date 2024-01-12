@@ -8,22 +8,25 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 
@@ -164,7 +167,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     /**
      * Add a citizen to the list of resting citizen in this graveyard
      */
-    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection)
+    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final AbstractEntityCitizen worker)
     {
         if(lastGraveData != null && !restingCitizen.contains(lastGraveData.getCitizenName()))
         {
@@ -174,7 +177,10 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
             {
                 facing = Direction.NORTH; //prevent setting an invalid HorizontalDirection
             }
-            colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(), ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
+
+            colony.getWorld().destroyBlock(positionAndDirection.getA(), true, worker);
+            colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(),
+                    ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
 
             BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)

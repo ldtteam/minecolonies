@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
@@ -16,7 +17,6 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferI
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -150,8 +150,8 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             if (slot == -1)
             {
                 MessageUtils.format("<%s> ")
-                  .with(ChatFormatting.BOLD, ChatFormatting.WHITE)
                   .append(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName())
+                  .withPriority(MessagePriority.IMPORTANT)
                   .sendTo(Minecraft.getInstance().player);
 
                 return; // We don't have one that isn't in our armour slot

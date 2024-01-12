@@ -252,6 +252,12 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
+    public boolean canAssignCitizens()
+    {
+        return true;
+    }
+
+    @Override
     public boolean canEat(final ItemStack stack)
     {
         if (requiresResourceForBuilding(stack))
@@ -282,12 +288,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         public BOWindow getWindow()
         {
             return new WindowHutBuilderModule(this);
-        }
-
-        @Override
-        public boolean allowsAssignment()
-        {
-            return true;
         }
     }
 }
