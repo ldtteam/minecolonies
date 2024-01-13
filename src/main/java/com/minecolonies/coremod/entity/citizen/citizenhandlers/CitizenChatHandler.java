@@ -44,7 +44,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             MessageUtils.format(citizen.getCombatTracker().getDeathMessage())
               .append(Component.literal("! "))
               .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION, Math.round(citizen.getX()), Math.round(citizen.getY()), Math.round(citizen.getZ())))
-              .append(mourn ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN) : Component.literal(""))
+              .append(mourn ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN) : Component.empty())
               .withPriority(MessagePriority.DANGER)
               .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
