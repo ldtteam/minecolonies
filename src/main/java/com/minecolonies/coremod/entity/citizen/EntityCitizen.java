@@ -1644,11 +1644,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   .injectModifier(new ExpirationBasedHappinessModifier(HappinessConstants.DEATH, 3.0, new StaticHappinessSupplier(0.0), 3));
             }
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
-            citizenChatHandler.notifyDeath(damageSource);
+
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
             {
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
+            citizenChatHandler.notifyDeath(damageSource, citizenJobHandler.getColonyJob() instanceof AbstractJobGuard<?>);
+
             getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH, getCitizenColonyHandler().getColony().getDay());
 
             if (!isInvisible())

@@ -619,11 +619,6 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void updateCitizenMourn(final ICitizenData data, final boolean mourn)
     {
-        if (mourn)
-        {
-            MessageUtils.format(COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName()).sendTo(colony).forManagers();
-        }
-
         for (final ICitizenData citizen : getCitizens())
         {
             if (mourn)

@@ -938,7 +938,7 @@
   "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left the colony.",
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
-  "com.minecolonies.coremod.mourning": "There has been a death in %s. The citizens will mourn %s tomorrow out of respect.",
+  "com.minecolonies.coremod.mourning": "Close family and friends will mourn %s tomorrow out of respect.",
 
   "event.minecolonies.raidmessage1": "Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "Citizens report rumors of raiders %s of %s!",
@@ -2523,5 +2523,6 @@
   "com.minecolonies.coremod.gui.townhall.stats.item_obtained": "Got %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled",
   "com.minecolonies.coremod.progress.colony_founded": "Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall.",
-  "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?"
+  "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
+  "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now."
 }

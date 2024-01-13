@@ -32,6 +32,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_IN
 public class EntityAICitizenChild implements IStateAI
 {
 
+    private static final int GROW_UP_NOTIFY_LIMIT = 10;
+
     /**
      * States used for this AI
      */
@@ -281,7 +283,10 @@ public class EntityAICitizenChild implements IStateAI
                   .getColony()
                   .getEventDescriptionManager()
                   .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
-                MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColony()).forAllPlayers();
+                if (child.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens().size() <= GROW_UP_NOTIFY_LIMIT)
+                {
+                    MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColony()).forAllPlayers();
+                }
                 // Grow up
                 child.setIsChild(false);
                 child.setTextureDirty();
