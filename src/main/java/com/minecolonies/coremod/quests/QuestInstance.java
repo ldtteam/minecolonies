@@ -249,11 +249,14 @@ public class QuestInstance implements IQuestInstance
             }
         }
 
-        final Player player = colony.getWorld().getPlayerByUUID(assignedPlayer);
-        if (player != null)
+        if (assignedPlayer != null)
         {
-            final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
-            player.sendSystemMessage(Component.translatable("com.minecolonies.coremod.quest.completed", questData.getName()));
+            final Player player = colony.getWorld().getPlayerByUUID(assignedPlayer);
+            if (player != null)
+            {
+                final IQuestTemplate questData = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID);
+                player.sendSystemMessage(Component.translatable("com.minecolonies.coremod.quest.completed", questData.getName()));
+            }
         }
     }
 
