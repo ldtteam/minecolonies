@@ -3,7 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.*;
+import com.minecolonies.core.tileentities.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

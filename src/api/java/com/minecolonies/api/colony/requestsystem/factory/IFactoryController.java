@@ -214,12 +214,4 @@ public interface IFactoryController
      * @param <Output>        The output type that the handler converts to.
      */
     <Output> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<Output> overrideHandler);
-
-    /**
-     * Method used to register a renaming of a class.
-     *
-     * @param previousName The old class name.
-     * @param newName      The new class name.
-     */
-    void registerNewClassRenaming(@NotNull final String previousName, @NotNull final String newName);
 }
