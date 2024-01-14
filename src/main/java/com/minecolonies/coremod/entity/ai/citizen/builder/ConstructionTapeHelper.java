@@ -72,7 +72,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, final IColony colony)
     {
-        if (colony instanceof Colony && !((Colony) colony).getSettings().getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue())
+        if (colony instanceof Colony && !((Colony) colony).getSettings().getSetting(BuildingTownHall.CONSTRUCTION_TAPE).getValue())
         {
             return;
         }
