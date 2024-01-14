@@ -113,7 +113,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private BlockPos currentStandingPosition;
 
     @Nullable
-    private Node workingNode = null;
+    private MineNode workingNode = null;
 
     /**
      * Constructor for the Miner. Defines the tasks the miner executes.
@@ -658,7 +658,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);;
-        if (workingNode == null || workingNode.getStatus() == Node.NodeStatus.COMPLETED)
+        if (workingNode == null || workingNode.getStatus() == MineNode.NodeStatus.COMPLETED)
         {
             workingNode = module.getActiveNode();
             module.setActiveNode(workingNode);
@@ -701,12 +701,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ);
         }
 
-        final Node parentNode = currentLevel.getNode(workingNode.getParent());
+        final MineNode parentNode = currentLevel.getNode(workingNode.getParent());
 
-        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && parentNode.getStatus() != Node.NodeStatus.COMPLETED)
+        if (parentNode != null && parentNode.getStyle() != MineNode.NodeType.SHAFT && parentNode.getStatus() != MineNode.NodeStatus.COMPLETED)
         {
             workingNode = parentNode;
-            workingNode.setStatus(Node.NodeStatus.AVAILABLE);
+            workingNode.setStatus(MineNode.NodeStatus.AVAILABLE);
             module.setActiveNode(parentNode);
             buildingMiner.markDirty();
             //We need to make sure to walk back to the last valid parent
@@ -721,7 +721,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_MINING_SHAFT;
         }
 
-        if ((workingNode.getStatus() == Node.NodeStatus.AVAILABLE || workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
+        if ((workingNode.getStatus() == MineNode.NodeStatus.AVAILABLE || workingNode.getStatus() == MineNode.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
         {
             workingNode.setRot(rotation);
             return executeStructurePlacement(workingNode, standingPosition, rotation);
@@ -752,9 +752,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return true;
     }
 
-    private IAIState executeStructurePlacement(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int rotation)
+    private IAIState executeStructurePlacement(@NotNull final MineNode mineNode, @NotNull final BlockPos standingPosition, final int rotation)
     {
-        mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
+        mineNode.setStatus(MineNode.NodeStatus.IN_PROGRESS);
         building.markDirty();
         //Preload structures
         if (job.getBlueprint() == null)
@@ -936,7 +936,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         final BlockPos vector = building.getLadderLocation().subtract(building.getCobbleLocation());
 
         if (parentPos != null && module.getCurrentLevel().getNode(parentPos) != null
-              && module.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+              && module.getCurrentLevel().getNode(parentPos).getStyle() == MineNode.NodeType.SHAFT)
         {
             final BlockPos ladderPos = buildingMiner.getLadderLocation();
             return new BlockPos(

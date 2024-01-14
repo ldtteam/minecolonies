@@ -6,9 +6,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.*;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.MineNode.NodeType.*;
 
 /**
  * Miner Level Data StructureIterator.
@@ -53,17 +51,17 @@ public class MinerLevel
     /**
      * The number of nodes that need to be built near the main shaft before randomly picking the next
      */
-    private static final int              MINIMUM_NODES_FOR_RANDOM = 10;
+    private static final int                  MINIMUM_NODES_FOR_RANDOM = 10;
     /**
      * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
     @NotNull
-    private final        Map<Vec2i, Node> nodes              = new HashMap<>();
+    private final        Map<Vec2i, MineNode> nodes                    = new HashMap<>();
     /**
      * The queue of open Nodes. Get a new node to work on here.
      */
     @NotNull
-    private final        Queue<Node>      openNodes          = new ArrayDeque<>(11);
+    private final        Queue<MineNode>      openNodes                = new ArrayDeque<>(11);
 
     /**
      * The depth of the level stored as the y coordinate.
@@ -73,7 +71,7 @@ public class MinerLevel
     /**
      * The node of the ladder.
      */
-    private final Node ladderNode;
+    private final MineNode ladderNode;
 
     /**
      * The node of the ladder.
@@ -108,14 +106,14 @@ public class MinerLevel
         @NotNull final Vec2i ladderCenter = new Vec2i(cobbleX + (vector.getX() * 4), cobbleZ + (vector.getZ() * 4));
 
         //They are shaft and ladderBack, their parents are the shaft.
-        @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ(), ladderCenter);
+        @NotNull final MineNode cobbleNode = new MineNode(cobbleCenter.getX(), cobbleCenter.getZ(), ladderCenter);
         cobbleNode.setStyle(LADDER_BACK);
-        cobbleNode.setStatus(Node.NodeStatus.COMPLETED);
+        cobbleNode.setStatus(MineNode.NodeStatus.COMPLETED);
         nodes.put(cobbleCenter, cobbleNode);
 
-        ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ(), null);
+        ladderNode = new MineNode(ladderCenter.getX(), ladderCenter.getZ(), null);
         ladderNode.setStyle(SHAFT);
-        ladderNode.setStatus(Node.NodeStatus.COMPLETED);
+        ladderNode.setStatus(MineNode.NodeStatus.COMPLETED);
         nodes.put(ladderCenter, ladderNode);
 
         final List<Vec2i> nodeCenterList = new ArrayList<>(4);
@@ -131,7 +129,7 @@ public class MinerLevel
             {
                 continue;
             }
-            final Node tempNode = new Node(pos.getX(), pos.getZ(), ladderCenter);
+            final MineNode tempNode = new MineNode(pos.getX(), pos.getZ(), ladderCenter);
             tempNode.setStyle(TUNNEL);
             nodes.put(pos, tempNode);
             openNodes.add(tempNode);
@@ -159,7 +157,7 @@ public class MinerLevel
         final ListTag nodeTagList = compound.getList(TAG_NODES, Tag.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.size(); i++)
         {
-            @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompound(i));
+            @NotNull final MineNode node = MineNode.createFromNBT(nodeTagList.getCompound(i));
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
@@ -184,7 +182,7 @@ public class MinerLevel
         final ListTag openNodeTagList = compound.getList(TAG_OPEN_NODES, Tag.TAG_COMPOUND);
         for (int i = 0; i < openNodeTagList.size(); i++)
         {
-            @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompound(i));
+            @NotNull final MineNode node = MineNode.createFromNBT(openNodeTagList.getCompound(i));
             this.openNodes.add(node);
         }
     }
@@ -195,9 +193,9 @@ public class MinerLevel
      * @param node the last node.
      * @return any random node.
      */
-    public Node getRandomNode(@Nullable final Node node)
+    public MineNode getRandomNode(@Nullable final MineNode node)
     {
-        Node nextNode = null;
+        MineNode nextNode = null;
         if (node == null || !nodes.containsKey(new Vec2i(node.getX(), node.getZ())))
         {
             return openNodes.peek();
@@ -213,8 +211,8 @@ public class MinerLevel
     public BlockPos getRandomCompletedNode(BuildingMiner buildingMiner)
     {
         Object[] nodeSet = nodes.keySet().toArray();
-        Node nextNode = nodes.get(nodeSet[rand.nextInt(nodeSet.length)]);
-        while (nextNode.getStatus() != Node.NodeStatus.COMPLETED || nextNode.getStyle() == LADDER_BACK)
+        MineNode nextNode = nodes.get(nodeSet[rand.nextInt(nodeSet.length)]);
+        while (nextNode.getStatus() != MineNode.NodeStatus.COMPLETED || nextNode.getStyle() == LADDER_BACK)
         {
             nextNode = getNode(nextNode.getParent());
         }
@@ -236,9 +234,9 @@ public class MinerLevel
      * @param rotation the rotation of the node.
      * @param node     the node to close.
      */
-    public void closeNextNode(final int rotation, final Node node, final Level world)
+    public void closeNextNode(final int rotation, final MineNode node, final Level world)
     {
-        final Node tempNode = node == null ? openNodes.peek() : node;
+        final MineNode tempNode = node == null ? openNodes.peek() : node;
         final List<Vec2i> nodeCenterList = new ArrayList<>(3);
 
         if (tempNode == null)
@@ -293,17 +291,17 @@ public class MinerLevel
                 continue;
             }
 
-            final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Vec2i(tempNode.getX(), tempNode.getZ()));
-            tempNodeToAdd.setStyle(Node.NodeType.SIDE_NODES.get(rand.nextInt(Node.NodeType.SIDE_NODES.size())));
+            final MineNode tempNodeToAdd = new MineNode(pos.getX(), pos.getZ(), new Vec2i(tempNode.getX(), tempNode.getZ()));
+            tempNodeToAdd.setStyle(MineNode.NodeType.SIDE_NODES.get(rand.nextInt(MineNode.NodeType.SIDE_NODES.size())));
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
-        Node I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ()));
+        MineNode I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ()));
         if(!tempNode.equals(I))
         {
             Log.getLogger().warn("Minecolonies node: " + node.getX() + ":" + node.getZ() + " not equal to storage during close, Please tell the mod authors about this");
         }
-        tempNode.setStatus(Node.NodeStatus.COMPLETED);
+        tempNode.setStatus(MineNode.NodeStatus.COMPLETED);
         openNodes.removeIf(tempNode::equals);
 
     }
@@ -316,7 +314,7 @@ public class MinerLevel
      * @param additionalRotation the additional rotation.
      * @return center of the new node.
      */
-    private static Vec2i getNextNodePositionFromNodeWithRotation(final Node node, final int rotation, final int additionalRotation)
+    private static Vec2i getNextNodePositionFromNodeWithRotation(final MineNode node, final int rotation, final int additionalRotation)
     {
         final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
         switch (realRotation)
@@ -353,7 +351,7 @@ public class MinerLevel
         }
 
         @NotNull final ListTag nodeTagList = new ListTag();
-        for (@NotNull final Node node : nodes.values())
+        for (@NotNull final MineNode node : nodes.values())
         {
             @NotNull final CompoundTag nodeCompound = new CompoundTag();
             node.write(nodeCompound);
@@ -365,7 +363,7 @@ public class MinerLevel
         compound.putInt(TAG_LADDERZ, ladderNode.getZ());
 
         @NotNull final ListTag openNodeTagList = new ListTag();
-        for (@NotNull final Node node : openNodes)
+        for (@NotNull final MineNode node : openNodes)
         {
             @NotNull final CompoundTag nodeCompound = new CompoundTag();
             node.write(nodeCompound);
@@ -375,7 +373,7 @@ public class MinerLevel
     }
 
     @NotNull
-    public Map<Vec2i, Node> getNodes()
+    public Map<Vec2i, MineNode> getNodes()
     {
         return Collections.unmodifiableMap(nodes);
     }
@@ -396,7 +394,7 @@ public class MinerLevel
     }
 
     @NotNull
-    public Node getLadderNode()
+    public MineNode getLadderNode()
     {
         return ladderNode;
     }
@@ -419,7 +417,7 @@ public class MinerLevel
      * @param key the Point2D key.
      * @return the Node.
      */
-    public Node getNode(final Vec2i key)
+    public MineNode getNode(final Vec2i key)
     {
         return nodes.get(key);
     }
@@ -430,7 +428,7 @@ public class MinerLevel
      * @param key the Point2D key.
      * @return the Node.
      */
-    public Node getOpenNode(final Vec2i key)
+    public MineNode getOpenNode(final Vec2i key)
     {
         return nodes.get(key);
     }
