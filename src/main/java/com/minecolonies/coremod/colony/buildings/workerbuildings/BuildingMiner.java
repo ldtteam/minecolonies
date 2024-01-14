@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
+import com.minecolonies.coremod.entity.ai.citizen.miner.MineNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -272,7 +272,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param rotateTimes  The amount of time to rotate the structure.
      * @param structurePos The position of the structure.
      */
-    public static void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
+    public static void initStructure(final MineNode mineNode, final int rotateTimes, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
     {
         final String structurePack = buildingMiner.getStructurePack();
         int rotateCount;
@@ -281,7 +281,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (mineNode == null)
         {
             rotateCount = getRotationFromVector(buildingMiner);
-            style = Node.NodeType.SHAFT.getSchematicName();
+            style = MineNode.NodeType.SHAFT.getSchematicName();
         }
         else
         {

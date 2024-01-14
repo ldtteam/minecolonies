@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
+import com.minecolonies.coremod.entity.ai.citizen.miner.MineNode;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -41,13 +41,13 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * The id of the activeNode node.
      */
     @Nullable
-    private Node activeNode = null;
+    private MineNode activeNode = null;
 
     /**
      * The id of the old node.
      */
     @Nullable
-    private Node oldNode = null;
+    private MineNode oldNode = null;
 
     /**
      * The first y level to start the shaft at.
@@ -67,11 +67,11 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
 
         if (compound.contains(TAG_ACTIVE))
         {
-            activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
+            activeNode = MineNode.createFromNBT(compound.getCompound(TAG_ACTIVE));
         }
         else if (compound.contains(TAG_OLD))
         {
-            oldNode = Node.createFromNBT(compound.getCompound(TAG_OLD));
+            oldNode = MineNode.createFromNBT(compound.getCompound(TAG_OLD));
         }
     }
 
@@ -205,15 +205,15 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * @return the int id of the active node.
      */
     @Nullable
-    public Node getActiveNode()
+    public MineNode getActiveNode()
     {
         if (levels.isEmpty())
         {
             return null;
         }
 
-        Node calcNode = activeNode;
-        if (activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED)
+        MineNode calcNode = activeNode;
+        if (activeNode == null || activeNode.getStatus() == MineNode.NodeStatus.COMPLETED)
         {
             if (currentLevel >= levels.size())
             {
@@ -234,7 +234,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param activeNode the int id of the active node.
      */
-    public void setActiveNode(@Nullable final Node activeNode)
+    public void setActiveNode(@Nullable final MineNode activeNode)
     {
         this.activeNode = activeNode;
     }
@@ -244,7 +244,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param oldNode the int id of the old node.
      */
-    public void setOldNode(@Nullable final Node oldNode)
+    public void setOldNode(@Nullable final MineNode oldNode)
     {
         this.oldNode = oldNode;
     }

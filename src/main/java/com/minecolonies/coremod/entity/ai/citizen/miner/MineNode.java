@@ -16,7 +16,7 @@ import java.util.*;
  * When a node is completed we should add the surrounding nodes to level as AVAILABLE also note that we don't want node (0, -1) because there will be a ladder on the back wall of
  * the initial node, and we cant put the connection through the ladder
  */
-public class Node
+public class MineNode
 {
     /**
      * Tags used to save and retrieve data from NBT.
@@ -79,7 +79,7 @@ public class Node
      * @param z      Z-coordinate in the node
      * @param parent the parent of the node.
      */
-    public Node(final int x, final int z, @Nullable final Vec2i parent)
+    public MineNode(final int x, final int z, @Nullable final Vec2i parent)
     {
         this.x = x;
         this.z = z;
@@ -95,7 +95,7 @@ public class Node
      * @return Node created from compound
      */
     @NotNull
-    public static Node createFromNBT(@NotNull final CompoundTag compound)
+    public static MineNode createFromNBT(@NotNull final CompoundTag compound)
     {
         // for backwards compatibility check if the types are doubles
         final boolean hasDoubles = compound.contains(TAG_X);
@@ -141,7 +141,7 @@ public class Node
         }
 
         //Set the node status in all directions.
-        @NotNull final Node node = new Node(x, z, parent);
+        @NotNull final MineNode node = new MineNode(x, z, parent);
         if(style == NodeType.UNDEFINED)
         {
             Log.getLogger().error("Minecolonies Node " + x + "," + z + " has an undefined style, please tell the mod author about this");
@@ -314,14 +314,14 @@ public class Node
      * @return the next node to go to.
      */
     @Nullable
-    public Node getRandomNextNode(final MinerLevel level, final int step)
+    public MineNode getRandomNextNode(final MinerLevel level, final int step)
     {
         if (step > 3)
         {
             return null;
         }
 
-        final Node nextNode;
+        final MineNode nextNode;
         switch (random.nextInt(3))
         {
             case 0:
@@ -339,7 +339,7 @@ public class Node
 
         if (nextNode == null || nextNode.style == NodeType.SHAFT)
         {
-            final Node parent = level.getOpenNode(getParent());
+            final MineNode parent = level.getOpenNode(getParent());
             return parent == null ? null : parent.getRandomNextNode(level, step + 1);
         }
         return nextNode;
@@ -356,7 +356,7 @@ public class Node
         {
             return false;
         }
-        final Node node = (Node) o;
+        final MineNode node = (MineNode) o;
         return x == node.x &&
                  z == node.z;
     }
