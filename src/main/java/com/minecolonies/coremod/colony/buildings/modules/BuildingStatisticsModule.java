@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.colony.managers.StatisticsManager;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 

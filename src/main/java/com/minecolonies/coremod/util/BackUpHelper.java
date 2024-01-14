@@ -3,8 +3,8 @@ package com.minecolonies.coremod.util;
 import com.google.common.io.Files;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,6 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
@@ -446,8 +445,7 @@ public final class BackUpHelper
             if (claimChunks)
             {
                 final LevelChunk chunk = ((LevelChunk) colonyWorld.getChunk(loadedColony.getCenter()));
-                final int id = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
-                if (id != colonyId)
+                if (ColonyUtils.getOwningColony(chunk) != colonyId)
                 {
                     reclaimChunks(loadedColony);
                 }

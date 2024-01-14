@@ -21,6 +21,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -1173,8 +1174,7 @@ public final class ColonyView implements IColonyView
     public boolean isCoordInColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk chunk = w.getChunkAt(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-        return cap.getOwningColony() == this.getID();
+        return ColonyUtils.getOwningColony(chunk) == this.getID();
     }
 
     @Override

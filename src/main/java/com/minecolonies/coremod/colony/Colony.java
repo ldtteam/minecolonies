@@ -42,6 +42,7 @@ import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.quests.QuestManager;
+import com.minecolonies.api.util.ColonyUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -533,7 +534,7 @@ public class Colony implements IColony
     {
         if (forceLoadTimer > 0 && world instanceof ServerLevel)
         {
-            if (!ticketedChunks.contains(chunkPos) && buildingManager.isWithinBuildingZone(chunk))
+            if (!ticketedChunks.contains(chunkPos) && buildingManager.keepChunkColonyLoaded(chunk))
             {
                 ticketedChunks.add(chunkPos);
                 ticketedChunksDirty = true;
@@ -1238,9 +1239,9 @@ public class Colony implements IColony
             return false;
         }
 
+
         final LevelChunk chunk = w.getChunkAt(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        return cap != null && cap.getOwningColony() == this.getID();
+        return ColonyUtils.getOwningColony(chunk) == this.getID();
     }
 
     @Override

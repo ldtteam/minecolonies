@@ -3,13 +3,13 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.core.BlockPos;
@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -44,7 +43,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -1033,8 +1031,7 @@ public class Tree
             return false;
         }
 
-        final IColonyTagCapability cap = ((LevelChunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (cap != null && cap.getOwningColony() != colony.getID())
+        if (ColonyUtils.getOwningColony((LevelChunk) chunk) != colony.getID())
         {
             return false;
         }

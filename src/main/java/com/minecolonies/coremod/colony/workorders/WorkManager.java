@@ -5,7 +5,6 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -13,7 +12,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.api.util.ColonyUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -29,7 +28,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * Handles work orders for a colony.
@@ -339,8 +337,7 @@ public class WorkManager implements IWorkManager
                 if (!chunks.contains(pos))
                 {
                     chunks.add(pos);
-                    final IColonyTagCapability colonyCap = world.getChunk(pos.x, pos.z).getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-                    if (colonyCap == null || colonyCap.getOwningColony() != colony.getID())
+                    if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
                     {
                         return false;
                     }

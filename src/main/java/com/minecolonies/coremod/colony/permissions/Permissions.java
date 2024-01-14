@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
 /**
@@ -782,15 +781,11 @@ public class Permissions implements IPermissions
                 {
                     // Check claim
                     final LevelChunk chunk = world.getChunk(playerEntity.chunkPosition().x, playerEntity.chunkPosition().z);
-
-                    final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-                    if (colonyCap != null)
+                    final int owningColonyId = ColonyUtils.getOwningColony(chunk);
+                    if (owningColonyId == colony.getID() && world.dimension() == colony.getDimension())
                     {
-                        if (colonyCap.getOwningColony() == colony.getID() && world.dimension() == colony.getDimension())
-                        {
-                            colony.getPackageManager().addCloseSubscriber(playerEntity);
-                            colony.getPackageManager().updateSubscribers();
-                        }
+                        colony.getPackageManager().addCloseSubscriber(playerEntity);
+                        colony.getPackageManager().updateSubscribers();
                     }
                 }
             }

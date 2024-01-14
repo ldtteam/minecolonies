@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.client;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.util.ChunkCapData;
+import com.minecolonies.api.util.ChunkCapData;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,13 +38,16 @@ public class UpdateChunkCapabilityMessage implements IMessage
     /**
      * Create a message to update the chunk cap on the client side.
      *
-     * @param tagCapability the cap.
-     * @param x             the x pos.
-     * @param z             the z pos.
+     * @param chunkCapData the data.
      */
+    public UpdateChunkCapabilityMessage(@NotNull final ChunkCapData chunkCapData)
+    {
+        this.chunkCapData = chunkCapData;
+    }
+
     public UpdateChunkCapabilityMessage(@NotNull final IColonyTagCapability tagCapability, final int x, final int z)
     {
-        chunkCapData = new ChunkCapData(x, z, tagCapability.getOwningColony(), tagCapability.getStaticClaimColonies());
+        this.chunkCapData = new ChunkCapData(x, z, tagCapability.getOwningColony(), tagCapability.getStaticClaimColonies(), tagCapability.getAllClaimingBuildings());
     }
 
     @Override
@@ -80,7 +83,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
         final LevelChunk chunk = world.getChunk(chunkCapData.x, chunkCapData.z);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
 
-        if (cap != null && cap.getOwningColony() != chunkCapData.owningColony)
+        if (cap != null && cap.getOwningColony() != chunkCapData.getOwningColony())
         {
             ChunkClientDataHelper.applyCap(chunkCapData, chunk);
         }

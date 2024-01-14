@@ -6,9 +6,9 @@ import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SWITCH;
@@ -210,18 +210,10 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
                 final int chunkX = startX + x;
                 final int chunkZ = startZ + z;
                 final LevelChunk chunk = world.getChunk(chunkX, chunkZ);
-                final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-                if (cap != null)
+                final int colonyId = ColonyUtils.getOwningColony(chunk);
+                if (colonyId != NO_COLONY_ID)
                 {
-                    if (cap.getOwningColony() != 0)
-                    {
-                        return cap.getOwningColony();
-                    }
-
-                    if (!cap.getStaticClaimColonies().isEmpty())
-                    {
-                        return cap.getStaticClaimColonies().get(0);
-                    }
+                    return colonyId;
                 }
             }
         }

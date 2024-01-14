@@ -10,7 +10,6 @@ import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -49,6 +48,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -67,7 +67,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.*;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -215,18 +214,17 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             }
 
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
-
-            final IColonyTagCapability cap = worldIn.getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            final LevelChunk chunk = worldIn.getChunkAt(pos);
             final BlockEntity entity = worldIn.getBlockEntity(pos);
             if (entity instanceof final TileEntityColonyBuilding te && te.getPositionedTags().containsKey(BlockPos.ZERO) && te.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED))
             {
-                if (building == null && cap.getOwningColony() == 0)
+                if (building == null && ColonyUtils.getOwningColony(chunk) == 0)
                 {
                     MessageUtils.format(MISSING_COLONY).sendTo(player);
                     return InteractionResult.FAIL;
                 }
 
-                if (building == null && cap.getAllClaimingBuildings().values().stream().flatMap(Collection::stream).noneMatch(p -> p.equals(pos)))
+                if (building == null && ColonyUtils.getAllClaimingBuildings(chunk).values().stream().flatMap(Collection::stream).noneMatch(p -> p.equals(pos)))
                 {
                     IColonyManager.getInstance().openReactivationWindow(pos);
                     return InteractionResult.SUCCESS;

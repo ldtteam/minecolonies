@@ -6,10 +6,10 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
@@ -53,7 +53,6 @@ public final class ConstructionTapeHelper
      * Calculates the borders for the workOrderBuildDecoration and sends it to the placement.
      *
      * @param building the building.
-     * @param world    the world.
      */
     public static void placeConstructionTape(@NotNull final IBuilding building)
     {
@@ -70,7 +69,6 @@ public final class ConstructionTapeHelper
      * Place construction tape.
      *
      * @param orgCorners the corner positions.
-     * @param world   the world.
      */
     public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, final IColony colony)
     {
