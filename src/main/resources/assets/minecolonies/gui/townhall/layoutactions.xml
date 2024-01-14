@@ -12,27 +12,14 @@
 
     <!-- todo search for "current pack" -->
 
-    <buttonimage id="build" size="129 17" pos="110 67"  textcolor="black"
+    <buttonimage id="build" size="129 17" pos="110 97"  textcolor="black"
             label="🔨🔨🔨🔨$(com.minecolonies.coremod.gui.townhall.build)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_build.png"/>
 
-    <buttonimage id="map" size="129 17" pos="110 86"  textcolor="black"
+    <buttonimage id="map" size="129 17" pos="110 116"  textcolor="black"
                  label="$(com.minecolonies.coremod.gui.townHall.map)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_map.png"/>
 
-    <buttonimage id="mercenaries" size="129 17" pos="110 106"  textcolor="black"
+    <buttonimage id="mercenaries" size="129 17" pos="110 136"  textcolor="black"
                  label="$(com.minecolonies.coremod.gui.townhall.mercenary)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_merc.png"/>
-
-
-    <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townhall.jobhiring)" pos="100 133" size="148 11" color="black"/>
-    <buttonimage id="toggleJob" size="64 17" pos="175 130" label="$(com.minecolonies.coremod.gui.hiring.off)" textcolor="black"
-                 tooltip="$(com.minecolonies.coremod.gui.townhall.jobhiring.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
-
-    <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townhall.housing)" pos="100 155" size="148 11" color="black"/>
-    <buttonimage id="toggleHousing" size="64 17" pos="175 152" label="$(com.minecolonies.coremod.gui.hiring.off)" textcolor="black"
-                 tooltip="$(com.minecolonies.coremod.gui.townhall.housing.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
-
-    <label id="movingIn" label="$(com.minecolonies.coremod.gui.townhall.movein)" pos="100 177" size="148 11" color="black"/>
-    <buttonimage id="toggleMoveIn" size="29 17" pos="205 174" label="$(com.minecolonies.coremod.gui.townhall.off)" textcolor="black"
-                 tooltip="$(com.minecolonies.coremod.gui.townhall.movein.tooltip)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
 
     <!-- Visual Changes, Right Side -->
 

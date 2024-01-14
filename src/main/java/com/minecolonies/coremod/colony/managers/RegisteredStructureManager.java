@@ -604,7 +604,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
-                    ConstructionTapeHelper.placeConstructionTape(building, world);
+                    ConstructionTapeHelper.placeConstructionTape(building);
                 }
 
                 colony.getRequestManager().onProviderAddedToColony(building);

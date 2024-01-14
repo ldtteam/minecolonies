@@ -1557,7 +1557,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
-        if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getServer().citizenCallForHelp.get() || callForHelpCooldown != 0)
+        if (!(attacker instanceof LivingEntity) || callForHelpCooldown != 0)
         {
             return;
         }
@@ -1817,34 +1817,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
         {
-            if (!name.getString().contains(citizenData.getName()) && MineColonies.getConfig().getServer().allowGlobalNameChanges.get() >= 0)
-            {
-                if (MineColonies.getConfig().getServer().allowGlobalNameChanges.get() == 0 &&
-                      MineColonies.getConfig().getServer().specialPermGroup.get()
-                        .stream()
-                        .noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
-                {
-                    MessageUtils.format(CITIZEN_RENAME_NOT_ALLOWED).sendTo(citizenColonyHandler.getColony()).forAllPlayers();
-                    return;
-                }
-
-
-                if (citizenColonyHandler.getColony() != null)
-                {
-                    for (final ICitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
-                    {
-                        if (citizen.getName().equals(name.getString()))
-                        {
-                            MessageUtils.format(CITIZEN_RENAME_SAME).sendTo(citizenColonyHandler.getColony()).forAllPlayers();
-                            return;
-                        }
-                    }
-                    this.citizenData.setName(name.getString());
-                    this.citizenData.markDirty(0);
-                    super.setCustomName(name);
-                }
-                return;
-            }
             super.setCustomName(name);
         }
     }

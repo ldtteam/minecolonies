@@ -13,11 +13,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
 
 import java.util.Random;
 
@@ -100,7 +100,7 @@ public class CommandRTP implements IMCCommand
     private void rtp(final Player player)
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
-        for (int attCounter = 0; attCounter <= MineColonies.getConfig().getServer().numberOfAttemptsForSafeTP.get(); attCounter++)
+        for (int attCounter = 0; attCounter <= 4; attCounter++)
         {
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();

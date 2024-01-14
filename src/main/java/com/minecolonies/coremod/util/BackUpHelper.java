@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -51,6 +50,11 @@ public final class BackUpHelper
      * Export colony filename scheme
      */
     public static final String FILENAME_EXPORT = "colony%dExport.zip";
+
+    /**
+     * Maximum amount of backup zips
+     */
+    private static final int MAX_BACKUPS = 20;
 
     /**
      * Last backup timer before the next is allowed
@@ -135,14 +139,14 @@ public final class BackUpHelper
                 fileList.add(current);
             }
 
-            if (fileList.size() <= MineColonies.getConfig().getServer().maxkeptbackups.get())
+            if (fileList.size() <= MAX_BACKUPS)
             {
                 return true;
             }
 
             fileList.sort(Comparator.comparingLong(File::lastModified));
 
-            int deleteCount = fileList.size() - MineColonies.getConfig().getServer().maxkeptbackups.get();
+            int deleteCount = fileList.size() - MAX_BACKUPS;
             for (File current : fileList)
             {
                 if (deleteCount <= 0)
@@ -455,6 +459,7 @@ public final class BackUpHelper
 
     /**
      * Reclaims chunks for a colony
+     *
      * @param colony
      */
     public static void reclaimChunks(final IColony colony)

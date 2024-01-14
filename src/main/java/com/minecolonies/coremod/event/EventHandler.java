@@ -65,7 +65,10 @@ import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.event.*;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
@@ -79,11 +82,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
-import java.util.List;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
@@ -544,7 +545,7 @@ public class EventHandler
                     return;
                 }
 
-                if (MineColonies.getConfig().getServer().suggestBuildToolPlacement.get() && !(player.isCreative() && player.isShiftKeyDown()))
+                if (!(player.isCreative() && player.isShiftKeyDown()))
                 {
                     final ItemStack stack = event.getItemStack();
                     if (!stack.isEmpty() && !world.isClientSide)
@@ -587,7 +588,7 @@ public class EventHandler
         {
             if (event.getLevel().isClientSide())
             {
-                event.setCanceled(MineColonies.getConfig().getServer().suggestBuildToolPlacement.get());
+                event.setCanceled(true);
             }
             else
             {

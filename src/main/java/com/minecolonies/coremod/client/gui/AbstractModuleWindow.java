@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.ButtonImage;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -39,8 +39,19 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
         final Random random = new Random(building.getID().hashCode());
         int offset = 0;
 
-        //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
-        if (building.getAllModuleViews().size() > 0)
+        boolean anyVisible = false;
+
+        for (IBuildingModuleView view : building.getAllModuleViews())
+        {
+            if (view.isPageVisible())
+            {
+                anyVisible = true;
+                break;
+            }
+        }
+
+            //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
+        if (building.getAllModuleViews().size() > 0 && anyVisible)
         {
             final ButtonImage image = new ButtonImage();
             image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
