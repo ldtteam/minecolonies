@@ -92,11 +92,11 @@ public class EntityAIVisitor implements IState
      */
     private boolean reduceTime()
     {
-        citizen.getCitizenData().decreaseSaturation(0.02);
-        citizen.getCitizenData().markDirty(20 * 20);
-        if (citizen.getCitizenData().getSaturation() <= 0)
+        citizen.getVisitorData().decreaseSaturation(0.02);
+        citizen.getVisitorData().markDirty(20 * 20);
+        if (citizen.getVisitorData().getSaturation() <= 0)
         {
-            citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
+            citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getVisitorData());
             if (tavern != null)
             {
                 tavern.getFirstModuleOccurance(TavernBuildingModule.class).removeCitizen(citizen.getCivilianID());
@@ -174,7 +174,7 @@ public class EntityAIVisitor implements IState
             final BlockPos pos = tavern.getModule(BuildingModules.TAVERN_VISITOR).getFreeSitPosition();
             if (pos != null)
             {
-                ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
+                ((VisitorData) citizen.getVisitorData()).setSittingPosition(pos);
                 citizen.isWorkerAtSiteWithMove(pos, 1);
                 actionTimeoutCounter = citizen.getRandom().nextInt(2500) + 3000;
                 return VisitorState.SITTING;
@@ -199,7 +199,7 @@ public class EntityAIVisitor implements IState
     {
         if ((actionTimeoutCounter -= 50) <= 0)
         {
-            ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
+            ((VisitorData) citizen.getVisitorData()).setSittingPosition(BlockPos.ZERO);
             return true;
         }
 
@@ -208,7 +208,7 @@ public class EntityAIVisitor implements IState
             return false;
         }
 
-        final BlockPos moveTo = ((VisitorData) citizen.getCitizenData()).getSittingPosition();
+        final BlockPos moveTo = ((VisitorData) citizen.getVisitorData()).getSittingPosition();
         if (citizen.isWorkerAtSiteWithMove(moveTo, 1))
         {
             SittingEntity.sitDown(moveTo, citizen, actionTimeoutCounter);
@@ -223,18 +223,18 @@ public class EntityAIVisitor implements IState
      */
     private boolean isEntityLoaded()
     {
-        if (citizen.getCitizenColonyHandler().getColony() == null || citizen.getCitizenData() == null || citizen.getCitizenData().getHomeBuilding() == null)
+        if (citizen.getCitizenColonyHandler().getColony() == null || citizen.getVisitorData() == null || citizen.getVisitorData().getHomeBuilding() == null)
         {
             return false;
         }
 
-        IBuilding building = citizen.getCitizenData().getHomeBuilding();
+        IBuilding building = citizen.getVisitorData().getHomeBuilding();
         if (building.hasModule(BuildingModules.TAVERN_VISITOR))
         {
             tavern = (DefaultBuildingInstance) building;
         }
 
-        ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
+        ((VisitorData) citizen.getVisitorData()).setSittingPosition(BlockPos.ZERO);
 
         return WorldUtil.isEntityBlockLoaded(citizen.level, citizen.blockPosition());
     }
@@ -272,7 +272,7 @@ public class EntityAIVisitor implements IState
      */
     private void resetLogic()
     {
-        ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
+        ((VisitorData) citizen.getVisitorData()).setSittingPosition(BlockPos.ZERO);
     }
 
     /**

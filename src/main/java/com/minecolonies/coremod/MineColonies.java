@@ -32,8 +32,6 @@ import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.structures.MineColoniesStructures;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -96,6 +94,7 @@ public class MineColonies
         ModLootConditions.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         SupplyLoot.GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBannerPatterns.BANNER_PATTERNS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModVisitorTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(FMLJavaModLoadingContext.get().getModEventBus());

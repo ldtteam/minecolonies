@@ -200,17 +200,11 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public <T extends IVisitorData> T getVisitor(int citizenId)
-    {
-        return (T) visitorMap.get(citizenId);
-    }
-
-    @Override
-    public IVisitorData spawnOrCreateCivilian(ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
+    public IVisitorData spawnOrCreateCivilian(IVisitorData data, final Level world, final BlockPos spawnPos, final boolean force)
     {
         if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
         {
-            return (IVisitorData) data;
+            return data;
         }
 
         if (data == null)
@@ -222,7 +216,7 @@ public class VisitorManager implements IVisitorManager
 
         if (citizenEntity == null)
         {
-            return (IVisitorData) data;
+            return data;
         }
 
         citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
@@ -230,7 +224,7 @@ public class VisitorManager implements IVisitorManager
 
         citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
 
-        return (IVisitorData) data;
+        return data;
     }
 
     @Override

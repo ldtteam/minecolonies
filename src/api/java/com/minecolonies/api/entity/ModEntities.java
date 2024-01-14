@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
@@ -18,7 +19,7 @@ public class ModEntities
 {
     public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
 
-    public static EntityType<? extends AbstractEntityCitizen> VISITOR;
+    public static EntityType<? extends AbstractEntityVisitor> VISITOR;
 
     public static EntityType<? extends Projectile> FISHHOOK;
 

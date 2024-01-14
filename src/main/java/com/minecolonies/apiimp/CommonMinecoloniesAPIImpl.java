@@ -22,6 +22,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -78,6 +79,8 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
+    private        IForgeRegistry<IVisitorType>                             visitorTypeRegistry;
+    private        IForgeRegistry<IVisitorType>                             visitorExtraDataRegistry;
 
     @Override
     @NotNull
@@ -200,6 +203,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         return researchCostRegistry;
     }
 
+    @Override
+    public IForgeRegistry<IVisitorType> getVisitorTypeRegistry()
+    {
+        return visitorTypeRegistry;
+    }
+
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         event.create(new RegistryBuilder<BuildingEntry>()
@@ -316,6 +325,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFunctionRegistry = b);
+
+        event.create(new RegistryBuilder<IVisitorType>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "visitortypes"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> visitorTypeRegistry = b);
     }
 
     @Override

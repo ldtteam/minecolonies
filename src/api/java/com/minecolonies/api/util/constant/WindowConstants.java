@@ -583,32 +583,32 @@ public final class WindowConstants
     public static final String LABEL_PAGE_NUMBER = "pageNum";
 
     /**
-     * The label to find the gui of the citizen.
+     * The id for the citizen main page.
      */
     public static final String CITIZEN_MAIN_RESOURCE_SUFFIX = ":gui/citizen/main.xml";
 
     /**
-     * The label to find the gui of the citizen.
+     * The id for the citizen requests page.
      */
     public static final String CITIZEN_REQ_RESOURCE_SUFFIX = ":gui/citizen/requests.xml";
 
     /**
-     * The label to find the gui of the citizen.
+     * The id for the citizen request detail page.
      */
     public static final String CITIZEN_REQ_DETAIL_SUFFIX = ":gui/windowrequestdetail.xml";
 
     /**
-     * The label to find the gui of the citizen.
+     * The id for the citizen happiness page.
      */
     public static final String CITIZEN_HAP_RESOURCE_SUFFIX = ":gui/citizen/happiness.xml";
 
     /**
-     * The label to find the gui of the citizen.
+     * The id for the citizen job page.
      */
     public static final String CITIZEN_JOB_RESOURCE_SUFFIX = ":gui/citizen/job.xml";
 
     /**
-     * The label to find the gui of the citizen.
+     * The id for the citizen family page.
      */
     public static final String CITIZEN_FAM_RESOURCE_SUFFIX = ":gui/citizen/family.xml";
 

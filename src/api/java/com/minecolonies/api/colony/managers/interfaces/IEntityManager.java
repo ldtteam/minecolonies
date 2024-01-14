@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Manager interface for managing entities for a colony
  */
-public interface IEntityManager
+public interface IEntityManager<T extends ICivilianData>
 {
     /**
      * Register a civilian entity with the colony
@@ -69,7 +69,7 @@ public interface IEntityManager
      * @param civilianId ID of the civilian.
      * @return ICivilianData associated with the ID, or null if it was not found.
      */
-    <T extends ICivilianData> T getCivilian(int civilianId);
+    T getCivilian(int civilianId);
 
     /**
      * Spawns a civilian with the specific civilian data.
@@ -80,7 +80,7 @@ public interface IEntityManager
      * @param force    True to skip max civilian test, false when not.
      * @return the new civilian.
      */
-    <T extends ICivilianData> T spawnOrCreateCivilian(T data, Level world, BlockPos spawnPos, boolean force);
+    T spawnOrCreateCivilian(T data, Level world, BlockPos spawnPos, boolean force);
 
     /**
      * Creates Civilian Data for a new civilian

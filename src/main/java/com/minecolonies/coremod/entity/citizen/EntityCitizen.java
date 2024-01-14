@@ -1029,7 +1029,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      *
      * @return the data.
      */
-    @Override
     public ICitizenData getCitizenData()
     {
         return citizenData;

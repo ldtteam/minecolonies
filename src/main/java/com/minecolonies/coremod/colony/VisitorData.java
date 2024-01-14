@@ -1,19 +1,26 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
+import com.minecolonies.api.entity.visitor.IVisitorExtraData;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TEXTURE_UUID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
 /**
@@ -22,76 +29,35 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTI
 public class VisitorData extends CitizenData implements IVisitorData
 {
     /**
-     * Recruit nbt tag
+     * NBT tags.
      */
-    private static final String TAG_RECRUIT_COST = "rcost";
+    public static final  String TAG_VISITOR_TYPE     = "visitorType";
+    public static final  String TAG_EXTRA_DATA       = "extra";
+    private static final String TAG_RECRUIT_COST     = "rcost";
     private static final String TAG_RECRUIT_COST_QTY = "rcostqty";
 
     /**
-     * The position the citizen is sitting at
+     * The type of the visitor.
      */
-    private BlockPos sittingPosition = BlockPos.ZERO;
+    private final IVisitorType visitorType;
 
     /**
-     * The recruitment level, used for stats/equipment and costs
+     * The extra data instances.
      */
-    private ItemStack recruitCost = ItemStack.EMPTY;
+    private List<IVisitorExtraData<?>> extraData;
 
     /**
-     * Texture UUID.
-     */
-    private UUID textureUUID;
-
-    /**
-     * Create a CitizenData given an ID. Used as a super-constructor or during loading.
+     * Create a VisitorData given an ID. Used as a super-constructor or during loading.
      *
-     * @param id     ID of the Citizen.
-     * @param colony Colony the Citizen belongs to.
+     * @param id          ID of the visitor.
+     * @param colony      colony the visitor belongs to.
+     * @param visitorType the type of the visitor.
      */
-    public VisitorData(final int id, final IColony colony)
+    public VisitorData(final int id, final IColony colony, final IVisitorType visitorType)
     {
         super(id, colony);
-    }
-
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        CompoundTag compoundNBT = super.serializeNBT();
-        CompoundTag item = new CompoundTag();
-        recruitCost.save(item);
-        compoundNBT.put(TAG_RECRUIT_COST, item);
-        compoundNBT.putInt(TAG_RECRUIT_COST_QTY, recruitCost.getCount());
-        BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
-        if (textureUUID != null)
-        {
-            compoundNBT.putUUID(TAG_TEXTURE_UUID, textureUUID);
-        }
-        return compoundNBT;
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundTag nbtTagCompound)
-    {
-        super.deserializeNBT(nbtTagCompound);
-        sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
-        recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
-        recruitCost.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
-        if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
-        {
-            this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
-        }
-    }
-
-    @Override
-    public void setRecruitCosts(final ItemStack item)
-    {
-        this.recruitCost = item;
-    }
-
-    @Override
-    public ItemStack getRecruitCost()
-    {
-        return recruitCost;
+        this.visitorType = visitorType;
+        this.extraData = visitorType.getExtraDataKeys();
     }
 
     /**
@@ -103,38 +69,23 @@ public class VisitorData extends CitizenData implements IVisitorData
      */
     public static IVisitorData loadVisitorFromNBT(final IColony colony, final CompoundTag nbt)
     {
-        final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony);
+        final ResourceLocation visitorTypeKey = new ResourceLocation(nbt.contains(TAG_VISITOR_TYPE) ? nbt.getString(TAG_VISITOR_TYPE) : "");
+        final IVisitorType visitorType = IMinecoloniesAPI.getInstance().getVisitorTypeRegistry().getValue(visitorTypeKey);
+        final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony, visitorType);
         data.deserializeNBT(nbt);
         return data;
     }
 
     @Override
-    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
+    public EntityType<? extends AbstractEntityVisitor> getEntityType()
     {
-        super.serializeViewNetworkData(buf);
-        buf.writeItem(recruitCost);
-        buf.writeInt(recruitCost.getCount());
-        if (textureUUID == null)
-        {
-            buf.writeBoolean(false);
-        }
-        else
-        {
-            buf.writeBoolean(true);
-            buf.writeUUID(textureUUID);
-        }
+        return visitorType.getEntityType();
     }
 
     @Override
-    public BlockPos getSittingPosition()
+    public <T> T getExtraDataValue(final IVisitorExtraData<T> extraData)
     {
-        return sittingPosition;
-    }
-
-    @Override
-    public void setSittingPosition(final BlockPos pos)
-    {
-        this.sittingPosition = pos;
+        return this.extraData.stream().filter(f -> f.getKey().equals(extraData.getKey())).findFirst().orElse(extraData.getDefaultValue());
     }
 
     @Override
@@ -168,20 +119,56 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
+    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
+    {
+        super.serializeViewNetworkData(buf);
+        buf.writeNbt(serializeNBT());
+    }
+
+    @Override
+    public CompoundTag serializeNBT()
+    {
+        final CompoundTag compound = super.serializeNBT();
+        compound.putString(TAG_VISITOR_TYPE, visitorType.getId().toString());
+
+        final CompoundTag extraDataCompound = new CompoundTag();
+        for (final IVisitorExtraData<?> extraDataKey : extraData)
+        {
+            extraDataCompound.put(extraDataKey.getKey(), extraDataKey.serializeNBT());
+        }
+        compound.put(TAG_EXTRA_DATA, extraDataCompound);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag nbtTagCompound)
+    {
+        super.deserializeNBT(nbtTagCompound);
+        for (final IVisitorExtraData<?> extraDataKey : extraData)
+        {
+            if (nbtTagCompound.contains(extraDataKey.getKey()))
+            {
+                extraDataKey.deserializeNBT(nbtTagCompound.getCompound(extraDataKey.getKey()));
+            }
+        }
+
+        // TODO: 1.20.2 Remove backwards compat for old visitor data
+        if (nbtTagCompound.contains(TAG_SITTING))
+        {
+            regularVisitorData.setSittingPosition(BlockPosUtil.read(nbtTagCompound, TAG_SITTING));
+            final ItemStack itemStack = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
+            itemStack.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
+            regularVisitorData.setRecruitCost(itemStack);
+            if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
+            {
+                regularVisitorData.setTextureUUID(nbtTagCompound.getUUID(TAG_TEXTURE_UUID));
+            }
+        }
+    }
+
+    @Override
     public void applyResearchEffects()
     {
         // no research effects for now
-    }
-
-    @Override
-    public void setCustomTexture(final UUID texture)
-    {
-        this.textureUUID = texture;
-    }
-
-    @Override
-    public boolean hasCustomTexture()
-    {
-        return textureUUID != null;
     }
 }

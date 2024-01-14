@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.world.item.ItemStack;
+import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
+import com.minecolonies.api.entity.visitor.IVisitorExtraData;
+import net.minecraft.world.entity.EntityType;
 
 /**
  * View data for visitors
@@ -8,9 +10,16 @@ import net.minecraft.world.item.ItemStack;
 public interface IVisitorViewData extends ICitizenDataView
 {
     /**
-     * Gets the visitors recruitment cost
+     * Get the entity type for this visitor.
      *
-     * @return stack to pay
+     * @return the entity type.
      */
-    ItemStack getRecruitCost();
+    EntityType<? extends AbstractEntityVisitor> getEntityType();
+
+    /**
+     * Get any bit of additional information for this visitor.
+     *
+     * @return the extra data container.
+     */
+    <T> T getExtraDataValue(final IVisitorExtraData<T> extraData);
 }

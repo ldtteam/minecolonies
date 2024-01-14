@@ -491,6 +491,13 @@ public interface IColony
     IQuestManager getQuestManager();
 
     /**
+     * Get the expedition manager of the colony.
+     *
+     * @return the expedition manager.
+     */
+    IExpeditionManager getExpeditionManager();
+
+    /**
      * Get citizen from colony.
      * @param id the id of the cit.
      * @return the cit.

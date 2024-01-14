@@ -18,12 +18,14 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.modules.*;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkAtHomeBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
@@ -230,11 +232,11 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCivilian(@Nullable final ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
+    public ICitizenData spawnOrCreateCivilian(@Nullable final ICitizenData data, final Level world, final BlockPos spawnPos, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
-            return (ICitizenData) data;
+            return data;
         }
 
         BlockPos spawnLocation = spawnPos;
@@ -248,7 +250,7 @@ public class CitizenManager implements ICitizenManager
             BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
             if (calculatedSpawn != null)
             {
-                return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                return spawnCitizenOnPosition(data, world, force, calculatedSpawn);
             }
             else
             {
@@ -257,7 +259,7 @@ public class CitizenManager implements ICitizenManager
                     calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getBuildingManager().getTownHall().getID());
                     if (calculatedSpawn != null)
                     {
-                        return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                        return spawnCitizenOnPosition(data, world, force, calculatedSpawn);
                     }
                 }
 
@@ -265,7 +267,7 @@ public class CitizenManager implements ICitizenManager
             }
         }
 
-        return (ICitizenData) data;
+        return data;
     }
 
     @NotNull

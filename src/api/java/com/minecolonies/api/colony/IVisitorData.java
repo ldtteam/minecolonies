@@ -1,40 +1,25 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
-
-import java.util.UUID;
+import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
+import com.minecolonies.api.entity.visitor.IVisitorExtraData;
+import net.minecraft.world.entity.EntityType;
 
 /**
- * Data for colony visitors, based on citizendata
+ * Data for colony visitors, based on citizen data
  */
 public interface IVisitorData extends ICitizenData
 {
     /**
-     * Sets the recruitment cost stack
+     * Get the entity type for this visitor.
+     *
+     * @return the entity type.
      */
-    void setRecruitCosts(final ItemStack cost);
+    EntityType<? extends AbstractEntityVisitor> getEntityType();
 
     /**
-     * Returns the recruitment cost stack
+     * Get any bit of additional information for this visitor.
      *
-     * @return itemstack
+     * @return the extra data container.
      */
-    ItemStack getRecruitCost();
-
-    /**
-     * The position the visitor is sitting on
-     *
-     * @return sitting pos
-     */
-    BlockPos getSittingPosition();
-
-    /**
-     * Sets the sitting position
-     *
-     * @param pos sitting pos
-     */
-    void setSittingPosition(final BlockPos pos);
-
-    void setCustomTexture(UUID texture);
+    <T> T getExtraDataValue(final IVisitorExtraData<T, ?> extraData);
 }

@@ -22,6 +22,7 @@ import com.minecolonies.coremod.entity.mobs.norsemen.EntityShieldmaiden;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.entity.visitor.RegularVisitorType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -61,11 +62,12 @@ public class EntityInitializer
                 .setShouldReceiveVelocityUpdates(true)
                 .setCustomClientFactory(NewBobberEntity::new));
 
-            ModEntities.VISITOR = build(registry, "visitor", EntityType.Builder.of(VisitorCitizen::new, MobCategory.CREATURE)
-              .setTrackingRange(ENTITY_TRACKING_RANGE)
-              .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-              .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
-              .setShouldReceiveVelocityUpdates(true));
+            ModEntities.VISITOR = build(registry, "visitor",
+              EntityType.Builder.of(VisitorCitizen.forVisitorType(new RegularVisitorType()), MobCategory.CREATURE)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                .setShouldReceiveVelocityUpdates(true));
 
             ModEntities.MERCENARY = build(registry, "mercenary",
               EntityType.Builder.of(EntityMercenary::new, MobCategory.CREATURE)

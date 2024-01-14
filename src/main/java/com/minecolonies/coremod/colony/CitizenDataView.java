@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -33,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED;
@@ -208,7 +206,7 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public IColony getColony()
+    public IColonyView getColony()
     {
         return colonyView;
     }

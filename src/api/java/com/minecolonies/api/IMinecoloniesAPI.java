@@ -20,6 +20,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -95,4 +96,6 @@ public interface IMinecoloniesAPI
     IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry();
 
     IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry();
+
+    IForgeRegistry<IVisitorType> getVisitorTypeRegistry();
 }

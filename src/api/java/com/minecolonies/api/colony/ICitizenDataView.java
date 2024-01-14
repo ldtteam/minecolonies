@@ -220,4 +220,12 @@ public interface ICitizenDataView extends ICitizen
      * @param position the pos of the home building.
      */
     void setHomeBuilding(BlockPos position);
+
+    /**
+     * Get the colony this citizen belongs to.
+     *
+     * @return the colony view.
+     */
+    @Override
+    IColonyView getColony();
 }
