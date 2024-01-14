@@ -14,11 +14,11 @@ import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
@@ -150,7 +150,7 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
             return 10;
         }
 
-        return (int) (Math.max(MIN_ATTACK_DELAY, MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().barbarianHordeDifficulty.get() * 4 * user.getDifficulty())
+        return (int) (Math.max(MIN_ATTACK_DELAY, MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().raidDifficulty.get() * 4 * user.getDifficulty())
                         * user.getAttackDelayModifier());
     }
 

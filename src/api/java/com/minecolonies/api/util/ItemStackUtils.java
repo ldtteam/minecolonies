@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -521,11 +520,11 @@ public final class ItemStackUtils
             return 5;
         }
         final int rodDurability = itemStack.getMaxDamage();
-        if (rodDurability <= (Tiers.WOOD.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
+        if (rodDurability <= (Tiers.WOOD.getUses() + 22))
         {
             return 1;
         }
-        else if (rodDurability <= (Tiers.IRON.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
+        else if (rodDurability <= (Tiers.IRON.getUses() + 6))
         {
             return 2;
         }

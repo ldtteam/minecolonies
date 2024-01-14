@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
 import com.minecolonies.api.colony.buildings.modules.*;
@@ -8,10 +9,11 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import com.minecolonies.api.util.MessageUtils;
 
 import java.util.function.Function;
+
+import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.LIVING;
 
 /**
  * Assignment module for jobs that have to live at the work place mandatorily.
@@ -36,16 +38,20 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
             final IBuilding oldHome = citizen.getHomeBuilding();
             if (oldHome != null && !oldHome.getID().equals(building.getID()))
             {
-                if (oldHome.hasModule(LivingBuildingModule.class) && !oldHome.hasModule(WorkAtHomeBuildingModule.class))
+                if (oldHome.hasModule(LIVING) && !oldHome.hasModule(WorkAtHomeBuildingModule.class))
                 {
-                    final MutableComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
-                    final MutableComponent buildingComponent = MessageUtils.format(oldHome.getBuildingDisplayName()).create();
-                    MessageUtils.format("com.minecolonies.coremod.gui.workerhuts.assignedbed",
-                        citizen.getName(),
-                        jobComponent,
-                        buildingComponent,
-                        BlockPosUtil.getString(oldHome.getID()))
-                      .sendTo(oldHome.getColony()).forAllPlayers();
+                    final LivingBuildingModule livingBuildingModule = oldHome.getModule(LIVING);
+                    if (livingBuildingModule.getHiringMode() == HiringMode.MANUAL || (livingBuildingModule.getHiringMode() == HiringMode.DEFAULT && building.getColony().isManualHiring()))
+                    {
+                        final MutableComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
+                        final MutableComponent buildingComponent = MessageUtils.format(oldHome.getBuildingDisplayName()).create();
+                        MessageUtils.format("com.minecolonies.coremod.gui.workerhuts.assignedbed",
+                            citizen.getName(),
+                            jobComponent,
+                            buildingComponent,
+                            BlockPosUtil.getString(oldHome.getID()))
+                          .sendTo(oldHome.getColony()).forAllPlayers();
+                    }
                 }
                 oldHome.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
             }

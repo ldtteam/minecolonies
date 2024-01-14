@@ -23,7 +23,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.modules.*;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkAtHomeBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
@@ -576,7 +579,7 @@ public class CitizenManager implements ICitizenManager
 
             if (respawnInterval <= 0)
             {
-                respawnInterval = MineColonies.getConfig().getServer().citizenRespawnInterval.get() * TICKS_SECOND;
+                respawnInterval = 60 * TICKS_SECOND;
                 int femaleCount = 0;
                 for (ICitizenData citizens : getCitizens())
                 {
@@ -619,11 +622,6 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void updateCitizenMourn(final ICitizenData data, final boolean mourn)
     {
-        if (mourn)
-        {
-            MessageUtils.format(COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName()).sendTo(colony).forManagers();
-        }
-
         for (final ICitizenData citizen : getCitizens())
         {
             if (mourn)

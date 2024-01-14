@@ -357,6 +357,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingTownHall::new)
           .setBuildingViewProducer(() -> BuildingTownHall.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID))
+          .addBuildingModuleProducer(TOWNHALL_SETTINGS)
           .createBuildingEntry());
 
         ModBuildings.wareHouse = DEFERRED_REGISTER.register(ModBuildings.WAREHOUSE_ID, () -> new BuildingEntry.Builder()

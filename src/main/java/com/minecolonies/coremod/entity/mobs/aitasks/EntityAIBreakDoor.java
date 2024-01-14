@@ -4,11 +4,11 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.core.BlockPos;
 
 import java.util.EnumSet;
 
@@ -77,7 +77,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
     @Override
     public void tick()
     {
-        if (mob.getCommandSenderWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getServer().shouldRaidersBreakDoors.get())
+        if (mob.getCommandSenderWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getServer().raidersbreakdoors.get())
         {
             breakTime = 0;
             return;

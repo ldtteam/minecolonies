@@ -2,7 +2,9 @@ package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -11,21 +13,14 @@ import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.ON_STRING;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.event.TextureReloadListener.TEXTURE_PACKS;
-
-import net.minecraft.ChatFormatting;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -38,6 +33,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
+import static com.minecolonies.api.util.constant.TranslationConstants.OFF_STRING;
+import static com.minecolonies.api.util.constant.TranslationConstants.ON_STRING;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.event.TextureReloadListener.TEXTURE_PACKS;
 
 /**
  * BOWindow for the town hall.
@@ -100,9 +101,6 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
         registerButton(BUTTON_PATREON, this::patreonClicked);
-        registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
-        registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
-        registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
 
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
@@ -118,91 +116,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         this.initialNamePackIndex = nameStyleDropDownList.getSelectedIndex();
 
         checkFeatureUnlock();
-
-        if (building.getColony().isManualHiring())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-        }
-
-        if (building.getColony().isManualHousing())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-        }
-
-        if (building.getColony().canMoveIn())
-        {
-            findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setText(Component.translatable(ON_STRING));
-        }
     }
 
-    /**
-     * Toggles the allocation of a certain job. Manual or automatic.
-     *
-     * @param button the pressed button.
-     */
-    private void toggleHiring(@NotNull final Button button)
-    {
-        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
-
-        final boolean toggle;
-        if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
-        {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-            toggle = true;
-        }
-        else
-        {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
-            toggle = false;
-        }
-        Network.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(), toggle));
-    }
-
-    /**
-     * Toggles the allocation of a certain job. Manual or automatic.
-     *
-     * @param button the pressed button.
-     */
-    private void toggleHousing(@NotNull final Button button)
-    {
-        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
-
-        final boolean toggle;
-        if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
-        {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-            toggle = true;
-        }
-        else
-        {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
-            toggle = false;
-        }
-        Network.getNetwork().sendToServer(new ToggleHousingMessage(this.building.getColony(), toggle));
-    }
-
-    /**
-     * Toggles citizens moving in. Off means citizens stop moving in.
-     *
-     * @param button the pressed button.
-     */
-    private void toggleMoveIn(@NotNull final Button button)
-    {
-        String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
-
-        final boolean toggle;
-        if (key.equals(OFF_STRING))
-        {
-            button.setText(Component.translatable(ON_STRING));
-            toggle = true;
-        }
-        else
-        {
-            button.setText(Component.translatable(OFF_STRING));
-            toggle = false;
-        }
-        Network.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
-    }
 
     /**
      * Switch the structure style pack.

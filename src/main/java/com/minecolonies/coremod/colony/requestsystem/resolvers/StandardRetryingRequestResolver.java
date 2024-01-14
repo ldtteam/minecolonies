@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -29,6 +28,8 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
 
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
+    private static final int MAX_RETRIES = 3;
+    private static final int RETRY_DELAY = 1200;
 
     private       IRequestManager             manager;
     private final ILocation                   location;
@@ -60,13 +61,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public int getMaximalTries()
     {
-        return MineColonies.getConfig().getServer().maximalRetries.get();
+        return MAX_RETRIES;
     }
 
     @Override
     public int getMaximalDelayBetweenRetriesInTicks()
     {
-        return MineColonies.getConfig().getServer().delayBetweenRetries.get();
+        return RETRY_DELAY;
     }
 
     @Override

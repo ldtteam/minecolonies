@@ -6,6 +6,8 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -28,6 +30,9 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
+import com.minecolonies.coremod.colony.buildings.modules.SettingsModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -218,21 +223,6 @@ public class Colony implements IColony
     private Level world = null;
 
     /**
-     * The hiring mode in the colony.
-     */
-    private boolean manualHiring = false;
-
-    /**
-     * The housing mode in the colony.
-     */
-    private boolean manualHousing = false;
-
-    /**
-     * Whether citizens can move in or not.
-     */
-    private boolean moveIn = true;
-
-    /**
      * The name of the colony.
      */
     private String name = "ERROR(Wasn't placed by player)";
@@ -339,6 +329,8 @@ public class Colony implements IColony
      * Current day of the colony.
      */
     private int day = 0;
+
+    private final SettingsModule settingsModule = (SettingsModule) BuildingEntry.produceModuleWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key);
 
     /**
      * Constructor for a newly created Colony.
@@ -730,7 +722,6 @@ public class Colony implements IColony
      */
     public void read(@NotNull final CompoundTag compound)
     {
-        manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
@@ -797,12 +788,6 @@ public class Colony implements IColony
         freePositions = ImmutableSet.copyOf(tempFreePositions);
 
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
-        manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
-
-        if (compound.contains(TAG_MOVE_IN))
-        {
-            moveIn = compound.getBoolean(TAG_MOVE_IN);
-        }
 
         if (compound.contains(TAG_STYLE))
         {
@@ -850,6 +835,12 @@ public class Colony implements IColony
         {
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
+
+        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key))
+        {
+            settingsModule.deserializeNBT(compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
+        }
+
         this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
     }
@@ -879,7 +870,6 @@ public class Colony implements IColony
         compound.putString(TAG_NAME, name);
         BlockPosUtil.write(compound, TAG_CENTER, center);
 
-        compound.putBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         compound.putInt(TAG_CHILD_TIME, additionalChildTime);
@@ -947,8 +937,6 @@ public class Colony implements IColony
         compound.put(TAG_FREE_POSITIONS, freePositionsTagList);
 
         compound.putInt(TAG_ABANDONED, packageManager.getLastContactInHours());
-        compound.putBoolean(TAG_MANUAL_HOUSING, manualHousing);
-        compound.putBoolean(TAG_MOVE_IN, moveIn);
         compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.putString(TAG_PACK, pack);
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
@@ -958,6 +946,10 @@ public class Colony implements IColony
         compound.putString(TAG_COL_TEXT, textureStyle);
         compound.putString(TAG_COL_NAME_STYLE, nameStyle);
         compound.putInt(COLONY_DAY, day);
+
+        final CompoundTag settings = new CompoundTag();
+        settingsModule.serializeNBT(settings);
+        compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
 
         this.colonyTag = compound;
 
@@ -1395,18 +1387,7 @@ public class Colony implements IColony
      */
     public boolean isManualHiring()
     {
-        return manualHiring;
-    }
-
-    /**
-     * Setter to set the job allocation manual or automatic.
-     *
-     * @param manualHiring true if manual, false if automatic.
-     */
-    public void setManualHiring(final boolean manualHiring)
-    {
-        this.manualHiring = manualHiring;
-        markDirty();
+        return !settingsModule.getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
     }
 
     /**
@@ -1416,18 +1397,7 @@ public class Colony implements IColony
      */
     public boolean isManualHousing()
     {
-        return manualHousing;
-    }
-
-    /**
-     * Setter to set the house allocation manual or automatic.
-     *
-     * @param manualHousing true if manual, false if automatic.
-     */
-    public void setManualHousing(final boolean manualHousing)
-    {
-        this.manualHousing = manualHousing;
-        markDirty();
+        return !settingsModule.getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
     }
 
     /**
@@ -1437,18 +1407,7 @@ public class Colony implements IColony
      */
     public boolean canMoveIn()
     {
-        return moveIn;
-    }
-
-    /**
-     * Setter to set the citizen moving in.
-     *
-     * @param newMoveIn true if can move in, false if can't move in.
-     */
-    public void setMoveIn(final boolean newMoveIn)
-    {
-        this.moveIn = newMoveIn;
-        markDirty();
+        return settingsModule.getSetting(BuildingTownHall.MOVE_IN).getValue();
     }
 
     /**
@@ -1647,7 +1606,7 @@ public class Colony implements IColony
     public void addVisitingPlayer(final Player player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if (!rank.isColonyManager() && !visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
+        if (!rank.isColonyManager() && !visitingPlayers.contains(player) && settingsModule.getSetting(BuildingTownHall.ENTER_LEAVE_MESSAGES).getValue())
         {
             visitingPlayers.add(player);
             if (!this.getImportantMessageEntityPlayers().contains(player))
@@ -1661,7 +1620,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final Player player)
     {
-        if (visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
+        if (visitingPlayers.contains(player) && settingsModule.getSetting(BuildingTownHall.ENTER_LEAVE_MESSAGES).getValue())
         {
             visitingPlayers.remove(player);
             if (!this.getImportantMessageEntityPlayers().contains(player))
@@ -1986,5 +1945,14 @@ public class Colony implements IColony
     public ICitizen getCitizen(final int id)
     {
         return citizenManager.getCivilian(id);
+    }
+
+    /**
+     * Gets the colonies settings
+     * @return
+     */
+    public ISettingsModule getSettings()
+    {
+        return settingsModule;
     }
 }

@@ -243,7 +243,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                     if (!(building instanceof IRSComponent))
                     {
-                        ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
+                        ConstructionTapeHelper.placeConstructionTape(building.getCorners(), building.getColony());
                     }
 
                     building.setIsMirrored(placementSettings.mirror != Mirror.NONE);
