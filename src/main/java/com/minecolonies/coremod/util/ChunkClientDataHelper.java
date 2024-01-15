@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.event.ClientChunkUpdatedEvent;
+import com.minecolonies.api.util.ChunkCapData;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -67,8 +68,8 @@ public class ChunkClientDataHelper
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap != null)
         {
-            cap.setOwningColony(chunkCapData.owningColony, chunk);
-            cap.setCloseColonies(chunkCapData.closeColonies);
+            cap.setOwningColony(chunkCapData.getOwningColony(), chunk);
+            cap.setStaticColonyClaim(chunkCapData.getStaticColonyClaim());
         }
 
         MinecraftForge.EVENT_BUS.post(new ClientChunkUpdatedEvent(chunk));

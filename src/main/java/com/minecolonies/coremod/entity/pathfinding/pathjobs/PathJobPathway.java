@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
@@ -13,8 +13,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * Path job to find a path between buildings
@@ -49,11 +47,9 @@ public class PathJobPathway extends AbstractPathJob
     protected double computeHeuristic(final BlockPos pos)
     {
         final LevelChunk chunk = (LevelChunk) world.getChunk(pos.getX() >> 4, pos.getZ() >> 4);
-
-        final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (colonyCap != null && colonyCap.getOwningColony() == colonyid)
+        if (ColonyUtils.getOwningColony(chunk) == colonyid)
         {
-            return Math.sqrt(end.distSqr(pos)) / (colonyCap.getAllClaimingBuildings().size() + 1);
+            return Math.sqrt(end.distSqr(pos)) / (ColonyUtils.getAllClaimingBuildings(chunk).size() + 1);
         }
 
         return Math.sqrt(end.distSqr(pos));

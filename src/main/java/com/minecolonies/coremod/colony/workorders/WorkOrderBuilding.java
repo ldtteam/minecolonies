@@ -272,7 +272,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
             final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
             if (building != null)
             {
-                ConstructionTapeHelper.placeConstructionTape(building.getCorners(), colony.getWorld());
+                ConstructionTapeHelper.placeConstructionTape(building.getCorners(), colony);
             }
         }
     }

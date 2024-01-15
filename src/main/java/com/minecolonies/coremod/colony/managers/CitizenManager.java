@@ -578,7 +578,7 @@ public class CitizenManager implements ICitizenManager
 
             if (respawnInterval <= 0)
             {
-                respawnInterval = MineColonies.getConfig().getServer().citizenRespawnInterval.get() * TICKS_SECOND;
+                respawnInterval = 60 * TICKS_SECOND;
                 int femaleCount = 0;
                 for (ICitizenData citizens : getCitizens())
                 {

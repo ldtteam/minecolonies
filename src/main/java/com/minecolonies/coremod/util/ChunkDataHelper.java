@@ -72,7 +72,7 @@ public final class ChunkDataHelper
             }
         }
 
-        final int closeColony = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
+        final int closeColony = ColonyUtils.getOwningColony(chunk);
         if (closeColony != 0)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.dimension());
@@ -91,7 +91,7 @@ public final class ChunkDataHelper
      */
     public static void unloadChunk(final LevelChunk chunk, final Level world)
     {
-        final int closeColony = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
+        final int closeColony = ColonyUtils.getOwningColony(chunk);
         if (closeColony != 0)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.dimension());

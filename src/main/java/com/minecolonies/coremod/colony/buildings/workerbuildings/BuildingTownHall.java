@@ -5,6 +5,8 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
@@ -14,7 +16,11 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowMainPage;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -53,6 +59,30 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     private final LinkedList<PermissionEvent> permissionEvents = new LinkedList<>();
 
     /**
+     * Citizen spawning.
+     */
+    public static final ISettingKey<BoolSetting> MOVE_IN              = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "kidspawn"));
+    /**
+     * Enter leave messages.
+     */
+    public static final ISettingKey<BoolSetting> ENTER_LEAVE_MESSAGES = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "enterleave"));
+
+    /**
+     * Automatic hiring mode.
+     */
+    public static final ISettingKey<BoolSetting> AUTO_HIRING_MODE = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "autohiring"));
+
+    /**
+     * AUtomatic housing mode.
+     */
+    public static final ISettingKey<BoolSetting> AUTO_HOUSING_MODE = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "autohousing"));
+
+    /**
+     * Constructgion tape setting.
+     */
+    public static final ISettingKey<BoolSetting> CONSTRUCTION_TAPE = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "tape"));
+
+    /**
      * Instantiates the building.
      *
      * @param c the colony.
@@ -87,6 +117,19 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             }
             permissionEvents.add(event);
             markDirty();
+        }
+    }
+
+    @Override
+    public void registerModule(@NotNull final IBuildingModule module)
+    {
+        if (module.getProducer() == BuildingModules.TOWNHALL_SETTINGS)
+        {
+            super.registerModule(((Colony)colony).getSettings());
+        }
+        else
+        {
+            super.registerModule(module);
         }
     }
 

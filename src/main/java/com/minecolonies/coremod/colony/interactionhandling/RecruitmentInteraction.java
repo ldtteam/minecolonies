@@ -4,8 +4,8 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.citizens.event.CitizenAddedEvent;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
@@ -15,13 +15,11 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -61,6 +59,11 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
       new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.showstats"), null),
       recruitAnswer,
       new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.notnow"), null)};
+
+    /**
+     * Chance for a bad visitor
+     */
+    private static final int BAD_VISITOR_CHANCE = 2;
 
     public RecruitmentInteraction(final ICitizen data)
     {
@@ -159,7 +162,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     data.setHomeBuilding(null);
                     data.setJob(null);
 
-                    if (colony.getWorld().random.nextInt(100) <= MineColonies.getConfig().getServer().badVisitorsChance.get())
+                    if (colony.getWorld().random.nextInt(100) <= BAD_VISITOR_CHANCE)
                     {
                         MessageUtils.format(MESSAGE_RECRUITMENT_RAN_OFF, data.getName()).sendTo(colony).forAllPlayers();
                         return;

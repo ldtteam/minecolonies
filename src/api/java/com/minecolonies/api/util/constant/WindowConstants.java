@@ -110,6 +110,11 @@ public final class WindowConstants
     public static final String BUTTON_TOGGLE_MOVE_IN = "toggleMoveIn";
 
     /**
+     * Id of the toggle move in button in the GUI.
+     */
+    public static final String BUTTON_TOGGLE_ENTER_LEAVE_MESSAGES = "toggleentermessages";
+
+    /**
      * Id of the toggle print progress button in the GUI.
      */
     public static final String BUTTON_TOGGLE_PRINT_PROGRESS = "togglePrintProgress";

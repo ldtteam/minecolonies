@@ -30,7 +30,6 @@ import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
 import com.minecolonies.coremod.research.GlobalResearchTreeMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -138,7 +137,6 @@ public class NetworkChannel
         registerMessage(++idx, TownHallRenameMessage.class, TownHallRenameMessage::new);
         registerMessage(++idx, MinerSetLevelMessage.class, MinerSetLevelMessage::new);
         registerMessage(++idx, RecallCitizenMessage.class, RecallCitizenMessage::new);
-        registerMessage(++idx, ToggleJobMessage.class, ToggleJobMessage::new);
         registerMessage(++idx, HireFireMessage.class, HireFireMessage::new);
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
@@ -153,8 +151,6 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
         registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
 
-        registerMessage(++idx, ToggleHousingMessage.class, ToggleHousingMessage::new);
-        registerMessage(++idx, ToggleMoveInMessage.class, ToggleMoveInMessage::new);
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
         registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
         registerMessage(++idx, AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);

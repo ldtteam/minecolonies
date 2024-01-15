@@ -6,9 +6,9 @@ import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
@@ -18,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -26,11 +25,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SWITCH;
+import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_MANAGEMENT_GUI;
 
 /**
  * TownhallGUI for managing colony creation/deletion
@@ -126,19 +126,17 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             }
         }
 
-        if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
+        final double spawnDistance =
+          Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getLevelData().getXSpawn(), world.getLevelData().getYSpawn(), world.getLevelData().getZSpawn())));
+        if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getLevelData().getXSpawn(), world.getLevelData().getYSpawn(), world.getLevelData().getZSpawn())));
-            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
-            {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
-                  MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()));
-            }
-            else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
-            {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
-                  MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()));
-            }
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
+              MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()));
+        }
+        else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
+        {
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
+              MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()));
         }
 
         if (findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).isTextEmpty())
@@ -177,12 +175,17 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
         if (reactivate)
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(),"", ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(), "", ((TileEntityColonyBuilding) entity).getBlueprintPath()));
             close();
         }
         else if (entity instanceof TileEntityColonyBuilding && !((TileEntityColonyBuilding) entity).getPackName().isEmpty())
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, false, colonyName.getString(), StructurePacks.selectedPack.getName(), ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+            Network.getNetwork()
+              .sendToServer(new CreateColonyMessage(pos,
+                false,
+                colonyName.getString(),
+                StructurePacks.selectedPack.getName(),
+                ((TileEntityColonyBuilding) entity).getBlueprintPath()));
             close();
         }
     }
@@ -207,18 +210,10 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
                 final int chunkX = startX + x;
                 final int chunkZ = startZ + z;
                 final LevelChunk chunk = world.getChunk(chunkX, chunkZ);
-                final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
-                if (cap != null)
+                final int colonyId = ColonyUtils.getOwningColony(chunk);
+                if (colonyId != NO_COLONY_ID)
                 {
-                    if (cap.getOwningColony() != 0)
-                    {
-                        return cap.getOwningColony();
-                    }
-
-                    if (!cap.getStaticClaimColonies().isEmpty())
-                    {
-                        return cap.getStaticClaimColonies().get(0);
-                    }
+                    return colonyId;
                 }
             }
         }

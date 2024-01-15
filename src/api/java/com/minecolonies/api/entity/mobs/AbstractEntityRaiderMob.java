@@ -4,7 +4,6 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
@@ -21,6 +20,7 @@ import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundTag;
@@ -47,9 +47,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -296,7 +296,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
                                                  .withChanceToByPassMovingAway(0.20)
                                                  .withPlaceLadders();
 
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().doBarbariansBreakThroughWalls.get())
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
             {
                 stuckHandler.withBlockBreaks();
                 stuckHandler.withCompleteStuckBlockBreak(6);
@@ -483,7 +483,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
 
                 if (!this.getMainHandItem().isEmpty() && SPEED_EFFECT != null && this.getMainHandItem().getItem() instanceof IChiefSwordItem
-                      && MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                      && MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
                       .stream().filter(entity -> !entity.hasEffect(MobEffects.MOVEMENT_SPEED))
@@ -512,10 +512,10 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     private void onEnterChunk(final ChunkPos newChunkPos)
     {
         final LevelChunk chunk = colony.getWorld().getChunk(newChunkPos.x, newChunkPos.z);
-        final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (chunkCapability != null && chunkCapability.getOwningColony() != 0 && colony.getID() != chunkCapability.getOwningColony())
+        final int owningColonyId = ColonyUtils.getOwningColony(chunk);
+        if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId)
         {
-            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), level);
+            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level);
             tempColony.getRaiderManager().setPassThroughRaid();
         }
     }

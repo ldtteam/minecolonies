@@ -298,7 +298,9 @@ public class BuildingEntry
         final var producer = ModuleProducer.ALL_MODULES.get(key);
         if (producer.hasServerModule())
         {
-            return producer.moduleProducer.get();
+            final IBuildingModule module = producer.moduleProducer.get();
+            module.setProducer(producer);
+            return module;
         }
 
         return null;

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_STATE_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
@@ -127,14 +126,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 continue;
             }
 
-            final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-            if (colonyCap == null)
-            {
-                iterator.remove();
-                continue;
-            }
-
-            if (colonyCap.getOwningColony() != colony.getID())
+            if (ColonyUtils.getOwningColony(chunk) != colony.getID())
             {
                 iterator.remove();
             }

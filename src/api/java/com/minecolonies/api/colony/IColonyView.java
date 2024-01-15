@@ -82,13 +82,6 @@ public interface IColonyView extends IColony
     boolean isManualHiring();
 
     /**
-     * Sets if workers should be hired manually.
-     *
-     * @param manualHiring true if manually.
-     */
-    void setManualHiring(boolean manualHiring);
-
-    /**
      * Getter for the manual housing or not.
      *
      * @return the boolean true or false.
@@ -96,25 +89,11 @@ public interface IColonyView extends IColony
     boolean isManualHousing();
 
     /**
-     * Sets if houses should be assigned manually.
-     *
-     * @param manualHousing true if manually.
-     */
-    void setManualHousing(boolean manualHousing);
-
-    /**
      * Getter for letting citizens move in or not.
      *
      * @return the boolean true or false.
      */
     boolean canMoveIn();
-
-    /**
-     * Sets if citizens can move in.
-     *
-     * @param newMoveIn true if citizens can move in.
-     */
-    void setMoveIn(boolean newMoveIn);
 
     /**
      * Get the town hall View for this ColonyView.
