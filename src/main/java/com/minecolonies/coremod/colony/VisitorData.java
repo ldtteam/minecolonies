@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
+import static com.minecolonies.api.entity.visitor.ModVisitorTypes.VISITOR_TYPE_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TEXTURE_UUID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
@@ -71,7 +72,7 @@ public class VisitorData extends CitizenData implements IVisitorData
      */
     public static IVisitorData loadVisitorFromNBT(final IColony colony, final CompoundTag nbt)
     {
-        final ResourceLocation visitorTypeKey = new ResourceLocation(nbt.contains(TAG_VISITOR_TYPE) ? nbt.getString(TAG_VISITOR_TYPE) : "");
+        final ResourceLocation visitorTypeKey = nbt.contains(TAG_VISITOR_TYPE) ? new ResourceLocation(nbt.getString(TAG_VISITOR_TYPE)) : VISITOR_TYPE_ID;
         final IVisitorType visitorType = IMinecoloniesAPI.getInstance().getVisitorTypeRegistry().getValue(visitorTypeKey);
         final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony, visitorType);
         data.deserializeNBT(nbt);
