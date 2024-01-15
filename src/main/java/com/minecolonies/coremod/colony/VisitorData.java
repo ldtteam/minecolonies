@@ -46,7 +46,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     /**
      * The extra data instances.
      */
-    private List<IVisitorExtraData<?>> extraData;
+    private final List<IVisitorExtraData<?>> extraData;
 
     /**
      * Create a VisitorData given an ID. Used as a super-constructor or during loading.
