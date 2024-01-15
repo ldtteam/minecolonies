@@ -326,8 +326,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.STRING);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
           .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem())
-          .add(Items.BAMBOO_PLANKS, Items.BAMBOO_HANGING_SIGN)
-          .addTags(ItemTags.CHEST_BOATS);
+          .add(Items.BAMBOO_HANGING_SIGN)
+          .addTags(ItemTags.CHEST_BOATS, ItemTags.PLANKS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.MAGMA_CREAM);
