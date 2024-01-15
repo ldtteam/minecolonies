@@ -2,6 +2,8 @@
   "values": [
     "minecolonies:barrel_block",
     "minecolonies:blockhutcrusher",
+    "minecraft:bamboo_planks",
+    "minecraft:bamboo_hanging_sign",
     "#minecraft:chest_boats"
   ]
 }
