@@ -34,6 +34,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.CHAT_LABEL_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.RESPONSE_BOX_ID;
 import static com.minecolonies.coremod.client.gui.WindowInteraction.BUTTON_RESPONSE_ID;
+import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
 
 /**
  * Interaction for recruiting visitors
@@ -92,11 +93,10 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         final ButtonImage recruitButton = window.findPaneOfTypeByID(BUTTON_RESPONSE_ID + 2, ButtonImage.class);
         final Box group = window.findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
 
-
-        if (recruitButton != null && dataView instanceof IVisitorViewData)
+        if (recruitButton != null && dataView instanceof IVisitorViewData visitorViewData)
         {
-            final ItemStack recruitCost = ((IVisitorViewData) dataView).getRecruitCost();
-            final IColonyView colony = (IColonyView) dataView.getColony();
+            final ItemStack recruitCost = visitorViewData.getExtraDataValue(EXTRA_DATA_RECRUIT_COST);
+            final IColonyView colony = dataView.getColony();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
                 .append(Component.literal(dataView.getName() + ": "))
@@ -115,7 +115,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             icon.setID(RECRUITMENT_ICON);
             icon.setSize(15, 15);
             group.addChild(icon);
-            icon.setItem(((IVisitorViewData) dataView).getRecruitCost());
+            icon.setItem(recruitCost);
             icon.setPosition(iconPosX, iconPosY);
             icon.setVisible(true);
         }
@@ -127,10 +127,10 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     {
         final Component response = getPossibleResponses().get(responseId);
         // Validate recruitment before returning true
-        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)
+        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData visitorViewData)
         {
-            if (player.isCreative() || InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), ((IVisitorViewData) data).getRecruitCost().getItem())
-                  >= ((IVisitorViewData) data).getRecruitCost().getCount())
+            final ItemStack recruitCost = visitorViewData.getExtraDataValue(EXTRA_DATA_RECRUIT_COST);
+            if (player.isCreative() || InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), recruitCost.getItem()) >= recruitCost.getCount())
             {
                 return super.onClientResponseTriggered(responseId, player, data, window);
             }
@@ -146,14 +146,13 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
         final Component response = getPossibleResponses().get(responseId);
-        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData)
+        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData visitorViewData)
         {
             IColony colony = data.getColony();
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
             {
-                if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()),
-                  ((IVisitorData) data).getRecruitCost(),
-                  ((IVisitorData) data).getRecruitCost().getCount(), true, true))
+                final ItemStack recruitCost = visitorViewData.getExtraDataValue(EXTRA_DATA_RECRUIT_COST);
+                if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), recruitCost, recruitCost.getCount(), true, true))
                 {
                     // Recruits visitor as new citizen and respawns entity
                     colony.getVisitorManager().removeCivilian(data);

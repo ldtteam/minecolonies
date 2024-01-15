@@ -12,7 +12,10 @@ import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -24,14 +27,12 @@ import com.minecolonies.coremod.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
-import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -52,13 +53,11 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
-import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
@@ -282,55 +281,6 @@ public class VisitorCitizen extends AbstractEntityVisitor
     public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player playerEntity)
     {
         return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
-    }
-
-    /**
-     * Direct interaction on right click
-     *
-     * @param player
-     * @param hand
-     * @return
-     */
-    private InteractionResult directPlayerInteraction(final Player player, final InteractionHand hand)
-    {
-        final ItemStack usedStack = player.getItemInHand(hand);
-        if (ISFOOD.test(usedStack))
-        {
-            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
-            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
-            {
-                if (!player.getInventory().add(remainingItem))
-                {
-                    InventoryUtils.spawnItemStack(
-                      player.level,
-                      player.getX(),
-                      player.getY(),
-                      player.getZ(),
-                      remainingItem
-                    );
-                }
-            }
-
-            if (!level.isClientSide())
-            {
-                getCitizenData().increaseSaturation(usedStack.getItem().getFoodProperties(usedStack, this).getNutrition());
-
-                playSound(SoundEvents.GENERIC_EAT, 1.5F, (float) SoundUtils.getRandomPitch(getRandom()));
-                // Position needs to be centered on citizen, Eat AI wrong too?
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    getXRot(),
-                    getYRot(),
-                    getEyeHeight()), this);
-
-                citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
-            }
-            return InteractionResult.CONSUME;
-        }
-        return null;
     }
 
     @Override
@@ -675,8 +625,8 @@ public class VisitorCitizen extends AbstractEntityVisitor
             return super.checkAndHandleImportantInteractions(player, hand);
         }
 
-        final InteractionResult result = directPlayerInteraction(player, hand);
-        if (result != null)
+        final InteractionResult result = visitorType.onPlayerInteraction(this, player, level, hand);
+        if (result.consumesAction())
         {
             return result;
         }

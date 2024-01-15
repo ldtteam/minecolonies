@@ -39,6 +39,8 @@ import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
+import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
+import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_SITTING_POSITION;
 
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
@@ -111,13 +113,14 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             BlockPos avg = BlockPos.ZERO;
             for (final Integer id : externalCitizens)
             {
-                final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
+                final IVisitorData data = building.getColony().getVisitorManager().getCivilian(id);
                 if (data != null)
                 {
-                    if (!data.getSittingPosition().equals(BlockPos.ZERO))
+                    final BlockPos sittingPosition = data.getExtraDataValue(EXTRA_DATA_SITTING_POSITION);
+                    if (!sittingPosition.equals(BlockPos.ZERO))
                     {
                         count++;
-                        avg = avg.offset(data.getSittingPosition());
+                        avg = avg.offset(sittingPosition);
                     }
                 }
             }
@@ -145,7 +148,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             musicCooldown -= MAX_TICKRATE;
         }
 
-        externalCitizens.removeIf(id -> colony.getVisitorManager().getVisitor(id) == null);
+        externalCitizens.removeIf(id -> colony.getVisitorManager().getCivilian(id) == null);
 
         if (noVisitorTime > 0)
         {
@@ -180,11 +183,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         int recruitLevel = building.getColony().getWorld().random.nextInt(10 * building.getBuildingLevel()) + 15;
         List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
-
-        if (newCitizen.getName().contains("Ray"))
-        {
-            newCitizen.setRecruitCosts(new ItemStack(Items.BAKED_POTATO, 64));
-        }
 
         newCitizen.getCitizenSkillHandler().init(recruitLevel);
 
@@ -226,7 +224,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             boots = new ItemStack(Items.DIAMOND_BOOTS);
         }
 
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
+        newCitizen.setExtraDataValue(EXTRA_DATA_RECRUIT_COST, new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
 
         if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
         {
@@ -291,10 +289,10 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         for (final Integer id : externalCitizens)
         {
-            final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
+            final IVisitorData data = building.getColony().getVisitorManager().getCivilian(id);
             if (data != null)
             {
-                positions.remove(data.getSittingPosition());
+                positions.remove(data.getExtraDataValue(EXTRA_DATA_SITTING_POSITION));
             }
         }
 
@@ -311,7 +309,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     {
         for (final Integer id : externalCitizens)
         {
-            building.getColony().getVisitorManager().removeCivilian(building.getColony().getVisitorManager().getVisitor(id));
+            building.getColony().getVisitorManager().removeCivilian(building.getColony().getVisitorManager().getCivilian(id));
         }
     }
 

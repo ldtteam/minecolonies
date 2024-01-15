@@ -54,10 +54,12 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
             visitorType = IMinecoloniesAPI.getInstance().getVisitorTypeRegistry().getValue(visitorTypeKey);
             if (visitorType != null)
             {
-                extraData = visitorType.createExtraData();
-                if (extraData != null)
+                extraData = visitorType.getExtraDataKeys();
+
+                final CompoundTag compound = compoundTag.getCompound(TAG_EXTRA_DATA);
+                for (final IVisitorExtraData<?> extraDataKey : extraData)
                 {
-                    extraData.deserializeNBT(compoundTag.getCompound(TAG_EXTRA_DATA));
+                    extraDataKey.deserializeNBT(compound.getCompound(extraDataKey.getKey()));
                 }
             }
         }
@@ -70,8 +72,13 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     }
 
     @Override
-    public <T> T getExtraDataValue(final IVisitorExtraData<T, ?> extraData)
+    @SuppressWarnings("unchecked")
+    public <T> T getExtraDataValue(final IVisitorExtraData<T> extraData)
     {
-        return null;
+        return this.extraData.stream()
+                 .filter(f -> f.equals(extraData))
+                 .map(m -> (T) m.getValue())
+                 .findFirst()
+                 .orElseThrow();
     }
 }

@@ -18,10 +18,12 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TEXTURE_UUID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
+import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.*;
 
 /**
  * Data for visitors
@@ -57,7 +59,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         super(id, colony);
         this.visitorType = visitorType;
-        this.extraData = visitorType.getExtraDataKeys();
+        this.extraData = List.copyOf(visitorType.getExtraDataKeys());
     }
 
     /**
@@ -83,9 +85,26 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getExtraDataValue(final IVisitorExtraData<T> extraData)
     {
-        return this.extraData.stream().filter(f -> f.getKey().equals(extraData.getKey())).findFirst().orElse(extraData.getDefaultValue());
+        return this.extraData.stream()
+                 .filter(f -> f.equals(extraData))
+                 .map(m -> (T) m.getValue())
+                 .findFirst()
+                 .orElseThrow();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> void setExtraDataValue(final IVisitorExtraData<T> extraData, final T value)
+    {
+        final IVisitorExtraData<T> foundExtraData = this.extraData.stream()
+                                                      .filter(f -> f.equals(extraData))
+                                                      .map(m -> (IVisitorExtraData<T>) m)
+                                                      .findFirst()
+                                                      .orElseThrow();
+        foundExtraData.setValue(value);
     }
 
     @Override
@@ -152,16 +171,16 @@ public class VisitorData extends CitizenData implements IVisitorData
             }
         }
 
-        // TODO: 1.20.2 Remove backwards compat for old visitor data
+        // TODO: Next major release: Remove backwards compat for old visitor data
         if (nbtTagCompound.contains(TAG_SITTING))
         {
-            regularVisitorData.setSittingPosition(BlockPosUtil.read(nbtTagCompound, TAG_SITTING));
+            setExtraDataValue(EXTRA_DATA_SITTING_POSITION, BlockPosUtil.read(nbtTagCompound, TAG_SITTING));
             final ItemStack itemStack = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
             itemStack.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
-            regularVisitorData.setRecruitCost(itemStack);
+            setExtraDataValue(EXTRA_DATA_RECRUIT_COST, itemStack);
             if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
             {
-                regularVisitorData.setTextureUUID(nbtTagCompound.getUUID(TAG_TEXTURE_UUID));
+                setExtraDataValue(EXTRA_DATA_CUSTOM_TEXTURE, Optional.of(nbtTagCompound.getUUID(TAG_TEXTURE_UUID)));
             }
         }
     }

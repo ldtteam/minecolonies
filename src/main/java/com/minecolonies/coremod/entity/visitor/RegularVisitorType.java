@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.visitor;
 
-import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -22,7 +21,8 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
@@ -32,7 +32,12 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_IN
  */
 public class RegularVisitorType implements IVisitorType
 {
+    /**
+     * Extra data fields.
+     */
     public static final SittingPositionData EXTRA_DATA_SITTING_POSITION = new SittingPositionData();
+    public static final RecruitCostData     EXTRA_DATA_RECRUIT_COST     = new RecruitCostData();
+    public static final CustomTextureData   EXTRA_DATA_CUSTOM_TEXTURE   = new CustomTextureData();
 
     @Override
     public ResourceLocation getId()
@@ -55,7 +60,7 @@ public class RegularVisitorType implements IVisitorType
     @Override
     public List<IVisitorExtraData<?>> getExtraDataKeys()
     {
-        return List.of(EXTRA_DATA_SITTING_POSITION);
+        return List.of(EXTRA_DATA_SITTING_POSITION, EXTRA_DATA_RECRUIT_COST, EXTRA_DATA_CUSTOM_TEXTURE);
     }
 
     @Override
@@ -98,59 +103,78 @@ public class RegularVisitorType implements IVisitorType
         return InteractionResult.PASS;
     }
 
-    @Override
-    public void getCustomTexture(final IVisitorViewData visitor, final ResourceLocation cachedTexture, final Consumer<ResourceLocation> cacheSetter)
-    {
-        if (cachedTexture != null)
-        {
-            return;
-        }
-
-
-        //
-        //if (!(visitor.getExtraData() instanceof RegularVisitorType.RegularVisitorData regularVisitorData))
-        //{
-        //    return;
-        //}
-        //if (regularVisitorData.textureUUID == null)
-        //{
-        //    return;
-        //}
-        //
-        //cacheSetter.accept(DefaultPlayerSkin.getDefaultSkin(regularVisitorData.textureUUID));
-        //Util.backgroundExecutor().execute(() ->
-        //{
-        //    Minecraft minecraft = Minecraft.getInstance();
-        //    final GameProfile profile = new GameProfile(regularVisitorData.textureUUID, "mcoltexturequery");
-        //    minecraft.getMinecraftSessionService().fillProfileProperties(profile, true);
-        //    Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
-        //    if (!map.isEmpty())
-        //    {
-        //        cacheSetter.accept(minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN));
-        //    }
-        //});
-    }
-
     public static class SittingPositionData extends AbstractVisitorExtraData<BlockPos>
     {
-        @Override
-        public String getKey()
+        private static final String TAG_VALUE = "value";
+
+        public SittingPositionData()
         {
-            return "sitting-pos";
+            super("sitting-pos", BlockPos.ZERO);
         }
 
         @Override
         public CompoundTag serializeNBT()
         {
             final CompoundTag compound = new CompoundTag();
-            BlockPosUtil.write(compound, "value", getValue());
+            BlockPosUtil.write(compound, TAG_VALUE, getValue());
             return compound;
         }
 
         @Override
         public void deserializeNBT(final CompoundTag compoundTag)
         {
-            setValue(BlockPosUtil.read(compoundTag, "value"));
+            setValue(BlockPosUtil.read(compoundTag, TAG_VALUE));
+        }
+    }
+
+    public static class RecruitCostData extends AbstractVisitorExtraData<ItemStack>
+    {
+        private static final String TAG_VALUE = "value";
+
+        public RecruitCostData()
+        {
+            super("recruit-cost", ItemStack.EMPTY);
+        }
+
+        @Override
+        public CompoundTag serializeNBT()
+        {
+            final CompoundTag compound = new CompoundTag();
+            compound.put(TAG_VALUE, getValue().save(new CompoundTag()));
+            return compound;
+        }
+
+        @Override
+        public void deserializeNBT(final CompoundTag compoundTag)
+        {
+            setValue(ItemStack.of(compoundTag.getCompound(TAG_VALUE)));
+        }
+    }
+
+    public static class CustomTextureData extends AbstractVisitorExtraData<Optional<UUID>>
+    {
+        private static final String TAG_VALUE = "value";
+
+        public CustomTextureData()
+        {
+            super("custom-texture", Optional.empty());
+        }
+
+        @Override
+        public CompoundTag serializeNBT()
+        {
+            final CompoundTag compound = new CompoundTag();
+            getValue().ifPresent(val -> compound.putUUID(TAG_VALUE, val));
+            return compound;
+        }
+
+        @Override
+        public void deserializeNBT(final CompoundTag compoundTag)
+        {
+            if (compoundTag.contains(TAG_VALUE))
+            {
+                setValue(Optional.of(compoundTag.getUUID(TAG_VALUE)));
+            }
         }
     }
 }

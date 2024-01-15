@@ -10,16 +10,20 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+
+import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_CUSTOM_TEXTURE;
+import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
 
 /**
  * Loads and listens to custom visitor data added
@@ -186,7 +190,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
         {
             if (texture != null)
             {
-                visitorData.setCustomTexture(texture);
+                visitorData.setExtraDataValue(EXTRA_DATA_CUSTOM_TEXTURE, Optional.of(texture));
             }
 
             if (gender != null)
@@ -206,7 +210,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
             if (recruitCost != null)
             {
-                visitorData.setRecruitCosts(recruitCost);
+                visitorData.setExtraDataValue(EXTRA_DATA_RECRUIT_COST, recruitCost);
             }
 
             if (storykey != null)

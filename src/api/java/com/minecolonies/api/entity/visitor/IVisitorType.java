@@ -1,6 +1,5 @@
 package com.minecolonies.api.entity.visitor;
 
-import com.minecolonies.api.colony.IVisitorViewData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -10,7 +9,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Specific handler actions for interacting with different types of visitors.
@@ -62,13 +60,4 @@ public interface IVisitorType
         // Nothing should happen by default.
         return InteractionResult.PASS;
     }
-
-    /**
-     * Get the custom texture for a visitor.
-     *
-     * @param visitor       the visitor view data instance.
-     * @param cachedTexture the currently cached texture.
-     * @param cacheSetter   the callable action to update the cached value.
-     */
-    void getCustomTexture(final IVisitorViewData visitor, final ResourceLocation cachedTexture, final Consumer<ResourceLocation> cacheSetter);
 }
