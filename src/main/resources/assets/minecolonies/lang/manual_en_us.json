@@ -284,7 +284,7 @@
   "block.blockhuttownhall.messagemaxsize.research": "%d has reached its max size. You can get more by completing the research in the University.",
 
   "block.blockhuttownhall.messagecolonistdesc": "The colonist %s",
-  "block.blockhuttownhall.messagecolonistgravelocation": "Their death position is %d %d %d.",
+  "block.blockhuttownhall.messagecolonistgravelocation": "Their death position is %d %d %d. ",
   "block.blockhuttownhall.messageinvalidworld": "You can't place a Town Hall in this world type",
   "block.blockhuttownhall.messagetooclose": "Too close to existing Town Hall",
   "block.blockhuttownhall.messagetooFar": "Too far away from your colony",
@@ -946,7 +946,7 @@
   "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left the colony.",
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
-  "com.minecolonies.coremod.mourning": "Close family and friends will mourn %s tomorrow out of respect.",
+  "com.minecolonies.coremod.mourning": "Close family and friends will mourn %s tomorrow out of respect. ",
 
   "event.minecolonies.raidmessage1": "Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "Citizens report rumors of raiders %s of %s!",

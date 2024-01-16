@@ -65,8 +65,9 @@ public interface IGraveManager
      * @param world        The world.
      * @param pos          The position where to spawn a grave
      * @param citizenData  The citizenData
+     * @return true if a grave was created.
      */
-    void createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData);
+    boolean createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData);
 
     /**
      * Returns a map with all graves within the colony. Key is ID (Coordinates), value is isReserved boolean.
