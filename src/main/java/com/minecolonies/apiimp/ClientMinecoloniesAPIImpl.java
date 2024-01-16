@@ -1,7 +1,7 @@
 package com.minecolonies.apiimp;
 
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
-import com.minecolonies.coremod.client.render.modeltype.registry.ModelTypeRegistry;
+import com.minecolonies.core.client.render.modeltype.registry.ModelTypeRegistry;
 
 public class ClientMinecoloniesAPIImpl extends CommonMinecoloniesAPIImpl
 {
