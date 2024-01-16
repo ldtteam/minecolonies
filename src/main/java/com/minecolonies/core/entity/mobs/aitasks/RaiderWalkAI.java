@@ -195,14 +195,14 @@ public class RaiderWalkAI implements IStateAI
         }
 
         walkTimer = raider.level.getGameTime() + raider.level.random.nextInt(1000);
-        targetBlock = BlockPosUtil.getRandomPosition(raider.level,
+        final BlockPos posAroundCampfire = BlockPosUtil.getRandomPosition(raider.level,
           campFire,
           BlockPos.ZERO,
           3,
           6);
-        if (targetBlock != null && targetBlock != BlockPos.ZERO)
+        if (posAroundCampfire != null && posAroundCampfire != BlockPos.ZERO)
         {
-            raider.getNavigation().moveToXYZ(targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(), 1.0);
+            raider.getNavigation().moveToXYZ(posAroundCampfire.getX(), posAroundCampfire.getY(), posAroundCampfire.getZ(), 1.0);
         }
     }
 }
