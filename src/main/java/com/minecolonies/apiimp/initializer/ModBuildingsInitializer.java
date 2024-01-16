@@ -4,16 +4,16 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
-import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.EmptyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.core.colony.buildings.DefaultBuildingInstance;
+import com.minecolonies.core.colony.buildings.modules.HomeBuildingModule;
+import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
+import com.minecolonies.core.colony.buildings.views.EmptyView;
+import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
-import static com.minecolonies.coremod.colony.buildings.modules.BuildingModules.*;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
 public final class ModBuildingsInitializer
 {

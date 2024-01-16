@@ -4,11 +4,11 @@ import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.quests.objectives.*;
-import com.minecolonies.coremod.quests.objectives.DialogueObjectiveTemplateTemplate;
-import com.minecolonies.coremod.quests.objectives.KillEntityObjectiveTemplateTemplate;
-import com.minecolonies.coremod.quests.rewards.*;
-import com.minecolonies.coremod.quests.triggers.*;
+import com.minecolonies.core.quests.objectives.*;
+import com.minecolonies.core.quests.objectives.DialogueObjectiveTemplateTemplate;
+import com.minecolonies.core.quests.objectives.KillEntityObjectiveTemplateTemplate;
+import com.minecolonies.core.quests.rewards.*;
+import com.minecolonies.core.quests.triggers.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

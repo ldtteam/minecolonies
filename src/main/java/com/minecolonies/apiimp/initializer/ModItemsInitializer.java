@@ -5,7 +5,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.items.*;
+import com.minecolonies.core.items.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
