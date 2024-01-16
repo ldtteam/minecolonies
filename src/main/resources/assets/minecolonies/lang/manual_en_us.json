@@ -2531,5 +2531,6 @@
   "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled",
   "com.minecolonies.coremod.progress.colony_founded": "Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall.",
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
-  "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now."
+  "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
+  "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!"
 }
