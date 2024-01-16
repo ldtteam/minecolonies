@@ -195,7 +195,7 @@ public class RaiderWalkAI implements IStateAI
         }
 
         walkTimer = raider.level.getGameTime() + raider.level.random.nextInt(1000);
-        targetBlock = BlockPosUtil.getRandomPosition(raider.level,
+        final BlockPos targetBlock = BlockPosUtil.getRandomPosition(raider.level,
           campFire,
           BlockPos.ZERO,
           3,
