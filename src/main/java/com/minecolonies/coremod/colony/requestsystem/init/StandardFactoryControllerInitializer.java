@@ -97,9 +97,5 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.RecipeSettingFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
-
-        StandardFactoryController.getInstance()
-          .registerNewClassRenaming("com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver",
-            "com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver");
     }
 }
