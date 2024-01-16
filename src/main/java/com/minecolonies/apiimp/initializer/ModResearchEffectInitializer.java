@@ -3,7 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.research.effects.ModResearchEffects;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.research.GlobalResearchEffect;
+import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

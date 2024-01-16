@@ -3,7 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.inventory.container.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.containers.*;
+import com.minecolonies.core.client.gui.containers.*;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;

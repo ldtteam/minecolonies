@@ -4,8 +4,8 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.client.render.modeltype.SimpleModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
-import com.minecolonies.coremod.client.model.*;
-import com.minecolonies.coremod.event.ClientRegistryHandler;
+import com.minecolonies.core.client.model.*;
+import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
