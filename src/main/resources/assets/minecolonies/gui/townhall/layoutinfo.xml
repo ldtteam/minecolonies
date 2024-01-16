@@ -7,8 +7,8 @@
 
     <list id="eventsList" size="148 140" pos="106 80">
         <box size="100% 36" linewidth="1">
-            <label id="action" size="140 12" pos="1 1" color="black"/>
-            <label id="name" size="140 12" pos="1 12" color="blue"/>
+            <label id="action" size="135 12" pos="1 1" color="black"/>
+            <label id="name" size="135 12" pos="1 12" color="blue"/>
             <label id="pos" size="70 12" pos="1 24" color="black"/>
             <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
         </box>
@@ -23,7 +23,7 @@
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
                 <buttonimage id="minus" label="↧" pos="0 15" size="14 15" textcolor="black"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                <label id="assignee" size="80 8" pos="25 20" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>
+                <label id="assignee" size="80 8" pos="25 20" textalign="MIDDLE_LEFT" color="gray"/>
 
                 <label id="work" size="105 17" pos="17 2" textalign="MIDDLE_LEFT" color="black"/>
                 <buttonimage id="delete" label="X" textcolor="red" pos="122 8" size="14 15"

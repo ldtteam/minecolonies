@@ -100,6 +100,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 {
                     IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
                     nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(Component.literal(" " + buildEvent.getLevel())).create());
+                    PaneBuilders.tooltipBuilder().append(nameLabel.getText()).hoverPane(nameLabel).build();
                 }
                 rowPane.findPaneOfTypeByID(POS_LABEL, Text.class)
                   .setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
