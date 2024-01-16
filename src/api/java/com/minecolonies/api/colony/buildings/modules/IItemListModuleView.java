@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+
 import java.util.Set;
 import java.util.function.Function;
 

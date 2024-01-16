@@ -1,9 +1,9 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
 

@@ -2,9 +2,9 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.Tuple;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 

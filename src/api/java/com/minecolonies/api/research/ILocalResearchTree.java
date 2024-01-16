@@ -2,11 +2,11 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
-
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /**

@@ -2,8 +2,8 @@ package com.minecolonies.api.entity.ai.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

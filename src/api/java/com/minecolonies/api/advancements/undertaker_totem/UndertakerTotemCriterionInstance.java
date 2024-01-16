@@ -3,7 +3,6 @@ package com.minecolonies.api.advancements.undertaker_totem;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.resources.ResourceLocation;
 
 /**

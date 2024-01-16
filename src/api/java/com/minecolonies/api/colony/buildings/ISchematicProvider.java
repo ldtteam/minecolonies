@@ -1,9 +1,9 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Set;

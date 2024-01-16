@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.Iterator;
 import java.util.Spliterator;

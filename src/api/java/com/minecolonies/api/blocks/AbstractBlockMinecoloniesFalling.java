@@ -1,14 +1,11 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
-import com.minecolonies.api.util.constant.Suppression;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMinecoloniesFalling<B>> extends FallingBlock implements IBlockMinecolonies<B>
 {

@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Interface for all building modules that store additional data.

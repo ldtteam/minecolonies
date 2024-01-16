@@ -5,8 +5,6 @@ import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.quests.objectives.*;
-import com.minecolonies.core.quests.objectives.DialogueObjectiveTemplateTemplate;
-import com.minecolonies.core.quests.objectives.KillEntityObjectiveTemplateTemplate;
 import com.minecolonies.core.quests.rewards.*;
 import com.minecolonies.core.quests.triggers.*;
 import net.minecraft.resources.ResourceLocation;

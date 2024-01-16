@@ -1,10 +1,8 @@
 package com.minecolonies.api.entity.ai.statemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingEvent;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;

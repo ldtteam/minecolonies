@@ -1,10 +1,10 @@
 package com.minecolonies.api.entity;
 
 import com.google.common.collect.Sets;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

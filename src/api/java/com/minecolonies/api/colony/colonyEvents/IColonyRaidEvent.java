@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.colonyEvents;
 
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EntityType;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.research.effects.IResearchEffectManager;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
