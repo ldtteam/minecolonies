@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkFlorist;
+import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFlorist;
 import org.jetbrains.annotations.NotNull;
 
 public class JobFlorist extends AbstractJob<EntityAIWorkFlorist, JobFlorist>

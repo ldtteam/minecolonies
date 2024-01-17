@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.ai.workers.production.agrilculture;
+package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.advancements.AdvancementTriggers;

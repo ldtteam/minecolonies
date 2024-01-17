@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkFisherman;
+import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;

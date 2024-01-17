@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.ai.workers.production.agrilculture;
+package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;

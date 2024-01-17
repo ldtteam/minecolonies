@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkPlanter;
+import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkPlanter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import org.jetbrains.annotations.NotNull;

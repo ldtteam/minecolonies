@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
 
 public class BuildingComposter extends AbstractBuilding
 {

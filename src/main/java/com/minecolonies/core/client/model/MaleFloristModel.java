@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkFlorist.RENDER_META_FLOWERS;
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 
 public class MaleFloristModel extends CitizenModel<AbstractEntityCitizen>
 {
