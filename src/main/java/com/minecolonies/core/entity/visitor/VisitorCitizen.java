@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.entity.visitor;
+package com.minecolonies.core.entity.visitor;
 
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -21,7 +21,8 @@ import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
-import com.minecolonies.core.entity.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.entity.entity.citizenhandlers.*;
 import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;

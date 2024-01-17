@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
-import com.minecolonies.core.entity.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;

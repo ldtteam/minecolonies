@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.entity.citizen.citizenhandlers;
+package com.minecolonies.core.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;

@@ -3,7 +3,7 @@ package com.minecolonies.core.client.render.worldevent.highlightmanager;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.core.client.render.worldevent.WorldEventContext;
-import com.minecolonies.core.entity.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;

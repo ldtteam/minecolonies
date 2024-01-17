@@ -17,7 +17,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
-import com.minecolonies.core.entity.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.platform.Lighting;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

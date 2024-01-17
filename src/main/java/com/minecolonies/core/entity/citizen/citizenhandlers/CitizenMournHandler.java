@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.entity.citizen.citizenhandlers;
+package com.minecolonies.core.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
