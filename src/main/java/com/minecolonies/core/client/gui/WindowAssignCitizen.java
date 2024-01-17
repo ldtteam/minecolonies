@@ -205,7 +205,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                                        return Integer.MAX_VALUE;
                                    }
 
-                                   return BlockPosUtil.getDistance2D(cit.getWorkBuilding(), building.getPosition());
+                                   return (int) BlockPosUtil.getDistance(cit.getWorkBuilding(), building.getPosition());
                                })).toList();
 
         assignedCitizens.clear();
@@ -256,7 +256,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 double newDistance = 0;
                 if (work != null)
                 {
-                    newDistance = BlockPosUtil.getDistance2D(work, building.getPosition());
+                    newDistance = BlockPosUtil.getDistance(work, building.getPosition());
                     workString = Component.translatable("com.minecolonies.coremod.gui.home.new", newDistance);
                 }
 
@@ -266,7 +266,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 {
                     if (work != null)
                     {
-                        final int oldDistance = (int) BlockPosUtil.getDistance2D(work, home);
+                        final int oldDistance = (int) BlockPosUtil.getDistance(work, home);
                         homeString = Component.translatable("com.minecolonies.coremod.gui.home.currently", oldDistance);
                         better = newDistance < oldDistance;
                         if (oldDistance > FAR_DISTANCE_THRESHOLD)
@@ -350,7 +350,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 int newDistance;
                 if (work != null)
                 {
-                    newDistance = (int) BlockPosUtil.getDistance2D(work, building.getPosition());
+                    newDistance = (int) BlockPosUtil.getDistance(work, building.getPosition());
                     workString = Component.translatable("com.minecolonies.coremod.gui.home.new", newDistance);
                 }
 
@@ -360,7 +360,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 {
                     if (work != null)
                     {
-                        final double distance = BlockPosUtil.getDistance2D(work, building.getPosition());
+                        final int distance = (int) BlockPosUtil.getDistance(work, building.getPosition());
                         if (distance > FAR_DISTANCE_THRESHOLD)
                         {
                             workString = workString.withStyle(ChatFormatting.RED);
