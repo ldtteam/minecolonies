@@ -3,7 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.visitor.RegularVisitorType;
+import com.minecolonies.core.entity.visitor.RegularVisitorType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

@@ -1,13 +1,13 @@
-package com.minecolonies.coremod.entity.visitor;
+package com.minecolonies.core.entity.visitor;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.entity.ai.visitor.EntityAIVisitor;
-import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
+import com.minecolonies.core.Network;
+import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
+import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

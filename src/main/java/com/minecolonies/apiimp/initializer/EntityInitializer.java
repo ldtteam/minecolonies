@@ -22,6 +22,7 @@ import com.minecolonies.core.entity.mobs.norsemen.EntityShieldmaiden;
 import com.minecolonies.core.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityPirate;
+import com.minecolonies.core.entity.visitor.RegularVisitorType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

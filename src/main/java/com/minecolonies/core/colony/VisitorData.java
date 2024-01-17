@@ -24,7 +24,7 @@ import static com.minecolonies.api.entity.visitor.ModVisitorTypes.VISITOR_TYPE_I
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TEXTURE_UUID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
-import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.*;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.*;
 
 /**
  * Data for visitors

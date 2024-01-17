@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.colony.VisitorData.TAG_EXTRA_DATA;
-import static com.minecolonies.coremod.colony.VisitorData.TAG_VISITOR_TYPE;
+import static com.minecolonies.core.colony.VisitorData.TAG_EXTRA_DATA;
+import static com.minecolonies.core.colony.VisitorData.TAG_VISITOR_TYPE;
 
 /**
  * View data for visitors

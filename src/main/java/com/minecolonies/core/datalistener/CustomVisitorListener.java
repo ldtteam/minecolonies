@@ -10,6 +10,9 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
@@ -19,8 +22,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_CUSTOM_TEXTURE;
-import static com.minecolonies.coremod.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_CUSTOM_TEXTURE;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
 
 /**
  * Loads and listens to custom visitor data added
