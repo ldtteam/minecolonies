@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
@@ -55,7 +56,6 @@ public class QuestTranslationProvider implements DataProvider
         final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "quests");
         final List<CompletableFuture<?>> quests = new ArrayList<>();
 
-        final JsonObject langJson = new JsonObject();
         try (final PackResources pack = new PathPackResources(MOD_ID + ".src", false, Path.of("..", "src", "main", "resources")))
         {
             pack.listResources(PackType.SERVER_DATA, MOD_ID, "quests", (questId, stream) ->
@@ -67,20 +67,21 @@ public class QuestTranslationProvider implements DataProvider
 
                 final ResourceLocation questPath = new ResourceLocation(questId.getNamespace(), questId.getPath().replace("quests/", "").replace(".json", ""));
                 final String baseKey = questPath.getNamespace() + ".quests." + questPath.getPath().replace("/", ".");
+                final JsonObject langJson = new JsonObject();
 
                 quests.add(CompletableFuture.supplyAsync(() ->
                 {
                     try
                     {
-                        final JsonObject json;
+                        final JsonObject questJson;
                         try (final InputStreamReader reader = new InputStreamReader(stream.get()))
                         {
-                            json = GsonHelper.parse(reader);
+                            questJson = GsonHelper.parse(reader);
                         }
 
-                        processQuest(langJson, baseKey, json);
+                        processQuest(langJson, baseKey, questJson);
 
-                        return json;
+                        return questJson;
                     }
                     catch (final Exception e)
                     {
@@ -91,7 +92,8 @@ public class QuestTranslationProvider implements DataProvider
                 {
                     if (json != null)
                     {
-                        return DataProvider.saveStable(cache, json, questProvider.json(questPath));
+                        return DataProvider.saveStable(cache, json, questProvider.json(questPath))
+                                .thenApply(q -> langJson);
                     }
                     return CompletableFuture.completedFuture(null);
                 }, Util.backgroundExecutor()));
@@ -99,13 +101,22 @@ public class QuestTranslationProvider implements DataProvider
         }
 
         return CompletableFuture.allOf(quests.toArray(CompletableFuture[]::new))
-                .thenComposeAsync(v -> saveLanguage(cache, langJson), Util.backgroundExecutor());
+                .thenComposeAsync(v -> saveLanguage(cache, quests.stream().map(q -> (JsonObject) q.join()).toList()), Util.backgroundExecutor());
     }
 
     @NotNull
     private CompletableFuture<?> saveLanguage(@NotNull final CachedOutput cache,
-                                              @NotNull final JsonObject langJson)
+                                              @NotNull final List<JsonObject> langJsons)
     {
+        final JsonObject langJson = new JsonObject();
+        for (final JsonObject questLang : langJsons)
+        {
+            for (final Map.Entry<String, JsonElement> entry : questLang.entrySet())
+            {
+                langJson.add(entry.getKey(), entry.getValue());
+            }
+        }
+
         final PackOutput.PathProvider langProvider = packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, "lang");
         final Path langFile = langProvider.file(new ResourceLocation(MOD_ID, "quests"), "json");
         return DataProvider.saveStable(cache, langJson, langFile);
