@@ -290,7 +290,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 if (citizen.getJobView() != null)
                 {
                     newLivingLabel.setText(
-                      Component.empty().append(Component.translatable(citizen.getJobView().getEntry().getTranslationKey())).append(": ").append(workString).append(" ").append(homeString.getString()));
+                      Component.empty().append(Component.translatable(citizen.getJobView().getEntry().getTranslationKey())).append(": ").append(workString).append(" ").append(homeString));
                     newLivingLabel.setTextWrap(true);
                 }
                 else
@@ -363,10 +363,10 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                         final double distance = BlockPosUtil.getDistance2D(work, building.getPosition());
                         if (distance > FAR_DISTANCE_THRESHOLD)
                         {
-                            workString.withStyle(ChatFormatting.RED);
+                            workString = workString.withStyle(ChatFormatting.RED);
                         }
                     }
-                    newLivingLabel.setText(Component.empty().append(Component.translatable(citizen.getJobView().getEntry().getTranslationKey()).getString()).append(Component.literal(": ")).append(workString));
+                    newLivingLabel.setText(Component.empty().append(Component.translatable(citizen.getJobView().getEntry().getTranslationKey())).append(Component.literal(": ")).append(workString));
                 }
                 else
                 {
