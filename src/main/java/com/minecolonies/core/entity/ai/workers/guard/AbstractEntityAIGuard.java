@@ -229,9 +229,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private IAIState wakeUpGuard()
     {
         if (sleepingGuard.get() == null || !(sleepingGuard.get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) || !sleepingGuard.get()
-          .getCitizenJobHandler()
-          .getColonyJob(AbstractJobGuard.class)
-          .isAsleep())
+                                                                                                                                          .getCitizenJobHandler()
+                                                                                                                                          .getColonyJob(AbstractJobGuard.class)
+                                                                                                                                          .isAsleep())
         {
             return CombatAIStates.NO_TARGET;
         }
@@ -363,7 +363,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState regen()
     {
-        if (((EntityCitizen)worker).getThreatTable().getTargetMob() != null && ((EntityCitizen)worker).getThreatTable().getTargetMob().distanceTo(worker) < 10)
+        if (((EntityCitizen) worker).getThreatTable().getTargetMob() != null && ((EntityCitizen) worker).getThreatTable().getTargetMob().distanceTo(worker) < 10)
         {
             return CombatAIStates.ATTACKING;
         }
@@ -462,9 +462,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         final ICitizenData citizenData = worker.getCitizenData();
         if (!worker.isWorkerAtSiteWithMove(location.getInDimensionLocation()
-            .offset(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
-              0,
-              randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
+                                             .offset(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
+                                               0,
+                                               randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
           GUARD_FOLLOW_TIGHT_RANGE) && citizenData != null)
         {
             if (!worker.hasEffect(MobEffects.MOVEMENT_SPEED))
@@ -624,14 +624,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Check if we can help a citizen
      *
-     * @return true if not fighting/helping already
      * @param pos
+     * @return true if not fighting/helping already
      */
     public boolean canHelp(final BlockPos pos)
     {
         if ((getState() == CombatAIStates.NO_TARGET || getState() == GUARD_SLEEP) && canBeInterrupted())
         {
-            if (buildingGuards.getTask().equals(GuardTaskSetting.GUARD) && !isWithinPersecutionDistance(pos,getPersecutionDistance()))
+            if (buildingGuards.getTask().equals(GuardTaskSetting.GUARD) && !isWithinPersecutionDistance(pos, getPersecutionDistance()))
             {
                 return false;
             }
@@ -768,7 +768,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     public boolean canBeInterrupted()
     {
         if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || worker.getLastAttacker() != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
-          .equals(GuardTaskSetting.FOLLOW))
+                                                                                                                                                           .equals(GuardTaskSetting.FOLLOW))
         {
             return false;
         }
@@ -803,11 +803,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     public static boolean isAttackableTarget(final AbstractEntityCitizen user, final LivingEntity entity)
     {
         if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType())) && !user.getCitizenData()
-          .getWorkBuilding()
-          .getModuleMatching(
-            EntityListModule.class,
-            m -> m.getId().equals(HOSTILE_LIST))
-          .isEntityInList(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType())))
+                                                                                                                                                          .getWorkBuilding()
+                                                                                                                                                          .getModuleMatching(
+                                                                                                                                                            EntityListModule.class,
+                                                                                                                                                            m -> m.getId()
+                                                                                                                                                                   .equals(
+                                                                                                                                                                     HOSTILE_LIST))
+                                                                                                                                                          .isEntityInList(
+                                                                                                                                                            ForgeRegistries.ENTITY_TYPES.getKey(
+                                                                                                                                                              entity.getType())))
         {
             return true;
         }

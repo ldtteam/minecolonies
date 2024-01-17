@@ -620,7 +620,7 @@ public class Tree
     /**
      * Searches all logs that belong to the tree.
      *
-     * @param world The world where the blocks are in.
+     * @param world  The world where the blocks are in.
      * @param colony the colony to search for buildings, or null if we don't care.
      */
     public void findLogs(@NotNull final Level world, @Nullable final IColony colony)
@@ -659,7 +659,7 @@ public class Tree
             }
 
             final BlockPos mean = new BlockPos(acc.getX() / stumpLocations.size(),
-                    acc.getY() / stumpLocations.size(), acc.getZ() / stumpLocations.size());
+              acc.getY() / stumpLocations.size(), acc.getZ() / stumpLocations.size());
             stumpLocations.clear();
             stumpLocations.add(mean);
         }
@@ -668,8 +668,8 @@ public class Tree
     /**
      * Adds a log and searches for further logs(Breadth first search).
      *
-     * @param world The world the log is in.
-     * @param log   the log to add.
+     * @param world  The world the log is in.
+     * @param log    the log to add.
      * @param colony the colony to search for buildings, or null if we don't care.
      */
     private void addAndSearch(@NotNull final Level world, @NotNull final BlockPos log, @Nullable final IColony colony)
@@ -739,12 +739,14 @@ public class Tree
 
     /**
      * Check if this is a log in the same tree type.
+     *
      * @param existingBlock the current block in the tree.
      * @param newBlock      block to check.
      * @return true if this is the same type of tree; false if it's something different.
      */
-    private boolean isBlockPartOfSameTree(@NotNull final BlockState existingBlock,
-                                          @NotNull final BlockState newBlock)
+    private boolean isBlockPartOfSameTree(
+      @NotNull final BlockState existingBlock,
+      @NotNull final BlockState newBlock)
     {
         if (existingBlock.is(ModTags.mangroveTree))
         {
@@ -1017,9 +1019,9 @@ public class Tree
     /**
      * Calculates with a colony if the position is inside the colony and optionally if it is inside a building.
      *
-     * @param pos    the position.
-     * @param colony the colony.
-     * @param world  the world to use
+     * @param pos                 the position.
+     * @param colony              the colony.
+     * @param world               the world to use
      * @param allowInsideBuilding if false, also checks that the tree is not inside a building.
      * @return return false if not inside the colony or optionally if inside a building.
      */

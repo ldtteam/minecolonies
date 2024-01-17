@@ -142,14 +142,14 @@ public class MineNode
 
         //Set the node status in all directions.
         @NotNull final MineNode node = new MineNode(x, z, parent);
-        if(style == NodeType.UNDEFINED)
+        if (style == NodeType.UNDEFINED)
         {
             Log.getLogger().error("Minecolonies Node " + x + "," + z + " has an undefined style, please tell the mod author about this");
         }
         node.setStyle(style);
         node.setStatus(status);
 
-        if(compound.contains(TAG_ROT))
+        if (compound.contains(TAG_ROT))
         {
             node.setRot(compound.getInt(TAG_ROT));
         }
@@ -166,8 +166,8 @@ public class MineNode
     {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
-        
-        if(rot.isPresent())
+
+        if (rot.isPresent())
         {
             compound.putInt(TAG_ROT, rot.get());
         }
@@ -408,7 +408,8 @@ public class MineNode
         /**
          * List of all valid types.
          */
-        public static final ImmutableList<NodeType> SIDE_NODES = ImmutableList.of(TUNNEL, CROSSROAD, BEND_RIGHT, BEND_LEFT, CROSS_THREE_LEFT_RIGHT, CROSS_THREE_TOP_LEFT, CROSS_THREE_TOP_RIGHT);
+        public static final ImmutableList<NodeType> SIDE_NODES =
+          ImmutableList.of(TUNNEL, CROSSROAD, BEND_RIGHT, BEND_LEFT, CROSS_THREE_LEFT_RIGHT, CROSS_THREE_TOP_LEFT, CROSS_THREE_TOP_RIGHT);
 
         /**
          * The schematic string.
@@ -417,6 +418,7 @@ public class MineNode
 
         /**
          * Create a new node type.
+         *
          * @param schemName the schematic name.
          */
         NodeType(final String schemName)
@@ -426,6 +428,7 @@ public class MineNode
 
         /**
          * Get the matching schematic name.
+         *
          * @return the file name string.
          */
         public String getSchematicName()
@@ -435,7 +438,8 @@ public class MineNode
     }
 
     /**
-     * Get rotation stored in the node as an optional, only set if actually stored. 
+     * Get rotation stored in the node as an optional, only set if actually stored.
+     *
      * @return
      */
     public Optional<Integer> getRot()
@@ -445,6 +449,7 @@ public class MineNode
 
     /**
      * Set rotation storaged in the node
+     *
      * @param rot
      */
     public void setRot(int rot)

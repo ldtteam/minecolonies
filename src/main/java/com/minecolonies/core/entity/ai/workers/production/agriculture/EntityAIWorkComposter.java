@@ -114,7 +114,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                 if (entity instanceof TileEntityBarrel)
                 {
                     final TileEntityBarrel barrel = (TileEntityBarrel) entity;
-                    for(int i = 0; i < accelerationTicks; i++)
+                    for (int i = 0; i < accelerationTicks; i++)
                     {
                         if (barrel.checkIfWorking() && !barrel.isDone())
                         {
@@ -126,7 +126,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         }
         return null;
     }
-
 
     /**
      * Method for the AI to try to get the materials needed for the task he's doing. Will request if there are no materials
@@ -179,7 +178,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList, RequestSystemTranslationConstants.REQUESTS_TYPE_COMPOSTABLE, Constants.STACKSIZE * building.getBarrels().size(), 1, building.getSetting(BuildingComposter.MIN).getValue()));
+                worker.getCitizenData()
+                  .createRequestAsync(new StackList(itemList,
+                    RequestSystemTranslationConstants.REQUESTS_TYPE_COMPOSTABLE,
+                    Constants.STACKSIZE * building.getBarrels().size(),
+                    1,
+                    building.getSetting(BuildingComposter.MIN).getValue()));
             }
         }
 
@@ -247,7 +251,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
+              worker.getInventoryCitizen(),
+              stack -> building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
 
             if (slot >= 0)
             {
@@ -309,7 +314,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                  * 5% chance (by default) for podzol, else dirt.
                  * Two researches to increase it to 10% and 15%, respectively.
                  */
-                if (((worker.getRandom().nextInt(100)) + 1) <= (5 * (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE))))
+                if (((worker.getRandom().nextInt(100)) + 1) <= (5 * (1 + worker.getCitizenColonyHandler()
+                                                                           .getColony()
+                                                                           .getResearchManager()
+                                                                           .getResearchEffects()
+                                                                           .getEffectStrength(PODZOL_CHANCE))))
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, 1));
                 }

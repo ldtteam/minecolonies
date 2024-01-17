@@ -212,7 +212,11 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             for (final ItemStack stack : list)
             {
                 structureAI.reduceNeededResources(stack);
-                structureAI.getWorker().getCitizenColonyHandler().getColony().getStatisticsManager().increment(BLOCKS_PLACED, structureAI.getWorker().getCitizenColonyHandler().getColony().getDay());
+                structureAI.getWorker()
+                  .getCitizenColonyHandler()
+                  .getColony()
+                  .getStatisticsManager()
+                  .increment(BLOCKS_PLACED, structureAI.getWorker().getCitizenColonyHandler().getColony().getDay());
             }
         }
 

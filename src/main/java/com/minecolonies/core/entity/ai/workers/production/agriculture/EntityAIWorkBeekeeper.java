@@ -140,13 +140,13 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private int getBeesInHives()
     {
         return building
-          .getHives()
-          .stream()
-          .map(world::getBlockEntity)
-          .filter(Objects::nonNull)
-          .map(BeehiveBlockEntity.class::cast)
-          .mapToInt(BeehiveBlockEntity::getOccupantCount)
-          .sum();
+                 .getHives()
+                 .stream()
+                 .map(world::getBlockEntity)
+                 .filter(Objects::nonNull)
+                 .map(BeehiveBlockEntity.class::cast)
+                 .mapToInt(BeehiveBlockEntity::getOccupantCount)
+                 .sum();
     }
 
     /**
@@ -223,9 +223,9 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         }
 
         final Optional<BlockPos> hive = building.getHives()
-          .stream()
-          .filter(pos -> BeehiveBlockEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
-          .findFirst();
+                                          .stream()
+                                          .filter(pos -> BeehiveBlockEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
+                                          .findFirst();
 
         if (hive.isPresent())
         {
@@ -277,10 +277,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         final List<Bee> animals = searchForAnimals(world, building);
 
         final Animal animalOne = animals
-          .stream()
-          .filter(animal -> !animal.isBaby())
-          .findAny()
-          .orElse(null);
+                                   .stream()
+                                   .filter(animal -> !animal.isBaby())
+                                   .findAny()
+                                   .orElse(null);
 
         if (animalOne == null)
         {
@@ -319,10 +319,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private IAIState harvestHoney()
     {
         final List<BlockPos> hives = building
-          .getHives()
-          .stream()
-          .filter(pos -> BeehiveBlockEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
-          .collect(Collectors.toList());
+                                       .getHives()
+                                       .stream()
+                                       .filter(pos -> BeehiveBlockEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
+                                       .collect(Collectors.toList());
 
         if (hives.isEmpty())
         {
@@ -383,7 +383,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         final int dex = getPrimarySkillLevel();
         if ((50 - (dex / 99. * 50.)) / 100 > worker.getRandom().nextDouble())
         {
-            final List<Entity> bees = ((BeehiveBlockEntity) world.getBlockEntity(hive)).releaseAllOccupants(world.getBlockState(hive), BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY);
+            final List<Entity> bees =
+              ((BeehiveBlockEntity) world.getBlockEntity(hive)).releaseAllOccupants(world.getBlockState(hive), BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY);
             bees.stream()
               .filter(entity -> entity instanceof Bee)
               .map(entity -> (Bee) entity)
@@ -442,9 +443,12 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             if (flowerCount < NUM_OF_FLOWERS_TO_BREED && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
             {
                 worker.getCitizenData().createRequestAsync(new StackList(flowersModule.getList().stream()
-                  .map(ItemStorage::getItemStack)
-                  .peek((stack) -> stack.setCount(NUM_OF_WANTED_FLOWERS))
-                  .collect(Collectors.toList()), RequestSystemTranslationConstants.REQUEST_TYPE_FLOWERS, NUM_OF_WANTED_FLOWERS, NUM_OF_FLOWERS_TO_BREED));
+                                                                           .map(ItemStorage::getItemStack)
+                                                                           .peek((stack) -> stack.setCount(NUM_OF_WANTED_FLOWERS))
+                                                                           .collect(Collectors.toList()),
+                  RequestSystemTranslationConstants.REQUEST_TYPE_FLOWERS,
+                  NUM_OF_WANTED_FLOWERS,
+                  NUM_OF_FLOWERS_TO_BREED));
                 return false;
             }
 
@@ -570,13 +574,13 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return new ArrayList<>();
         }
         return ownBuilding
-          .getHives()
-          .stream()
-          .map(AABB::new)
-          .map(aabb -> aabb.inflate(HIVE_BEE_RADIUS))
-          .map(aabb -> world.getEntitiesOfClass(Bee.class, aabb))
-          .flatMap(Collection::stream)
-          .collect(Collectors.toList());
+                 .getHives()
+                 .stream()
+                 .map(AABB::new)
+                 .map(aabb -> aabb.inflate(HIVE_BEE_RADIUS))
+                 .map(aabb -> world.getEntitiesOfClass(Bee.class, aabb))
+                 .flatMap(Collection::stream)
+                 .collect(Collectors.toList());
     }
 
     private int getHoneyBottlesPerHarvest()

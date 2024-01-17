@@ -276,7 +276,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         if (BlockPosUtil.getDistanceSquared(target.blockPosition(), user.blockPosition()) <= 4.0)
         {
             final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level,
-            AbstractPathJob.prepareStart(target),
+              AbstractPathJob.prepareStart(target),
               target.blockPosition(),
               (int) 7.0,
               (int) user.getAttribute(Attributes.FOLLOW_RANGE).getValue(),

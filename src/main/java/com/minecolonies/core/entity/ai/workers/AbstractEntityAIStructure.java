@@ -387,9 +387,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState()) || isDecoItem(info.getBlockInfo()
-                      .getState()
-                      .getBlock()))),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
+                                                                                       || isDecoItem(info.getBlockInfo()
+                                                                                                       .getState()
+                                                                                                       .getBlock()))),
                   false);
                 break;
             case WEAK_SOLID:
@@ -400,7 +401,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()))),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()))),
                   false);
                 break;
             case CLEAR_WATER:
@@ -416,8 +417,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !(info.getBlockInfo().getState().getBlock() instanceof AirBlock) || (handler.getWorld()
-                      .isEmptyBlock(pos)))),
+                          .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !(info.getBlockInfo().getState().getBlock() instanceof AirBlock) || (handler.getWorld()
+                                                                                                                                                            .isEmptyBlock(pos)))),
                   false);
                 break;
             case DECORATE:
@@ -428,9 +429,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
-                      .getState()
-                      .getBlock()))),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
+                                                                                                                                                            .getState()
+                                                                                                                                                            .getBlock()))),
                   false);
                 break;
             case SPAWN:
@@ -728,7 +729,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             requestedMap.entrySet()
               .removeIf(entry -> ItemStackUtils.isEmpty(entry.getKey().getItemStack()) || foundStacks.stream()
-                .anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target, entry.getKey().getItemStack())));
+                                                                                            .anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target,
+                                                                                              entry.getKey().getItemStack())));
         }
 
         for (final Map.Entry<ItemStorage, Integer> placedStack : requestedMap.entrySet())
@@ -740,16 +742,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.building
-              .getOpenRequestsOfTypeFiltered(
-                placer.getWorker().getCitizenData(),
-                TypeConstants.DELIVERABLE,
-                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
+                                                                               .getOpenRequestsOfTypeFiltered(
+                                                                                 placer.getWorker().getCitizenData(),
+                                                                                 TypeConstants.DELIVERABLE,
+                                                                                 (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
             final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.building
-              .getCompletedRequestsOfTypeFiltered(
-                placer.getWorker().getCitizenData(),
-                TypeConstants.DELIVERABLE,
-                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
+                                                                                        .getCompletedRequestsOfTypeFiltered(
+                                                                                          placer.getWorker().getCitizenData(),
+                                                                                          TypeConstants.DELIVERABLE,
+                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
             if (requests.isEmpty() && completedRequests.isEmpty())
             {

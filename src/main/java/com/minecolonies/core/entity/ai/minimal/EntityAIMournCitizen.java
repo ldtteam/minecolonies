@@ -66,8 +66,8 @@ public class EntityAIMournCitizen implements IStateAI
      * Constant values of mourning
      */
     private static final int MIN_DESTINATION_TO_LOCATION = 225;
-    private static final int AVERAGE_MOURN_TIME = 60 * 5;
-    private static final int AVERAGE_STARE_TIME = 10 * 20;
+    private static final int AVERAGE_MOURN_TIME          = 60 * 5;
+    private static final int AVERAGE_STARE_TIME          = 10 * 20;
 
     /**
      * The position of the graveyard.
@@ -106,6 +106,7 @@ public class EntityAIMournCitizen implements IStateAI
 
     /**
      * Path to the townhall.
+     *
      * @return IDLE again.
      */
     private IState walkToTownHall()
@@ -117,6 +118,7 @@ public class EntityAIMournCitizen implements IStateAI
 
     /**
      * Path to the graveyard.
+     *
      * @return the next state to go to.
      */
     private IState walkToGraveyard()
@@ -137,6 +139,7 @@ public class EntityAIMournCitizen implements IStateAI
     /**
      * Wander at the graveyard and visit the graves.
      * While wandering at the graveyard, the chance to stop mourning is doubled.
+     *
      * @return the next state to go to.
      */
     private IState wanderAtGraveyard()
@@ -181,7 +184,7 @@ public class EntityAIMournCitizen implements IStateAI
                     }
                     final String deathBud = iterator.next();
                     final String firstName = StringUtils.split(deathBud)[0];
-                    final String lastName = deathBud.replaceFirst(firstName,"");
+                    final String lastName = deathBud.replaceFirst(firstName, "");
 
                     final List<String> graveNameList = ((TileEntityNamedGrave) blockEntity).getTextLines();
                     if (!graveNameList.isEmpty() && graveNameList.contains(firstName) && graveNameList.contains(lastName))
@@ -198,6 +201,7 @@ public class EntityAIMournCitizen implements IStateAI
 
     /**
      * Walk to grave state.
+     *
      * @return next state.
      */
     private IState walkToGrave()
@@ -217,6 +221,7 @@ public class EntityAIMournCitizen implements IStateAI
 
     /**
      * Wander around randomly.
+     *
      * @return also IDLE again.
      */
     private IState wander()
@@ -227,6 +232,7 @@ public class EntityAIMournCitizen implements IStateAI
 
     /**
      * State at a random player around.
+     *
      * @return Staring if there is a player, else IDLE.
      */
     private IState stare()
@@ -253,12 +259,18 @@ public class EntityAIMournCitizen implements IStateAI
             }
         }
 
-        citizen.getLookControl().setLookAt(closestEntity.getX(), closestEntity.getY() + (double) closestEntity.getEyeHeight(), closestEntity.getZ(), (float) citizen.getMaxHeadYRot(), (float) citizen.getMaxHeadXRot());
+        citizen.getLookControl()
+          .setLookAt(closestEntity.getX(),
+            closestEntity.getY() + (double) closestEntity.getEyeHeight(),
+            closestEntity.getZ(),
+            (float) citizen.getMaxHeadYRot(),
+            (float) citizen.getMaxHeadXRot());
         return MourningState.STARING;
     }
 
     /**
      * Decide what to do next.
+     *
      * @return the next state to go to.
      */
     private IState decide()
@@ -275,8 +287,9 @@ public class EntityAIMournCitizen implements IStateAI
 
         if (this.graveyard == null)
         {
-            this.graveyard = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
-              GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
+            this.graveyard =
+              citizen.getCitizenColonyHandler().getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
+                GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
         }
 
         if (graveyard != null)

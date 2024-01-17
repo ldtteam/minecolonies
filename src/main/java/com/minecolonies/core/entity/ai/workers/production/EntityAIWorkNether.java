@@ -96,11 +96,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      * Edibles that the worker will attempt to eat while in the nether (unfiltered)
      */
     final List<ItemStack> netherEdible = IColonyManager.getInstance()
-      .getCompatibilityManager()
-      .getEdibles(building.getBuildingLevel() - 1)
-      .stream()
-      .map(ItemStorage::getItemStack)
-      .collect(Collectors.toList());
+                                           .getCompatibilityManager()
+                                           .getEdibles(building.getBuildingLevel() - 1)
+                                           .stream()
+                                           .map(ItemStorage::getItemStack)
+                                           .collect(Collectors.toList());
 
     /**
      * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
@@ -133,7 +133,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                                        || getState() == NETHER_LEAVE
                                                        || getState() == NETHER_RETURN
                                                        || getState() == NETHER_OPENPORTAL
-                                                       || getState() == NETHER_CLOSEPORTAL? RENDER_META_WORKING : "");
+                                                       || getState() == NETHER_CLOSEPORTAL ? RENDER_META_WORKING : "");
 
         for (int slot = 0; slot < worker.getInventoryCitizen().getSlots(); slot++)
         {
@@ -195,7 +195,10 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             worker.setSilent(false);
             worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
 
-            if (!force) return;
+            if (!force)
+            {
+                return;
+            }
         }
         worker.setInvisible(false);
         worker.setSilent(false);
@@ -454,7 +457,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         float incomingDamage = tag.getFloat(TAG_DAMAGE);
                         incomingDamage -= incomingDamage * (getSecondarySkillLevel() * SECONDARY_DAMAGE_REDUCTION);
 
-                        for (int hit = 0; mobHealth > 0 && ! worker.isDeadOrDying(); hit++)
+                        for (int hit = 0; mobHealth > 0 && !worker.isDeadOrDying(); hit++)
                         {
                             // Clear anti-hurt timers.
                             worker.hurtTime = 0;

@@ -84,7 +84,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * The combat pathing options.
      */
-    private final PathingOptions    combatPathingOptions;
+    private final PathingOptions combatPathingOptions;
 
     /**
      * If the last attack was an instant effect potion.
@@ -238,8 +238,9 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected boolean isAttackableTarget(final LivingEntity entity)
     {
         return (AbstractEntityAIGuard.isAttackableTarget(user, entity)
-                  || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null )
-                  || (entity instanceof Player && entity.getLastHurtByMobTimestamp() != 0 && entity.tickCount > entity.getLastHurtByMobTimestamp() && entity.tickCount - entity.getLastHurtByMobTimestamp() < 20 * 30))
+                  || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null)
+                  || (entity instanceof Player && entity.getLastHurtByMobTimestamp() != 0 && entity.tickCount > entity.getLastHurtByMobTimestamp()
+                        && entity.tickCount - entity.getLastHurtByMobTimestamp() < 20 * 30))
                  && !wasAffectedByDruid(entity);
     }
 
@@ -291,12 +292,14 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
     /**
      * Check if an entity has one of the potion effects the druid hands out.
+     *
      * @param entity the entity to check for.
      * @return true if so.
      */
     private boolean wasAffectedByDruid(final LivingEntity entity)
     {
-        return entity.hasEffect(MobEffects.MOVEMENT_SLOWDOWN) || entity.hasEffect(MobEffects.SATURATION) || entity.hasEffect(MobEffects.DAMAGE_BOOST) || entity.hasEffect(MobEffects.WEAKNESS) || entity.hasEffect(MobEffects.DAMAGE_RESISTANCE) || entity.hasEffect(MobEffects.HEAL);
+        return entity.hasEffect(MobEffects.MOVEMENT_SLOWDOWN) || entity.hasEffect(MobEffects.SATURATION) || entity.hasEffect(MobEffects.DAMAGE_BOOST)
+                 || entity.hasEffect(MobEffects.WEAKNESS) || entity.hasEffect(MobEffects.DAMAGE_RESISTANCE) || entity.hasEffect(MobEffects.HEAL);
     }
 
     @Override

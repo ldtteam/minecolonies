@@ -143,7 +143,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             }
 
             final Tuple<String, String> shaft = getShaftPath(quarry);
-            final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+            final WorkOrderMiner wo =
+              new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
             wo.setClaimedBy(building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
@@ -154,7 +155,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
     /**
      * Get the path of the quarry shaft blueprint.
-     *
+     * <p>
      * The shaft path is either based on an explicit shaft= tag on the building, or based on the actual schematic used.
      * The directory can be explicitly specified, or it will default to the same as the building.
      *
@@ -169,7 +170,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (tileEntity != null)
         {
             path = quarry.getBlueprintPath().replace('\\', '/')
-                    .replace("1.blueprint", "shaft1.blueprint");
+                     .replace("1.blueprint", "shaft1.blueprint");
             if (!path.endsWith("shaft1.blueprint"))
             {
                 path = path.replace(".blueprint", "shaft.blueprint");
@@ -213,11 +214,11 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
     @Override
     public void loadStructure(
-            @NotNull final IWorkOrder workOrder,
-            final int rotateTimes,
-            final BlockPos position,
-            final boolean isMirrored,
-            final boolean removal)
+      @NotNull final IWorkOrder workOrder,
+      final int rotateTimes,
+      final BlockPos position,
+      final boolean isMirrored,
+      final boolean removal)
     {
         final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
@@ -226,7 +227,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
-                Log.getLogger().warn("Couldn't find structure with name: " + workOrder.getStructurePath() + " in: " + workOrder.getStructurePack() + ". Aborting loading procedure");
+                Log.getLogger()
+                  .warn("Couldn't find structure with name: " + workOrder.getStructurePath() + " in: " + workOrder.getStructurePack() + ". Aborting loading procedure");
                 this.loadingBlueprint = false;
                 return;
             }
@@ -309,9 +311,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                 || isDecoItem(info.getBlockInfo().getState().getBlock())
-                                                                                 || pos.getY()  < worldPos.getY())),
+                          .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
+                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock())
+                                                                                       || pos.getY() < worldPos.getY())),
                   false);
 
                 if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
@@ -330,7 +332,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 if (progress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                      structurePlacer.getB().getStage());
                     return getState();
                 }
 
@@ -340,20 +343,22 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                 && !isDecoItem(info.getBlockInfo().getState().getBlock()))
-                                                                                 || pos.getY() > worldPos.getY())),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.isAnySolid(info.getBlockInfo().getState())
+                                                                                        && !isDecoItem(info.getBlockInfo().getState().getBlock()))
+                                                                                       || pos.getY() > worldPos.getY())),
                   false);
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                      structurePlacer.getB().getStage());
                 }
                 else if (progress.getY() != -1 && result.getIteratorPos().getY() > progress.getY())
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                      structurePlacer.getB().getStage());
                 }
                 else
                 {
@@ -379,7 +384,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
                 {
                     structurePlacer.getB().setStage(BUILD_SOLID);
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                      structurePlacer.getB().getStage());
                 }
                 else
                 {
@@ -427,7 +433,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure = new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+        final WorkerLoadOnlyStructureHandler structure =
+          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
         job.getWorkOrder().setIteratorType("default");
 
         final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
@@ -452,9 +459,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                 || isDecoItem(info.getBlockInfo().getState().getBlock())
-                                                                                 || pos.getY()  < worldPos.getY())),
+                          .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
+                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock())
+                                                                                       || pos.getY() < worldPos.getY())),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -494,9 +501,10 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
-                      .getState()
-                      .getBlock())  || pos.getY() > worldPos.getY())),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
+                                                                                                                                                            .getState()
+                                                                                                                                                            .getBlock())
+                                                                                       || pos.getY() > worldPos.getY())),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -523,7 +531,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 return false;
             case ENTITIES:
                 result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0  || pos.getY()  < worldPos.getY())), true);
+                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0 || pos.getY() < worldPos.getY())), true);
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
@@ -562,7 +570,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             isCanceled = true;
         }
-        else if(job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
+        else if (job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
         {
             isCanceled = true;
         }
@@ -650,7 +658,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             final BlockState surroundingState = world.getBlockState(pos);
 
             final FluidState fluid = world.getFluidState(pos);
-            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) || SurfaceType.isWater(world, pos, surroundingState, fluid))
+            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA))
+                  || SurfaceType.isWater(world, pos, surroundingState, fluid))
             {
                 setBlockFromInventory(pos, getMainFillBlock());
             }
@@ -669,7 +678,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         }
 
         worker.decreaseSaturationForContinuousAction();
-        blockToMine  = null;
+        blockToMine = null;
         return BUILDING_STEP;
     }
 
@@ -704,8 +713,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
     /**
      * Handles the placement and reduction of a block from the inventory.
+     *
      * @param location the place to place the block at.
-     * @param block the block.
+     * @param block    the block.
      */
     private void setBlockFromInventory(@NotNull final BlockPos location, final Block block)
     {

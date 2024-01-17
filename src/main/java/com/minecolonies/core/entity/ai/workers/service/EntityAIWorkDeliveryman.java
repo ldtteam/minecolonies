@@ -81,7 +81,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Delivery icon
      */
-    private final static VisibleCitizenStatus DELIVERING           =
+    private final static VisibleCitizenStatus DELIVERING =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/delivery.png"), "com.minecolonies.gui.visiblestatus.delivery");
 
     /**
@@ -217,7 +217,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-        
+
         if (currentSlot >= handler.getSlots())
         {
             return true;
@@ -225,14 +225,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         ItemStack stack = handler.getStackInSlot(currentSlot);
 
-        while(stack.isEmpty())
+        while (stack.isEmpty())
         {
             currentSlot++;
             if (currentSlot >= handler.getSlots())
             {
                 return true;
             }
-            stack = handler.getStackInSlot(currentSlot);            
+            stack = handler.getStackInSlot(currentSlot);
         }
 
         final int amount = workerRequiresItem(building, stack, alreadyKept);
@@ -365,7 +365,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         boolean success = true;
         boolean extracted = false;
         final IItemHandler workerInventory = worker.getInventoryCitizen();
-        final List<ItemStorage> itemsToDeliver = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask).stream().map(r -> new ItemStorage(r.getRequest().getStack())).collect(Collectors.toList());
+        final List<ItemStorage> itemsToDeliver =
+          job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask).stream().map(r -> new ItemStorage(r.getRequest().getStack())).collect(Collectors.toList());
 
         for (int i = 0; i < workerInventory.getSlots(); i++)
         {
@@ -438,7 +439,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Insert the result back into the inventory so we do not lose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
-            worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount(), worker.getCitizenColonyHandler().getColony().getDay());
+            worker.getCitizenColonyHandler()
+              .getColony()
+              .getStatisticsManager()
+              .incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount(), worker.getCitizenColonyHandler().getColony().getDay());
         }
 
         if (!extracted)
@@ -561,7 +565,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
+        if ((entity instanceof TileEntityColonyBuilding
+               && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
               (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
         {
             final IItemHandler handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);

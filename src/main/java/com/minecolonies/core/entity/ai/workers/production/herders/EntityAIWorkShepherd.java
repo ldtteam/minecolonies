@@ -32,7 +32,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     /**
      * Constants used for sheep dying calculations.
      */
-    private static final int HUNDRED_PERCENT_CHANCE      = 100;
+    private static final int HUNDRED_PERCENT_CHANCE = 100;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -95,7 +95,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     private Sheep findShearableSheep()
     {
         return searchForAnimals(a -> a instanceof Sheep sheepie && !sheepie.isSheared() && !sheepie.isBaby())
-                .stream().map(a -> (Sheep) a).findAny().orElse(null);
+                 .stream().map(a -> (Sheep) a).findAny().orElse(null);
     }
 
     /**
@@ -136,7 +136,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
                 sheep.setSheared(true);
                 int qty = 1 + worker.getRandom().nextInt(enchantmentLevel + 1);
 
-                for(int j = 0; j < qty; ++j)
+                for (int j = 0; j < qty; ++j)
                 {
                     items.add(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())));
                 }

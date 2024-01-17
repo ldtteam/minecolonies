@@ -315,7 +315,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 // search for interesting items in our restriction zone, if we ran out of trees
                 searchForItems(new AABB(building.getStartRestriction(), building.getEndRestriction())
-                        .inflate(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP));
+                                 .inflate(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP));
             }
 
             if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())

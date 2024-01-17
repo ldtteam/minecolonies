@@ -213,13 +213,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         ActionHandlerResult handlerResult = switch (activeModuleResult.getAction())
-        {
-            case NONE -> ActionHandlerResult.FINISHED;
-            case PLANT -> handlePlantingAction();
-            case BONEMEAL -> handleBonemealAction();
-            case HARVEST -> handleMiningAction(true);
-            case CLEAR -> handleMiningAction(false);
-        };
+                                              {
+                                                  case NONE -> ActionHandlerResult.FINISHED;
+                                                  case PLANT -> handlePlantingAction();
+                                                  case BONEMEAL -> handleBonemealAction();
+                                                  case HARVEST -> handleMiningAction(true);
+                                                  case CLEAR -> handleMiningAction(false);
+                                              };
 
         if (handlerResult.equals(ActionHandlerResult.FINISHED))
         {

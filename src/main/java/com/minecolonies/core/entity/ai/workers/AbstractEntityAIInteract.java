@@ -238,6 +238,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
     /**
      * Event triggered after receiving a list of block drops.
+     *
      * @param blockDrops the received items from the block.
      */
     public void onBlockDropReception(final List<ItemStack> blockDrops)
@@ -247,6 +248,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
     /**
      * Check if this specific block should be picked up via silk touch.
+     *
      * @param curBlockState the state to check.
      * @return true if so.
      */
@@ -334,13 +336,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
         return (int) (((BLOCK_MINING_DELAY * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
                          * (double) world.getBlockState(pos).getDestroySpeed(world, pos) / (double) (worker.getMainHandItem()
-          .getItem()
-          .getDestroySpeed(worker.getMainHandItem(), state)))
+                                                                                                       .getItem()
+                                                                                                       .getDestroySpeed(worker.getMainHandItem(), state)))
                         * reduction);
     }
 
     /**
      * Get the level that affects the break speed.
+     *
      * @return the level.
      */
     public int getBreakSpeedLevel()
@@ -361,7 +364,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * Search for all items around the worker. and store them in the items list.
      *
-     * @param boundingBox     the area to search.
+     * @param boundingBox the area to search.
      */
     public void searchForItems(final AABB boundingBox)
     {
@@ -369,7 +372,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
                   .stream()
                   .filter(item -> item != null && item.isAlive() &&
                                     (!item.getPersistentData().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")) &&
-                          isItemWorthPickingUp(item.getItem()))
+                                    isItemWorthPickingUp(item.getItem()))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }
@@ -377,8 +380,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * Check if an item is sufficiently interesting to want to go pick it up.  (This won't stop a
      * worker picking up something else as they pass by, but it makes them not want to go over to it.)
+     *
      * @param stack the stack to check.
-     * @return      true if the worker wants to go over to it.
+     * @return true if the worker wants to go over to it.
      */
     protected boolean isItemWorthPickingUp(final ItemStack stack)
     {
@@ -445,6 +449,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
     /**
      * Search for a random position to go to, anchored around the citizen.
+     *
      * @param range the max range
      * @return null until position was found.
      */
@@ -455,8 +460,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
     /**
      * Search for a random position to go to.
+     *
      * @param range the max range
-     * @param pos position we want to find a random position around in the given range
+     * @param pos   position we want to find a random position around in the given range
      * @return null until position was found.
      */
     protected BlockPos findRandomPositionToWalkTo(final int range, final BlockPos pos)
@@ -466,7 +472,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             pathBackupFactor = 1;
             pathResult = getRandomNavigationPath(range, pos);
         }
-        else if ( pathResult.failedToReachDestination())
+        else if (pathResult.failedToReachDestination())
         {
             pathBackupFactor++;
             pathResult = getRandomNavigationPath(range * pathBackupFactor, pos);
@@ -496,8 +502,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
     /**
      * Get a navigator to find a certain position.
+     *
      * @param range the max range.
-     * @param pos the position to
+     * @param pos   the position to
      * @return the navigator.
      */
     protected PathResult getRandomNavigationPath(final int range, final BlockPos pos)

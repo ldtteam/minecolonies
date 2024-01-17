@@ -107,7 +107,10 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final BuildingHospital hospital = building;
-        for (final AbstractEntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, building, cit -> cit.getCitizenDiseaseHandler().isSick()))
+        for (final AbstractEntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world,
+          AbstractEntityCitizen.class,
+          building,
+          cit -> cit.getCitizenDiseaseHandler().isSick()))
         {
             hospital.checkOrCreatePatientFile(citizen.getCivilianID());
         }
@@ -212,7 +215,10 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             }
         }
 
-        for (final Player player : WorldUtil.getEntitiesWithinBuilding(world, Player.class, building, player -> player.getHealth() < player.getMaxHealth() - 10 - (2 * building.getBuildingLevel())))
+        for (final Player player : WorldUtil.getEntitiesWithinBuilding(world,
+          Player.class,
+          building,
+          player -> player.getHealth() < player.getMaxHealth() - 10 - (2 * building.getBuildingLevel())))
         {
             playerToHeal = player;
             return CURE_PLAYER;

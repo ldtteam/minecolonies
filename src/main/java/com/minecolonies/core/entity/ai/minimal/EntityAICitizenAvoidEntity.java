@@ -156,9 +156,9 @@ public class EntityAICitizenAvoidEntity implements IStateAI
                   3.0D,
                   (double) distanceFromEntity),
                 target -> target.isAlive() && citizen.getSensing().hasLineOfSight(target))
-              .stream()
-              .filter(targetEntityClass::isInstance)
-              .findFirst();
+                                                      .stream()
+                                                      .filter(targetEntityClass::isInstance)
+                                                      .findFirst();
 
             return entityOptional.orElse(null);
         }

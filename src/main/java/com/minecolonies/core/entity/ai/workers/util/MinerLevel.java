@@ -1,4 +1,5 @@
 package com.minecolonies.core.entity.ai.workers.util;
+
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
@@ -36,18 +37,18 @@ public class MinerLevel
     /**
      * Possible rotations.
      */
-    private static final int              ROTATE_ONCE        = 1;
-    private static final int              ROTATE_TWICE       = 2;
-    private static final int              ROTATE_THREE_TIMES = 3;
-    private static final int              MAX_ROTATIONS      = 4;
+    private static final int                  ROTATE_ONCE              = 1;
+    private static final int                  ROTATE_TWICE             = 2;
+    private static final int                  ROTATE_THREE_TIMES       = 3;
+    private static final int                  MAX_ROTATIONS            = 4;
     /**
      * Random object needed for some tasks.
      */
-    private static final Random           rand               = new Random();
+    private static final Random               rand                     = new Random();
     /**
      * Number to choose random types. It's random.nextInt(RANDOM_TYPES),
      */
-    private static final int              RANDOM_TYPES       = 4;
+    private static final int                  RANDOM_TYPES             = 4;
     /**
      * The number of nodes that need to be built near the main shaft before randomly picking the next
      */
@@ -273,7 +274,7 @@ public class MinerLevel
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
             case UNDEFINED:
-                Log.getLogger().error("Minecolonies node: " + node.getX() + ":" + node.getZ() +" style undefined creating children, Please tell the mod authors about this");
+                Log.getLogger().error("Minecolonies node: " + node.getX() + ":" + node.getZ() + " style undefined creating children, Please tell the mod authors about this");
                 return;
             default:
                 return;
@@ -297,13 +298,12 @@ public class MinerLevel
             openNodes.add(tempNodeToAdd);
         }
         MineNode I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ()));
-        if(!tempNode.equals(I))
+        if (!tempNode.equals(I))
         {
             Log.getLogger().warn("Minecolonies node: " + node.getX() + ":" + node.getZ() + " not equal to storage during close, Please tell the mod authors about this");
         }
         tempNode.setStatus(MineNode.NodeStatus.COMPLETED);
         openNodes.removeIf(tempNode::equals);
-
     }
 
     /**

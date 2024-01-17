@@ -261,8 +261,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             if (loot != null)
             {
                 final int enchantmentLevel = loot.stream()
-                        .mapToInt(EntityAIWorkEnchanter::getEnchantedBookLevel)
-                        .max().orElse(0);
+                                               .mapToInt(EntityAIWorkEnchanter::getEnchantedBookLevel)
+                                               .max().orElse(0);
 
                 //Decrement mana.
                 data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -enchantmentLevel);
@@ -280,8 +280,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (stack.getItem().equals(Items.ENCHANTED_BOOK))
         {
             return EnchantedBookItem.getEnchantments(stack).stream()
-                    .mapToInt(nbt -> ((CompoundTag) nbt).getShort("lvl"))
-                    .max().orElse(0);
+                     .mapToInt(nbt -> ((CompoundTag) nbt).getShort("lvl"))
+                     .max().orElse(0);
         }
         return 0;
     }

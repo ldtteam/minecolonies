@@ -69,12 +69,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private static final int LADDER_REQUEST_BATCHES = 10;
 
-    public static final String RENDER_META_TORCH = "torch";
-    public static final String RENDER_META_STONE = "stone";
-    public static final String RENDER_META_SHOVEL = "shovel";
+    public static final String RENDER_META_TORCH   = "torch";
+    public static final String RENDER_META_STONE   = "stone";
+    public static final String RENDER_META_SHOVEL  = "shovel";
     public static final String RENDER_META_PICKAXE = "pickaxe";
 
-    private static final int NODE_DISTANCE       = 7;
+    private static final int NODE_DISTANCE    = 7;
     /**
      * Return to chest after building level stacks.
      */
@@ -240,7 +240,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             final BlockState surroundingState = world.getBlockState(pos);
 
             final FluidState fluid = world.getFluidState(pos);
-            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) || SurfaceType.isWater(world, pos, surroundingState, fluid))
+            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA))
+                  || SurfaceType.isWater(world, pos, surroundingState, fluid))
             {
                 setBlockFromInventory(pos, getMainFillBlock());
             }
@@ -641,7 +642,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private IAIState executeNodeMining()
     {
-        final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);;
+        final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
+        ;
         @Nullable final MinerLevel currentLevel = module.getCurrentLevel();
         if (currentLevel == null)
         {
@@ -659,7 +661,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return IDLE;
         }
 
-        final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);;
+        final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
+        ;
         if (workingNode == null || workingNode.getStatus() == MineNode.NodeStatus.COMPLETED)
         {
             workingNode = module.getActiveNode();
@@ -761,7 +764,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         //Preload structures
         if (job.getBlueprint() == null)
         {
-            initStructure(mineNode, rotation, new BlockPos(mineNode.getX(), building.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel().getDepth(), mineNode.getZ()), building, world, job);
+            initStructure(mineNode,
+              rotation,
+              new BlockPos(mineNode.getX(), building.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel().getDepth(), mineNode.getZ()),
+              building,
+              world,
+              job);
             return LOAD_STRUCTURE;
         }
 
@@ -928,7 +936,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private BlockPos getNodeMiningPosition(final BlockPos blockToMine)
     {
         final BuildingMiner buildingMiner = building;
-        final MinerLevelManagementModule module = buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class);;
+        final MinerLevelManagementModule module = buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class);
+        ;
 
         if (module.getCurrentLevel() == null || module.getActiveNode() == null)
         {

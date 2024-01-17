@@ -32,7 +32,8 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public WorkerLoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement,
+    public WorkerLoadOnlyStructureHandler(
+      final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement,
       final AbstractEntityAIStructure<J, B> entityAIStructure)
     {
         super(world, pos, blueprint, settings, fancyPlacement);

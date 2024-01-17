@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class ConstructionTapeHelper
 {
-    public static final DirectionProperty FACING    = HorizontalDirectionalBlock.FACING;
-    public static final BooleanProperty   CORNER    = BooleanProperty.create("corner");
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final BooleanProperty   CORNER = BooleanProperty.create("corner");
 
     /**
      * Private Constructor to hide implicit one. Intentionally empty.
@@ -98,13 +98,15 @@ public final class ConstructionTapeHelper
                 working = firstValidPosition(new BlockPos(place.getX(), y, z), world, sizeY);
                 if (working != null)
                 {
-                    world.setBlockAndUpdate(working, BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getX() == x), world, working, Direction.SOUTH));
+                    world.setBlockAndUpdate(working,
+                      BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getX() == x), world, working, Direction.SOUTH));
                 }
 
                 working = firstValidPosition(new BlockPos(place.getX(), y, z + sizeZ), world, sizeY);
                 if (working != null)
                 {
-                    world.setBlockAndUpdate(working, BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getX() == x), world, working, Direction.NORTH));
+                    world.setBlockAndUpdate(working,
+                      BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getX() == x), world, working, Direction.NORTH));
                 }
             }
 
@@ -120,7 +122,10 @@ public final class ConstructionTapeHelper
                 if (working != null)
                 {
                     world.setBlockAndUpdate(working,
-                      BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getZ() == z), world, working, place.getZ() == z ? Direction.SOUTH : Direction.WEST));
+                      BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getZ() == z),
+                        world,
+                        working,
+                        place.getZ() == z ? Direction.SOUTH : Direction.WEST));
                 }
             }
 
@@ -177,7 +182,7 @@ public final class ConstructionTapeHelper
      * Remove construction tape.
      *
      * @param orgCorners the corner positions.
-     * @param world   the world.
+     * @param world      the world.
      */
     public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final Level world)
     {
@@ -247,7 +252,12 @@ public final class ConstructionTapeHelper
      * @param block            the block.
      * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
      */
-    public static void removeTapeIfNecessary(@NotNull final Level world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner, final int minHeight, final int maxHeight)
+    public static void removeTapeIfNecessary(
+      @NotNull final Level world,
+      @NotNull final BlockPos block,
+      @NotNull final Block tapeOrTapeCorner,
+      final int minHeight,
+      final int maxHeight)
     {
         for (int y = minHeight; y <= maxHeight; y++)
         {

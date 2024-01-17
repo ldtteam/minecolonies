@@ -254,8 +254,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private boolean hasRodButNotEquipped()
     {
         return InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), ToolType.FISHINGROD, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())
-                && worker.getMainHandItem() != null
-                && !ItemStackUtils.isTool(worker.getMainHandItem(), ToolType.FISHINGROD);
+                 && worker.getMainHandItem() != null
+                 && !ItemStackUtils.isTool(worker.getMainHandItem(), ToolType.FISHINGROD);
     }
 
     /**
@@ -523,7 +523,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround() || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround() || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive()
+                 || entityFishHook.caughtEntity != null;
     }
 
     /**
@@ -563,7 +564,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getMainHandItem() == null || !ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), worker.getItemHandlerCitizen().getStackInSlot(rodSlot), false, true))
+        if (worker.getMainHandItem() == null || !ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(),
+          worker.getItemHandlerCitizen().getStackInSlot(rodSlot),
+          false,
+          true))
         {
             equipRod();
             return getState();
@@ -639,13 +643,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private void generateBonusLoot()
     {
         final LootParams context = (new LootParams.Builder((ServerLevel) this.world))
-                .withParameter(LootContextParams.ORIGIN, entityFishHook.position())
-                .withParameter(LootContextParams.THIS_ENTITY, entityFishHook)
-                .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
-                .withParameter(LootContextParams.KILLER_ENTITY, worker)
-                .withLuck((float) getPrimarySkillLevel())
-                .create(LootContextParamSets.FISHING);
-        final LootTable bonusLoot = this.world.getServer().getLootData().getLootTable(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.building.getBuildingLevel(), new ResourceLocation("")));
+                                     .withParameter(LootContextParams.ORIGIN, entityFishHook.position())
+                                     .withParameter(LootContextParams.THIS_ENTITY, entityFishHook)
+                                     .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
+                                     .withParameter(LootContextParams.KILLER_ENTITY, worker)
+                                     .withLuck((float) getPrimarySkillLevel())
+                                     .create(LootContextParamSets.FISHING);
+        final LootTable bonusLoot =
+          this.world.getServer().getLootData().getLootTable(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.building.getBuildingLevel(), new ResourceLocation("")));
         final List<ItemStack> loot = bonusLoot.getRandomItems(context);
 
         for (final ItemStack itemstack : loot)
@@ -658,10 +663,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
             this.world.addFreshEntity(itementity);
             worker.level.addFreshEntity(new ExperienceOrb(worker.level,
-                    worker.getX(),
-                    worker.getY() + 0.5D,
-                    worker.getZ() + 0.5D,
-                    XP_PER_CATCH));
+              worker.getX(),
+              worker.getY() + 0.5D,
+              worker.getZ() + 0.5D,
+              XP_PER_CATCH));
         }
     }
 

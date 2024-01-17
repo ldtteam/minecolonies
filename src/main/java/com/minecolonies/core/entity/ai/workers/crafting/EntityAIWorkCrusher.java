@@ -38,7 +38,8 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     /**
      * Crusher icon
      */
-    private final static VisibleCitizenStatus CRUSHING = new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/crusher.png"), "com.minecolonies.gui.visiblestatus.crusher");
+    private final static VisibleCitizenStatus CRUSHING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/crusher.png"), "com.minecolonies.gui.visiblestatus.crusher");
 
     /**
      * Constructor for the crusher. Defines the tasks the crusher executes.
@@ -136,7 +137,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
 
         final IAIState check = checkForItems(currentRecipeStorage);
-        if (job.getProgress() > MAX_LEVEL - Math.min((getSecondarySkillLevel()/2) + 1, MAX_LEVEL))
+        if (job.getProgress() > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 2) + 1, MAX_LEVEL))
         {
             job.setProgress(0);
 
@@ -182,7 +183,8 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
         if (check == CRAFT)
         {
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).getItemStack().copy(), crusherBuilding.getID()), worker);
+            Network.getNetwork()
+              .sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).getItemStack().copy(), crusherBuilding.getID()), worker);
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().below()),
               worker);
             SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.STONE_BREAK);

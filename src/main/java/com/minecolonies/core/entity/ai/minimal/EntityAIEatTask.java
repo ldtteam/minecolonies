@@ -131,9 +131,12 @@ public class EntityAIEatTask implements IStateAI
         super();
         this.citizen = citizen;
 
-        citizen.getCitizenAI().addTransition(new TickingTransition<>(CitizenAIState.EATING,() -> true,() ->{ reset(); return CHECK_FOR_FOOD;},20));
+        citizen.getCitizenAI().addTransition(new TickingTransition<>(CitizenAIState.EATING, () -> true, () -> {
+            reset();
+            return CHECK_FOR_FOOD;
+        }, 20));
 
-        citizen.getCitizenAI().addTransition(new TickingTransition<>(DONE, () -> true,() -> CitizenAIState.IDLE, 1));
+        citizen.getCitizenAI().addTransition(new TickingTransition<>(DONE, () -> true, () -> CitizenAIState.IDLE, 1));
         citizen.getCitizenAI().addTransition(new TickingTransition<>(CHECK_FOR_FOOD, () -> true, this::getFood, 20));
         citizen.getCitizenAI().addTransition(new TickingTransition<>(GO_TO_HUT, () -> true, this::goToHut, 20));
         citizen.getCitizenAI().addTransition(new TickingTransition<>(EAT, () -> true, this::eat, 20));
@@ -303,7 +306,8 @@ public class EntityAIEatTask implements IStateAI
             else
             {
                 waitingTicks++;
-                if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME || (citizen.getCitizenData().getJob() instanceof AbstractJobGuard<?> && !WorldUtil.isDayTime(citizen.level)))
+                if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME || (citizen.getCitizenData().getJob() instanceof AbstractJobGuard<?>
+                                                                                 && !WorldUtil.isDayTime(citizen.level)))
                 {
                     waitingTicks = 0;
                     return GET_FOOD_YOURSELF;
@@ -439,7 +443,6 @@ public class EntityAIEatTask implements IStateAI
                     return GO_TO_RESTAURANT;
                 }
             }
-
         }
         return SEARCH_RESTAURANT;
     }

@@ -152,7 +152,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 {
                     continue;
                 }
-                if (item.getItemNeeded() == ToolType.SHIELD && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
+                if (item.getItemNeeded() == ToolType.SHIELD
+                      && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
                 {
                     continue;
                 }
@@ -180,8 +181,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 final Map<IItemHandler, List<Integer>> items = InventoryUtils.findAllSlotsInProviderWith(building, item);
                 if (items.isEmpty())
                 {
-                        // None found, check for equipped
-                    if ((item.getType().isArmor() && ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType()))) || (!item.getType().isArmor() && ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType()))))
+                    // None found, check for equipped
+                    if ((item.getType().isArmor() && ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType()))) || (!item.getType().isArmor()
+                                                                                                                                                && ItemStackUtils.isEmpty(worker.getItemBySlot(
+                      item.getType()))))
                     {
                         // create request
                         checkForToolorWeaponASync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());
@@ -296,7 +299,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                         if (!current.isEmpty() && current.getItem() instanceof ArmorItem)
                         {
                             final int currentLevel = ItemStackUtils.getMiningLevel(current, item.getItemNeeded());
-                            final int newLevel =  ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot), item.getItemNeeded());
+                            final int newLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot), item.getItemNeeded());
                             if (currentLevel > newLevel)
                             {
                                 continue;
@@ -307,7 +310,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 }
                 else
                 {
-                    if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                    if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired()
+                          && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                     {
                         equipment.add(item.getType());
                         int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
@@ -327,7 +331,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     public void cleanVisibleSlots()
     {
         final ItemStack stack = worker.getItemBySlot(EquipmentSlot.OFFHAND);
-        if (stack.isEmpty() || InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, false, true)) == -1)
+        if (stack.isEmpty()
+              || InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, false, true)) == -1)
         {
             worker.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
         }

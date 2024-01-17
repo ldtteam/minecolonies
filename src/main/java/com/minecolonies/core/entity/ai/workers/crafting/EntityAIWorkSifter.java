@@ -82,7 +82,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return 1; 
+        return 1;
     }
 
     /**
@@ -118,15 +118,15 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (currentRecipeStorage == null)
         {
-            if(InventoryUtils.hasBuildingEnoughElseCount(sifterBuilding, i -> i.is(ModTags.meshes), 1) == 0)
+            if (InventoryUtils.hasBuildingEnoughElseCount(sifterBuilding, i -> i.is(ModTags.meshes), 1) == 0)
             {
-                if(InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0)
+                if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0)
                 {
                     // We don't want the mesh in our inventory, we 'craft' out of the building
                     incrementActionsDone();
                     return INVENTORY_FULL;
                 }
-                if(worker.getCitizenData() != null)
+                if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
                     setDelay(NO_MESH_DELAY);
@@ -147,9 +147,9 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         final ItemStack meshItem = currentRecipeStorage.getCraftingTools().get(0);
         final ItemStack inputItem = currentRecipeStorage.getCleanedInput().stream()
-                .map(ItemStorage::getItemStack)
-                .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
-                .findFirst().orElse(ItemStack.EMPTY);
+                                      .map(ItemStorage::getItemStack)
+                                      .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
+                                      .findFirst().orElse(ItemStack.EMPTY);
 
         if (meshItem.isEmpty() || inputItem.isEmpty())
         {
@@ -161,7 +161,10 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         {
             worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         }
-        if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getOffhandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getOffhandItem(), meshItem, false, true)))
+        if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getOffhandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getOffhandItem(),
+          meshItem,
+          false,
+          true)))
         {
             worker.setItemInHand(InteractionHand.OFF_HAND, meshItem);
         }
@@ -169,7 +172,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         WorkerUtil.faceBlock(building.getPosition(), worker);
 
         progress++;
-       
+
         if (progress > MAX_LEVEL - (getEffectiveSkillLevel(getSecondarySkillLevel()) / 2))
         {
             progress = 0;
@@ -177,7 +180,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
             {
                 incrementActionsDoneAndDecSaturation();
-            } 
+            }
             if (!currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers()))
             {
                 currentRecipeStorage = null;
@@ -189,10 +192,10 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         }
 
         Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
+          .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
         Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
-        
+          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
+
         worker.swing(InteractionHand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
         return getState();

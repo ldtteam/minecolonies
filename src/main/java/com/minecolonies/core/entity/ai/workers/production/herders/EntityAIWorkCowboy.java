@@ -34,12 +34,12 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      * Bucket metadata.
      */
     public static final String RENDER_META_BUCKET = "bucket";
-    public static final String RENDER_META_BOWL = "bowl";
+    public static final String RENDER_META_BOWL   = "bowl";
 
     /**
      * Herd cow icon
      */
-    private final static VisibleCitizenStatus HERD_COW               =
+    private final static VisibleCitizenStatus HERD_COW =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cowboy.png"), "com.minecolonies.gui.visiblestatus.cowboy");
 
     /**
@@ -117,12 +117,12 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToMilk() &&
-                !searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow)).isEmpty())
+              !searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow)).isEmpty())
         {
             list.add(new ItemStack(Items.BUCKET));
         }
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToStew() &&
-                !searchForAnimals(a -> a instanceof MushroomCow).isEmpty())
+              !searchForAnimals(a -> a instanceof MushroomCow).isEmpty())
         {
             list.add(new ItemStack(Items.BOWL));
         }
@@ -141,7 +141,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET))
         {
             if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(new ItemStack(Items.BUCKET, 1)), 1) > 0
-                    && !walkToBuilding())
+                  && !walkToBuilding())
             {
                 checkAndTransferFromHut(new ItemStack(Items.BUCKET, 1));
             }
@@ -153,7 +153,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         }
 
         final Cow cow = searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow) && !a.isBaby()).stream()
-                .map(a -> (Cow) a).findFirst().orElse(null);
+                          .map(a -> (Cow) a).findFirst().orElse(null);
 
         if (cow == null)
         {
@@ -191,7 +191,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BOWL))
         {
             if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(new ItemStack(Items.BOWL, 1)), 1) > 0
-                    && !walkToBuilding())
+                  && !walkToBuilding())
             {
                 checkAndTransferFromHut(new ItemStack(Items.BOWL, 1));
             }
@@ -203,7 +203,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         }
 
         final MushroomCow mooshroom = searchForAnimals(a -> a instanceof MushroomCow && !a.isBaby()).stream()
-                .map(a -> (MushroomCow) a).findFirst().orElse(null);
+                                        .map(a -> (MushroomCow) a).findFirst().orElse(null);
 
         if (mooshroom == null)
         {

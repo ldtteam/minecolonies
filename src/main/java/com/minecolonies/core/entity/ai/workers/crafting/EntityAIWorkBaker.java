@@ -61,5 +61,4 @@ public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, 
     {
         return true;
     }
-
 }

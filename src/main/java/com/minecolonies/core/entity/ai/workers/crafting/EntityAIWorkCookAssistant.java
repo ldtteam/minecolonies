@@ -41,7 +41,7 @@ public class EntityAIWorkCookAssistant extends AbstractEntityAIRequestSmelter<Jo
         {
             building.setIsCooking(true);
         }
-        if(!job.hasTask() && building.getIsCooking())
+        if (!job.hasTask() && building.getIsCooking())
         {
             building.setIsCooking(false);
         }

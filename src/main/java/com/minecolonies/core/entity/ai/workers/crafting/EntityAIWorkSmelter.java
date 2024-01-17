@@ -70,6 +70,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
 
     /**
      * Break down ores until they are finished.
+     *
      * @return the next state to go to.
      */
     private IAIState breakOres()
@@ -77,7 +78,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
         final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
-        if(currentRecipeStorage == null)
+        if (currentRecipeStorage == null)
         {
             return IDLE;
         }
@@ -86,14 +87,14 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                                       .map(ItemStorage::getItemStack)
                                       .findFirst().orElse(ItemStack.EMPTY);
 
-        if(inputItem.isEmpty())
+        if (inputItem.isEmpty())
         {
             return IDLE;
         }
 
         WorkerUtil.faceBlock(building.getPosition(), worker);
 
-        if(!module.fullFillRecipe(currentRecipeStorage))
+        if (!module.fullFillRecipe(currentRecipeStorage))
         {
             return IDLE;
         }
@@ -130,8 +131,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-            new InvWrapper(furnace), RESULT_SLOT,
-            worker.getInventoryCitizen());
+          new InvWrapper(furnace), RESULT_SLOT,
+          worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -159,7 +160,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
 
         final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
-        if(currentRecipeStorage == null)
+        if (currentRecipeStorage == null)
         {
             return super.checkForImportantJobs();
         }
@@ -180,7 +181,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        if(stack.is(ModTags.breakable_ore))
+        if (stack.is(ModTags.breakable_ore))
         {
             return false;
         }
@@ -216,7 +217,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE, STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
+                    worker.getCitizenData()
+                      .createRequestAsync(new StackList(requests,
+                        RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE,
+                        STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),
+                        1));
                 }
             }
         }

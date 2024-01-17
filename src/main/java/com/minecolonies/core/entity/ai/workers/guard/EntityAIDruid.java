@@ -51,7 +51,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
         {
             // Mistletoes and water bottles
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
-              item ->  item.getItem() == ModItems.magicpotion,
+              item -> item.getItem() == ModItems.magicpotion,
               32,
               worker.getInventoryCitizen());
 
@@ -61,7 +61,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
             }
         }
     }
-    
+
     @Override
     public void guardMovement()
     {

@@ -30,9 +30,9 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      * Predicate to check if concrete powder is in inv.
      */
     private static final Predicate<ItemStack> CONCRETE =
-      stack -> !stack.isEmpty() 
-            && stack.getItem() instanceof BlockItem 
-            && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
+      stack -> !stack.isEmpty()
+                 && stack.getItem() instanceof BlockItem
+                 && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
 
     /**
      * Constructor for the Concrete mason. Defines the tasks the Concrete mason executes.
@@ -106,10 +106,10 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     {
         int slot = -1;
 
-        if(currentRequest != null && currentRecipeStorage != null)
+        if (currentRequest != null && currentRecipeStorage != null)
         {
             ItemStack inputStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
-            if(CONCRETE.test(inputStack))
+            if (CONCRETE.test(inputStack))
             {
                 slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, inputStack));
             }
@@ -119,7 +119,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             }
         }
         else
-        { 
+        {
             slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), CONCRETE);
         }
 
@@ -135,7 +135,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
                     walkTo = posToPlace;
                     return START_WORKING;
                 }
-                walkTo = null; 
+                walkTo = null;
                 if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
                 {
                     world.setBlock(posToPlace, block.defaultBlockState().updateShape(Direction.DOWN, block.defaultBlockState(), world, posToPlace, posToPlace), 0x03);

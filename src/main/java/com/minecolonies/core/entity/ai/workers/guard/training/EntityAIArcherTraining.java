@@ -169,7 +169,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double zVector = currentShootingTarget.getZ() - worker.getZ();
             final double distance = (double) Mth.sqrt((float) (xVector * xVector + zVector * zVector));
 
-            final double chance = HIT_CHANCE_DIVIDER / (getPrimarySkillLevel()/2.0 + 1);
+            final double chance = HIT_CHANCE_DIVIDER / (getPrimarySkillLevel() / 2.0 + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
             worker.playSound(SoundEvents.SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));

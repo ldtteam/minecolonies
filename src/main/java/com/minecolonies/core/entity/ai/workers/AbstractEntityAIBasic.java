@@ -224,8 +224,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
                                                                      this.building.hasOpenSyncRequest(worker.getCitizenData()) || this.building
-                                                                                                                                            .hasCitizenCompletedRequestsToPickup(
-                                                                                                                                              worker.getCitizenData()),
+                                                                                                                                    .hasCitizenCompletedRequestsToPickup(
+                                                                                                                                      worker.getCitizenData()),
             NEEDS_ITEM,
             20),
 
@@ -262,6 +262,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Set a position to walk to.
+     *
      * @param walkto the position to walk to.
      */
     public void setWalkTo(final BlockPos walkto)
@@ -271,6 +272,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Special walk state..
+     *
      * @return IDLE once arrived.
      */
     private IAIState walkToState()
@@ -378,7 +380,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 final BlockPos workerPosition = worker.blockPosition();
                 final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getJobRegistryEntry().getTranslationKey();
-                Log.getLogger().error("Pausing Citizen " + name + " (" + jobName + ") in colony:"+worker.getCitizenData().getColony().getID() +" at " + workerPosition + " for " + timeout + " Seconds because of error:");
+                Log.getLogger()
+                  .error("Pausing Citizen " + name + " (" + jobName + ") in colony:" + worker.getCitizenData().getColony().getID() + " at " + workerPosition + " for " + timeout
+                           + " Seconds because of error:");
             }
             else
             {
@@ -584,7 +588,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
                 catch (final Exception ex)
                 {
-                    Log.getLogger().warn("Resolver died for finished request. Oopsy. " +  worker.getCitizenData().getName() + " witnessed it.");
+                    Log.getLogger().warn("Resolver died for finished request. Oopsy. " + worker.getCitizenData().getName() + " witnessed it.");
                 }
                 final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
 
@@ -652,6 +656,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Get the primary skill of this worker.
+     *
      * @return the primary skill.
      */
     protected int getPrimarySkillLevel()
@@ -661,6 +666,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Get the secondary skill of this worker.
+     *
      * @return the secondary skill.
      */
     protected int getSecondarySkillLevel()
@@ -670,6 +676,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Utility method to get a given module for this AI.
+     *
      * @return the right module.
      */
     protected WorkerBuildingModule getModuleForJob()
@@ -680,12 +687,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Apply a early bonus curve to a skill level
      * note: This adjusts the range from 0-99 to be 1-100
+     *
      * @param rawSkillLevel to apply the curve to
      * @return effective skill level to use in linear bonus functions
      */
     protected int getEffectiveSkillLevel(int rawSkillLevel)
     {
-        return (int)(((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1 ) / 10.0, 2));
+        return (int) (((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1) / 10.0, 2));
     }
 
     /**
@@ -770,7 +778,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
             {
                 entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                      .ifPresent((handler) ->  InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler, (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack), getInventory()));
+                  .ifPresent((handler) -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler,
+                    (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack),
+                    getInventory()));
                 return true;
             }
         }
@@ -996,7 +1006,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     if (((TileEntityRack) entity).hasItemStack(toolPredicate))
                     {
-                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), toolPredicate, worker.getInventoryCitizen()))
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                          toolPredicate,
+                          worker.getInventoryCitizen()))
                         {
                             return true;
                         }
@@ -1017,6 +1029,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Get the building to dump the inventory into.
+     *
      * @return its own building by default.
      */
     protected IBuilding getBuildingToDump()
@@ -1246,7 +1259,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (building.getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
+              Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW,
+                new ItemStack(target.getBlock()).getHoverName(),
+                pos.getX(),
+                pos.getY(),
+                pos.getZ()),
               ChatPriority.IMPORTANT,
               Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW),
               pos));
@@ -1485,8 +1502,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
      *
-     * @param stack the requested stack.
-     * @param count count to request.
+     * @param stack    the requested stack.
+     * @param count    count to request.
      * @param minCount the min count to fulfill.
      * @return true if in the inventory, else false.
      */
@@ -1546,8 +1563,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
      *
-     * @param stack the requested stack.
-     * @param count the count.
+     * @param stack    the requested stack.
+     * @param count    the count.
      * @param minCount the min count.
      * @return true if in the inventory, else false.
      */
@@ -1591,7 +1608,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty()
-            && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack, updatedCount, updatedMinCount, matchNBT);
@@ -1603,6 +1620,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Check if a request exists for a given deliverable.
+     *
      * @param deliverable the deliverable to check of request.
      * @return true if available or transfered.
      */
@@ -1662,7 +1680,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
           (IRequest<? extends RequestTag> r) -> r.getRequest().getTag().equals(tag)).isEmpty()
-            && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
+              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
           (IRequest<? extends RequestTag> r) -> r.getRequest().getTag().equals(tag)).isEmpty())
         {
             final IDeliverable tagRequest = new RequestTag(tag, count);

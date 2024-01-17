@@ -87,7 +87,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     /**
      * Xp gained on harvest
      */
-    private static final double XP_PER_FLOWER    = 2;
+    private static final double XP_PER_FLOWER = 2;
 
     /**
      * Flower meta data.
@@ -134,7 +134,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     {
         worker.setRenderMetadata(
           (InventoryUtils.hasItemInItemHandler(worker.getItemHandlerCitizen(), stack -> stack.is(ItemTags.FLOWERS)) ? RENDER_META_FLOWERS : "")
-          + (getState() == IDLE ? "" : RENDER_META_WORKING));
+            + (getState() == IDLE ? "" : RENDER_META_WORKING));
     }
 
     /**
