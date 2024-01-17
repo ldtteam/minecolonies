@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
-import com.minecolonies.core.entity.citizen.VisitorCitizen;
+import com.minecolonies.core.entity.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;

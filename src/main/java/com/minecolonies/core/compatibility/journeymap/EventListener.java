@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.entity.citizen.VisitorCitizen;
+import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import journeymap.client.api.display.Context;
 import journeymap.client.api.event.forge.EntityRadarUpdateEvent;
 import journeymap.client.api.model.WrappedEntity;

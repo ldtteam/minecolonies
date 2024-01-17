@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.entity.ai.citizen.enchanter.EntityAIWorkEnchanter;
+import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkEnchanter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;

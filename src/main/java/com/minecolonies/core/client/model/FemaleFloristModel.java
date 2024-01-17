@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.florist.EntityAIWorkFlorist.RENDER_META_FLOWERS;
+import static com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 
 public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen>
 {

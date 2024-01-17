@@ -35,7 +35,7 @@ import com.minecolonies.core.colony.ColonyManager;
 import com.minecolonies.core.colony.buildings.registry.BuildingDataManager;
 import com.minecolonies.core.colony.interactionhandling.registry.InteractionResponseHandlerManager;
 import com.minecolonies.core.colony.jobs.registry.JobDataManager;
-import com.minecolonies.core.entity.ai.registry.MobAIRegistry;
+import com.minecolonies.core.entity.mobs.registry.MobAIRegistry;
 import com.minecolonies.core.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.core.research.GlobalResearchTree;
 import com.minecolonies.core.util.FurnaceRecipes;

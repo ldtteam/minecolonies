@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.render;
 
-import com.minecolonies.core.entity.NewBobberEntity;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.NewBobberEntity;
+import com.minecolonies.core.entity.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;

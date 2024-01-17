@@ -1,7 +1,8 @@
-package com.minecolonies.core.entity.citizen;
+package com.minecolonies.core.entity.entity.citizen;
 
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.entity.entity.citizen.EntityCitizen;
 import net.minecraft.network.chat.*;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.*;

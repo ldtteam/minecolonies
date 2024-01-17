@@ -11,8 +11,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.fisherman.EntityAIWorkFisherman.RENDER_META_FISH;
-import static com.minecolonies.core.entity.ai.citizen.fisherman.EntityAIWorkFisherman.RENDER_META_ROD;
+import static com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkFisherman.RENDER_META_FISH;
+import static com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkFisherman.RENDER_META_ROD;
 
 public class FemaleFisherModel extends CitizenModel<AbstractEntityCitizen>
 {

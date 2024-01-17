@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.RENDER_META_LOGS;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack.RENDER_META_LOGS;
 
 public class MaleForesterModel extends CitizenModel<AbstractEntityCitizen>
 {

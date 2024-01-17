@@ -32,7 +32,7 @@ import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateRa
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import com.minecolonies.api.util.ColonyUtils;

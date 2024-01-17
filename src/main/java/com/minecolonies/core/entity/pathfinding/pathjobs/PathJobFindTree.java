@@ -6,7 +6,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.entity.ai.citizen.lumberjack.Tree;
+import com.minecolonies.core.entity.ai.workers.util.Tree;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;

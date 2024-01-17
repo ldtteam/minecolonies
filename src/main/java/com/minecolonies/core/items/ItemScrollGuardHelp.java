@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardFollowModeSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.Entity;

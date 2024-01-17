@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.core.entity.ai.citizen.composter.EntityAIWorkComposter;
+import com.minecolonies.core.entity.ai.workers.production.agrilculture.EntityAIWorkComposter;
 import org.jetbrains.annotations.NotNull;
 
 public class JobComposter extends AbstractJob<EntityAIWorkComposter, JobComposter>
