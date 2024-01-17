@@ -87,12 +87,17 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
+        final VoxelShape shape = blockState.getShape(world, pos);
+        if (shape.max(Direction.Axis.Y) < 0.5 && isDangerous(world.getBlockState(pos.below())))
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
         if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN))
         {
             return SurfaceType.WALKABLE;
         }
 
-        final VoxelShape shape = blockState.getShape(world, pos);
         if (shape.max(Direction.Axis.Y) > 1.0)
         {
             return SurfaceType.NOT_PASSABLE;
@@ -110,6 +115,11 @@ public enum SurfaceType
         }
 
         if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock)
+        {
+            return SurfaceType.DROPABLE;
+        }
+
+        if (!blockState.isFaceSturdy(world, pos, Direction.DOWN))
         {
             return SurfaceType.DROPABLE;
         }

@@ -1409,6 +1409,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!block.isAir())
         {
             final VoxelShape shape = block.getCollisionShape(world, pos);
+            if (shape.max(Direction.Axis.Y) < 0.5 && SurfaceType.isDangerous(world.getBlockState(pos.below())))
+            {
+                return false;
+            }
             if (block.blocksMotion() && !(shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1))
             {
                 if (block.getBlock() instanceof TrapDoorBlock || block.getBlock() instanceof PanelBlock)
