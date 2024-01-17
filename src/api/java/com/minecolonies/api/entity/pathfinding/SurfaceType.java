@@ -7,6 +7,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -65,10 +66,7 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof CampfireBlock
-              || block instanceof AbstractBlockBarrel
-              || block instanceof MagmaBlock
-              || block instanceof PowderSnowBlock)
+        if (isDangerous(blockState))
         {
             if (pathingOptions != null && pathingOptions.canPassDanger())
             {
@@ -126,6 +124,25 @@ public enum SurfaceType
         }
 
         return SurfaceType.DROPABLE;
+    }
+
+    /**
+     * Is the surface inherently dangerous to stand on/in (i.e. causes damage).
+     *
+     * @param blockState block to check.
+     * @return           true if dangerous.
+     */
+    public static boolean isDangerous(final BlockState blockState)
+    {
+        final Block block = blockState.getBlock();
+
+        return  blockState.is(ModTags.dangerousBlocks) ||
+                block instanceof FireBlock ||
+                block instanceof CampfireBlock ||
+                block instanceof AbstractBlockBarrel ||
+                block instanceof MagmaBlock ||
+                block instanceof SweetBerryBushBlock ||
+                block instanceof PowderSnowBlock;
     }
 
     /**

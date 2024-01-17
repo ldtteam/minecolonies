@@ -1467,7 +1467,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              || !block.getBlock().properties.hasCollision;
                 }
             }
-            else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock || block.getBlock() instanceof PowderSnowBlock)
+            else if (SurfaceType.isDangerous(block))
             {
                 return false;
             }

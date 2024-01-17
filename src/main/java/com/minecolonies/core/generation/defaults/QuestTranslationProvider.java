@@ -134,6 +134,7 @@ public class QuestTranslationProvider implements DataProvider
         {
             langJson.addProperty(baseKey, json.get(TEXT_ID).getAsString());
             json.addProperty(TEXT_ID, baseKey);
+            Log.getLogger().info(baseKey);
 
             int answerCount = 0;
             for (final JsonElement answerJson : json.get(OPTIONS_ID).getAsJsonArray())
@@ -141,6 +142,7 @@ public class QuestTranslationProvider implements DataProvider
                 final String answerKey = baseKey + ".answer" + answerCount;
                 langJson.addProperty(answerKey, answerJson.getAsJsonObject().get(ANSWER_ID).getAsString());
                 answerJson.getAsJsonObject().addProperty(ANSWER_ID, answerKey);
+                Log.getLogger().info(answerKey);
 
                 final JsonObject result = answerJson.getAsJsonObject().get(RESULT_ID).getAsJsonObject();
                 processObjective(langJson, answerKey + ".reply", result);
