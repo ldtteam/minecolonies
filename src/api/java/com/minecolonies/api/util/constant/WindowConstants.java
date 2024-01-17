@@ -954,15 +954,26 @@ public final class WindowConstants
      */
     public static final String BUTTON_DONE = "done";
 
+
+    /**
+     * Id of the hire button.
+     */
+    public static final String BUTTON_HIRE = "hire";
+
     /**
      * Id of the citizen name in the GUI.
      */
     public static final String CITIZEN_LABEL = "citizen";
 
     /**
-     * Id of the citizen list in the GUI.
+     * Id of the unassigned citizen list in the GUI.
      */
-    public static final String CITIZEN_LIST = "unassigned";
+    public static final String UNASSIGNED_CITIZEN_LIST = "unassigned";
+
+    /**
+     * Id of the assigned citizen list in the GUI.
+     */
+    public static final String ASSIGNED_CITIZEN_LIST = "assigned";
 
     /**
      * Assign button of the gui.
