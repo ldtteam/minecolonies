@@ -35,7 +35,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     /**
      * Threshold that defines when the living quarters are too far away.
      */
-    private static final double FAR_DISTANCE_THRESHOLD = 250;
+    private static final double FAR_DISTANCE_THRESHOLD = 300;
 
     /**
      * The view of the current building.
