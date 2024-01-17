@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import java.util.Set;
-
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.Set;
 
 /**
  * The citizen happiness handler interface.

@@ -1,4 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="524 243" pause="false" lightbox="false">
+<window size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <label id="happinessTitle" size="120 11" color="black" pos="100 61" textalign="MIDDLE"/>

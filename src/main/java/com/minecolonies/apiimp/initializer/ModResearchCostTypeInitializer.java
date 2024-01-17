@@ -2,9 +2,9 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.research.ModResearchCostTypes;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.research.costs.ListItemCost;
-import com.minecolonies.coremod.research.costs.SimpleItemCost;
-import com.minecolonies.coremod.research.costs.TagItemCost;
+import com.minecolonies.core.research.costs.ListItemCost;
+import com.minecolonies.core.research.costs.SimpleItemCost;
+import com.minecolonies.core.research.costs.TagItemCost;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

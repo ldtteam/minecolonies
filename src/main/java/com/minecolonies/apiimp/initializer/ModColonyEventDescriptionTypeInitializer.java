@@ -1,17 +1,14 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
-import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
-import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
-import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.*;
+import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
+import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
+import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
+import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
+import com.minecolonies.core.colony.colonyEvents.citizenEvents.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 
 /**
  * Initializer for colony event types, register new event types here.

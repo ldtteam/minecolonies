@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import net.minecraft.resources.ResourceLocation;
+
 import java.util.List;
 
 /**

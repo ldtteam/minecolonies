@@ -35,7 +35,8 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PACK;
 
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.

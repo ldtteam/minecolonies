@@ -3,6 +3,10 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorExtraData;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.UUID;
 
 /**
  * Data for colony visitors, based on citizen data

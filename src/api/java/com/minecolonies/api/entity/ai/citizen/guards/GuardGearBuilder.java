@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.ai.citizen.guards;
 
 import com.minecolonies.api.util.constant.ToolType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.EquipmentSlot;
 
 import java.util.ArrayList;
 import java.util.List;

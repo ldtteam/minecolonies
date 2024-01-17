@@ -2,8 +2,6 @@ package com.minecolonies.api.research.effects;
 
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;

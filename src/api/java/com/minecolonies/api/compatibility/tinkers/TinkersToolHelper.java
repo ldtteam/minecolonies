@@ -1,11 +1,8 @@
 package com.minecolonies.api.compatibility.tinkers;
 
-import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 /*import slimeknights.tconstruct.common.TinkerTags;

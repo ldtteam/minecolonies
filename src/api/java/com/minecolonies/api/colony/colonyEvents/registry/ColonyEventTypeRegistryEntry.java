@@ -3,14 +3,12 @@ package com.minecolonies.api.colony.colonyEvents.registry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.util.Log;
-import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiFunction;
-
 import javax.annotation.Nonnull;
+import java.util.function.BiFunction;
 
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.

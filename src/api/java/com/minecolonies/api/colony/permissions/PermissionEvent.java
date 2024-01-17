@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.permissions;
 
 import com.minecolonies.api.network.PacketUtils;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

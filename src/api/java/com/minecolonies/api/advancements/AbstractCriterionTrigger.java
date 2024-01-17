@@ -1,17 +1,15 @@
 package com.minecolonies.api.advancements;
 
 import com.google.common.collect.Maps;
-import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.PlayerAdvancements;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.Function;
-
-import net.minecraft.advancements.CriterionTrigger.Listener;
 
 /**
  * The base class of a Trigger that tracks listeners and defines criterion

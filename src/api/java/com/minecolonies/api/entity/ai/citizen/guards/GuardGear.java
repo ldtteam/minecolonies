@@ -2,11 +2,11 @@ package com.minecolonies.api.entity.ai.citizen.guards;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.SwordItem;
 
 import java.util.function.Predicate;

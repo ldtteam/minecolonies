@@ -1,7 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.particles.SleepingParticle;
+import com.minecolonies.core.client.particles.SleepingParticle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;

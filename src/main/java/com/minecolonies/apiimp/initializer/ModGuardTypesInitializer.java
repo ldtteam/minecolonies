@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.colony.jobs.JobDruid;
+import com.minecolonies.core.colony.jobs.JobDruid;
+import com.minecolonies.core.colony.jobs.JobKnight;
+import com.minecolonies.core.colony.jobs.JobRanger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

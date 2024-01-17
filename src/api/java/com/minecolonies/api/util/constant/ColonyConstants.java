@@ -1,8 +1,8 @@
 package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.world.level.ChunkPos;
 
 import java.util.Comparator;
 import java.util.Random;

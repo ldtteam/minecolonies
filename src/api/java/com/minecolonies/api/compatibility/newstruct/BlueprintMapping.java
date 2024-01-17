@@ -1,6 +1,9 @@
 package com.minecolonies.api.compatibility.newstruct;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The class that is responsible for the mapping of the old structurename/style to new style/structurename.

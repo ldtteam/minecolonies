@@ -2,10 +2,10 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 

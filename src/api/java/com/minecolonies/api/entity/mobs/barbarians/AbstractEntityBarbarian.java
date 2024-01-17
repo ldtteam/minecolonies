@@ -2,8 +2,8 @@ package com.minecolonies.api.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;

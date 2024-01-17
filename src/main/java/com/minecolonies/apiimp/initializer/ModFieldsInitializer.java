@@ -2,9 +2,9 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific.*;
-import com.minecolonies.coremod.colony.fields.FarmField;
-import com.minecolonies.coremod.colony.fields.PlantationField;
+import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific.*;
+import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.core.colony.fields.PlantationField;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.DeferredRegister;
