@@ -7,7 +7,6 @@ import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.MineColonies;
@@ -124,10 +123,8 @@ public class ItemScrollGuardHelp extends AbstractItemScroll {
                 if (job != null && job.getWorkerAI() != null) {
                     final long spawnTime = world.getGameTime()
                             + TICKS_SECOND * MineColonies.getConfig().getServer().reinforcmentScrollLifeSpan.get();
-                    Log.getLogger().info("spawnTime: " + spawnTime);
                     // Timed despawn
                     job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(() -> {
-                        Log.getLogger().info("time: " + (world.getGameTime() - spawnTime));
                         if (world.getGameTime() - spawnTime > 0) {
                             ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK)
                                     .set(GuardTaskSetting.PATROL);
