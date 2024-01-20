@@ -10,8 +10,9 @@ public interface ICitizenChatHandler
      *
      * @param damageSource the damage source.
      * @param mourn if citizens will mourn.
+     * @param graveSpawned if grave spawned to collect.
      */
-    void notifyDeath(DamageSource damageSource, final boolean mourn);
+    void notifyDeath(DamageSource damageSource, final boolean mourn, final boolean graveSpawned);
 
     /**
      * Sends a localized message from the citizen containing a language string with a key and arguments.

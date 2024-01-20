@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_MOURN;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_GRAVE_SPAWNED;
 
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).
@@ -31,20 +32,16 @@ public class CitizenChatHandler implements ICitizenChatHandler
         this.citizen = citizen;
     }
 
-    /**
-     * Notify about death of citizen.
-     *
-     * @param damageSource the damage source.
-     */
     @Override
-    public void notifyDeath(final DamageSource damageSource, final boolean mourn)
+    public void notifyDeath(final DamageSource damageSource, final boolean mourn, final boolean graveSpawned)
     {
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
             MessageUtils.format(citizen.getCombatTracker().getDeathMessage())
               .append(Component.literal("! "))
               .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION, Math.round(citizen.getX()), Math.round(citizen.getY()), Math.round(citizen.getZ())))
-              .append(mourn ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN) : Component.empty())
+              .append(mourn ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN, citizen.getCitizenData().getName()) : Component.empty())
+              .append(graveSpawned ? Component.translatable(WARNING_GRAVE_SPAWNED) : Component.empty())
               .withPriority(MessagePriority.DANGER)
               .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
