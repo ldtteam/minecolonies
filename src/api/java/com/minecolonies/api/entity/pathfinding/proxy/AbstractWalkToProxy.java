@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.pathfinding;
+package com.minecolonies.api.entity.pathfinding.proxy;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;

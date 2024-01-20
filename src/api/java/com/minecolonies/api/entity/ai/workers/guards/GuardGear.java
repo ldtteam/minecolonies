@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.citizen.guards;
+package com.minecolonies.api.entity.ai.workers.guards;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;

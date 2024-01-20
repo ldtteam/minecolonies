@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity;
+package com.minecolonies.api.entity.other;
 
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;

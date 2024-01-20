@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.citizen.builder;
+package com.minecolonies.api.entity.ai.workers.builder;
 
 /**
  * Marker interface that is used to mark blocks that the Builder cannot break.

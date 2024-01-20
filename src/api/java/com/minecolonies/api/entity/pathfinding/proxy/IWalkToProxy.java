@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.pathfinding;
+package com.minecolonies.api.entity.pathfinding.proxy;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;

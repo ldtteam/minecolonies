@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.*;
+import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler.*;
 
 /**
  * Happiness factory initializer of the values.

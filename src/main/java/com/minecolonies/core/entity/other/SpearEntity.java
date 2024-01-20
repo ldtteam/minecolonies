@@ -1,6 +1,6 @@
 package com.minecolonies.core.entity.other;
 
-import com.minecolonies.api.entity.ICustomAttackSound;
+import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.nbt.CompoundTag;

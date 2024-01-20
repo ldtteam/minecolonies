@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.registry;
+package com.minecolonies.api.entity.mobs.registry;
 
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;

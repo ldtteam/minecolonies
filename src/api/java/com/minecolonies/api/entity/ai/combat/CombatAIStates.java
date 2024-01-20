@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.combat;
+package com.minecolonies.api.entity.ai.combat;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 

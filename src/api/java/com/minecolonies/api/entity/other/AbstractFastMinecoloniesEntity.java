@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity;
+package com.minecolonies.api.entity.other;
 
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.util.EntityUtils;

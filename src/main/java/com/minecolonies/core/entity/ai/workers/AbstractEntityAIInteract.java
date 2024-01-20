@@ -1,6 +1,6 @@
 package com.minecolonies.core.entity.ai.workers;
 
-import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.entity.ai.workers.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;

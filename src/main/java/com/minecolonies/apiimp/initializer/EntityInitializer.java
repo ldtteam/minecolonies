@@ -1,6 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.entity.MinecoloniesMinecart;
+import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.entity.citizen.EntityCitizen;

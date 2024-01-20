@@ -1,9 +1,9 @@
 package com.minecolonies.core.entity.mobs.aitasks;
 
-import com.minecolonies.api.entity.ICustomAttackSound;
+import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.entity.pathfinding.PathResult;

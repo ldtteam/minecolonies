@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity;
+package com.minecolonies.api.entity.mobs;
 
 import net.minecraft.sounds.SoundEvent;
 

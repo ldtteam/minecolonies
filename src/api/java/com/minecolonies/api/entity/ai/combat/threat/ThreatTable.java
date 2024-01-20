@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.combat.threat;
+package com.minecolonies.api.entity.ai.combat.threat;
 
 import net.minecraft.world.entity.LivingEntity;
 
