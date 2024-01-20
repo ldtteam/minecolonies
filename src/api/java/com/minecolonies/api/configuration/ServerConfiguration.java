@@ -84,6 +84,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue  guardDamageMultiplier;
     public final ForgeConfigSpec.DoubleValue  guardHealthMult;
     public final ForgeConfigSpec.BooleanValue pvp_mode;
+    public final ForgeConfigSpec.IntValue reinforcmentScrollLifeSpan;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
@@ -187,6 +188,7 @@ public class ServerConfiguration extends AbstractConfiguration
         guardDamageMultiplier = defineDouble(builder, "guardDamageMultiplier", 1.0, 0.1, 15.0);
         guardHealthMult = defineDouble(builder, "guardhealthmult", 1.0, 0.1, 5.0);
         pvp_mode = defineBoolean(builder, "pvp_mode", false);
+        reinforcmentScrollLifeSpan = defineInteger(builder, "reinforcmentScrollLifeSpan", 900, 60, Integer.MAX_VALUE);
 
         swapToCategory(builder, "permissions");
 
