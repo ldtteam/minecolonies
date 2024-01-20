@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
-import com.minecolonies.api.entity.ai.workers.guards.GuardGear;
-import com.minecolonies.api.entity.ai.workers.guards.GuardGearBuilder;
+import com.minecolonies.api.entity.ai.workers.util.GuardGear;
+import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryFunctions;

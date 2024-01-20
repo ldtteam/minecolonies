@@ -3,7 +3,7 @@ package com.minecolonies.core.entity.ai.workers.education;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.util.StudyItem;
+import com.minecolonies.api.entity.ai.workers.util.StudyItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;

@@ -5,7 +5,7 @@ import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesDirectional;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.entity.ai.workers.builder.IBuilderUndestroyable;
+import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;

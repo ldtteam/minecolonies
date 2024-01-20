@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.workers.guards;
+package com.minecolonies.api.entity.ai.workers.util;
 
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.util.Tuple;

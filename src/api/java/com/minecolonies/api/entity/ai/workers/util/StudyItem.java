@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.ai.util;
+package com.minecolonies.api.entity.ai.workers.util;
 
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;

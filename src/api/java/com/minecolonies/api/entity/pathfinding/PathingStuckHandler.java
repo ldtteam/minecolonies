@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.entity.ai.workers.builder.IBuilderUndestroyable;
+import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
