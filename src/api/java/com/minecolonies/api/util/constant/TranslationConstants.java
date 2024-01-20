@@ -772,6 +772,13 @@ public final class TranslationConstants
 
     //</editor-fold>
 
+    //<editor-fold desc="Interaction texts">
+
+    @NonNls
+    public static final String INTERACTION_EXPEDITIONARY = "com.minecolonies.coremod.interaction.visitor.expeditionary";
+
+    //</editor-fold>
+
     private TranslationConstants()
     {
         // empty default

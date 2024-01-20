@@ -21,6 +21,8 @@ public class ModEntities
 
     public static EntityType<? extends AbstractEntityVisitor> VISITOR;
 
+    public static EntityType<? extends AbstractEntityVisitor> EXPEDITIONARY;
+
     public static EntityType<? extends Projectile> FISHHOOK;
 
     public static EntityType<? extends PathfinderMob> MERCENARY;

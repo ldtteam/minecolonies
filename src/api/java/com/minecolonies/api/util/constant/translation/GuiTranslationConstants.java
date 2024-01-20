@@ -49,4 +49,10 @@ public class GuiTranslationConstants
     public static final String QUEST_LOG_COMPLETED_MULTIPLE_TEXT = "com.minecolonies.coremod.item.questlog.gui.completed_multiple";
     @NonNls
     public static final String QUEST_LOG_TRACK_CITIZEN_TEXT      = "com.minecolonies.coremod.item.questlog.gui.track_citizen";
+
+    // Expeditionary window
+    @NonNls
+    public static final String EXPEDITIONARY_DIFFICULTY        = "com.minecolonies.gui.expedition.difficulty";
+    @NonNls
+    public static final String EXPEDITIONARY_DIFFICULTY_PREFIX = "com.minecolonies.gui.expedition.difficulty.";
 }

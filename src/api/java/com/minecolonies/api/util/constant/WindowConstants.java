@@ -618,6 +618,11 @@ public final class WindowConstants
     public static final String CITIZEN_FAM_RESOURCE_SUFFIX = ":gui/citizen/family.xml";
 
     /**
+     * The id for the expeditionary visitor main page.
+     */
+    public static final String EXPEDITIONARY_MAIN_RESOURCE_SUFFIX = ":gui/visitor/expeditionary/main.xml";
+
+    /**
      * Id of the resource add button.
      */
     public static final String REQUEST_FULLFIL = "fulfill";

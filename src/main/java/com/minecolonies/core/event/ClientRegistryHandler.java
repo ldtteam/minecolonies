@@ -269,6 +269,7 @@ public class ClientRegistryHandler
     {
         event.registerEntityRenderer(ModEntities.CITIZEN, RenderBipedCitizen::new);
         event.registerEntityRenderer(ModEntities.VISITOR, RenderBipedCitizen::new);
+        event.registerEntityRenderer(ModEntities.EXPEDITIONARY, RenderBipedCitizen::new);
         event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
         event.registerEntityRenderer(ModEntities.FIREARROW, FireArrowRenderer::new);
         event.registerEntityRenderer(ModEntities.SPEAR, RendererSpear::new);

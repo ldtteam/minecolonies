@@ -1582,4 +1582,10 @@ public final class ColonyView implements IColonyView
     {
         return this.questManager;
     }
+
+    @Override
+    public IExpeditionManager getExpeditionManager()
+    {
+        return null;
+    }
 }

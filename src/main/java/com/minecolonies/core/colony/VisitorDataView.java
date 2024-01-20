@@ -52,15 +52,12 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         {
             final ResourceLocation visitorTypeKey = new ResourceLocation(compoundTag.getString(TAG_VISITOR_TYPE));
             visitorType = IMinecoloniesAPI.getInstance().getVisitorTypeRegistry().getValue(visitorTypeKey);
-            if (visitorType != null)
-            {
-                extraData = visitorType.getExtraDataKeys();
+            extraData = visitorType.getExtraDataKeys();
 
-                final CompoundTag compound = compoundTag.getCompound(TAG_EXTRA_DATA);
-                for (final IVisitorExtraData<?> extraDataKey : extraData)
-                {
-                    extraDataKey.deserializeNBT(compound.getCompound(extraDataKey.getKey()));
-                }
+            final CompoundTag compound = compoundTag.getCompound(TAG_EXTRA_DATA);
+            for (final IVisitorExtraData<?> extraDataKey : extraData)
+            {
+                extraDataKey.deserializeNBT(compound.getCompound(extraDataKey.getKey()));
             }
         }
     }
@@ -69,6 +66,12 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     public EntityType<? extends AbstractEntityVisitor> getEntityType()
     {
         return visitorType.getEntityType();
+    }
+
+    @Override
+    public @NotNull IVisitorType getVisitorType()
+    {
+        return visitorType;
     }
 
     @Override

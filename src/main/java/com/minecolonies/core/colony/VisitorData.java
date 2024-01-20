@@ -86,6 +86,12 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
+    public @NotNull IVisitorType getVisitorType()
+    {
+        return visitorType;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getExtraDataValue(final IVisitorExtraData<T> extraData)
     {

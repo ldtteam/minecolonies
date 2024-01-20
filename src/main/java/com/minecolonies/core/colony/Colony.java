@@ -192,6 +192,11 @@ public class Colony implements IColony
     private IQuestManager questManager;
 
     /**
+     * Expedition manager for this colony
+     */
+    private final IExpeditionManager expeditionManager = new ExpeditionManager(this);
+
+    /**
      * The Positions which players can freely interact.
      */
     private ImmutableSet<BlockPos> freePositions = ImmutableSet.of();
@@ -1939,6 +1944,12 @@ public class Colony implements IColony
     public IQuestManager getQuestManager()
     {
         return questManager;
+    }
+
+    @Override
+    public IExpeditionManager getExpeditionManager()
+    {
+        return expeditionManager;
     }
 
     @Override

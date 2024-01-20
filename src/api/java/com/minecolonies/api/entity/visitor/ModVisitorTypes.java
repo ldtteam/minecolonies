@@ -12,10 +12,12 @@ public class ModVisitorTypes
     /**
      * Resource ids.
      */
-    public static final ResourceLocation VISITOR_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "visitor");
+    public static final ResourceLocation VISITOR_TYPE_ID               = new ResourceLocation(Constants.MOD_ID, "visitor");
+    public static final ResourceLocation EXPEDITIONARY_VISITOR_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "expeditionary");
 
     /**
      * Registry objects.
      */
     public static RegistryObject<IVisitorType> visitor;
+    public static RegistryObject<IVisitorType> expeditionary;
 }

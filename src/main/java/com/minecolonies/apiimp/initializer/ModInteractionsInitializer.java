@@ -52,5 +52,11 @@ public final class ModInteractionsInitializer
                                                      .setResponseHandlerProducer(QuestDeliveryInteraction::new)
                                                      .setRegistryName(ModInteractionResponseHandlers.QUEST_ACTION)
                                                      .createEntry());
+
+        ModInteractionResponseHandlers.expeditionary = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.EXPEDITIONARY.getPath(),
+          () -> new InteractionResponseHandlerEntry.Builder()
+                  .setResponseHandlerProducer(ExpeditionaryInteraction::new)
+                  .setRegistryName(ModInteractionResponseHandlers.EXPEDITIONARY)
+                  .createEntry());
     }
 }
