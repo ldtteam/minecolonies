@@ -1005,7 +1005,7 @@
   "com.minecolonies.coremod.gui.workerhuts.pickup.denied": "You cannot pickup this building.",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away!",
-  "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away!",
+  "com.minecolonies.coremod.toofar": "You can't place a colony that far from world-spawn. It can be at most %d blocks away! This can be configured in the server config.",
 
   "com.minecolonies.coremod.gui.scantool.select": "Select",
 
