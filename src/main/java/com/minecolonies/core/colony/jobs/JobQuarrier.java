@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.jobs.IJobWithExternalWorkStations;
 import com.minecolonies.core.colony.buildings.modules.QuarryModule;
-import com.minecolonies.core.entity.ai.citizen.miner.EntityAIQuarrier;
+import com.minecolonies.core.entity.ai.workers.production.EntityAIQuarrier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import org.jetbrains.annotations.NotNull;

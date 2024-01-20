@@ -460,6 +460,7 @@ public class EntityAIInteractToggleAble extends Goal
         /**
          * Check if the block can be opened.
          * By default this is true when toggleable, but some blocks (trapdoors) we ever only want to open (and reset).
+         *
          * @param state the state to check.
          * @return true if so.
          */
@@ -470,6 +471,7 @@ public class EntityAIInteractToggleAble extends Goal
 
         /**
          * Check if the citizen should always close or only close when they were the ones that opened.
+         *
          * @return true if so.
          */
         public boolean onlyCloseYourOpens()
@@ -481,9 +483,9 @@ public class EntityAIInteractToggleAble extends Goal
          * Toggles the given state
          *
          * @param entity the entity doing it.
-         * @param state state to toggle
-         * @param world world to use
-         * @param pos   position the block is at
+         * @param state  state to toggle
+         * @param world  world to use
+         * @param pos    position the block is at
          */
         public abstract void toggleBlock(final Entity entity, final BlockState state, final Level world, final BlockPos pos);
 
@@ -491,9 +493,9 @@ public class EntityAIInteractToggleAble extends Goal
          * Toggles the given state to closed
          *
          * @param entity the entity doing it.
-         * @param state state to toggle
-         * @param world world to use
-         * @param pos   position the block is at
+         * @param state  state to toggle
+         * @param world  world to use
+         * @param pos    position the block is at
          */
         public abstract void toggleBlockClosed(final Entity entity, final BlockState state, final Level world, final BlockPos pos);
     }

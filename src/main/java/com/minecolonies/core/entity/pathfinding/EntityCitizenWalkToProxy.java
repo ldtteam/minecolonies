@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.pathfinding;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
+import com.minecolonies.api.entity.pathfinding.proxy.AbstractWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
@@ -12,8 +12,8 @@ import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobMiner;
-import com.minecolonies.core.entity.ai.citizen.miner.MinerLevel;
-import com.minecolonies.core.entity.ai.citizen.miner.MineNode;
+import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
+import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.core.Direction;

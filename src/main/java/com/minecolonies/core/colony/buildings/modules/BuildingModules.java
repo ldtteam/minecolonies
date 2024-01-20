@@ -27,9 +27,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_HOSTILES;
 import static com.minecolonies.core.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
-import static com.minecolonies.core.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
-import static com.minecolonies.core.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.SAPLINGS_LIST;
-import static com.minecolonies.core.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack.SAPLINGS_LIST;
+import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
 
 public class BuildingModules
 {

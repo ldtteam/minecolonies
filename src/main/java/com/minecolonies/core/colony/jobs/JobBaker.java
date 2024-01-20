@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.citizen.baker.EntityAIWorkBaker;
+import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkBaker;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 

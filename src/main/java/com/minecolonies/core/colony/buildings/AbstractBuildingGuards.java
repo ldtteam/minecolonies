@@ -21,7 +21,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.core.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.core.items.ItemBannerRallyGuards;

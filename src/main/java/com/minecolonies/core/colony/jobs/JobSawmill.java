@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.core.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
+import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSawmill;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;

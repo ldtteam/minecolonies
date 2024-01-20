@@ -8,7 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.entity.ai.citizen.healer.Patient;
+import com.minecolonies.core.entity.ai.workers.util.Patient;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

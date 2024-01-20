@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.jobs.JobBuilder;
-import com.minecolonies.core.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

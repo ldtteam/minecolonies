@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.herders.EntityAIWorkCowboy.RENDER_META_BUCKET;
+import static com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkCowboy.RENDER_META_BUCKET;
 
 public class FemaleCowHerderModel extends CitizenModel<AbstractEntityCitizen>
 {

@@ -13,7 +13,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.guard.EntityAIDruid.RENDER_META_POTION;
+import static com.minecolonies.core.entity.ai.workers.guard.EntityAIDruid.RENDER_META_POTION;
 
 public class MaleDruidModel extends CitizenModel<AbstractEntityCitizen>
 {

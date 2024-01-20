@@ -15,7 +15,7 @@ import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.jobs.JobMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
-import com.minecolonies.core.entity.ai.citizen.miner.MineNode;
+import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

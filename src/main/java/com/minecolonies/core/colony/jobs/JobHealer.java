@@ -5,7 +5,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.core.entity.ai.citizen.healer.EntityAIWorkHealer;
+import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkHealer;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
