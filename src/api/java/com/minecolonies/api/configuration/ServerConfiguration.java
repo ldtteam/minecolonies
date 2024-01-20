@@ -171,7 +171,7 @@ public class ServerConfiguration extends AbstractConfiguration
         maxColonySize = defineInteger(builder, "maxColonySize", 20, 1, 250);
         minColonyDistance = defineInteger(builder, "minColonyDistance", 8, 1, 200);
         initialColonySize = defineInteger(builder, "initialColonySize", 4, 1, 15);
-        maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", Integer.MAX_VALUE, 1000, Integer.MAX_VALUE);
+        maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 30000, 1000, Integer.MAX_VALUE);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 0, 0, 1000);
 
         swapToCategory(builder, "combat");
