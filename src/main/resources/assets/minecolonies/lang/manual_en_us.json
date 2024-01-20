@@ -513,7 +513,7 @@
 
   "com.minecolonies.coremod.gui.hiring.description": "Choose workers for the %s.",
   "com.minecolonies.coremod.gui.hiring.dedicated": "%s-only %s",
-  "com.minecolonies.coremod.gui.assigning.description": "Choose a citizen to live here.",
+  "com.minecolonies.coremod.gui.assigning.description": "Administer the citizens living here.",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.townhall.repair": "Repair Town Hall",
@@ -2380,7 +2380,7 @@
   "com.minecolonies.coremod.gui.buildingassignmentmode": "Building Assignment Mode:",
   "com.minecolonies.coremod.gui.home.homeless": "Homeless",
   "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
-  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here",
+  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here. ",
   "com.minecolonies.coremod.setting.minecolonies:crushermode": "Crusher Mode:",
   "com.minecolonies.coremod.setting.minecolonies:dailylimit": "Daily Limit:",
 
