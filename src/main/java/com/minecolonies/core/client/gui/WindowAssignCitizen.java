@@ -253,10 +253,10 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 citizenLabel.setText(Component.literal(citizen.getName()));
 
                 MutableComponent workString = Component.empty();
-                double newDistance = 0;
+                int newDistance = 0;
                 if (work != null)
                 {
-                    newDistance = BlockPosUtil.getDistance(work, building.getPosition());
+                    newDistance = (int) BlockPosUtil.getDistance(work, building.getPosition());
                     workString = Component.translatable("com.minecolonies.coremod.gui.home.new", newDistance);
                 }
 
