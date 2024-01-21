@@ -4,9 +4,9 @@ import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -65,10 +65,7 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof CampfireBlock
-              || block instanceof AbstractBlockBarrel
-              || block instanceof MagmaBlock
-              || block instanceof PowderSnowBlock)
+        if (isDangerous(blockState))
         {
             if (pathingOptions != null && pathingOptions.canPassDanger())
             {
@@ -89,12 +86,17 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
+        final VoxelShape shape = blockState.getShape(world, pos);
+        if (shape.max(Direction.Axis.Y) < 0.5 && isDangerous(world.getBlockState(pos.below())))
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
         if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN))
         {
             return SurfaceType.WALKABLE;
         }
 
-        final VoxelShape shape = blockState.getShape(world, pos);
         if (shape.max(Direction.Axis.Y) > 1.0)
         {
             return SurfaceType.NOT_PASSABLE;
@@ -116,6 +118,11 @@ public enum SurfaceType
             return SurfaceType.DROPABLE;
         }
 
+        if (!blockState.isFaceSturdy(world, pos, Direction.DOWN))
+        {
+            return SurfaceType.DROPABLE;
+        }
+
         if ((BlockUtils.isAnySolid(blockState) && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
                && (shape.max(Direction.Axis.Z) - shape.min(Direction.Axis.Z)) > 0.75)
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
@@ -126,6 +133,24 @@ public enum SurfaceType
         }
 
         return SurfaceType.DROPABLE;
+    }
+
+    /**
+     * Is the surface inherently dangerous to stand on/in (i.e. causes damage).
+     *
+     * @param blockState block to check.
+     * @return           true if dangerous.
+     */
+    public static boolean isDangerous(final BlockState blockState)
+    {
+        final Block block = blockState.getBlock();
+
+        return  blockState.is(ModTags.dangerousBlocks) ||
+                block instanceof FireBlock ||
+                block instanceof CampfireBlock ||
+                block instanceof MagmaBlock ||
+                block instanceof SweetBerryBushBlock ||
+                block instanceof PowderSnowBlock;
     }
 
     /**
