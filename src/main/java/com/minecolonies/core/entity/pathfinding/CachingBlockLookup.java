@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.pathfinding;
 
-import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
@@ -66,11 +65,6 @@ public class CachingBlockLookup
                 states[index] = state;
             }
 
-            if (!state.equals(world.getBlockState(pos)))
-            {
-                Log.getLogger().warn("Error!");
-            }
-
             return state;
         }
     }
@@ -101,11 +95,6 @@ public class CachingBlockLookup
             {
                 state = world.getBlockState(temp.set(x, y, z));
                 states[index] = state;
-            }
-
-            if (!state.equals(world.getBlockState(temp.set(x, y, z))))
-            {
-                Log.getLogger().warn("Error!");
             }
 
             return state;
