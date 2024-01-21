@@ -36,6 +36,11 @@ public class PathingOptions
     public double swimCost = 1.5D;
 
     /**
+     * Additional cost of cave air.
+     */
+    public double caveAirCost = 2D;
+
+    /**
      * Additional cost enter entering water
      */
     public double swimCostEnter = 25D;
@@ -228,6 +233,7 @@ public class PathingOptions
         onRailCost = pathingOptions.onRailCost;
         railsExitCost = pathingOptions.railsExitCost;
         swimCost = pathingOptions.swimCost;
+        caveAirCost = pathingOptions.caveAirCost;
         swimCostEnter = pathingOptions.swimCostEnter;
         traverseToggleAbleCost = pathingOptions.traverseToggleAbleCost;
         vineCost = pathingOptions.vineCost;

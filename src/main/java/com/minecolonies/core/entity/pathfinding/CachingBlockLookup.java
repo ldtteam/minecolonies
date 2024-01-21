@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.pathfinding;
 
+import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,24 +13,24 @@ public class CachingBlockLookup
     /**
      * Center of the cache
      */
-    private       int                      centerX;
-    private       int                      centerY;
-    private       int                      centerZ;
+    private int centerX;
+    private int centerY;
+    private int centerZ;
 
     /**
      * Original world lookup
      */
-    private final LevelReader              world;
+    private final LevelReader world;
 
     /**
      * Temp world access
      */
-    private final BlockPos.MutableBlockPos temp   = new BlockPos.MutableBlockPos();
+    private final BlockPos.MutableBlockPos temp = new BlockPos.MutableBlockPos();
 
     /**
      * States array
      */
-    private final BlockState[][][]         states = new BlockState[5][5][5];
+    private final BlockState[] states = new BlockState[5 * 5 * 5];
 
     public CachingBlockLookup(final BlockPos center, final LevelReader world)
     {
@@ -41,6 +42,7 @@ public class CachingBlockLookup
 
     /**
      * Get a blockstate
+     *
      * @param pos
      * @return
      */
@@ -56,18 +58,26 @@ public class CachingBlockLookup
         }
         else
         {
-            BlockState state = states[xPos][yPos][zPos];
+            final int index = xPos + yPos * 5 + zPos * 5 * 5;
+            BlockState state = states[index];
             if (state == null)
             {
                 state = world.getBlockState(pos);
-                states[xPos][yPos][zPos] = state;
+                states[index] = state;
             }
+
+            if (!state.equals(world.getBlockState(pos)))
+            {
+                Log.getLogger().warn("Error!");
+            }
+
             return state;
         }
     }
 
     /**
      * Get a blockstate
+     *
      * @param x
      * @param y
      * @param z
@@ -85,11 +95,17 @@ public class CachingBlockLookup
         }
         else
         {
-            BlockState state = states[xPos][yPos][zPos];
+            final int index = xPos + yPos * 5 + zPos * 5 * 5;
+            BlockState state = states[index];
             if (state == null)
             {
                 state = world.getBlockState(temp.set(x, y, z));
-                states[xPos][yPos][zPos] = state;
+                states[index] = state;
+            }
+
+            if (!state.equals(world.getBlockState(temp.set(x, y, z))))
+            {
+                Log.getLogger().warn("Error!");
             }
 
             return state;
@@ -98,19 +114,14 @@ public class CachingBlockLookup
 
     /**
      * Resets the cache's position and data
+     *
      * @param next
      */
     public void resetToNextPos(final BlockPos next)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < states.length; i++)
         {
-            for (int j = 0; j < 5; j++)
-            {
-                for (int k = 0; k < 5; k++)
-                {
-                    states[i][j][k] = null;
-                }
-            }
+            states[i] = null;
         }
 
         centerX = next.getX() + 2;
