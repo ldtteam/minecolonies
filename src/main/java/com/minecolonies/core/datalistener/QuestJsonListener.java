@@ -385,7 +385,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                 root = root.parent;
             }
             final ExpressionNode finalExpressionTree = root;
-            return colony -> evaluate(colony, triggerMap, finalExpressionTree, new HashMap<>());
+            return colony -> evaluate(colony, triggerMap, finalExpressionTree, new HashMap<>(), questId);
         }
     }
 
@@ -395,7 +395,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      * @param colony the colony.
      * @return predicate from data
      */
-    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final ExpressionNode expressionTree, final Map<String, ITriggerReturnData<?>> triggerDataCache)
+    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final ExpressionNode expressionTree, final Map<String, ITriggerReturnData<?>> triggerDataCache, final ResourceLocation questId)
     {
         switch (expressionTree.expression)
         {
@@ -403,7 +403,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             {
                 if (expressionTree.childB != null)
                 {
-                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB, triggerDataCache);
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB, triggerDataCache, questId);
                     if (immReturn != null)
                     {
                         return immReturn;
@@ -411,7 +411,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                 }
                 if (expressionTree.childA != null)
                 {
-                    return evaluate(colony, triggerMap, expressionTree.childA, triggerDataCache);
+                    return evaluate(colony, triggerMap, expressionTree.childA, triggerDataCache, questId);
                 }
                 return null;
             }
@@ -420,7 +420,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                 final List<ITriggerReturnData<?>> returnDataList = new ArrayList<>();
                 if (expressionTree.childB != null)
                 {
-                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB, triggerDataCache);
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB, triggerDataCache, questId);
                     if (immReturn == null)
                     {
                         return null;
@@ -429,7 +429,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                 }
                 if (expressionTree.childA != null)
                 {
-                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA, triggerDataCache);
+                    final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA, triggerDataCache, questId);
                     if (immReturn == null)
                     {
                         return null;
@@ -441,7 +441,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             default ->
             {
                 final IQuestTriggerTemplate trigger = triggerMap.get(expressionTree.expression);
-                final ITriggerReturnData<?> returnData = triggerDataCache.computeIfAbsent(expressionTree.expression, s -> trigger.canTriggerQuest(colony));
+                final ITriggerReturnData<?> returnData = triggerDataCache.computeIfAbsent(expressionTree.expression, s -> trigger.canTriggerQuest(questId, colony));
                 if (returnData.isPositive())
                 {
                     return List.of(returnData);

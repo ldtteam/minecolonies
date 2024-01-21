@@ -60,4 +60,10 @@ public interface IQuestObjectiveTemplate
      * @return the unlocked rewards by this objective.
      */
     List<Integer> getRewardUnlocks();
+
+    /**
+     * Get the quest target.
+     * @return the target id.
+     */
+    int getTarget();
 }
