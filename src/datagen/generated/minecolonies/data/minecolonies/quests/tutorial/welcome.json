@@ -230,7 +230,8 @@
       "target": 0,
       "text": "minecolonies.quests.tutorial.welcome.obj5",
       "unlocks-rewards": [
-        0
+        0,
+        1
       ]
     }
   ],
@@ -241,6 +242,12 @@
       "details": {
         "item": "minecolonies:questlog",
         "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:unlockquest",
+      "details": {
+        "id": "minecolonies:tutorial/builder"
       }
     }
   ],

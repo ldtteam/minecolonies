@@ -65,6 +65,12 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
         return this.rewardUnlocks;
     }
 
+    @Override
+    public int getTarget()
+    {
+        return target;
+    }
+
     /**
      * Parse the dialogue objective from json.
      * @param jsonObject the json to parse it from.
