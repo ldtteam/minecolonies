@@ -66,8 +66,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 10),
-          new AITarget(START_WORKING, SIFT, 1),
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
@@ -83,6 +81,12 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     protected int getActionsDoneUntilDumping()
     {
         return 1; 
+    }
+
+    @Override
+    protected IAIState decide()
+    {
+        return SIFT;
     }
 
     /**
