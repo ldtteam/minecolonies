@@ -276,6 +276,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.STONE_PRESSURE_PLATE)
           .add(Items.BLUE_ICE)
           .add(Items.PACKED_ICE)
+          .add(Items.NETHER_WART_BLOCK)
           .add(Items.DAYLIGHT_DETECTOR)
           .add(Items.COMPARATOR)
           .add(Items.LEVER)
@@ -325,7 +326,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.STRING);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
           .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem())
-          .addTags(ItemTags.CHEST_BOATS);
+          .add(Items.BAMBOO_HANGING_SIGN)
+          .addTags(ItemTags.CHEST_BOATS, ItemTags.PLANKS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.MAGMA_CREAM);
