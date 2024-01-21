@@ -4,7 +4,6 @@ import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.items.ModTags;
@@ -149,7 +148,6 @@ public enum SurfaceType
         return  blockState.is(ModTags.dangerousBlocks) ||
                 block instanceof FireBlock ||
                 block instanceof CampfireBlock ||
-                block instanceof AbstractBlockBarrel ||
                 block instanceof MagmaBlock ||
                 block instanceof SweetBerryBushBlock ||
                 block instanceof PowderSnowBlock;
