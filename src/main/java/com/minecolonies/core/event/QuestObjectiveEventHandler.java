@@ -54,7 +54,7 @@ public class QuestObjectiveEventHandler
             return;
         }
 
-        final Block block = event.getLevel().getBlockState(event.getPos()).getBlock();
+        final Block block = event.getState().getBlock();
         if (breakBlockObjectives.containsKey(block) && breakBlockObjectives.get(block).containsKey(event.getPlayer().getUUID()))
         {
             final List<IQuestInstance> objectives = breakBlockObjectives.get(block).get(event.getPlayer().getUUID());
