@@ -90,7 +90,7 @@ public interface IQuestInstance extends INBTSerializable<CompoundTag>
      * Get the id of the current task holder in the quest.
      * @return the quest participant.
      */
-    int getCurrentTaskHolderId();
+    int getQuestTarget();
 
     /**
      * Get the objective data of the current objective.

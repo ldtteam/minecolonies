@@ -334,7 +334,7 @@ public class QuestInstance implements IQuestInstance
     }
 
     @Override
-    public int getCurrentTaskHolderId()
+    public int getQuestTarget()
     {
         final IQuestObjectiveTemplate objective = QuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(getObjectiveIndex());
         if (objective == null)
