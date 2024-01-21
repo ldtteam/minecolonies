@@ -251,13 +251,13 @@ public class GraveManager implements IGraveManager
      * @param citizenData The citizenData
      */
     @Override
-    public void createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
+    public boolean createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
     {
         final BlockState here = world.getBlockState(pos);
         if (here.getBlock() == Blocks.LAVA)
         {
             MessageUtils.format(WARNING_GRAVE_LAVA).sendTo(colony).forManagers();
-            return;
+            return false;
         }
 
         BlockPos firstValidPosition = null;
@@ -321,11 +321,12 @@ public class GraveManager implements IGraveManager
             graveEntity.setGraveData(graveData);
 
             colony.getGraveManager().addNewGrave(firstValidPosition);
-            MessageUtils.format(WARNING_GRAVE_SPAWNED).sendTo(colony).forManagers();
+            return true;
         }
         else
         {
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
         }
+        return false;
     }
 }

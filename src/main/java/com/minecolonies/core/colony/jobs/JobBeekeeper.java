@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.citizen.beekeeper.EntityAIWorkBeekeeper;
+import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkBeekeeper;
 
 /**
  * Class of the Beekeeper job.

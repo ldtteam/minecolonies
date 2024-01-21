@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.citizen.netherworker.EntityAIWorkNether;
+import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkNether;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;

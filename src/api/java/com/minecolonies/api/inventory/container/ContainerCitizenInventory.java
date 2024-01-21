@@ -2,8 +2,8 @@ package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
+import com.minecolonies.api.entity.ai.workers.util.GuardGear;
+import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;

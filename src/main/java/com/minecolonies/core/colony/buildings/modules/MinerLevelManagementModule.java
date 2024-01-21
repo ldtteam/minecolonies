@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
-import com.minecolonies.core.entity.ai.citizen.miner.MinerLevel;
-import com.minecolonies.core.entity.ai.citizen.miner.MineNode;
+import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
+import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
-import static com.minecolonies.core.entity.ai.citizen.miner.EntityAIStructureMiner.SHAFT_RADIUS;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.SHAFT_RADIUS;
 
 /**
  * Module containing miner level management.

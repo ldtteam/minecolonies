@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.miner.EntityAIStructureMiner.*;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
 public class FemaleMinerModel extends CitizenModel<AbstractEntityCitizen>
 {

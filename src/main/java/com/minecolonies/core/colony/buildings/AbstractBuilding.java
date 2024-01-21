@@ -53,8 +53,8 @@ import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedReques
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
-import com.minecolonies.core.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.core.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
+import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.util.ChunkDataHelper;
 import com.minecolonies.api.util.ColonyUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;

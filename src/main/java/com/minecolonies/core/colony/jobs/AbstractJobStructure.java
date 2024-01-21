@@ -10,7 +10,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.core.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;

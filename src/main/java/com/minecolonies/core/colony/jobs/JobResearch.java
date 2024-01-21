@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.core.entity.ai.citizen.research.EntityAIWorkResearcher;
+import com.minecolonies.core.entity.ai.workers.education.EntityAIWorkResearcher;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 

@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.miner.EntityAIStructureMiner.*;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
 public class FemaleNetherWorkerModel extends CitizenModel<AbstractEntityCitizen>
 {

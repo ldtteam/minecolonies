@@ -2,7 +2,7 @@ package com.minecolonies.core.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.MinecoloniesMinecart;
+import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.*;

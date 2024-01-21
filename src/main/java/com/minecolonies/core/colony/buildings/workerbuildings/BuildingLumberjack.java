@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NETHER_TREE_LIST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.core.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.SAPLINGS_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack.SAPLINGS_LIST;
 
 /**
  * The lumberjacks building.

@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
-import com.minecolonies.api.entity.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

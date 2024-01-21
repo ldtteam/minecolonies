@@ -9,7 +9,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack;
-import com.minecolonies.core.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
+import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;

@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.jobs.JobBuilder;
-import com.minecolonies.core.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

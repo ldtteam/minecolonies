@@ -12,8 +12,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.student.EntityAIStudy.RENDER_META_BOOK;
-import static com.minecolonies.core.entity.ai.citizen.student.EntityAIStudy.RENDER_META_STUDYING;
+import static com.minecolonies.core.entity.ai.workers.education.EntityAIStudy.RENDER_META_BOOK;
+import static com.minecolonies.core.entity.ai.workers.education.EntityAIStudy.RENDER_META_STUDYING;
 
 public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
 {

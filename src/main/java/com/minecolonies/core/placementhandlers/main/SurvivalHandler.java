@@ -19,7 +19,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
-import com.minecolonies.core.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.EventHandler;
 import com.minecolonies.core.network.messages.client.OpenDecoBuildWindowMessage;
 import com.minecolonies.core.network.messages.client.OpenPlantationFieldBuildWindowMessage;

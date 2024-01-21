@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.core.entity.ai.citizen.herders.EntityAIWorkChickenHerder;
+import com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkChickenHerder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;

@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.guard.EntityAIDruid.RENDER_META_POTION;
+import static com.minecolonies.core.entity.ai.workers.guard.EntityAIDruid.RENDER_META_POTION;
 
 public class FemaleDruidModel extends CitizenModel<AbstractEntityCitizen>
 {
