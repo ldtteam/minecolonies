@@ -193,7 +193,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     {
         //Removes citizens that work from home and remove citizens already living here.
         unassignedCitizens = colony.getCitizens().values().stream()
-                     .filter(cit -> !Objects.equals(cit.getHomeBuilding(), cit.getWorkBuilding()) && !building.getPosition().equals(cit.getHomeBuilding()))
+                     .filter(cit -> (!Objects.equals(cit.getHomeBuilding(), cit.getWorkBuilding()) || cit.getHomeBuilding() == null) && !building.getPosition().equals(cit.getHomeBuilding()))
                      .sorted(Comparator.comparing((ICitizenDataView cit) -> cit.getHomeBuilding() == null ? 0 : 1)
                                .thenComparingLong(cit -> {
                                    if (cit.getWorkBuilding() == null)
