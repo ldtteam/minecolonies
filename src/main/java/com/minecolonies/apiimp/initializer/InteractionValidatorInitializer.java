@@ -11,14 +11,14 @@ import com.minecolonies.api.entity.citizen.happiness.ITimeBasedHappinessModifier
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.BuildingModules;
-import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.jobs.*;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.util.WorkerUtil;
+import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.modules.ItemListModule;
+import com.minecolonies.core.colony.buildings.modules.QuarryModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.*;
+import com.minecolonies.core.colony.jobs.*;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
+import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -33,10 +33,10 @@ import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
-import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
-import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
-import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
-import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
+import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
+import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
+import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
 
 /**
  * Class containing initializer for all the validator predicates.

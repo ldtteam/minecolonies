@@ -2,11 +2,15 @@ package com.minecolonies.api.quests.registries;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IQuestDialogueAnswer;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
+import com.minecolonies.api.quests.IQuestRewardTemplate;
+import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
+
 import java.util.function.Function;
 
 /**

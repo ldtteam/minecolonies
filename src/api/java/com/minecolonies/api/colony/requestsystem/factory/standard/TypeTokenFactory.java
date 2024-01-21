@@ -53,7 +53,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     {
         try
         {
-            return TypeToken.of(Class.forName(nbt.getString(NbtTagConstants.TAG_VALUE)));
+            return TypeToken.of(Class.forName(nbt.getString(NbtTagConstants.TAG_VALUE).replace("coremod", "core")));
         }
         catch (ClassNotFoundException e)
         {
@@ -88,7 +88,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     {
         try
         {
-            return TypeToken.of(Class.forName(buffer.readUtf(32767)));
+            return TypeToken.of(Class.forName(buffer.readUtf(32767).replace("coremod", "core")));
         }
         catch (ClassNotFoundException e)
         {

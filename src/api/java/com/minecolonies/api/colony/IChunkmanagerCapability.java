@@ -2,9 +2,9 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.NBTUtils;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.common.capabilities.Capability;

@@ -284,7 +284,7 @@
   "block.blockhuttownhall.messagemaxsize.research": "%d has reached its max size. You can get more by completing the research in the University.",
 
   "block.blockhuttownhall.messagecolonistdesc": "The colonist %s",
-  "block.blockhuttownhall.messagecolonistgravelocation": "Their death position is %d %d %d.",
+  "block.blockhuttownhall.messagecolonistgravelocation": "Their death position is %d %d %d. ",
   "block.blockhuttownhall.messageinvalidworld": "You can't place a Town Hall in this world type",
   "block.blockhuttownhall.messagetooclose": "Too close to existing Town Hall",
   "block.blockhuttownhall.messagetooFar": "Too far away from your colony",
@@ -513,7 +513,7 @@
 
   "com.minecolonies.coremod.gui.hiring.description": "Choose workers for the %s.",
   "com.minecolonies.coremod.gui.hiring.dedicated": "%s-only %s",
-  "com.minecolonies.coremod.gui.assigning.description": "Choose a citizen to live here.",
+  "com.minecolonies.coremod.gui.assigning.description": "Administer the citizens living here.",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.townhall.repair": "Repair Town Hall",
@@ -946,7 +946,7 @@
   "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left the colony.",
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
-  "com.minecolonies.coremod.mourning": "Close family and friends will mourn %s tomorrow out of respect.",
+  "com.minecolonies.coremod.mourning": "Close family and friends will mourn %s tomorrow out of respect. ",
 
   "event.minecolonies.raidmessage1": "Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "Citizens report rumors of raiders %s of %s!",
@@ -1005,7 +1005,7 @@
   "com.minecolonies.coremod.gui.workerhuts.pickup.denied": "You cannot pickup this building.",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away!",
-  "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away!",
+  "com.minecolonies.coremod.toofar": "You can't place a colony that far from world-spawn. It can be at most %d blocks away! This can be configured in the server config.",
 
   "com.minecolonies.coremod.gui.scantool.select": "Select",
 
@@ -2380,7 +2380,7 @@
   "com.minecolonies.coremod.gui.buildingassignmentmode": "Building Assignment Mode:",
   "com.minecolonies.coremod.gui.home.homeless": "Homeless",
   "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
-  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here",
+  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here. ",
   "com.minecolonies.coremod.setting.minecolonies:crushermode": "Crusher Mode:",
   "com.minecolonies.coremod.setting.minecolonies:dailylimit": "Daily Limit:",
 
@@ -2531,5 +2531,6 @@
   "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled",
   "com.minecolonies.coremod.progress.colony_founded": "Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall.",
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
-  "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now."
+  "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
+  "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!"
 }

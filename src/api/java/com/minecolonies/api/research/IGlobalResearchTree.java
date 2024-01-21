@@ -1,16 +1,14 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

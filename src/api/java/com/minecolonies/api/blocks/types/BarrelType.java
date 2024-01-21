@@ -1,7 +1,7 @@
 package com.minecolonies.api.blocks.types;
 
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
 public enum BarrelType implements StringRepresentable

@@ -2,8 +2,6 @@ package com.minecolonies.api.colony.requestsystem;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
@@ -68,15 +66,9 @@ public final class StandardFactoryController implements IFactoryController
     private final List<ITypeOverrideHandler<?>> typeOverrideHandlers = new ArrayList<>();
 
     /**
-     * Map that handles class renamings during deserialization from older data.
-     */
-    @NotNull
-    private final BiMap<String, String> classRenamingHandlers = HashBiMap.create();
-
-    /**
      * Specific serialization mappings.
      */
-    private Map<Short, IFactory<?, ?>> serializationMappings = new HashMap<>();
+    private final Map<Short, IFactory<?, ?>> serializationMappings = new HashMap<>();
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
@@ -296,8 +288,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         else
         {
-            String className = compound.getString(NBT_TYPE);
-            className = processClassRenaming(className);
+            String className = compound.getString(NBT_TYPE).replace("coremod", "core");
             try
             {
                 factory = getFactoryForOutput(className);
@@ -314,20 +305,9 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (Throwable throwable)
         {
-            Log.getLogger().error(throwable);
+            Log.getLogger().error("Error when deserializing", throwable);
             return null;
         }
-    }
-
-    private String processClassRenaming(@NotNull final String previousClassName)
-    {
-        if (!this.classRenamingHandlers.containsKey(previousClassName))
-        {
-            return previousClassName;
-        }
-
-        //See if we renamed something again.
-        return processClassRenaming(this.classRenamingHandlers.get(previousClassName));
     }
 
     @Override
@@ -385,11 +365,5 @@ public final class StandardFactoryController implements IFactoryController
     public <OUTPUT> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<OUTPUT> overrideHandler)
     {
         this.typeOverrideHandlers.add(overrideHandler);
-    }
-
-    @Override
-    public void registerNewClassRenaming(@NotNull final String previousName, @NotNull final String newName)
-    {
-        this.classRenamingHandlers.put(previousName, newName);
     }
 }

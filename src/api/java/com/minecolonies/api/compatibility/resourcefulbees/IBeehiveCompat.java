@@ -1,8 +1,8 @@
 package com.minecolonies.api.compatibility.resourcefulbees;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;

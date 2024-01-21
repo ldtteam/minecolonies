@@ -6,8 +6,6 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public abstract class AbstractBlockMinecoloniesGrave<B extends AbstractBlockMinecoloniesGrave<B>> extends AbstractBlockMinecolonies<B> implements EntityBlock
 {
     public static final EnumProperty<GraveType> VARIANT = EnumProperty.create("variant", GraveType.class);

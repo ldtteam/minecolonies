@@ -2,10 +2,9 @@ package com.minecolonies.api.colony.colonyEvents;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.INBTSerializable;
-
 import org.jetbrains.annotations.NotNull;
 
 /**

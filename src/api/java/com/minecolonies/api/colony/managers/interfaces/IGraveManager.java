@@ -2,11 +2,10 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -66,8 +65,9 @@ public interface IGraveManager
      * @param world        The world.
      * @param pos          The position where to spawn a grave
      * @param citizenData  The citizenData
+     * @return true if a grave was created.
      */
-    void createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData);
+    boolean createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData);
 
     /**
      * Returns a map with all graves within the colony. Key is ID (Coordinates), value is isReserved boolean.

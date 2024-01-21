@@ -3,9 +3,9 @@ package com.minecolonies.api.advancements.complete_build_request;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<CompleteBuildRequestListeners, CompleteBuildRequestCriterionInstance>

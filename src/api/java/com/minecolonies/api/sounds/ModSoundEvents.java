@@ -7,7 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.*;
+import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.*;
 

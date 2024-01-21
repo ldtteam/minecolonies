@@ -2,11 +2,11 @@ package com.minecolonies.api.entity.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;

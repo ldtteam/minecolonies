@@ -2,22 +2,22 @@ package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
+import com.minecolonies.api.entity.ai.workers.util.GuardGear;
+import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,6 @@ import java.util.Optional;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.ARMOR_LEVEL_GOLD;
 
 /**
  * Container for Mie

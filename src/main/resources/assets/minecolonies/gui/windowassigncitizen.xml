@@ -1,19 +1,37 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
-    <label size="100% 11" pos="0 20" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
-    <list id="unassigned" size="300 120" pos="90 40">
+    <label size="100% 11" pos="0 20" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
+
+    <list id="assigned" size="190 160" pos="10 40">
         <view size="100% 34">
-            <label id="citizen" size="100% 12" pos="5 4" color="yellow"/>
-            <label id="job" size="100% 12" pos="5 14" color="yellow" textscale="0.94"/>
-            <label id="living" size="100% 12" pos="5 24" color="yellow" textscale="0.94"/>
-            <button id="done" size="50 15" pos="240 6" label="$(com.minecolonies.coremod.gui.hiring.buttonassign)"/>
+            <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
+            <label id="citizen" size="100% 12" pos="5 2" color="blue"/>
+            <buttonimage id="fire" size="44 10" pos="120 2" textcolor="black"
+                         source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
+                         label="$(com.minecolonies.coremod.gui.hiring.buttonfire)" textscale="0.8"/>
+
+            <label id="job" size="175 20" pos="5 13" color="black" textalign="TOP_LEFT"/>
         </view>
     </list>
-    <label id="buildingassignmentmode" size="200 11" pos="110 165" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildingassignmentmode)"/>
-    <button id="mode" size="200 20" pos="110 175"/>
 
-    <label  id="autoHireWarn" textscale="0.75" size="100% 11" pos="0 200" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.home.hire.warning)"/>
-    <button id="cancel" size="200 20" pos="110 215" label="$(gui.cancel)"/>
+    <list id="unassigned" size="190 160" pos="201 40">
+        <view size="100% 34">
+            <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
+            <label id="citizen" size="100% 12" pos="5 2" color="blue"/>
+            <buttonimage id="hire" size="44 10" pos="120 2" textcolor="black"
+                         source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
+                         label="$(com.minecolonies.coremod.gui.hiring.buttonassign)" textscale="0.8"/>
+
+            <label id="job" size="175 20" pos="5 13" color="black" textscale="0.8"/>
+        </view>
+    </list>
+
+    <label id="buildingassignmentmode" size="200 11" pos="40 210" color="black" label="$(com.minecolonies.coremod.gui.buildingassignmentmode)"/>
+    <buttonimage id="mode" size="169 17" pos="170 207" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_large.png"/>
+
+    <buttonimage id="cancel" size="14 15" pos="375 10"
+                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 </window>
