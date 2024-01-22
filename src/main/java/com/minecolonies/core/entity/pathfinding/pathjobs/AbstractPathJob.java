@@ -538,7 +538,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getZ() * dPos.getZ());
 
-        if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairBlock))
+        if (cachedBlockLookup.getBlockState(blockPos).getBlock() == Blocks.CAVE_AIR)
+        {
+            cost *= pathingOptions.caveAirCost;
+        }
+
+        if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && cachedBlockLookup.getBlockState(blockPos).getBlock() instanceof StairBlock))
         {
             if (dPos.getY() > 0 && pathingOptions.jumpCost != 1)
             {
@@ -550,7 +555,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
         }
 
-        if (world.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
+        if (cachedBlockLookup.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
         {
             cost *= pathingOptions.traverseToggleAbleCost;
         }
@@ -667,7 +672,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             currentNode.setClosed();
 
             final boolean isViablePosition = isInRestrictedArea(currentNode.pos)
-                                               && SurfaceType.getSurfaceType(world, world.getBlockState(currentNode.pos.below()), currentNode.pos.below()) == SurfaceType.WALKABLE;
+                                               && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(currentNode.pos.below()), currentNode.pos.below())
+                                                    == SurfaceType.WALKABLE;
             if (isViablePosition && isAtDestination(currentNode))
             {
                 bestNode = currentNode;
@@ -797,12 +803,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             startNode.setLadder();
         }
-        else if (isLiquid(world.getBlockState(start.below())))
+        else if (isLiquid(cachedBlockLookup.getBlockState(start.below())))
         {
             startNode.setSwimming();
         }
 
-        startNode.setOnRails(pathingOptions.canUseRails() && world.getBlockState(start).getBlock() instanceof BaseRailBlock);
+        startNode.setOnRails(pathingOptions.canUseRails() && cachedBlockLookup.getBlockState(start).getBlock() instanceof BaseRailBlock);
 
         nodesOpen.offer(startNode);
         nodesVisited.put(computeNodeKey(start), startNode);
