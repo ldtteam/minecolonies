@@ -128,6 +128,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state)
     {
         super(type, pos, state);
+        this.freeSlots = inventory.getSlots();
     }
 
     /**
@@ -141,6 +142,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     {
         super(type, pos, state, size);
         this.size = ((size - DEFAULT_SIZE) / SLOT_PER_LINE);
+        this.freeSlots = inventory.getSlots();
     }
 
     /**
