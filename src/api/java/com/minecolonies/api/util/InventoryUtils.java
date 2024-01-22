@@ -886,12 +886,9 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rack && rack.getFreeSlots() > 0)
                 {
-                    if (((TileEntityRack) entity).getFreeSlots() > 0)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
         }

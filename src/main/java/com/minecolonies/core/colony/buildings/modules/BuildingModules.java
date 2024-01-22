@@ -399,7 +399,7 @@ public class BuildingModules
         .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
         .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
         .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
-        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(true))
+        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(false))
         .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.DIRT)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<SimpleCraftingModule,CraftingModuleView> BUILDER_CRAFT                   =
       new BuildingEntry.ModuleProducer<>("builder_craft", () -> new SimpleCraftingModule(ModJobs.builder.get()), () -> CraftingModuleView::new);
@@ -437,7 +437,7 @@ public class BuildingModules
         .with(BuildingLumberjack.DEFOLIATE, new BoolSetting(false))
         .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
         .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting())
-        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new);
+        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(false)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,ToolModuleView> FORESTER_TOOL     =
       new BuildingEntry.ModuleProducer<>("forester_zone", null, () -> () -> new ToolModuleView(ModItems.scepterLumberjack));
 
@@ -464,7 +464,7 @@ public class BuildingModules
         .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
         .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE))
         .with(BuildingMiner.MAX_DEPTH, new IntSetting(-100))
-        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new);
+        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(false)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,MinerGuardAssignModuleView> MINER_GUARD_ASSIGN    =
       new BuildingEntry.ModuleProducer<>("miner_guard_assign", null, () -> MinerGuardAssignModuleView::new);
 
