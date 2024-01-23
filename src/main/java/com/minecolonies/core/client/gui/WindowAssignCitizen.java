@@ -13,6 +13,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.moduleviews.LivingBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.ChatFormatting;
@@ -209,7 +210,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                                })).toList();
 
         assignedCitizens.clear();
-        for (final int id : building.getModuleView(BuildingModules.LIVING).getAssignedCitizens())
+        for (final int id : building.getModuleViewByType(LivingBuildingModuleView.class).getAssignedCitizens())
         {
             assignedCitizens.add(colony.getCitizen(id));
         }
@@ -303,6 +304,10 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                     if (building.getResidents().size() < building.getMax())
                     {
                         hireButton.enable();
+                    }
+                    else
+                    {
+                        hireButton.disable();
                     }
                     PaneBuilders.tooltipBuilder().hoverPane(hireButton).build().setText(Component.empty());
                 }
