@@ -161,6 +161,17 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
     void serializeToView(@NotNull FriendlyByteBuf buf);
 
     /**
+     * Serializes to view.
+     *
+     * @param buf      FriendlyByteBuf to write to.
+     * @param fullSync Whether it's a full sync
+     */
+    default void serializeToView(@NotNull FriendlyByteBuf buf, final boolean fullSync)
+    {
+        serializeToView(buf);
+    }
+
+    /**
      * Set the custom building name of the building.
      *
      * @param name the name to set.

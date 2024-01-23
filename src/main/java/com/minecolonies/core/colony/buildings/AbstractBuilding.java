@@ -53,10 +53,9 @@ import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedReques
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
-import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
-import com.minecolonies.api.util.ColonyUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -679,13 +678,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
     }
 
+    @Override
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    {
+        serializeToView(buf, true);
+    }
+
     /**
      * Serializes to view.
      *
      * @param buf FriendlyByteBuf to write to.
      */
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
         buf.writeUtf(this.getBuildingType().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
@@ -734,7 +739,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         for (final IBuildingModule module: syncedModules)
         {
             buf.writeInt(module.getProducer().getRuntimeID());
-            module.serializeToView(buf);
+            module.serializeToView(buf, fullSync);
         }
     }
 
