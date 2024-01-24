@@ -46,9 +46,11 @@ public interface IStatisticsManager
 
     /**
      * Serialize to bytebuf.
-     * @param buf the buffer to write to.
+     *
+     * @param buf               the buffer to write to.
+     * @param hasNewSubscribers
      */
-    void serialize(@NotNull final FriendlyByteBuf buf);
+    void serialize(@NotNull final FriendlyByteBuf buf, final boolean hasNewSubscribers);
 
     /**
      * Deserialize from bytebuf.

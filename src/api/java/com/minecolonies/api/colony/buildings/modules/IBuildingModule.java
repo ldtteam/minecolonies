@@ -32,13 +32,26 @@ public interface IBuildingModule extends IHasDirty
 
     /**
      * Get the producer of this module
+     *
      * @return
      */
     BuildingEntry.ModuleProducer getProducer();
 
     /**
      * Serialization method to send the module data to the client side.
+     *
+     * @param buf      the buffer to write it to.
+     * @param fullSync whether we need to sync the full data
+     */
+    default void serializeToView(FriendlyByteBuf buf, final boolean fullSync)
+    {
+        serializeToView(buf);
+    }
+
+    /**
+     * Serialization method to send the module data to the client side.
+     *
      * @param buf the buffer to write it to.
      */
-    default void serializeToView(FriendlyByteBuf buf) { }
+    default void serializeToView(FriendlyByteBuf buf) {}
 }
