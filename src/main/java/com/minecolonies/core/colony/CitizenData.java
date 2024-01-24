@@ -24,6 +24,7 @@ import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.interactionhandling.QuestDeliveryInteraction;
 import com.minecolonies.core.colony.interactionhandling.QuestDialogueInteraction;
@@ -33,6 +34,7 @@ import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenMournHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
+import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
@@ -61,6 +63,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -303,6 +306,16 @@ public class CitizenData implements ICitizenData
     private int soundProfile;
 
     /**
+     * Recent interaction timer
+     */
+    private int interactedRecently = 0;
+
+    /**
+     * Recent interaction timer
+     */
+    private Set<UUID> interactedRecentlyPlayers = new HashSet<>();
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -366,6 +379,18 @@ public class CitizenData implements ICitizenData
     public void markDirty(final int time)
     {
         dirty = Math.min(dirty, time);
+
+        if (interactedRecently > 0)
+        {
+            for (final UUID player : interactedRecentlyPlayers)
+            {
+                if (getColony().getWorld().getPlayerByUUID(player) instanceof ServerPlayer playerEntity)
+                {
+                    Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage((Colony) getColony(), this), playerEntity);
+                }
+            }
+        }
+
         if (isDirty())
         {
             colony.getCitizenManager().markDirty();
@@ -1441,11 +1466,27 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void setInteractedRecently(final UUID player)
+    {
+        interactedRecentlyPlayers.add(player);
+        interactedRecently = TICKS_SECOND * 20;
+    }
+
+    @Override
     public void update()
     {
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
             return;
+        }
+
+        if (interactedRecently > 0)
+        {
+            interactedRecently -= TICKS_SECOND * 3;
+            if (interactedRecently <= 0)
+            {
+                interactedRecentlyPlayers.clear();
+            }
         }
 
         if (!isWorking && job != null && inactivityTimer != DISABLED && ++inactivityTimer >= job.getInactivityLimit())

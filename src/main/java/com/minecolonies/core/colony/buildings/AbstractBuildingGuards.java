@@ -305,7 +305,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Nullable
     public Player getPlayerToFollowOrRally()
     {
-        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
+        if (rallyLocation != null && rallyLocation instanceof EntityLocation)
+        {
+            return ((EntityLocation) rallyLocation).getPlayerEntity();
+        }
+        else if (getTask().equals(GuardTaskSetting.FOLLOW))
+        {
+            return getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
+        }
+
+        return null;
     }
 
     /**

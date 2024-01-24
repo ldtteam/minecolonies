@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticipant
 {
@@ -405,4 +406,11 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * Called after buildings loaded
      */
     void onBuildingLoad();
+
+    /**
+     * Called when a player interacts with a citizen
+     *
+     * @param player the player that interacted
+     */
+    void setInteractedRecently(final UUID player);
 }

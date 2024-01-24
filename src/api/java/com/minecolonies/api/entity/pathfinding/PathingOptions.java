@@ -6,12 +6,12 @@ package com.minecolonies.api.entity.pathfinding;
 public class PathingOptions
 {
     /**
-     * Additional cost of jumping and dropping - base 1.
+     * Additional cost of jumping
      */
-    public double jumpCost = 1.1D;
+    public double jumpCost = 1.5D;
 
     /**
-     * Additional cost of jumping and dropping - base 1.
+     * Additional cost of dropping
      */
     public double dropCost = 1.1D;
 

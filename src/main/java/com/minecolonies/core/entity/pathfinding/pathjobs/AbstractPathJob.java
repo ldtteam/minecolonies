@@ -553,7 +553,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else if (pathingOptions.dropCost != 1)
             {
-                cost *= pathingOptions.dropCost * Math.abs(dPos.getY());
+                cost *= pathingOptions.dropCost * Math.abs(dPos.getY() * dPos.getY());
             }
         }
 
