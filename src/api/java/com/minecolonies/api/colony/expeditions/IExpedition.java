@@ -1,13 +1,14 @@
 package com.minecolonies.api.colony.expeditions;
 
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -46,6 +47,13 @@ public interface IExpedition
     List<IExpeditionMember> getMembers();
 
     /**
+     * Get the equipment given to the expedition at start time.
+     *
+     * @return the equipment list.
+     */
+    List<ItemStack> getEquipment();
+
+    /**
      * Get the currently active members of the expedition.
      *
      * @return the expedition members.
@@ -54,21 +62,12 @@ public interface IExpedition
     List<IExpeditionMember> getActiveMembers();
 
     /**
-     * The equipment that has been given to this expedition to use.
-     *
-     * @return the list of equipment.
-     */
-    @NotNull
-    List<ItemStack> getEquipment();
-
-    /**
      * The results of this expedition.
-     * Yields null as long as the stage of the expedition is not {@link ExpeditionStatus#RETURNED}.
+     * Yields null as long as the stage of the expedition is not {@link EventStatus#DONE}.
      *
      * @return a list of stages containing results per expedition stage.
      */
-    @Nullable
-    List<IExpeditionStage> getResults();
+    Collection<IExpeditionStage> getResults();
 
     /**
      * Advances the current stage of the expedition.

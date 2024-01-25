@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class ExpeditionStage implements IExpeditionStage
+public final class ExpeditionStage implements IExpeditionStage
 {
     @Override
     public List<ItemStack> getRewards()

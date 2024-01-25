@@ -289,6 +289,9 @@ public class ColonyExpeditionType
          */
         private final Style style;
 
+        /**
+         * Internal constructor.
+         */
         Difficulty(final String key, final int level, final int luckLevel, final Item icon, final boolean hidden, final Style style)
         {
             this.key = key;
@@ -366,6 +369,16 @@ public class ColonyExpeditionType
         public Style getStyle()
         {
             return style;
+        }
+
+        /**
+         * Get the luck level an expedition of the given difficulty will have.
+         *
+         * @return the luck level.
+         */
+        public int getLuckLevel()
+        {
+            return luckLevel;
         }
     }
 }

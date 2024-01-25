@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.managers;
 
+import com.google.common.collect.EvictingQueue;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.expeditions.IExpedition;
@@ -11,15 +12,27 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraftforge.eventbus.api.Event.Result;
 
+import java.util.HashMap;
+
 /**
  * Implementation for the colony expedition manager. From here all outgoing expeditions to external places are managed.
  */
 public class ExpeditionManager implements IExpeditionManager
 {
     /**
+     * The maximum amount of expeditions kept in the history, separated per expedition owner type.
+     */
+    private static final int MAX_EXPEDITION_HISTORY = 5;
+
+    /**
      * The colony this manager is for.
      */
     private final IColony colony;
+
+    /**
+     * The currently registered expeditions.
+     */
+    private final HashMap<Class<?>, EvictingQueue<IExpedition>> expeditions;
 
     /**
      * Whether a ruined portal has been discovered by an expedition.
@@ -37,6 +50,14 @@ public class ExpeditionManager implements IExpeditionManager
     public ExpeditionManager(final IColony colony)
     {
         this.colony = colony;
+        this.expeditions = new HashMap<>();
+    }
+
+    @Override
+    public void addExpedition(final IExpedition expedition, final Class<?> owner)
+    {
+        this.expeditions.computeIfAbsent(owner, clazz -> EvictingQueue.create(MAX_EXPEDITION_HISTORY));
+        this.expeditions.get(owner).add(expedition);
     }
 
     @Override
@@ -63,15 +84,6 @@ public class ExpeditionManager implements IExpeditionManager
             return isStrongholdDiscovered;
         }
         return false;
-    }
-
-    @Override
-    public void registerExpedition(final IExpedition expedition)
-    {
-        if (!canGoToDimension(expedition.getTargetDimension()))
-        {
-            return;
-        }
     }
 
 

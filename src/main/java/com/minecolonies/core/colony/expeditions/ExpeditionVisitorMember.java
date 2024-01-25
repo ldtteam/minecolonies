@@ -13,7 +13,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 /**
  * Visitor expedition members.
  */
-public class ExpeditionVisitorMember implements IExpeditionMember
+public final class ExpeditionVisitorMember implements IExpeditionMember
 {
     /**
      * Nbt tag constants.

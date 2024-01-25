@@ -2,10 +2,7 @@ package com.minecolonies.core.colony.colonyEvents.raidEvents;
 
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
@@ -36,7 +33,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.Path;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -188,12 +184,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     public int getID()
     {
         return id;
-    }
-
-    @Override
-    public void setColony(@NotNull final IColony colony)
-    {
-        this.colony = colony;
     }
 
     /**

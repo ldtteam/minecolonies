@@ -5,15 +5,20 @@ import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.IVisitorViewData;
+import com.minecolonies.api.colony.expeditions.IExpedition;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.core.colony.expeditions.Expedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType.Difficulty;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -57,7 +62,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
 
         updateDifficulty();
 
-        registerButton(LABEL_EXPEDITION_NAME, this::startExpedition);
+        registerButton(LABEL_EXPEDITION_NAME, this::openVisitorInventory);
     }
 
     @Override
@@ -67,9 +72,9 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     }
 
     /**
-     * Triggers starting the expedition.
+     * Open visitor inventory for providing tools.
      */
-    private void startExpedition()
+    private void openVisitorInventory()
     {
         Network.getNetwork().sendToServer(new OpenInventoryMessage(visitorData.getColony(), visitorData.getName(), visitorData.getId()));
     }
@@ -103,5 +108,14 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
                     .withStyle(currentDifficulty.getStyle()))
           .hoverPane(findPaneOfTypeByID(VIEW_EXPEDITION_DIFFICULTY, View.class))
           .build();
+    }
+
+    /**
+     * Triggers starting the expedition.
+     */
+    private void startExpedition()
+    {
+        visitorData.getInventory().isEmpty();
+        final IExpedition expedition = new Expedition();
     }
 }
