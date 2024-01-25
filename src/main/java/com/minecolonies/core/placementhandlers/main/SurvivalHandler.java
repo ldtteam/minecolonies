@@ -175,6 +175,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   packName,
                   blueprintPath);
                 MinecraftForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, blockPos), world.getBlockState(blockPos.below()), player));
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
 
                 if (tempColony == null)
                 {
@@ -204,8 +205,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                         finishedUpgrade = true;
                     }
                 }
-
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, blockPos);
                 if (building == null)
