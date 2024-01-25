@@ -135,10 +135,4 @@ public class BuildingComposter extends AbstractBuilding
         compound.put(TAG_BARRELS, compostBinTagList);
         return compound;
     }
-
-    @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
-    {
-        super.serializeToView(buf);
-    }
 }

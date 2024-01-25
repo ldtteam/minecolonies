@@ -154,22 +154,12 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
     int getClaimRadius(int buildingLevel);
 
     /**
-     * Serializes to view. Sends 3 integers. 1) hashcode of the name of the class. 2) building level. 3) max building level.
-     *
-     * @param buf FriendlyByteBuf to write to.
-     */
-    void serializeToView(@NotNull FriendlyByteBuf buf);
-
-    /**
      * Serializes to view.
      *
      * @param buf      FriendlyByteBuf to write to.
      * @param fullSync Whether it's a full sync
      */
-    default void serializeToView(@NotNull FriendlyByteBuf buf, final boolean fullSync)
-    {
-        serializeToView(buf);
-    }
+    void serializeToView(@NotNull FriendlyByteBuf buf, final boolean fullSync);
 
     /**
      * Set the custom building name of the building.

@@ -353,9 +353,9 @@ public class BuildingLumberjack extends AbstractBuilding
     }
 
     @Override
-    public void serializeToView(@NotNull FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        super.serializeToView(buf);
+        super.serializeToView(buf, fullSync);
 
         buf.writeBoolean(shouldRestrict());
         if (startRestriction != null && endRestriction != null)

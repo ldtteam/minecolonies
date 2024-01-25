@@ -678,12 +678,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
     }
 
-    @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
-    {
-        serializeToView(buf, true);
-    }
-
     /**
      * Serializes to view.
      *

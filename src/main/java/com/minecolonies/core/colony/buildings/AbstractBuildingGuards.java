@@ -268,9 +268,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        super.serializeToView(buf);
+        super.serializeToView(buf, fullSync);
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)

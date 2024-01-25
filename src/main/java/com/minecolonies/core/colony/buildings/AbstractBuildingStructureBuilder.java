@@ -252,9 +252,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        super.serializeToView(buf);
+        super.serializeToView(buf, fullSync);
 
         final WorkerBuildingModule module = getFirstModuleOccurance(WorkerBuildingModule.class);
         buf.writeUtf(module.getFirstCitizen() != null ? module.getFirstCitizen().getName() : "");
