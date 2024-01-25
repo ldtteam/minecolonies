@@ -8,12 +8,12 @@ import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -138,7 +138,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return boxCenter == null ? pos.distSqr(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter);
+        return Math.sqrt(boxCenter == null ? pos.distSqr(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter));
     }
 
     @Override

@@ -757,7 +757,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 this.citizenDataView = colonyView.getCitizen(citizenId);
                 this.getNavigation().getPathingOptions().setCanUseRails(canPathOnRails());
-                this.getNavigation().getPathingOptions().setCanClimbVines(canClimbVines());
+                this.getNavigation().getPathingOptions().setCanClimbNonLadders(canClimbVines());
             }
         }
         return false;

@@ -135,7 +135,7 @@ public class StatisticsManager implements IStatisticsManager
             final String id = buf.readUtf();
             final int statEntrySize = buf.readVarInt();
 
-            final Int2IntLinkedOpenHashMap statValues = fullSync ? new Int2IntLinkedOpenHashMap(statEntrySize) : stats.get(id);
+            final Int2IntLinkedOpenHashMap statValues = (fullSync || !stats.containsKey(id)) ? new Int2IntLinkedOpenHashMap(statEntrySize) : stats.get(id);
             for (int j = 0; j < statEntrySize; j++)
             {
                 statValues.put(buf.readVarInt(), buf.readVarInt());

@@ -9,9 +9,9 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.ai.workers.education.EntityAIStudy;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -163,7 +163,7 @@ public class EntityAICitizenWander implements IStateAI
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
                 citizen.getNavigation()
-                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
+                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                   && citizen.getRandom().nextInt(100) < 5)
