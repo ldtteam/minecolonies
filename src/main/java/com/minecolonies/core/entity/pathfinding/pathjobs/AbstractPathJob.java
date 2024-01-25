@@ -538,7 +538,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final BlockState state,
       final BlockPos blockPos)
     {
-        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getZ() * dPos.getZ() + dPos.getY() * dPos.getY());
+        double cost = Math.abs(dPos.getX()) + Math.abs(dPos.getZ()) + Math.abs(dPos.getY());
 
         if (cachedBlockLookup.getBlockState(blockPos).getBlock() == Blocks.CAVE_AIR)
         {
