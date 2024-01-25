@@ -142,11 +142,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     protected WeakReference<LivingEntity> entity;
 
     /**
-     * Cost factor related to the reptition
-     */
-    private double repetitionCostFactor = 1;
-
-    /**
      * AbstractPathJob constructor.
      *
      * @param world  the world within which to path.
@@ -546,18 +541,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (cachedBlockLookup.getBlockState(blockPos).getBlock() == Blocks.CAVE_AIR)
         {
-            cost *= pathingOptions.caveAirCost * repetitionCostFactor;
+            cost *= pathingOptions.caveAirCost;
         }
 
         if (dPos.getY() != 0 && !(cachedBlockLookup.getBlockState(blockPos.below()).is(BlockTags.STAIRS)))
         {
             if (dPos.getY() > 0)
             {
-                cost *= pathingOptions.jumpCost * repetitionCostFactor;
+                cost *= pathingOptions.jumpCost;
             }
             else if (pathingOptions.dropCost != 1)
             {
-                cost *= pathingOptions.dropCost * Math.abs(dPos.getY() * dPos.getY()) * repetitionCostFactor;
+                cost *= pathingOptions.dropCost * Math.abs(dPos.getY() * dPos.getY());
             }
         }
 
@@ -583,18 +578,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (state.is(BlockTags.CLIMBABLE) && !(state.getBlock() instanceof LadderBlock))
         {
-            cost *= pathingOptions.nonLadderClimbableCost * repetitionCostFactor;
+            cost *= pathingOptions.nonLadderClimbableCost;
         }
 
         if (isSwimming)
         {
             if (swimStart)
             {
-                cost *= pathingOptions.swimCostEnter * repetitionCostFactor;
+                cost *= pathingOptions.swimCostEnter;
             }
             else
             {
-                cost *= pathingOptions.swimCost * repetitionCostFactor;
+                cost *= pathingOptions.swimCost;
             }
         }
 
