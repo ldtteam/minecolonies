@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.ldtteam.domumornamentum.block.AbstractBlockStairs;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -536,18 +538,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final BlockState state,
       final BlockPos blockPos)
     {
-        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getZ() * dPos.getZ());
+        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getZ() * dPos.getZ() + dPos.getY() * dPos.getY());
 
         if (cachedBlockLookup.getBlockState(blockPos).getBlock() == Blocks.CAVE_AIR)
         {
             cost *= pathingOptions.caveAirCost;
         }
 
-        if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && cachedBlockLookup.getBlockState(blockPos).getBlock() instanceof StairBlock))
+        if (dPos.getY() != 0 && !(cachedBlockLookup.getBlockState(blockPos.below()).is(BlockTags.STAIRS)))
         {
-            if (dPos.getY() > 0 && pathingOptions.jumpCost != 1)
+            if (dPos.getY() > 0)
             {
-                cost *= pathingOptions.jumpCost * Math.abs(dPos.getY());
+                cost *= pathingOptions.jumpCost;
             }
             else if (pathingOptions.dropCost != 1)
             {
@@ -1316,7 +1318,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return pos.getY() + 1;
         }
-        if (target.getBlock() instanceof StairBlock
+        if (target.is(BlockTags.STAIRS)
               && parentY - HALF_A_BLOCK < MAX_JUMP_HEIGHT
               && target.getValue(StairBlock.HALF) == Half.BOTTOM
               && BlockPosUtil.getXZFacing(parent.pos, pos) == target.getValue(StairBlock.FACING))
