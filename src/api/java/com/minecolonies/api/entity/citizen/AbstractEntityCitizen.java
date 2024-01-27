@@ -248,6 +248,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         if (modelType == null)
         {
             Log.getLogger().error("Null model type for: " + getModelType() + " of: " + this);
+            textureDirty = false;
             return;
         }
 
