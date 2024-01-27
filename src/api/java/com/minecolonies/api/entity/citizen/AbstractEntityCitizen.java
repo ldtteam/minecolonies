@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.citizen;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenData;
@@ -243,7 +244,14 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             return;
         }
 
-        texture = IModelTypeRegistry.getInstance().getModelType(getModelType()).getTexture(this);
+        final IModelType modelType = IModelTypeRegistry.getInstance().getModelType(getModelType());
+        if (modelType == null)
+        {
+            Log.getLogger().error("Null model type for: " + getModelType() + " of: " + this);
+            return;
+        }
+
+        texture = modelType.getTexture(this);
         textureDirty = false;
     }
 
