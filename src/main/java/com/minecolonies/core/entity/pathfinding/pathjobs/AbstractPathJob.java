@@ -21,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -80,17 +81,17 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Max range used to calculate the number of nodes we visit (square of maxrange).
      */
-    protected final int maxRange;
+    protected int maxRange;
 
     /**
      * Queue of all open nodes.
      */
-    private final Queue<MNode> nodesOpen = new PriorityQueue<>(500);
+    private Queue<MNode> nodesOpen = new PriorityQueue<>(500);
 
     /**
      * Queue of all the visited nodes.
      */
-    private final Map<Integer, MNode> nodesVisited = new HashMap<>();
+    private Map<Integer, MNode> nodesVisited = new HashMap<>();
 
     //  Debug Rendering
     protected     boolean    debugDrawEnabled     = false;
@@ -536,21 +537,26 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final BlockState state,
       final BlockPos blockPos)
     {
-        double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getZ() * dPos.getZ());
+        double cost = Math.abs(dPos.getX()) + Math.abs(dPos.getZ()) + Math.abs(dPos.getY());
 
-        if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairBlock))
+        if (cachedBlockLookup.getBlockState(blockPos).getBlock() == Blocks.CAVE_AIR)
         {
-            if (dPos.getY() > 0 && pathingOptions.jumpCost != 1)
+            cost *= pathingOptions.caveAirCost;
+        }
+
+        if (dPos.getY() != 0 && !(cachedBlockLookup.getBlockState(blockPos.below()).is(BlockTags.STAIRS)))
+        {
+            if (dPos.getY() > 0)
             {
-                cost *= pathingOptions.jumpCost * Math.abs(dPos.getY());
+                cost *= pathingOptions.jumpCost;
             }
             else if (pathingOptions.dropCost != 1)
             {
-                cost *= pathingOptions.dropCost * Math.abs(dPos.getY());
+                cost *= pathingOptions.dropCost * Math.abs(dPos.getY() * dPos.getY());
             }
         }
 
-        if (world.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
+        if (cachedBlockLookup.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
         {
             cost *= pathingOptions.traverseToggleAbleCost;
         }
@@ -570,9 +576,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             cost *= pathingOptions.railsExitCost;
         }
 
-        if (state.getBlock() instanceof VineBlock)
+        if (state.is(BlockTags.CLIMBABLE) && !(state.getBlock() instanceof LadderBlock))
         {
-            cost *= pathingOptions.vineCost;
+            cost *= pathingOptions.nonLadderClimbableCost;
         }
 
         if (isSwimming)
@@ -667,7 +673,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             currentNode.setClosed();
 
             final boolean isViablePosition = isInRestrictedArea(currentNode.pos)
-                                               && SurfaceType.getSurfaceType(world, world.getBlockState(currentNode.pos.below()), currentNode.pos.below()) == SurfaceType.WALKABLE;
+                                               && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(currentNode.pos.below()), currentNode.pos.below())
+                                                    == SurfaceType.WALKABLE;
             if (isViablePosition && isAtDestination(currentNode))
             {
                 bestNode = currentNode;
@@ -797,12 +804,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             startNode.setLadder();
         }
-        else if (isLiquid(world.getBlockState(start.below())))
+        else if (isLiquid(cachedBlockLookup.getBlockState(start.below())))
         {
             startNode.setSwimming();
         }
 
-        startNode.setOnRails(pathingOptions.canUseRails() && world.getBlockState(start).getBlock() instanceof BaseRailBlock);
+        startNode.setOnRails(pathingOptions.canUseRails() && cachedBlockLookup.getBlockState(start).getBlock() instanceof BaseRailBlock);
 
         nodesOpen.offer(startNode);
         nodesVisited.put(computeNodeKey(start), startNode);
@@ -1210,7 +1217,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return handleInLiquid(pos, below, isSwimming);
         }
 
-        if (isLadder(below.getBlock(), pos.below()))
+        if (isLadder(below, pos.below()))
         {
             return pos.getY();
         }
@@ -1310,7 +1317,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return pos.getY() + 1;
         }
-        if (target.getBlock() instanceof StairBlock
+        if (target.is(BlockTags.STAIRS)
               && parentY - HALF_A_BLOCK < MAX_JUMP_HEIGHT
               && target.getValue(StairBlock.HALF) == Half.BOTTOM
               && BlockPosUtil.getXZFacing(parent.pos, pos) == target.getValue(StairBlock.FACING))
@@ -1409,6 +1416,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!block.isAir())
         {
             final VoxelShape shape = block.getCollisionShape(world, pos);
+            if (shape.max(Direction.Axis.Y) < 0.5 && SurfaceType.isDangerous(world.getBlockState(pos.below())))
+            {
+                return false;
+            }
             if (block.blocksMotion() && !(shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1))
             {
                 if (block.getBlock() instanceof TrapDoorBlock || block.getBlock() instanceof PanelBlock)
@@ -1467,13 +1478,13 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              || !block.getBlock().properties.hasCollision;
                 }
             }
-            else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock || block.getBlock() instanceof PowderSnowBlock)
+            else if (SurfaceType.isDangerous(block))
             {
                 return false;
             }
             else
             {
-                if (isLadder(block.getBlock(), pos))
+                if (isLadder(block, pos))
                 {
                     return true;
                 }
@@ -1501,7 +1512,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return !head
                      || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock)
-                     || isLadder(state.getBlock(), pos);
+                     || isLadder(state, pos);
         }
         return isPassable(state, pos, parent, head);
     }
@@ -1550,18 +1561,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Is the block a ladder.
      *
-     * @param block block to check.
-     * @param pos   location of the block.
+     * @param blockState block to check.
+     * @param pos        location of the block.
      * @return true if the block is a ladder.
      */
-    protected boolean isLadder(@NotNull final Block block, final BlockPos pos)
+    protected boolean isLadder(@NotNull final BlockState blockState, final BlockPos pos)
     {
-        return block.isLadder(this.cachedBlockLookup.getBlockState(pos), world, pos, entity.get()) && (block != Blocks.VINE || pathingOptions.canClimbVines());
+        return blockState.isLadder(world, pos, entity.get()) && (blockState.getBlock() instanceof LadderBlock || pathingOptions.canClimbNonLadders());
     }
 
     protected boolean isLadder(final BlockPos pos)
     {
-        return isLadder(cachedBlockLookup.getBlockState(pos).getBlock(), pos);
+        return isLadder(cachedBlockLookup.getBlockState(pos), pos);
     }
 
     /**

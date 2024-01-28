@@ -12,7 +12,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.herders.EntityAIWorkCowboy.RENDER_META_BUCKET;
+import static com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkCowboy.RENDER_META_BUCKET;
 
 public class MaleCowHerderModel extends CitizenModel<AbstractEntityCitizen>
 {

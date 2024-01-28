@@ -63,7 +63,7 @@ public class LookAtEntityGoal extends Goal
             else
             {
                 this.lookAt = WorldUtil.getNearestEntity(this.mob.level.getEntitiesOfClass(this.lookAtType,
-                  this.mob.getBoundingBox().inflate(this.lookDistance, 3.0D,  this.lookDistance),
+                  this.mob.getBoundingBox().inflate(this.lookDistance, 3.0D, this.lookDistance),
                   (entity) -> true), this.mob, this.mob.getBlockX(), this.mob.getBlockY() + 1, this.mob.getBlockZ(), lookDistance);
             }
 

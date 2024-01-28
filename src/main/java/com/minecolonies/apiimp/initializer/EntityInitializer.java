@@ -1,11 +1,10 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.entity.MinecoloniesMinecart;
+import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.entity.*;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.citizen.VisitorCitizen;
+import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.core.entity.mobs.amazons.EntityAmazonSpearman;
@@ -23,6 +22,7 @@ import com.minecolonies.core.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.core.entity.visitor.RegularVisitorType;
+import com.minecolonies.core.entity.other.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

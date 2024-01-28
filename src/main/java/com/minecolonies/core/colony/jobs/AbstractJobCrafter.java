@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.entity.ai.basic.AbstractEntityAIBasic;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;

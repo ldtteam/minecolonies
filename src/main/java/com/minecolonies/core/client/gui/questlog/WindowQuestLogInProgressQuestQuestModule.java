@@ -56,7 +56,7 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
     @Override
     public void trackQuest(final IQuestInstance quest)
     {
-        HighlightManager.addHighlight(HIGHLIGHT_QUEST_LOG_TRACKER_KEY, new CitizenRenderData(quest.getQuestGiverId(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
+        HighlightManager.addHighlight(HIGHLIGHT_QUEST_LOG_TRACKER_KEY, new CitizenRenderData(quest.getQuestTarget(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
     }
 
     /**

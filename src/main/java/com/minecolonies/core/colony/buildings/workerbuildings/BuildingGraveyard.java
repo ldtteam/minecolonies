@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;

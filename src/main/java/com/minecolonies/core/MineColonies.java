@@ -2,10 +2,12 @@ package com.minecolonies.core;
 
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
@@ -17,6 +19,8 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
@@ -27,10 +31,8 @@ import com.minecolonies.core.loot.SupplyLoot;
 import com.minecolonies.core.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
-import com.minecolonies.core.proxy.ClientProxy;
-import com.minecolonies.core.proxy.CommonProxy;
-import com.minecolonies.core.proxy.IProxy;
-import com.minecolonies.core.proxy.ServerProxy;
+import com.minecolonies.core.recipes.FoodIngredient;
+import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.structures.MineColoniesStructures;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,17 +40,19 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -64,11 +68,6 @@ public class MineColonies
      * The config instance.
      */
     private static Configuration config;
-
-    /**
-     * The proxy.
-     */
-    public static final IProxy proxy = DistExecutor.unsafeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public MineColonies()
     {
@@ -119,22 +118,28 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ServerEvents.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ClientEvents.class));
 
-        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
-
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
 
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(this.getClass());
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ClientRegistryHandler.class);
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ModCreativeTabs.class);
 
         InteractionValidatorInitializer.init();
-        proxy.setupApi();
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MinecoloniesAPIProxy.getInstance().setApiInstance(new ClientMinecoloniesAPIImpl()));
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl()));
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+    }
+
+    @SubscribeEvent
+    public static void registerNewRegistries(final NewRegistryEvent event)
+    {
+        MinecoloniesAPIProxy.getInstance().onRegistryNewRegistry(event);
     }
 
     /**
@@ -186,6 +191,17 @@ public class MineColonies
         event.put(ModEntities.SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
     }
 
+    @SubscribeEvent
+    public static void registerRecipeSerializers(final RegisterEvent event)
+    {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+        {
+            CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
+            CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
+            CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
+        }
+    }
+
     /**
      * Called when MC loading is about to finish.
      *
@@ -196,33 +212,6 @@ public class MineColonies
     {
         PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
-    }
-
-    /**
-     * Called when MineCraft reloads a configuration file.
-     *
-     * @param event event
-     */
-    @SubscribeEvent
-    public static void onConfigReload(final ModConfigEvent.Reloading event)
-    {
-        if (event.getConfig().getType() == ModConfig.Type.COMMON)
-        {
-            // ModConfig fires for each of server, client, and common.
-            // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
-            RequestSystemInitializer.reconfigureLogging();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onConfigLoaded(final ModConfigEvent.Loading event)
-    {
-        if (event.getConfig().getType() == ModConfig.Type.COMMON)
-        {
-            // ModConfig fires for each of server, client, and common.
-            // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
-            RequestSystemInitializer.reconfigureLogging();
-        }
     }
 
     /**

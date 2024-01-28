@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.citizen.herders.EntityAIWorkShepherd;
+import com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkShepherd;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

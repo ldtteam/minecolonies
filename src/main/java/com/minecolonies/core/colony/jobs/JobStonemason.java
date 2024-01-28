@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.citizen.stonemason.EntityAIWorkStonemason;
+import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkStonemason;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;

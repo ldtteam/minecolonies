@@ -17,7 +17,7 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.QuarryModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.jobs.*;
-import com.minecolonies.core.entity.ai.basic.AbstractEntityAIBasic;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -34,7 +34,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
-import static com.minecolonies.core.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
+import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
 

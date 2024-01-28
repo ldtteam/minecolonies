@@ -3,7 +3,7 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;

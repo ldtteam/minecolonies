@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.citizen.school.EntityAIWorkPupil;
+import com.minecolonies.core.entity.ai.workers.education.EntityAIWorkPupil;
 import org.jetbrains.annotations.NotNull;
 
 /**

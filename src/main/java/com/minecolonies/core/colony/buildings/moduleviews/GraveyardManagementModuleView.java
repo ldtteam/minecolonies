@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
-import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.client.gui.modules.GraveyardManagementWindow;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;

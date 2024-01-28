@@ -2,7 +2,8 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.client.gui.WindowClipBoard;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.MineColonies;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
@@ -115,7 +117,10 @@ public class ItemClipboard extends AbstractItemMinecolonies
         if (compound.contains(TAG_COLONY))
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
-            if (colonyView != null) MineColonies.proxy.openClipboardWindow(colonyView);
+            if (colonyView != null)
+            {
+                new WindowClipBoard(colonyView).open();
+            }
         }
         else
         {

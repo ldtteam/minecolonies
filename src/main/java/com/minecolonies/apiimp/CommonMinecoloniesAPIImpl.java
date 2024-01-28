@@ -20,7 +20,7 @@ import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
+import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -36,7 +36,7 @@ import com.minecolonies.core.colony.ColonyManager;
 import com.minecolonies.core.colony.buildings.registry.BuildingDataManager;
 import com.minecolonies.core.colony.interactionhandling.registry.InteractionResponseHandlerManager;
 import com.minecolonies.core.colony.jobs.registry.JobDataManager;
-import com.minecolonies.core.entity.ai.registry.MobAIRegistry;
+import com.minecolonies.core.entity.mobs.registry.MobAIRegistry;
 import com.minecolonies.core.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.core.research.GlobalResearchTree;
 import com.minecolonies.core.util.FurnaceRecipes;
@@ -209,6 +209,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         return visitorTypeRegistry;
     }
 
+    @Override
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         event.create(new RegistryBuilder<BuildingEntry>()

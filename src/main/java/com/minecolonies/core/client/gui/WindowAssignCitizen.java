@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
@@ -11,19 +12,19 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.moduleviews.LivingBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.home.AssignUnassignMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.*;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.client.gui.townhall.AbstractWindowTownHall.*;
 
@@ -35,7 +36,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     /**
      * Threshold that defines when the living quarters are too far away.
      */
-    private static final double FAR_DISTANCE_THRESHOLD = 250;
+    private static final double FAR_DISTANCE_THRESHOLD = 300;
 
     /**
      * The view of the current building.
@@ -45,7 +46,12 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     /**
      * List of citizens which can be assigned.
      */
-    private final ScrollingList citizenList;
+    private final ScrollingList unassignedCitizenList;
+
+    /**
+     * List of citizens which are currently assigned.
+     */
+    private final ScrollingList assignedCitizenList;
 
     /**
      * The colony.
@@ -53,9 +59,14 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     private final IColonyView colony;
 
     /**
-     * Contains all the citizens.
+     * Contains all the unassigned citizens.
      */
-    private List<ICitizenDataView> citizens = new ArrayList<>();
+    private List<ICitizenDataView> unassignedCitizens = new ArrayList<>();
+
+    /**
+     * Contains all the already assigned citizens.
+     */
+    private List<ICitizenDataView> assignedCitizens = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
@@ -68,10 +79,14 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
         super(Constants.MOD_ID + ASSIGN_CITIZEN_RESOURCE_SUFFIX);
         this.colony = c;
         this.building = building;
-        citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);
+        unassignedCitizenList = findPaneOfTypeByID(UNASSIGNED_CITIZEN_LIST, ScrollingList.class);
+        assignedCitizenList = findPaneOfTypeByID(ASSIGNED_CITIZEN_LIST, ScrollingList.class);
+
         super.registerButton(BUTTON_CANCEL, this::cancelClicked);
         super.registerButton(BUTTON_MODE, this::modeClicked);
-        super.registerButton(BUTTON_DONE, this::hireClicked);
+
+        super.registerButton(BUTTON_HIRE, this::hireClicked);
+        super.registerButton(BUTTON_FIRE, this::fireClicked);
 
         updateCitizens();
 
@@ -79,34 +94,47 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     }
 
     /**
-     * When assignment was clicked.
+     * When hire was clicked.
      * @param button the clicked button.
      */
     private void hireClicked(@NotNull final Button button)
     {
-        final int row = citizenList.getListElementIndexByPane(button);
-        final ICitizenDataView data = citizens.get(row);
+        final int row = unassignedCitizenList.getListElementIndexByPane(button);
+        final ICitizenDataView data = unassignedCitizens.get(row);
 
-        final boolean isAssign = button.getText().getString().equals(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign").getString());
-        if (isAssign)
+        if (building.getResidents().size() >= building.getMax())
         {
-            if (building.getResidents().size() >= building.getMax())
-            {
-                return;
-            }
-            building.addResident(data.getId());
-            data.setHomeBuilding(building.getPosition());
+            return;
         }
-        else
-        {
-            building.removeResident(data.getId());
-            data.setHomeBuilding(null);
-        }
+        building.addResident(data.getId());
+        data.setHomeBuilding(building.getPosition());
 
-        Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, isAssign, data.getId(), null));
+        Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId(), null));
+
         updateCitizens();
-        citizenList.refreshElementPanes();
+        unassignedCitizenList.refreshElementPanes();
+        assignedCitizenList.refreshElementPanes();
     }
+
+    /**
+     * When fire was clicked.
+     * @param button the clicked button.
+     */
+    private void fireClicked(@NotNull final Button button)
+    {
+        final int row = assignedCitizenList.getListElementIndexByPane(button);
+        final ICitizenDataView data = assignedCitizens.get(row);
+
+        building.removeResident(data.getId());
+        data.setHomeBuilding(null);
+
+        Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, false, data.getId(), null));
+
+        updateCitizens();
+        unassignedCitizenList.refreshElementPanes();
+        assignedCitizenList.refreshElementPanes();
+    }
+
 
     /**
      * Hiring mode switch clicked.
@@ -164,22 +192,28 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
      */
     private void updateCitizens()
     {
-        citizens.clear();
-        citizens.addAll(colony.getCitizens().values());
-
-        //Removes all citizens which already have a job.
-        citizens = colony.getCitizens().values().stream()
-                     .filter(cit -> !(colony.getBuilding(cit.getHomeBuilding()) instanceof AbstractBuildingGuards.View))
-                     .sorted(Comparator.comparing((ICitizenDataView cit) -> (cit.getHomeBuilding() != null && cit.getHomeBuilding().equals(building.getPosition())) ? 0 : 1)
-                       .thenComparing(cit -> cit.getHomeBuilding() == null ? 0 : 1)
+        //Removes citizens that work from home and remove citizens already living here.
+        unassignedCitizens = colony.getCitizens().values().stream()
+                     .filter(cit -> (!Objects.equals(cit.getHomeBuilding(), cit.getWorkBuilding()) || cit.getHomeBuilding() == null) && !building.getPosition().equals(cit.getHomeBuilding()))
+                     .sorted(Comparator.comparing((ICitizenDataView cit) -> cit.getHomeBuilding() == null ? 0 : 1)
                                .thenComparingLong(cit -> {
                                    if (cit.getWorkBuilding() == null)
                                    {
-                                       return 0;
+                                       if (cit.getHomeBuilding() == null)
+                                       {
+                                           return 0;
+                                       }
+                                       return Integer.MAX_VALUE;
                                    }
 
-                                   return BlockPosUtil.getDistance2D(cit.getWorkBuilding(), building.getPosition());
-                               })).collect(Collectors.toList());
+                                   return (int) BlockPosUtil.getDistance(cit.getWorkBuilding(), building.getPosition());
+                               })).toList();
+
+        assignedCitizens.clear();
+        for (final int id : building.getModuleViewByType(LivingBuildingModuleView.class).getAssignedCitizens())
+        {
+            assignedCitizens.add(colony.getCitizen(id));
+        }
     }
 
     @Override
@@ -187,10 +221,11 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     {
         super.onOpened();
         updateCitizens();
-        citizenList.enable();
-        citizenList.show();
+
+        unassignedCitizenList.enable();
+        unassignedCitizenList.show();
         //Creates a dataProvider for the homeless citizenList.
-        citizenList.setDataProvider(new ScrollingList.DataProvider()
+        unassignedCitizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
              * The number of rows of the list.
@@ -199,7 +234,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
             @Override
             public int getElementCount()
             {
-                return citizens.size();
+                return unassignedCitizens.size();
             }
 
             /**
@@ -210,97 +245,148 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                @NotNull final ICitizenDataView citizen = citizens.get(index);
-
-
-                final Button done = rowPane.findPaneOfTypeByID(CITIZEN_DONE, Button.class);
+                @NotNull final ICitizenDataView citizen = unassignedCitizens.get(index);
+                final Button hireButton = rowPane.findPaneOfTypeByID(BUTTON_HIRE, Button.class);
                 final BlockPos home = citizen.getHomeBuilding();
                 final BlockPos work = citizen.getWorkBuilding();
 
-                boolean assign = false;
-                if (home != null && home.equals(building.getPosition()))
-                {
-                    done.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
-                }
-                else
-                {
-                    assign = true;
-                    done.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
-                }
-
                 final Text citizenLabel = rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class);
                 citizenLabel.setText(Component.literal(citizen.getName()));
-                if (assign)
-                {
-                    citizenLabel.setColors(YELLOW);
-                }
-                else
-                {
-                    citizenLabel.setColors(DARKGREEN);
-                }
 
-                String workString = "";
-                double newDistance = 0;
+                MutableComponent workString = Component.empty();
+                int newDistance = 0;
                 if (work != null)
                 {
-                    newDistance = BlockPosUtil.getDistance2D(work, building.getPosition());
-                    workString = " " + Component.translatable("com.minecolonies.coremod.gui.home.new", newDistance).getString();
+                    newDistance = (int) BlockPosUtil.getDistance(work, building.getPosition());
+                    workString = Component.translatable("com.minecolonies.coremod.gui.home.new", newDistance);
                 }
 
-                String homeString = Component.translatable("com.minecolonies.coremod.gui.home.homeless").getString();
+                MutableComponent homeString = Component.translatable("com.minecolonies.coremod.gui.home.homeless");
                 boolean better = false;
-                boolean badCurrentLiving = true;
                 if (home != null)
                 {
                     if (work != null)
                     {
-                        final double oldDistance = BlockPosUtil.getDistance2D(work, home);
-                        homeString = Component.translatable("com.minecolonies.coremod.gui.home.currently", oldDistance).getString();
+                        final int oldDistance = (int) BlockPosUtil.getDistance(work, home);
+                        homeString = Component.translatable("com.minecolonies.coremod.gui.home.currently", oldDistance);
                         better = newDistance < oldDistance;
-                        if (oldDistance < FAR_DISTANCE_THRESHOLD)
+                        if (oldDistance > FAR_DISTANCE_THRESHOLD)
                         {
-                            badCurrentLiving = false;
+                            homeString = homeString.withStyle(ChatFormatting.RED);
                         }
                     }
                     else
                     {
-                        homeString = Component.translatable("com.minecolonies.coremod.gui.home.currently", home.getX(), home.getY(), home.getZ()).getString();
+                        homeString = Component.empty();
                     }
                 }
+
+                if (better)
+                {
+                    workString = workString.withStyle(ChatFormatting.DARK_GREEN);
+                }
+
 
                 final Text newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Text.class);
                 if (citizen.getJobView() != null)
                 {
-                    newLivingLabel.setText(Component.literal(Component.translatable(citizen.getJobView().getEntry().getTranslationKey()).getString() + ":" + workString));
-                    if (better)
-                    {
-                        newLivingLabel.setColors(DARKGREEN);
-                    }
-                }
-
-                final Text currentLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_LIVING, Text.class);
-                if (assign)
-                {
-                    currentLivingLabel.setText(Component.literal(homeString));
-                    if (badCurrentLiving)
-                    {
-                        currentLivingLabel.setColors(RED);
-                    }
+                    newLivingLabel.setText(
+                      Component.empty().append(Component.translatable(citizen.getJobView().getEntry().getTranslationKey())).append(": ").append(workString).append(" ").append(homeString));
+                    newLivingLabel.setTextWrap(true);
                 }
                 else
                 {
-                    currentLivingLabel.setText(Component.translatable("com.minecolonies.coremod.gui.home.liveshere"));
+                    newLivingLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED));
                 }
 
-                if ((colony.isManualHousing() || building.getHiringMode() != HiringMode.DEFAULT)
-                      && !(building.getHiringMode() == HiringMode.AUTO)
-                      && (!assign || building.getResidents().size() < building.getMax()))
+                if (((colony.isManualHousing() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.MANUAL)))
                 {
-                    done.enable();
+                    if (building.getResidents().size() < building.getMax())
+                    {
+                        hireButton.enable();
+                    }
+                    else
+                    {
+                        hireButton.disable();
+                    }
+                    PaneBuilders.tooltipBuilder().hoverPane(hireButton).build().setText(Component.empty());
                 }
                 else
                 {
-                    done.disable();
+                    hireButton.disable();
+                    PaneBuilders.tooltipBuilder().hoverPane(hireButton).build().setText(Component.translatable("com.minecolonies.coremod.gui.home.hire.warning"));
+                }
+            }
+        });
+
+        assignedCitizenList.enable();
+        assignedCitizenList.show();
+        //Creates a dataProvider for the homeless citizenList.
+        assignedCitizenList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return assignedCitizens.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                @NotNull final ICitizenDataView citizen = assignedCitizens.get(index);
+                final Button fireButton = rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class);
+                final BlockPos work = citizen.getWorkBuilding();
+                fireButton.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+
+
+                final Text citizenLabel = rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class);
+                citizenLabel.setText(Component.literal(citizen.getName()));
+
+                MutableComponent workString = Component.empty();
+                int newDistance;
+                if (work != null)
+                {
+                    newDistance = (int) BlockPosUtil.getDistance(work, building.getPosition());
+                    workString = Component.translatable("com.minecolonies.coremod.gui.home.new", newDistance);
+                }
+
+                final Text newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Text.class);
+                newLivingLabel.setTextWrap(true);
+                if (citizen.getJobView() != null)
+                {
+                    if (work != null)
+                    {
+                        final int distance = (int) BlockPosUtil.getDistance(work, building.getPosition());
+                        if (distance > FAR_DISTANCE_THRESHOLD)
+                        {
+                            workString = workString.withStyle(ChatFormatting.RED);
+                        }
+                    }
+                    newLivingLabel.setText(Component.empty().append(Component.translatable(citizen.getJobView().getEntry().getTranslationKey())).append(Component.literal(": ")).append(workString));
+                }
+                else
+                {
+                    newLivingLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED));
+                }
+
+                if (((colony.isManualHousing() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.MANUAL)))
+                {
+                    fireButton.enable();
+                    PaneBuilders.tooltipBuilder().hoverPane(fireButton).build().setText(Component.empty());
+                }
+                else
+                {
+                    fireButton.disable();
+                    PaneBuilders.tooltipBuilder().hoverPane(fireButton).build().setText(Component.translatable("com.minecolonies.coremod.gui.home.hire.warning"));
                 }
             }
         });

@@ -261,7 +261,7 @@
       }
     }
   ],
-  "triggerOrder": "1 || 2",
+  "triggerOrder": "(1 || 2) && 3",
   "triggers": [
     {
       "type": "minecolonies:citizen",
@@ -276,6 +276,9 @@
     {
       "type": "minecolonies:citizen",
       "state": {}
+    },
+    {
+      "type": "minecolonies:unlock"
     }
   ]
 }

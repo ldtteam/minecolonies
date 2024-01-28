@@ -146,8 +146,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
             return;
         }
 
-        @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getPosition());
-        window.open();
+        new WindowHireWorker(building.getColony(), building.getPosition()).open();
     }
 
     /**

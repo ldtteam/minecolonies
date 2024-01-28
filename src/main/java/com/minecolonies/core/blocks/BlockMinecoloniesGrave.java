@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
-import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;

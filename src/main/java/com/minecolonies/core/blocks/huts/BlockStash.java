@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.world.level.block.Block;

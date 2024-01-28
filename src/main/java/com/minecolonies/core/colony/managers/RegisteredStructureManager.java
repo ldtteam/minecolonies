@@ -31,7 +31,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.fields.registry.FieldDataManager;
-import com.minecolonies.core.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewFieldsUpdateMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
@@ -846,7 +846,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    final ColonyViewBuildingViewMessage message = new ColonyViewBuildingViewMessage(building);
+                    final ColonyViewBuildingViewMessage message = new ColonyViewBuildingViewMessage(building, !newSubscribers.isEmpty());
                     players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
                 }
             }

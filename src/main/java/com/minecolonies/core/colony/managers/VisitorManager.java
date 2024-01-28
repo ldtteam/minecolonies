@@ -13,7 +13,7 @@ import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
-import com.minecolonies.core.entity.citizen.VisitorCitizen;
+import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

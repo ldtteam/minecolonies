@@ -2,7 +2,7 @@ package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.tileentities.TileEntityNamedGrave;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;

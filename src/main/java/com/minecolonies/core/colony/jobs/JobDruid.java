@@ -4,7 +4,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.core.entity.ai.citizen.guard.EntityAIDruid;
+import com.minecolonies.core.entity.ai.workers.guard.EntityAIDruid;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;

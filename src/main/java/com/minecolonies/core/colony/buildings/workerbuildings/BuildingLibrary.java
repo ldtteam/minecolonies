@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.ai.util.StudyItem;
+import com.minecolonies.api.entity.ai.workers.util.StudyItem;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;

@@ -11,8 +11,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.miner.EntityAIStructureMiner.*;
-import static com.minecolonies.core.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_PICKAXE;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_PICKAXE;
 
 public class MaleNetherWorkerModel extends CitizenModel<AbstractEntityCitizen>
 {

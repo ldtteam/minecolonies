@@ -12,7 +12,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.herders.EntityAIWorkRabbitHerder.RENDER_META_CARROT;
+import static com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkRabbitHerder.RENDER_META_CARROT;
 
 public class FemaleSwineHerderModel extends CitizenModel<AbstractEntityCitizen>
 {

@@ -70,8 +70,8 @@ public class CombatUtils
     /**
      * Shoots a given arrow at the given target with a hit chance
      *
-     * @param arrow the arrow entity to be shot
-     * @param target the target to be shot at
+     * @param arrow     the arrow entity to be shot
+     * @param target    the target to be shot at
      * @param hitChance the chance the target will be hit
      */
     public static void shootArrow(final AbstractArrow arrow, final LivingEntity target, final float hitChance)

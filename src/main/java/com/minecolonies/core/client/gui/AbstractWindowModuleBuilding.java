@@ -71,8 +71,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void editName()
     {
-        @NotNull final WindowHutNameEntry window = new WindowHutNameEntry(building);
-        window.open();
+        new WindowHutNameEntry(building).open();
     }
 
     /**
@@ -80,8 +79,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void infoClicked()
     {
-        @NotNull final WindowInfo window = new WindowInfo(building);
-        window.open();
+        new WindowInfo(building).open();
     }
 
     /**
@@ -89,8 +87,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void allInventoryClicked()
     {
-        @NotNull final WindowHutAllInventory window = new WindowHutAllInventory(building, this);
-        window.open();
+        new WindowHutAllInventory(building, this).open();
     }
 
     /**
@@ -115,8 +112,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         }
         else
         {
-            @NotNull final WindowBuildBuilding window = new WindowBuildBuilding(building.getColony(), building);
-            window.open();
+            new WindowBuildBuilding(building.getColony(), building).open();
         }
     }
 

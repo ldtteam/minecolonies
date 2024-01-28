@@ -136,8 +136,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
                 blueprint = saveStructure(worldIn, playerIn, new AABB(getBounds(itemStack).getA(), getBounds(itemStack).getB()));
             }
 
-            final WindowSchematicAnalyzer window = new WindowSchematicAnalyzer();
-            window.open();
+            new WindowSchematicAnalyzer().open();
         }
         return InteractionResult.SUCCESS;
     }
