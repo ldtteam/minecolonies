@@ -150,7 +150,6 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void back()
     {
-        this.close();
         this.prev.open();
     }
 

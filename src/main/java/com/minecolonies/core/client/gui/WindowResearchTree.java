@@ -272,7 +272,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         // Cancel the entire WindowResearchTree
         else if (button.getID().equals("cancel"))
         {
-            this.close();
             last.open();
         }
     }
