@@ -7,18 +7,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.requestable.SmeltableOre;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Filter;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.core.filter.LevelRangeFilter;
-import org.jetbrains.annotations.NotNull;
 
 public class RequestSystemInitializer
 {
@@ -37,43 +27,5 @@ public class RequestSystemInitializer
         RequestMappingHandler.registerRequestableTypeMapping(PublicCrafting.class, StandardRequests.PublicCraftingRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(PrivateCrafting.class, StandardRequests.PrivateCraftingRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(RequestTag.class, StandardRequests.ItemTagRequest.class);
-    }
-
-    public static void reconfigureLogging()
-    {
-        LogManager.getLogger(MineColonies.class.getName()).warn("Reconfiguring logging for RS.");
-
-        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        final Configuration config = ctx.getConfiguration();
-        final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));
-        loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL,
-          MineColonies.getConfig().getCommon().rsEnableDebugLogging.get() ? Level.DEBUG : Level.INFO,
-          Filter.Result.NEUTRAL,
-          Filter.Result.DENY));
-
-        ctx.updateLoggers();
-
-        LogManager.getLogger(String.format("%s.requestsystem", Constants.MOD_ID)).warn(String.format("Updated logging config. RS Debug logging enabled: %s",
-          MineColonies.getConfig().getCommon().rsEnableDebugLogging.get()));
-
-        LogManager.getLogger(MineColonies.class.getName()).warn("Reconfigured logging for RS.");
-    }
-
-    private static LoggerConfig getLoggerConfiguration(@NotNull final Configuration configuration, @NotNull final String loggerName)
-    {
-        final LoggerConfig lc = configuration.getLoggerConfig(loggerName);
-        if (lc.getName().equals(loggerName))
-        {
-            return lc;
-        }
-        else
-        {
-            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), lc.isAdditive());
-            nlc.setParent(lc);
-            configuration.addLogger(loggerName, nlc);
-            configuration.getLoggerContext().updateLoggers();
-
-            return nlc;
-        }
     }
 }
