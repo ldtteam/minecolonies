@@ -74,11 +74,11 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         );
         worker.setCanPickUpLoot(true);
 
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_MAX, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE));
-        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
+        itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_MAX, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
     }
 
     /**
@@ -144,118 +144,115 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected void atBuildingActions()
     {
-        for (final List<GuardGear> itemList : itemsNeeded)
+        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevel() - 1))
         {
-            for (final GuardGear item : itemList)
+            if (!(building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired()))
             {
-                if (!(building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired()))
-                {
-                    continue;
-                }
-                if (item.getItemNeeded() == ToolType.SHIELD
-                      && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
-                {
-                    continue;
-                }
+                continue;
+            }
+            if (item.getItemNeeded() == ToolType.SHIELD
+                  && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
+            {
+                continue;
+            }
 
-                int bestSlot = -1;
-                int bestLevel = -1;
-                IItemHandler bestHandler = null;
+            int bestSlot = -1;
+            int bestLevel = -1;
+            IItemHandler bestHandler = null;
 
+            if (item.getType().isArmor())
+            {
+                if (!ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType())))
+                {
+                    bestLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getArmorInSlot(item.getType()), item.getItemNeeded());
+                }
+            }
+            else
+            {
+                if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
+                {
+                    bestLevel = ItemStackUtils.getMiningLevel(worker.getItemBySlot(item.getType()), item.getItemNeeded());
+                }
+            }
+
+
+            final Map<IItemHandler, List<Integer>> items = InventoryUtils.findAllSlotsInProviderWith(building, item);
+            if (items.isEmpty())
+            {
+                // None found, check for equipped
+                if ((item.getType().isArmor() && ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType()))) || (!item.getType().isArmor()
+                                                                                                                                            && ItemStackUtils.isEmpty(worker.getItemBySlot(
+                  item.getType()))))
+                {
+                    // create request
+                    checkForToolOrWeaponAsync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());
+                }
+            }
+            else
+            {
+                // Compare levels
+                for (Map.Entry<IItemHandler, List<Integer>> entry : items.entrySet())
+                {
+                    for (final Integer slot : entry.getValue())
+                    {
+                        final ItemStack stack = entry.getKey().getStackInSlot(slot);
+                        if (ItemStackUtils.isEmpty(stack))
+                        {
+                            continue;
+                        }
+
+                        int currentLevel = ItemStackUtils.getMiningLevel(stack, item.getItemNeeded());
+
+                        if (currentLevel > bestLevel)
+                        {
+                            bestLevel = currentLevel;
+                            bestSlot = slot;
+                            bestHandler = entry.getKey();
+                        }
+                    }
+                }
+            }
+
+            // Transfer if needed
+            if (bestHandler != null)
+            {
                 if (item.getType().isArmor())
                 {
                     if (!ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType())))
                     {
-                        bestLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getArmorInSlot(item.getType()), item.getItemNeeded());
+                        final ItemStack armorStack = worker.getInventoryCitizen().getArmorInSlot(item.getType());
+                        worker.getInventoryCitizen().moveArmorToInventory(item.getType());
+                        final int slot =
+                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == armorStack);
+                        if (slot > -1)
+                        {
+                            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
+                        }
+                    }
+
+                    final ItemStack newStack = bestHandler.getStackInSlot(bestSlot);
+                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
+                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == newStack);
+                    if (slot > -1)
+                    {
+                        worker.getInventoryCitizen().transferArmorToSlot(item.getType(), slot);
                     }
                 }
                 else
                 {
                     if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
-                        bestLevel = ItemStackUtils.getMiningLevel(worker.getItemBySlot(item.getType()), item.getItemNeeded());
-                    }
-                }
-
-
-                final Map<IItemHandler, List<Integer>> items = InventoryUtils.findAllSlotsInProviderWith(building, item);
-                if (items.isEmpty())
-                {
-                    // None found, check for equipped
-                    if ((item.getType().isArmor() && ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType()))) || (!item.getType().isArmor()
-                                                                                                                                                && ItemStackUtils.isEmpty(worker.getItemBySlot(
-                      item.getType()))))
-                    {
-                        // create request
-                        checkForToolorWeaponASync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());
-                    }
-                }
-                else
-                {
-                    // Compare levels
-                    for (Map.Entry<IItemHandler, List<Integer>> entry : items.entrySet())
-                    {
-                        for (final Integer slot : entry.getValue())
-                        {
-                            final ItemStack stack = entry.getKey().getStackInSlot(slot);
-                            if (ItemStackUtils.isEmpty(stack))
-                            {
-                                continue;
-                            }
-
-                            int currentLevel = ItemStackUtils.getMiningLevel(stack, item.getItemNeeded());
-
-                            if (currentLevel > bestLevel)
-                            {
-                                bestLevel = currentLevel;
-                                bestSlot = slot;
-                                bestHandler = entry.getKey();
-                            }
-                        }
-                    }
-                }
-
-                // Transfer if needed
-                if (bestHandler != null)
-                {
-                    if (item.getType().isArmor())
-                    {
-                        if (!ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType())))
-                        {
-                            final ItemStack armorStack = worker.getInventoryCitizen().getArmorInSlot(item.getType());
-                            worker.getInventoryCitizen().moveArmorToInventory(item.getType());
-                            final int slot =
-                              InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == armorStack);
-                            if (slot > -1)
-                            {
-                                InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
-                            }
-                        }
-
-                        final ItemStack newStack = bestHandler.getStackInSlot(bestSlot);
-                        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
-                        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == newStack);
+                        final int slot =
+                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()));
                         if (slot > -1)
                         {
-                            worker.getInventoryCitizen().transferArmorToSlot(item.getType(), slot);
+                            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
                         }
                     }
-                    else
-                    {
-                        if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
-                        {
-                            final int slot =
-                              InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()));
-                            if (slot > -1)
-                            {
-                                InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
-                            }
-                        }
 
-                        // Used for further comparisons, set to the right inventory slot afterwards
-                        worker.setItemSlot(item.getType(), bestHandler.getStackInSlot(bestSlot));
-                        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
-                    }
+                    // Used for further comparisons, set to the right inventory slot afterwards
+                    worker.setItemSlot(item.getType(), bestHandler.getStackInSlot(bestSlot));
+                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
                 }
             }
         }
@@ -276,49 +273,46 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         cleanVisibleSlots();
         final Set<EquipmentSlot> equipment = new HashSet<>();
-        for (final List<GuardGear> itemList : itemsNeeded)
+        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevel() - 1))
         {
-            for (final GuardGear item : itemList)
+            if (equipment.contains(item.getType()))
             {
-                if (equipment.contains(item.getType()))
+                continue;
+            }
+            if (item.getType().isArmor())
+            {
+                if (building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                 {
-                    continue;
-                }
-                if (item.getType().isArmor())
-                {
-                    if (building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                    int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
+                    if (slot <= -1)
                     {
-                        int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
-                        if (slot <= -1)
+                        continue;
+                    }
+
+                    equipment.add(item.getType());
+                    final ItemStack current = worker.getInventoryCitizen().getArmorInSlot(item.getType());
+                    if (!current.isEmpty() && current.getItem() instanceof ArmorItem)
+                    {
+                        final int currentLevel = ItemStackUtils.getMiningLevel(current, item.getItemNeeded());
+                        final int newLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot), item.getItemNeeded());
+                        if (currentLevel > newLevel)
                         {
                             continue;
                         }
-
-                        equipment.add(item.getType());
-                        final ItemStack current = worker.getInventoryCitizen().getArmorInSlot(item.getType());
-                        if (!current.isEmpty() && current.getItem() instanceof ArmorItem)
-                        {
-                            final int currentLevel = ItemStackUtils.getMiningLevel(current, item.getItemNeeded());
-                            final int newLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot), item.getItemNeeded());
-                            if (currentLevel > newLevel)
-                            {
-                                continue;
-                            }
-                        }
-                        worker.getInventoryCitizen().transferArmorToSlot(item.getType(), slot);
                     }
+                    worker.getInventoryCitizen().transferArmorToSlot(item.getType(), slot);
                 }
-                else
+            }
+            else
+            {
+                if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired()
+                      && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                 {
-                    if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired()
-                          && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                    equipment.add(item.getType());
+                    int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
+                    if (slot > -1)
                     {
-                        equipment.add(item.getType());
-                        int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
-                        if (slot > -1)
-                        {
-                            worker.setItemSlot(item.getType(), worker.getInventoryCitizen().getStackInSlot(slot));
-                        }
+                        worker.setItemSlot(item.getType(), worker.getInventoryCitizen().getStackInSlot(slot));
                     }
                 }
             }
