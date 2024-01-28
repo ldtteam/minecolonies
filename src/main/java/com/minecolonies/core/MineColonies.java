@@ -2,6 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -18,6 +19,8 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
@@ -28,10 +31,6 @@ import com.minecolonies.core.loot.SupplyLoot;
 import com.minecolonies.core.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
-import com.minecolonies.core.proxy.ClientProxy;
-import com.minecolonies.core.proxy.CommonProxy;
-import com.minecolonies.core.proxy.IProxy;
-import com.minecolonies.core.proxy.ServerProxy;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.structures.MineColoniesStructures;
@@ -48,12 +47,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,11 +68,6 @@ public class MineColonies
      * The config instance.
      */
     private static Configuration config;
-
-    /**
-     * The proxy.
-     */
-    public static final IProxy proxy = DistExecutor.unsafeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public MineColonies()
     {
@@ -124,22 +117,28 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ServerEvents.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ClientEvents.class));
 
-        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
-
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
 
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(this.getClass());
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ClientRegistryHandler.class);
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ModCreativeTabs.class);
 
         InteractionValidatorInitializer.init();
-        proxy.setupApi();
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MinecoloniesAPIProxy.getInstance().setApiInstance(new ClientMinecoloniesAPIImpl()));
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl()));
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+    }
+
+    @SubscribeEvent
+    public static void registerNewRegistries(final NewRegistryEvent event)
+    {
+        MinecoloniesAPIProxy.getInstance().onRegistryNewRegistry(event);
     }
 
     /**

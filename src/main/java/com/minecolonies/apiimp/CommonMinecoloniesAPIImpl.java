@@ -200,6 +200,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         return researchCostRegistry;
     }
 
+    @Override
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         event.create(new RegistryBuilder<BuildingEntry>()
