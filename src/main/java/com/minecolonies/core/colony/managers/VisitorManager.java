@@ -13,6 +13,8 @@ import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import com.minecolonies.core.entity.citizen.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.core.BlockPos;
@@ -28,6 +30,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION_TYPE;
 
 /**
  * Manages all visiting entities to the colony
@@ -234,6 +237,14 @@ public class VisitorManager implements IVisitorManager
         return createAndRegisterVisitor(ModVisitorTypes.visitor.get());
     }
 
+    public IVisitorData createAndRegisterExpeditionary(@NotNull final ColonyExpeditionType expeditionType)
+    {
+        final IVisitorData expeditionary = createAndRegisterVisitor(ModVisitorTypes.expeditionary.get());
+        expeditionary.setExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE, Optional.of(expeditionType));
+
+        return expeditionary;
+    }
+
     /**
      * Create visitor data for the given visitor type.
      *
@@ -279,6 +290,15 @@ public class VisitorManager implements IVisitorManager
             for (final IVisitorData data : visitorMap.values())
             {
                 data.updateEntityIfNecessary();
+            }
+
+            if (visitorMap.values().stream().noneMatch(f -> f.getVisitorType().equals(ModVisitorTypes.expeditionary.get())))
+            {
+                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
+                if (expeditionType != null)
+                {
+                    createAndRegisterExpeditionary(expeditionType);
+                }
             }
         }
     }

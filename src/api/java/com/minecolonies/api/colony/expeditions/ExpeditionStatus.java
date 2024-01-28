@@ -8,13 +8,9 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 public enum ExpeditionStatus
 {
     /**
-     * Initial expedition state, expedition exists but has not been started yet.
+     * Default state, the moment this expedition is registered as an event to the colony they will embark.
      */
-    CREATED(EventStatus.WAITING),
-    /**
-     * The expedition is ready and is about to leave.
-     */
-    READY(EventStatus.STARTING),
+    CREATED(EventStatus.STARTING),
     /**
      * The expedition embarked on their journey and is currently in progress.
      */

@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraftforge.eventbus.api.Event.Result;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation for the colony expedition manager. From here all outgoing expeditions to external places are managed.
@@ -32,7 +33,7 @@ public class ExpeditionManager implements IExpeditionManager
     /**
      * The currently registered expeditions.
      */
-    private final HashMap<Class<?>, EvictingQueue<IExpedition>> expeditions;
+    private final Map<Class<?>, EvictingQueue<IExpedition>> expeditions = new HashMap<>();
 
     /**
      * Whether a ruined portal has been discovered by an expedition.
@@ -50,7 +51,6 @@ public class ExpeditionManager implements IExpeditionManager
     public ExpeditionManager(final IColony colony)
     {
         this.colony = colony;
-        this.expeditions = new HashMap<>();
     }
 
     @Override
@@ -85,20 +85,6 @@ public class ExpeditionManager implements IExpeditionManager
         }
         return false;
     }
-
-
-    //@Override
-    //public IExpedition createExpedition(final Level level, final Consumer<Expedition.Builder> expeditionBuilder)
-    //{
-    //    //final LootContextParamSet lootContextParams = new LootContextParamSet.Builder().build();
-    //    //
-    //    //final Builder lootContextBuilder = new Builder((ServerLevel) colony.getWorld());
-    //    //lootContextBuilder.withLuck(1);
-    //    //final LootContext lootContext = lootContextBuilder.create(lootContextParams);
-    //    //
-    //    //colony.getWorld().getServer().getLootTables().get(new ResourceLocation("")).getRandomItems(lootContext);
-    //    return null;
-    //}
 
     /**
      * This event is fired by {@link ExpeditionManager#canGoToDimension(ResourceKey)}.

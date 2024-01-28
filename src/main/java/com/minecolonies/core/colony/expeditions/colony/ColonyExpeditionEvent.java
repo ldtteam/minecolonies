@@ -27,6 +27,7 @@ import java.util.Deque;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
 
 public class ColonyExpeditionEvent extends AbstractExpeditionEvent
@@ -39,20 +40,13 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     /**
      * NBT tags.
      */
-    private static final String TAG_EXPEDITION_TYPE  = "expeditionType";
-    private static final String TAG_DAYS_IN_PROGRESS = "daysInProgress";
-    private static final String TAG_REMAINING_ITEMS  = "remainingItems";
+    private static final String TAG_EXPEDITION_TYPE = "expeditionType";
+    private static final String TAG_REMAINING_ITEMS = "remainingItems";
 
     /**
      * The size of the expedition inventory.
      */
     private static final int EXPEDITION_INVENTORY_SIZE = 27;
-
-    /**
-     * The maximum amount of days an expedition can take.
-     * This is actually 3 days, but we take into consideration the potential partial first day of travelling.
-     */
-    private static final int MAX_EXPEDITION_DAYS_LENGTH = 4;
 
     /**
      * The inventory for the expedition.
@@ -70,15 +64,25 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     private ColonyExpeditionType expeditionType;
 
     /**
-     * The amount of days that the expedition is currently in progress.
-     */
-    private int daysInProgress = 0;
-
-    /**
      * Contains a set of items that still have yet to be found.
      */
     @Nullable
     private Deque<ItemStack> remainingItems;
+
+    /**
+     * The minimum time that the expedition is able to end at.
+     */
+    private long endTime = -1;
+
+    /**
+     * Whether the timeout has passed.
+     */
+    private boolean isMinimumTimeElapsed = false;
+
+    /**
+     *
+     */
+    private boolean isRemainingItemsEmpty = false;
 
     /**
      * Create a new colony expedition event.
@@ -128,12 +132,53 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     @Override
     public void onUpdate()
     {
+        // Skip the update entirely if we're not embarked just yet
         if (!getExpedition().getStatus().equals(ExpeditionStatus.EMBARKED) || remainingItems == null)
         {
             return;
         }
 
+        // We have to continuously check if the minimum end time of the expedition has already passed
+        if (!isMinimumTimeElapsed && endTime < getColony().getWorld().getGameTime())
+        {
+            isMinimumTimeElapsed = true;
+        }
+
+        // If the minimum time has passed and the loot table is empty, we can finish the expedition
+        if (isMinimumTimeElapsed && isRemainingItemsEmpty)
+        {
+            if (getExpedition().getActiveMembers().isEmpty())
+            {
+                getExpedition().setStatus(ExpeditionStatus.KILLED);
+                return;
+            }
+
+            final int chance = random.nextInt(100);
+            if (chance <= 2)
+            {
+                getExpedition().setStatus(ExpeditionStatus.LOST);
+            }
+            else
+            {
+                getExpedition().setStatus(ExpeditionStatus.RETURNED);
+            }
+            return;
+        }
+
+        // If the deque is empty, we can set the flag for loot table empty to be done.
+        if (remainingItems.isEmpty())
+        {
+            isRemainingItemsEmpty = true;
+            return;
+        }
+
+        // Process the next item in the loot table deque.
         final ItemStack nextItem = remainingItems.getFirst();
+        if (nextItem.equals(ItemStack.EMPTY))
+        {
+            return;
+        }
+
         if (nextItem.getItem() instanceof ItemAdventureToken)
         {
             if (nextItem.hasTag())
@@ -153,6 +198,8 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         final Level world = getColony().getWorld();
         if (!world.isClientSide)
         {
+            endTime = world.getGameTime() + TICKS_HOUR;
+
             getExpedition().getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
 
             final LootParams lootParams = new Builder((ServerLevel) world)
@@ -173,32 +220,10 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     }
 
     @Override
-    public void onNightFall()
-    {
-        if (getExpedition().getStatus().equals(ExpeditionStatus.EMBARKED))
-        {
-            daysInProgress++;
-            if (daysInProgress >= MAX_EXPEDITION_DAYS_LENGTH)
-            {
-                final int chance = random.nextInt(100);
-                if (chance <= 2)
-                {
-                    getExpedition().setStatus(ExpeditionStatus.LOST);
-                }
-                else
-                {
-                    getExpedition().setStatus(ExpeditionStatus.RETURNED);
-                }
-            }
-        }
-    }
-
-    @Override
     public CompoundTag serializeNBT()
     {
         final CompoundTag compound = new CompoundTag();
         compound.putString(TAG_EXPEDITION_TYPE, expeditionType.getId().toString());
-        compound.putInt(TAG_DAYS_IN_PROGRESS, daysInProgress);
         compound.put(TAG_INVENTORY, inventory.serializeNBT());
 
         if (remainingItems != null)
@@ -214,7 +239,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     public void deserializeNBT(final CompoundTag compoundTag)
     {
         expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(new ResourceLocation(compoundTag.getString(TAG_EXPEDITION_TYPE)));
-        daysInProgress = compoundTag.getInt(TAG_DAYS_IN_PROGRESS);
         inventory.deserializeNBT(compoundTag.getCompound(TAG_INVENTORY));
 
         if (compoundTag.contains(TAG_REMAINING_ITEMS))

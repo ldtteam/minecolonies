@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.expeditions;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +50,7 @@ public final class ExpeditionVisitorMember implements IExpeditionMember
      *
      * @param visitorData the visitor to create the expedition member for.
      */
-    public ExpeditionVisitorMember(final IVisitorData visitorData)
+    public ExpeditionVisitorMember(final IVisitorViewData visitorData)
     {
         this.id = visitorData.getId();
         this.name = visitorData.getName();
