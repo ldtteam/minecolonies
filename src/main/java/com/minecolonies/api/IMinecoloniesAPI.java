@@ -27,6 +27,7 @@ import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
 
 public interface IMinecoloniesAPI
 {
@@ -95,4 +96,6 @@ public interface IMinecoloniesAPI
     IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry();
 
     IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry();
+
+    void onRegistryNewRegistry(NewRegistryEvent event);
 }
