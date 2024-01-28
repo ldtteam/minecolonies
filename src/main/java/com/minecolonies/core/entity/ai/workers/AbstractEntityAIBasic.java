@@ -910,25 +910,39 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Ensures that we have a appropriate tool available. ASync call on the tool.
      *
      * @param toolType     Tool type that is requested
-     * @param minimalLevel min. level of the tool
-     * @param maximalLevel min. level of the tool
+     * @param minLevel min. level of the tool
+     * @param maxLevel min. level of the tool
      */
-    protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel, final int maximalLevel)
+    protected void checkForToolOrWeaponAsync(@NotNull final IToolType toolType, final int minLevel, final int maxLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
           building.getOpenRequestsOfTypeFiltered(
             worker.getCitizenData(),
             TypeToken.of(Tool.class),
-            r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+            r -> r.getRequest().getToolClass().equals(toolType));
+
         final ImmutableList<IRequest<? extends Tool>> completedToolRequests =
           building.getCompletedRequestsOfTypeFiltered(
             worker.getCitizenData(),
             TypeToken.of(Tool.class),
-            r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+            r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minLevel);
 
-        if (openToolRequests.isEmpty() && completedToolRequests.isEmpty() && !hasOpenToolRequest(toolType))
+        final List<IRequest<? extends Tool>> actualOpen = new ArrayList<>();
+        for (final IRequest<? extends Tool> req : openToolRequests)
         {
-            final Tool request = new Tool(toolType, minimalLevel, maximalLevel);
+            if (req.getRequest().getMinLevel() < minLevel || req.getRequest().getMaxLevel() < maxLevel)
+            {
+                worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(req.getId(), RequestState.CANCELLED);
+            }
+            else
+            {
+                actualOpen.add(req);
+            }
+        }
+
+        if (actualOpen.isEmpty() && completedToolRequests.isEmpty())
+        {
+            final Tool request = new Tool(toolType, minLevel, maxLevel);
             worker.getCitizenData().createRequestAsync(request);
         }
     }

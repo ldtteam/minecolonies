@@ -955,7 +955,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     if (ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                     {
                         // create request
-                        checkForToolorWeaponASync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());
+                        checkForToolOrWeaponAsync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());
                     }
                 }
                 else
