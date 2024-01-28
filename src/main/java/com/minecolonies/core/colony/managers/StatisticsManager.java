@@ -10,6 +10,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,13 +24,18 @@ public class StatisticsManager implements IStatisticsManager
     /**
      * NBT tags.
      */
-    private static final String TAG_STAT_MANAGER    = "stat_manager";
-    private static final String TAG_STAT            = "stat";
+    private static final String TAG_STAT_MANAGER = "stat_manager";
+    private static final String TAG_STAT         = "stat";
 
     /**
      * The current stats of the colony.
      */
     private final Map<String, Int2IntLinkedOpenHashMap> stats = new HashMap<>();
+
+    /**
+     * The modified and not yet sent stats
+     */
+    private Set<String> dirtyStats = new HashSet<>();
 
     @Override
     public void increment(final @NotNull String id, final int day)
@@ -42,6 +48,7 @@ public class StatisticsManager implements IStatisticsManager
     {
         final Int2IntLinkedOpenHashMap innerMap = stats.computeIfAbsent(id, k -> new Int2IntLinkedOpenHashMap());
         innerMap.addTo(day, qty);
+        dirtyStats.add(id);
     }
 
     @Override
@@ -75,33 +82,60 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
-    public void serialize(@NotNull final FriendlyByteBuf buf)
+    public void serialize(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        buf.writeVarInt(stats.size());
-        for (final Map.Entry<String, Int2IntLinkedOpenHashMap> dataEntry : stats.entrySet())
-        {
-            buf.writeUtf(dataEntry.getKey());
-            buf.writeVarInt(dataEntry.getValue().size());
+        buf.writeBoolean(fullSync);
+        buf.writeVarInt(fullSync ? stats.size() : dirtyStats.size());
 
-            for (final Int2IntMap.Entry valueEntry : dataEntry.getValue().int2IntEntrySet())
+        if (fullSync)
+        {
+            for (final Map.Entry<String, Int2IntLinkedOpenHashMap> dataEntry : stats.entrySet())
             {
-                buf.writeVarInt(valueEntry.getIntKey());
-                buf.writeVarInt(valueEntry.getIntValue());
+                buf.writeUtf(dataEntry.getKey());
+                buf.writeVarInt(dataEntry.getValue().size());
+
+                for (final Int2IntMap.Entry valueEntry : dataEntry.getValue().int2IntEntrySet())
+                {
+                    buf.writeVarInt(valueEntry.getIntKey());
+                    buf.writeVarInt(valueEntry.getIntValue());
+                }
             }
+        }
+        else
+        {
+            for (final String id : dirtyStats)
+            {
+                var dataEntry = stats.get(id);
+
+                buf.writeUtf(id);
+                buf.writeVarInt(1);
+                buf.writeVarInt(dataEntry.lastIntKey());
+                buf.writeVarInt(dataEntry.get(dataEntry.lastIntKey()));
+            }
+        }
+
+        if (!dirtyStats.isEmpty())
+        {
+            dirtyStats = new HashSet<>();
         }
     }
 
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
-        stats.clear();
+        final boolean fullSync = buf.readBoolean();
+        if (fullSync)
+        {
+            stats.clear();
+        }
+
         final int statSize = buf.readVarInt();
         for (int i = 0; i < statSize; i++)
         {
             final String id = buf.readUtf();
             final int statEntrySize = buf.readVarInt();
 
-            final Int2IntLinkedOpenHashMap statValues = new Int2IntLinkedOpenHashMap(statEntrySize);
+            final Int2IntLinkedOpenHashMap statValues = (fullSync || !stats.containsKey(id)) ? new Int2IntLinkedOpenHashMap(statEntrySize) : stats.get(id);
             for (int j = 0; j < statEntrySize; j++)
             {
                 statValues.put(buf.readVarInt(), buf.readVarInt());

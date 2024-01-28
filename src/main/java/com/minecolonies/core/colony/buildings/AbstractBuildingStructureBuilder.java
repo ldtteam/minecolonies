@@ -13,7 +13,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.core.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -252,9 +252,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        super.serializeToView(buf);
+        super.serializeToView(buf, fullSync);
 
         final WorkerBuildingModule module = getFirstModuleOccurance(WorkerBuildingModule.class);
         buf.writeUtf(module.getFirstCitizen() != null ? module.getFirstCitizen().getName() : "");

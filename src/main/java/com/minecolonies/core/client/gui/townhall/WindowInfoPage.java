@@ -100,6 +100,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 {
                     IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
                     nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(Component.literal(" " + buildEvent.getLevel())).create());
+                    PaneBuilders.tooltipBuilder().append(nameLabel.getText()).hoverPane(nameLabel).build();
                 }
                 rowPane.findPaneOfTypeByID(POS_LABEL, Text.class)
                   .setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
@@ -209,11 +210,16 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (index == 0)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).setVisible(numElements != 1);
-                    rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).show();
+                    rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
                 }
                 else if (index == numElements - 1)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).show();
+                    rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).show();
                 }
 
                 //Searches citizen of id x
@@ -228,7 +234,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
                 Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class);
                 PaneBuilders.tooltipBuilder().append(workOrder.getDisplayName()).hoverPane(workOrderTextPanel).build();
-                workOrderTextPanel.setText(workOrder.getDisplayName());
+                workOrderTextPanel.setText(Component.literal(workOrder.getDisplayName().getString().replace("\n", ": ")));
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(Component.literal(claimingCitizen));
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Component.literal(Integer.toString(workOrder.getId())));
             }

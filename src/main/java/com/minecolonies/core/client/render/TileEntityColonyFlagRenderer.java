@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.render;
 
 import com.ldtteam.structurize.blocks.ModBlocks;
-import com.minecolonies.api.tileentities.TileEntityColonyFlag;
+import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import com.minecolonies.core.blocks.decorative.BlockColonyFlagBanner;
 import com.minecolonies.core.blocks.decorative.BlockColonyFlagWallBanner;
 import com.mojang.blaze3d.vertex.PoseStack;

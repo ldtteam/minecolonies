@@ -154,6 +154,8 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getAllBrickStairBlocks().toArray(new Block[0]))
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICKS);
 
+        tag(ModTags.dangerousBlocks);
+
         tag(ModTags.mangroveTree)
                 .add(Blocks.MANGROVE_LOG)
                 .add(Blocks.MANGROVE_ROOTS);

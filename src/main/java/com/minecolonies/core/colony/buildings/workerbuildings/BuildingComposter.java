@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.core.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
 
 public class BuildingComposter extends AbstractBuilding
 {
@@ -134,11 +134,5 @@ public class BuildingComposter extends AbstractBuilding
         }
         compound.put(TAG_BARRELS, compostBinTagList);
         return compound;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
-    {
-        super.serializeToView(buf);
     }
 }

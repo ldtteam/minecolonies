@@ -18,7 +18,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
-import com.minecolonies.core.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;

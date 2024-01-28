@@ -424,7 +424,7 @@ public final class ColonyView implements IColonyView
         final CompoundTag graveTag = new CompoundTag();
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
-        colony.getStatisticsManager().serialize(buf);
+        colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
         buf.writeNbt(colony.getQuestManager().serializeNBT());
         buf.writeInt(colony.getDay());
     }

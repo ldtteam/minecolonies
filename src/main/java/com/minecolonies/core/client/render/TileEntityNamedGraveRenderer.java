@@ -2,7 +2,7 @@ package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
-import com.minecolonies.api.tileentities.TileEntityNamedGrave;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;

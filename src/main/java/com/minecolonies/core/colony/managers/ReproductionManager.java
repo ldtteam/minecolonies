@@ -9,10 +9,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IReproductionManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.core.util.AdvancementUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +24,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.StatisticsConstants.BIRTH;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NEW_CHILD_BORN;
 import static com.minecolonies.core.colony.CitizenData.SUFFIXES;
 
 /**
@@ -102,6 +105,16 @@ public class ReproductionManager implements IReproductionManager
             final LivingBuildingModule module = newHome.getFirstModuleOccurance(LivingBuildingModule.class);
             final List<ICitizenData> assignedCitizens = module.getAssignedCitizen();
             assignedCitizens.removeIf(ICitizen::isChild);
+
+            boolean isOnlyChildInColony = true;
+            for (final ICitizenData data : colony.getCitizenManager().getCitizens())
+            {
+                if (data.isChild())
+                {
+                    isOnlyChildInColony = false;
+                    break;
+                }
+            }
 
             final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
             ICitizenData firstParent;
@@ -195,6 +208,10 @@ public class ReproductionManager implements IReproductionManager
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
 
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
+            if (isOnlyChildInColony)
+            {
+                MessageUtils.format(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()).sendTo(colony).forManagers();
+            }
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));
             colony.getStatisticsManager().increment(BIRTH, colony.getDay());

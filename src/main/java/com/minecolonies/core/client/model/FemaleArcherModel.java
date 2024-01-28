@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.citizen.guard.EntityAIRanger.RENDER_META_ARROW;
+import static com.minecolonies.core.entity.ai.workers.guard.EntityAIRanger.RENDER_META_ARROW;
 
 public class FemaleArcherModel extends CitizenModel<AbstractEntityCitizen>
 {

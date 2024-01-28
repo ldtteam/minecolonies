@@ -21,7 +21,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.core.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
@@ -268,9 +268,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        super.serializeToView(buf);
+        super.serializeToView(buf, fullSync);
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)
@@ -305,7 +305,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Nullable
     public Player getPlayerToFollowOrRally()
     {
-        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
+        if (rallyLocation != null && rallyLocation instanceof EntityLocation)
+        {
+            return ((EntityLocation) rallyLocation).getPlayerEntity();
+        }
+        else if (getTask().equals(GuardTaskSetting.FOLLOW))
+        {
+            return getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
+        }
+
+        return null;
     }
 
     /**

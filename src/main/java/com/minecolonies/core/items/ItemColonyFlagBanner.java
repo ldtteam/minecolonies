@@ -1,7 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.tileentities.TileEntityColonyFlag;
+import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPatterns;

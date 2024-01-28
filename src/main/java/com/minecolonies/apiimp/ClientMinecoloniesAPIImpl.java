@@ -2,6 +2,7 @@ package com.minecolonies.apiimp;
 
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.core.client.render.modeltype.registry.ModelTypeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
 
 public class ClientMinecoloniesAPIImpl extends CommonMinecoloniesAPIImpl
 {
@@ -11,5 +12,11 @@ public class ClientMinecoloniesAPIImpl extends CommonMinecoloniesAPIImpl
     public IModelTypeRegistry getModelTypeRegistry()
     {
         return modelTypeRegistry;
+    }
+
+    @Override
+    public void onRegistryNewRegistry(final NewRegistryEvent event)
+    {
+        super.onRegistryNewRegistry(event);
     }
 }

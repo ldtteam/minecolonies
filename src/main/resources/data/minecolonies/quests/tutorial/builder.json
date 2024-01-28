@@ -18,9 +18,12 @@
     {
       "type": "minecolonies:citizen",
       "state": { }
+    },
+    {
+      "type": "minecolonies:unlock"
     }
   ],
-  "triggerOrder": "1 || 2",
+  "triggerOrder": "(1 || 2) && 3",
   "objectives": [
     {
       "type": "minecolonies:dialogue",

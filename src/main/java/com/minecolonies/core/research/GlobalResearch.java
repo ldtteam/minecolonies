@@ -19,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -304,7 +306,7 @@ public class GlobalResearch implements IGlobalResearch
         this.autostart = false;
         this.instant = false;
         this.immutable = immutable;
-        if (MineColonies.proxy.isClient())
+        if (FMLEnvironment.dist.isClient())
         {
             this.textureIcon = validateIconTextures(iconTexture);
         }
@@ -601,7 +603,7 @@ public class GlobalResearch implements IGlobalResearch
         if(iconString.contains("."))
         {
             final ResourceLocation unsafeIconTexture = new ResourceLocation(iconString);
-            if (checkIcons && MineColonies.proxy.isClient())
+            if (checkIcons && FMLEnvironment.dist.isClient())
             {
                 this.textureIcon = validateIconTextures(unsafeIconTexture);
             }

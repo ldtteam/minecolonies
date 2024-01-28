@@ -119,9 +119,9 @@ public class BuildingBeekeeper extends AbstractBuilding
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
-        super.serializeToView(buf);
+        super.serializeToView(buf, fullSync);
 
         buf.writeVarInt(hives.size());
         for (final BlockPos hive : hives)

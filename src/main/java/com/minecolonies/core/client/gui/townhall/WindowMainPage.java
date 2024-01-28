@@ -363,8 +363,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void renameClicked()
     {
-        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(building.getColony());
-        window.open();
+        new WindowTownHallNameEntry(building.getColony()).open();
     }
 
     /**
@@ -372,8 +371,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mercenaryClicked()
     {
-        @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
-        window.open();
+        new WindowTownHallMercenary(building.getColony()).open();
     }
 
     /**
@@ -381,8 +379,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mapButtonClicked()
     {
-        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
-        window.open();
+        new WindowColonyMap(building).open();
     }
 
     @Override

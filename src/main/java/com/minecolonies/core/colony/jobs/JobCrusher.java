@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.core.entity.ai.citizen.crusher.EntityAIWorkCrusher;
+import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkCrusher;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 

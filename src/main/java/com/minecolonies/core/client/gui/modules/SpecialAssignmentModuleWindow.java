@@ -79,8 +79,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
             return;
         }
 
-        @NotNull final WindowHireWorker window = new WindowHireWorker(buildingView.getColony(), buildingView.getPosition());
-        window.open();
+        new WindowHireWorker(buildingView.getColony(), buildingView.getPosition()).open();
     }
 
     @Override

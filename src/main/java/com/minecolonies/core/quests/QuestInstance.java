@@ -39,7 +39,7 @@ public class QuestInstance implements IQuestInstance
     private int questGiver = Integer.MIN_VALUE;
 
     /**
-     * Quest giver.
+     * Quest participants.
      */
     private final List<Integer> questParticipants = new ArrayList<>();
 
@@ -331,6 +331,26 @@ public class QuestInstance implements IQuestInstance
     public List<Integer> getParticipants()
     {
         return questParticipants;
+    }
+
+    @Override
+    public int getQuestTarget()
+    {
+        final IQuestObjectiveTemplate objective = QuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(getObjectiveIndex());
+        if (objective == null)
+        {
+            return getQuestGiverId();
+        }
+        final int target = objective.getTarget();
+        if (target == 0)
+        {
+            return getQuestGiverId();
+        }
+        if (target <= questParticipants.size())
+        {
+            return questParticipants.get(target - 1);
+        }
+        return getQuestGiverId();
     }
 
     @Override

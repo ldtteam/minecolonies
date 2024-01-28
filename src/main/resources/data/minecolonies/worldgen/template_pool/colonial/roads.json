@@ -33,7 +33,7 @@
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/straighta1",
-        "processors": "minecolonies:colonial/decoration",
+        "processors": "minecolonies:colonial/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
@@ -42,7 +42,7 @@
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/straightb1",
-        "processors": "minecolonies:colonial/decoration",
+        "processors": "minecolonies:colonial/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
@@ -51,7 +51,7 @@
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/straightc1",
-        "processors": "minecolonies:colonial/decoration",
+        "processors": "minecolonies:colonial/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }

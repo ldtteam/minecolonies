@@ -44,11 +44,21 @@ public class ColonyViewBuildingViewMessage implements IMessage
      */
     public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
     {
+        this(building, true);
+    }
+
+    /**
+     * Creates a message to handle colony views.
+     *
+     * @param building AbstractBuilding to add or update a view.
+     */
+    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building, final boolean fullSync)
+    {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.buildingData = new FriendlyByteBuf(Unpooled.buffer());
-        building.serializeToView(this.buildingData);
+        building.serializeToView(this.buildingData, fullSync);
         this.dimension = building.getColony().getDimension();
     }
 

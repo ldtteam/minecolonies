@@ -2,9 +2,9 @@ package com.minecolonies.core.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
@@ -165,7 +165,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public PathResult<AbstractPathJob> moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType, final boolean prioDoors)
+    public PathResult<AbstractPathJob> moveToRandomPos(
+      final int range,
+      final double speedFactor,
+      final net.minecraft.util.Tuple<BlockPos, BlockPos> corners,
+      final RestrictionType restrictionType)
     {
         if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {
@@ -185,7 +189,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           corners.getB(),
           restrictionType), null, speedFactor, true);
 
-        result.getJob().getPathingOptions().withToggleCost(prioDoors ? 5 : 1).withJumpCost(1).withDropCost(1);
+        result.getJob().getPathingOptions().withJumpCost(1).withDropCost(1);
         return result;
     }
 
