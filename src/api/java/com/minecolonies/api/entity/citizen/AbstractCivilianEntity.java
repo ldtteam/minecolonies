@@ -141,10 +141,20 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
 
     /**
      * Get the sound manager.
+     *
      * @return the sound manager.
      */
     public SoundManager getSoundManager()
     {
         return soundManager;
+    }
+
+    @Override
+    public String toString()
+    {
+        final ICivilianData data = getCivilianData();
+        final String id = data == null ? "none" : "" + data.getId();
+        final String colony = data == null ? "none" : "" + data.getColony().getName();
+        return "Enity: " + getDisplayName().getString() + " Type: [" + getClass().getSimpleName() + "] at pos: " + blockPosition() + " civilian id: " + id + " colony: " + colony;
     }
 }

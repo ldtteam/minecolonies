@@ -4,12 +4,13 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.ai.IStateAI;
+import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -45,7 +46,7 @@ public class RaiderWalkAI implements IStateAI
     /**
      * Random path result.
      */
-    private PathResult randomPathResult;
+    private PathResult<? extends IPathJob> randomPathResult;
 
     /**
      * If we are currently trying to move to a random block.
@@ -155,7 +156,8 @@ public class RaiderWalkAI implements IStateAI
                   && building.getBuildingLevel() > 0
                   && !building.getCorners().getA().equals(building.getCorners().getB()))
             {
-                randomPathResult = raider.getNavigation().moveToRandomPos(10, 0.9, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, true);
+                randomPathResult = raider.getNavigation().moveToRandomPos(10, 0.9, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                randomPathResult.getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
             }
             else
             {

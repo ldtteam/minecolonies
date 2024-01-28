@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.ldtteam.domumornamentum.block.AbstractBlockStairs;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -82,17 +81,17 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Max range used to calculate the number of nodes we visit (square of maxrange).
      */
-    protected final int maxRange;
+    protected int maxRange;
 
     /**
      * Queue of all open nodes.
      */
-    private final Queue<MNode> nodesOpen = new PriorityQueue<>(500);
+    private Queue<MNode> nodesOpen = new PriorityQueue<>(500);
 
     /**
      * Queue of all the visited nodes.
      */
-    private final Map<Integer, MNode> nodesVisited = new HashMap<>();
+    private Map<Integer, MNode> nodesVisited = new HashMap<>();
 
     //  Debug Rendering
     protected     boolean    debugDrawEnabled     = false;
@@ -553,7 +552,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else if (pathingOptions.dropCost != 1)
             {
-                cost *= pathingOptions.dropCost * Math.abs(dPos.getY());
+                cost *= pathingOptions.dropCost * Math.abs(dPos.getY() * dPos.getY());
             }
         }
 
@@ -577,9 +576,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             cost *= pathingOptions.railsExitCost;
         }
 
-        if (state.getBlock() instanceof VineBlock)
+        if (state.is(BlockTags.CLIMBABLE) && !(state.getBlock() instanceof LadderBlock))
         {
-            cost *= pathingOptions.vineCost;
+            cost *= pathingOptions.nonLadderClimbableCost;
         }
 
         if (isSwimming)
@@ -1218,7 +1217,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return handleInLiquid(pos, below, isSwimming);
         }
 
-        if (isLadder(below.getBlock(), pos.below()))
+        if (isLadder(below, pos.below()))
         {
             return pos.getY();
         }
@@ -1485,7 +1484,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else
             {
-                if (isLadder(block.getBlock(), pos))
+                if (isLadder(block, pos))
                 {
                     return true;
                 }
@@ -1513,7 +1512,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return !head
                      || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock)
-                     || isLadder(state.getBlock(), pos);
+                     || isLadder(state, pos);
         }
         return isPassable(state, pos, parent, head);
     }
@@ -1562,18 +1561,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Is the block a ladder.
      *
-     * @param block block to check.
-     * @param pos   location of the block.
+     * @param blockState block to check.
+     * @param pos        location of the block.
      * @return true if the block is a ladder.
      */
-    protected boolean isLadder(@NotNull final Block block, final BlockPos pos)
+    protected boolean isLadder(@NotNull final BlockState blockState, final BlockPos pos)
     {
-        return block.isLadder(this.cachedBlockLookup.getBlockState(pos), world, pos, entity.get()) && (block != Blocks.VINE || pathingOptions.canClimbVines());
+        return blockState.isLadder(world, pos, entity.get()) && (blockState.getBlock() instanceof LadderBlock || pathingOptions.canClimbNonLadders());
     }
 
     protected boolean isLadder(final BlockPos pos)
     {
-        return isLadder(cachedBlockLookup.getBlockState(pos).getBlock(), pos);
+        return isLadder(cachedBlockLookup.getBlockState(pos), pos);
     }
 
     /**

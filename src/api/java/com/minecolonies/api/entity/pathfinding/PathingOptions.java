@@ -5,40 +5,42 @@ package com.minecolonies.api.entity.pathfinding;
  */
 public class PathingOptions
 {
-    /**
-     * Additional cost of jumping and dropping - base 1.
-     */
-    public double jumpCost = 1.1D;
+    // x2: Weak dislike, x3: clear dislike, x4 strong dislike x5 very strong dislike
 
     /**
-     * Additional cost of jumping and dropping - base 1.
+     * Additional cost of jumping
      */
-    public double dropCost = 1.1D;
+    public double jumpCost = 3D;
 
     /**
-     * Cost improvement of paths - base 1.
+     * Additional cost of dropping
      */
-    public double onPathCost = 0.5D;
+    public double dropCost = 2D;
 
     /**
      * Cost improvement of paths - base 1.
      */
-    public double onRailCost = 0.1D;
+    public double onPathCost = 1 / 4d;
+
+    /**
+     * Cost improvement of paths - base 1.
+     */
+    public double onRailCost = 1 / 10D;
 
     /**
      * The rails exit cost.
      */
-    public double railsExitCost = 2;
+    public double railsExitCost = 5;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 1.5D;
+    public double swimCost = 3D;
 
     /**
      * Additional cost of cave air.
      */
-    public double caveAirCost = 2D;
+    public double caveAirCost = 4D;
 
     /**
      * Additional cost enter entering water
@@ -51,9 +53,9 @@ public class PathingOptions
     public double traverseToggleAbleCost = 10D;
 
     /**
-     * Cost to climb a vine.
+     * Cost to climb a non ladder.
      */
-    public double vineCost = 2D;
+    public double nonLadderClimbableCost = 4D;
 
     /**
      * Whether to use minecart rail pathing
@@ -74,7 +76,7 @@ public class PathingOptions
     /**
      * Whether to path through vines.
      */
-    private boolean canClimbVines  = false;
+    private boolean canClimbNonLadders = false;
 
     /**
      * Whether to path through dangerous blocks.
@@ -99,9 +101,9 @@ public class PathingOptions
         return canUseRails;
     }
 
-    public boolean canClimbVines()
+    public boolean canClimbNonLadders()
     {
-        return canClimbVines;
+        return canClimbNonLadders;
     }
 
     public void setCanUseRails(final boolean canUseRails)
@@ -109,9 +111,9 @@ public class PathingOptions
         this.canUseRails = canUseRails;
     }
 
-    public void setCanClimbVines(final boolean canClimbVines)
+    public void setCanClimbNonLadders(final boolean canClimbNonLadders)
     {
-        this.canClimbVines = canClimbVines;
+        this.canClimbNonLadders = canClimbNonLadders;
     }
 
     public boolean canSwim()
@@ -192,9 +194,9 @@ public class PathingOptions
         return this;
     }
 
-    public PathingOptions withVineCost(final double vineCost)
+    public PathingOptions withNonLadderClimbableCost(final double nonLadderClimbableCost)
     {
-        this.vineCost = vineCost;
+        this.nonLadderClimbableCost = nonLadderClimbableCost;
         return this;
     }
 
@@ -236,12 +238,12 @@ public class PathingOptions
         caveAirCost = pathingOptions.caveAirCost;
         swimCostEnter = pathingOptions.swimCostEnter;
         traverseToggleAbleCost = pathingOptions.traverseToggleAbleCost;
-        vineCost = pathingOptions.vineCost;
+        nonLadderClimbableCost = pathingOptions.nonLadderClimbableCost;
         canUseRails = pathingOptions.canUseRails;
         canSwim = pathingOptions.canSwim;
         enterDoors = pathingOptions.enterDoors;
         canOpenDoors = pathingOptions.canOpenDoors;
-        canClimbVines = pathingOptions.canClimbVines;
+        canClimbNonLadders = pathingOptions.canClimbNonLadders;
         canPassDanger = pathingOptions.canPassDanger;
     }
 

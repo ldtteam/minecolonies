@@ -12,13 +12,12 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.core.colony.jobs.JobCrusher;
-import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -77,7 +76,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
             {
                 if (building.isInBuilding(worker.blockPosition()))
                 {
-                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
+                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
                 }
                 else
                 {

@@ -7,14 +7,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
-import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTable;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -288,13 +288,14 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             this.newNavigator.setCanFloat(true);
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             this.newNavigator.getPathingOptions().setEnterDoors(true);
-            newNavigator.getPathingOptions().withDropCost(1.3D);
+            newNavigator.getPathingOptions().withDropCost(1D);
+            newNavigator.getPathingOptions().withJumpCost(1D);
             newNavigator.getPathingOptions().setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
-                                                 .withTakeDamageOnStuck(0.4f)
-                                                 .withBuildLeafBridges()
-                                                 .withChanceToByPassMovingAway(0.20)
-                                                 .withPlaceLadders();
+              .withTakeDamageOnStuck(0.4f)
+              .withBuildLeafBridges()
+              .withChanceToByPassMovingAway(0.20)
+              .withPlaceLadders();
 
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
             {

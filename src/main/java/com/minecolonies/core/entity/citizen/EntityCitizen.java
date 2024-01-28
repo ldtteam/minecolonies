@@ -13,7 +13,8 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
+import com.minecolonies.api.entity.ai.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.EntityState;
@@ -27,9 +28,8 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
-import com.minecolonies.api.entity.ai.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
@@ -48,14 +48,14 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.colony.jobs.JobRanger;
-import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.other.SittingEntity;
-import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
-import com.minecolonies.core.entity.ai.workers.CitizenAI;
-import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.ai.minimal.EntityAICitizenChild;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
+import com.minecolonies.core.entity.ai.workers.CitizenAI;
+import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
+import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -413,16 +413,19 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide && getCitizenData() != null)
         {
+            citizenData.update();
+            citizenData.setInteractedRecently(player.getUUID());
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
             Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
+
+            if (citizenData.getJob() != null)
+            {
+                ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+                getNavigation().stop();
+                getLookControl().setLookAt(player);
+            }
         }
 
-        if (citizenData != null && citizenData.getJob() != null)
-        {
-            ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
-            getNavigation().stop();
-            getLookControl().setLookAt(player);
-        }
         return InteractionResult.SUCCESS;
     }
 
@@ -754,7 +757,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 this.citizenDataView = colonyView.getCitizen(citizenId);
                 this.getNavigation().getPathingOptions().setCanUseRails(canPathOnRails());
-                this.getNavigation().getPathingOptions().setCanClimbVines(canClimbVines());
+                this.getNavigation().getPathingOptions().setCanClimbNonLadders(canClimbVines());
             }
         }
         return false;

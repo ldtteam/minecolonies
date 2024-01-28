@@ -24,7 +24,6 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobAlchemist;
-import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -301,7 +300,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
                 if (building.isInBuilding(worker.blockPosition()))
                 {
-                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ, false);
+                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
                 }
                 else
                 {
