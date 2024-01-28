@@ -1,7 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.SoundUtils;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.server.level.ServerPlayer;

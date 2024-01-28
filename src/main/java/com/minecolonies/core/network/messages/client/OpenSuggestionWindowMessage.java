@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.client.gui.WindowSuggestBuildTool;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
@@ -81,6 +82,6 @@ public class OpenSuggestionWindowMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        MineColonies.proxy.openSuggestionWindow(pos, state, stack);
+        new WindowSuggestBuildTool(pos, state, stack).open();
     }
 }

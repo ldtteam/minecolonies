@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
-import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;

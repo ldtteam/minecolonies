@@ -20,6 +20,8 @@ import com.minecolonies.core.colony.requestsystem.resolvers.DeliveryRequestResol
 import com.minecolonies.core.colony.requestsystem.resolvers.PickupRequestResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.WarehouseRequestResolver;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.core.tileentities.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.RegistryObject;

@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
-import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;

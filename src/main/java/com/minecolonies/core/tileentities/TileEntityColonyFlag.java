@@ -1,10 +1,11 @@
-package com.minecolonies.api.tileentities;
+package com.minecolonies.core.tileentities;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

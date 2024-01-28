@@ -6,7 +6,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
@@ -150,7 +150,6 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void back()
     {
-        this.close();
         this.prev.open();
     }
 

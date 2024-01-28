@@ -6,6 +6,7 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
@@ -31,6 +32,8 @@ import com.minecolonies.core.proxy.ClientProxy;
 import com.minecolonies.core.proxy.CommonProxy;
 import com.minecolonies.core.proxy.IProxy;
 import com.minecolonies.core.proxy.ServerProxy;
+import com.minecolonies.core.recipes.FoodIngredient;
+import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.structures.MineColoniesStructures;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +41,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -49,6 +53,8 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -183,6 +189,17 @@ public class MineColonies
         event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+    }
+
+    @SubscribeEvent
+    public static void registerRecipeSerializers(final RegisterEvent event)
+    {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+        {
+            CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
+            CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
+            CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
+        }
     }
 
     /**

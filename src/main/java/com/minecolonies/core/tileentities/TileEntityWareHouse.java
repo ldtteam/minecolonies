@@ -4,7 +4,6 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import net.minecraft.world.item.ItemStack;

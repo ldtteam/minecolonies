@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IGraveData;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;

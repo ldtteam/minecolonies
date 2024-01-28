@@ -8,9 +8,5 @@ import net.minecraft.world.level.Level;
  */
 public class ServerProxy extends CommonProxy
 {
-    @Override
-    public Level getWorld(final ResourceKey<Level> dimension)
-    {
-        return net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
-    }
+
 }

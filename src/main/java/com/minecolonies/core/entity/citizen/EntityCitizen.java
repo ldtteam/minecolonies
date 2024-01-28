@@ -40,6 +40,7 @@ import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.client.gui.WindowInteraction;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -406,7 +407,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 final ICitizenDataView citizenDataView = getCitizenDataView();
                 if (citizenDataView != null && !isInvisible())
                 {
-                    MineColonies.proxy.showCitizenWindow(citizenDataView);
+                    new WindowInteraction(citizenDataView).open();
                 }
             }
         }
