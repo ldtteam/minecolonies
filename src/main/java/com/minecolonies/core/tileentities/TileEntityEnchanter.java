@@ -1,5 +1,6 @@
-package com.minecolonies.api.tileentities;
+package com.minecolonies.core.tileentities;
 
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;

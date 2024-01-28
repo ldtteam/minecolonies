@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.client.gui.WindowDecorationController;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -164,7 +165,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
             final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof TileEntityDecorationController)
             {
-                MineColonies.proxy.openDecorationControllerWindow(pos);
+                new WindowDecorationController(pos).open();
             }
         }
         return InteractionResult.SUCCESS;

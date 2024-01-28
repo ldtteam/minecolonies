@@ -1,5 +1,7 @@
-package com.minecolonies.api.tileentities;
+package com.minecolonies.core.tileentities;
 
+import com.minecolonies.api.tileentities.AbstractTileEntityNamedGrave;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;

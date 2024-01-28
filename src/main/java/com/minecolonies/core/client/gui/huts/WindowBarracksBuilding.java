@@ -107,8 +107,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      */
     private void hireSpiesClicked(final Button button)
     {
-        @NotNull final WindowsBarracksSpies window = new WindowsBarracksSpies(this.building, this.building.getID());
-        window.open();
+        new WindowsBarracksSpies(this.building, this.building.getID()).open();
     }
 
     @Override

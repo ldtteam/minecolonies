@@ -13,6 +13,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.client.gui.WindowBannerRallyGuards;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
@@ -221,7 +222,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             }
             else
             {
-                MineColonies.proxy.openBannerRallyGuardsWindow(banner);
+                new WindowBannerRallyGuards(banner).open();
             }
         }
     }
@@ -412,13 +413,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      *
      * @return A list of maps. Map's key is the position, Map's value is a guard tower or null.
      */
-    public static List<Pair<ILocation, AbstractBuildingGuards.View>> getGuardTowerViews(final ItemStack banner)
+    public static List<Pair<ILocation, AbstractBuildingGuards.View>> getGuardTowerViews(final ItemStack banner, final Level level)
     {
         final LinkedList<Pair<ILocation, AbstractBuildingGuards.View>> result = new LinkedList<>();
         for (final ILocation guardTowerLocation : getGuardTowerLocations(banner))
         {
             result.add(new Pair<>(guardTowerLocation,
-              getGuardBuildingView(MineColonies.proxy.getWorld(guardTowerLocation.getDimension()), guardTowerLocation.getInDimensionLocation())));
+              getGuardBuildingView(level, guardTowerLocation.getInDimensionLocation())));
         }
         return ImmutableList.copyOf(result);
     }

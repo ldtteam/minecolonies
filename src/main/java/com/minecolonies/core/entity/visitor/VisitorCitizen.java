@@ -16,6 +16,7 @@ import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.client.gui.WindowInteraction;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
@@ -511,7 +512,7 @@ VisitorCitizen extends AbstractEntityCitizen
                 final ICitizenDataView citizenDataView = getCitizenDataView();
                 if (citizenDataView != null)
                 {
-                    MineColonies.proxy.showCitizenWindow(citizenDataView);
+                    new WindowInteraction(citizenDataView).open();
                 }
             }
         }

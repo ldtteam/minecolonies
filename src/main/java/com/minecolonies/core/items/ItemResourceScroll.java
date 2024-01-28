@@ -5,7 +5,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.core.client.gui.WindowResourceList;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -97,7 +98,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                     }
                 }
 
-                MineColonies.proxy.openResourceScrollWindow(builderBuildingView, warehouseSnapshot);
+                new WindowResourceList(builderBuildingView, warehouseSnapshot).open();
             }
             else
             {

@@ -279,8 +279,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         if (getOpenRequestTreeOfBuilding().size() > row)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequestTreeOfBuilding().get(row).getRequest(), colony.getID());
-            window.open();
+            new WindowRequestDetail(this, getOpenRequestTreeOfBuilding().get(row).getRequest(), colony.getID()).open();
         }
     }
 

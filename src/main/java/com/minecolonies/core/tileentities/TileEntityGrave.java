@@ -1,10 +1,13 @@
-package com.minecolonies.api.tileentities;
+package com.minecolonies.core.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import com.minecolonies.api.blocks.types.GraveType;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerGrave;
+import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
@@ -124,7 +127,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public ItemStackHandler createInventory(final int slots)
     {
-        return new RackInventory(slots);
+        return new AbstractTileEntityRack.RackInventory(slots);
     }
 
     @Override

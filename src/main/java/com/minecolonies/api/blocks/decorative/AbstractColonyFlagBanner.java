@@ -3,7 +3,7 @@ package com.minecolonies.api.blocks.decorative;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.tileentities.TileEntityColonyFlag;
+import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
