@@ -11,9 +11,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -268,6 +268,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         return quarry == null ? super.getBuildingToDump() : quarry;
     }
 
+    // TODO: Remove copied logic and override/add new super methods instead
     @Override
     protected IAIState structureStep()
     {
@@ -311,9 +312,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                          .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock())
-                                                                                       || pos.getY() < worldPos.getY())),
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
+                                                                                 || isDecoItem(info.getBlockInfo().getState().getBlock())
+                                                                                 || pos.getY() < worldPos.getY())),
                   false);
 
                 if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
@@ -343,9 +344,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                        && !isDecoItem(info.getBlockInfo().getState().getBlock()))
-                                                                                       || pos.getY() > worldPos.getY())),
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.isAnySolid(info.getBlockInfo().getState())
+                                                                                  && !isDecoItem(info.getBlockInfo().getState().getBlock()))
+                                                                                 || pos.getY() > worldPos.getY())),
                   false);
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
