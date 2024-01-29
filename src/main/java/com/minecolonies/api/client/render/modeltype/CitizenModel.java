@@ -74,6 +74,10 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
      */
     public boolean displayHat(final AbstractEntityCitizen citizen)
     {
-        return citizen.getPose() != Pose.SLEEPING && citizen.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
+        if (citizen.getPose() == Pose.SLEEPING || !citizen.getItemBySlot(EquipmentSlot.HEAD).isEmpty())
+        {
+            return false;
+        }
+        return citizen.getCitizenDataView() == null || citizen.getCitizenDataView().getInventory().getArmorInSlot(EquipmentSlot.HEAD).isEmpty();
     }
 }
