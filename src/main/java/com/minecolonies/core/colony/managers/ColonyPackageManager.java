@@ -268,6 +268,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (subscriber instanceof FakePlayer)
         {
             Log.getLogger().warn("Adding fakeplayer as subscriber: this should not happen", new Exception());
+            return;
         }
 
         if (!closeSubscribers.contains(subscriber))
@@ -294,6 +295,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (subscriber instanceof FakePlayer)
         {
             Log.getLogger().warn("Adding fakeplayer as important subscriber: this should not happen", new Exception());
+            return;
         }
 
         importantColonyPlayers.add(subscriber);
