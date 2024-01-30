@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.ColonyUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.Colony;
@@ -17,6 +18,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -263,6 +265,11 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void addCloseSubscriber(@NotNull final ServerPlayer subscriber)
     {
+        if (subscriber instanceof FakePlayer)
+        {
+            Log.getLogger().warn("Adding fakeplayer as subscriber: this should not happen", new Exception());
+        }
+
         if (!closeSubscribers.contains(subscriber))
         {
             closeSubscribers.add(subscriber);
@@ -284,6 +291,11 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void addImportantColonyPlayer(@NotNull final ServerPlayer subscriber)
     {
+        if (subscriber instanceof FakePlayer)
+        {
+            Log.getLogger().warn("Adding fakeplayer as important subscriber: this should not happen", new Exception());
+        }
+
         importantColonyPlayers.add(subscriber);
         newSubscribers.add(subscriber);
     }
