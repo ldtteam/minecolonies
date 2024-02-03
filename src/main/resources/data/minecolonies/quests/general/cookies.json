@@ -161,7 +161,7 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 1,
-        "item": "minecraft:cookies",
+        "item": "minecraft:cookie",
         "qty": 8,
         "next-objective": 7
       }
@@ -227,7 +227,7 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:cookies",
+        "item": "minecraft:cookie",
         "qty": 8
       }
     },

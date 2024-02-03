@@ -104,14 +104,14 @@
           "answer": "Meh. Okay. On it.",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 2
+            "go-to": 3
           }
         },
         {
           "answer": "Uhhh, I get to kill some more zombies. Sure!",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 2
+            "go-to": 3
           }
         },
         {
@@ -130,7 +130,7 @@
         "target": 0,
         "entity-type": "minecraft:zombie",
         "qty": 3,
-        "next-objective": 3
+        "next-objective": 4
       }
     },
     {
@@ -139,7 +139,7 @@
         "target": 0,
         "item": "minecraft:rotten_flesh",
         "qty": 3,
-        "next-objective": 4
+        "next-objective": 5
       }
     },
     {
@@ -151,14 +151,14 @@
           "answer": "Yes Master *rubs hands*!",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 5
+            "go-to": 6
           }
         },
         {
           "answer": "On it!",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 5
+            "go-to": 6
           }
         },
         {
@@ -176,7 +176,7 @@
         "target": 0,
         "item": "minecraft:spider_eye",
         "qty": 2,
-        "next-objective": 6
+        "next-objective": 7
       }
     },
     {
@@ -188,14 +188,14 @@
           "answer": "I have no concern. No problem!",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 7
+            "go-to": 8
           }
         },
         {
           "answer": "One creeper for the gun powder or stealing some from the guards? No problem!",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 7
+            "go-to": 8
           }
         },
         {
@@ -213,12 +213,11 @@
         "target": 0,
         "item": "minecraft:gunpowder",
         "qty": 1,
-        "next-objective": 8
+        "next-objective": 9
       }
     },
     {
       "type": "minecolonies:dialogue",
-      "unlocks-rewards": [0],
       "target": 0,
       "text": "Splendid! Let me mix them together real quick!",
       "options": [
@@ -226,7 +225,7 @@
           "answer": "Okay, I'm waiting.",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 9
+            "go-to": 10
           }
         }
       ]
@@ -241,7 +240,7 @@
           "answer": "Great! Take Potion",
           "result": {
             "type": "minecolonies:advanceobjective",
-            "go-to": 10
+            "go-to": 11
           }
         }
       ]

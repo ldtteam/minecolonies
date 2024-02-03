@@ -63,7 +63,7 @@
       "details": {
         "target": 0,
         "entity-type": "minecraft:zombie",
-        "qty": 10,
+        "qty": 2,
         "next-objective": 2
       }
     },
