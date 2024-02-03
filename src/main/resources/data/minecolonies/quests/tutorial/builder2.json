@@ -25,16 +25,16 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Now that you don't have to provide food manually to your citizens anymore. How about we upgrade your builder to allow you to expand your colony further.",
+      "text": "I see your colony is growing nicely. How about we upgrade your builders hut to take your colony to the next level.",
       "options": [
         {
           "answer": "Sounds great!!",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "Upgrading buildings yields many benefits. ",
+            "text": "Upgrading buildings yields many benefits. Aside from your citizens leveling up faster they may also use higher tool tiers.",
             "options": [
               {
-                "answer": "On it!",
+                "answer": "I'm on it!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
