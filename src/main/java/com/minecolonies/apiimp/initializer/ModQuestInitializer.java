@@ -52,6 +52,7 @@ public final class ModQuestInitializer
         QuestRegistries.citizenTrigger = DEFERRED_REGISTER_TRIGGER.register(CITIZEN_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(CitizenQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.unlockTrigger = DEFERRED_REGISTER_TRIGGER.register(UNLOCK_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(UnlockQuestTriggerTemplate::createUnlockTrigger));
         QuestRegistries.questReputationTrigger = DEFERRED_REGISTER_TRIGGER.register(QUEST_REPUTATION_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(QuestReputationTriggerTemplate::createQuestReputationTrigger));
+        QuestRegistries.worldDifficultyTrigger = DEFERRED_REGISTER_TRIGGER.register(WORLD_DIFFICULTY_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(WorldDifficultyTriggerTemplate::createDifficultyTrigger));
 
         QuestRegistries.itemReward = DEFERRED_REGISTER_REWARD.register(ITEM_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(ItemRewardTemplate::createReward));
         QuestRegistries.skillReward = DEFERRED_REGISTER_REWARD.register(SKILL_REWARD_ID.getPath(), () -> new QuestRegistries.RewardEntry(SkillRewardTemplate::createReward));

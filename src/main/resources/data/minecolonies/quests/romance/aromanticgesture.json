@@ -5,7 +5,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 1
+      "rarity": 500
     },
     {
       "type": "minecolonies:citizen",
@@ -75,7 +75,6 @@
     },
     {
       "type": "minecolonies:delivery",
-      "unlocks-rewards": [0, 1, 2],
       "details": {
         "target": 1,
         "item": "minecraft:poppy",
@@ -84,6 +83,7 @@
       }
     },
     {
+      "unlocks-rewards": [0, 1, 2],
       "type": "minecolonies:dialogue",
       "target": 1,
       "text": "Oh, this is beautiful! Thank you so much! Who is it from?",

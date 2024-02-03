@@ -2,7 +2,7 @@
   "name": "Feed the masses",
   "max-occurrences": 1,
   "parents": [
-    "minecolonies:tutorial/housing"
+    "minecolonies:tutorial/restaurant"
   ],
   "triggers": [
     {
@@ -10,7 +10,7 @@
       "state": {
         "notmatch": {
           "finavquests": [
-            "minecolonies:tutorial/housing"
+            "minecolonies:tutorial/restaurant"
           ]
         }
       }
@@ -25,13 +25,13 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "While we are getting food from the farm, you still have to manually feed the citizens when they are hungry. How about we build a restaurant so that is taken care of automatically?",
+      "text": "Now that you don't have to provide food manually to your citizens anymore. How about we upgrade your builder to allow you to expand your colony further.",
       "options": [
         {
           "answer": "Sounds great!!",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "The cook in the restaurant will not only cook food for you in the furnace automatically, but they will also hand out food to citizens that are hungry. You know the drill, craft the restaurant hut block in a crafting bench. This time surround an apple with planks and the build tool at the top.'",
+            "text": "Upgrading buildings yields many benefits. ",
             "options": [
               {
                 "answer": "On it!",

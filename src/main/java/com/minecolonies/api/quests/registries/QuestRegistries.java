@@ -169,6 +169,7 @@ public class QuestRegistries
     public static ResourceLocation CITIZEN_TRIGGER_ID     = new ResourceLocation(Constants.MOD_ID, "citizen");
     public static ResourceLocation UNLOCK_TRIGGER_ID      = new ResourceLocation(Constants.MOD_ID, "unlock");
     public static ResourceLocation QUEST_REPUTATION_TRIGGER_ID  = new ResourceLocation(Constants.MOD_ID, "questreputation");
+    public static ResourceLocation WORLD_DIFFICULTY_TRIGGER_ID  = new ResourceLocation(Constants.MOD_ID, "difficulty");
 
     public static ResourceLocation DIALOGUE_ANSWER_ID = new ResourceLocation(Constants.MOD_ID, "dialogue");
     public static ResourceLocation RETURN_ANSWER_ID   = new ResourceLocation(Constants.MOD_ID, "return");
@@ -197,6 +198,7 @@ public class QuestRegistries
     public static RegistryObject <TriggerEntry> citizenTrigger;
     public static RegistryObject <TriggerEntry> unlockTrigger;
     public static RegistryObject <TriggerEntry> questReputationTrigger;
+    public static RegistryObject <TriggerEntry> worldDifficultyTrigger;
 
     public static RegistryObject <DialogueAnswerEntry> dialogueAnswerResult;
     public static RegistryObject <DialogueAnswerEntry> returnAnswerResult;

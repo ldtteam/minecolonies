@@ -1,11 +1,13 @@
 {
-  "name": "The Zombie Menace",
-  "parents": [],
-  "max-occurrences": 5,
+  "name": "The Zombie Menace II",
+  "parents": [
+    "minecolonies:general/thezombiemenace1"
+  ],
+  "max-occurrences": 2,
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 500
+      "rarity": 250000
     },
     {
       "type": "minecolonies:state",
@@ -13,7 +15,7 @@
         "path": "buildingManager/buildings",
         "match": {
           "type": "minecolonies:guardtower",
-          "level": 2
+          "level": 3
         }
       }
     },
@@ -60,7 +62,6 @@
     },
     {
       "type": "minecolonies:killentity",
-      "unlocks-rewards": [0, 1],
       "details": {
         "target": 0,
         "entity-type": "minecraft:zombie",
@@ -69,6 +70,7 @@
       }
     },
     {
+      "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "You did it! We're safe for now. Here's your reward.",

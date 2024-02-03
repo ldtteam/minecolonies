@@ -1,0 +1,268 @@
+{
+  "name": "Alchemy!",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 250000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:alchemist",
+          "level": 2
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:alchemist"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "I just discovered a new alchemical process but I need some materials to test it out. Do you think you could help me with that?",
+      "options": [
+        {
+          "answer": "Sure, what do you need?.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Splendid! Well, I require the flesh of three zombies!",
+            "options": [
+              {
+                "answer": "A bit creepy. But okay!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "I have no concerns, sure!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Uhh, just three?",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "I suddenly don't feel like being part of this.",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": -1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I'm sorry, I can't help right now.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        },
+        {
+          "answer": "I won't be able to help you with that.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:rotten_flesh",
+        "qty": 3,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "The flesh you delivered me seemed a bit cold. I feel I require warm zombie flesh. Three again please",
+      "options": [
+        {
+          "answer": "Meh. Okay. On it.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 2
+          }
+        },
+        {
+          "answer": "Uhhh, I get to kill some more zombies. Sure!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 2
+          }
+        },
+        {
+          "answer": "I suddenly don't feel like being part of this anymore.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:killentity",
+      "unlocks-rewards": [0, 1],
+      "details": {
+        "target": 0,
+        "entity-type": "minecraft:zombie",
+        "qty": 3,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:rotten_flesh",
+        "qty": 3,
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Splendid! This looks just perfect! But I'm afraid I need something new! Fetch me 2 fresh spider eyes.",
+      "options": [
+        {
+          "answer": "Yes Master *rubs hands*!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        },
+        {
+          "answer": "On it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        },
+        {
+          "answer": "I hate spiders. No way!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:spider_eye",
+        "qty": 2,
+        "next-objective": 6
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hehehehehe! Perfect! Now I just need something to fuel the reaction. Gun powder would be perfect!",
+      "options": [
+        {
+          "answer": "I have no concern. No problem!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 7
+          }
+        },
+        {
+          "answer": "One creeper for the gun powder or stealing some from the guards? No problem!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 7
+          }
+        },
+        {
+          "answer": "This sounds concerning. I want out!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:gun_powder",
+        "qty": 1,
+        "next-objective": 8
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
+      "target": 0,
+      "text": "Splendid! Let me mix them together real quick!",
+      "options": [
+        {
+          "answer": "Okay, I'm waiting.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 9
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "unlocks-rewards": [0],
+      "target": 0,
+      "text": "*Laughs Maniacally* I have done it. I have done it! I have created a potion of eternal life! Here try it!",
+      "options": [
+        {
+          "answer": "Great! Take Potion",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 10
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "id: \"minecraft:splash_potion\", Count: 1b, tag: {RepairCost: 0, Potion: \"minecraft:poison\", display: {Name: '{\"text\":\"Suspicious Potion\"}'}"
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

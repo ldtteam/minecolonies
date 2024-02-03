@@ -10,8 +10,9 @@ public class QuestParseConstant
      */
     public static final String DETAILS_KEY = "details";
     public static final String TARGET_KEY   = "target";
-    public static final String QUANTITY_KEY = "qty";
-    public static final String NEXT_OBJ_KEY = "next-objective";
+    public static final String QUANTITY_KEY   = "qty";
+    public static final String DIFFICULTY_KEY = "difficulty";
+    public static final String NEXT_OBJ_KEY   = "next-objective";
     public static final String BLOCK_KEY = "block";
     public static final String ITEM_KEY = "item";
     public static final String NBT_KEY = "nbt";
