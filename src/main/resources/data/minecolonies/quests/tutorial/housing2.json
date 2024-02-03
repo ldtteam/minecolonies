@@ -86,7 +86,7 @@
     {
       "type": "minecolonies:buildbuilding",
       "details": {
-        "type": "minecolonies:builder",
+        "type": "minecolonies:residence",
         "count-existing": true,
         "lvl": 2,
         "qty": 2,
@@ -114,7 +114,7 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:rack",
+        "item": "minecolonies:blockminecoloniesrack",
         "qty": 8
       }
     }

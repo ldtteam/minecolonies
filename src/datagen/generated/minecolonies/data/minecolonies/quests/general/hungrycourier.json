@@ -62,11 +62,7 @@
         "next-objective": 2,
         "qty": 1,
         "target": 0
-      },
-      "unlocks-rewards": [
-        0,
-        1
-      ]
+      }
     },
     {
       "type": "minecolonies:dialogue",
@@ -80,7 +76,11 @@
         }
       ],
       "target": 0,
-      "text": "minecolonies.quests.general.hungrycourier.obj2"
+      "text": "minecolonies.quests.general.hungrycourier.obj2",
+      "unlocks-rewards": [
+        0,
+        1
+      ]
     }
   ],
   "parents": [],

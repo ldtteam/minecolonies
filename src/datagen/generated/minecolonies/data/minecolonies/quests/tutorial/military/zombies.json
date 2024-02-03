@@ -90,7 +90,7 @@
     {
       "type": "minecolonies:citizen",
       "state": {
-        "match": {
+        "notmatch": {
           "finavquests": [
             "minecolonies:tutorial/military/torches"
           ]

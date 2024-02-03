@@ -1,54 +1,50 @@
 {
-  "max-occurrences": 5,
-  "name": "minecolonies.quests.general.thezombiemenace",
+  "max-occurrences": 2,
+  "name": "minecolonies.quests.general.thezombiemenace1",
   "objectives": [
     {
       "type": "minecolonies:dialogue",
       "options": [
         {
-          "answer": "minecolonies.quests.general.thezombiemenace.obj0.answer0",
+          "answer": "minecolonies.quests.general.thezombiemenace1.obj0.answer0",
           "result": {
             "type": "minecolonies:dialogue",
             "options": [
               {
-                "answer": "minecolonies.quests.general.thezombiemenace.obj0.answer0.reply.answer0",
+                "answer": "minecolonies.quests.general.thezombiemenace1.obj0.answer0.reply.answer0",
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
               }
             ],
-            "text": "minecolonies.quests.general.thezombiemenace.obj0.answer0.reply"
+            "text": "minecolonies.quests.general.thezombiemenace1.obj0.answer0.reply"
           }
         },
         {
-          "answer": "minecolonies.quests.general.thezombiemenace.obj0.answer1",
+          "answer": "minecolonies.quests.general.thezombiemenace1.obj0.answer1",
           "result": {
             "type": "minecolonies:cancel"
           }
         }
       ],
       "target": 0,
-      "text": "minecolonies.quests.general.thezombiemenace.obj0"
+      "text": "minecolonies.quests.general.thezombiemenace1.obj0"
     },
     {
       "type": "minecolonies:killentity",
       "details": {
         "entity-type": "minecraft:zombie",
         "next-objective": 2,
-        "qty": 10,
+        "qty": 2,
         "target": 0
-      },
-      "unlocks-rewards": [
-        0,
-        1
-      ]
+      }
     },
     {
       "type": "minecolonies:dialogue",
       "options": [
         {
-          "answer": "minecolonies.quests.general.thezombiemenace.obj2.answer0",
+          "answer": "minecolonies.quests.general.thezombiemenace1.obj2.answer0",
           "result": {
             "type": "minecolonies:advanceobjective",
             "go-to": 3
@@ -56,7 +52,11 @@
         }
       ],
       "target": 0,
-      "text": "minecolonies.quests.general.thezombiemenace.obj2"
+      "text": "minecolonies.quests.general.thezombiemenace1.obj2",
+      "unlocks-rewards": [
+        0,
+        1
+      ]
     }
   ],
   "parents": [],
@@ -64,8 +64,8 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:diamond",
-        "qty": 1
+        "item": "minecraft:iron_ingot",
+        "qty": 2
       }
     },
     {

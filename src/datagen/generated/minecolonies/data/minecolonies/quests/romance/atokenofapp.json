@@ -76,11 +76,7 @@
         "next-objective": 3,
         "qty": 1,
         "target": 1
-      },
-      "unlocks-rewards": [
-        0,
-        1
-      ]
+      }
     },
     {
       "type": "minecolonies:dialogue",
@@ -94,7 +90,11 @@
         }
       ],
       "target": 0,
-      "text": "minecolonies.quests.romance.atokenofapp.obj3"
+      "text": "minecolonies.quests.romance.atokenofapp.obj3",
+      "unlocks-rewards": [
+        0,
+        1
+      ]
     }
   ],
   "parents": [
