@@ -97,7 +97,7 @@
                 "answer": "minecolonies.quests.tutorial.warehouse.obj1.answer2.reply.answer0",
                 "result": {
                   "type": "minecolonies:advanceobjective",
-                  "go-to": 10
+                  "go-to": 2
                 }
               }
             ],
