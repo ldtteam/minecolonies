@@ -120,7 +120,7 @@
                 "answer": "Noted!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
-                  "go-to": 10
+                  "go-to": 2
                 }
               }
             ]
