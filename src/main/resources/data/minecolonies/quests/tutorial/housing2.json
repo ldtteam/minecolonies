@@ -1,8 +1,8 @@
 {
-  "name": "Bob the Builder",
+  "name": "Upgrade the Shed!",
   "max-occurrences": 1,
   "parents": [
-    "minecolonies:tutorial/restaurant"
+    "minecolonies:tutorial/builder2"
   ],
   "triggers": [
     {
@@ -10,7 +10,7 @@
       "state": {
         "notmatch": {
           "finavquests": [
-            "minecolonies:tutorial/restaurant"
+            "minecolonies:tutorial/builder2"
           ]
         }
       }
@@ -25,16 +25,16 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "I see your colony is growing nicely. How about we upgrade your builders hut to take your colony to the next level?",
+      "text": "Now that you got a level 2 builder the next logical step is upgrading your residences. Residences house 2 citizens per housing level up to a five citizens at level five.",
       "options": [
         {
-          "answer": "Sounds great!!",
+          "answer": "Sounds existing! What do you want me to do?.",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "Upgrading buildings yields many benefits. Aside from your citizens leveling up faster they may also use higher tool tiers. You can upgrade the building through the build options after right clicking the hut block.",
+            "text": "Upgrade two of your residences to level 2 and come back to me later then!",
             "options": [
               {
-                "answer": "I'm on it!",
+                "answer": "On it!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
@@ -89,7 +89,7 @@
         "type": "minecolonies:builder",
         "count-existing": true,
         "lvl": 2,
-        "qty": 1,
+        "qty": 2,
         "target": 0,
         "next-objective": 2
       }
@@ -98,7 +98,7 @@
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Awesome! This will now also allow you to upgrade all kinds of other buildings. Make sure to regularly check the quest log about future tasks!",
+      "text": "Amazing! This is the best way to attract new citizens to your colony! Not only that! Citizens are also considerably happier in higher residence tiers! Here I found these racks earlier. I'm sure they will come in handy!",
       "options": [
         {
           "answer": "Thank you. Bye!",
@@ -114,7 +114,7 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:lantern",
+        "item": "minecolonies:rack",
         "qty": 8
       }
     }
