@@ -619,8 +619,6 @@ public class GlobalResearch implements IGlobalResearch
             this.itemIcon = parseIconItemStacks(iconString);
         }
 
-        //todo gamemode trigger
-
         parseRequirements(researchJson);
         parseEffects(researchJson, effectCategories);
     }
