@@ -7,7 +7,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import static com.minecolonies.core.structures.EmptyColonyStructure.COLONY_CODEC;
-import static com.minecolonies.core.structures.EmptyNetherColonyStructure.NETHER_COLONY_CODEC;
 
 /**
  * Thanks to: https://github.com/TelepathicGrunt/StructureTutorialMod/tree/1.18.x-Forge-Jigsaw
@@ -25,6 +24,4 @@ public class MineColoniesStructures
      * this base structure will have the resourcelocation of structure_tutorial:sky_structures.
      */
     public static final RegistryObject<StructureType<EmptyColonyStructure>> EMPTY_COLONY = DEFERRED_REGISTRY_STRUCTURE.register("empty_colony", () -> () -> COLONY_CODEC);
-    public static final RegistryObject<StructureType<EmptyNetherColonyStructure>> EMPTY_NETHER_COLONY = DEFERRED_REGISTRY_STRUCTURE.register("empty_nether_colony", () -> () -> NETHER_COLONY_CODEC);
-
 }

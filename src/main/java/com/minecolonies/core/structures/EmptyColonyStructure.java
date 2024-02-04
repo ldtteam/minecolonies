@@ -4,8 +4,10 @@ import com.minecolonies.api.util.Log;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -33,7 +35,8 @@ public class EmptyColonyStructure extends Structure
                                                                                                     Codec.intRange(0, 10).fieldOf("size").forGetter(structure -> structure.size),
                                                                                                     HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.startHeight),
                                                                                                     Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(structure -> structure.projectStartToHeightmap),
-                                                                                                    Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter)
+                                                                                                    Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter),
+                                                                                                    Codec.BOOL.optionalFieldOf("allow_cave", false).forGetter(structure -> structure.allowCave)
                                                                                                   ).apply(instance, EmptyColonyStructure::new)).codec();
 
     private final Holder<StructureTemplatePool> startPool;
@@ -42,6 +45,7 @@ public class EmptyColonyStructure extends Structure
     private final HeightProvider startHeight;
     private final Optional<Heightmap.Types> projectStartToHeightmap;
     private final int maxDistanceFromCenter;
+    private boolean allowCave;
 
     public EmptyColonyStructure(Structure.StructureSettings config,
       Holder<StructureTemplatePool> startPool,
@@ -49,7 +53,8 @@ public class EmptyColonyStructure extends Structure
       int size,
       HeightProvider startHeight,
       Optional<Heightmap.Types> projectStartToHeightmap,
-      int maxDistanceFromCenter)
+      int maxDistanceFromCenter,
+      boolean allowCave)
     {
         super(config);
         this.startPool = startPool;
@@ -58,6 +63,7 @@ public class EmptyColonyStructure extends Structure
         this.startHeight = startHeight;
         this.projectStartToHeightmap = projectStartToHeightmap;
         this.maxDistanceFromCenter = maxDistanceFromCenter;
+        this.allowCave = allowCave;
     }
 
     @Override
@@ -86,6 +92,32 @@ public class EmptyColonyStructure extends Structure
     @Override
     public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context)
     {
+        if (allowCave)
+        {
+            final BlockPos.MutableBlockPos result = isFeatureChunkCave(context);
+            if (result != null)
+            {
+                Optional<GenerationStub> structurePiecesGenerator =
+                  JigsawPlacement.addPieces(
+                    context,
+                    this.startPool,
+                    this.startJigsawName,
+                    this.size,
+                    result,
+                    false,
+                    this.projectStartToHeightmap,
+                    this.maxDistanceFromCenter
+                  );
+
+                if (structurePiecesGenerator.isPresent())
+                {
+                    Log.getLogger().debug("New Empty colony at" + result);
+                }
+                return structurePiecesGenerator;
+            }
+            return Optional.empty();
+        }
+
         if (!isFeatureChunk(context))
         {
             return Optional.empty();
@@ -114,5 +146,69 @@ public class EmptyColonyStructure extends Structure
             Log.getLogger().debug("New Empty colony at" + blockpos);
         }
         return structurePiecesGenerator;
+    }
+
+    private static BlockPos.MutableBlockPos isFeatureChunkCave(GenerationContext context)
+    {
+        BlockPos blockPos = context.chunkPos().getWorldPosition();
+        ChunkPos chunkPos = new ChunkPos(blockPos);
+
+        int currentY = 0;
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+
+        for (int i = 0; i < 10; i++)
+        {
+            currentY += context.random().nextInt(0, 30);
+            for (int curChunkX = chunkPos.x - 1; curChunkX <= chunkPos.x + 1; curChunkX++)
+            {
+                for (int curChunkZ = chunkPos.z - 1; curChunkZ <= chunkPos.z + 1; curChunkZ++)
+                {
+                    NoiseColumn blockView = context.chunkGenerator().getBaseColumn(mutable.getX(), mutable.getZ(), context.heightAccessor(), context.randomState());
+                    mutable.set(curChunkX << 4, currentY, curChunkZ << 4);
+                    if (blockView.getBlock(mutable.getY()).isAir())
+                    {
+                        int airCount = 1;
+                        while (mutable.getY() > context.chunkGenerator().getMinY())
+                        {
+                            BlockState state = blockView.getBlock(mutable.getY());
+                            if (state.isAir())
+                            {
+                                airCount++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            mutable.move(Direction.DOWN);
+                        }
+
+                        mutable.setY(currentY);
+                        while (mutable.getY() < context.chunkGenerator().getMinY() + context.chunkGenerator().getGenDepth())
+                        {
+                            BlockState state = blockView.getBlock(mutable.getY());
+                            if (state.isAir())
+                            {
+                                airCount++;
+                                if (airCount >= 32)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            mutable.move(Direction.UP);
+                        }
+
+                        if (airCount >= 32)
+                        {
+                            return mutable;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
