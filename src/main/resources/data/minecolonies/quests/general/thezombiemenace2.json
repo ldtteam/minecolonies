@@ -1,0 +1,105 @@
+{
+  "name": "The Zombie Menace II",
+  "parents": [
+    "minecolonies:general/thezombiemenace1"
+  ],
+  "max-occurrences": 2,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 250000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:guardtower",
+          "level": 3
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "We have a problem. The Zombies in the nearby forest are causing trouble. Can you help us take care of them?",
+      "options": [
+        {
+          "answer": "Sure, I'll do what I can.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Thank you! We need you to kill 10 Zombies. We'll reward you for your efforts.",
+            "options": [
+              {
+                "answer": "I'm on it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I'm sorry, I can't help right now.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:killentity",
+      "details": {
+        "target": 0,
+        "entity-type": "minecraft:zombie",
+        "qty": 10,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0, 1],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "You did it! We're safe for now. Here's your reward.",
+      "options": [
+        {
+          "answer": "Thank you!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:diamond",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

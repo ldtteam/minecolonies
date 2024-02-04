@@ -1,0 +1,258 @@
+{
+  "name": "Cookies for the Kids!",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 250000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:baker",
+          "level": 1
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:baker"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "child": true
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi, Thank you for hiring me as a baker! I always wanted to be a baker! Let's make some cookies for young ones!",
+      "options": [
+        {
+          "answer": "Sure, what do you need?.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "I need two wheat and one coco bean!",
+            "options": [
+              {
+                "answer": "On my way!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "They're not my kids, why should I do it?",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": -1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I'm sorry, I can't help right now.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        },
+        {
+          "answer": "I won't be able to help you with that.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:wheat",
+        "qty": 2,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:cocoa_beans",
+        "qty": 1,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Thank you. I'll get right on this!",
+      "options": [
+        {
+          "answer": "Sure! I'll wait!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Here you are. Please take those 8 cookies and deliver them to $1! You can find the kid with the help of the quest log.",
+      "options": [
+        {
+          "answer": "Sure! I'm on it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 1,
+      "text": "Hi! The baker told me you got cookies for me!",
+      "options": [
+        {
+          "answer": "Yes, But I ate them all!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "You are a so mean! I will never forget this!",
+            "options": [
+              {
+                "answer": "Hihihihih",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes, I have them here! Give me a second!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 6
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 1,
+        "item": "minecraft:cookie",
+        "qty": 8,
+        "next-objective": 7
+      }
+    },
+    {
+      "unlocks-rewards": [1,2,3],
+      "type": "minecolonies:dialogue",
+      "target": 1,
+      "text": "*Shiny Eyes* Uhhh! Those look delicious!",
+      "options": [
+        {
+          "answer": "Please make sure to share them with your friends!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Suuuure! I found this shiny thing on the floor. Here you can have it!",
+            "options": [
+              {
+                "answer": "Thanks",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Yes they really do!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Thank you! I found this shiny thing on the floor. Here you can have it!",
+            "options": [
+              {
+                "answer": "Thanks",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Have a good one!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Thank you! I found this shiny thing on the floor. Here you can have it!",
+            "options": [
+              {
+                "answer": "Thanks",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:cookie",
+        "qty": 8
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:emerald",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 1,
+        "qty": 1,
+        "days": 7
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

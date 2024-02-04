@@ -1,0 +1,122 @@
+{
+  "name": "Bob the Builder",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/restaurant"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/restaurant"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "I see your colony is growing nicely. How about we upgrade your builders hut to take your colony to the next level?",
+      "options": [
+        {
+          "answer": "Sounds great!!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Upgrading buildings yields many benefits. Aside from your citizens leveling up faster they may also use higher tool tiers. You can upgrade the building through the build options after right clicking the hut block.",
+            "options": [
+              {
+                "answer": "I'm on it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+                  "options": [
+                    {
+                      "answer": "Noted!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 10
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+            "options": [
+              {
+                "answer": "Noted!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:builder",
+        "count-existing": true,
+        "lvl": 2,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Awesome! This will now also allow you to upgrade all kinds of other buildings. Make sure to regularly check the quest log about future tasks!",
+      "options": [
+        {
+          "answer": "Thank you. Bye!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:lantern",
+        "qty": 8
+      }
+    }
+  ]
+}
