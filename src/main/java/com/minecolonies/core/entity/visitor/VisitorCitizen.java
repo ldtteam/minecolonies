@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
+import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.*;
@@ -22,8 +22,8 @@ import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
-import com.minecolonies.core.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.MovementHandler;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
@@ -548,7 +548,7 @@ VisitorCitizen extends AbstractEntityCitizen
 
             if (!level.isClientSide())
             {
-                getCitizenData().increaseSaturation(usedStack.getItem().getFoodProperties(usedStack, this).getNutrition());
+                getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 // Position needs to be centered on citizen, Eat AI wrong too?
