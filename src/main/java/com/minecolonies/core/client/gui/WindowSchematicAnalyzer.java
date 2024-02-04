@@ -44,6 +44,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     private static final String BOX_LEFT                = "left";
     private static final String BOX_RIGHT               = "right";
     private static final String LABEL_SCORE             = "score";
+    private static final String LABEL_BLOCK_COUNTS      = "blockcounts";
     private static final String LABEL_SIZE              = "size";
     private static final String LABEL_BUILDINGS         = "buildings";
     private static final String BUTTON_SHOW_RES         = "showresources";
@@ -366,14 +367,25 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 
         box.findPaneOfTypeByID(LABEL_SCORE, Text.class)
           .setText(Component.translatable("com.minecolonies.coremod.gui.analyzer.complexity", Component.literal("" + next.costScore).withStyle(
-            ChatFormatting.RED)));
+            ChatFormatting.RED).withStyle(ChatFormatting.BOLD)));
+
+        box.findPaneOfTypeByID(LABEL_BLOCK_COUNTS, Text.class)
+          .setText(Component.translatable("com.minecolonies.coremod.gui.analyzer.blockcounts", Component.literal("" + next.differentBlocks.size()).withStyle(
+            ChatFormatting.BLUE).withStyle(ChatFormatting.BOLD)));
+
+        PaneBuilders.tooltipBuilder()
+          .append(Component.translatable("com.minecolonies.coremod.gui.analyzer.score", next.differentBlocks.size() * 40, next.costScore))
+          .hoverPane(box.findPaneOfTypeByID(LABEL_BLOCK_COUNTS, Text.class))
+          .build();
 
         box.findPaneOfTypeByID(LABEL_SIZE, Text.class)
           .setText(Component.translatable("com.minecolonies.coremod.gui.analyzer.size", Component.literal("[" + next.blueprint.getSizeX() + " " + next.blueprint.getSizeY() + " "
-                                                                                                            + next.blueprint.getSizeZ() + "]").withStyle(ChatFormatting.YELLOW)));
-
+                                                                                                            + next.blueprint.getSizeZ() + "]")
+            .withStyle(ChatFormatting.YELLOW)
+            .withStyle(ChatFormatting.BOLD)));
         box.findPaneOfTypeByID(LABEL_BUILDINGS, Text.class)
-          .setText(Component.translatable("com.minecolonies.coremod.gui.analyzer.buildings", Component.literal("" + next.containedBuildings).withStyle(ChatFormatting.GOLD)));
+          .setText(Component.translatable("com.minecolonies.coremod.gui.analyzer.buildings",
+            Component.literal("" + next.containedBuildings).withStyle(ChatFormatting.GOLD).withStyle(ChatFormatting.BOLD)));
 
         final ScrollingList resourceList = box.findPaneOfTypeByID(LIST_RES, ScrollingList.class);
         resourceList.setVisible(false);

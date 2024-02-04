@@ -266,7 +266,7 @@
     {
       "type": "minecolonies:citizen",
       "state": {
-        "match": {
+        "notmatch": {
           "finavquests": [
             "minecolonies:tutorial/welcome"
           ]

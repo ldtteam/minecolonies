@@ -74,6 +74,7 @@ public class QuestInstance implements IQuestInstance
         this.colony = colony;
         this.questTemplateID = questTemplateID;
         this.assignmentStart = colony.getDay();
+        questParticipants.clear();
 
         for (final ITriggerReturnData<?> data : triggerReturnData)
         {

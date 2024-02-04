@@ -1,11 +1,11 @@
 {
   "name": "The Zombie Menace",
   "parents": [],
-  "max-occurrences": 5,
+  "max-occurrences": 2,
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 500
+      "rarity": 250000
     },
     {
       "type": "minecolonies:state",
@@ -38,7 +38,7 @@
           "answer": "Sure, I'll do what I can.",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "Thank you! We need you to kill 10 Zombies. We'll reward you for your efforts.",
+            "text": "Thank you! We need you to kill 2 Zombies. We'll reward you for your efforts.",
             "options": [
               {
                 "answer": "I'm on it!",
@@ -60,15 +60,15 @@
     },
     {
       "type": "minecolonies:killentity",
-      "unlocks-rewards": [0, 1],
       "details": {
         "target": 0,
         "entity-type": "minecraft:zombie",
-        "qty": 10,
+        "qty": 2,
         "next-objective": 2
       }
     },
     {
+      "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "You did it! We're safe for now. Here's your reward.",
@@ -87,8 +87,8 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:diamond",
-        "qty": 1
+        "item": "minecraft:iron_ingot",
+        "qty": 2
       }
     },
     {

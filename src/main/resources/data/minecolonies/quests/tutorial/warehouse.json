@@ -1,0 +1,199 @@
+{
+  "name": "Automate Deliveries!",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/housing2"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/housing2"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi! I'm sure your feet are hurting by now because you are manually fulfilling all the citizens needs! I got good news! You can automate most of this with the help of a warehouse and courier!",
+      "options": [
+        {
+          "answer": "Tell me more about it!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Let's start by crafting a warehouse block by surrounding a chest with planks and the build tool in the top slot and a courier hut by surrounding a set of chain boots with planks and the build tool in the top slot.",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already got a warehouse and courier!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+                  "options": [
+                    {
+                      "answer": "Noted!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 10
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already got one!!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+            "options": [
+              {
+                "answer": "Noted!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Welcome back, did you craft the warehouse and courier hut blocks already?",
+      "options": [
+        {
+          "answer": "No, I forgot what I had to do!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Craft a warehouse block by surrounding a chest with planks and the build tool in the top slot and a courier hut by surrounding a set of chain boots with planks and the build tool in the top slot.",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Yes! Got them right here!!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "That was fast! Next place the buildings with the help of the build tool, click build and supply your builder with the materials. I advise you to place the warehouse somewhat centrally in your colony for easy access. The courier hut location is inconsequential on the other hand.",
+            "options": [
+              {
+                "answer": "Noted!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:warehouse",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:deliveryman",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 4
+      }
+    },
+    {
+      "unlocks-rewards": [0,1,2,3],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Neat! The food your farmer produces will now automatically reach the restaurant through the warehouse. Here, have a set of tools you can drop off in the warehouse to be delivered to your citizens on demand.",
+      "options": [
+        {
+          "answer": "Thank you. Bye!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:stone_pickaxe",
+        "qty": 2
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:stone_axe",
+        "qty": 2
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:stone_shovel",
+        "qty": 2
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:stone_hoe",
+        "qty": 2
+      }
+    }
+  ]
+}

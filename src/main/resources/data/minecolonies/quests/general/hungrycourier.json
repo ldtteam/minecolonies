@@ -5,7 +5,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 1000
+      "rarity": 5000000
     },
     {
       "type": "minecolonies:state",
@@ -84,7 +84,6 @@
     },
     {
       "type": "minecolonies:delivery",
-      "unlocks-rewards": [0, 1],
       "details": {
         "target": 0,
         "item": "minecraft:baked_potato",
@@ -93,6 +92,7 @@
       }
     },
     {
+      "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Oh, this was great! Thanks a lot!",
