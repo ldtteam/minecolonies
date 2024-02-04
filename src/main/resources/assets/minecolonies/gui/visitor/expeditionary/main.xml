@@ -1,0 +1,13 @@
+<window size="400 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide.png" size="400 244" pos="0 0"/>
+
+    <view size="340 204" pos="30 20">
+        <label id="expedition_name" size="240 15" pos="0 0" color="black"/>
+        <view id="expedition_difficulty" size="64 15" pos="0 20">
+            <image id="diff_1" source="minecolonies:textures/gui/visitor/expeditionary/sword_backdrop.png" size="16 16" pos="0 0" visible="false"/>
+            <image id="diff_2" source="minecolonies:textures/gui/visitor/expeditionary/sword_backdrop.png" size="16 16" pos="16 0" visible="false"/>
+            <image id="diff_3" source="minecolonies:textures/gui/visitor/expeditionary/sword_backdrop.png" size="16 16" pos="32 0" visible="false"/>
+            <image id="diff_4" source="minecolonies:textures/gui/visitor/expeditionary/sword_backdrop.png" size="16 16" pos="48 0" visible="false"/>
+        </view>
+    </view>
+</window>

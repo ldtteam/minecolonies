@@ -16,6 +16,7 @@ import com.minecolonies.core.colony.expeditions.Expedition;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType.Difficulty;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.StartExpeditionMessage;
 import net.minecraft.network.chat.Component;
@@ -28,9 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITIONARY_DIFFICULTY;
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITIONARY_DIFFICULTY_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.EXPEDITIONARY_MAIN_RESOURCE_SUFFIX;
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.EXPEDITIONARY_DIFFICULTY;
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.EXPEDITIONARY_DIFFICULTY_PREFIX;
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION_TYPE;
 
 /**
@@ -62,19 +63,18 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + EXPEDITIONARY_MAIN_RESOURCE_SUFFIX);
         this.visitorData = visitorData;
-        this.expeditionType = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE).orElseThrow();
+        final ResourceLocation expeditionTypeId = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE);
+        this.expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+        if (this.expeditionType == null)
+        {
+            throw new IllegalStateException(String.format("Expedition with id '%s' does not exist.", expeditionTypeId.toString()));
+        }
 
         findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
 
         updateDifficulty();
 
         registerButton(LABEL_EXPEDITION_NAME, this::openVisitorInventory);
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
     }
 
     /**

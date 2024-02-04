@@ -8,15 +8,11 @@ public abstract class AbstractVisitorExtraData<S> implements IVisitorExtraData<S
     private final String key;
 
     @NotNull
-    private final S defaultValue;
-
-    @NotNull
     private S value;
 
     protected AbstractVisitorExtraData(@NotNull final String key, @NotNull final S defaultValue)
     {
         this.key = key;
-        this.defaultValue = defaultValue;
         this.value = defaultValue;
     }
 
@@ -36,13 +32,6 @@ public abstract class AbstractVisitorExtraData<S> implements IVisitorExtraData<S
     public final void setValue(@NotNull final S value)
     {
         this.value = value;
-    }
-
-    @NotNull
-    @Override
-    public final S getDefaultValue()
-    {
-        return defaultValue;
     }
 
     @Override

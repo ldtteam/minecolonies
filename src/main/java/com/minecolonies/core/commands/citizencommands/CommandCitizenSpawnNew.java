@@ -39,7 +39,7 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
             return 0;
         }
 
-        final ICitizenData newCitizen = colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true);
+        final ICitizenData newCitizen = colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true);
         context.getSource().sendSuccess(() -> Component.translatable(COMMAND_CITIZEN_SPAWN_SUCCESS, newCitizen.getName()), true);
 
         MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.COMMANDS));

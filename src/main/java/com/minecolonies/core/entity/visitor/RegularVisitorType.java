@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
@@ -46,9 +46,9 @@ public class RegularVisitorType implements IVisitorType
     }
 
     @Override
-    public EntityType<? extends AbstractEntityVisitor> getEntityType()
+    public Function<Level, AbstractEntityVisitor> getEntityCreator()
     {
-        return ModEntities.VISITOR;
+        return ModEntities.VISITOR::create;
     }
 
     @Override

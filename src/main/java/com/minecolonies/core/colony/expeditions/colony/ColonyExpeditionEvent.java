@@ -40,8 +40,11 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     /**
      * NBT tags.
      */
-    private static final String TAG_EXPEDITION_TYPE = "expeditionType";
-    private static final String TAG_REMAINING_ITEMS = "remainingItems";
+    private static final String TAG_EXPEDITION_TYPE            = "expeditionType";
+    private static final String TAG_REMAINING_ITEMS            = "remainingItems";
+    private static final String TAG_END_TIME                   = "endTime";
+    private static final String TAG_FLAG_MINIMUM_TIME_ELAPSED  = "flagMinTimeElapsed";
+    private static final String TAG_FLAG_REMAINING_ITEMS_EMPTY = "flagRemainingItemsEmpty";
 
     /**
      * The size of the expedition inventory.
@@ -52,11 +55,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * The inventory for the expedition.
      */
     private final ItemStackHandler inventory = new ItemStackHandler(EXPEDITION_INVENTORY_SIZE);
-
-    /**
-     * Random instance for calculating random values.
-     */
-    private final Random random = new Random();
 
     /**
      * The expedition type for this colony expedition.
@@ -80,7 +78,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     private boolean isMinimumTimeElapsed = false;
 
     /**
-     *
+     * Whether the remaining items list was emptied out.
      */
     private boolean isRemainingItemsEmpty = false;
 
@@ -153,7 +151,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                 return;
             }
 
-            final int chance = random.nextInt(100);
+            final int chance = new Random().nextInt(100);
             if (chance <= 2)
             {
                 getExpedition().setStatus(ExpeditionStatus.LOST);
@@ -232,6 +230,10 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                                                 .map(IForgeItemStack::serializeNBT)
                                                 .collect(NBTUtils.toListNBT()));
         }
+
+        compound.putLong(TAG_END_TIME, endTime);
+        compound.putBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED, isMinimumTimeElapsed);
+        compound.putBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY, isRemainingItemsEmpty);
         return compound;
     }
 
@@ -247,5 +249,9 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                                .map(ItemStack::of)
                                .collect(Collectors.toCollection(ArrayDeque::new));
         }
+
+        endTime = compoundTag.getLong(TAG_END_TIME);
+        isMinimumTimeElapsed = compoundTag.getBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED);
+        isRemainingItemsEmpty = compoundTag.getBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY);
     }
 }

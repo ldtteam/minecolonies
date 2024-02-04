@@ -3,13 +3,11 @@ package com.minecolonies.core.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorViewData;
-import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorExtraData;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -60,12 +58,6 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
                 extraDataKey.deserializeNBT(compound.getCompound(extraDataKey.getKey()));
             }
         }
-    }
-
-    @Override
-    public EntityType<? extends AbstractEntityVisitor> getEntityType()
-    {
-        return visitorType.getEntityType();
     }
 
     @Override

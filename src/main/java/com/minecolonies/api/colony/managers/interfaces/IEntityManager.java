@@ -3,10 +3,8 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -70,24 +68,6 @@ public interface IEntityManager<T extends ICivilianData>
      * @return ICivilianData associated with the ID, or null if it was not found.
      */
     T getCivilian(int civilianId);
-
-    /**
-     * Spawns a civilian with the specific civilian data.
-     *
-     * @param data     Data to use when spawn, null when new generation.
-     * @param world    THe world.
-     * @param spawnPos the pos to spawn it at.
-     * @param force    True to skip max civilian test, false when not.
-     * @return the new civilian.
-     */
-    T spawnOrCreateCivilian(T data, Level world, BlockPos spawnPos, boolean force);
-
-    /**
-     * Creates Civilian Data for a new civilian
-     *
-     * @return new ICivilianData
-     */
-    ICivilianData createAndRegisterCivilianData();
 
     /**
      * Removes a civilian from the colony.

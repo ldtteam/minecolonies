@@ -80,7 +80,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
     private        IForgeRegistry<IVisitorType>                             visitorTypeRegistry;
-    private        IForgeRegistry<IVisitorType>                             visitorExtraDataRegistry;
 
     @Override
     @NotNull

@@ -32,12 +32,4 @@ public interface IVisitorExtraData<S> extends INBTSerializable<CompoundTag>
      * @param value the new value.
      */
     void setValue(S value);
-
-    /**
-     * Get the default value in case no value was explicitly set yet.
-     *
-     * @return the value.
-     */
-    @Nullable
-    S getDefaultValue();
 }

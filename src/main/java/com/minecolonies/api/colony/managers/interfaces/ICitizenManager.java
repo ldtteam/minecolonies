@@ -15,6 +15,23 @@ import java.util.List;
  */
 public interface ICitizenManager extends IEntityManager<ICitizenData>
 {
+    /**
+     * Spawns a civilian with the specific civilian data.
+     *
+     * @param data     Data to use when spawn, null when new generation.
+     * @param world    THe world.
+     * @param spawnPos the pos to spawn it at.
+     * @param force    True to skip max civilian test, false when not.
+     * @return the new civilian.
+     */
+    ICitizenData spawnOrCreateCitizen(ICitizenData data, Level world, BlockPos spawnPos, boolean force);
+
+    /**
+     * Creates citizen data for a new citizen
+     *
+     * @return new ICitizenData
+     */
+    ICitizenData createAndRegisterCitizenData();
 
     /**
      * Spawn a brand new Citizen.
@@ -30,7 +47,7 @@ public interface ICitizenManager extends IEntityManager<ICitizenData>
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world)
     {
-        return this.spawnOrCreateCivilian(data, world, null, false);
+        return this.spawnOrCreateCitizen(data, world, null, false);
     }
 
     /**
@@ -43,7 +60,7 @@ public interface ICitizenManager extends IEntityManager<ICitizenData>
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world, final BlockPos spawnPos)
     {
-        return this.spawnOrCreateCivilian(data, world, spawnPos, false);
+        return this.spawnOrCreateCitizen(data, world, spawnPos, false);
     }
 
     /**
@@ -58,9 +75,6 @@ public interface ICitizenManager extends IEntityManager<ICitizenData>
      * Recalculates how many citizen can be in the colony.
      */
     void calculateMaxCitizens();
-
-    @Override
-    ICitizenData createAndRegisterCivilianData();
 
     /**
      * Resurrect a citizen from its saved NBT.

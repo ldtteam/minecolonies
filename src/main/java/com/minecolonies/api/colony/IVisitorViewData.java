@@ -1,9 +1,7 @@
 package com.minecolonies.api.colony;
 
-import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorExtraData;
 import com.minecolonies.api.entity.visitor.IVisitorType;
-import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,13 +9,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IVisitorViewData extends ICitizenDataView
 {
-    /**
-     * Get the entity type for this visitor.
-     *
-     * @return the entity type.
-     */
-    EntityType<? extends AbstractEntityVisitor> getEntityType();
-
     /**
      * Get the type of the visitor.
      *

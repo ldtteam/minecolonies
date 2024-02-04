@@ -3,12 +3,12 @@ package com.minecolonies.api.entity.visitor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Specific handler actions for interacting with different types of visitors.
@@ -23,11 +23,11 @@ public interface IVisitorType
     ResourceLocation getId();
 
     /**
-     * Get the entity type for this visitor type.
+     * Get the generator function for creating the entity for this given visitor.
      *
-     * @return the entity type.
+     * @return the entity creator.
      */
-    EntityType<? extends AbstractEntityVisitor> getEntityType();
+    Function<Level, AbstractEntityVisitor> getEntityCreator();
 
     /**
      * Creates the state machine for this specific visitor.

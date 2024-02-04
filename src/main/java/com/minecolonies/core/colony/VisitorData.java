@@ -3,7 +3,6 @@ package com.minecolonies.core.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorExtraData;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -13,7 +12,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,12 +78,6 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public EntityType<? extends AbstractEntityVisitor> getEntityType()
-    {
-        return visitorType.getEntityType();
-    }
-
-    @Override
     public @NotNull IVisitorType getVisitorType()
     {
         return visitorType;
@@ -129,7 +121,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         if (getLastPosition() != BlockPos.ZERO && (getLastPosition().getX() != 0 && getLastPosition().getZ() != 0) && WorldUtil.isEntityBlockLoaded(getColony().getWorld(),
           getLastPosition()))
         {
-            getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
+            getColony().getVisitorManager().spawnOrCreateVisitor(visitorType, this, getColony().getWorld(), getLastPosition());
         }
         else if (getHomeBuilding() != null)
         {
@@ -138,7 +130,7 @@ public class VisitorData extends CitizenData implements IVisitorData
                 final BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(getColony().getWorld(), getHomeBuilding().getID());
                 if (spawnPos != null)
                 {
-                    getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
+                    getColony().getVisitorManager().spawnOrCreateVisitor(visitorType, this, getColony().getWorld(), spawnPos);
                 }
             }
         }
@@ -170,11 +162,12 @@ public class VisitorData extends CitizenData implements IVisitorData
     public void deserializeNBT(final CompoundTag nbtTagCompound)
     {
         super.deserializeNBT(nbtTagCompound);
+        final CompoundTag extraDataCompound = nbtTagCompound.getCompound(TAG_EXTRA_DATA);
         for (final IVisitorExtraData<?> extraDataKey : extraData)
         {
-            if (nbtTagCompound.contains(extraDataKey.getKey()))
+            if (extraDataCompound.contains(extraDataKey.getKey()))
             {
-                extraDataKey.deserializeNBT(nbtTagCompound.getCompound(extraDataKey.getKey()));
+                extraDataKey.deserializeNBT(extraDataCompound.getCompound(extraDataKey.getKey()));
             }
         }
 

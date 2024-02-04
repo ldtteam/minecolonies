@@ -232,7 +232,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCivilian(@Nullable final ICitizenData data, final Level world, final BlockPos spawnPos, final boolean force)
+    public ICitizenData spawnOrCreateCitizen(@Nullable final ICitizenData data, final Level world, final BlockPos spawnPos, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
@@ -280,7 +280,7 @@ public class CitizenManager implements ICitizenManager
         ICitizenData citizenData = data;
         if (citizenData == null)
         {
-            citizenData = createAndRegisterCivilianData();
+            citizenData = createAndRegisterCitizenData();
 
             if (getMaxCitizens() >= getCurrentCitizenCount() && !force)
             {
@@ -307,7 +307,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData createAndRegisterCivilianData()
+    public ICitizenData createAndRegisterCitizenData()
     {
         //This ensures that citizen IDs are getting reused.
         //That's needed to prevent bugs when calling IDs that are not used.
@@ -586,7 +586,7 @@ public class CitizenManager implements ICitizenManager
                 }
 
                 final boolean firstCitizen = getCitizens().size() == 0;
-                final ICitizenData newCitizen = createAndRegisterCivilianData();
+                final ICitizenData newCitizen = createAndRegisterCitizenData();
                 if (firstCitizen)
                 {
                     colony.getQuestManager().injectAvailableQuest(new QuestInstance(new ResourceLocation(MOD_ID, "tutorial/welcome"), colony, List.of(new CitizenTriggerReturnData(newCitizen))));
@@ -608,7 +608,7 @@ public class CitizenManager implements ICitizenManager
                     newCitizen.setGenderAndGenerateName(false);
                 }
 
-                spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
+                spawnOrCreateCitizen(newCitizen, colony.getWorld(), null, true);
 
                 MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
 

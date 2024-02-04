@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
@@ -16,17 +17,17 @@ import com.minecolonies.core.colony.colonyEvents.citizenEvents.VisitorSpawnedEve
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
 import com.minecolonies.core.network.messages.client.colony.PlayMusicAtPosMessage;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -175,7 +176,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
      */
     private void spawnVisitor()
     {
-        IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
+        IVisitorData newCitizen = building.getColony().getVisitorManager().createAndRegisterVisitorData(ModVisitorTypes.visitor.get());
         externalCitizens.add(newCitizen.getId());
 
         newCitizen.setBedPos(building.getPosition());
@@ -233,7 +234,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
               ChatPriority.IMPORTANT));
         }
 
-        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
+        building.getColony().getVisitorManager().spawnOrCreateVisitor(ModVisitorTypes.visitor.get(), newCitizen, building.getColony().getWorld(), spawnPos);
         if (newCitizen.getEntity().isPresent())
         {
             newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, boots);

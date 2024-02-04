@@ -37,9 +37,7 @@ public class ExpeditionaryInteraction extends ServerCitizenInteraction
      * @param inquiry  the inquiry text.
      * @param priority the chat priority.
      */
-    public ExpeditionaryInteraction(
-      final Component inquiry,
-      final IChatPriority priority)
+    public ExpeditionaryInteraction(final Component inquiry, final IChatPriority priority)
     {
         super(inquiry, true, priority, d -> true, null, viewAnswer, returnAnswer);
     }

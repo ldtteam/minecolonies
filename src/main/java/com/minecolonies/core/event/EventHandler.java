@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
@@ -722,7 +723,7 @@ public class EventHandler
                 event.setCanceled(true);
                 if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
-                    IVisitorData visitorData = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
+                    IVisitorData visitorData = colony.getVisitorManager().createAndRegisterVisitorData(ModVisitorTypes.visitor.get());
                     BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
                     IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
 
@@ -734,7 +735,7 @@ public class EventHandler
                     List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
                     visitorData.getCitizenSkillHandler().init(recruitLevel);
-                    colony.getVisitorManager().spawnOrCreateCivilian(visitorData, world, entity.blockPosition(), false);
+                    colony.getVisitorManager().spawnOrCreateVisitor(ModVisitorTypes.visitor.get(), visitorData, world, entity.blockPosition());
                     colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(entity.blockPosition(), visitorData.getName()));
 
                     if (visitorData.getEntity().isPresent())

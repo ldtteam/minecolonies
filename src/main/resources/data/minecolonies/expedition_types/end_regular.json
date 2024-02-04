@@ -1,0 +1,42 @@
+{
+  "name": "Expedition in the End",
+  "to-text": "the End",
+  "difficulty": "hard",
+  "dimension": "minecraft:the_end",
+  "loot-table": "minecolonies:expedition_end",
+  "requirements": [
+    {
+      "type": "tool",
+      "tool": "weapon"
+    },
+    {
+      "type": "tool",
+      "tool": "pickaxe"
+    },
+    {
+      "type": "tool",
+      "tool": "shovel"
+    },
+    {
+      "type": "tool",
+      "tool": "helmet"
+    },
+    {
+      "type": "tool",
+      "tool": "chestplate"
+    },
+    {
+      "type": "tool",
+      "tool": "leggings"
+    },
+    {
+      "type": "tool",
+      "tool": "boots"
+    },
+    {
+      "type": "food",
+      "amount": 32
+    }
+  ],
+  "guards": 1
+}
