@@ -164,11 +164,12 @@ public class VisitorData extends CitizenData implements IVisitorData
     public void deserializeNBT(final CompoundTag nbtTagCompound)
     {
         super.deserializeNBT(nbtTagCompound);
+        final CompoundTag extraDataCompound = nbtTagCompound.getCompound(TAG_EXTRA_DATA);
         for (final IVisitorExtraData<?> extraDataKey : extraData)
         {
-            if (nbtTagCompound.contains(extraDataKey.getKey()))
+            if (extraDataCompound.contains(extraDataKey.getKey()))
             {
-                extraDataKey.deserializeNBT(nbtTagCompound.getCompound(extraDataKey.getKey()));
+                extraDataKey.deserializeNBT(extraDataCompound.getCompound(extraDataKey.getKey()));
             }
         }
 
