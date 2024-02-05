@@ -1,12 +1,15 @@
 package com.minecolonies.core;
 
+import com.ldtteam.common.config.Configurations;
+import com.ldtteam.common.language.LanguageHandler;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.configuration.ClientConfiguration;
+import com.minecolonies.api.configuration.CommonConfiguration;
+import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.enchants.ModEnchants;
@@ -42,6 +45,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.capabilities.CapabilityManager;
@@ -67,10 +71,16 @@ public class MineColonies
     /**
      * The config instance.
      */
-    private static Configuration config;
+    private static Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> config;
 
-    public MineColonies()
+    public MineColonies(final FMLModContainer modContainer, final Dist dist)
     {
+        final IEventBus modBus = modContainer.getEventBus();
+        final IEventBus forgeBus = NeoForge.EVENT_BUS;
+    
+        config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
+        LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
+
         TileEntityInitializer.BLOCK_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModEnchants.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModContainerInitializers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -104,9 +114,6 @@ public class MineColonies
         ModCreativeTabs.TAB_REG.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         ModEnchantInitializer.init();
-
-        LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json"); // hotfix config comments, it's ugly bcs it's gonna be replaced
-        config = new Configuration();
 
         Consumer<TagsUpdatedEvent> onTagsLoaded = (event) -> ModTags.tagsLoaded = true;
         NeoForge.EVENT_BUS.addListener(onTagsLoaded);
@@ -218,7 +225,7 @@ public class MineColonies
      *
      * @return the config handler.
      */
-    public static Configuration getConfig()
+    public static Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig()
     {
         return config;
     }

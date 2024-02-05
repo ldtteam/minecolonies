@@ -1,10 +1,17 @@
 package com.minecolonies.api.configuration;
 
+import com.ldtteam.common.config.AbstractConfiguration;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+
 import java.util.Arrays;
 import java.util.List;
-import net.neoforged.neoforge.common.NeoForgeConfigSpec;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
@@ -17,106 +24,106 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Gameplay settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.IntValue     initialCitizenAmount;
-    public final NeoForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
-    public final NeoForgeConfigSpec.BooleanValue allowInfiniteColonies;
-    public final NeoForgeConfigSpec.BooleanValue allowOtherDimColonies;
-    public final NeoForgeConfigSpec.IntValue     maxCitizenPerColony;
-    public final NeoForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
-    public final NeoForgeConfigSpec.BooleanValue alwaysRenderNameTag;
-    public final NeoForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
-    public final NeoForgeConfigSpec.BooleanValue holidayFeatures;
-    public final NeoForgeConfigSpec.IntValue     luckyBlockChance;
-    public final NeoForgeConfigSpec.IntValue     minThLevelToTeleport;
-    public final NeoForgeConfigSpec.DoubleValue  foodModifier;
-    public final NeoForgeConfigSpec.IntValue     diseaseModifier;
-    public final NeoForgeConfigSpec.BooleanValue forceLoadColony;
-    public final NeoForgeConfigSpec.IntValue     loadtime;
-    public final NeoForgeConfigSpec.IntValue     colonyLoadStrictness;
-    public final NeoForgeConfigSpec.IntValue     maxTreeSize;
-    public final NeoForgeConfigSpec.BooleanValue noSupplyPlacementRestrictions;
-    public final NeoForgeConfigSpec.BooleanValue skyRaiders;
+    public final IntValue     initialCitizenAmount;
+    public final BooleanValue allowInfiniteSupplyChests;
+    public final BooleanValue allowInfiniteColonies;
+    public final BooleanValue allowOtherDimColonies;
+    public final IntValue     maxCitizenPerColony;
+    public final BooleanValue enableInDevelopmentFeatures;
+    public final BooleanValue alwaysRenderNameTag;
+    public final BooleanValue workersAlwaysWorkInRain;
+    public final BooleanValue holidayFeatures;
+    public final IntValue     luckyBlockChance;
+    public final IntValue     minThLevelToTeleport;
+    public final DoubleValue  foodModifier;
+    public final IntValue     diseaseModifier;
+    public final BooleanValue forceLoadColony;
+    public final IntValue     loadtime;
+    public final IntValue     colonyLoadStrictness;
+    public final IntValue     maxTreeSize;
+    public final BooleanValue noSupplyPlacementRestrictions;
+    public final BooleanValue skyRaiders;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
-    public final NeoForgeConfigSpec.BooleanValue                        researchCreativeCompletion;
-    public final NeoForgeConfigSpec.BooleanValue                        researchDebugLog;
-    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> researchResetCost;
+    public final BooleanValue                        researchCreativeCompletion;
+    public final BooleanValue                        researchDebugLog;
+    public final ConfigValue<List<? extends String>> researchResetCost;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseRTPCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseAllyTHTeleport;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
-    public final NeoForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
+    public final BooleanValue canPlayerUseRTPCommand;
+    public final BooleanValue canPlayerUseColonyTPCommand;
+    public final BooleanValue canPlayerUseAllyTHTeleport;
+    public final BooleanValue canPlayerUseHomeTPCommand;
+    public final BooleanValue canPlayerUseShowColonyInfoCommand;
+    public final BooleanValue canPlayerUseKillCitizensCommand;
+    public final BooleanValue canPlayerUseAddOfficerCommand;
+    public final BooleanValue canPlayerUseDeleteColonyCommand;
+    public final BooleanValue canPlayerUseResetCommand;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.IntValue     maxColonySize;
-    public final NeoForgeConfigSpec.IntValue     minColonyDistance;
-    public final NeoForgeConfigSpec.IntValue     initialColonySize;
-    public final NeoForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
-    public final NeoForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
+    public final IntValue     maxColonySize;
+    public final IntValue     minColonyDistance;
+    public final IntValue     initialColonySize;
+    public final IntValue     maxDistanceFromWorldSpawn;
+    public final IntValue     minDistanceFromWorldSpawn;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
      *  ------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.BooleanValue enableColonyRaids;
-    public final NeoForgeConfigSpec.IntValue     raidDifficulty;
-    public final NeoForgeConfigSpec.IntValue     maxRaiders;
-    public final NeoForgeConfigSpec.BooleanValue raidersbreakblocks;
-    public final NeoForgeConfigSpec.IntValue     averageNumberOfNightsBetweenRaids;
-    public final NeoForgeConfigSpec.IntValue     minimumNumberOfNightsBetweenRaids;
-    public final NeoForgeConfigSpec.BooleanValue raidersbreakdoors;
-    public final NeoForgeConfigSpec.BooleanValue mobAttackCitizens;
-    public final NeoForgeConfigSpec.DoubleValue  guardDamageMultiplier;
-    public final NeoForgeConfigSpec.DoubleValue  guardHealthMult;
-    public final NeoForgeConfigSpec.BooleanValue pvp_mode;
+    public final BooleanValue enableColonyRaids;
+    public final IntValue     raidDifficulty;
+    public final IntValue     maxRaiders;
+    public final BooleanValue raidersbreakblocks;
+    public final IntValue     averageNumberOfNightsBetweenRaids;
+    public final IntValue     minimumNumberOfNightsBetweenRaids;
+    public final BooleanValue raidersbreakdoors;
+    public final BooleanValue mobAttackCitizens;
+    public final DoubleValue  guardDamageMultiplier;
+    public final DoubleValue  guardHealthMult;
+    public final BooleanValue pvp_mode;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.BooleanValue                        enableColonyProtection;
-    public final NeoForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
-    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
+    public final BooleanValue                        enableColonyProtection;
+    public final EnumValue<Explosions>               turnOffExplosionsInColonies;
+    public final ConfigValue<List<? extends String>> freeToInteractBlocks;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
-    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
-    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
-    public final NeoForgeConfigSpec.BooleanValue                        auditCraftingTags;
-    public final NeoForgeConfigSpec.BooleanValue                        debugInventories;
-    public final NeoForgeConfigSpec.BooleanValue                        blueprintBuildMode;
+    public final ConfigValue<List<? extends String>> configListStudyItems;
+    public final ConfigValue<List<? extends String>> configListRecruitmentItems;
+    public final ConfigValue<List<? extends String>> luckyOres;
+    public final ConfigValue<List<? extends String>> diseases;
+    public final BooleanValue                        auditCraftingTags;
+    public final BooleanValue                        debugInventories;
+    public final BooleanValue                        blueprintBuildMode;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
-    public final NeoForgeConfigSpec.IntValue pathfindingDebugVerbosity;
-    public final NeoForgeConfigSpec.IntValue pathfindingMaxThreadCount;
-    public final NeoForgeConfigSpec.IntValue minimumRailsToPath;
+    public final IntValue pathfindingDebugVerbosity;
+    public final IntValue pathfindingMaxThreadCount;
+    public final IntValue minimumRailsToPath;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    public final NeoForgeConfigSpec.BooleanValue creativeResolve;
+    public final BooleanValue creativeResolve;
 
 
     /**
@@ -124,87 +131,89 @@ public class ServerConfiguration extends AbstractConfiguration
      *
      * @param builder config builder
      */
-    protected ServerConfiguration(final NeoForgeConfigSpec.Builder builder)
+    public ServerConfiguration(final Builder builder)
     {
-        createCategory(builder, "gameplay");
+        super(builder, MOD_ID);
 
-        initialCitizenAmount = defineInteger(builder, "initialcitizenamount", 4, 1, 10);
-        allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
-        allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
-        allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 100, CitizenConstants.CITIZEN_LIMIT_MAX);
-        enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
-        alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
-        workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
-        holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
-        minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
-        foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
-        diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
-        forceLoadColony = defineBoolean(builder, "forceloadcolony", true);
-        loadtime = defineInteger(builder, "loadtime", 10, 1, 1440);
-        colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
-        maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
-        noSupplyPlacementRestrictions = defineBoolean(builder, "nosupplyplacementrestrictions", false);
-        skyRaiders = defineBoolean(builder, "skyraiders", false);
+        createCategory("gameplay");
 
-        swapToCategory(builder, "research");
-        researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
-        researchDebugLog = defineBoolean(builder, "researchdebuglog", false);
-        researchResetCost = defineList(builder, "researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s -> s instanceof String);
+        initialCitizenAmount = defineInteger("initialcitizenamount", 4, 1, 10);
+        allowInfiniteSupplyChests = defineBoolean("allowinfinitesupplychests", false);
+        allowInfiniteColonies = defineBoolean("allowinfinitecolonies", false);
+        allowOtherDimColonies = defineBoolean("allowotherdimcolonies", true);
+        maxCitizenPerColony = defineInteger("maxcitizenpercolony", 250, 100, CitizenConstants.CITIZEN_LIMIT_MAX);
+        enableInDevelopmentFeatures = defineBoolean("enableindevelopmentfeatures", false);
+        alwaysRenderNameTag = defineBoolean("alwaysrendernametag", true);
+        workersAlwaysWorkInRain = defineBoolean("workersalwaysworkinrain", false);
+        holidayFeatures = defineBoolean("holidayfeatures", true);
+        luckyBlockChance = defineInteger("luckyblockchance", 1, 0, 100);
+        minThLevelToTeleport = defineInteger("minthleveltoteleport", 3, 0, 5);
+        foodModifier = defineDouble("foodmodifier", 1.0, 0.1, 100);
+        diseaseModifier = defineInteger("diseasemodifier", 5, 1, 100);
+        forceLoadColony = defineBoolean("forceloadcolony", true);
+        loadtime = defineInteger("loadtime", 10, 1, 1440);
+        colonyLoadStrictness = defineInteger("colonyloadstrictness", 3, 1, 15);
+        maxTreeSize = defineInteger("maxtreesize", 400, 1, 1000);
+        noSupplyPlacementRestrictions = defineBoolean("nosupplyplacementrestrictions", false);
+        skyRaiders = defineBoolean("skyraiders", false);
 
-        swapToCategory(builder, "commands");
+        swapToCategory("research");
+        researchCreativeCompletion = defineBoolean("researchcreativecompletion", true);
+        researchDebugLog = defineBoolean("researchdebuglog", false);
+        researchResetCost = defineList("researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s -> s instanceof String);
 
-        canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", false);
-        canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
-        canPlayerUseAllyTHTeleport = defineBoolean(builder, "canplayeruseallytownhallteleport", true);
-        canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", false);
-        canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
-        canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", false);
-        canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
-        canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", false);
-        canPlayerUseResetCommand = defineBoolean(builder, "canplayeruseresetcommand", false);
+        swapToCategory("commands");
 
-        swapToCategory(builder, "claims");
+        canPlayerUseRTPCommand = defineBoolean("canplayerusertpcommand", false);
+        canPlayerUseColonyTPCommand = defineBoolean("canplayerusecolonytpcommand", false);
+        canPlayerUseAllyTHTeleport = defineBoolean("canplayeruseallytownhallteleport", true);
+        canPlayerUseHomeTPCommand = defineBoolean("canplayerusehometpcommand", false);
+        canPlayerUseShowColonyInfoCommand = defineBoolean("canplayeruseshowcolonyinfocommand", true);
+        canPlayerUseKillCitizensCommand = defineBoolean("canplayerusekillcitizenscommand", false);
+        canPlayerUseAddOfficerCommand = defineBoolean("canplayeruseaddofficercommand", true);
+        canPlayerUseDeleteColonyCommand = defineBoolean("canplayerusedeletecolonycommand", false);
+        canPlayerUseResetCommand = defineBoolean("canplayeruseresetcommand", false);
 
-        maxColonySize = defineInteger(builder, "maxColonySize", 20, 1, 250);
-        minColonyDistance = defineInteger(builder, "minColonyDistance", 8, 1, 200);
-        initialColonySize = defineInteger(builder, "initialColonySize", 4, 1, 15);
-        maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 30000, 1000, Integer.MAX_VALUE);
-        minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 0, 0, 1000);
+        swapToCategory("claims");
 
-        swapToCategory(builder, "combat");
+        maxColonySize = defineInteger("maxColonySize", 20, 1, 250);
+        minColonyDistance = defineInteger("minColonyDistance", 8, 1, 200);
+        initialColonySize = defineInteger("initialColonySize", 4, 1, 15);
+        maxDistanceFromWorldSpawn = defineInteger("maxdistancefromworldspawn", 30000, 1000, Integer.MAX_VALUE);
+        minDistanceFromWorldSpawn = defineInteger("mindistancefromworldspawn", 0, 0, 1000);
 
-        enableColonyRaids = defineBoolean(builder, "dobarbariansspawn", true);
-        raidDifficulty = defineInteger(builder, "barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
-        maxRaiders = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
-        raidersbreakblocks = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 14, 1, 50);
-        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 10, 1, 30);
-        mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
-        raidersbreakdoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
-        guardDamageMultiplier = defineDouble(builder, "guardDamageMultiplier", 1.0, 0.1, 15.0);
-        guardHealthMult = defineDouble(builder, "guardhealthmult", 1.0, 0.1, 5.0);
-        pvp_mode = defineBoolean(builder, "pvp_mode", false);
+        swapToCategory("combat");
 
-        swapToCategory(builder, "permissions");
+        enableColonyRaids = defineBoolean("dobarbariansspawn", true);
+        raidDifficulty = defineInteger("barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
+        maxRaiders = defineInteger("maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
+        raidersbreakblocks = defineBoolean("dobarbariansbreakthroughwalls", true);
+        averageNumberOfNightsBetweenRaids = defineInteger("averagenumberofnightsbetweenraids", 14, 1, 50);
+        minimumNumberOfNightsBetweenRaids = defineInteger("minimumnumberofnightsbetweenraids", 10, 1, 30);
+        mobAttackCitizens = defineBoolean("mobattackcitizens", true);
+        raidersbreakdoors = defineBoolean("shouldraiderbreakdoors", true);
+        guardDamageMultiplier = defineDouble("guardDamageMultiplier", 1.0, 0.1, 15.0);
+        guardHealthMult = defineDouble("guardhealthmult", 1.0, 0.1, 5.0);
+        pvp_mode = defineBoolean("pvp_mode", false);
 
-        enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
-        turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        freeToInteractBlocks = defineList(builder, "freetointeractblocks",
+        swapToCategory("permissions");
+
+        enableColonyProtection = defineBoolean("enablecolonyprotection", true);
+        turnOffExplosionsInColonies = defineEnum("turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
+        freeToInteractBlocks = defineList("freetointeractblocks",
           Arrays.asList
                   ("dirt",
                     "0 0 0"),
           s -> s instanceof String);
 
-        swapToCategory(builder, "compatibility");
+        swapToCategory("compatibility");
 
-        configListStudyItems = defineList(builder, "configliststudyitems",
+        configListStudyItems = defineList("configliststudyitems",
           Arrays.asList
                   ("minecraft:paper;400;100", "minecraft:book;600;10"),
           s -> s instanceof String);
 
-        configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
+        configListRecruitmentItems = defineList("configlistrecruitmentitems",
           Arrays.asList
                   ("minecraft:hay_block;3",
                     "minecraft:book;2",
@@ -220,7 +229,7 @@ public class ServerConfiguration extends AbstractConfiguration
                     "minecraft:honeycomb;6",
                     "minecraft:quartz;3"),
           s -> s instanceof String);
-        luckyOres = defineList(builder, "luckyores",
+        luckyOres = defineList("luckyores",
           Arrays.asList
                   ("minecraft:coal_ore!64",
                     "minecraft:copper_ore!48",
@@ -232,26 +241,26 @@ public class ServerConfiguration extends AbstractConfiguration
                     "minecraft:emerald_ore!1"),
           s -> s instanceof String);
 
-        diseases = defineList(builder, "diseases",
+        diseases = defineList("diseases",
           Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
             "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
             "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple"),
           s -> s instanceof String);
 
-        auditCraftingTags = defineBoolean(builder, "auditcraftingtags", false);
-        debugInventories = defineBoolean(builder, "debuginventories", false);
-        blueprintBuildMode = defineBoolean(builder, "blueprintbuildmode", false);
+        auditCraftingTags = defineBoolean("auditcraftingtags", false);
+        debugInventories = defineBoolean("debuginventories", false);
+        blueprintBuildMode = defineBoolean("blueprintbuildmode", false);
 
-        swapToCategory(builder, "pathfinding");
+        swapToCategory("pathfinding");
 
-        pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
-        minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 8, 5, 100);
-        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 2, 1, 10);
+        pathfindingDebugVerbosity = defineInteger("pathfindingdebugverbosity", 0, 0, 10);
+        minimumRailsToPath = defineInteger("minimumrailstopath", 8, 5, 100);
+        pathfindingMaxThreadCount = defineInteger("pathfindingmaxthreadcount", 2, 1, 10);
 
-        swapToCategory(builder, "requestSystem");
+        swapToCategory("requestSystem");
 
-        creativeResolve = defineBoolean(builder, "creativeresolve", false);
+        creativeResolve = defineBoolean("creativeresolve", false);
 
-        finishCategory(builder);
+        finishCategory();
     }
 }

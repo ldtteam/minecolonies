@@ -9,7 +9,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.common.language.LanguageHandler;
 import com.minecolonies.api.client.render.modeltype.ISimpleModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataView;
