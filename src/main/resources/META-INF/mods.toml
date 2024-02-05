@@ -37,9 +37,9 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.minecolonies]] #optional
     # the modid of the dependency
-    modId="forge" #mandatory
+    modId="neoforge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
+    type="required" #mandatory
     # The version range of the dependency
     versionRange="${forge_range}" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
@@ -49,19 +49,19 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 # Here's another dependency
 [[dependencies.minecolonies]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="[${minecraftVersion}, 1.21)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="structurize"
-    mandatory=true
+    type="required"
     versionRange="[${structurize_version}, )"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="blockui"
-    mandatory=true
+    type="required"
     versionRange="[${blockUI_version}, )"
     ordering="AFTER"
     side="BOTH"
@@ -73,13 +73,13 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="domum_ornamentum"
-    mandatory=true
+    type="required"
     versionRange="[${domumOrnamentumVersion}, )"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="journeymap"
-    mandatory=false
+    type="optional"
     versionRange="[${project.jmapVersion},)"
     ordering="NONE"
     side="BOTH"
