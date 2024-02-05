@@ -8,8 +8,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;

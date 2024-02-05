@@ -31,9 +31,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,7 +180,7 @@ public final class ColonyManager implements IColonyManager
 
             try
             {
-                MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
+                NeoForge.EVENT_BUS.unregister(colony.getEventHandler());
             }
             catch (final NullPointerException e)
             {
@@ -234,7 +234,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final ResourceKey<Level> registryKey)
     {
-        final Level world = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
+        final Level world = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
         if (world == null)
         {
             return null;
@@ -330,7 +330,7 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final Level world : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final Level world : net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             world.getCapability(COLONY_MANAGER_CAP, null).ifPresent(c -> allColonies.addAll(c.getColonies()));
         }
@@ -618,7 +618,7 @@ public final class ColonyManager implements IColonyManager
                 c.onWorldLoad(world);
             }
 
-            MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
+            NeoForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
         }
     }
 
@@ -645,7 +645,7 @@ public final class ColonyManager implements IColonyManager
                 BackUpHelper.backupColonyData();
             }
 
-            MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
+            NeoForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
         }
     }
 
@@ -674,7 +674,7 @@ public final class ColonyManager implements IColonyManager
         }
         view.handleColonyViewMessage(colonyData, world, isNewSubscription);
 
-        MinecraftForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
+        NeoForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
     }
 
     @Override

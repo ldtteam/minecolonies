@@ -10,8 +10,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -53,7 +53,7 @@ public class DatagenLootTableManager extends LootDataManager
             )
             {
                 final JsonElement jsonobject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
-                final LootTable loottable = ForgeHooks.loadLootTable(GSON, location, jsonobject, false);
+                final LootTable loottable = CommonHooks.loadLootTable(GSON, location, jsonobject, false);
                 if (loottable != null)
                 {
                     this.tables.put(location, loottable);

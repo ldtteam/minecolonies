@@ -3,7 +3,7 @@ package com.minecolonies.api.research.effects;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 /**
  *  Contains a list of research effects by type.  Currently only supports absolute modifiers through Global Research Effect.

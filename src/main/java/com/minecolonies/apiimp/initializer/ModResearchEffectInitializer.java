@@ -5,7 +5,7 @@ import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 

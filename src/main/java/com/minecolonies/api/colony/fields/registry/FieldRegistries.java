@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.IForgeRegistry;
+import net.neoforged.neoforge.registries.RegistryObject;
 import org.apache.commons.lang3.Validate;
 
 import java.util.ArrayList;

@@ -8,9 +8,8 @@ import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DefaultJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegistryObject;
 import java.util.function.Supplier;
 
 public final class ModJobsInitializer

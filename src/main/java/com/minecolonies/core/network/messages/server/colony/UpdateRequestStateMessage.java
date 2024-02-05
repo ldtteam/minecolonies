@@ -8,7 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

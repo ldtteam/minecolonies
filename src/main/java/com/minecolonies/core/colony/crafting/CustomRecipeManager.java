@@ -17,7 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootDataManager;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -421,6 +421,6 @@ public class CustomRecipeManager
             lootTables.put(id, drops);
         }
 
-        MinecraftForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
+        NeoForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
     }
 }

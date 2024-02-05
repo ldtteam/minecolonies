@@ -99,11 +99,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.common.capabilities.Capability;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1680,7 +1680,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
               Component.literal(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
 
-            MinecraftForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
+            NeoForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
         }
         super.die(damageSource);
     }
@@ -1749,7 +1749,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
-        if (capability == ForgeCapabilities.ITEM_HANDLER)
+        if (capability == Capabilities.ITEM_HANDLER)
         {
             final ICitizenData data = getCitizenData();
             if (data == null)

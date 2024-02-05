@@ -2,7 +2,7 @@ package com.minecolonies.api.inventory;
 
 import com.minecolonies.api.inventory.container.*;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 public class ModContainers
 {

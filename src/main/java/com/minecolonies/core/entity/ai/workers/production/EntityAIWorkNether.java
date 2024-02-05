@@ -47,8 +47,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

@@ -16,9 +16,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -175,7 +175,7 @@ public class CreateColonyMessage implements IMessage
 
             if (isLogicalServer)
             {
-                MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
+                NeoForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
             }
             return;
         }

@@ -1,24 +1,24 @@
 package com.minecolonies.api.configuration;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec;
 
 /**
  * Mod client configuration. Loaded clientside, not synced.
  */
 public class ClientConfiguration extends AbstractConfiguration
 {
-    public final ForgeConfigSpec.BooleanValue citizenVoices;
-    public final ForgeConfigSpec.BooleanValue neighborbuildingrendering;
-    public final ForgeConfigSpec.IntValue neighborbuildingrange;
-    public final ForgeConfigSpec.IntValue buildgogglerange;
-    public final ForgeConfigSpec.BooleanValue colonyteamborders;
+    public final NeoForgeConfigSpec.BooleanValue citizenVoices;
+    public final NeoForgeConfigSpec.BooleanValue neighborbuildingrendering;
+    public final NeoForgeConfigSpec.IntValue neighborbuildingrange;
+    public final NeoForgeConfigSpec.IntValue buildgogglerange;
+    public final NeoForgeConfigSpec.BooleanValue colonyteamborders;
 
     /**
      * Builds client configuration.
      *
      * @param builder config builder
      */
-    protected ClientConfiguration(final ForgeConfigSpec.Builder builder)
+    protected ClientConfiguration(final NeoForgeConfigSpec.Builder builder)
     {
         createCategory(builder, "gameplay");
         citizenVoices = defineBoolean(builder, "enablecitizenvoices", true);

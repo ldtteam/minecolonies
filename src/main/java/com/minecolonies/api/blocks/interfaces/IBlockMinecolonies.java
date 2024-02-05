@@ -3,7 +3,7 @@ package com.minecolonies.api.blocks.interfaces;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.neoforged.neoforge.registries.IForgeRegistry;
 
 public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>>
 {

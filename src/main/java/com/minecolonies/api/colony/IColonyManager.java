@@ -11,7 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
+import net.neoforged.neoforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -230,7 +230,7 @@ public interface IColonyManager
     /**
      * On server tick, tick every Colony. NOTE: Review this for performance.
      *
-     * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
+     * @param event {@link net.neoforged.neoforge.event.TickEvent.ServerTickEvent}
      */
     void onServerTick(@NotNull TickEvent.ServerTickEvent event);
 

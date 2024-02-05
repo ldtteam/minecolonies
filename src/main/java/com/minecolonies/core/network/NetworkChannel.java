@@ -37,13 +37,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
-
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkRegistry;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.simple.SimpleChannel;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -255,7 +254,7 @@ public class NetworkChannel
             msg.fromBytes(buf);
             return msg;
         }, (msg, ctxIn) -> {
-            final net.minecraftforge.network.NetworkEvent.Context ctx = ctxIn.get();
+            final net.neoforged.neoforge.network.NetworkEvent.Context ctx = ctxIn.get();
             final LogicalSide packetOrigin = ctx.getDirection().getOriginationSide();
             ctx.setPacketHandled(true);
             msg.onExecute(ctx, packetOrigin.equals(LogicalSide.CLIENT));
@@ -334,7 +333,7 @@ public class NetworkChannel
      * @param pos target position and radius
      * @see PacketDistributor.TargetPoint
      */
-    public void sendToPosition(final IMessage msg, final net.minecraftforge.network.PacketDistributor.TargetPoint pos)
+    public void sendToPosition(final IMessage msg, final net.neoforged.neoforge.network.PacketDistributor.TargetPoint pos)
     {
         handleSplitting(msg, s -> rawChannel.send(PacketDistributor.NEAR.with(() -> pos), s));
     }

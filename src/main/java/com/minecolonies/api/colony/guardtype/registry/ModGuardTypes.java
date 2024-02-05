@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.guardtype.registry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 public final class ModGuardTypes
 {

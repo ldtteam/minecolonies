@@ -11,7 +11,7 @@ import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.colony.buildings.views.EmptyView;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 

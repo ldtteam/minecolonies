@@ -64,9 +64,9 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -995,7 +995,7 @@ public class Colony implements IColony
             {
                 eventHandler = new ColonyPermissionEventHandler(this);
                 questManager.onWorldLoad();
-                MinecraftForge.EVENT_BUS.register(eventHandler);
+                NeoForge.EVENT_BUS.register(eventHandler);
             }
             setColonyColor(this.colonyTeamColor);
         }
@@ -1020,7 +1020,7 @@ public class Colony implements IColony
 
         if (eventHandler != null)
         {
-            MinecraftForge.EVENT_BUS.unregister(eventHandler);
+            NeoForge.EVENT_BUS.unregister(eventHandler);
         }
         world = null;
     }

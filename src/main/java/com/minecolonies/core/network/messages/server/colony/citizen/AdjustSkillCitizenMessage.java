@@ -9,7 +9,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public class DynamicTreesSetting extends IntSetting
 {

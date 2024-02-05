@@ -3,10 +3,9 @@ package com.minecolonies.core.event.capabilityproviders;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.Tag;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
-
+import net.neoforged.neoforge.common.capabilities.Capability;
+import net.neoforged.neoforge.common.capabilities.ICapabilitySerializable;
+import net.neoforged.neoforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;

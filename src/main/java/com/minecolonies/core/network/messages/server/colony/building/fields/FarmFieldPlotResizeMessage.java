@@ -7,7 +7,7 @@ import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Message to change the farmer field plot size.

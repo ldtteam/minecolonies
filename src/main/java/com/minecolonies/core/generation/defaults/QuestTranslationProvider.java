@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.resource.PathPackResources;
+import net.neoforged.neoforge.resource.PathPackResources;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;

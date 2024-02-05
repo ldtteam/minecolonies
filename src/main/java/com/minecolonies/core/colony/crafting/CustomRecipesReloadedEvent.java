@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.crafting;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 /**
  * This event is fired on the client side whenever the CustomRecipeManager has been

@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 public final class ModBuildings
 {

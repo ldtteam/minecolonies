@@ -10,7 +10,7 @@ import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.Norsem
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Initializer for colony event types, register new event types here.

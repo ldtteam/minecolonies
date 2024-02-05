@@ -2,7 +2,7 @@ package com.minecolonies.core.quests.sideeffects;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 public interface IQuestSideEffect extends INBTSerializable<CompoundTag>
 {

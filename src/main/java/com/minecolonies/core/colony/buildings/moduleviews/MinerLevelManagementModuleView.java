@@ -9,8 +9,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import com.minecolonies.core.colony.workorders.view.WorkOrderMinerView;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

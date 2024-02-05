@@ -2,13 +2,15 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry;
+import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFunctionEntry;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.TimeBasedHappinessModifier;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobPupil;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.*;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler.*;

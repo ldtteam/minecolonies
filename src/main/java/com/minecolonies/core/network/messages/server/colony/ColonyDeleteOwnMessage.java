@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.event.ColonyDeletedEvent;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.minecraft.network.FriendlyByteBuf;
 import com.minecolonies.api.util.MessageUtils;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -55,7 +55,7 @@ public class ColonyDeleteOwnMessage implements IMessage
 
             if (isLogicalServer)
             {
-                MinecraftForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
+                NeoForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
             }
         }
         else

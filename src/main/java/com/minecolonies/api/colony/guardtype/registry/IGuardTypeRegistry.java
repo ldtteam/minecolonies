@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.guardtype.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.guardtype.GuardType;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.neoforged.neoforge.registries.IForgeRegistry;
 
 public interface IGuardTypeRegistry
 {

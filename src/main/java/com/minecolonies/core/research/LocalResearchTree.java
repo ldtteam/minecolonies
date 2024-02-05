@@ -18,8 +18,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.items.wrapper.InvWrapper;
-
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;

@@ -119,7 +119,7 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
                 input.add(new ItemStorage(container.slots.get(3).getItem()));
 
                 final ItemStack
-                  primaryOutput = net.minecraftforge.common.brewing.BrewingRecipeRegistry.getOutput(container.slots.get(3).getItem(), container.slots.get(0).getItem()).copy();
+                  primaryOutput = net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry.getOutput(container.slots.get(3).getItem(), container.slots.get(0).getItem()).copy();
                 primaryOutput.setCount(3);
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))

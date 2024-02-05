@@ -8,7 +8,7 @@ import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingRepaired
 import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.core.colony.colonyEvents.citizenEvents.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Initializer for colony event types, register new event types here.

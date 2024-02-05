@@ -7,7 +7,7 @@ import com.minecolonies.core.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.core.research.BuildingResearchRequirement;
 import com.minecolonies.core.research.ResearchResearchRequirement;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.ModResearchRequirements.*;
 

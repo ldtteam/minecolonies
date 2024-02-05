@@ -7,8 +7,8 @@ import com.minecolonies.core.client.gui.modules.EnchanterStationModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

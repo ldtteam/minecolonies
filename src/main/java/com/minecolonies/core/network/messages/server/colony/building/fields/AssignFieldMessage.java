@@ -9,7 +9,7 @@ import com.minecolonies.core.colony.fields.registry.FieldDataManager;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

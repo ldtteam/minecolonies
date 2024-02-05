@@ -9,7 +9,7 @@ import com.minecolonies.core.colony.jobs.JobDruid;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobRanger;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.util.constant.translation.JobTranslationConstants.*;
 

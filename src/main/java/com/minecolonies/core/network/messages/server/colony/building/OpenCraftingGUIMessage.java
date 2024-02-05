@@ -16,9 +16,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -113,7 +112,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
             }
             else
             {
-                net.minecraftforge.network.NetworkHooks.openScreen(player,
+                net.neoforged.neoforge.network.NetworkHooks.openScreen(player,
                   new MenuProvider()
                   {
                       @NotNull

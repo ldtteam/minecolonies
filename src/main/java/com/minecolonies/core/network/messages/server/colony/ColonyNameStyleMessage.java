@@ -3,7 +3,7 @@ package com.minecolonies.core.network.messages.server.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Message to set the colony name style.

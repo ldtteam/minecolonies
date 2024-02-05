@@ -19,10 +19,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +89,7 @@ public class PermissionsMessage
 
         @OnlyIn(Dist.CLIENT)
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             IColonyManager.getInstance().handlePermissionsViewMessage(colonyID, data, dimension);
             data.release();
@@ -154,7 +154,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             if (colony == null)
@@ -251,7 +251,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
@@ -396,7 +396,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
@@ -472,7 +472,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
@@ -549,7 +549,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
@@ -627,7 +627,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
@@ -697,7 +697,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
@@ -783,7 +783,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        public void onExecute(final net.neoforged.neoforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))

@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.common.ForgeHooks;
+import net.neoforged.neoforge.common.CommonHooks;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_HELP_INFO_DISCORD;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_HELP_INFO_WIKI;
@@ -33,9 +33,9 @@ public class CommandHelp implements IMCCommand
         }
 
         context.getSource().sendSuccess(() -> Component.translatable(COMMAND_HELP_INFO_WIKI), true);
-        context.getSource().sendSuccess(() -> ((MutableComponent) ForgeHooks.newChatWithLinks(wikiUrl)).append(Component.literal("\n")), true);
+        context.getSource().sendSuccess(() -> ((MutableComponent) CommonHooks.newChatWithLinks(wikiUrl)).append(Component.literal("\n")), true);
         context.getSource().sendSuccess(() -> Component.translatable(COMMAND_HELP_INFO_DISCORD), true);
-        context.getSource().sendSuccess(() -> ForgeHooks.newChatWithLinks(discordUrl), true);
+        context.getSource().sendSuccess(() -> CommonHooks.newChatWithLinks(discordUrl), true);
 
         return 1;
     }

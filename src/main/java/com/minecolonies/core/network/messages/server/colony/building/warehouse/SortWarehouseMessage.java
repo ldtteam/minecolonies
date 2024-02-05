@@ -7,8 +7,8 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.SortingUtils;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Sort the warehouse if level bigger than 3.
@@ -51,7 +51,7 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     {
         if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
         {
-            building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(inv -> SortingUtils.sort((CombinedItemHandler) inv));
+            building.getCapability(Capabilities.ITEM_HANDLER, null).ifPresent(inv -> SortingUtils.sort((CombinedItemHandler) inv));
         }
     }
 }

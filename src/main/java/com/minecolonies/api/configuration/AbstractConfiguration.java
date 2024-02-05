@@ -3,7 +3,13 @@ package com.minecolonies.api.configuration;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.common.ForgeConfigSpec.*;
-
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.Builder;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.EnumValue;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.IntValue;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec.LongValue;
 import java.util.List;
 import java.util.function.Predicate;
 

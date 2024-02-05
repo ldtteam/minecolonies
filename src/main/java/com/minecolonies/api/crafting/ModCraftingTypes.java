@@ -2,7 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.crafting.registry.CraftingType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 

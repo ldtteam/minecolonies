@@ -8,7 +8,7 @@ import com.minecolonies.core.quests.objectives.*;
 import com.minecolonies.core.quests.rewards.*;
 import com.minecolonies.core.quests.triggers.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.quests.registries.QuestRegistries.*;
 

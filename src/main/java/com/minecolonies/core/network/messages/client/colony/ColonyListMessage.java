@@ -7,7 +7,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

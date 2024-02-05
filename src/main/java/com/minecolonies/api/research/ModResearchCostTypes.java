@@ -4,8 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
-
+import net.neoforged.neoforge.registries.RegistryObject;
 import java.util.function.Function;
 
 /**

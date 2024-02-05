@@ -2,10 +2,9 @@ package com.minecolonies.api.configuration;
 
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import net.minecraftforge.common.ForgeConfigSpec;
-
 import java.util.Arrays;
 import java.util.List;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
@@ -18,106 +17,106 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Gameplay settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue     initialCitizenAmount;
-    public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
-    public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
-    public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
-    public final ForgeConfigSpec.IntValue     maxCitizenPerColony;
-    public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
-    public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
-    public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
-    public final ForgeConfigSpec.BooleanValue holidayFeatures;
-    public final ForgeConfigSpec.IntValue     luckyBlockChance;
-    public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
-    public final ForgeConfigSpec.DoubleValue  foodModifier;
-    public final ForgeConfigSpec.IntValue     diseaseModifier;
-    public final ForgeConfigSpec.BooleanValue forceLoadColony;
-    public final ForgeConfigSpec.IntValue     loadtime;
-    public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
-    public final ForgeConfigSpec.IntValue     maxTreeSize;
-    public final ForgeConfigSpec.BooleanValue noSupplyPlacementRestrictions;
-    public final ForgeConfigSpec.BooleanValue skyRaiders;
+    public final NeoForgeConfigSpec.IntValue     initialCitizenAmount;
+    public final NeoForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
+    public final NeoForgeConfigSpec.BooleanValue allowInfiniteColonies;
+    public final NeoForgeConfigSpec.BooleanValue allowOtherDimColonies;
+    public final NeoForgeConfigSpec.IntValue     maxCitizenPerColony;
+    public final NeoForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
+    public final NeoForgeConfigSpec.BooleanValue alwaysRenderNameTag;
+    public final NeoForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
+    public final NeoForgeConfigSpec.BooleanValue holidayFeatures;
+    public final NeoForgeConfigSpec.IntValue     luckyBlockChance;
+    public final NeoForgeConfigSpec.IntValue     minThLevelToTeleport;
+    public final NeoForgeConfigSpec.DoubleValue  foodModifier;
+    public final NeoForgeConfigSpec.IntValue     diseaseModifier;
+    public final NeoForgeConfigSpec.BooleanValue forceLoadColony;
+    public final NeoForgeConfigSpec.IntValue     loadtime;
+    public final NeoForgeConfigSpec.IntValue     colonyLoadStrictness;
+    public final NeoForgeConfigSpec.IntValue     maxTreeSize;
+    public final NeoForgeConfigSpec.BooleanValue noSupplyPlacementRestrictions;
+    public final NeoForgeConfigSpec.BooleanValue skyRaiders;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
-    public final ForgeConfigSpec.BooleanValue                        researchCreativeCompletion;
-    public final ForgeConfigSpec.BooleanValue                        researchDebugLog;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> researchResetCost;
+    public final NeoForgeConfigSpec.BooleanValue                        researchCreativeCompletion;
+    public final NeoForgeConfigSpec.BooleanValue                        researchDebugLog;
+    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> researchResetCost;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue canPlayerUseRTPCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseAllyTHTeleport;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseRTPCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseAllyTHTeleport;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
+    public final NeoForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue     maxColonySize;
-    public final ForgeConfigSpec.IntValue     minColonyDistance;
-    public final ForgeConfigSpec.IntValue     initialColonySize;
-    public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
-    public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
+    public final NeoForgeConfigSpec.IntValue     maxColonySize;
+    public final NeoForgeConfigSpec.IntValue     minColonyDistance;
+    public final NeoForgeConfigSpec.IntValue     initialColonySize;
+    public final NeoForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
+    public final NeoForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
      *  ------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue enableColonyRaids;
-    public final ForgeConfigSpec.IntValue     raidDifficulty;
-    public final ForgeConfigSpec.IntValue     maxRaiders;
-    public final ForgeConfigSpec.BooleanValue raidersbreakblocks;
-    public final ForgeConfigSpec.IntValue     averageNumberOfNightsBetweenRaids;
-    public final ForgeConfigSpec.IntValue     minimumNumberOfNightsBetweenRaids;
-    public final ForgeConfigSpec.BooleanValue raidersbreakdoors;
-    public final ForgeConfigSpec.BooleanValue mobAttackCitizens;
-    public final ForgeConfigSpec.DoubleValue  guardDamageMultiplier;
-    public final ForgeConfigSpec.DoubleValue  guardHealthMult;
-    public final ForgeConfigSpec.BooleanValue pvp_mode;
+    public final NeoForgeConfigSpec.BooleanValue enableColonyRaids;
+    public final NeoForgeConfigSpec.IntValue     raidDifficulty;
+    public final NeoForgeConfigSpec.IntValue     maxRaiders;
+    public final NeoForgeConfigSpec.BooleanValue raidersbreakblocks;
+    public final NeoForgeConfigSpec.IntValue     averageNumberOfNightsBetweenRaids;
+    public final NeoForgeConfigSpec.IntValue     minimumNumberOfNightsBetweenRaids;
+    public final NeoForgeConfigSpec.BooleanValue raidersbreakdoors;
+    public final NeoForgeConfigSpec.BooleanValue mobAttackCitizens;
+    public final NeoForgeConfigSpec.DoubleValue  guardDamageMultiplier;
+    public final NeoForgeConfigSpec.DoubleValue  guardHealthMult;
+    public final NeoForgeConfigSpec.BooleanValue pvp_mode;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
-    public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
+    public final NeoForgeConfigSpec.BooleanValue                        enableColonyProtection;
+    public final NeoForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
+    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
-    public final ForgeConfigSpec.BooleanValue                        auditCraftingTags;
-    public final ForgeConfigSpec.BooleanValue                        debugInventories;
-    public final ForgeConfigSpec.BooleanValue                        blueprintBuildMode;
+    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
+    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
+    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
+    public final NeoForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
+    public final NeoForgeConfigSpec.BooleanValue                        auditCraftingTags;
+    public final NeoForgeConfigSpec.BooleanValue                        debugInventories;
+    public final NeoForgeConfigSpec.BooleanValue                        blueprintBuildMode;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
-    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity;
-    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount;
-    public final ForgeConfigSpec.IntValue minimumRailsToPath;
+    public final NeoForgeConfigSpec.IntValue pathfindingDebugVerbosity;
+    public final NeoForgeConfigSpec.IntValue pathfindingMaxThreadCount;
+    public final NeoForgeConfigSpec.IntValue minimumRailsToPath;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue creativeResolve;
+    public final NeoForgeConfigSpec.BooleanValue creativeResolve;
 
 
     /**
@@ -125,7 +124,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *
      * @param builder config builder
      */
-    protected ServerConfiguration(final ForgeConfigSpec.Builder builder)
+    protected ServerConfiguration(final NeoForgeConfigSpec.Builder builder)
     {
         createCategory(builder, "gameplay");
 

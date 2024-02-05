@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.jobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
-
+import net.neoforged.neoforge.registries.RegistryObject;
 import java.util.ArrayList;
 import java.util.List;
 

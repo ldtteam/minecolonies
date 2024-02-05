@@ -10,8 +10,8 @@ import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

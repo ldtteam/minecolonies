@@ -1,8 +1,8 @@
 package com.minecolonies.api.configuration;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -30,9 +30,9 @@ public class Configuration
      */
     public Configuration()
     {
-        final Pair<ClientConfiguration, ForgeConfigSpec> cli = new ForgeConfigSpec.Builder().configure(ClientConfiguration::new);
-        final Pair<ServerConfiguration, ForgeConfigSpec> ser = new ForgeConfigSpec.Builder().configure(ServerConfiguration::new);
-        final Pair<CommonConfiguration, ForgeConfigSpec> com = new ForgeConfigSpec.Builder().configure(CommonConfiguration::new);
+        final Pair<ClientConfiguration, NeoForgeConfigSpec> cli = new NeoForgeConfigSpec.Builder().configure(ClientConfiguration::new);
+        final Pair<ServerConfiguration, NeoForgeConfigSpec> ser = new NeoForgeConfigSpec.Builder().configure(ServerConfiguration::new);
+        final Pair<CommonConfiguration, NeoForgeConfigSpec> com = new NeoForgeConfigSpec.Builder().configure(CommonConfiguration::new);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, cli.getRight());
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ser.getRight());

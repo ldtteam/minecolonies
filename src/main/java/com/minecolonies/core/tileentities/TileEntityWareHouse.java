@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,6 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse.MAX_STORAGE_UPGRADE;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class which handles the tileEntity of our colony warehouse.
@@ -100,9 +100,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     }
                 }
 
-                if (entity instanceof ChestBlockEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
+                if (entity instanceof ChestBlockEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(Capabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
                 {
-                    for (final ItemStack stack : InventoryUtils.filterItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
+                    for (final ItemStack stack : InventoryUtils.filterItemHandler(entity.getCapability(Capabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
                     {
                         found.add(new Tuple<>(stack, pos));
                     }
@@ -149,7 +149,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             }
 
             final int index = i;
-            chest.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handler -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, index, handler));
+            chest.getCapability(Capabilities.ITEM_HANDLER, null).ifPresent(handler -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, index, handler));
         }
     }
 

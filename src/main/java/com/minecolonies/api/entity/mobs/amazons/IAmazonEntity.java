@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.mobs.amazons;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.neoforged.neoforge.common.capabilities.ICapabilitySerializable;
 
 /**
  * A tagging interface for Amazon Entities.
