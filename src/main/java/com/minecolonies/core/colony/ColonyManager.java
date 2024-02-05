@@ -69,11 +69,6 @@ public final class ColonyManager implements IColonyManager
     private final ICompatibilityManager compatibilityManager = new CompatibilityManager();
 
     /**
-     * Pseudo unique id for the server
-     */
-    private UUID serverUUID = UUID.randomUUID();
-
-    /**
      * Indicate if a schematic have just been downloaded. Client only
      */
     private boolean schematicDownloaded = false;
@@ -563,11 +558,6 @@ public final class ColonyManager implements IColonyManager
     public void write(@NotNull final CompoundTag compound)
     {
         //Get the colonies NBT tags and store them in a ListNBT.
-        if (serverUUID != null)
-        {
-            compound.putUUID(TAG_UUID, serverUUID);
-        }
-
         final CompoundTag compCompound = new CompoundTag();
         compatibilityManager.write(compCompound);
         compound.put(TAG_COMPATABILITY_MANAGER, compCompound);
@@ -583,11 +573,6 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void read(@NotNull final CompoundTag compound)
     {
-        if (compound.hasUUID(TAG_UUID))
-        {
-            serverUUID = compound.getUUID(TAG_UUID);
-        }
-
         if (compound.contains(TAG_COMPATABILITY_MANAGER))
         {
             compatibilityManager.read(compound.getCompound(TAG_COMPATABILITY_MANAGER));
@@ -641,18 +626,6 @@ public final class ColonyManager implements IColonyManager
     public void setCapLoaded()
     {
         this.capLoaded = true;
-    }
-
-    @Override
-    public UUID getServerUUID()
-    {
-        return serverUUID;
-    }
-
-    @Override
-    public void setServerUUID(final UUID uuid)
-    {
-        serverUUID = uuid;
     }
 
     @Override
