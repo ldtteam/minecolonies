@@ -113,7 +113,7 @@ public class EventListener
             else
             {
                 final String jobId = entity.getEntityData().get(DATA_JOB);
-                final JobEntry jobEntry = IJobRegistry.getInstance().getValue(new ResourceLocation(jobId));
+                final JobEntry jobEntry = IJobRegistry.getInstance().get(new ResourceLocation(jobId));
                 final IJob<?> job = jobEntry == null ? null : jobEntry.produceJob(null);
 
                 if (job instanceof AbstractJobGuard

@@ -10,6 +10,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.TagParser;
@@ -31,7 +32,6 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.common.ToolAction;
 import net.neoforged.neoforge.common.ToolActions;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -979,7 +979,7 @@ public final class ItemStackUtils
                 Log.getLogger().error("Unable to parse item definition: " + itemData);
             }
         }
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+        final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0], split[1]));
         final ItemStack stack = new ItemStack(item);
         if (tag != null)
         {
@@ -1035,7 +1035,7 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        return new Tuple<>(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemId)),
+        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(new ResourceLocation(itemId)),
                 itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
     }
 

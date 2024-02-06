@@ -1,5 +1,6 @@
 package com.minecolonies.api;
 
+import com.ldtteam.common.config.Configurations;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
@@ -15,7 +16,9 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
-import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.configuration.ClientConfiguration;
+import com.minecolonies.api.configuration.CommonConfiguration;
+import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
@@ -26,7 +29,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
-import net.neoforged.neoforge.registries.IForgeRegistry;
+import net.minecraft.core.Registry;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 public interface IMinecoloniesAPI
@@ -47,23 +50,23 @@ public interface IMinecoloniesAPI
 
     IBuildingDataManager getBuildingDataManager();
 
-    IForgeRegistry<BuildingEntry> getBuildingRegistry();
+    Registry<BuildingEntry> getBuildingRegistry();
 
-    IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry();
+    Registry<FieldRegistries.FieldEntry> getFieldRegistry();
 
     IJobDataManager getJobDataManager();
 
-    IForgeRegistry<JobEntry> getJobRegistry();
+    Registry<JobEntry> getJobRegistry();
 
-    IForgeRegistry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry();
+    Registry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry();
 
     IGuardTypeDataManager getGuardTypeDataManager();
 
-    IForgeRegistry<GuardType> getGuardTypeRegistry();
+    Registry<GuardType> getGuardTypeRegistry();
 
     IModelTypeRegistry getModelTypeRegistry();
 
-    Configuration getConfig();
+    Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig();
 
     IFurnaceRecipes getFurnaceRecipes();
 
@@ -71,31 +74,31 @@ public interface IMinecoloniesAPI
 
     IGlobalResearchTree getGlobalResearchTree();
 
-    IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry();
+    Registry<ResearchRequirementEntry> getResearchRequirementRegistry();
 
-    IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry();
+    Registry<ResearchEffectEntry> getResearchEffectRegistry();
 
-    IForgeRegistry<ResearchCostType> getResearchCostRegistry();
+    Registry<ResearchCostType> getResearchCostRegistry();
 
-    IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry();
+    Registry<ColonyEventTypeRegistryEntry> getColonyEventRegistry();
 
-    IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry();
+    Registry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry();
 
-    IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry();
+    Registry<RecipeTypeEntry> getRecipeTypeRegistry();
 
-    IForgeRegistry<CraftingType> getCraftingTypeRegistry();
+    Registry<CraftingType> getCraftingTypeRegistry();
 
-    IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry();
+    Registry<QuestRegistries.RewardEntry> getQuestRewardRegistry();
 
-    IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry();
+    Registry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry();
 
-    IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry();
+    Registry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry();
 
-    IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry();
+    Registry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry();
 
-    IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry();
+    Registry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry();
 
-    IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry();
+    Registry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry();
 
     void onRegistryNewRegistry(NewRegistryEvent event);
 }

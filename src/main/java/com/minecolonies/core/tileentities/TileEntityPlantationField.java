@@ -174,7 +174,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
 
     private FieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
     {
-        return FieldRegistries.getFieldRegistry().getValues().stream()
+        return FieldRegistries.getFieldRegistry().stream()
                  .filter(fieldEntry -> {
                      List<IPlantationModule> modules = fieldEntry.getFieldModuleProducers().stream().map(m -> m.apply(null))
                                                          .filter(IPlantationModule.class::isInstance)

@@ -65,7 +65,7 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
-        final JobEntry entry = IJobRegistry.getInstance().getValue(new ResourceLocation(nbt.getString(NBT_JOB)));
+        final JobEntry entry = IJobRegistry.getInstance().get(new ResourceLocation(nbt.getString(NBT_JOB)));
         return new PublicWorkerCraftingProductionResolver(location, token, entry);
     }
 
@@ -74,7 +74,7 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
-        packetBuffer.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), input.getJobEntry());
+        packetBuffer.writeId(IMinecoloniesAPI.getInstance().getJobRegistry(), input.getJobEntry());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
-        final JobEntry entry = buffer.readRegistryId();
+        final JobEntry entry = buffer.readById(IMinecoloniesAPI.getInstance().getJobRegistry());
         return new PublicWorkerCraftingProductionResolver(location, token, entry);
     }
 

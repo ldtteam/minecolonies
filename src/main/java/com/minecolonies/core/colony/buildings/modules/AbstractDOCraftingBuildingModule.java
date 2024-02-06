@@ -6,8 +6,8 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public abstract class AbstractDOCraftingBuildingModule extends AbstractCraftingB
     {
         final OptionalPredicate<ItemStack> validator = getIngredientValidator();
         final ItemStack stack = recipe.getPrimaryOutput();
-        if (ForgeRegistries.ITEMS.getKey(stack.getItem()).getNamespace().equals("domum_ornamentum"))
+        if (BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("domum_ornamentum"))
         {
             for (final List<ItemStack> slot : recipe.getInputs())
             {

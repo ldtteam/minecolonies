@@ -52,7 +52,7 @@ public final class FieldDataManager
      */
     public static IField resourceLocationToField(final @NotNull ResourceLocation fieldName, final @NotNull BlockPos position)
     {
-        final FieldRegistries.FieldEntry fieldEntry = FieldRegistries.getFieldRegistry().getValue(fieldName);
+        final FieldRegistries.FieldEntry fieldEntry = FieldRegistries.getFieldRegistry().get(fieldName);
 
         if (fieldEntry == null)
         {
@@ -71,7 +71,7 @@ public final class FieldDataManager
      */
     public static IField bufferToField(final @NotNull FriendlyByteBuf buf)
     {
-        final FieldRegistries.FieldEntry fieldType = buf.readRegistryIdSafe(FieldRegistries.FieldEntry.class);
+        final FieldRegistries.FieldEntry fieldType = buf.readById(FieldRegistries.getFieldRegistry());
         final BlockPos position = buf.readBlockPos();
         final IField field = fieldType.produceField(position);
         field.deserialize(buf);
@@ -87,7 +87,7 @@ public final class FieldDataManager
     public static FriendlyByteBuf fieldToBuffer(final @NotNull IField field)
     {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeRegistryId(FieldRegistries.getFieldRegistry(), field.getFieldType());
+        buf.writeId(FieldRegistries.getFieldRegistry(), field.getFieldType());
         buf.writeBlockPos(field.getPosition());
         field.serialize(buf);
         return buf;

@@ -70,7 +70,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
         citizenID = buf.readInt();
         if (buf.readBoolean())
         {
-            jobEntry = buf.readRegistryId();
+            jobEntry = buf.readById(IMinecoloniesAPI.getInstance().getJobRegistry());
         }
     }
 
@@ -91,7 +91,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
         else
         {
             buf.writeBoolean(true);
-            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
+            buf.writeId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         }
     }
 

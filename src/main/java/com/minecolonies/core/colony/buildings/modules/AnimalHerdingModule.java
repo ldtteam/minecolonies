@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -94,7 +94,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     @NotNull
     public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
     {
-        return Collections.singletonList(new GenericRecipe(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()),
+        return Collections.singletonList(new GenericRecipe(BuiltInRegistries.ENTITY_TYPE.getKey(animal.getType()),
                 ItemStack.EMPTY,
                 Collections.emptyList(),
                 Collections.emptyList(),

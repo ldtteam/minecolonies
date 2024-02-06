@@ -8,12 +8,12 @@ import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.crafting.IIngredientSerializer;
 import net.neoforged.neoforge.common.util.Lazy;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class PlantIngredient extends Ingredient
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "plant");
 
     private static final Lazy<PlantIngredient> INSTANCE
-            = Lazy.of(() -> new PlantIngredient(ForgeRegistries.ITEMS.getValues().stream()
+            = Lazy.of(() -> new PlantIngredient(BuiltInRegistries.ITEM.stream()
                     .filter(item -> item instanceof BlockItem &&
                         (((BlockItem) item).getBlock() instanceof CropBlock ||
                          ((BlockItem) item).getBlock() instanceof StemBlock))

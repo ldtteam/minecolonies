@@ -9,13 +9,13 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public final class RecipeAnalyzer
     {
         final ImmutableMap.Builder<CraftingType, List<IGenericRecipe>> builder = ImmutableMap.builder();
 
-        for (final CraftingType type : MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry().getValues())
+        for (final CraftingType type : MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry())
         {
             final List<IGenericRecipe> recipes = type.findRecipes(recipeManager, world);
             builder.put(type, recipes);
@@ -110,7 +110,7 @@ public final class RecipeAnalyzer
     {
         final List<Animal> animals = new ArrayList<>();
 
-        for (final EntityType<?> entityType : ForgeRegistries.ENTITY_TYPES.getValues())
+        for (final EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE)
         {
             if (entityType.getCategory() != MobCategory.CREATURE) { continue; }
 

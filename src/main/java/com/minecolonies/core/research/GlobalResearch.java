@@ -13,6 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -745,7 +745,7 @@ public class GlobalResearch implements IGlobalResearch
             outputString[0] = iconParts[0];
             outputString[1] = iconParts[1];
         }
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(outputString[0], outputString[1]));
+        final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(outputString[0], outputString[1]));
         if (item.equals(Items.AIR))
         {
             return ItemStack.EMPTY;
@@ -821,9 +821,9 @@ public class GlobalResearch implements IGlobalResearch
                 final JsonObject rootObject = reqArrayElement.getAsJsonObject();
 
                 // ItemRequirements. If no count, assumes 1x.
-                if (IMinecoloniesAPI.getInstance().getResearchCostRegistry().getEntries().stream().anyMatch(entry -> entry.getValue().hasCorrectJsonFields(rootObject)))
+                if (IMinecoloniesAPI.getInstance().getResearchCostRegistry().entrySet().stream().anyMatch(entry -> entry.getValue().hasCorrectJsonFields(rootObject)))
                 {
-                    final Optional<IResearchCost> cost = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getEntries().stream()
+                    final Optional<IResearchCost> cost = IMinecoloniesAPI.getInstance().getResearchCostRegistry().entrySet().stream()
                                                            .filter(entry -> entry.getValue().hasCorrectJsonFields(rootObject))
                                                            .map(entry -> entry.getValue().parseFromJson(rootObject))
                                                            .findFirst();

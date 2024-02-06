@@ -890,7 +890,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
                   new ResourceLocation(Constants.MOD_ID, building.getKey())))
                 {
-                    item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                    item = IMinecoloniesAPI.getInstance().getBuildingRegistry().get(
                       new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
                 }
                 else
@@ -934,7 +934,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
               new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())))
             {
-                item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                item = IMinecoloniesAPI.getInstance().getBuildingRegistry().get(
                   new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())).getBuildingBlock().asItem();
             }
             else

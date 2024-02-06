@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import java.util.function.Function;
 
 /**
@@ -16,11 +16,11 @@ public class ModResearchCostTypes
     public static final ResourceLocation LIST_ITEM_COST_ID   = new ResourceLocation(Constants.MOD_ID, "item_list");
     public static final ResourceLocation TAG_ITEM_COST_ID    = new ResourceLocation(Constants.MOD_ID, "item_tag");
 
-    public static RegistryObject<ResearchCostType> simpleItemCost;
+    public static DeferredHolder<ResearchCostType, ResearchCostType> simpleItemCost;
 
-    public static RegistryObject<ResearchCostType> listItemCost;
+    public static DeferredHolder<ResearchCostType, ResearchCostType> listItemCost;
 
-    public static RegistryObject<ResearchCostType> tagItemCost;
+    public static DeferredHolder<ResearchCostType, ResearchCostType> tagItemCost;
 
     /**
      * Quest reward entry type.

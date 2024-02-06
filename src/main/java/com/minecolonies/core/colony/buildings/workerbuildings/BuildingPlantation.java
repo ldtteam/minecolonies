@@ -454,7 +454,7 @@ public class BuildingPlantation extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
-            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry().getValues())
+            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry())
             {
                 type.getFieldModuleProducers().stream()
                   .map(m -> m.apply(null))

@@ -253,7 +253,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         if (jobEntry != null)
         {
             buf.writeBoolean(true);
-            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
+            buf.writeId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         }
         else
         {
@@ -264,7 +264,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeVarInt(craftingTypes.size());
         for (final CraftingType type : craftingTypes)
         {
-            buf.writeRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry(), type);
+            buf.writeId(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry(), type);
         }
 
         final List<IRecipeStorage> storages = new ArrayList<>();

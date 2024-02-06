@@ -3,6 +3,7 @@ package com.minecolonies.core.recipes;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.crafting.IIngredientSerializer;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -71,7 +71,7 @@ public class FoodIngredient extends Ingredient
 
     private static Stream<Value> buildItemLists(final Builder builder)
     {
-        return ForgeRegistries.ITEMS.getValues().stream()
+        return BuiltInRegistries.ITEM.stream()
                 .map(ItemStack::new)
                 .filter(ISFOOD)
                 .filter(builder::matchesFood)

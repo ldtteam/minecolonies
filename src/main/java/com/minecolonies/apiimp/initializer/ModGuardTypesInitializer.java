@@ -5,17 +5,17 @@ import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.jobs.JobDruid;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobRanger;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.util.constant.translation.JobTranslationConstants.*;
 
 public final class ModGuardTypesInitializer
 {
-    public final static DeferredRegister<GuardType> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "guardtypes"), Constants.MOD_ID);
+    public final static DeferredRegister<GuardType> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.GUARD_TYPES, Constants.MOD_ID);
 
     private ModGuardTypesInitializer()
     {

@@ -153,7 +153,7 @@ public interface IGuardBuilding extends IBuilding
     int getBonusVision();
 
     /**
-     * Populates the mobs list from the ForgeRegistries.
+     * Populates the mobs list from the BuiltInRegistries.
      */
     void calculateMobs();
 

@@ -5,10 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +100,7 @@ public class StreamParticleEffectMessage implements IMessage
 
         this.stage = buf.readInt();
         this.maxStage = buf.readInt();
-        this.type = (SimpleParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
+        this.type = (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(buf.readResourceLocation());
     }
 
     @Override
@@ -116,7 +116,7 @@ public class StreamParticleEffectMessage implements IMessage
 
         buf.writeInt(this.stage);
         buf.writeInt(this.maxStage);
-        buf.writeResourceLocation(ForgeRegistries.PARTICLE_TYPES.getKey(this.type));
+        buf.writeResourceLocation(BuiltInRegistries.PARTICLE_TYPE.getKey(this.type));
     }
 
     @Nullable

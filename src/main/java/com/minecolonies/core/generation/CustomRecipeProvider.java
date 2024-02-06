@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -17,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -233,7 +233,7 @@ public abstract class CustomRecipeProvider implements DataProvider
 
         public void build(@NotNull final Consumer<FinishedRecipe> consumer)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, ForgeRegistries.BLOCKS.getKey(this.intermediate).toString());
+            this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, BuiltInRegistries.BLOCK.getKey(this.intermediate).toString());
             consumer.accept(new Result(this.json, this.id));
         }
 
@@ -241,7 +241,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         private JsonObject stackAsJson(final ItemStack stack)
         {
             final JsonObject jsonItemStack = new JsonObject();
-            String name = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
+            String name = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
             // this could be incorrect for items with both damage and other NBT,
             // but that should be rare, and this avoids some annoyance.
             if (stack.hasTag() && !stack.isDamageableItem())

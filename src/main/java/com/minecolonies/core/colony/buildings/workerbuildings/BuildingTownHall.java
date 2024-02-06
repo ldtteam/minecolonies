@@ -282,7 +282,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             {
                 final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readUtf());
 
-                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
+                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().get(eventTypeID);
                 if (registryEntry == null)
                 {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());

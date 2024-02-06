@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +21,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -146,7 +146,7 @@ public final class LootTableAnalyzer
         switch (type)
         {
             case "minecraft:item" -> {
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(entryJson, "name")));
+                final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(GsonHelper.getAsString(entryJson, "name")));
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 float modifier = 1.0F;
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
@@ -238,7 +238,7 @@ public final class LootTableAnalyzer
             final String entityType = token.getTag().getString(TAG_ENTITY_TYPE);
             if (!entityType.isEmpty())
             {
-                final EntityType<?> mob = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityType));
+                final EntityType<?> mob = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(entityType));
                 if (mob != null)
                 {
                     return toDrops(lootTableManager, mob.getDefaultLootTable());
@@ -301,7 +301,7 @@ public final class LootTableAnalyzer
 
                 case "minecraft:set_potion":
                     final String id = GsonHelper.getAsString(function, "id");
-                    final Potion potion = ForgeRegistries.POTIONS.getValue(ResourceLocation.tryParse(id));
+                    final Potion potion = BuiltInRegistries.POTION.get(ResourceLocation.tryParse(id));
                     if (potion != null)
                     {
                         PotionUtils.setPotion(stack, potion);

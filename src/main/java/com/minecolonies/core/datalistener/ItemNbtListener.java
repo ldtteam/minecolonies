@@ -5,11 +5,11 @@ import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.generation.ItemNbtCalculator;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -64,11 +64,11 @@ public class ItemNbtListener extends SimpleJsonResourceReloadListener
                         set.add(ItemNbtCalculator.deserializeKeyFromJson(subElement.getAsJsonObject()));
                     }
 
-                    ItemStackUtils.CHECKED_NBT_KEYS.put(ForgeRegistries.ITEMS.getValue(itemLoc), set);
+                    ItemStackUtils.CHECKED_NBT_KEYS.put(BuiltInRegistries.ITEM.get(itemLoc), set);
                 }
                 else
                 {
-                    ItemStackUtils.CHECKED_NBT_KEYS.put(ForgeRegistries.ITEMS.getValue(itemLoc), new HashSet<>());
+                    ItemStackUtils.CHECKED_NBT_KEYS.put(BuiltInRegistries.ITEM.get(itemLoc), new HashSet<>());
                 }
             }
             catch (Exception e)

@@ -11,8 +11,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -128,7 +128,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
                     break;
                 case BLOCK:
                     colony.addFreeBlock(block.getBlock());
-                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, ForgeRegistries.BLOCKS.getKey(block.getBlock())).sendTo(player);
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, BuiltInRegistries.BLOCK.getKey(block.getBlock())).sendTo(player);
                     break;
                 default:
                     // Error!
@@ -144,7 +144,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
                     break;
                 case BLOCK:
                     colony.removeFreeBlock(block.getBlock());
-                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, ForgeRegistries.BLOCKS.getKey(block.getBlock())).sendTo(player);
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, BuiltInRegistries.BLOCK.getKey(block.getBlock())).sendTo(player);
                     break;
                 default:
                     // Error!

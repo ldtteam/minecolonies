@@ -7,6 +7,7 @@ import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -24,7 +25,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -130,7 +130,7 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 
     private void saveBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar, final Consumer<Builder> lootPoolConfigurer)
     {
-        final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
+        final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
         if (location != null)
         {
             final ResourceLocation id = new ResourceLocation(location.getNamespace(),
@@ -144,7 +144,7 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 
     private void saveBannerBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar)
     {
-        final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
+        final ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
         if (location != null)
         {
             registrar.register(new ResourceLocation(location.getNamespace(), "blocks/" + location.getPath()), LootContextParamSets.BLOCK,

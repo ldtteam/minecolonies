@@ -5,12 +5,11 @@ import com.minecolonies.api.crafting.ExactMatchItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.ForgeRegistry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -167,7 +166,8 @@ public final class SortingUtils
      */
     private static int getId(final Item item)
     {
-        return ((ForgeRegistry<Item>) ForgeRegistries.ITEMS).getID(item);
+        // TODO: remove this arghhhh
+        return BuiltInRegistries.ITEM.getID(item);
     }
 
     /**

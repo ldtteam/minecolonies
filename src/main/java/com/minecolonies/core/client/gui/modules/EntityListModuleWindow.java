@@ -10,8 +10,8 @@ import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -160,7 +160,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
      */
     private void updateResources()
     {
-        final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || ForgeRegistries.ENTITY_TYPES.getValue(res).getDescription().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+        final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || BuiltInRegistries.ENTITY_TYPE.get(res).getDescription().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
         for (final ResourceLocation storage : groupedItemList)
         {
@@ -224,7 +224,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
             {
                 final ResourceLocation resource = currentDisplayedList.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(ForgeRegistries.ENTITY_TYPES.getValue(resource).getDescription());
+                resourceLabel.setText(BuiltInRegistries.ENTITY_TYPE.get(resource).getDescription());
                 resourceLabel.setColors(WHITE);
                 final boolean isAllowedItem  = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);

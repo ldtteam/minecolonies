@@ -5,12 +5,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -62,7 +62,7 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
                        @NotNull final ItemLike output)
     {
         CustomRecipeBuilder.create(BLACKSMITH, MODULE_CRAFTING,
-                        ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
+                        BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_INGOT, ironCount)),
                         new ItemStorage(new ItemStack(Items.LEATHER)),
                         new ItemStorage(new ItemStack(Items.COAL, coalCount))))
@@ -78,7 +78,7 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
                            @NotNull final ItemLike output)
     {
         CustomRecipeBuilder.create(BLACKSMITH, MODULE_CRAFTING,
-                        ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
+                        BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input)),
                         new ItemStorage(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)),
                         new ItemStorage(new ItemStack(Items.NETHERITE_INGOT)),

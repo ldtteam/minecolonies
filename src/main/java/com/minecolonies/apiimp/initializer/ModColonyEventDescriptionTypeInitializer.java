@@ -2,12 +2,12 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
 import com.minecolonies.core.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.core.colony.colonyEvents.citizenEvents.*;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
@@ -15,7 +15,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  */
 public final class ModColonyEventDescriptionTypeInitializer
 {
-    public final static DeferredRegister<ColonyEventDescriptionTypeRegistryEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "colonyeventdesctypes"), Constants.MOD_ID);
+    public final static DeferredRegister<ColonyEventDescriptionTypeRegistryEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.COLONY_EVENT_DESC_TYPES, Constants.MOD_ID);
 
     private ModColonyEventDescriptionTypeInitializer()
     {

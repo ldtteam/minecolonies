@@ -7,9 +7,9 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.IForgeRegistry;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import java.util.function.Function;
 
 /**
@@ -21,7 +21,7 @@ public class QuestRegistries
      * Get the reward registry.
      * @return the reward registry.
      */
-    static IForgeRegistry<RewardEntry> getQuestRewardsRegistry()
+    static Registry<RewardEntry> getQuestRewardsRegistry()
     {
         return IMinecoloniesAPI.getInstance().getQuestRewardRegistry();
     }
@@ -30,7 +30,7 @@ public class QuestRegistries
      * Get the objective registry.
      * @return the reward registry.
      */
-    static IForgeRegistry<ObjectiveEntry> getQuestObjectiveRegistry()
+    static Registry<ObjectiveEntry> getQuestObjectiveRegistry()
     {
         return IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry();
     }
@@ -39,7 +39,7 @@ public class QuestRegistries
      * Get the trigger registry.
      * @return the reward registry.
      */
-    static IForgeRegistry<TriggerEntry> getQuestTriggerRegistry()
+    static Registry<TriggerEntry> getQuestTriggerRegistry()
     {
         return IMinecoloniesAPI.getInstance().getQuestTriggerRegistry();
     }
@@ -48,7 +48,7 @@ public class QuestRegistries
      * Get the dialogue answer result registry.
      * @return the reward registry.
      */
-    static IForgeRegistry<DialogueAnswerEntry> getDialogueAnswerResultRegistry()
+    static Registry<DialogueAnswerEntry> getDialogueAnswerResultRegistry()
     {
         return IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry();
     }
@@ -176,32 +176,32 @@ public class QuestRegistries
     public static ResourceLocation GOTO_ANSWER_ID     = new ResourceLocation(Constants.MOD_ID, "advanceobjective");
 
 
-    public static RegistryObject<RewardEntry>  itemReward;
-    public static RegistryObject <RewardEntry> skillReward;
-    public static RegistryObject <RewardEntry> researchReward;
-    public static RegistryObject <RewardEntry> raidReward;
-    public static RegistryObject <RewardEntry> relationshipReward;
-    public static RegistryObject <RewardEntry> happinessReward;
-    public static RegistryObject <RewardEntry> unlockQuestReward;
-    public static RegistryObject <RewardEntry> questReputationReward;
+    public static DeferredHolder<RewardEntry, RewardEntry>  itemReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> skillReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> researchReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> raidReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> relationshipReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> happinessReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> unlockQuestReward;
+    public static DeferredHolder<RewardEntry, RewardEntry> questReputationReward;
 
-    public static RegistryObject <ObjectiveEntry> dialogueObjective;
-    public static RegistryObject <ObjectiveEntry> breakBlockObjective;
-    public static RegistryObject <ObjectiveEntry> deliveryObjective;
-    public static RegistryObject <ObjectiveEntry> killEntityObjective;
-    public static RegistryObject <ObjectiveEntry> placeBlockObjective;
-    public static RegistryObject <ObjectiveEntry> buildBuildingObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> dialogueObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> breakBlockObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> deliveryObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> killEntityObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> placeBlockObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> buildBuildingObjective;
 
-    public static RegistryObject <TriggerEntry> stateTrigger;
-    public static RegistryObject <TriggerEntry> randomTrigger;
-    public static RegistryObject <TriggerEntry> citizenTrigger;
-    public static RegistryObject <TriggerEntry> unlockTrigger;
-    public static RegistryObject <TriggerEntry> questReputationTrigger;
-    public static RegistryObject <TriggerEntry> worldDifficultyTrigger;
+    public static DeferredHolder<TriggerEntry, TriggerEntry> stateTrigger;
+    public static DeferredHolder<TriggerEntry, TriggerEntry> randomTrigger;
+    public static DeferredHolder<TriggerEntry, TriggerEntry> citizenTrigger;
+    public static DeferredHolder<TriggerEntry, TriggerEntry> unlockTrigger;
+    public static DeferredHolder<TriggerEntry, TriggerEntry> questReputationTrigger;
+    public static DeferredHolder<TriggerEntry, TriggerEntry> worldDifficultyTrigger;
 
-    public static RegistryObject <DialogueAnswerEntry> dialogueAnswerResult;
-    public static RegistryObject <DialogueAnswerEntry> returnAnswerResult;
-    public static RegistryObject <DialogueAnswerEntry> cancelAnswerResult;
-    public static RegistryObject <DialogueAnswerEntry> gotoAnswerResult;
+    public static DeferredHolder<DialogueAnswerEntry, DialogueAnswerEntry> dialogueAnswerResult;
+    public static DeferredHolder<DialogueAnswerEntry, DialogueAnswerEntry> returnAnswerResult;
+    public static DeferredHolder<DialogueAnswerEntry, DialogueAnswerEntry> cancelAnswerResult;
+    public static DeferredHolder<DialogueAnswerEntry, DialogueAnswerEntry> gotoAnswerResult;
 
 }

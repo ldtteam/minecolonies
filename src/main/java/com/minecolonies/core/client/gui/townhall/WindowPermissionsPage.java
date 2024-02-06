@@ -19,12 +19,12 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -446,7 +446,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 if (index < freeBlocks.size())
                 {
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(ForgeRegistries.BLOCKS.getKey(freeBlocks.get(index)).toString()));
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(BuiltInRegistries.BLOCK.getKey(freeBlocks.get(index)).toString()));
                 }
                 else
                 {
@@ -467,7 +467,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         try
         {
-            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
+            final Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(inputText));
 
             if (block != null)
             {

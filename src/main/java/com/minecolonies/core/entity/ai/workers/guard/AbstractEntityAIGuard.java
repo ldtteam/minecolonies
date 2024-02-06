@@ -33,13 +33,13 @@ import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -797,7 +797,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public static boolean isAttackableTarget(final AbstractEntityCitizen user, final LivingEntity entity)
     {
-        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType())) && !user.getCitizenData()
+        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())) && !user.getCitizenData()
                                                                                                                                                           .getWorkBuilding()
                                                                                                                                                           .getModuleMatching(
                                                                                                                                                             EntityListModule.class,
@@ -805,7 +805,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                                                                                                                                                                    .equals(
                                                                                                                                                                      HOSTILE_LIST))
                                                                                                                                                           .isEntityInList(
-                                                                                                                                                            ForgeRegistries.ENTITY_TYPES.getKey(
+                                                                                                                                                            BuiltInRegistries.ENTITY_TYPE.getKey(
                                                                                                                                                               entity.getType())))
         {
             return true;

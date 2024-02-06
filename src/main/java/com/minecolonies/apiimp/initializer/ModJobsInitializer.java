@@ -3,18 +3,19 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.jobs.*;
 import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DefaultJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
 import java.util.function.Supplier;
 
 public final class ModJobsInitializer
 {
-    public final static DeferredRegister<JobEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "jobs"), Constants.MOD_ID);
+    public final static DeferredRegister<JobEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.JOBS, Constants.MOD_ID);
 
     private ModJobsInitializer()
     {
@@ -307,7 +308,7 @@ public final class ModJobsInitializer
      * @param supplier the supplier of the entry.
      * @return the registry object.
      */
-    private static RegistryObject<JobEntry> register(final DeferredRegister<JobEntry> deferredRegister, final String path, final Supplier<JobEntry> supplier)
+    private static DeferredHolder<JobEntry, JobEntry> register(final DeferredRegister<JobEntry> deferredRegister, final String path, final Supplier<JobEntry> supplier)
     {
         ModJobs.jobs.add(new ResourceLocation(Constants.MOD_ID, path));
         return deferredRegister.register(path, supplier);

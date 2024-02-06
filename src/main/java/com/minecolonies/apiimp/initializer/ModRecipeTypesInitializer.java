@@ -5,12 +5,12 @@ import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModRecipeTypesInitializer
 {
-    public final static DeferredRegister<RecipeTypeEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"), Constants.MOD_ID);
+    public final static DeferredRegister<RecipeTypeEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.RECIPE_TYPE_ENTRIES, Constants.MOD_ID);
 
     private ModRecipeTypesInitializer()
     {

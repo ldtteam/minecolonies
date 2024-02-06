@@ -4,16 +4,16 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.recipes.ArchitectsCutterCraftingType;
 import com.minecolonies.core.recipes.BrewingCraftingType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModCraftingTypesInitializer
 {
     public final static DeferredRegister<CraftingType>
-       DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "craftingtypes"), Constants.MOD_ID);
+       DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.CRAFTING_TYPES, Constants.MOD_ID);
 
     private ModCraftingTypesInitializer()
     {

@@ -22,14 +22,14 @@ import com.minecolonies.core.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.core.entity.other.*;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.IForgeRegistry;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,9 +42,9 @@ public class EntityInitializer
 {
     public static void setupEntities(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES))
+        if (event.getRegistryKey().equals(Registries.ENTITY_TYPE))
         {
-            final @Nullable IForgeRegistry<EntityType<?>> registry = event.getForgeRegistry();
+            final @Nullable Registry<EntityType<?>> registry = event.getRegistry(Registries.ENTITY_TYPE);
 
             ModEntities.CITIZEN = build(registry, "citizen",
               EntityType.Builder.of(EntityCitizen::new, MobCategory.CREATURE)
@@ -205,10 +205,10 @@ public class EntityInitializer
         }
     }
 
-    private static <T extends Entity> EntityType<T> build(IForgeRegistry<EntityType<?>> registry, final String key, final EntityType.Builder<T> builder)
+    private static <T extends Entity> EntityType<T> build(Registry<EntityType<?>> registry, final String key, final EntityType.Builder<T> builder)
     {
         EntityType<T> entity = builder.build(Constants.MOD_ID + ":" + key);
-        registry.register(new ResourceLocation(Constants.MOD_ID + ":" + key), entity);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID + ":" + key), entity);
         return entity;
     }
 

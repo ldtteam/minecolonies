@@ -17,6 +17,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -25,7 +27,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -343,7 +344,7 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_INTERMEDIATE_PROP))
         {
-            recipe.intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
+            recipe.intermediate = BuiltInRegistries.BLOCK.get(new ResourceLocation(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
         }
         else
         {
@@ -421,9 +422,9 @@ public class CustomRecipe
 
         final boolean logStatus = IMinecoloniesAPI.getInstance().getConfig().getServer().auditCraftingTags.get();
 
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.create(tagId)))
+        for (final Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.create(tagId)))
         {
-            final ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+            final ResourceLocation itemId = item.unwrapKey().orElseThrow().location();
             if (!filter.test(itemId)) { continue; }
 
             final ResourceLocation recipeId = new ResourceLocation(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
@@ -937,7 +938,7 @@ public class CustomRecipe
         {
             packetBuffer.writeItem(alts);
         }
-        packetBuffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(getIntermediate()));
+        packetBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(getIntermediate()));
     }
 
     /**
@@ -982,7 +983,7 @@ public class CustomRecipe
             altOutputs.add(buffer.readItem());
         }
 
-        final Block intermediate = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
+        final Block intermediate = BuiltInRegistries.BLOCK.get(buffer.readResourceLocation());
 
         return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId,
                 researchReq, researchExclude, lootTable, requiredTool,

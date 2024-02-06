@@ -25,7 +25,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
           compound.contains(NbtTagConstants.TAG_HANDLER_TYPE)
             ? new ResourceLocation(Constants.MOD_ID, compound.getString(NbtTagConstants.TAG_HANDLER_TYPE))
             : ModInteractionResponseHandlers.STANDARD;
-        final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().getValue(handlerType).getProducer().apply(citizen);
+        final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().get(handlerType).getProducer().apply(citizen);
         if (handler != null)
         {
             try

@@ -2,14 +2,13 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.particles.SleepingParticle;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
@@ -32,10 +31,7 @@ public class ModParticleTypesInitializer
         @SubscribeEvent
         public static void registerParticles(final RegisterEvent event)
         {
-            if (event.getRegistryKey().equals(ForgeRegistries.Keys.PARTICLE_TYPES))
-            {
-                event.getForgeRegistry().register(SLEEPING_TEXTURE, SLEEPINGPARTICLE_TYPE);
-            }
+            event.register(Registries.PARTICLE_TYPE, SLEEPING_TEXTURE, () -> SLEEPINGPARTICLE_TYPE);
         }
     }
 
@@ -48,7 +44,7 @@ public class ModParticleTypesInitializer
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event)
         {
-            Minecraft.getInstance().particleEngine.register(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
+            event.registerSpriteSet(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
         }
     }
 }

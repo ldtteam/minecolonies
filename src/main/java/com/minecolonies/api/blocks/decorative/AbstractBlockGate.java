@@ -4,6 +4,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -30,7 +31,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -484,9 +484,9 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param registry the registry to use.
      * @return the block itself.
      */
-    public AbstractBlockGate registerBlock(final IForgeRegistry<Block> registry)
+    public AbstractBlockGate registerBlock(final Registry<Block> registry)
     {
-        registry.register(new ResourceLocation(Constants.MOD_ID, this.name), this);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, this.name), this);
         return this;
     }
 
@@ -496,8 +496,8 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param registry   the registry to use.
      * @param properties the item properties.
      */
-    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
+    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
     {
-        registry.register(new ResourceLocation(Constants.MOD_ID, this.name), new BlockItem(this, properties));
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, this.name), new BlockItem(this, properties));
     }
 }

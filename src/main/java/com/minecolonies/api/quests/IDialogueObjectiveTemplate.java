@@ -132,7 +132,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
         public static AnswerElement parse(final JsonObject jsonObject)
         {
             final JsonObject resultObj = jsonObject.getAsJsonObject(RESULT_ID);
-            return new AnswerElement(Component.translatable(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().getValue(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
+            return new AnswerElement(Component.translatable(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().get(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
         }
     }
 }

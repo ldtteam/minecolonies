@@ -11,6 +11,7 @@ import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.animal.Animal;
@@ -18,12 +19,12 @@ import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Creates a new building for the Shepherd.
@@ -106,7 +107,7 @@ public class BuildingShepherd extends AbstractBuilding
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
             recipes.add(new GenericRecipe(null, ItemStack.EMPTY,
-                    ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList(),
+                    StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.WOOL).spliterator(), false).map(ItemStack::new).toList(),
                     Collections.emptyList(), Collections.emptyList(),
                     0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
 

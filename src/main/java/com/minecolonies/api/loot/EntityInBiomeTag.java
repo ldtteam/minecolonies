@@ -3,6 +3,7 @@ package com.minecolonies.api.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +80,7 @@ public class EntityInBiomeTag implements LootItemCondition
                                             @NotNull final JsonDeserializationContext context)
         {
             final String tagId = GsonHelper.getAsString(json, "tag", "");
-            final TagKey<Biome> tag = tagId.isEmpty() ? null : ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(tagId));
+            final TagKey<Biome> tag = tagId.isEmpty() ? null : TagKey.create(Registries.BIOME, new ResourceLocation(tagId));
             return new EntityInBiomeTag(tag);
         }
     }

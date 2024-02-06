@@ -5,6 +5,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.Network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +16,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -68,14 +68,14 @@ public class PlayAudioMessage implements IMessage
     {
         // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
-        buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
+        buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
     }
 
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
         this.category = SoundSource.values()[buf.readVarInt()];
-        this.soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(buf.readResourceLocation());
+        this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
     }
 
     @Nullable

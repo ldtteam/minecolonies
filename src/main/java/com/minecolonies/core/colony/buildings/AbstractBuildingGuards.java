@@ -705,7 +705,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     /**
-     * Populates the mobs list from the ForgeRegistries.
+     * Populates the mobs list from the BuiltInRegistries.
      */
     @Override
     public void calculateMobs()

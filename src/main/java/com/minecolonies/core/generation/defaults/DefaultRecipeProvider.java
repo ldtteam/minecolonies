@@ -9,6 +9,7 @@ import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +20,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -239,7 +239,7 @@ public class DefaultRecipeProvider extends RecipeProvider
     private static ResourceLocation append(@NotNull final ItemLike item,
                                            @NotNull final String text)
     {
-        return append(ForgeRegistries.ITEMS.getKey(item.asItem()), "", text);
+        return append(BuiltInRegistries.ITEM.getKey(item.asItem()), "", text);
     }
 
     /**

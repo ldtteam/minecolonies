@@ -42,6 +42,7 @@ import com.minecolonies.core.quests.QuestManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -58,7 +59,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -294,7 +294,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
         {
-            buf.writeUtf(ForgeRegistries.BLOCKS.getKey(block).toString());
+            buf.writeUtf(BuiltInRegistries.BLOCK.getKey(block).toString());
         }
 
         buf.writeInt(freePos.size());
@@ -784,7 +784,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((buf.readUtf(32767)))));
+            freeBlocks.add(BuiltInRegistries.BLOCK.get(new ResourceLocation((buf.readUtf(32767)))));
         }
 
         final int posListSize = buf.readInt();

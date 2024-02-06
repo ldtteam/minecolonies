@@ -229,7 +229,7 @@ public class EventManager implements IEventManager
                 final CompoundTag tagCompound = (CompoundTag) base;
                 final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, tagCompound.getString(TAG_NAME));
 
-                final ColonyEventTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventRegistry().getValue(eventTypeID);
+                final ColonyEventTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventRegistry().get(eventTypeID);
                 if (registryEntry == null)
                 {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());

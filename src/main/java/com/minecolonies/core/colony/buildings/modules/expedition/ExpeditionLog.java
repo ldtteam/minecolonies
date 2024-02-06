@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Tuple;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -13,7 +14,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -258,7 +258,7 @@ public class ExpeditionLog
         for (final Map.Entry<EntityType<?>, Integer> entry : this.mobs.entrySet())
         {
             final CompoundTag mob = new CompoundTag();
-            mob.putString(TAG_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).toString());
+            mob.putString(TAG_TYPE, BuiltInRegistries.ENTITY_TYPE.getKey(entry.getKey()).toString());
             mob.putInt(TAG_COUNT, entry.getValue());
             mobs.add(mob);
         }
@@ -307,7 +307,7 @@ public class ExpeditionLog
         {
             final CompoundTag mob = mobs.getCompound(i);
             final ResourceLocation type = new ResourceLocation(mob.getString(TAG_TYPE));
-            final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(type);
+            final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(type);
             if (entityType != null)
             {
                 this.mobs.put(entityType, mob.getInt(TAG_COUNT));
@@ -347,7 +347,7 @@ public class ExpeditionLog
         buf.writeVarInt(this.mobs.size());
         for (final Map.Entry<EntityType<?>, Integer> entry : this.mobs.entrySet())
         {
-            buf.writeRegistryIdUnsafe(ForgeRegistries.ENTITY_TYPES, entry.getKey());
+            buf.writeId(BuiltInRegistries.ENTITY_TYPE, entry.getKey());
             buf.writeVarInt(entry.getValue());
         }
 
@@ -384,7 +384,7 @@ public class ExpeditionLog
         this.mobs.clear();
         for (int size = buf.readVarInt(); size > 0; --size)
         {
-            final EntityType<?> entityType = buf.readRegistryIdUnsafe(ForgeRegistries.ENTITY_TYPES);
+            final EntityType<?> entityType = buf.readById(BuiltInRegistries.ENTITY_TYPE);
             final int count = buf.readVarInt();
             if (entityType != null)
             {

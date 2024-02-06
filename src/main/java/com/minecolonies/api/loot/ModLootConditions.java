@@ -4,8 +4,8 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -17,8 +17,8 @@ public final class ModLootConditions
     public static final ResourceLocation ENTITY_IN_BIOME_TAG_ID = new ResourceLocation(MOD_ID, "entity_in_biome_tag");
     public static final ResourceLocation RESEARCH_UNLOCKED_ID = new ResourceLocation(MOD_ID, "research_unlocked");
 
-    public static final RegistryObject<LootItemConditionType> entityInBiomeTag;
-    public static final RegistryObject<LootItemConditionType> researchUnlocked;
+    public static final DeferredHolder<LootItemConditionType, LootItemConditionType> entityInBiomeTag;
+    public static final DeferredHolder<LootItemConditionType, LootItemConditionType> researchUnlocked;
 
     public static void init()
     {
