@@ -3,7 +3,6 @@ package com.minecolonies.api.blocks;
 import com.ldtteam.structurize.blocks.interfaces.*;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;

@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Locale;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.BLUEPRINT_FOLDER;
-import static com.ldtteam.structurize.api.util.constant.Constants.SCANS_FOLDER;
+import static com.ldtteam.structurize.api.constants.Constants.BLUEPRINT_FOLDER;
+import static com.ldtteam.structurize.api.constants.Constants.SCANS_FOLDER;
 
 /**
  * Handles sendScanMessages.

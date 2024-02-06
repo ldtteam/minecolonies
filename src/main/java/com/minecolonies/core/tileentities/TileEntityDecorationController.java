@@ -1,6 +1,6 @@
 package com.minecolonies.core.tileentities;
 
-import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
+import com.ldtteam.structurize.api.IRotatableBlockEntity;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;

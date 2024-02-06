@@ -27,9 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.ldtteam.structurize.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
-import static com.ldtteam.structurize.api.util.constant.NbtTagConstants.SECOND_POS_STRING;
-import static com.ldtteam.structurize.api.util.constant.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
+import static com.ldtteam.structurize.api.constants.NbtTagConstants.FIRST_POS_STRING;
+import static com.ldtteam.structurize.api.constants.NbtTagConstants.SECOND_POS_STRING;
+import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
 
 /**
  * Item used to analyze schematics or selected blocks

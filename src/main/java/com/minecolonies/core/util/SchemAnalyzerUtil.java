@@ -1,7 +1,7 @@
 package com.minecolonies.core.util;
 
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
-import com.ldtteam.structurize.api.util.ItemStorage;
+import com.ldtteam.structurize.api.ItemStorage;
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import com.ldtteam.structurize.blocks.schematic.BlockSubstitution;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;

@@ -7,9 +7,9 @@ import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
-import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.ItemStackUtils;
+import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG;
+import static com.ldtteam.structurize.api.constants.Constants.UPDATE_FLAG;
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
 public class DoDoorBlockPlacementHandler implements IPlacementHandler
@@ -52,7 +52,7 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
             {
                 world.removeBlock(pos, false);
                 world.removeBlock(pos.above(), false);
-                world.setBlock(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+                world.setBlock(pos, blockState, Constants.UPDATE_FLAG);
                 world.setBlock(pos.above(), blockState.setValue(net.minecraft.world.level.block.DoorBlock.HALF, DoubleBlockHalf.UPPER), UPDATE_FLAG);
                 if (tileEntityData != null)
                 {

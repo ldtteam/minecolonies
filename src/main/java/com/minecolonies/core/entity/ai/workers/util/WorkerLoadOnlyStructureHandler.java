@@ -1,7 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;

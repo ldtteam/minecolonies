@@ -1,7 +1,7 @@
 package com.minecolonies.core.util;
 
 import com.google.common.io.Files;
-import com.ldtteam.structurize.api.util.BlockPosUtil;
+import com.ldtteam.structurize.api.BlockPosUtil;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.minecolonies.api.util.Log;

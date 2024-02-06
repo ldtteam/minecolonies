@@ -28,9 +28,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
-import static com.ldtteam.structurize.api.util.constant.GUIConstants.BUTTON_SWITCH_STYLE;
+import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY_CAMP;
+import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY_SHIP;
+import static com.ldtteam.structurize.api.constants.GUIConstants.BUTTON_SWITCH_STYLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_WARNING_SUPPLY_BUILDING_ERROR;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_BUILDING_BAD_BLOCKS;
 import static com.minecolonies.api.util.constant.WindowConstants.SUPPLIES_RESOURCE_SUFFIX;

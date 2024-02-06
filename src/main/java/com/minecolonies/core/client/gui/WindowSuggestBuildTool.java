@@ -15,7 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
+import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_RELATIVE;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MISSING_BUILD_TOOL;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
