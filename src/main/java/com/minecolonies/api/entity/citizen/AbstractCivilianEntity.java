@@ -105,8 +105,8 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
         if (getSleepingPos().isPresent())
         {
             final BlockPos pos = getSleepingPos().get();
-            final BlockState state = level.getBlockState(getSleepingPos().get());
-            return state.getBlock().isBed(state,level,pos,this);
+            final BlockState state = level().getBlockState(getSleepingPos().get());
+            return state.getBlock().isBed(state,level(),pos,this);
         }
 
         return false;
@@ -135,7 +135,7 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
             getNavigation().stop();
             getLookControl().setLookAt(player);
 
-            playSoundAtCitizenWith(level, blockPosition(), GREETING, getCivilianData());
+            playSoundAtCitizenWith(level(), blockPosition(), GREETING, getCivilianData());
         }
     }
 

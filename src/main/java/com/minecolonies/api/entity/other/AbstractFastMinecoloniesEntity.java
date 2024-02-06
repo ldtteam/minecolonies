@@ -134,14 +134,14 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     {
         if (this.level().isClientSide())
         {
-            this.level.getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntityUtils.pushableBy()).forEach(this::doPush);
+            this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntityUtils.pushableBy()).forEach(this::doPush);
         }
         else
         {
             if (this.tickCount % 10 == randomVariance % 10)
             {
                 entityPushCache.clear();
-                entityPushCache = this.level.getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
+                entityPushCache = this.level().getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
             }
             for (Entity entity : entityPushCache)
             {
@@ -223,7 +223,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public boolean isInWaterRainOrBubble()
     {
         // Used to extinguish fire, only check if on fire
-        if (getRemainingFireTicks() > 0 || level.isClientSide)
+        if (getRemainingFireTicks() > 0 || level().isClientSide)
         {
             return super.isInWaterRainOrBubble();
         }

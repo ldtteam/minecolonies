@@ -236,7 +236,7 @@ public class EntityMercenaryAI extends Goal
         {
             entity.swing(InteractionHand.MAIN_HAND);
             entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
-            entity.getTarget().hurt(entity.level.damageSources().mobAttack(entity), 15);
+            entity.getTarget().hurt(entity.level().damageSources().mobAttack(entity), 15);
             entity.getTarget().setSecondsOnFire(3);
             attacktimer = ATTACK_DELAY;
         }

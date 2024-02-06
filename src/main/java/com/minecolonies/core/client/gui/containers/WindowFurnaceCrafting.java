@@ -79,7 +79,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
-        this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
+        this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level().dimension(), container.getPos());
         this.module =(CraftingModuleView) building.getModuleView(container.getModuleId());
     }
 

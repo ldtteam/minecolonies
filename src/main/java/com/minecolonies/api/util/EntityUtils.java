@@ -352,7 +352,7 @@ public final class EntityUtils
             }
             else
             {
-                return !localEntity.level.isClientSide || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
+                return !localEntity.level().isClientSide || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
             }
         });
     }

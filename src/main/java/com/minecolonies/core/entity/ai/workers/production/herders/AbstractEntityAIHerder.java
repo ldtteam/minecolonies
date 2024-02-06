@@ -380,7 +380,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             if (!entity.isBaby() && !entity.isInLove())
             {
-                if (toKill == null || !entity.level.canSeeSky(entity.blockPosition()) && toKill.level.canSeeSky(toKill.blockPosition()))
+                if (toKill == null || !entity.level().canSeeSky(entity.blockPosition()) && toKill.level().canSeeSky(toKill.blockPosition()))
                 {
                     toKill = entity;
                 }
@@ -595,7 +595,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         for (final Animal animal : animals)
         {
-            if (worker.level.getGameTime() - fedRecently.getOrDefault(animal.getUUID(), 0L) > TICKS_SECOND * 60 * 5)
+            if (worker.level().getGameTime() - fedRecently.getOrDefault(animal.getUUID(), 0L) > TICKS_SECOND * 60 * 5)
             {
                 toFeed = animal;
                 break;
@@ -613,10 +613,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             worker.swing(InteractionHand.MAIN_HAND);
             worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
-            worker.level.broadcastEntityEvent(toFeed, (byte) 18);
+            worker.level().broadcastEntityEvent(toFeed, (byte) 18);
             toFeed.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
             worker.getCitizenItemHandler().removeHeldItem();
-            fedRecently.put(toFeed.getUUID(), worker.level.getGameTime());
+            fedRecently.put(toFeed.getUUID(), worker.level().getGameTime());
 
             return DECIDE;
         }
@@ -827,7 +827,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
             worker.swing(InteractionHand.MAIN_HAND);
-            final DamageSource ds = animal.level.damageSources().playerAttack(getFakePlayer());
+            final DamageSource ds = animal.level().damageSources().playerAttack(getFakePlayer());
             animal.hurt(ds, (float) getButcheringAttackDamage());
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
         }

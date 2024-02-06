@@ -405,20 +405,20 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected boolean canUpdatePath()
     {
         // Auto dismount when trying to path.
-        if (ourEntity.vehicle != null)
+        if (ourEntity.getVehicle() != null)
         {
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getNode(this.getPath().getNextNodeIndex());
             if (pEx.isRailsExit())
             {
-                final Entity entity = ourEntity.vehicle;
+                final Entity entity = ourEntity.getVehicle();
                 ourEntity.stopRiding();
                 entity.remove(Entity.RemovalReason.DISCARDED);
             }
             else if (!pEx.isOnRails())
             {
-                if (ourEntity.vehicle instanceof MinecoloniesMinecart)
+                if (ourEntity.getVehicle() instanceof MinecoloniesMinecart)
                 {
-                    final Entity entity = ourEntity.vehicle;
+                    final Entity entity = ourEntity.getVehicle();
                     ourEntity.stopRiding();
                     entity.remove(Entity.RemovalReason.DISCARDED);
                 }
@@ -430,9 +430,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     }
                 }
             }
-            else if ((Math.abs(pEx.x - mob.getX()) > 7 || Math.abs(pEx.z - mob.getZ()) > 7) && ourEntity.vehicle != null)
+            else if ((Math.abs(pEx.x - mob.getX()) > 7 || Math.abs(pEx.z - mob.getZ()) > 7) && ourEntity.getVehicle() != null)
             {
-                final Entity entity = ourEntity.vehicle;
+                final Entity entity = ourEntity.getVehicle();
                 ourEntity.stopRiding();
                 entity.remove(Entity.RemovalReason.DISCARDED);
             }
@@ -679,9 +679,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     yOffset = 0.5D;
                 }
 
-                if (mob.vehicle instanceof MinecoloniesMinecart)
+                if (mob.getVehicle() instanceof final MinecoloniesMinecart ourMinecart)
                 {
-                    ((MinecoloniesMinecart) mob.vehicle).setHurtDir(1);
+                    ourMinecart.setHurtDir(1);
                 }
                 else
                 {
@@ -708,29 +708,29 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             spawnedPos = BlockPos.ZERO;
         }
 
-        if (mob.vehicle instanceof MinecoloniesMinecart && pExNext != null)
+        if (mob.getVehicle() instanceof MinecoloniesMinecart && pExNext != null)
         {
             final BlockPos blockPos = new BlockPos(pEx.x, pEx.y, pEx.z);
             final BlockPos blockPosNext = new BlockPos(pExNext.x, pExNext.y, pExNext.z);
-            final Vec3 motion = mob.vehicle.getDeltaMovement();
+            final Vec3 motion = mob.getVehicle().getDeltaMovement();
             double forward;
             switch (BlockPosUtil.getXZFacing(blockPos, blockPosNext).getOpposite())
             {
                 case EAST:
                     forward = Math.min(Math.max(motion.x() - 1 * 0.01D, -1), 0);
-                    mob.vehicle.setDeltaMovement(motion.add(forward == -1 ? -1 : -0.01D, 0.0D, 0.0D));
+                    mob.getVehicle().setDeltaMovement(motion.add(forward == -1 ? -1 : -0.01D, 0.0D, 0.0D));
                     break;
                 case WEST:
                     forward = Math.max(Math.min(motion.x() + 0.01D, 1), 0);
-                    mob.vehicle.setDeltaMovement(motion.add(forward == 1 ? 1 : 0.01D, 0.0D, 0.0D));
+                    mob.getVehicle().setDeltaMovement(motion.add(forward == 1 ? 1 : 0.01D, 0.0D, 0.0D));
                     break;
                 case NORTH:
                     forward = Math.max(Math.min(motion.z() + 0.01D, 1), 0);
-                    mob.vehicle.setDeltaMovement(motion.add(0.0D, 0.0D, forward == 1 ? 1 : 0.01D));
+                    mob.getVehicle().setDeltaMovement(motion.add(0.0D, 0.0D, forward == 1 ? 1 : 0.01D));
                     break;
                 case SOUTH:
                     forward = Math.min(Math.max(motion.z() - 1 * 0.01D, -1), 0);
-                    mob.vehicle.setDeltaMovement(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -0.01D));
+                    mob.getVehicle().setDeltaMovement(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -0.01D));
                     break;
 
                 case DOWN:

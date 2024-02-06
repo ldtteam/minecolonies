@@ -67,14 +67,14 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     @Override
     public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos)
     {
-        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level instanceof ServerLevel)
+        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level() instanceof ServerLevel)
         {
-            final IBuilding building = IColonyManager.getInstance().getBuilding(player.level, pos);
-            if (building != null && building.getColony().isCoordInColony(player.level, pos)
+            final IBuilding building = IColonyManager.getInstance().getBuilding(player.level(), pos);
+            if (building != null && building.getColony().isCoordInColony(player.level(), pos)
                   && building.getColony().getPermissions().getRank(player).isHostile())
             {
                 final double localProgress = breakProgressOnTownHall;
-                final double hardness = state.getDestroySpeed(player.level, pos) * 20.0 * 1.5;
+                final double hardness = state.getDestroySpeed(player.level(), pos) * 20.0 * 1.5;
 
                 if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
                 {
@@ -98,7 +98,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                     validTownHallBreak = true;
                 }
 
-                if (player.level.getGameTime() - lastTownHallBreakingTick < 10)
+                if (player.level().getGameTime() - lastTownHallBreakingTick < 10)
                 {
                     breakProgressOnTownHall++;
                 }
@@ -108,7 +108,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                     breakProgressOnTownHall = 0;
                     validTownHallBreak = false;
                 }
-                lastTownHallBreakingTick = player.level.getGameTime();
+                lastTownHallBreakingTick = player.level().getGameTime();
             }
             else
             {
@@ -119,7 +119,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         {
             validTownHallBreak = true;
         }
-        final float def = super.getDestroyProgress(state, player, player.level, pos);
+        final float def = super.getDestroyProgress(state, player, player.level(), pos);
         return MineColonies.getConfig().getServer().pvp_mode.get() ? def / 12 : def;
     }
 

@@ -112,7 +112,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         }
 
         Entity ownerEntity = this.getOwner();
-        DamageSource damageSource = this.level.damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
+        DamageSource damageSource = this.level().damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
         this.dealtDamage = true;
         if (targetEntity.hurt(damageSource, damageAmount))
         {

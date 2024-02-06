@@ -134,7 +134,7 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
         if (DATA_HOOKED_ENTITY.equals(key))
         {
             final int i = this.getEntityData().get(DATA_HOOKED_ENTITY);
-            this.caughtEntity = i > 0 ? this.level.getEntity(i - 1) : null;
+            this.caughtEntity = i > 0 ? this.level().getEntity(i - 1) : null;
         }
 
         super.onSyncedDataUpdated(key);
@@ -183,7 +183,7 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
     {
 
         super.tick();
-        if (!this.level.isClientSide())
+        if (!this.level().isClientSide())
         {
             if (--this.tickRemove <= 0)
             {
@@ -194,11 +194,11 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
 
         if (this.angler == null)
         {
-            if (level.isClientSide)
+            if (level().isClientSide)
             {
                 if (anglerId > -1)
                 {
-                    angler = (EntityCitizen) level.getEntity(anglerId);
+                    angler = (EntityCitizen) level().getEntity(anglerId);
                 }
             }
             else
@@ -206,7 +206,7 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
                 this.remove(RemovalReason.DISCARDED);
             }
         }
-        else if (this.level.isClientSide || !this.shouldStopFishing())
+        else if (this.level().isClientSide || !this.shouldStopFishing())
         {
 
             if (this.inGround)
@@ -221,10 +221,10 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
 
             float f = 0.0F;
             final BlockPos blockpos = this.blockPosition();
-            final FluidState ifluidstate = this.level.getFluidState(blockpos);
+            final FluidState ifluidstate = this.level().getFluidState(blockpos);
             if (ifluidstate.is(FluidTags.WATER))
             {
-                f = ifluidstate.getHeight(this.level, blockpos);
+                f = ifluidstate.getHeight(this.level(), blockpos);
             }
 
             if (this.currentState == NewBobberEntity.State.FLYING)
@@ -243,7 +243,7 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
                     return;
                 }
 
-                if (!this.level.isClientSide)
+                if (!this.level().isClientSide)
                 {
                     this.checkCollision();
                 }
@@ -288,7 +288,7 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
                     }
 
                     this.setDeltaMovement(Vector3d.x * 0.9D, Vector3d.y - d0 * (double) this.random.nextFloat() * 0.2D, Vector3d.z * 0.9D);
-                    if (!this.level.isClientSide && f > 0.0F)
+                    if (!this.level().isClientSide && f > 0.0F)
                     {
                         this.catchingFish(blockpos);
                     }
@@ -370,15 +370,15 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
 
     private void catchingFish(final BlockPos p_190621_1_)
     {
-        final ServerLevel serverworld = (ServerLevel) this.level;
+        final ServerLevel serverworld = (ServerLevel) this.level();
         int i = 1;
         final BlockPos blockpos = p_190621_1_.above();
-        if (this.random.nextFloat() < 0.25F && this.level.isRainingAt(blockpos))
+        if (this.random.nextFloat() < 0.25F && this.level().isRainingAt(blockpos))
         {
             ++i;
         }
 
-        if (this.random.nextFloat() < 0.5F && !this.level.canSeeSky(blockpos))
+        if (this.random.nextFloat() < 0.5F && !this.level().canSeeSky(blockpos))
         {
             --i;
         }
@@ -497,38 +497,38 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
 
     public int getDamage()
     {
-        if (!this.level.isClientSide && this.angler != null)
+        if (!this.level().isClientSide && this.angler != null)
         {
             int i = 0;
             final net.neoforged.neoforge.event.entity.player.ItemFishedEvent event = null;
             if (this.caughtEntity != null)
             {
                 this.bringInHookedEntity();
-                this.level.broadcastEntityEvent(this, (byte) 31);
+                this.level().broadcastEntityEvent(this, (byte) 31);
                 i = this.caughtEntity instanceof ItemEntity ? 3 : 5;
             }
             else if (this.ticksCatchable > 0)
             {
-                LootParams.Builder lootcontext$builder = (new LootParams.Builder((ServerLevel)this.level))
+                LootParams.Builder lootcontext$builder = (new LootParams.Builder((ServerLevel)this.level()))
                                                             .withParameter(LootContextParams.ORIGIN, this.position())
                                                             .withParameter(LootContextParams.TOOL, this.getAngler().getMainHandItem())
                                                             .withParameter(LootContextParams.THIS_ENTITY, this)
                                                             .withLuck((float)this.luck);
 
                 lootcontext$builder.withParameter(LootContextParams.KILLER_ENTITY, this.angler).withParameter(LootContextParams.THIS_ENTITY, this);
-                final LootTable loottable = this.level.getServer().getLootData().getLootTable(ModLootTables.FISHING);
+                final LootTable loottable = this.level().getServer().getLootData().getLootTable(ModLootTables.FISHING);
                 final List<ItemStack> list = loottable.getRandomItems(lootcontext$builder.create(LootContextParamSets.FISHING));
 
                 for (final ItemStack itemstack : list)
                 {
-                    final ItemEntity itementity = new ItemEntity(this.level, onWaterPos.x, onWaterPos.y, onWaterPos.z, itemstack);
+                    final ItemEntity itementity = new ItemEntity(this.level(), onWaterPos.x, onWaterPos.y, onWaterPos.z, itemstack);
                     final double d0 = this.angler.getX() - onWaterPos.x;
                     final double d1 = (this.angler.getY() + 0.5D) - onWaterPos.y;
                     final double d2 = this.angler.getZ() - onWaterPos.z;
                     itementity.noPhysics = true;
                     itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
-                    this.level.addFreshEntity(itementity);
-                    this.angler.level.addFreshEntity(new ExperienceOrb(this.angler.level,
+                    this.level().addFreshEntity(itementity);
+                    this.angler.level().addFreshEntity(new ExperienceOrb(this.angler.level(),
                       this.angler.getX(),
                       this.angler.getY() + 0.5D,
                       this.angler.getZ() + 0.5D,
@@ -555,7 +555,7 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
     @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(final byte id)
     {
-        if (id == 31 && this.level.isClientSide && this.caughtEntity instanceof EntityCitizen)
+        if (id == 31 && this.level().isClientSide && this.caughtEntity instanceof EntityCitizen)
         {
             this.bringInHookedEntity();
         }

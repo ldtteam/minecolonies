@@ -124,7 +124,7 @@ public class EntityAIVisitor implements IState
         if (citizen.isWorkerAtSiteWithMove(target.blockPosition(), 2) && citizen.hasLineOfSight(target))
         {
             citizen.swing(InteractionHand.MAIN_HAND);
-            target.hurt(target.level.damageSources().source(DamageSourceKeys.VISITOR), 10.0f);
+            target.hurt(target.level().damageSources().source(DamageSourceKeys.VISITOR), 10.0f);
         }
 
         return false;
@@ -236,7 +236,7 @@ public class EntityAIVisitor implements IState
 
         ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
 
-        return WorldUtil.isEntityBlockLoaded(citizen.level, citizen.blockPosition());
+        return WorldUtil.isEntityBlockLoaded(citizen.level(), citizen.blockPosition());
     }
 
     /**

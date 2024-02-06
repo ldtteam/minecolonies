@@ -214,7 +214,7 @@ public class EntityAIEatTask implements IStateAI
 
         final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
 
-        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level, citizen);
+        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
 
         final double satIncrease =
           itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
@@ -226,7 +226,7 @@ public class EntityAIEatTask implements IStateAI
             if (citizenData.getInventory().isFull())
             {
                 InventoryUtils.spawnItemStack(
-                  citizen.level,
+                  citizen.level(),
                   citizen.getX(),
                   citizen.getY(),
                   citizen.getZ(),
@@ -307,7 +307,7 @@ public class EntityAIEatTask implements IStateAI
             {
                 waitingTicks++;
                 if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME || (citizen.getCitizenData().getJob() instanceof AbstractJobGuard<?>
-                                                                                 && !WorldUtil.isDayTime(citizen.level)))
+                                                                                 && !WorldUtil.isDayTime(citizen.level())))
                 {
                     waitingTicks = 0;
                     return GET_FOOD_YOURSELF;

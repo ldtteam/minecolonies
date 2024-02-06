@@ -193,7 +193,7 @@ public class EntityAISickTask implements IStateAI
             {
                 for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
                 {
-                    final Level world = citizen.level;
+                    final Level world = citizen.level();
                     BlockState state = world.getBlockState(pos);
                     if (state.is(BlockTags.BEDS)
                           && !state.getValue(BedBlock.OCCUPIED)

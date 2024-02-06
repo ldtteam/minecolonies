@@ -144,11 +144,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         {
             if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
             {
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 10));
             }
             else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
             {
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 20));
             }
         }
     }
@@ -165,7 +165,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), responseId));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), this.getInquiry(), responseId));
         return true;
     }
 

@@ -204,7 +204,7 @@ VisitorCitizen extends AbstractEntityCitizen
                     }
                     else
                     {
-                        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+                        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level().dimension());
                         return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
                     }
                 }
@@ -484,7 +484,7 @@ VisitorCitizen extends AbstractEntityCitizen
     @Override
     public InteractionResult checkAndHandleImportantInteractions(final Player player, @NotNull final InteractionHand hand)
     {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level.dimension());
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level().dimension());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return InteractionResult.FAIL;
@@ -531,13 +531,13 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+            final ItemStack remainingItem = usedStack.finishUsingItem(level(), this);
             if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
             {
                 if (!player.getInventory().add(remainingItem))
                 {
                     InventoryUtils.spawnItemStack(
-                      player.level,
+                      player.level(),
                       player.getX(),
                       player.getY(),
                       player.getZ(),
@@ -546,7 +546,7 @@ VisitorCitizen extends AbstractEntityCitizen
                 }
             }
 
-            if (!level.isClientSide())
+            if (!level().isClientSide())
             {
                 getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
 
@@ -576,7 +576,7 @@ VisitorCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyClient();
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level().dimension());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getVisitor(citizenId);
@@ -615,7 +615,7 @@ VisitorCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyClient();
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level().dimension());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getVisitor(citizenId);
@@ -669,7 +669,7 @@ VisitorCitizen extends AbstractEntityCitizen
     public void die(DamageSource cause)
     {
         super.die(cause);
-        if (!level.isClientSide())
+        if (!level().isClientSide())
         {
             IColony colony = getCitizenColonyHandler().getColony();
             if (colony != null && getCitizenData() != null)
@@ -678,7 +678,7 @@ VisitorCitizen extends AbstractEntityCitizen
                 if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
                 {
                     TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
-                    tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
+                    tavern.setNoVisitorTime(level().getRandom().nextInt(5000) + 30000);
                 }
 
                 final String deathLocation = BlockPosUtil.getString(blockPosition());

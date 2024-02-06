@@ -662,7 +662,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             itementity.noPhysics = true;
             itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
             this.world.addFreshEntity(itementity);
-            worker.level.addFreshEntity(new ExperienceOrb(worker.level,
+            worker.level().addFreshEntity(new ExperienceOrb(worker.level(),
               worker.getX(),
               worker.getY() + 0.5D,
               worker.getZ() + 0.5D,

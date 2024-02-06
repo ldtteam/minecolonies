@@ -550,7 +550,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     public BlockPos getPositionToFollow()
     {
         Player followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
-        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level.dimension() == this.colony.getDimension())
+        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level().dimension() == this.colony.getDimension())
         {
             return followPlayer.blockPosition();
         }

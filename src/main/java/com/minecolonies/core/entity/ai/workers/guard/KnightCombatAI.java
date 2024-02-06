@@ -105,7 +105,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected IAIState attackProtect()
     {
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), Items.SHIELD);
-        if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
+        if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level().getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
             user.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, shieldSlot);
@@ -150,10 +150,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(user.getRandom()));
 
         final double damageToBeDealt = getAttackDamage();
-        DamageSource source = target.level.damageSources().source(DamageSourceKeys.GUARD, user);
+        DamageSource source = target.level().damageSources().source(DamageSourceKeys.GUARD, user);
         if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof Player)
         {
-            source = target.level.damageSources().source(DamageSourceKeys.GUARD_PVP, user);
+            source = target.level().damageSources().source(DamageSourceKeys.GUARD_PVP, user);
         }
 
         final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(InteractionHand.MAIN_HAND));
@@ -162,7 +162,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             target.setSecondsOnFire(fireLevel * 80);
         }
 
-        if (user.level.getGameTime() - lastAoeUseTime > KNOCKBACK_COOLDOWN)
+        if (user.level().getGameTime() - lastAoeUseTime > KNOCKBACK_COOLDOWN)
         {
             doAoeAttack(source, damageToBeDealt);
         }
@@ -196,7 +196,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
               && user.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
         {
-            List<LivingEntity> entities = user.level.getEntitiesOfClass(LivingEntity.class, user.getBoundingBox().inflate(2.0D, 0.5D, 2.0D));
+            List<LivingEntity> entities = user.level().getEntitiesOfClass(LivingEntity.class, user.getBoundingBox().inflate(2.0D, 0.5D, 2.0D));
             for (LivingEntity livingentity : entities)
             {
                 if (livingentity != user && isEntityValidTarget(livingentity) && (!(livingentity instanceof ArmorStand)))
@@ -209,7 +209,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
                 }
             }
 
-            user.level.playSound(null,
+            user.level().playSound(null,
               user.getX(),
               user.getY(),
               user.getZ(),
@@ -220,9 +220,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
             double d0 = (double) (-Mth.sin(user.getYRot() * ((float) Math.PI / 180)));
             double d1 = (double) Mth.cos(user.getYRot() * ((float) Math.PI / 180));
-            if (user.level instanceof ServerLevel)
+            if (user.level() instanceof ServerLevel serverLevel)
             {
-                ((ServerLevel) user.level).sendParticles(ParticleTypes.SWEEP_ATTACK,
+                serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK,
                   user.getX() + d0,
                   user.getY(0.5D),
                   user.getZ() + d1,
@@ -233,7 +233,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
                   0.0D);
             }
 
-            lastAoeUseTime = user.level.getGameTime();
+            lastAoeUseTime = user.level().getGameTime();
         }
     }
 

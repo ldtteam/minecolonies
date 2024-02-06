@@ -153,7 +153,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return DECIDE;
         }
 
-        if (sittingTicks == 0 || worker.vehicle == null)
+        if (sittingTicks == 0 || worker.getVehicle() == null)
         {
             // Sit for 60-120 seconds.
             maxSittingTicks = worker.getRandom().nextInt(120 / 2) + 60;
@@ -180,7 +180,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         }
 
         worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        if (worker.vehicle != null)
+        if (worker.getVehicle() != null)
         {
             worker.stopRiding();
             worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());

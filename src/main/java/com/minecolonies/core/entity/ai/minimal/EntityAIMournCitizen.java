@@ -172,9 +172,9 @@ public class EntityAIMournCitizen implements IStateAI
         final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyardBuilding).getGravePositions();
         for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
         {
-            if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))
+            if (WorldUtil.isBlockLoaded(citizen.level(), gravePos.getA()))
             {
-                final BlockEntity blockEntity = citizen.level.getBlockEntity(gravePos.getA());
+                final BlockEntity blockEntity = citizen.level().getBlockEntity(gravePos.getA());
                 if (blockEntity instanceof TileEntityNamedGrave)
                 {
                     final Iterator<String> iterator = citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator();
@@ -245,7 +245,7 @@ public class EntityAIMournCitizen implements IStateAI
 
         if (closestEntity == null)
         {
-            closestEntity = this.citizen.level.getNearestEntity(EntityCitizen.class,
+            closestEntity = this.citizen.level().getNearestEntity(EntityCitizen.class,
               TargetingConditions.DEFAULT,
               citizen,
               citizen.getX(),

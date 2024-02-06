@@ -165,7 +165,7 @@ public class DecorationBuildRequestMessage implements IMessage
         }
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName, path),
-          player.level,
+          player.level(),
           (blueprint -> {
               if (blueprint == null)
               {

@@ -413,7 +413,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
             final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
-            if (currentWorldPos.getY() < worker.level.getMinBuildHeight() + 5)
+            if (currentWorldPos.getY() < worker.level().getMinBuildHeight() + 5)
             {
                 building.setProgressPos(null, null);
                 worker.getCitizenData().setStatusPosition(null);

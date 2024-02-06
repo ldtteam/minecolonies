@@ -117,8 +117,8 @@ public class ColonyPermissionEventHandler
     {
         if (entity instanceof Player)
         {
-            @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer((Player) entity, entity.level);
-            if (colony.isCoordInColony(entity.level, posIn))
+            @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer((Player) entity, entity.level());
+            if (colony.isCoordInColony(entity.level(), posIn))
             {
                 if (blockState.getBlock() instanceof AbstractBlockHut
                       && colony.getPermissions().hasPermission(player, action))
@@ -171,7 +171,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            final long worldTime = entity.level.getGameTime();
+            final long worldTime = entity.level().getGameTime();
             if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
                   || lastPlayerNotificationTick.get(entity.getUUID()) + (Constants.TICKS_SECOND * 10)
                        < worldTime)
@@ -198,7 +198,7 @@ public class ColonyPermissionEventHandler
 
         if (event.getState().getBlock() instanceof AbstractBlockHut)
         {
-            @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(event.getPlayer().level, event.getPos());
+            @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(event.getPlayer().level(), event.getPos());
             if (building == null)
             {
                 return;
@@ -228,7 +228,7 @@ public class ColonyPermissionEventHandler
 
             if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall)
             {
-                IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getPlayer().level);
+                IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getPlayer().level());
             }
         }
         else if (event.getState().getBlock() instanceof BlockDecorationController)

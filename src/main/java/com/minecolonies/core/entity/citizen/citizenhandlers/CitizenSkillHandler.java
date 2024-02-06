@@ -246,7 +246,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         if (data.getEntity().isPresent())
         {
             final AbstractEntityCitizen citizen = data.getEntity().get();
-            playSoundAtCitizenWith(citizen.level, citizen.blockPosition(), SUCCESS, data);
+            playSoundAtCitizenWith(citizen.level(), citizen.blockPosition(), SUCCESS, data);
             Network.getNetwork()
               .sendToTrackingEntity(new VanillaParticleMessage(citizen.getX(), citizen.getY(), citizen.getZ(), ParticleTypes.HAPPY_VILLAGER),
                 data.getEntity().get());

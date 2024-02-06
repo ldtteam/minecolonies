@@ -35,7 +35,7 @@ public class FMLEventHandler
         if (event.getEntity() instanceof ServerPlayer)
         {
             // This automatically reloads the owner of the colony if failed.
-            IColonyManager.getInstance().getIColonyByOwner(event.getEntity().level, event.getEntity());
+            IColonyManager.getInstance().getIColonyByOwner(event.getEntity().level(), event.getEntity());
             //ColonyManager.syncAllColoniesAchievements();
         }
     }

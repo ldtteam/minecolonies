@@ -113,7 +113,7 @@ public class EntityAICitizenWander implements IStateAI
             return READ_A_BOOK;
         }
 
-        final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
+        final BlockEntity blockEntity = citizen.level().getBlockEntity(leisureSite);
         if (blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary)
         {
             walkTo = ((BuildingLibrary) ((TileEntityColonyBuilding) blockEntity).getBuilding()).getRandomBookShelf();
@@ -157,7 +157,7 @@ public class EntityAICitizenWander implements IStateAI
             return WANDER_AT_LEISURE_SITE;
         }
 
-        final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
+        final BlockEntity blockEntity = citizen.level().getBlockEntity(leisureSite);
         if (blockEntity instanceof IBlueprintDataProviderBE)
         {
             if (walkTo == null && citizen.getRandom().nextBoolean())

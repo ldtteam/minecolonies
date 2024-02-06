@@ -152,7 +152,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doHutInventory(final ServerPlayer player, final IColony colony)
     {
-        final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level, tePos);
+        final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level(), tePos);
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
         {

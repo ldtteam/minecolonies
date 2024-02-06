@@ -104,7 +104,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     public WindowCrafting(final ContainerCrafting container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
+        this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level().dimension(), container.getPos());
         this.module = (CraftingModuleView) building.getModuleView(container.getModuleId());
         completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get());
     }

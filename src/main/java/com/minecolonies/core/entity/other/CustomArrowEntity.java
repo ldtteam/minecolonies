@@ -83,11 +83,11 @@ public class CustomArrowEntity extends Arrow
                 DamageSource source;
                 if (shooter == null)
                 {
-                    source = level.damageSources().arrow(this, this);
+                    source = level().damageSources().arrow(this, this);
                 }
                 else
                 {
-                    source = level.damageSources().arrow(this, shooter);
+                    source = level().damageSources().arrow(this, shooter);
                 }
                 player.hurt(source, (float) getBaseDamage());
                 setBaseDamage(0);
@@ -128,7 +128,7 @@ public class CustomArrowEntity extends Arrow
         if (this.inGround)
         {
             final AABB aabb = (new AABB(this.position(), this.position())).inflate(0.06D);
-            for(VoxelShape voxelshape : this.level.getBlockCollisions(null, aabb)) {
+            for(VoxelShape voxelshape : this.level().getBlockCollisions(null, aabb)) {
                 if (!voxelshape.isEmpty())
                 {
                     return false;

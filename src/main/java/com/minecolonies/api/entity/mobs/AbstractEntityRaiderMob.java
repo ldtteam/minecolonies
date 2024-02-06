@@ -516,7 +516,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         final int owningColonyId = ColonyUtils.getOwningColony(chunk);
         if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId)
         {
-            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level);
+            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level());
             tempColony.getRaiderManager().setPassThroughRaid();
         }
     }

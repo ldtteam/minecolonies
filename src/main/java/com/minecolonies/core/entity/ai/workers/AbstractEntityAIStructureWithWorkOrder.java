@@ -444,7 +444,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                         else
                         {
                             // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
-                            final BlockEntity te = worker.level.getBlockEntity(building.getID());
+                            final BlockEntity te = worker.level().getBlockEntity(building.getID());
                             if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProviderBE) te).getSchematicName().isEmpty())
                             {
                                 building.onUpgradeComplete(wo.getTargetLevel());

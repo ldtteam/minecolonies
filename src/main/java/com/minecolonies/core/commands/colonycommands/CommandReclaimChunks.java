@@ -41,7 +41,7 @@ public class CommandReclaimChunks implements IMCOPCommand
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
 
-        final IChunkmanagerCapability chunkManager = sender.level.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = sender.level().getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
@@ -54,7 +54,7 @@ public class CommandReclaimChunks implements IMCOPCommand
             return 0;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyID, sender.level);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyID, sender.level());
         BackUpHelper.reclaimChunks(colony);
         MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);
         return 1;

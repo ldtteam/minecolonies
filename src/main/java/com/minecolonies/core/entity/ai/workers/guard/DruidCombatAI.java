@@ -197,7 +197,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     {
         if (BlockPosUtil.getDistanceSquared(target.blockPosition(), user.blockPosition()) <= 4.0)
         {
-            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level,
+            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level(),
               AbstractPathJob.prepareStart(target),
               target.blockPosition(),
               12,
@@ -209,12 +209,12 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         }
         else if (BlockPosUtil.getDistance2D(target.blockPosition(), user.blockPosition()) >= 20)
         {
-            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level, AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
+            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level(), AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
             final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
-        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
+        final PathJobCanSee job = new PathJobCanSee(user, target, user.level(), ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
         final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;
@@ -252,7 +252,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             return true;
         }
 
-        final List<LivingEntity> entities = user.level.getEntitiesOfClass(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = user.level().getEntitiesOfClass(LivingEntity.class, getSearchArea());
 
         if (entities.isEmpty())
         {

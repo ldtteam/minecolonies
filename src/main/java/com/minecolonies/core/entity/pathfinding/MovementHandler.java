@@ -76,7 +76,7 @@ public class MovementHandler extends MoveControl
             final PathNavigation pathnavigator = this.mob.getNavigation();
 
             final NodeEvaluator nodeprocessor = pathnavigator.getNodeEvaluator();
-            if (nodeprocessor.getBlockPathType(this.mob.level,
+            if (nodeprocessor.getBlockPathType(this.mob.level(),
               Mth.floor(this.mob.getX() + (double) rot1),
               Mth.floor(this.mob.getY()),
               Mth.floor(this.mob.getZ() + (double) rot2)) != BlockPathTypes.WALKABLE)
@@ -108,13 +108,13 @@ public class MovementHandler extends MoveControl
             this.mob.setYRot(this.rotlerp(this.mob.getYRot(), range, 90.0F));
             this.mob.setSpeed((float) (this.speedModifier * speedValue));
             final BlockPos blockpos = this.mob.blockPosition();
-            final BlockState blockstate = this.mob.level.getBlockState(blockpos);
+            final BlockState blockstate = this.mob.level().getBlockState(blockpos);
             final Block block = blockstate.getBlock();
-            final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
+            final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level(), blockpos);
             if ((yDif > (double) stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getBbWidth()))
                   || (!voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(
               BlockTags.FENCES) && !blockstate.is(BlockTags.FENCE_GATES))
-                       && !block.isLadder(blockstate, this.mob.level, blockpos, this.mob))
+                       && !block.isLadder(blockstate, this.mob.level(), blockpos, this.mob))
             {
                 this.mob.getJumpControl().jump();
                 this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.JUMPING;
@@ -126,7 +126,7 @@ public class MovementHandler extends MoveControl
 
             // Avoid beeing stuck in jumping while in liquids
             final BlockPos blockpos = this.mob.blockPosition();
-            final BlockState blockstate = this.mob.level.getBlockState(blockpos);
+            final BlockState blockstate = this.mob.level().getBlockState(blockpos);
             if (this.mob.onGround() || blockstate.liquid())
             {
                 this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.WAIT;

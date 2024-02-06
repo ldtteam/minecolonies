@@ -52,7 +52,7 @@ public class CommandClaimChunks implements IMCOPCommand
         // Added/removed
         final boolean add = BoolArgumentType.getBool(context, ADD_ARG);
 
-        final IChunkmanagerCapability chunkManager = sender.level.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = sender.level().getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
@@ -65,7 +65,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        ChunkDataHelper.staticClaimInRange(colonyID, add, sender.blockPosition(), range, sender.level, true);
+        ChunkDataHelper.staticClaimInRange(colonyID, add, sender.blockPosition(), range, sender.level(), true);
         if (add)
         {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);

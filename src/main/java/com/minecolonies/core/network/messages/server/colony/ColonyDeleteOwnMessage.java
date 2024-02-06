@@ -47,7 +47,7 @@ public class ColonyDeleteOwnMessage implements IMessage
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.level, player);
+        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.level(), player);
         if (colony != null)
         {
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());

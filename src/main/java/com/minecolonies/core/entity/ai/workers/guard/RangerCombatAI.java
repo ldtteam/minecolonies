@@ -109,7 +109,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         if (weaponSlot != -1)
         {
             user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
-            if (nextAttackTime - BOW_HOLDING_DELAY >= user.level.getGameTime())
+            if (nextAttackTime - BOW_HOLDING_DELAY >= user.level().getGameTime())
             {
                 user.startUsingItem(InteractionHand.MAIN_HAND);
             }
@@ -275,7 +275,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     {
         if (BlockPosUtil.getDistanceSquared(target.blockPosition(), user.blockPosition()) <= 4.0)
         {
-            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level,
+            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level(),
               AbstractPathJob.prepareStart(target),
               target.blockPosition(),
               (int) 7.0,
@@ -287,12 +287,12 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
         else if (BlockPosUtil.getDistance2D(target.blockPosition(), user.blockPosition()) >= 20)
         {
-            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level, AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
+            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level(), AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
             final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
-        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
+        final PathJobCanSee job = new PathJobCanSee(user, target, user.level(), ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
         final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;

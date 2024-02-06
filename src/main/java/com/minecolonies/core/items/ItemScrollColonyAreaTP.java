@@ -125,7 +125,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
      */
     private List<ServerPlayer> getAffectedPlayers(final ServerPlayer user)
     {
-        return user.level.getEntitiesOfClass(ServerPlayer.class, user.getBoundingBox().inflate(10, 2, 10));
+        return user.level().getEntitiesOfClass(ServerPlayer.class, user.getBoundingBox().inflate(10, 2, 10));
     }
 
     @Override

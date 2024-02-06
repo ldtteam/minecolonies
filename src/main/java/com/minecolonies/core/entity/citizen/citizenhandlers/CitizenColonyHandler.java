@@ -94,7 +94,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.level);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.level());
 
         if (colony == null)
         {
@@ -175,7 +175,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Nullable
     public IColony getColony()
     {
-        if (colony == null && !citizen.level.isClientSide)
+        if (colony == null && !citizen.level().isClientSide)
         {
             registerWithColony(getColonyId(), citizen.getCivilianID());
         }

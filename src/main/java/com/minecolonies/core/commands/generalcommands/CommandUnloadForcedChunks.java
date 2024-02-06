@@ -27,14 +27,14 @@ public class CommandUnloadForcedChunks implements IMCCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
-        if (sender instanceof Player)
+        if (sender instanceof final Player player && player.level() instanceof final ServerLevel serverLevel)
         {
-            final Level world = sender.level;
-            for (long chunk : ((ServerChunkCache) sender.level.getChunkSource()).chunkMap.visibleChunkMap.keySet())
+            final Level world = sender.level();
+            for (long chunk : serverLevel.getChunkSource().chunkMap.visibleChunkMap.keySet())
             {
-                ((ServerLevel) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
+                serverLevel.setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
-            MessageUtils.format(Component.literal("Successfully removed forceload flag!")).sendTo((Player) sender);
+            MessageUtils.format(Component.literal("Successfully removed forceload flag!")).sendTo(player);
             return 1;
         }
         return 0;

@@ -179,9 +179,9 @@ public class EntityAISleep implements IStateAI
 
                 for (final BlockPos pos : bedList)
                 {
-                    if (WorldUtil.isEntityBlockLoaded(citizen.level, pos))
+                    if (WorldUtil.isEntityBlockLoaded(citizen.level(), pos))
                     {
-                        final Level world = citizen.level;
+                        final Level world = citizen.level();
                         final BlockState state = world.getBlockState(pos);
                         final BlockState above = world.getBlockState(pos.above());
                         if (state.is(BlockTags.BEDS)
@@ -254,15 +254,15 @@ public class EntityAISleep implements IStateAI
      */
     private void setBedOccupied(boolean occupied)
     {
-        final BlockState headState = citizen.level.getBlockState(usedBed);
-        citizen.level.setBlock(usedBed, headState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
+        final BlockState headState = citizen.level().getBlockState(usedBed);
+        citizen.level().setBlock(usedBed, headState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
 
         final BlockPos feetPos = usedBed.relative(headState.getValue(BedBlock.FACING).getOpposite());
-        final BlockState feetState = citizen.level.getBlockState(feetPos);
+        final BlockState feetState = citizen.level().getBlockState(feetPos);
 
         if (feetState.is(BlockTags.BEDS))
         {
-            citizen.level.setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
+            citizen.level().setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
         }
     }
 

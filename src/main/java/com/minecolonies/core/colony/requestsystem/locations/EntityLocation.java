@@ -44,7 +44,7 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        for (final ServerLevel world : ServerLifecycleHooks.getCurrentServer().levels.values())
+        for (final ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             try
             {

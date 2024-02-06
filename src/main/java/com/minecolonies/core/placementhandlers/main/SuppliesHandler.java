@@ -114,7 +114,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
             SoundUtils.playSuccessSound(player, player.blockPosition());
 
-            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level, blueprint,
+            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level(), blueprint,
                     blockPos, placementSettings.getRotation(), placementSettings.getMirror() != Mirror.NONE ? Mirror.FRONT_BACK : Mirror.NONE, true, player);
         }
         else

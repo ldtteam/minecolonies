@@ -354,7 +354,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
           Mth.floor(entity.getY()),
           Mth.floor(entity.getZ()));
-        final Level level = entity.level;
+        final Level level = entity.level();
         BlockState bs = level.getBlockState(pos);
         // 1 Up when we're standing within this collision shape
         final VoxelShape collisionShape = bs.getCollisionShape(level, pos);
@@ -442,7 +442,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private static boolean canStandInSolidBlock(final BlockState state)
     {
         return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN))
-                 || !state.getBlock().properties.hasCollision;
+                 || !state.getBlock().properties().hasCollision;
     }
 
     /**
@@ -1475,7 +1475,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              || block.getBlock() instanceof BlockDecorationController
                              || block.getBlock() instanceof SignBlock
                              || block.getBlock() instanceof AbstractBannerBlock
-                             || !block.getBlock().properties.hasCollision;
+                             || !block.getBlock().properties().hasCollision;
                 }
             }
             else if (SurfaceType.isDangerous(block))

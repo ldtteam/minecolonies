@@ -51,7 +51,7 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
             return;
         }
 
-        building.upgradeContainers(player.level);
+        building.upgradeContainers(player.level());
 
         final boolean isCreative = player.isCreative();
         if (!isCreative)

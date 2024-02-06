@@ -134,7 +134,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public void onWindowOpened(final BOWindow window, final ICitizenDataView dataView)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level.dimension());
+        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level().dimension());
         if (colony != null)
         {
             final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
@@ -156,7 +156,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.fulfill"))
         {
-            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level.dimension());
+            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level().dimension());
 
             if (colony != null)
             {

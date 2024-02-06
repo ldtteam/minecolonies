@@ -67,7 +67,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
         final Coordinates targetLocation = Vec3Argument.getCoordinates(context, POS_ARG);
         final BlockPos targetPos = targetLocation.getBlockPos(context.getSource());
 
-        if (context.getSource().getLevel() == entityCitizen.level)
+        if (context.getSource().getLevel() == entityCitizen.level())
         {
             entityCitizen.moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), entityCitizen.getViewYRot(1F), entityCitizen.getViewXRot(1F));
             entityCitizen.getNavigation().stop();

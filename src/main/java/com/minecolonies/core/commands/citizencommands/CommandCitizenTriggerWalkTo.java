@@ -71,7 +71,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
         final Coordinates targetLocation = Vec3Argument.getCoordinates(context, POS_ARG);
         final BlockPos targetPos = targetLocation.getBlockPos(context.getSource());
 
-        if (context.getSource().getLevel() == entityCitizen.level)
+        if (context.getSource().getLevel() == entityCitizen.level())
         {
             if (entityCitizen instanceof EntityCitizen && entityCitizen.getCitizenJobHandler().getColonyJob() != null)
             {

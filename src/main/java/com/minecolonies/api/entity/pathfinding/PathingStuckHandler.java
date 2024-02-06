@@ -449,7 +449,7 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void placeLadders(final AbstractAdvancedPathNavigate navigator)
     {
-        final Level world = navigator.getOurEntity().level;
+        final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
         BlockPos entityPos = entity.blockPosition();

@@ -263,7 +263,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         {
             compound.putBoolean(TAG_IS_ACTIVE, true);
 
-           final IColony colony = getColony(compound, playerIn.level);
+           final IColony colony = getColony(compound, playerIn.level());
            if (colony != null && colony.getPermissions().hasPermission(playerIn, Action.RALLY_GUARDS))
            {
                final int numGuards = broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), playerIn == null ? null : new EntityLocation(playerIn.getUUID()));
