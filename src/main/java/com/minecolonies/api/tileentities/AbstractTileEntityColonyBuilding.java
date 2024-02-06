@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.minecolonies.api.colony.IColony;
@@ -139,18 +140,14 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public abstract boolean hasAccessPermission(Player player);
 
     /**
-     * Set if the entity is mirrored.
-     *
-     * @param mirror true if so.
+     * @param rotationMirror rotation and mirror of the entity.
      */
-    public abstract void setMirror(boolean mirror);
+    public abstract void setRotationMirror(RotationMirror rotationMirror);
 
     /**
-     * Check if building is mirrored.
-     *
-     * @return true if so.
+     * @return rotation and mirror of the entity.
      */
-    public abstract boolean isMirrored();
+    public abstract RotationMirror getRotationMirror();
 
     /**
      * Getter for the style.

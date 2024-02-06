@@ -1,5 +1,6 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import net.minecraft.core.BlockPos;
@@ -33,7 +34,7 @@ public class InfestedBlocksPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         final BlockState expectedBlockState = getExpectedBlockState(blockState, complete);
         if (expectedBlockState == null)

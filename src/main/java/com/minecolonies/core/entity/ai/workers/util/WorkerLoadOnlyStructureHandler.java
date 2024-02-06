@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
@@ -28,26 +29,20 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprint      the blueprint.
-     * @param settings       the placement settings.
+     * @param rotMir       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
     public WorkerLoadOnlyStructureHandler(
-      final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement,
+      final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir, final boolean fancyPlacement,
       final AbstractEntityAIStructure<J, B> entityAIStructure)
     {
-        super(world, pos, blueprint, settings, fancyPlacement);
+        super(world, pos, blueprint, rotMir, fancyPlacement);
         this.structureAI = entityAIStructure;
-    }
-
-    @Override
-    public BlockState getSolidBlockForPos(final BlockPos blockPos)
-    {
-        return structureAI.getSolidSubstitution(blockPos);
     }
 
     @Override
     public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final Function<BlockPos, BlockState> virtualBlocks)
     {
-        return structureAI.getSolidSubstitution(worldPos);
+        return structureAI.getSolidSubstitution(worldPos, virtualBlocks);
     }
 }

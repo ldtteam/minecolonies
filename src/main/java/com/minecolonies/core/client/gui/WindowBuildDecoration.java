@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
@@ -30,8 +31,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,14 +74,9 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final String path;
 
     /**
-     * Rotation.
+     * Rotation and Mirror.
      */
-    private final Rotation rotation;
-
-    /**
-     * Mirror.
-     */
-    private final boolean mirror;
+    private final RotationMirror rotationMirror;
 
     /**
      * A function that will supply the message, given the position of the requested builder, if any.
@@ -116,8 +110,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
       final BlockPos pos,
       final String packMeta,
       final String path,
-      final Rotation rotation,
-      final boolean mirror,
+      final RotationMirror rotationMirror,
       Function<BlockPos, IMessage> buildRequestMessage)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
@@ -139,8 +132,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         final String cleanedPackName = packMeta.replace(Minecraft.getInstance().player.getUUID().toString(), "");
         blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
-        this.rotation = rotation;
-        this.mirror = mirror;
+        this.rotationMirror = rotationMirror;
         this.buildRequestMessage = buildRequestMessage;
     }
 
@@ -237,9 +229,9 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               world,
               structurePos,
               blueprintFuture.get(),
-              new PlacementSettings(),
+              RotationMirror.NONE,
               true);
-            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, Minecraft.getInstance().level);
+            structure.getBluePrint().setRotationMirror(rotationMirror, Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);
             StructurePhasePlacementResult result;

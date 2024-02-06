@@ -1,5 +1,6 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
@@ -14,7 +15,6 @@ import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.workorders.WorkOrderDecoration;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
@@ -54,12 +54,7 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * The rotation.
      */
-    private Rotation rotation;
-
-    /**
-     * If mirrored.
-     */
-    private boolean mirror;
+    private RotationMirror rotationMirror;
 
     /**
      * The dimension.
@@ -92,7 +87,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param path        blueprint path.
      * @param dimension   the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final Rotation rotation, final boolean mirror, final BlockPos builder)
+    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final RotationMirror rotationMirror, final BlockPos builder)
     {
         super();
         this.workOrderType = workOrderType;
@@ -100,8 +95,7 @@ public class DecorationBuildRequestMessage implements IMessage
         this.packName = packName;
         this.path = path;
         this.dimension = dimension;
-        this.rotation = rotation;
-        this.mirror = mirror;
+        this.rotationMirror = rotationMirror;
         this.builder = builder;
     }
 
@@ -113,8 +107,7 @@ public class DecorationBuildRequestMessage implements IMessage
         this.packName = buf.readUtf(32767);
         this.path = buf.readUtf(32767);
         this.dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        this.mirror = buf.readBoolean();
-        this.rotation = Rotation.values()[buf.readInt()];
+        this.rotationMirror = RotationMirror.values()[buf.readByte()];
         this.builder = buf.readBlockPos();
     }
 
@@ -126,8 +119,7 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeUtf(this.packName);
         buf.writeUtf(this.path);
         buf.writeUtf(this.dimension.location().toString());
-        buf.writeBoolean(this.mirror);
-        buf.writeInt(this.rotation.ordinal());
+        buf.writeByte(rotationMirror.ordinal());
         buf.writeBlockPos(this.builder);
     }
 
@@ -186,8 +178,7 @@ public class DecorationBuildRequestMessage implements IMessage
                   path,
                   WordUtils.capitalizeFully(displayName),
                   pos,
-                  rotation.ordinal(),
-                  mirror,
+                  rotationMirror,
                   0);
 
               if (!builder.equals(BlockPos.ZERO))

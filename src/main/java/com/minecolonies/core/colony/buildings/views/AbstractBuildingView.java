@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.views;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
@@ -80,14 +81,9 @@ public abstract class AbstractBuildingView implements IBuildingView
     private int buildingDmPrio = 1;
 
     /**
-     * Rotation of the building.
+     * Rotation and mirror of the building.
      */
-    private int rotation;
-
-    /**
-     * Mirror of the building.
-     */
-    private boolean isBuildingMirrored;
+    private RotationMirror rotationMirror;
 
     /**
      * The workOrderLevel.
@@ -282,20 +278,9 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the rotation.
      */
     @Override
-    public int getRotation()
+    public RotationMirror getRotationMirror()
     {
-        return rotation;
-    }
-
-    /**
-     * Getter for the mirror.
-     *
-     * @return true if mirrored.
-     */
-    @Override
-    public boolean isMirrored()
-    {
-        return isBuildingMirrored;
+        return rotationMirror;
     }
 
     /**
@@ -402,8 +387,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         parent = buf.readBlockPos();
         customName = buf.readUtf(32767);
 
-        rotation = buf.readInt();
-        isBuildingMirrored = buf.readBoolean();
+        rotationMirror = RotationMirror.values()[buf.readByte()];
         claimRadius = buf.readInt();
 
         final List<IToken<?>> list = new ArrayList<>();

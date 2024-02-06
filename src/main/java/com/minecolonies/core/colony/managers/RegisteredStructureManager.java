@@ -582,7 +582,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                   tileEntity.getBlockState().getBlock(),
                   tileEntity.getPosition()));
 
-                building.setIsMirrored(tileEntity.isMirrored());
+                building.setRotationMirror(tileEntity.getRotationMirror());
                 if (tileEntity.getStructurePack() != null)
                 {
                     building.setStructurePack(tileEntity.getStructurePack().getName());

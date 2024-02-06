@@ -57,6 +57,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
       final boolean mirror,
       final BlockPos minerBuilding)
     {
+        // TODO: rotationMirror (and all call sites of this)
         super(packName, structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
         this.minerBuilding = minerBuilding;
     }

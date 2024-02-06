@@ -1,6 +1,7 @@
 package com.minecolonies.core.placementhandlers;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -43,7 +44,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (complete)
         {

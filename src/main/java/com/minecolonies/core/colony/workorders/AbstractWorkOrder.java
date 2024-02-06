@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
@@ -18,8 +19,11 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.workorders.view.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
@@ -115,14 +120,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private BlockPos location;
 
     /**
-     * The rotation of this work order its structure.
+     * The rotation and mirror of this work order its structure.
      */
-    private int rotation;
-
-    /**
-     * Whether the work order its structure is mirrored or not.
-     */
-    private boolean isMirrored;
+    private RotationMirror rotationMirror;
 
     /**
      * The current level of the work order its structure.
@@ -306,8 +306,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
       String translationKey,
       WorkOrderType workOrderType,
       BlockPos location,
-      int rotation,
-      boolean isMirrored,
+      RotationMirror rotationMirror,
       int currentLevel,
       int targetLevel)
     {
@@ -317,8 +316,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         this.translationKey = translationKey;
         this.workOrderType = workOrderType;
         this.location = location;
-        this.rotation = rotation;
-        this.isMirrored = isMirrored;
+        this.rotationMirror = rotationMirror;
         this.currentLevel = currentLevel;
         this.targetLevel = targetLevel;
     }
@@ -426,15 +424,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     @Override
-    public final int getRotation()
+    public final RotationMirror getRotationMirror()
     {
-        return rotation;
-    }
-
-    @Override
-    public final boolean isMirrored()
-    {
-        return isMirrored;
+        return rotationMirror;
     }
 
     @Override
@@ -591,8 +583,15 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         translationKey = compound.getString(TAG_TRANSLATION_KEY);
         workOrderType = WorkOrderType.values()[compound.getInt(TAG_WO_TYPE)];
         location = BlockPosUtil.read(compound, TAG_LOCATION);
-        rotation = compound.getInt(TAG_ROTATION);
-        isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
+        {
+            this.rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
+        }
+        else
+        {
+            // TODO: remove this later (data break introduced in 1.20.4)
+            this.rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], compound.getBoolean(TAG_IS_MIRRORED) ? Mirror.FRONT_BACK : Mirror.NONE);
+        }
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
         targetLevel = compound.getInt(TAG_TARGET_LEVEL);
         amountOfResources = compound.getInt(TAG_AMOUNT_OF_RESOURCES);
@@ -621,8 +620,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         compound.putString(TAG_TRANSLATION_KEY, translationKey);
         compound.putInt(TAG_WO_TYPE, workOrderType.ordinal());
         BlockPosUtil.write(compound, TAG_LOCATION, location);
-        compound.putInt(TAG_ROTATION, rotation);
-        compound.putBoolean(TAG_IS_MIRRORED, isMirrored);
+        compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
         compound.putInt(TAG_TARGET_LEVEL, targetLevel);
         compound.putInt(TAG_AMOUNT_OF_RESOURCES, amountOfResources);
@@ -648,8 +646,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeUtf(translationKey);
         buf.writeInt(workOrderType.ordinal());
         buf.writeBlockPos(location);
-        buf.writeInt(rotation);
-        buf.writeBoolean(isMirrored);
+        buf.writeByte(rotationMirror.ordinal());
         buf.writeInt(currentLevel);
         buf.writeInt(targetLevel);
         buf.writeInt(amountOfResources);

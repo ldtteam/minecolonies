@@ -160,7 +160,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             if (entity instanceof TileEntityColonyBuilding buildingEntity)
             {
                 buildingEntity.setStructurePack(StructurePacks.getStructurePack(getStructurePack()));
-                buildingEntity.setMirror(isMirrored());
+                buildingEntity.setRotationMirror(getRotationMirror());
                 final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                 if (building != null)
                 {

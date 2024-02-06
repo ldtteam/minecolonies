@@ -1,5 +1,6 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -54,7 +55,8 @@ public class LecternPlacementHandler implements IPlacementHandler
                                          @NotNull final BlockState blockState,
                                          @Nullable CompoundTag tileEntityData,
                                          final boolean complete,
-                                         final BlockPos centerPos)
+                                         final BlockPos centerPos,
+                                         final RotationMirror rotMir)
     {
         if (!world.setBlock(pos, blockState, Block.UPDATE_ALL))
         {
@@ -63,7 +65,7 @@ public class LecternPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
-            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos);
+            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, rotMir);
         }
 
         return ActionProcessingResult.SUCCESS;

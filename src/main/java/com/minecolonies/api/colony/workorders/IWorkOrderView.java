@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.workorders;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -76,18 +77,11 @@ public interface IWorkOrderView
     BlockPos getLocation();
 
     /**
-     * Get the current rotation of the building
+     * Get the current rotation and mirror of the building
      *
      * @return the location
      */
-    int getRotation();
-
-    /**
-     * Whether the current building is mirrored
-     *
-     * @return the location
-     */
-    boolean isMirrored();
+    RotationMirror getRotationMirror();
 
     /**
      * Get a text component containing the display name of the work order which can be shown on the GUI

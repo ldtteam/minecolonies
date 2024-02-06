@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -696,8 +697,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
 
-        buf.writeInt(getRotation());
-        buf.writeBoolean(isMirrored());
+        buf.writeByte();
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundTag requestSystemCompound = new CompoundTag();
@@ -966,7 +966,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        cachedRotation = -1;
+        rotationMirror = null;
         ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
@@ -1016,8 +1016,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               = ColonyUtils.calculateCorners(this.getPosition(),
               colony.getWorld(),
               blueprint,
-              getRotation(),
-              isMirrored());
+              getRotationMirror());
             this.setCorners(corners.getA(), corners.getB());
 
             if (te != null)

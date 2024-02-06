@@ -1,5 +1,6 @@
 package com.minecolonies.api.blocks;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blocks.interfaces.*;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
@@ -314,7 +315,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param state   the state the placed block is in.
      * @param placer  the player placing the block.
      * @param stack   the itemstack from where the block was placed.
-     * @param mirror  the mirror used.
+     * @param rotMir  the mirror used.
      * @param style   the style of the building
      */
     public void onBlockPlacedByBuildTool(
@@ -323,14 +324,14 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final BlockState state,
       final LivingEntity placer,
       final ItemStack stack,
-      final boolean mirror,
+      final RotationMirror rotMir,
       final String style,
       final String blueprintPath)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
-            ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
+            ((AbstractTileEntityColonyBuilding) tileEntity).setRotationMirror(rotMir);
             ((AbstractTileEntityColonyBuilding) tileEntity).setPackName(style);
             ((AbstractTileEntityColonyBuilding) tileEntity).setBlueprintPath(blueprintPath);
         }
@@ -440,9 +441,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public AbstractStructureHandler getStructureHandler(final Level level, final BlockPos blockPos, final Blueprint blueprint, final PlacementSettings placementSettings, final boolean b)
+    public AbstractStructureHandler getStructureHandler(final Level level, final BlockPos blockPos, final Blueprint blueprint, final RotationMirror rotationMirror, final boolean b)
     {
-        return new CreativeBuildingStructureHandler(level, blockPos, blueprint, placementSettings, b);
+        return new CreativeBuildingStructureHandler(level, blockPos, blueprint, rotationMirror, b);
     }
 
     @Override
@@ -451,7 +452,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final Level world,
       final BlockPos pos,
       final Blueprint blueprint,
-      final PlacementSettings settings,
+      final RotationMirror rotationMirror,
       final boolean fancyPlacement,
       final String pack,
       final String path)
@@ -473,7 +474,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
           anchor,
           player,
           null,
-          settings.getMirror() != Mirror.NONE,
+          rotationMirror,
           pack,
           path);
 

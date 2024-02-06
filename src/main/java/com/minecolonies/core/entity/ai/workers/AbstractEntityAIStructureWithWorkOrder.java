@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
@@ -184,10 +185,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final int tempRotation = workOrder.getRotation();
         final boolean removal = workOrder.getWorkOrderType() == WorkOrderType.REMOVE;
 
-        loadStructure(workOrder, tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder, pos, workOrder.getRotationMirror(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }
@@ -230,10 +230,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure = new WorkerLoadOnlyStructureHandler(world,
+        final WorkerLoadOnlyStructureHandler<J, B> structure = new WorkerLoadOnlyStructureHandler<>(world,
           structurePlacer.getB().getWorldPos(),
           structurePlacer.getB().getBluePrint(),
-          new PlacementSettings(),
+          RotationMirror.NONE,
           true,
           this);
 

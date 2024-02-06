@@ -9,6 +9,7 @@ import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
 import com.ldtteam.structurize.api.ItemStackUtils;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -45,7 +46,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (world.getBlockState(pos).equals(blockState))
         {

@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.colonyEvents.raidEvents;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ColonyState;
@@ -35,6 +36,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
@@ -65,6 +67,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public static final String TAG_SPAWNERS      = "spawners";
     public static final String TAG_SHIPSIZE      = "shipSize";
     public static final String TAG_SHIPROTATION  = "shipRotation";
+    public static final String TAG_SHIP_ROTMIR   = "shipRotMir";
     public static final String TAG_KILLED        = "killed";
 
     /**
@@ -130,7 +133,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Rotation of the ship to spawn
      */
-    private int shipRotation = 0;
+    private RotationMirror shipRotationMirror = RotationMirror.NONE;
 
     /**
      * List of all spawners.
@@ -170,7 +173,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
           "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
+            blueprint.setRotationMirror(shipRotationMirror, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
             {
@@ -411,9 +414,9 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      *
      * @param shipRotation the ship rotation.
      */
-    public void setShipRotation(final int shipRotation)
+    public void setShipRotation(final RotationMirror shipRotationMirror)
     {
-        this.shipRotation = shipRotation;
+        this.shipRotationMirror = shipRotationMirror;
     }
 
     @Override
@@ -486,7 +489,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         compound.putInt(TAG_SPAWNER_COUNT, maxSpawners);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
-        compound.putInt(TAG_SHIPROTATION, shipRotation);
+        compound.putByte(TAG_SHIP_ROTMIR, (byte) shipRotationMirror.ordinal());
         BlockPosUtil.writePosListToNBT(compound, TAG_WAYPOINT, wayPoints);
         return compound;
     }
@@ -507,7 +510,15 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
-        shipRotation = compound.getInt(TAG_SHIPROTATION);
+        if (compound.contains(TAG_SHIP_ROTMIR, Tag.TAG_BYTE))
+        {
+            shipRotationMirror = RotationMirror.values()[compound.getByte(TAG_SHIP_ROTMIR)];
+        }
+        else
+        {
+            // TODO: remove this later (data break introduced in 1.20.4)
+            shipRotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_SHIPROTATION)], Mirror.NONE);
+        }
         wayPoints = BlockPosUtil.readPosListFromNBT(compound, TAG_WAYPOINT);
     }
 

@@ -147,15 +147,13 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         new WindowBuildDecoration(controller.getBlockPos(),
           controller.getPackName(),
           path,
-          controller.getRotation(),
-          controller.getMirror(),
+          controller.getRotationMirror(),
           builder -> new DecorationBuildRequestMessage(WorkOrderType.BUILD,
             controller.getBlockPos(),
             controller.getPackName(),
             path,
             Minecraft.getInstance().level.dimension(),
-            controller.getRotation(),
-            controller.getMirror(),
+            controller.getRotationMirror(),
             builder)).open();
     }
 
@@ -168,15 +166,13 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         new WindowBuildDecoration(controller.getBlockPos(),
           controller.getPackName(),
           controller.getBlueprintPath(),
-          controller.getRotation(),
-          controller.getMirror(),
+          controller.getRotationMirror(),
           builder -> new DecorationBuildRequestMessage(WorkOrderType.REPAIR,
             controller.getBlockPos(),
             controller.getPackName(),
             controller.getBlueprintPath(),
             Minecraft.getInstance().level.dimension(),
-            controller.getRotation(),
-            controller.getMirror(),
+            controller.getRotationMirror(),
             builder)).open();
     }
 }

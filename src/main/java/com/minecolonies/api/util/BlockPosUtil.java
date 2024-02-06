@@ -21,7 +21,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -836,27 +835,6 @@ public final class BlockPosUtil
         public Component getShortText()
         {
             return shortText;
-        }
-    }
-
-    /**
-     * Get the rotation enum value from the amount of rotations.
-     *
-     * @param rotations the amount of rotations.
-     * @return the enum Rotation.
-     */
-    public static Rotation getRotationFromRotations(final int rotations)
-    {
-        switch (rotations)
-        {
-            case ROTATE_ONCE:
-                return Rotation.CLOCKWISE_90;
-            case ROTATE_TWICE:
-                return Rotation.CLOCKWISE_180;
-            case ROTATE_THREE_TIMES:
-                return Rotation.COUNTERCLOCKWISE_90;
-            default:
-                return Rotation.NONE;
         }
     }
 

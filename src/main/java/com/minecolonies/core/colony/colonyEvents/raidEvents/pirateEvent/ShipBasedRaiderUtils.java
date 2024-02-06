@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -106,10 +106,10 @@ public final class ShipBasedRaiderUtils
      * @param colony     the colony.
      * @param spawnPoint the spawn point.
      * @param raidLevel  the raid level.
-     * @param rotation   the rotation.
+     * @param rotMir     the rotation and mirror.
      * @return true if successful.
      */
-    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName)
+    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final RotationMirror rotMir, final String shipName)
     {
         if (spawnPoint.equals(colony.getCenter()))
         {
@@ -120,7 +120,7 @@ public final class ShipBasedRaiderUtils
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
         final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
-        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
+        blueprint.setRotationMirror(rotMir, world);
 
         return canPlaceShipAt(spawnPoint, blueprint, world) || canPlaceShipAt(spawnPoint.below(), blueprint, world);
     }

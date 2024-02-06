@@ -153,8 +153,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotation(),
-                    previewData.getMirror()));
+                    previewData.getRotationMirror()));
                 cancelClicked();
                 return;
             }
@@ -171,8 +170,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotation(),
-                    previewData.getMirror()));
+                    previewData.getRotationMirror()));
                 cancelClicked();
                 return;
             }

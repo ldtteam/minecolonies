@@ -1,5 +1,6 @@
 package com.minecolonies.core.placementhandlers.main;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
@@ -19,7 +20,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -48,7 +48,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
+    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final RotationMirror rotMir)
     {
         return false;
     }
@@ -62,7 +62,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
             final Level world,
             final Player playerArg,
             final BlockPos blockPos,
-            final PlacementSettings placementSettings)
+            final RotationMirror rotMir)
     {
         if (clientPack || !StructurePacks.hasPack(packName))
         {
@@ -73,7 +73,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
         final ServerPlayer player = (ServerPlayer) playerArg;
 
-        blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
+        blueprint.setRotationMirror(rotMir, world);
 
         if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                 && !isFreeInstantPlacementMH(player) && !player.isCreative())
@@ -113,8 +113,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
             SoundUtils.playSuccessSound(player, player.blockPosition());
 
-            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level(), blueprint,
-                    blockPos, placementSettings.getRotation(), placementSettings.getMirror() != Mirror.NONE ? Mirror.FRONT_BACK : Mirror.NONE, true, player);
+            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level(), blueprint, blockPos, rotMir, true, player);
         }
         else
         {

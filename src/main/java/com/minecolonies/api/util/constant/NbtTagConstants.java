@@ -140,6 +140,11 @@ public final class NbtTagConstants
     public static final String TAG_ROTATION = "rotation";
 
     /**
+     * The tag to store the rotation and mirror of the building.
+     */
+    public static final String TAG_ROTATION_MIRROR = "rotMir";
+
+    /**
      * The tag to store the md5 hash of the schematic.
      */
     public static final String TAG_SCHEMATIC_MD5 = "schematicMD5";

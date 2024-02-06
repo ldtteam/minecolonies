@@ -1,5 +1,6 @@
 package com.minecolonies.core.tileentities;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -26,6 +27,7 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -35,7 +37,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -57,6 +58,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -91,7 +93,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Check if the building has a mirror.
      */
-    private boolean mirror;
+    private RotationMirror rotationMirror;
 
     /**
      * The style of the building.
@@ -357,7 +359,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             colonyId = compound.getInt(TAG_COLONY);
         }
-        mirror = compound.getBoolean(TAG_MIRROR);
+
+        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
+        {
+            rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
+        }
+        else
+        {
+            // TODO: rotationMirror (where is rotation here?)
+            mirror = compound.getBoolean(TAG_MIRROR);
+        }
 
         String packName;
         String path;
@@ -428,7 +439,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY, colonyId);
-        compound.putBoolean(TAG_MIRROR, mirror);
+        compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
         compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
         compound.putString(TAG_PATH, path == null ? "" : path);
         if (registryName != null)
@@ -491,26 +502,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
-    /**
-     * Set if the entity is mirrored.
-     *
-     * @param mirror true if so.
-     */
     @Override
-    public void setMirror(final boolean mirror)
+    public void setRotationMirror(final RotationMirror rotationMirror)
     {
-        this.mirror = mirror;
+        this.rotationMirror = rotationMirror;
     }
 
-    /**
-     * Check if building is mirrored.
-     *
-     * @return true if so.
-     */
     @Override
-    public boolean isMirrored()
+    public RotationMirror getRotationMirror()
     {
-        return mirror;
+        return rotationMirror;
     }
 
     /**
@@ -698,7 +699,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 rotation = 4 + worldRotation - structureRotation;
             }
 
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), this.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, level);
+            blueprint.setRotationMirror(rotationMirror, level);
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
 
             if (info.getTileEntityData() != null)

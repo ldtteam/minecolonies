@@ -87,6 +87,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     @Override
     public int getRotation()
     {
+        // TODO: rotationMirror
         return 0;
     }
 

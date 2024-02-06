@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.workorders;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -169,18 +170,11 @@ public interface IWorkOrder
     BlockPos getLocation();
 
     /**
-     * Get the current rotation of the building
+     * Get the current rotation and mirror of the building
      *
      * @return the location
      */
-    int getRotation();
-
-    /**
-     * Whether the current building is mirrored
-     *
-     * @return the location
-     */
-    boolean isMirrored();
+    RotationMirror getRotationMirror();
 
     /**
      * Is the Work Order claimed?

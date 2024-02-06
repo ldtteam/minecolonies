@@ -1,6 +1,7 @@
 package com.minecolonies.core.placementhandlers;
 
 import com.ldtteam.structurize.api.ItemStackUtils;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
@@ -45,7 +46,7 @@ public class HutPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (world.getBlockState(pos).equals(blockState))
         {

@@ -1,12 +1,11 @@
 package com.minecolonies.core.network.messages.client;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.network.messages.server.DecorationBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 
 /**
  * Message to open the deco build window on the client.
@@ -28,15 +27,14 @@ public class OpenDecoBuildWindowMessage extends OpenBuildWindowMessage
       final BlockPos pos,
       final String packName,
       final String path,
-      final Rotation rotation,
-      final Mirror mirror)
+      final RotationMirror rotationMirror)
     {
-        super(pos, packName, path, rotation, mirror);
+        super(pos, packName, path, rotationMirror);
     }
 
     @Override
     public IMessage createWorkOrderMessage(final BlockPos builder)
     {
-        return new DecorationBuildRequestMessage(WorkOrderType.BUILD, pos, packName, path, Minecraft.getInstance().level.dimension(), rotation, mirror, builder);
+        return new DecorationBuildRequestMessage(WorkOrderType.BUILD, pos, packName, path, Minecraft.getInstance().level.dimension(), rotationMirror, builder);
     }
 }

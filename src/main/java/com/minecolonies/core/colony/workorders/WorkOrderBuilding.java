@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.workorders;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -71,8 +72,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
           building.getBuildingType().getTranslationKey(),
           type,
           building.getID(),
-          building.getRotation(),
-          building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored(),
+          building.getTileEntity() == null ? building.getRotationMirror() : building.getTileEntity().getRotationMirror(),
           building.getBuildingLevel(),
           targetLevel);
         wo.setCustomName(building);
@@ -93,12 +93,11 @@ public class WorkOrderBuilding extends AbstractWorkOrder
       String translationKey,
       WorkOrderType workOrderType,
       BlockPos location,
-      int rotation,
-      boolean isMirrored,
+      RotationMirror rotMir,
       int currentLevel,
       int targetLevel)
     {
-        super(packName, path, translationKey, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
+        super(packName, path, translationKey, workOrderType, location, rotMir, currentLevel, targetLevel);
     }
 
     public String getCustomName()
