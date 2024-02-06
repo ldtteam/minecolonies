@@ -41,11 +41,9 @@ import net.minecraft.core.registries.Registries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.capabilities.Capability;
@@ -81,62 +79,67 @@ public class MineColonies
         config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
 
-        TileEntityInitializer.BLOCK_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModEnchants.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModContainerInitializers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModBuildingsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModFieldsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModGuardTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModColonyEventDescriptionTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModResearchRequirementInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModRecipeSerializerInitializer.RECIPE_SERIALIZER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModRecipeSerializerInitializer.RECIPE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModColonyEventTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModCraftingTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModJobsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModRecipeTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RaiderMobUtils.ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModSoundEvents.SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModInteractionsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModResearchEffectInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModResearchCostTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModLootConditions.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        SupplyLoot.GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModBannerPatterns.BANNER_PATTERNS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
+        ModEnchants.ENCHANTMENTS.register(modBus);
+        ModContainerInitializers.CONTAINERS.register(modBus);
+        ModBuildingsInitializer.DEFERRED_REGISTER.register(modBus);
+        ModFieldsInitializer.DEFERRED_REGISTER.register(modBus);
+        ModGuardTypesInitializer.DEFERRED_REGISTER.register(modBus);
+        ModColonyEventDescriptionTypeInitializer.DEFERRED_REGISTER.register(modBus);
+        ModResearchRequirementInitializer.DEFERRED_REGISTER.register(modBus);
+        ModRecipeSerializerInitializer.RECIPE_SERIALIZER.register(modBus);
+        ModRecipeSerializerInitializer.RECIPE_TYPES.register(modBus);
+        ModColonyEventTypeInitializer.DEFERRED_REGISTER.register(modBus);
+        ModCraftingTypesInitializer.DEFERRED_REGISTER.register(modBus);
+        ModJobsInitializer.DEFERRED_REGISTER.register(modBus);
+        ModRecipeTypesInitializer.DEFERRED_REGISTER.register(modBus);
+        RaiderMobUtils.ATTRIBUTES.register(modBus);
+        ModSoundEvents.SOUND_EVENTS.register(modBus);
+        ModInteractionsInitializer.DEFERRED_REGISTER.register(modBus);
+        ModResearchEffectInitializer.DEFERRED_REGISTER.register(modBus);
+        ModResearchCostTypeInitializer.DEFERRED_REGISTER.register(modBus);
+        ModLootConditions.DEFERRED_REGISTER.register(modBus);
+        SupplyLoot.GLM.register(modBus);
+        ModBannerPatterns.BANNER_PATTERNS.register(modBus);
 
-        ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModQuestInitializer.DEFERRED_REGISTER_REWARD.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModQuestInitializer.DEFERRED_REGISTER_ANSWER_RESULT.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FACTOR.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(modBus);
+        ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(modBus);
+        ModQuestInitializer.DEFERRED_REGISTER_REWARD.register(modBus);
+        ModQuestInitializer.DEFERRED_REGISTER_ANSWER_RESULT.register(modBus);
+        ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FACTOR.register(modBus);
+        ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(modBus);
 
-        ModCreativeTabs.TAB_REG.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModCreativeTabs.TAB_REG.register(modBus);
 
         ModEnchantInitializer.init();
 
         Consumer<TagsUpdatedEvent> onTagsLoaded = (event) -> ModTags.tagsLoaded = true;
         NeoForge.EVENT_BUS.addListener(onTagsLoaded);
 
-        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
-        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
-        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ServerEvents.class);
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ClientEvents.class));
+        forgeBus.register(EventHandler.class);
+        forgeBus.register(FMLEventHandler.class);
+        forgeBus.register(DataPackSyncEventHandler.ServerEvents.class);
+        if (dist.isClient()) 
+        {
+            forgeBus.register(ClientEventHandler.class);
+            forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
+        }
 
-        Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
+        modBus.addListener(GatherDataHandler::dataGeneratorSetup);
 
-        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(this.getClass());
-        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
-        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ClientRegistryHandler.class);
-        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ModCreativeTabs.class);
+        forgeBus.register(this.getClass());
+        modBus.register(this.getClass());
+        modBus.register(ClientRegistryHandler.class);
+        modBus.register(ModCreativeTabs.class);
 
         InteractionValidatorInitializer.init();
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MinecoloniesAPIProxy.getInstance().setApiInstance(new ClientMinecoloniesAPIImpl()));
-        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl()));
+        switch (dist)
+        {
+            case CLIENT -> MinecoloniesAPIProxy.getInstance().setApiInstance(new ClientMinecoloniesAPIImpl());
+            case DEDICATED_SERVER -> MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
+        }
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
+        MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modBus);
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());

@@ -5,6 +5,7 @@ gradle.projectsEvaluated {
     }
 }
 
+// because the datagen produces output files with the same names as the originals, and we want the datagen to win
 project.tasks.getByName("processResources", {task ->
     task.duplicatesStrategy 'include'
 })
