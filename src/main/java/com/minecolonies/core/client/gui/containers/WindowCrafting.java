@@ -195,7 +195,6 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     @Override
     public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
     {
-        this.renderBackground(stack);
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }

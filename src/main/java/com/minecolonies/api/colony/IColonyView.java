@@ -172,8 +172,7 @@ public interface IColonyView extends IColony
      * @param world             the world it is in.
      * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyViewMessage(@NotNull FriendlyByteBuf buf, @NotNull Level world, boolean isNewSubscription);
+    void handleColonyViewMessage(@NotNull FriendlyByteBuf buf, @NotNull Level world, boolean isNewSubscription);
 
     /**
      * Update permissions.
@@ -181,8 +180,7 @@ public interface IColonyView extends IColony
      * @param buf buffer containing permissions.
      * @return null == no response
      */
-    @Nullable
-    IMessage handlePermissionsViewMessage(@NotNull FriendlyByteBuf buf);
+    void handlePermissionsViewMessage(@NotNull FriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's workOrders given a network data ColonyView update packet. This uses a full-replacement - workOrders do not get updated and are instead overwritten.
@@ -190,8 +188,7 @@ public interface IColonyView extends IColony
      * @param buf Network data.
      * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyViewWorkOrderMessage(FriendlyByteBuf buf);
+    void handleColonyViewWorkOrderMessage(FriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
@@ -200,8 +197,7 @@ public interface IColonyView extends IColony
      * @param buf Network data.
      * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyViewCitizensMessage(int id, FriendlyByteBuf buf);
+    void handleColonyViewCitizensMessage(int id, FriendlyByteBuf buf);
 
     /**
      * Handles visitor view messages
@@ -216,8 +212,7 @@ public interface IColonyView extends IColony
      * @param citizen citizen ID.
      * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyViewRemoveCitizenMessage(int citizen);
+    void handleColonyViewRemoveCitizenMessage(int citizen);
 
     /**
      * Remove a building from the ColonyView.
@@ -225,8 +220,7 @@ public interface IColonyView extends IColony
      * @param buildingId location of the building.
      * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId);
+    void handleColonyViewRemoveBuildingMessage(BlockPos buildingId);
 
     /**
      * Remove a workOrder from the ColonyView.
@@ -234,8 +228,7 @@ public interface IColonyView extends IColony
      * @param workOrderId id of the workOrder.
      * @return null == no response
      */
-    @Nullable
-    IMessage handleColonyViewRemoveWorkOrderMessage(int workOrderId);
+    void handleColonyViewRemoveWorkOrderMessage(int workOrderId);
 
     /**
      * Update a ColonyView's buildings given a network data ColonyView update packet. This uses a full-replacement - buildings do not get updated and are instead overwritten.
@@ -244,8 +237,7 @@ public interface IColonyView extends IColony
      * @param buf        buffer containing ColonyBuilding information.
      * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
+    void handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
 
     /**
      * Handle the colony view research manager updating.

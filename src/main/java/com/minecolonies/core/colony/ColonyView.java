@@ -754,8 +754,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, @NotNull final Level world, final boolean isNewSubscription)
+    public void handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, @NotNull final Level world, final boolean isNewSubscription)
     {
         this.world = world;
         //  General Attributes
@@ -876,7 +875,6 @@ public final class ColonyView implements IColonyView
         this.statisticManager.deserialize(buf);
         this.questManager.deserializeNBT(buf.readNbt());
         this.day = buf.readInt();
-        return null;
     }
 
     /**
@@ -886,11 +884,9 @@ public final class ColonyView implements IColonyView
      * @return null == no response
      */
     @Override
-    @Nullable
-    public IMessage handlePermissionsViewMessage(@NotNull final FriendlyByteBuf buf)
+    public void handlePermissionsViewMessage(@NotNull final FriendlyByteBuf buf)
     {
         permissions.deserialize(buf);
-        return null;
     }
 
     /**
@@ -900,8 +896,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyViewWorkOrderMessage(final FriendlyByteBuf buf)
+    public void handleColonyViewWorkOrderMessage(final FriendlyByteBuf buf)
     {
         boolean claimsChanged = false;
 
@@ -924,8 +919,6 @@ public final class ColonyView implements IColonyView
             workOrderCachedCount = workOrders.size();
             ColonyBlueprintRenderer.invalidateCache();
         }
-
-        return null;
     }
 
     /**
@@ -936,16 +929,13 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyViewCitizensMessage(final int id, final FriendlyByteBuf buf)
+    public void handleColonyViewCitizensMessage(final int id, final FriendlyByteBuf buf)
     {
         final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf, this);
         if (citizen != null)
         {
             citizens.put(citizen.getId(), citizen);
         }
-
-        return null;
     }
 
     @Override
@@ -983,11 +973,9 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyViewRemoveCitizenMessage(final int citizen)
+    public void handleColonyViewRemoveCitizenMessage(final int citizen)
     {
         citizens.remove(citizen);
-        return null;
     }
 
     /**
@@ -997,15 +985,13 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
+    public void handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
     {
         final IBuildingView building = buildings.remove(buildingId);
         if (townHall == building)
         {
             townHall = null;
         }
-        return null;
     }
 
     /**
@@ -1015,11 +1001,9 @@ public final class ColonyView implements IColonyView
      * @return null == no response
      */
     @Override
-    @Nullable
-    public IMessage handleColonyViewRemoveWorkOrderMessage(final int workOrderId)
+    public void handleColonyViewRemoveWorkOrderMessage(final int workOrderId)
     {
         workOrders.remove(workOrderId);
-        return null;
     }
 
     /**
@@ -1030,8 +1014,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final FriendlyByteBuf buf)
     {
         if (buildings.containsKey(buildingId))
         {
@@ -1052,8 +1035,6 @@ public final class ColonyView implements IColonyView
                 }
             }
         }
-
-        return null;
     }
 
     @Override

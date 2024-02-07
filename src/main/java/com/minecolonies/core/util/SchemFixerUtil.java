@@ -7,6 +7,7 @@ import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 
 import java.io.ByteArrayInputStream;
@@ -78,7 +79,7 @@ public class SchemFixerUtil
                 }
                 try
                 {
-                    CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(java.nio.file.Files.readAllBytes(blueprintFile.toPath())));
+                    CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(java.nio.file.Files.readAllBytes(blueprintFile.toPath())), NbtAccounter.unlimitedHeap());
                     final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT);
                     if (fixSchematicNameAndCorners(blueprint))
                     {

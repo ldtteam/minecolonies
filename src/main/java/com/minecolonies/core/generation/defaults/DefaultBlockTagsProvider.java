@@ -195,7 +195,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
         tag(ModTags.validSpawn)
-          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH)
+          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS_BLOCK, Blocks.FERN, Blocks.TORCH)
           .addTags(BlockTags.BUTTONS)
           .addTags(BlockTags.RAILS)
           .addTags(BlockTags.WOOL_CARPETS);

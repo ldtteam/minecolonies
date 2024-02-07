@@ -325,7 +325,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (!world.getBlockState(nextCobble).canOcclude())
         {
-            if (!checkIfRequestForItemExistOrCreate(new ItemStack(getSolidSubstitution(nextCobble).getBlock()), COBBLE_REQUEST_BATCHES, 1))
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(getSolidSubstitution(nextCobble, pos -> null).getBlock()), COBBLE_REQUEST_BATCHES, 1))
             {
                 return getState();
             }

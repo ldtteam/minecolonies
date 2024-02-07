@@ -61,14 +61,14 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
 
         @NotNull final ListTag craftedList = new ListTag();
         craftedResults.forEach(item -> {
-            @NotNull final CompoundTag itemCompound = item.serializeNBT();
+            @NotNull final CompoundTag itemCompound = item.save(new CompoundTag());
             craftedList.add(itemCompound);
         });
         compound.put(TAG_CRAFTED, craftedList);
 
         @NotNull final ListTag processedList = new ListTag();
         processedResults.forEach(item -> {
-            @NotNull final CompoundTag itemCompound = item.serializeNBT();
+            @NotNull final CompoundTag itemCompound = item.save(new CompoundTag());
             processedList.add(itemCompound);
         });
         compound.put(TAG_PROCESSED, processedList);

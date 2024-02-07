@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.colony.permissions.Permissions;

@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -121,7 +120,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
     MutableComponent literalAndRemember(String message)
     {
         fullLog += message + "\n";
-        return MutableComponent.create(new LiteralContents(message));
+        return Component.literal(message);
     }
 
     /**

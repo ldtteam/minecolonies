@@ -12,8 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -72,7 +72,7 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
 
     @NotNull
     @Override
-    public ItemStack getCloneItemStack(final BlockGetter worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
+    public ItemStack getCloneItemStack(final LevelReader worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
     {
         BlockEntity tileentity = worldIn.getBlockEntity(pos);
         if (tileentity instanceof TileEntityColonyFlag)

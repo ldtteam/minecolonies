@@ -250,7 +250,7 @@ public class ExpeditionLog
         final ListTag equipment = new ListTag();
         for (final ItemStack stack : this.equipment)
         {
-            equipment.add(stack.serializeNBT());
+            equipment.add(stack.save(new CompoundTag()));
         }
         compound.put(TAG_EQUIPMENT, equipment);
 

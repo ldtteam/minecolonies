@@ -193,7 +193,7 @@ public class Stack implements IConcreteDeliverable
     public static CompoundTag serialize(final IFactoryController controller, final Stack input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_STACK, input.theStack.serializeNBT());
+        compound.put(NBT_STACK, input.theStack.save(new CompoundTag()));
         compound.putBoolean(NBT_MATCHMETA, input.matchDamage);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
@@ -201,7 +201,7 @@ public class Stack implements IConcreteDeliverable
 
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.put(NBT_RESULT, input.result.serializeNBT());
+            compound.put(NBT_RESULT, input.result.save(new CompoundTag()));
         }
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MINCOUNT, input.getMinimumCount());

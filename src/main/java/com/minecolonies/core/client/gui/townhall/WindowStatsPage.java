@@ -272,9 +272,9 @@ public class WindowStatsPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
-                return Component.translatable((String) INTERVAL.keySet().toArray()[index]).getString();
+                return Component.translatable((String) INTERVAL.keySet().toArray()[index]);
             }
         });
         intervalDropdown.setSelectedIndex(new ArrayList<>(INTERVAL.keySet()).indexOf(selectedInterval));

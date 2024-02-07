@@ -137,7 +137,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
                 citizen.getInventoryCitizen().setCustomName(name);
             }
 
-            NetworkHooks.openScreen(player, citizen, packetBuffer -> packetBuffer.writeVarInt(citizen.getCitizenColonyHandler().getColonyId()).writeVarInt(citizen.getCivilianID()));
+            player.openMenu(citizen, packetBuffer -> packetBuffer.writeVarInt(citizen.getCitizenColonyHandler().getColonyId()).writeVarInt(citizen.getCivilianID()));
         }
     }
 
@@ -147,7 +147,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
         {
-            NetworkHooks.openScreen(player, (MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
+            player.openMenu((MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
         }
     }
 

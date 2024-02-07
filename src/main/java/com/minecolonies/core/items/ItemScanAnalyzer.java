@@ -133,7 +133,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
                 lastPos = start;
                 lastPos2 = end;
 
-                blueprint = saveStructure(worldIn, playerIn, new AABB(getBounds(itemStack).getA(), getBounds(itemStack).getB()));
+                blueprint = saveStructure(worldIn, playerIn, AABB.encapsulatingFullBlocks(getBounds(itemStack).getA(), getBounds(itemStack).getB()));
             }
 
             new WindowSchematicAnalyzer().open();

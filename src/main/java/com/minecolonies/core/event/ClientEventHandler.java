@@ -316,8 +316,7 @@ public class ClientEventHandler
     public static void onDebugOverlay(final CustomizeGuiOverlayEvent.DebugText event)
     {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.options.renderDebug)
-        {
+
             final ClientLevel world = mc.level;
             final LocalPlayer player = mc.player;
             final BlockPos pos = player.blockPosition();
@@ -344,7 +343,6 @@ public class ClientEventHandler
             }
 
             event.getLeft().add(colony.getName() + " : " + Component.translatable(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

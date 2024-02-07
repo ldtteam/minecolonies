@@ -27,6 +27,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -192,13 +193,13 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < builders.size())
                 {
-                    return builders.get(index).getA();
+                    return Component.literal(builders.get(index).getA());
                 }
-                return "";
+                return Component.empty();
             }
         });
         buildersDropDownList.setSelectedIndex(0);

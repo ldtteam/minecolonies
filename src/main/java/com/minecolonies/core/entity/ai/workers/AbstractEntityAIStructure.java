@@ -891,7 +891,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final Blueprint blueprint = structurePlacer.getB().getBluePrint();
 
         final BlockPos leftCorner = structurePlacer.getB().getWorldPos().subtract(blueprint.getPrimaryBlockOffset());
-        searchForItems(new AABB(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
+        searchForItems(AABB.encapsulatingFullBlocks(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
     }
 
     /**

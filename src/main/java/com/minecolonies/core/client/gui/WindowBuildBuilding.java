@@ -37,6 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
@@ -382,13 +383,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < styles.size())
                 {
-                    return styles.get(index);
+                    return Component.literal(styles.get(index));
                 }
-                return "";
+                return Component.empty();
             }
         });
     }
@@ -408,13 +409,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < builders.size())
                 {
-                    return builders.get(index).getA();
+                    return Component.literal(builders.get(index).getA());
                 }
-                return "";
+                return Component.empty();
             }
         });
         buildersDropDownList.setSelectedIndex(0);

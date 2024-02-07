@@ -64,7 +64,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         {
             if (module.canLearn(ModCraftingTypes.SMELTING.get()))
             {
-                NetworkHooks.openScreen(player, new MenuProvider()
+                player.openMenu(new MenuProvider()
                 {
                     @NotNull
                     @Override
@@ -83,7 +83,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
             }
             else if (module.canLearn(ModCraftingTypes.BREWING.get()))
             {
-                NetworkHooks.openScreen(player, new MenuProvider()
+                player.openMenu(new MenuProvider()
                 {
                     @NotNull
                     @Override
@@ -102,8 +102,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
             }
             else
             {
-                net.neoforged.neoforge.network.NetworkHooks.openScreen(player,
-                  new MenuProvider()
+                player.openMenu(new MenuProvider()
                   {
                       @NotNull
                       @Override

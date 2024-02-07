@@ -295,9 +295,9 @@ public class ColonyPermissionEventHandler
     {
         if (MineColonies.getConfig().getServer().enableColonyProtection.get()
               && MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get() == Explosions.DAMAGE_NOTHING
-              && colony.isCoordInColony(event.getLevel(), BlockPos.containing(event.getExplosion().getPosition())))
+              && colony.isCoordInColony(event.getLevel(), BlockPos.containing(event.getExplosion().center())))
         {
-            cancelEvent(event, null, colony, Action.EXPLODE, BlockPos.containing(event.getExplosion().getPosition()));
+            cancelEvent(event, null, colony, Action.EXPLODE, BlockPos.containing(event.getExplosion().center()));
         }
     }
 

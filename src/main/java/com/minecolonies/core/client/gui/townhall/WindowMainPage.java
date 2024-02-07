@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -148,14 +149,14 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < textColors.size())
                 {
                     final String colorName = textColors.get(index).getName().replace("_", " ");
-                    return colorName.substring(0, 1).toUpperCase(Locale.US) + colorName.substring(1);
+                    return Component.literal(colorName.substring(0, 1).toUpperCase(Locale.US) + colorName.substring(1));
                 }
-                return "";
+                return Component.empty();
             }
         });
 
@@ -170,9 +171,9 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
-                return TEXTURE_PACKS.get(index);
+                return Component.literal(TEXTURE_PACKS.get(index));
             }
         });
 

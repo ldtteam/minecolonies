@@ -30,7 +30,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -174,9 +173,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
             final TileEntityGrave grave = (TileEntityGrave) tileEntity;
             if (!worldIn.isClientSide)
             {
-                NetworkHooks.openScreen((ServerPlayer) player,
-                  grave,
-                  buf -> buf.writeBlockPos(grave.getBlockPos()));
+                ((ServerPlayer) player).openMenu(grave, buf -> buf.writeBlockPos(grave.getBlockPos()));
             }
             return InteractionResult.SUCCESS;
         }

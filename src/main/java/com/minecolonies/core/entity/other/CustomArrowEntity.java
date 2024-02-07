@@ -13,7 +13,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;

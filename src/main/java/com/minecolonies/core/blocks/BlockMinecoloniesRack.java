@@ -35,7 +35,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -231,8 +230,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             final TileEntityRack rack = (TileEntityRack) tileEntity;
             if (!worldIn.isClientSide)
             {
-                NetworkHooks.openScreen((ServerPlayer) player,
-                  rack,
+                ((ServerPlayer) player).openMenu(rack,
                   buf -> buf.writeBlockPos(rack.getBlockPos()).writeBlockPos(rack.getOtherChest() == null ? BlockPos.ZERO : rack.getOtherChest().getBlockPos()));
             }
             return InteractionResult.SUCCESS;
@@ -280,12 +278,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
-    }
-
-    @Override
-    public @NotNull Block getBlock()
-    {
-        return this;
     }
 
     @Override

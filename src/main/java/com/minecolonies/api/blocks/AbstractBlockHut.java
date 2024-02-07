@@ -524,7 +524,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                 building.setBuildingLevel(1);
             }
 
-            building.setIsMirrored(settings.mirror != Mirror.NONE);
+            building.setRotationMirror(rotationMirror);
             building.onUpgradeComplete(building.getBuildingLevel());
         }
         return true;

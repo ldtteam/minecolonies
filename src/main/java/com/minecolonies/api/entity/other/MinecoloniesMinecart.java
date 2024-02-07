@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -315,17 +314,10 @@ public class MinecoloniesMinecart extends Minecart
         this.handleNetherPortal();
         if (this.level().isClientSide)
         {
-            if (this.lSteps > 0)
+            if (this.lerpSteps > 0)
             {
-                double d5 = this.getX() + (this.lx - this.getX()) / (double) this.lSteps;
-                double d6 = this.getY() + (this.ly - this.getY()) / (double) this.lSteps;
-                double d7 = this.getZ() + (this.lz - this.getZ()) / (double) this.lSteps;
-                double d2 = Mth.wrapDegrees(this.lyr - (double) this.getYRot());
-                this.setYRot(this.getYRot() + (float) d2 / (float) this.lSteps);
-                this.setXRot(this.getXRot() + (float) (this.lxr - (double) this.getXRot()) / (float) this.lSteps);
-                --this.lSteps;
-                this.setPos(d5, d6, d7);
-                this.setRot(this.getYRot(), this.getXRot());
+                this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
+                --this.lerpSteps;
             }
             else
             {

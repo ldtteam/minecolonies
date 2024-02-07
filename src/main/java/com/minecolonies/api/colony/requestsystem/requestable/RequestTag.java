@@ -209,7 +209,7 @@ public class RequestTag implements IDeliverable
         compound.putString(NBT_TAG, input.getTag().location().toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
-            compound.put(NBT_RESULT, input.getResult().serializeNBT());
+            compound.put(NBT_RESULT, input.getResult().save(new CompoundTag()));
         }
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MINCOUNT, input.getMinimumCount());

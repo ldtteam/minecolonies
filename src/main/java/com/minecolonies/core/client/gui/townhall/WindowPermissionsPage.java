@@ -20,6 +20,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -337,9 +338,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int i)
+            public MutableComponent getLabel(final int i)
             {
-                return Component.translatable(rankTypes.get(i)).getString();
+                return Component.translatable(rankTypes.get(i));
             }
         });
         dropdown.setHandler(this::changeRankMode);
@@ -598,10 +599,10 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                         }
 
                         @Override
-                        public String getLabel(final int i)
+                        public MutableComponent getLabel(final int i)
                         {
                             Rank rank = rankList.get(i);
-                            return rank.getName();
+                            return Component.literal(rank.getName());
                         }
                     });
                     dropdown.setSelectedIndex(rankList.indexOf(rank));

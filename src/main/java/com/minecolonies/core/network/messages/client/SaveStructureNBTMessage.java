@@ -10,6 +10,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
         String fileName = null;
         try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
         {
-            final CompoundTag wrapperCompound = NbtIo.readCompressed(stream);
+            final CompoundTag wrapperCompound = NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap());
             compoundNBT = wrapperCompound.getCompound(TAG_SCHEMATIC);
             fileName = wrapperCompound.getString(TAG_MILLIS);
         }

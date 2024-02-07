@@ -37,7 +37,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.ToolActions;
 import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
-import net.neoforged.neoforge.network.NetworkHooks;
 import net.neoforged.neoforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 
