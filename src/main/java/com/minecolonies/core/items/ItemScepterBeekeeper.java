@@ -8,7 +8,6 @@ import com.minecolonies.api.items.IBlockOverlayItem;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import net.minecraft.core.BlockPos;
@@ -81,7 +80,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
                 MessageUtils.format(TOOL_BEEHIVE_SCEPTER_REMOVE_HIVE).sendTo(useContext.getPlayer());
                 building.removeHive(pos);
                 SoundUtils.playSoundForPlayer((ServerPlayer) player, SoundEvents.NOTE_BLOCK_BELL.get(), (float) SoundUtils.VOLUME * 2, 0.5f);
-                Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), (ServerPlayer) player);
+                new ColonyViewBuildingViewMessage(building).sendToPlayer((ServerPlayer) player);
             }
             else
             {
@@ -90,7 +89,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
                     MessageUtils.format(TOOL_BEEHIVE_SCEPTER_ADD_HIVE).sendTo(useContext.getPlayer());
                     building.addHive(pos);
                     SoundUtils.playSuccessSound(player, player.blockPosition());
-                    Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), (ServerPlayer) player);
+                    new ColonyViewBuildingViewMessage(building).sendToPlayer((ServerPlayer) player);
                 }
                 if (positions.size() >= building.getMaximumHives())
                 {

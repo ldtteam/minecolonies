@@ -16,7 +16,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
@@ -152,7 +151,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     protected void cancel(@NotNull final IRequest<?> request)
     {
         building.onRequestedRequestCancelled(colony.getRequestManager(), request);
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
+        new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null).sendToServer();
 
         updateRequests();
     }

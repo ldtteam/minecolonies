@@ -1,7 +1,6 @@
 package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.controls.Button;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.network.messages.server.colony.ColonyDeleteOwnMessage;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ public class WindowTownHallColonyDelete extends AbstractWindowSkeleton
         if (button.getID().equals(BUTTON_CONFIRM))
         {
             // Delete colony
-            Network.getNetwork().sendToServer(new ColonyDeleteOwnMessage());
+            new ColonyDeleteOwnMessage().sendToServer();
         }
 
         close();

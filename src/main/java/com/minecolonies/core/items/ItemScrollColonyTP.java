@@ -3,11 +3,11 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -110,12 +110,9 @@ public class ItemScrollColonyTP extends AbstractItemScroll
     {
         if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0)
         {
-            Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT),
-                entity);
-            Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT),
-                (ServerPlayer) entity);
+            final Entity entity1 = entity;
+            new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT).sendToTrackingEntity(entity1);
+            new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT).sendToPlayer((ServerPlayer) entity);
         }
     }
 

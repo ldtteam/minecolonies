@@ -2,7 +2,6 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ToolModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.GiveToolMessage;
@@ -42,6 +41,6 @@ public class ToolModuleWindow extends AbstractModuleWindow
      */
     private void givePlayerScepter()
     {
-        Network.getNetwork().sendToServer(new GiveToolMessage(buildingView, moduleView.getTool()));
+        new GiveToolMessage(buildingView, moduleView.getTool()).sendToServer();
     }
 }

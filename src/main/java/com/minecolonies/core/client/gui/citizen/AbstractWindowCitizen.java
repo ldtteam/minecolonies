@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowRequestTree;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
@@ -35,8 +34,8 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
         registerButton("requestIcon", () -> new RequestWindowCitizen(citizen).open());
         PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("requestIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.citizen.requests"));
 
-        registerButton("inventoryTab", () -> Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId())));
-        registerButton("inventoryIcon", () -> Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId())));
+        registerButton("inventoryTab", () -> new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()).sendToServer());
+        registerButton("inventoryIcon", () -> new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()).sendToServer());
         PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("inventoryIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.citizen.inventory"));
 
         registerButton("happinessTab", () -> new HappinessWindowCitizen(citizen).open());

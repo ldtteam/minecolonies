@@ -14,7 +14,6 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.client.render.RenderBipedCitizen;
@@ -268,14 +267,10 @@ public class EventHandler
 
         ChunkDataHelper.loadChunk(chunk, world);
 
-        Network.getNetwork()
-          .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
-            chunkPos.x,
-            chunkPos.z,
-            8, true), (ServerPlayer) event.player);
+        new UpdateChunkRangeCapabilityMessage(world, chunkPos.x, chunkPos.z, 8, true).sendToPlayer((ServerPlayer) event.player);
 
         final ChunkCapData chunkCapData = ColonyUtils.getChunkCapData(chunk);
-        Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(chunkCapData), (ServerPlayer) event.player);
+        new UpdateChunkCapabilityMessage(chunkCapData).sendToPlayer((ServerPlayer) event.player);
 
         // Check if we get into a differently claimed chunk
         if (chunkCapData.getOwningColony() != -1)
@@ -538,9 +533,10 @@ public class EventHandler
                     final ItemStack stack = event.getItemStack();
                     if (!stack.isEmpty() && !world.isClientSide)
                     {
-                        Network.getNetwork()
-                          .sendToPlayer(new OpenSuggestionWindowMessage(block.defaultBlockState().setValue(AbstractBlockHut.FACING,
-                            event.getEntity().getDirection()), event.getPos().relative(event.getFace()), stack), (ServerPlayer) player);
+                        new OpenSuggestionWindowMessage(
+                            block.defaultBlockState().setValue(AbstractBlockHut.FACING, event.getEntity().getDirection()),
+                            event.getPos().relative(event.getFace()),
+                            stack).sendToPlayer((ServerPlayer) player);
                     }
                     event.setCanceled(true);
                 }

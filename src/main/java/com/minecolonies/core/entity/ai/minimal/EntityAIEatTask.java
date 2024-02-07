@@ -15,7 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -197,14 +196,13 @@ public class EntityAIEatTask implements IStateAI
 
         citizen.swing(InteractionHand.MAIN_HAND);
         citizen.playSound(SoundEvents.GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-        Network.getNetwork()
-          .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getMainHandItem(),
+        new ItemParticleEffectMessage(citizen.getMainHandItem(),
             citizen.getX(),
             citizen.getY(),
             citizen.getZ(),
             citizen.getXRot(),
             citizen.getYRot(),
-            citizen.getEyeHeight()), citizen);
+            citizen.getEyeHeight()).sendToTrackingEntity(citizen);
 
         waitingTicks++;
         if (waitingTicks < REQUIRED_TIME_TO_EAT)

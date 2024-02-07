@@ -20,7 +20,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobAlchemist;
@@ -260,7 +259,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
               SoundSource.BLOCKS,
               state.getSoundType(world, walkTo, worker).getVolume(),
               state.getSoundType(world, walkTo, worker).getPitch());
-            Network.getNetwork().sendToTrackingEntity(new BlockParticleEffectMessage(walkTo, state, worker.getRandom().nextInt(7) - 1), worker);
+            new BlockParticleEffectMessage(walkTo, state, worker.getRandom().nextInt(7) - 1).sendToTrackingEntity(worker);
 
             if (worker.getRandom().nextInt(120) < 1)
             {

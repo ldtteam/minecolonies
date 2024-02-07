@@ -14,7 +14,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -251,11 +250,8 @@ public class EntityAISickTask implements IStateAI
 
         citizen.swing(InteractionHand.MAIN_HAND);
         citizen.playSound(SoundEvents.NOTE_BLOCK_HARP.get(), (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
-        Network.getNetwork().sendToTrackingEntity(
-          new CircleParticleEffectMessage(
-            citizen.position().add(0, 2, 0),
-            ParticleTypes.HAPPY_VILLAGER,
-            waitingTicks), citizen);
+        new CircleParticleEffectMessage(citizen.position().add(0, 2, 0), ParticleTypes.HAPPY_VILLAGER, waitingTicks)
+            .sendToTrackingEntity(citizen);
 
 
         waitingTicks++;

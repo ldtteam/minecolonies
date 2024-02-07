@@ -11,7 +11,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -85,7 +84,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 if (snapshotNeedsUpdate)
                 {
                     // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
-                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos));
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos).sendToServer();
                 }
                 else
                 {
@@ -161,11 +160,11 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
                 if (warehouseSnapshotData != null)
                 {
-                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot, warehouseSnapshotData.hash));
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot, warehouseSnapshotData.hash).sendToServer();
                 }
                 else
                 {
-                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos));
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos).sendToServer();
                 }
             }
         }

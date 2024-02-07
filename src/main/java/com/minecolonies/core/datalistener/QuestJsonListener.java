@@ -8,7 +8,6 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.GlobalQuestSyncMessage;
 import com.minecolonies.core.quests.*;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
@@ -62,7 +61,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             byteBuf.writeResourceLocation(entry.getKey());
             byteBuf.writeByteArray(entry.getValue().toString().getBytes());
         }
-        Network.getNetwork().sendToPlayer(new GlobalQuestSyncMessage(byteBuf), player);
+        new GlobalQuestSyncMessage(byteBuf).sendToPlayer(player);
     }
 
     /**

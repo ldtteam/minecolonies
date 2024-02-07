@@ -11,7 +11,6 @@ import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewResearchManagerViewMessage;
 import com.minecolonies.core.research.LocalResearch;
@@ -87,8 +86,7 @@ public class ResearchManager implements IResearchManager
             }
             players.addAll(newSubscribers);
 
-            final ColonyViewResearchManagerViewMessage message = new ColonyViewResearchManagerViewMessage(colony, this);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+            new ColonyViewResearchManagerViewMessage(colony, this).sendToPlayer(players);
 
         }
         clearDirty();

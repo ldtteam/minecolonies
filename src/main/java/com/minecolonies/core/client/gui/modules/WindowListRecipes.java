@@ -8,7 +8,6 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
@@ -107,7 +106,7 @@ public class WindowListRecipes extends AbstractModuleWindow
     {
         final int row = recipeList.getListElementIndexByPane(button);
         module.toggle(row);
-        Network.getNetwork().sendToServer(new ToggleRecipeMessage(buildingView, row, module.getProducer().getRuntimeID()));
+        new ToggleRecipeMessage(buildingView, row, module.getProducer().getRuntimeID()).sendToServer();
     }
 
     /**
@@ -119,7 +118,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         final boolean shift = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         final int row = recipeList.getListElementIndexByPane(button);
         module.switchOrder(row, row + 1, shift);
-        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getProducer().getRuntimeID(), shift));
+        new ChangeRecipePriorityMessage(buildingView, row, false, module.getProducer().getRuntimeID(), shift).sendToServer();
         recipeList.refreshElementPanes();
     }
 
@@ -132,7 +131,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         final boolean shift = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         final int row = recipeList.getListElementIndexByPane(button);
         module.switchOrder(row, row - 1, shift);
-        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getProducer().getRuntimeID(), shift));
+        new ChangeRecipePriorityMessage(buildingView, row, true, module.getProducer().getRuntimeID(), shift).sendToServer();
         recipeList.refreshElementPanes();
     }
 
@@ -146,7 +145,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         final IRecipeStorage data = module.getRecipes().get(row);
         module.removeRecipe(row);
         recipeList.refreshElementPanes();
-        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, true, data, module.getProducer().getRuntimeID()));
+        new AddRemoveRecipeMessage(buildingView, true, data, module.getProducer().getRuntimeID()).sendToServer();
     }
 
     /**

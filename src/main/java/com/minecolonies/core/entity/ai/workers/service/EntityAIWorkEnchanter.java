@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingEnchanter;
@@ -223,23 +222,14 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
         if (progressTicks++ < MAX_ENCHANTMENT_TICKS / building.getBuildingLevel())
         {
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.position().add(0, 2, 0),
-                ParticleTypes.ENCHANT,
-                progressTicks), worker);
+            new CircleParticleEffectMessage(worker.position().add(0, 2, 0), ParticleTypes.ENCHANT, progressTicks)
+                .sendToTrackingEntity(worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.position().add(0, 1.5, 0),
-                ParticleTypes.ENCHANT,
-                progressTicks), worker);
+            new CircleParticleEffectMessage(worker.position().add(0, 1.5, 0), ParticleTypes.ENCHANT, progressTicks)
+                .sendToTrackingEntity(worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.position().add(0, 1, 0),
-                ParticleTypes.ENCHANT,
-                progressTicks), worker);
+            new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.ENCHANT, progressTicks)
+                .sendToTrackingEntity(worker);
 
             worker.queueSound(SoundEvents.ENCHANTMENT_TABLE_USE, worker.blockPosition().above(), 20, 0, 0.5f, worker.getRandom().nextFloat());
 
@@ -366,19 +356,10 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             final Vec3 start = worker.position().add(0, 2, 0);
             final Vec3 goal = citizenToGatherFrom.getEntity().get().position().add(0, 2, 0);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new StreamParticleEffectMessage(
-                start,
-                goal,
-                ParticleTypes.ENCHANT,
-                progressTicks % MAX_PROGRESS_TICKS,
-                MAX_PROGRESS_TICKS), worker);
+            new StreamParticleEffectMessage(start, goal, ParticleTypes.ENCHANT, progressTicks % MAX_PROGRESS_TICKS, MAX_PROGRESS_TICKS)
+                .sendToTrackingEntity(worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                start,
-                ParticleTypes.HAPPY_VILLAGER,
-                progressTicks), worker);
+            new CircleParticleEffectMessage(start, ParticleTypes.HAPPY_VILLAGER, progressTicks).sendToTrackingEntity(worker);
 
             WorkerUtil.faceBlock(BlockPos.containing(goal), worker);
 

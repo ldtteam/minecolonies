@@ -5,7 +5,6 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +29,11 @@ public class ColonyListMessage extends AbstractPlayMessage
     private final List<IColony>    colonies;
     private final List<ColonyInfo> colonyInfo;
 
+    public ColonyListMessage()
+    {
+        this(Collections.emptyList());
+    }
+
     /**
      * Creates a message to handle colony views.
      */
@@ -44,31 +48,26 @@ public class ColonyListMessage extends AbstractPlayMessage
     {
         super(buf, type);
         colonies = null;
-        colonyInfo = new ArrayList<>();
-        final int count = buf.readInt();
-        for (int i = 0; i < count; i++)
-        {
-            final ColonyInfo info = new ColonyInfo(buf.readInt());
-            info.center = buf.readBlockPos();
-            info.name = buf.readUtf(32767);
-            info.citizencount = buf.readInt();
-            info.owner = buf.readUtf(32767);
-            colonyInfo.add(info);
-        }
+        colonyInfo = buf.readList(b -> {
+            final ColonyInfo info = new ColonyInfo(b.readInt());
+            info.center = b.readBlockPos();
+            info.name = b.readUtf(32767);
+            info.citizencount = b.readInt();
+            info.owner = b.readUtf(32767);
+            return info;
+        });
     }
 
     @Override
     protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
-        buf.writeInt(colonies.size());
-        for (final IColony colony : colonies)
-        {
-            buf.writeInt(colony.getID());
-            buf.writeBlockPos(colony.getCenter());
-            buf.writeUtf(colony.getName());
-            buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
-            buf.writeUtf(colony.getPermissions().getOwnerName());
-        }
+        buf.writeCollection(colonies, (b, colony) ->{
+            b.writeInt(colony.getID());
+            b.writeBlockPos(colony.getCenter());
+            b.writeUtf(colony.getName());
+            b.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
+            b.writeUtf(colony.getPermissions().getOwnerName());
+        });
     }
 
     @Override
@@ -80,7 +79,7 @@ public class ColonyListMessage extends AbstractPlayMessage
     @Override
     protected void onServerExecute(final PlayPayloadContext context, final ServerPlayer player)
     {
-        Network.getNetwork().sendToPlayer(new ColonyListMessage(IColonyManager.getInstance().getColonies(player.level())), player);
+        new ColonyListMessage(IColonyManager.getInstance().getColonies(player.level())).sendToPlayer(player);
     }
 
     public static class ColonyInfo

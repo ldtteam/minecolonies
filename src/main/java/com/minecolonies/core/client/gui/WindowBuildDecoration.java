@@ -23,7 +23,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -336,7 +335,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                                    ? BlockPos.ZERO
                                    : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
-        Network.getNetwork().sendToServer(buildRequestMessage.apply(builder));
+        buildRequestMessage.apply(builder).sendToServer();
         close();
     }
 }

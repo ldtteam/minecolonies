@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -361,7 +360,7 @@ public class CustomRecipeManager
     {
         final FriendlyByteBuf recipeMgrFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(recipeMgrFriendlyByteBuf);
-        Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf), player);
+        new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf).sendToPlayer(player);
     }
 
     /**

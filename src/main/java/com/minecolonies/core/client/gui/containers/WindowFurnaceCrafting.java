@@ -6,7 +6,6 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
@@ -118,7 +117,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.FURNACE, module.getProducer().getRuntimeID()));
+                    new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.FURNACE, module.getProducer().getRuntimeID()).sendToServer();
                 }
             }
         }

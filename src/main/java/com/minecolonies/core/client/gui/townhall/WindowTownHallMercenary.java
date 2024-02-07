@@ -7,7 +7,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.network.messages.server.colony.HireMercenaryMessage;
@@ -69,7 +68,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         if (button.getID().equals(BUTTON_DONE))
         {
             colony.usedMercenaries();
-            Network.getNetwork().sendToServer(new HireMercenaryMessage(colony));
+            new HireMercenaryMessage(colony).sendToServer();
             Minecraft.getInstance().player.playSound(SoundEvents.LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
         }
 

@@ -15,7 +15,6 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowInteraction;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
@@ -505,7 +504,7 @@ VisitorCitizen extends AbstractEntityCitizen
         {
             if (player.isShiftKeyDown())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
+                new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()).sendToServer();
             }
             else
             {
@@ -552,14 +551,8 @@ VisitorCitizen extends AbstractEntityCitizen
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 // Position needs to be centered on citizen, Eat AI wrong too?
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    getXRot(),
-                    getYRot(),
-                    getEyeHeight()), this);
+                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
+                    .sendToTrackingEntity(this);
 
                 citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
             }

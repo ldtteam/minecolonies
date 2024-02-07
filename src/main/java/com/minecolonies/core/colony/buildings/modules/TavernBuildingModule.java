@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
@@ -17,7 +16,6 @@ import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
 import com.minecolonies.core.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -129,10 +127,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
             avg = new BlockPos(avg.getX() / count, avg.getY() / count, avg.getZ() / count);
             final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, avg, building.getColony().getWorld(), 0.7f, 1.0f);
-            for (final ServerPlayer curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
-            {
-                Network.getNetwork().sendToPlayer(message, curPlayer);
-            }
+            message.sendToPlayer(building.getColony().getPackageManager().getCloseSubscribers());
             musicCooldown = TWENTY_MINUTES;
         }
     }

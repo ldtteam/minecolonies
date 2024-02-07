@@ -3,7 +3,6 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.network.chat.*;
@@ -109,14 +108,10 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
             final ServerPlayer sPlayer = (ServerPlayer) entity;
             for (final Entity player : getAffectedPlayers(sPlayer))
             {
-                Network.getNetwork()
-                  .sendToTrackingEntity(new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.INSTANT_EFFECT),
-                    player);
+                new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.INSTANT_EFFECT).sendToTrackingEntity(player);
             }
 
-            Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(sPlayer.getX(), sPlayer.getY(), sPlayer.getZ(), ParticleTypes.INSTANT_EFFECT),
-                sPlayer);
+            new VanillaParticleMessage(sPlayer.getX(), sPlayer.getY(), sPlayer.getZ(), ParticleTypes.INSTANT_EFFECT).sendToPlayer(sPlayer);
         }
     }
 

@@ -9,7 +9,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkOrderListModuleView;
@@ -177,11 +176,11 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
         if (view.getClaimedBy().equals(buildingView.getPosition()))
         {
             view.setClaimedBy(buildingView.getPosition());
-            Network.getNetwork().sendToServer(new WorkOrderChangeMessage(buildingView, view.getId(), true, 0));
+            new WorkOrderChangeMessage(buildingView, view.getId(), true, 0).sendToServer();
         }
         else
         {
-            Network.getNetwork().sendToServer(new BuilderSelectWorkOrderMessage(buildingView, view.getId()));
+            new BuilderSelectWorkOrderMessage(buildingView, view.getId()).sendToServer();
         }
     }
 }

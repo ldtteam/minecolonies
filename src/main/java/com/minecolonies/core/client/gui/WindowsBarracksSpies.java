@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.HireSpiesMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -93,7 +92,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
             case BUTTON_HIRE:
             {
                 findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
-                Network.getNetwork().sendToServer(new HireSpiesMessage(buildingView.getColony()));
+                new HireSpiesMessage(buildingView.getColony()).sendToServer();
                 this.close();
                 break;
             }

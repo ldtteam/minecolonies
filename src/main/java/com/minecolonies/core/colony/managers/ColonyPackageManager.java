@@ -215,7 +215,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             for (ServerPlayer player : players)
             {
                 message.setIsNewSubscription(newSubscribers.contains(player));
-                Network.getNetwork().sendToPlayer(message, player);
+                message.sendToPlayer(player);
             }
         }
         colony.getRequestManager().setDirty(false);
@@ -233,7 +233,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
+            players.forEach(player -> new PermissionsMessage.View(colony, permissions.getRank(player)).sendToPlayer(player));
         }
     }
 
@@ -249,8 +249,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             players.addAll(newSubscribers);
 
             List<IWorkOrder> workOrders = new ArrayList<>(workManager.getWorkOrders().values());
-            final ColonyViewWorkOrderMessage message = new ColonyViewWorkOrderMessage(colony, workOrders);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+            new ColonyViewWorkOrderMessage(colony, workOrders).sendToPlayer(players);
 
             workManager.setDirty(false);
         }

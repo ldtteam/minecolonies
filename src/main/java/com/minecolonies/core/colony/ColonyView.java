@@ -23,7 +23,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
@@ -1094,7 +1093,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void addPlayer(final String player)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(this, player));
+        new PermissionsMessage.AddPlayer(this, player).sendToServer();
     }
 
     /**
@@ -1105,7 +1104,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void removePlayer(final UUID player)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
+        new PermissionsMessage.RemovePlayer(this, player).sendToServer();
     }
 
     /**
@@ -1159,7 +1158,7 @@ public final class ColonyView implements IColonyView
     public void setName(final String name)
     {
         this.name = name;
-        Network.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
+        new TownHallRenameMessage(this, name).sendToServer();
     }
 
     @NotNull
@@ -1399,7 +1398,7 @@ public final class ColonyView implements IColonyView
     public void setColonyFlag(ListTag colonyFlag)
     {
         this.colonyFlag = colonyFlag;
-        Network.getNetwork().sendToServer(new ColonyFlagChangeMessage(this, colonyFlag));
+        new ColonyFlagChangeMessage(this, colonyFlag).sendToServer();
     }
 
     /**

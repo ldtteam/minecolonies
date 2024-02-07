@@ -7,7 +7,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
@@ -56,7 +55,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
             {
                 if (assignedGuards < getMaxGuards())
                 {
-                    Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding, buildingView.getPosition()));
+                    new GuardSetMinePosMessage(guardbuilding, buildingView.getPosition()).sendToServer();
                     button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                     guardbuilding.setMinePos(buildingView.getPosition());
                     assignedGuards++;
@@ -64,7 +63,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
             }
             else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
             {
-                Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding));
+                new GuardSetMinePosMessage(guardbuilding).sendToServer();
                 button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
                 guardbuilding.setMinePos(null);
                 assignedGuards--;

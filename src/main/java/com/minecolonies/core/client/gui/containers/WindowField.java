@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.colony.fields.FarmField;
@@ -158,7 +157,7 @@ public class WindowField extends AbstractWindowSkeleton
         farmField.setRadius(direction.get(), newRadius);
         button.setText(Component.literal(String.valueOf(newRadius)));
 
-        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()));
+        new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()).sendToServer();
     }
 
     private void updateAll()
@@ -180,7 +179,7 @@ public class WindowField extends AbstractWindowSkeleton
         IColonyView colonyView = getCurrentColony();
         if (colonyView != null && farmField != null)
         {
-            Network.getNetwork().sendToServer(new FarmFieldUpdateSeedMessage(colonyView, stack, farmField.getPosition()));
+            new FarmFieldUpdateSeedMessage(colonyView, stack, farmField.getPosition()).sendToServer();
 
             farmField.setSeed(stack);
         }

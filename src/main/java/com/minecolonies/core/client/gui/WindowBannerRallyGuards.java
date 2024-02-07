@@ -9,7 +9,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.network.messages.server.RemoveFromRallyingListMessage;
 import com.minecolonies.core.network.messages.server.ToggleBannerRallyGuardsMessage;
@@ -153,7 +152,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
         {
             final ILocation locationToRemove = guardTowers.get(row).getFirst();
             // Server side removal
-            Network.getNetwork().sendToServer(new RemoveFromRallyingListMessage(banner, locationToRemove));
+            new RemoveFromRallyingListMessage(banner, locationToRemove).sendToServer();
 
             // Client side removal
             removeGuardTowerAtLocation(banner, locationToRemove);
@@ -167,7 +166,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      */
     private void rallyClicked(@NotNull final Button button)
     {
-        Network.getNetwork().sendToServer(new ToggleBannerRallyGuardsMessage(banner));
+        new ToggleBannerRallyGuardsMessage(banner).sendToServer();
         this.close();
     }
 }

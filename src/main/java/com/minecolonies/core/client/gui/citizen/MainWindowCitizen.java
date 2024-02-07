@@ -6,7 +6,6 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -108,14 +107,14 @@ public class MainWindowCitizen extends AbstractWindowCitizen
             final String label = button.getID().replace(PLUS_PREFIX, "");
             final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
 
-            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, 1, skill));
+            new AdjustSkillCitizenMessage(colony, citizen, 1, skill).sendToServer();
         }
         else if (button.getID().contains(MINUS_PREFIX))
         {
             final String label = button.getID().replace(MINUS_PREFIX, "");
             final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
 
-            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, -1, skill));
+            new AdjustSkillCitizenMessage(colony, citizen, -1, skill).sendToServer();
         }
     }
 }

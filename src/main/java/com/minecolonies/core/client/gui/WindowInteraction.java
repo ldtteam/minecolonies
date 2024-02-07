@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionClose;
 import net.minecraft.client.Minecraft;
@@ -140,7 +139,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         if (currentInteraction < interactions.size())
         {
             interactions.get(currentInteraction).onClosed();
-            Network.getNetwork().sendToServer(new InteractionClose(citizen.getColonyId(), citizen.getId(), mc.level.dimension(), interactions.get(currentInteraction).getInquiry()));
+            new InteractionClose(citizen.getColonyId(), citizen.getId(), mc.level.dimension(), interactions.get(currentInteraction).getInquiry()).sendToServer();
         }
     }
 

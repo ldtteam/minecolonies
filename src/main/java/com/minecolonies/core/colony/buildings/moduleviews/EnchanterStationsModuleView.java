@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.EnchanterStationModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,7 +49,7 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
     public void addWorker(final BlockPos blockPos)
     {
         buildingToGatherFrom.add(blockPos);
-        Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(buildingView, blockPos, true));
+        new EnchanterWorkerSetMessage(buildingView, blockPos, true).sendToServer();
     }
 
     /**
@@ -61,7 +60,7 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
     public void removeWorker(final BlockPos blockPos)
     {
         buildingToGatherFrom.remove(blockPos);
-        Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(buildingView, blockPos, false));
+        new EnchanterWorkerSetMessage(buildingView, blockPos, false).sendToServer();
     }
 
     @OnlyIn(Dist.CLIENT)

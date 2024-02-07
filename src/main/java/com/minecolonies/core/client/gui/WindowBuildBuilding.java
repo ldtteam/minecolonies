@@ -26,7 +26,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.network.messages.server.colony.building.BuildPickUpMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildRequestMessage;
@@ -174,7 +173,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void pickUpBuilding()
     {
-        Network.getNetwork().sendToServer(new BuildPickUpMessage(building));
+        new BuildPickUpMessage(building).sendToServer();
         close();
     }
 
@@ -184,7 +183,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void deconstructBuildingClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder));
+        new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder).sendToServer();
         cancelClicked();
     }
 
@@ -203,14 +202,14 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
+        new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())).sendToServer();
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder).sendToServer();
         }
         else
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, builder));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, builder).sendToServer();
         }
         cancelClicked();
     }
@@ -221,7 +220,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
+        new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder).sendToServer();
         cancelClicked();
     }
 

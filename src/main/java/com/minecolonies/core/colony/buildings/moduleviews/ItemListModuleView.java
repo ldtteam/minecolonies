@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -68,7 +67,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @Override
     public void addItem(final ItemStorage item)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, getProducer().getRuntimeID(), item, true));
+        new AssignFilterableItemMessage(this.buildingView, getProducer().getRuntimeID(), item, true).sendToServer();
         listsOfItems.add(item);
     }
 
@@ -87,7 +86,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @Override
     public void removeItem(final ItemStorage item)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, getProducer().getRuntimeID(), item, false));
+        new AssignFilterableItemMessage(this.buildingView, getProducer().getRuntimeID(), item, false).sendToServer();
         listsOfItems.remove(item);
     }
 
@@ -112,7 +111,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @Override
     public void clearItems()
     {
-        Network.getNetwork().sendToServer(new ResetFilterableItemMessage(this.buildingView, getProducer().getRuntimeID()));
+        new ResetFilterableItemMessage(this.buildingView, getProducer().getRuntimeID()).sendToServer();
         listsOfItems.clear();
     }
 

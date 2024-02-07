@@ -13,7 +13,6 @@ import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
@@ -223,7 +222,7 @@ public class EntityAISleep implements IStateAI
             return WALKING_HOME;
         }
 
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()), citizen);
+        new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()).sendToTrackingEntity(citizen);
         //TODO make sleeping noises here.
         return null;
     }

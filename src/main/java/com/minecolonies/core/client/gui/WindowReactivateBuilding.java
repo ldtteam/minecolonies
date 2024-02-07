@@ -1,7 +1,6 @@
 package com.minecolonies.core.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.ReactivateBuildingMessage;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ public class WindowReactivateBuilding extends AbstractWindowSkeleton
      */
     private void reactivateClicked()
     {
-        Network.getNetwork().sendToServer(new ReactivateBuildingMessage(pos));
+        new ReactivateBuildingMessage(pos).sendToServer();
         close();
     }
 

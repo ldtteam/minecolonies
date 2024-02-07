@@ -19,7 +19,6 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenModule;
@@ -224,8 +223,7 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.isDirty() || !newSubscribers.isEmpty())
                 {
-                    final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage(colony, citizen);
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+                    new ColonyViewCitizenViewMessage(colony, citizen).sendToPlayer(players);
                 }
             }
         }
@@ -378,10 +376,7 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen((ICitizenData) citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final ServerPlayer player : colony.getPackageManager().getCloseSubscribers())
-        {
-            Network.getNetwork().sendToPlayer(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
-        }
+        new ColonyViewRemoveCitizenMessage(colony, citizen.getId()).sendToPlayer(colony.getPackageManager().getCloseSubscribers());
 
         calculateMaxCitizens();
         markDirty();

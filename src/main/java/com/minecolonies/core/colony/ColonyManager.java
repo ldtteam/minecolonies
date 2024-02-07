@@ -16,7 +16,6 @@ import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowReactivateBuilding;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveMessage;
@@ -199,7 +198,7 @@ public final class ColonyManager implements IColonyManager
             cap.deleteColony(id);
             BackUpHelper.markColonyDeleted(colony.getID(), colony.getDimension());
             colony.getImportantMessageEntityPlayers()
-              .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()), (ServerPlayer) player));
+              .forEach(player -> new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()).sendToPlayer((ServerPlayer) player));
             Log.getLogger().info("Successfully deleted colony: " + id);
         }
         catch (final RuntimeException e)

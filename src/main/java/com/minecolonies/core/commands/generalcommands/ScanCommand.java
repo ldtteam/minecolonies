@@ -170,7 +170,7 @@ public class ScanCommand extends AbstractCommand
             }
         }
 
-        Network.getNetwork().sendToPlayer(new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName.toLowerCase(Locale.US)), (ServerPlayer) player);
+        new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName.toLowerCase(Locale.US)).sendToPlayer((ServerPlayer) player);
         if (style.isEmpty())
         {
             return;
@@ -257,7 +257,7 @@ public class ScanCommand extends AbstractCommand
             final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", "").replace(" ", "").toLowerCase(Locale.US));
             structuretemplate = structuretemplatemanager.getOrCreate(location);
             structuretemplate.fillFromWorld(world, newZero, new BlockPos(box.getXSpan(), box.getYSpan() - yDif, box.getZSpan()), false, Blocks.STRUCTURE_VOID);
-            com.minecolonies.core.Network.getNetwork().sendToPlayer(new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt").toLowerCase(Locale.US)), (ServerPlayer) player);
+            new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt").toLowerCase(Locale.US)).sendToPlayer((ServerPlayer) player);
         }
         catch (final ResourceLocationException resLocEx)
         {

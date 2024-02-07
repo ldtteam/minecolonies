@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.network.messages.server.colony.building.AddMinimumStockToBuildingModuleMessage;
@@ -84,7 +83,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
         final int row = resourceList.getListElementIndexByPane(button);
         final Tuple<ItemStorage, Integer> tuple = moduleView.getStock().get(row);
         moduleView.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack(), moduleView.getProducer().getRuntimeID()));
+        new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack(), moduleView.getProducer().getRuntimeID()).sendToServer();
         updateStockList();
     }
 
@@ -95,7 +94,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     {
         if (!moduleView.hasReachedLimit())
         {
-            new WindowSelectRes(this, (stack) -> true, (stack, qty) -> Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty)), true).open();
+            new WindowSelectRes(this, (stack) -> true, (stack, qty) -> new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty).sendToServer(), true).open();
         }
     }
 

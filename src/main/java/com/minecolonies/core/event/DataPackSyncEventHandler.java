@@ -3,7 +3,6 @@ package com.minecolonies.core.event;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.compatibility.CraftingTagAuditor;
 import com.minecolonies.core.datalistener.QuestJsonListener;
@@ -65,7 +64,7 @@ public class DataPackSyncEventHandler
         private static void sendPackets(@NotNull final ServerPlayer player,
                                         @NotNull final UpdateClientWithCompatibilityMessage compatMsg)
         {
-            Network.getNetwork().sendToPlayer(compatMsg, player);
+            compatMsg.sendToPlayer(player);
             CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
             QuestJsonListener.sendGlobalQuestPackets(player);

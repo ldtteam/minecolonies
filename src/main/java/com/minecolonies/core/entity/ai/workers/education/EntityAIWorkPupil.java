@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPupil;
@@ -165,12 +164,12 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         if (slot != -1)
         {
             worker.setItemSlot(EquipmentSlot.MAINHAND, worker.getInventoryCitizen().getStackInSlot(slot));
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
+            new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks).sendToTrackingEntity(worker);
         }
         else
         {
             worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
+            new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks).sendToTrackingEntity(worker);
         }
 
         sittingTicks++;

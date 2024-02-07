@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
@@ -76,7 +75,7 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
         {
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
             AbstractPathJob.trackingMap.remove((Player) sender);
-            Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
+            new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()).sendToPlayer((ServerPlayer) sender);
         }
         else
         {

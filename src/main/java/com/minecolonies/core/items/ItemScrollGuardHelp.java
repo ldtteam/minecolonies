@@ -9,7 +9,6 @@ import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardFollowModeSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
@@ -186,12 +185,9 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     {
         if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0)
         {
-            Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT),
-                entity);
-            Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT),
-                (ServerPlayer) entity);
+            final Entity entity1 = entity;
+            new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT).sendToTrackingEntity(entity1);
+            new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT).sendToPlayer((ServerPlayer) entity);
         }
     }
 

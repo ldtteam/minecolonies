@@ -11,7 +11,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.core.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
@@ -164,11 +163,10 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         {
             colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
         }
-        Network.getNetwork().sendToServer(
-          new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
+        new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)).sendToServer();
 
         final ItemStack copy = itemStack.copy();
         copy.setCount(isCreative ? amount : Math.min(amount, count));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
+        new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy).sendToServer();
     }
 }

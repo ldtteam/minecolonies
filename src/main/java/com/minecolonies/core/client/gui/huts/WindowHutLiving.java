@@ -6,7 +6,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.core.client.gui.WindowAssignCitizen;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
@@ -74,7 +73,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void recallClicked()
     {
-        Network.getNetwork().sendToServer(new RecallCitizenHutMessage(building));
+        new RecallCitizenHutMessage(building).sendToServer();
     }
 
     @Override

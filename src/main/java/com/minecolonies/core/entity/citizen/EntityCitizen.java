@@ -39,7 +39,6 @@ import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowInteraction;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -401,7 +400,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (player.isShiftKeyDown() && !isInvisible())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
+                new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()).sendToServer();
             }
             else
             {
@@ -418,7 +417,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenData.update();
             citizenData.setInteractedRecently(player.getUUID());
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
-            Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
+            message.sendToPlayer((ServerPlayer) player);
 
             if (citizenData.getJob() != null)
             {
@@ -483,7 +482,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 {
                     getCitizenDiseaseHandler().cure();
                     playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
-                    Network.getNetwork().sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER), this);
+                    new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER).sendToTrackingEntity(this);
                 }
             }
 
@@ -594,14 +593,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    getXRot(),
-                    getYRot(),
-                    getEyeHeight()), this);
+                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
+                    .sendToTrackingEntity(this);
             }
         }
         else
@@ -638,14 +631,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?
-            Network.getNetwork()
-              .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                getX(),
-                getY(),
-                getZ(),
-                getXRot(),
-                getYRot(),
-                getEyeHeight()), this);
+            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
+                .sendToTrackingEntity(this);
         }
 
         final ItemStack remainingItem = usedStack.finishUsingItem(level(), this);
@@ -1902,14 +1889,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions)
     {
-        Network.getNetwork().sendToTrackingEntity(new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level(), length, repetitions), this);
+        new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level(), length, repetitions).sendToTrackingEntity(this);
     }
 
     @Override
     public void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
     {
-        Network.getNetwork()
-          .sendToTrackingEntity(new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level(), volume, pitch, length, repetitions), this);
+        new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level(), volume, pitch, length, repetitions).sendToTrackingEntity(this);
     }
 
     /**

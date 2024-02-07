@@ -2,7 +2,6 @@ package com.minecolonies.core.compatibility.jei.transfer;
 
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.containers.WindowBrewingstandCrafting;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.compatibility.jei.JobBasedRecipeCategory;
@@ -77,6 +76,6 @@ public class BrewingCraftingGuiHandler extends AbstractTeachingGuiHandler<Window
         }
 
         final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(matrix, false);
-        Network.getNetwork().sendToServer(message);
+        message.sendToServer();
     }
 }

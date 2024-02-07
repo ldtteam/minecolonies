@@ -3,7 +3,6 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildRequestMessage;
@@ -100,15 +99,15 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
 
         if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE))
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO).sendToServer();
         }
         else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_REPAIR))
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO).sendToServer();
         }
         else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_DECONSTRUCTION))
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO).sendToServer();
         }
         else
         {
@@ -121,7 +120,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
+        new OpenInventoryMessage(building).sendToServer();
     }
 
     @Override

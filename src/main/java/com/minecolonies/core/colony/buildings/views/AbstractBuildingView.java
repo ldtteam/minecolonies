@@ -18,7 +18,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
@@ -342,7 +341,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         if (shouldOpenInv)
         {
-            Network.getNetwork().sendToServer(new OpenInventoryMessage(this));
+            new OpenInventoryMessage(this).sendToServer();
         }
         else
         {
@@ -609,7 +608,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void setCustomName(final String name)
     {
         this.customName = name;
-        Network.getNetwork().sendToServer(new HutRenameMessage(this, name));
+        new HutRenameMessage(this, name).sendToServer();
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -122,7 +121,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
 
-        Network.getNetwork().sendToServer(new ColonyListMessage());
+        new ColonyListMessage().sendToServer();
     }
 
     /**
@@ -130,7 +129,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
+        new OpenInventoryMessage(building).sendToServer();
     }
 
     /**

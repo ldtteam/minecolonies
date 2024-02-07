@@ -14,7 +14,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.core.colony.jobs.JobUndertaker;
@@ -321,8 +320,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             {
                 worker.getLookControl().setLookAt(gravePos.getX(), gravePos.getY(), gravePos.getZ(), FACING_DELTA_YAW, worker.getMaxHeadXRot());
                 worker.swing(InteractionHand.MAIN_HAND);
-                Network.getNetwork()
-                  .sendToTrackingEntity(new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.ENCHANT), worker);
+                new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.ENCHANT).sendToTrackingEntity(worker);
                 effortCounter += getSecondarySkillLevel();
                 return getState();
             }
@@ -339,8 +337,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             if (chance >= random.nextDouble())
             {
-                Network.getNetwork()
-                  .sendToTrackingEntity(new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.HEART), worker);
+                new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.HEART).sendToTrackingEntity(worker);
 
                 final ICitizenData citizenData = buildingGraveyard.getColony()
                                                    .getCitizenManager()

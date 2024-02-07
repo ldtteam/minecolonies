@@ -15,7 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSmeltery;
@@ -104,10 +103,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             worker.getCitizenExperienceHandler().addExperience(0.2);
         }
 
-        Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID()), worker);
-        Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
+        new LocalizedParticleEffectMessage(inputItem, building.getID()).sendToTrackingEntity(worker);
+        new LocalizedParticleEffectMessage(inputItem, building.getID().below()).sendToTrackingEntity(worker);
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         worker.swing(InteractionHand.MAIN_HAND);

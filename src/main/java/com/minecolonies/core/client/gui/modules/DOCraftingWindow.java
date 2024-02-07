@@ -20,7 +20,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.colony.buildings.moduleviews.DOCraftingModuleView;
@@ -227,7 +226,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
           additionalOutput,
           new ArrayList<>());
 
-        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getProducer().getRuntimeID()));
+        new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override

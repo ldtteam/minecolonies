@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.CitizenDataView;
 import com.minecolonies.core.colony.buildings.moduleviews.PupilBuildingModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
@@ -199,7 +198,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
 
-        Network.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id));
+        new RestartCitizenMessage(this.building, id).sendToServer();
         this.close();
     }
 
@@ -214,7 +213,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
-        Network.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
+        new PauseCitizenMessage(this.building, id).sendToServer();
         citizen.setPaused(!citizen.isPaused());
     }
 

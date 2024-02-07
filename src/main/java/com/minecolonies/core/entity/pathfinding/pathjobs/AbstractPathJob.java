@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.entity.pathfinding.CachingBlockLookup;
 import com.minecolonies.core.entity.pathfinding.ChunkCache;
@@ -301,7 +300,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else if (entry.getValue().equals(mob.getUUID()))
             {
-                Network.getNetwork().sendToPlayer(new SyncPathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath), (ServerPlayer) entry.getKey());
+                new SyncPathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath).sendToPlayer((ServerPlayer) entry.getKey());
             }
         }
     }
@@ -323,7 +322,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             if (entry.getValue().equals(mob.getUUID()))
             {
-                Network.getNetwork().sendToPlayer(new SyncPathReachedMessage(reached), (ServerPlayer) entry.getKey());
+                new SyncPathReachedMessage(reached).sendToPlayer((ServerPlayer) entry.getKey());
             }
         }
     }

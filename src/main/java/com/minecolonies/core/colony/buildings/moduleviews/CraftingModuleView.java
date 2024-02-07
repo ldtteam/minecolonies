@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.WindowListRecipes;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.OpenCraftingGUIMessage;
@@ -243,7 +242,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     {
         final BlockPos pos = buildingView.getPosition();
         Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getProducer().getRuntimeID()));
+        new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getProducer().getRuntimeID()).sendToServer();
     }
 
     /**

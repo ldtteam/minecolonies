@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.SpecialAssignmentModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.core.network.messages.server.colony.building.QuarryHiringModeMessage;
@@ -51,7 +50,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     public void addCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.add(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()));
+        new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override
@@ -90,7 +89,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     public void removeCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.remove(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()));
+        new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override
@@ -103,7 +102,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new QuarryHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()));
+        new QuarryHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override

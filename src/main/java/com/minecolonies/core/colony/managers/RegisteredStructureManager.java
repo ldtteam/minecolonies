@@ -18,7 +18,6 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.huts.BlockHutTavern;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
@@ -634,10 +633,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
             buildings = builder.build();
 
-            for (final ServerPlayer player : subscribers)
-            {
-                Network.getNetwork().sendToPlayer(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
-            }
+            new ColonyViewRemoveBuildingMessage(colony, building.getID()).sendToPlayer(subscribers);
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
               colony.getID(),
@@ -846,8 +842,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.isDirty() || !newSubscribers.isEmpty())
                 {
-                    final ColonyViewBuildingViewMessage message = new ColonyViewBuildingViewMessage(building, !newSubscribers.isEmpty());
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+                    new ColonyViewBuildingViewMessage(building, !newSubscribers.isEmpty()).sendToPlayer(players);
                 }
             }
         }
@@ -869,7 +864,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldsUpdateMessage(colony, fields), player));
+            new ColonyViewFieldsUpdateMessage(colony, fields).sendToPlayer(players);
         }
     }
 

@@ -8,7 +8,6 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -123,7 +122,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         new WindowSwitchPack(() -> {
             building.getColony().setStructurePack(StructurePacks.selectedPack.getName());
-            Network.getNetwork().sendToServer(new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()));
+            new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()).sendToServer();
             return new WindowMainPage((BuildingTownHall.View) this.building);
         }).open();
     }
@@ -204,7 +203,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialTextureIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
+            new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
 
@@ -217,7 +216,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialNamePackIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())));
+            new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
 
@@ -228,7 +227,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building));
+        new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building).sendToServer();
     }
 
     /**
@@ -247,7 +246,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void resetTextureStyle()
     {
-        Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)));
+        new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)).sendToServer();
     }
 
     @Override

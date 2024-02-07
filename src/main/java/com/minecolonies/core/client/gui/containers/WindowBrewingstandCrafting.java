@@ -5,7 +5,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
@@ -124,7 +123,7 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.BREWING_STAND, module.getProducer().getRuntimeID()));
+                    new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.BREWING_STAND, module.getProducer().getRuntimeID()).sendToServer();
                 }
             }
         }

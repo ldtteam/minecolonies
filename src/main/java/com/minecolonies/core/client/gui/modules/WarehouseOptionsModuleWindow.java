@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.WarehouseOptionsModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
@@ -82,7 +81,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 
         updateResourcePane();
         //Make sure we have a fresh view
-        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.buildingView));
+        new MarkBuildingDirtyMessage(this.buildingView).sendToServer();
     }
 
     /**
@@ -189,7 +188,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
      */
     private void transferItems()
     {
-        Network.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.buildingView));
+        new UpgradeWarehouseMessage(this.buildingView).sendToServer();
         module.incrementStorageUpgrade();
         lockUpgrade = true;
         this.updateResourcePane();
@@ -202,7 +201,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     {
         if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
         {
-            Network.getNetwork().sendToServer(new SortWarehouseMessage(this.buildingView));
+            new SortWarehouseMessage(this.buildingView).sendToServer();
             MessageUtils.format(WAREHOUSE_SORTED).sendTo(Minecraft.getInstance().player);
         }
     }

@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
@@ -114,7 +113,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         {
             prio++;
         }
-        Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, true));
+        new ChangeDeliveryPriorityMessage(building, true).sendToServer();
         updatePriorityLabel();
     }
 
@@ -124,13 +123,13 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         {
             prio--;
         }
-        Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
+        new ChangeDeliveryPriorityMessage(building, false).sendToServer();
         updatePriorityLabel();
     }
 
     private void forcePickup()
     {
-        Network.getNetwork().sendToServer(new ForcePickupMessage(building));
+        new ForcePickupMessage(building).sendToServer();
     }
 
     /**
@@ -154,7 +153,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      */
     private void recallClicked()
     {
-        Network.getNetwork().sendToServer(new RecallCitizenMessage(building));
+        new RecallCitizenMessage(building).sendToServer();
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -86,7 +85,6 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
      */
     public static void sendToAll(final IColony col, final boolean important, final boolean stop, final PlayAudioMessage... messages)
     {
-        asd;
         final List<Player> players = important
           ? col.getImportantMessageEntityPlayers()
           : col.getMessagePlayerEntities();
@@ -95,12 +93,12 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
         {
             if (stop)
             {
-                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayer) player);
+                new StopMusicMessage().sendToPlayer((ServerPlayer) player);
             }
 
             for (final PlayAudioMessage pam : messages)
             {
-                Network.getNetwork().sendToPlayer(pam, (ServerPlayer) player);
+                pam.sendToPlayer((ServerPlayer) player);
             }
         }
     }

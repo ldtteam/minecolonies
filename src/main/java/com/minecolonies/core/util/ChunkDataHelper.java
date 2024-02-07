@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.core.BlockPos;
@@ -120,7 +119,7 @@ public final class ChunkDataHelper
 
         if (cap != null)
         {
-            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z));
+            new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z).sendToAllClients();
         }
     }
 
@@ -401,7 +400,7 @@ public final class ChunkDataHelper
             cap.removeColony(id, chunk);
         }
 
-        Network.getNetwork().sendToTrackingChunk(new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z), chunk);
+        new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z).sendToPlayersTrackingChunk(chunk);
         return true;
     }
 
@@ -467,7 +466,7 @@ public final class ChunkDataHelper
             cap.removeBuildingClaim(colony.getID(), buildingPos, chunk);
         }
 
-        Network.getNetwork().sendToTrackingChunk(new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z), chunk);
+        new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z).sendToPlayersTrackingChunk(chunk);
         return true;
     }
 }

@@ -15,7 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
 import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
@@ -189,7 +188,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 // are eligible to send TryResearchMessages, and only IN_PROGRESS, or FINISHED
                 // are eligible to drawUndo buttons.
                 cancelResearch.setState(ResearchState.NOT_STARTED);
-                Network.getNetwork().sendToServer(new TryResearchMessage(building, cancelResearch.getId(), cancelResearch.getBranch(), true));
+                new TryResearchMessage(building, cancelResearch.getId(), cancelResearch.getBranch(), true).sendToServer();
                 close();
             }
         }
@@ -213,7 +212,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     hasMax = true;
                 }
-                Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch(), false));
+                new TryResearchMessage(building, research.getId(), research.getBranch(), false).sendToServer();
                 close();
             }
             else if (localResearch != null)
@@ -465,7 +464,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         if (mc.player.isCreative() && state == ResearchState.IN_PROGRESS && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()
               && progress < IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(research.getDepth()))
         {
-            Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch(), false));
+            new TryResearchMessage(building, research.getId(), research.getBranch(), false).sendToServer();
         }
 
         if (research.getDepth() != 1 && (state != ResearchState.FINISHED && state != ResearchState.IN_PROGRESS)

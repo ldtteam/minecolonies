@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -132,6 +131,6 @@ public class WindowClipBoard extends AbstractWindowRequestTree
     @Override
     protected void cancel(@NotNull final IRequest<?> request)
     {
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
+        new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null).sendToServer();
     }
 }

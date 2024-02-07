@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.moduleviews.LivingBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
@@ -109,7 +108,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
         building.addResident(data.getId());
         data.setHomeBuilding(building.getPosition());
 
-        Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId(), null));
+        new AssignUnassignMessage(this.building, true, data.getId(), null).sendToServer();
 
         updateCitizens();
         unassignedCitizenList.refreshElementPanes();
@@ -128,7 +127,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
         building.removeResident(data.getId());
         data.setHomeBuilding(null);
 
-        Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, false, data.getId(), null));
+        new AssignUnassignMessage(this.building, false, data.getId(), null).sendToServer();
 
         updateCitizens();
         unassignedCitizenList.refreshElementPanes();

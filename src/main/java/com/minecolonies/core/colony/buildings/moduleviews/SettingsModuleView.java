@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.SettingsModuleWindow;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.colony.building.TriggerSettingMessage;
@@ -114,7 +113,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         if (setting.isActive(this))
         {
             setting.trigger();
-            Network.getNetwork().sendToServer(new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()));
+            new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()).sendToServer();
         }
     }
 }

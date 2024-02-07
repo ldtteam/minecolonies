@@ -20,7 +20,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.EntityListModule;
 import com.minecolonies.core.colony.buildings.modules.MinerLevelManagementModule;
@@ -294,7 +293,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState sleepParticles()
     {
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.getX(), worker.getY() + 2.0d, worker.getZ()), worker);
+        new SleepingParticleMessage(worker.getX(), worker.getY() + 2.0d, worker.getZ()).sendToTrackingEntity(worker);
 
         if (worker.getHealth() < worker.getMaxHealth())
         {

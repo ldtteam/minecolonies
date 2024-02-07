@@ -1,7 +1,6 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import net.minecraft.world.item.TooltipFlag;
@@ -54,8 +53,7 @@ public class ItemScrollBuff extends AbstractItemScroll
 
             addRegenerationWithParticles(player);
             // Send to player additionally, as players do not track themselves
-            Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.HEART), player);
+            new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.HEART).sendToPlayer(player);
             SoundUtils.playSoundForPlayer(player, SoundEvents.PLAYER_LEVELUP, 0.2f, 1.0f);
         }
         else
@@ -78,9 +76,7 @@ public class ItemScrollBuff extends AbstractItemScroll
     private void addRegenerationWithParticles(final LivingEntity entity)
     {
         entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, TICKS_SECOND * 60));
-        Network.getNetwork()
-          .sendToTrackingEntity(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.HEART),
-            entity);
+        new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.HEART).sendToTrackingEntity(entity);
     }
 
     @Override

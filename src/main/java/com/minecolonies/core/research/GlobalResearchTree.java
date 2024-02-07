@@ -10,7 +10,6 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
 import net.minecraft.server.level.ServerPlayer;
@@ -227,7 +226,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         final FriendlyByteBuf researchTreeFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(researchTreeFriendlyByteBuf);
 
-        Network.getNetwork().sendToPlayer(new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf), player);
+        new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf).sendToPlayer(player);
     }
 
     public void serializeNetworkData(final FriendlyByteBuf buf)

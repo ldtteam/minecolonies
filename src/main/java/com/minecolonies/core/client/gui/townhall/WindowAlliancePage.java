@@ -9,7 +9,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
 import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMessage;
@@ -63,7 +62,7 @@ public class WindowAlliancePage extends AbstractWindowTownHall
 
         MessageUtils.format(DO_REALLY_WANNA_TP, ally.name)
           .withPriority(MessagePriority.IMPORTANT)
-          .withClickEvent(new ClickEventWithExecutable(() -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.dimension, ally.id))))
+          .withClickEvent(new ClickEventWithExecutable(() -> new TeleportToColonyMessage(ally.dimension, ally.id).sendToServer()))
           .sendTo(Minecraft.getInstance().player);
         this.close();
     }

@@ -17,7 +17,6 @@ import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.EventHandler;
@@ -131,9 +130,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
         if (anchor.is(ModBlocks.blockPlantationField))
         {
-            Network.getNetwork()
-              .sendToPlayer(new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, rotMir),
-                (ServerPlayer) player);
+            new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
         }
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
@@ -261,16 +258,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 int level = Utils.getBlueprintLevel(blueprint.getFileName());
                 if (level == -1)
                 {
-                    Network.getNetwork().sendToPlayer(new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir), (ServerPlayer) player);
+                    new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
                 }
                 else
                 {
-                    Network.getNetwork().sendToPlayer(new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), rotMir), (ServerPlayer) player);
+                    new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), rotMir).sendToPlayer((ServerPlayer) player);
                 }
             }
             else
             {
-                Network.getNetwork().sendToPlayer(new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir), (ServerPlayer) player);
+                new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
             }
         }
 

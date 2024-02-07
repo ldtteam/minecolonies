@@ -10,7 +10,6 @@ import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.network.messages.client.CreateColonyMessage;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -175,17 +174,16 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
         if (reactivate)
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(), "", ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+            new CreateColonyMessage(pos, true, colonyName.getString(), "", ((TileEntityColonyBuilding) entity).getBlueprintPath()).sendToServer();
             close();
         }
         else if (entity instanceof TileEntityColonyBuilding && !((TileEntityColonyBuilding) entity).getPackName().isEmpty())
         {
-            Network.getNetwork()
-              .sendToServer(new CreateColonyMessage(pos,
+            new CreateColonyMessage(pos,
                 false,
                 colonyName.getString(),
                 StructurePacks.selectedPack.getName(),
-                ((TileEntityColonyBuilding) entity).getBlueprintPath()));
+                ((TileEntityColonyBuilding) entity).getBlueprintPath()).sendToServer();
             close();
         }
     }

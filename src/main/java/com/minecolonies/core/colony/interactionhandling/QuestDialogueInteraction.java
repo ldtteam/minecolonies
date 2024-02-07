@@ -10,7 +10,6 @@ import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import com.minecolonies.core.quests.objectives.DialogueObjectiveTemplateTemplate;
@@ -142,14 +141,14 @@ public class QuestDialogueInteraction extends StandardInteraction
             final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
             if (result instanceof IFinalQuestDialogueAnswer)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), Component.literal(questId.toString()), responseId));
+                new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), Component.literal(questId.toString()), responseId).sendToServer();
                 this.currentElement = this.startElement;
                 finished = true;
                 return true;
             }
             else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
             {
-                Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), Component.literal(questId.toString()), responseId));
+                new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), Component.literal(questId.toString()), responseId).sendToServer();
                 this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
                 return false;
             }

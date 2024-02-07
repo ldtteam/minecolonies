@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobHealer;
@@ -412,19 +411,11 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         progressTicks++;
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
-            Network.getNetwork().sendToTrackingEntity(
-              new StreamParticleEffectMessage(
-                worker.position().add(0, 2, 0),
-                citizen.position(),
-                ParticleTypes.HEART,
-                progressTicks % MAX_PROGRESS_TICKS,
-                MAX_PROGRESS_TICKS), worker);
+            new StreamParticleEffectMessage(worker.position().add(0, 2, 0), citizen.position(), ParticleTypes.HEART, progressTicks % MAX_PROGRESS_TICKS, MAX_PROGRESS_TICKS)
+                .sendToTrackingEntity(worker);
 
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                worker.position().add(0, 2, 0),
-                ParticleTypes.HEART,
-                progressTicks), worker);
+            new CircleParticleEffectMessage(worker.position().add(0, 2, 0), ParticleTypes.HEART, progressTicks)
+                .sendToTrackingEntity(worker);
 
             return getState();
         }
@@ -484,11 +475,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return getState();
         }
 
-        Network.getNetwork().sendToTrackingEntity(
-          new CircleParticleEffectMessage(
-            remotePatient.getEntity().get().position(),
-            ParticleTypes.HEART,
-            1), worker);
+        new CircleParticleEffectMessage(remotePatient.getEntity().get().position(), ParticleTypes.HEART, 1)
+            .sendToTrackingEntity(worker);
 
         citizen.heal(citizen.getMaxHealth() - citizen.getHealth() - 5 - building.getBuildingLevel());
         citizen.markDirty(10);

@@ -1,7 +1,6 @@
 package com.minecolonies.core.compatibility.jei.transfer;
 
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
@@ -78,7 +77,7 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
             final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
             guiIngredients.put(0, input);
             final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, false);
-            Network.getNetwork().sendToServer(message);
+            message.sendToServer();
         }
 
         return null;

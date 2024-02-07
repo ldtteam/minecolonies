@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
@@ -179,7 +178,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final BuildingResourcesModuleView moduleView = builder.getModuleViewByType(BuildingResourcesModuleView.class);
 
         //Make sure we have a fresh view
-        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
+        new MarkBuildingDirtyMessage(builder).sendToServer();
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(Component.literal(builder.getWorkerName()));
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());

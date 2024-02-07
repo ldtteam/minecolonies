@@ -1,7 +1,6 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.gui.AbstractBlueprintManipulationWindow;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.network.messages.BuildToolPlacementMessage;
@@ -148,12 +147,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               placementErrorList,
               Minecraft.getInstance().player))
             {
-                Network.getNetwork()
-                  .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
+                new BuildToolPlacementMessage(handlerType, handlerId,
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotationMirror()));
+                    previewData.getRotationMirror()).sendToServer();
                 cancelClicked();
                 return;
             }
@@ -165,12 +163,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               placementErrorList,
               Minecraft.getInstance().player))
             {
-                Network.getNetwork()
-                  .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
+                new BuildToolPlacementMessage(handlerType, handlerId,
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotationMirror()));
+                    previewData.getRotationMirror()).sendToServer();
                 cancelClicked();
                 return;
             }

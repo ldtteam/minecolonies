@@ -7,7 +7,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
 import net.minecraft.ChatFormatting;
@@ -163,7 +162,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         {
             return;
         }
-        Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(building, selectedCitizen.getId()));
+        new RecallSingleCitizenMessage(building, selectedCitizen.getId()).sendToServer();
     }
 
     /**

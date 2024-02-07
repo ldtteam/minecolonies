@@ -29,7 +29,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -1417,10 +1416,7 @@ public class Colony implements IColony
     public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final ServerPlayer player : packageManager.getCloseSubscribers())
-        {
-            Network.getNetwork().sendToPlayer(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
-        }
+        new ColonyViewRemoveWorkOrderMessage(this, orderId).sendToPlayer(packageManager.getCloseSubscribers());
     }
 
     /**

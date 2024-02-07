@@ -24,7 +24,6 @@ import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.interactionhandling.QuestDeliveryInteraction;
 import com.minecolonies.core.colony.interactionhandling.QuestDialogueInteraction;
@@ -386,7 +385,7 @@ public class CitizenData implements ICitizenData
             {
                 if (getColony().getWorld().getPlayerByUUID(player) instanceof ServerPlayer playerEntity)
                 {
-                    Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage((Colony) getColony(), this), playerEntity);
+                    new ColonyViewCitizenViewMessage((Colony) getColony(), this).sendToPlayer(playerEntity);
                 }
             }
         }
