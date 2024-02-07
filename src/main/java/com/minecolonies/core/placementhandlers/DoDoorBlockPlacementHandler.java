@@ -3,11 +3,8 @@ package com.minecolonies.core.placementhandlers;
 import com.ldtteam.domumornamentum.block.AbstractBlockDoor;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
-import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
-import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
-import com.ldtteam.structurize.api.ItemStackUtils;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
@@ -19,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,25 +107,20 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
                 return Collections.emptyList();
             }
 
-            final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
+            final Property<?> property;
             if (blockState.getBlock() instanceof DoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
+                property = DoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof FancyDoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
+                property = FancyDoorBlock.TYPE;
             }
-            else if (blockState.getBlock() instanceof TrapdoorBlock)
+            else
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase());
+                property = null;
             }
-            else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase());
-            }
-            itemList.add(item);
-            itemList.removeIf(ItemStackUtils::isEmpty);
+            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity) : BlockUtils.getMaterializedItemStack(tileEntity, property));
         }
         return itemList;
     }

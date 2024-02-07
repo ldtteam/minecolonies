@@ -1,6 +1,7 @@
 package com.minecolonies.core.event;
 
 import com.google.common.collect.ImmutableMap;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -133,9 +134,9 @@ public class ClientEventHandler
             {
                 int tier = SchemAnalyzerUtil.getBlockTier(blockItem.getBlock());
 
-                if (DomumOrnamentumUtils.isDoBlock(blockItem.getBlock()) && event.getItemStack().hasTag())
+                if (DomumOrnamentumUtils.isDoBlock(blockItem.getBlock()))
                 {
-                    for (Block block : DomumOrnamentumUtils.getTextureData(event.getItemStack()).getTexturedComponents().values())
+                    for (Block block : MaterialTextureData.deserializeFromItemStack(event.getItemStack()).getTexturedComponents().values())
                     {
                         tier = Math.max(tier, SchemAnalyzerUtil.getBlockTier(block));
                     }

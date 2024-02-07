@@ -2,6 +2,7 @@ package com.minecolonies.core.recipes;
 
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
 import com.minecolonies.api.crafting.GenericRecipe;
@@ -12,7 +13,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -66,10 +66,9 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
             output.setCount(Math.max(recipe.getCount(), inputs.size()));
 
             // resultItem usually doesn't have textureData, but we need it to properly match the creative tab
-            if (!output.getOrCreateTag().contains("textureData"))
+            if (MaterialTextureData.extractNbtFromItemStack(output) == null)
             {
-                assert output.getTag() != null;
-                output.getTag().put("textureData", new CompoundTag());
+                new MaterialTextureData().writeToItemStack(output);
             }
 
             recipes.add(new GenericRecipe(holder.id(), output, new ArrayList<>(),
