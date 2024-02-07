@@ -123,7 +123,7 @@ public class TileEntityColonyFlag extends BlockEntity
         for (Pair<Holder<BannerPattern>, DyeColor> pair : list)
         {
             CompoundTag pairNBT = new CompoundTag();
-            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().get().getHashname());
+            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().value().getHashname());
             pairNBT.putInt(TAG_PATTERN_COLOR, pair.getSecond().getId());
             nbt.add(pairNBT);
         }

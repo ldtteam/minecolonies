@@ -183,7 +183,7 @@ public final class CraftingUtils
         final HolderLookup.RegistryLookup<CreativeModeTab> registry = displayParams.holders().lookup(Registries.CREATIVE_MODE_TAB).get();
         final Map<CreativeModeTab, ResourceKey<CreativeModeTab>> tabKeys = registry.listElements()
                 .distinct()     // some mods are dumb
-                .collect(Collectors.toMap(Holder::get, Holder.Reference::key));
+                .collect(Collectors.toMap(Holder::value, Holder.Reference::key));
 
         for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
         {

@@ -62,7 +62,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    public void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         spawnParticles(type, player.level(), x, y, z);
     }

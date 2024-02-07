@@ -490,7 +490,7 @@ public class WindowBannerPicker extends Screen
             int tempIndex = 0;
             for (final Holder<BannerPattern> pat : WindowBannerPicker.this.patterns)
             {
-                if (pat.get().getHashname().equals(pattern.get().getHashname()))
+                if (pat.value().getHashname().equals(pattern.value().getHashname()))
                 {
                     this.index = tempIndex;
                     break;
@@ -521,7 +521,7 @@ public class WindowBannerPicker extends Screen
             }
             catch (final Exception ex)
             {
-                Log.getLogger().warn(pattern.get().getHashname());
+                Log.getLogger().warn(pattern.value().getHashname());
                 Log.getLogger().error(ex);
             }
         }
