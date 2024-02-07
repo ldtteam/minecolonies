@@ -156,7 +156,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             source = target.level().damageSources().source(DamageSourceKeys.GUARD_PVP, user);
         }
 
-        final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(InteractionHand.MAIN_HAND));
+        final int fireLevel = user.getItemInHand(InteractionHand.MAIN_HAND).getEnchantmentLevel(Enchantments.FIRE_ASPECT);
         if (fireLevel > 0)
         {
             target.setSecondsOnFire(fireLevel * 80);

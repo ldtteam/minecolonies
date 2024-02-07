@@ -8,11 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.apache.commons.lang3.Validate;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -198,8 +198,8 @@ public class FieldRegistries
              */
             public FieldEntry createFieldEntry()
             {
-                Validate.notNull(registryName);
-                Validate.notNull(fieldProducer);
+                Objects.requireNonNull(registryName);
+                Objects.requireNonNull(fieldProducer);
 
                 return new FieldEntry(registryName, fieldProducer, fieldModuleProducers);
             }

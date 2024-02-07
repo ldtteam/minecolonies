@@ -10,13 +10,13 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -101,10 +101,10 @@ public class BuildingEntry
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder explicitly allowed to create an instance.
         public BuildingEntry createBuildingEntry()
         {
-            Validate.notNull(buildingBlock);
-            Validate.notNull(buildingProducer);
-            Validate.notNull(buildingViewProducer);
-            Validate.notNull(registryName);
+            Objects.requireNonNull(buildingBlock);
+            Objects.requireNonNull(buildingProducer);
+            Objects.requireNonNull(buildingViewProducer);
+            Objects.requireNonNull(registryName);
 
             return new BuildingEntry(registryName, buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers);
         }

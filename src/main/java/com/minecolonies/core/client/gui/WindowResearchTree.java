@@ -524,23 +524,23 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         switch (state)
         {
             case AVAILABLE:
-                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_blue.png"), false);
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_blue.png"));
                 subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_medium.png"), false);
-                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_blue.png"), false);
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_blue.png"));
                 nameBar.setID(research.getId().toString());
                 iconBox.setID(research.getId().toString());
                 break;
             case IN_PROGRESS:
-                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"), false);
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"));
                 subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_thin.png"), false);
-                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"), false);
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
                 nameBar.setID(research.getId().toString());
                 iconBox.setID(research.getId().toString());
                 drawProgressBar(view, offsetX, offsetY, research, progress, subBar);
                 break;
             case FINISHED:
-                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"), false);
-                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"), false);
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"));
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
                 nameBar.setID(research.getId().toString());
                 iconBox.setID(research.getId().toString());
                 break;
@@ -548,28 +548,28 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             case ABANDONED:
             case MISSING_PARENT:
             case TOO_LOW_UNIVERSITY:
-                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_gray.png"), false);
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_gray.png"));
                 subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_medium.png"), false);
-                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_gray.png"), false);
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_gray.png"));
                 break;
             case TOO_MANY_PROGRESS:
                 ButtonImage tooMany1 = new ButtonImage();
-                tooMany1.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS), false);
+                tooMany1.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
                 tooMany1.setText(Component.translatable("com.minecolonies.coremod.research.research.toomanyinprogress.1"));
                 tooMany1.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 tooMany1.setPosition(offsetX + ICON_WIDTH * 2, offsetY + BUTTON_HEIGHT);
                 view.addChild(tooMany1);
                 final ButtonImage tooMany2 = new ButtonImage();
-                tooMany2.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS), false);
+                tooMany2.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
                 tooMany2.setText(Component.translatable("com.minecolonies.coremod.research.research.toomanyinprogress.2"));
                 tooMany2.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 tooMany2.setPosition(offsetX + ICON_WIDTH * 2, offsetY + BUTTON_HEIGHT * 2);
                 view.addChild(tooMany2);
             case MISSING_REQUIREMENT:
             case MISSING_COST:
-                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_plain.png"), false);
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_plain.png"));
                 subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_medium.png"), false);
-                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini.png"), false);
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini.png"));
                 break;
             default:
                 Log.getLogger().error("Error in DrawResearchBoxes for " + research.getId() + " state: " + state);
@@ -774,7 +774,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void drawUndoProgressButton(final Button parent)
     {
-        undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES), false);
+        undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
         undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + TEXT_Y_OFFSET + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
         undoButton.setID("undo:" + parent.getID());
@@ -823,7 +823,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         undoText.setColors(COLOR_TEXT_DARK);
         if (!missingItems.isEmpty())
         {
-            undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS), false);
+            undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
             undoText.setText(Component.translatable("com.minecolonies.coremod.research.research.notenoughresources"));
             for (ItemStorage cost : missingItems)
             {
@@ -833,7 +833,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         else
         {
-            undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES), false);
+            undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
             undoButton.setID("undo:" + parent.getID());
             undoText.setText(Component.translatable("com.minecolonies.coremod.research.undo.remove"));
         }
@@ -1023,7 +1023,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 break;
             case AVAILABLE:
                 final ButtonImage icon = new ButtonImage();
-                icon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_start.png"), false);
+                icon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_start.png"));
                 icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                 icon.setPosition(offsetX, offsetY);
                 icon.setID(research.getId().toString());
@@ -1031,7 +1031,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 break;
             case IN_PROGRESS:
                 final ButtonImage playIcon = new ButtonImage();
-                playIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_cancel.png"), false);
+                playIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_cancel.png"));
                 playIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                 playIcon.setPosition(offsetX, offsetY);
                 playIcon.setID(research.getId().toString());
@@ -1060,7 +1060,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 else
                 {
                     final ButtonImage checkIcon = new ButtonImage();
-                    checkIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_check.png"), false);
+                    checkIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_check.png"));
                     checkIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                     checkIcon.setPosition(offsetX, offsetY);
                     checkIcon.setID(research.getId().toString());

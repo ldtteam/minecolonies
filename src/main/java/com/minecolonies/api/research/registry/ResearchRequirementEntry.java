@@ -3,8 +3,8 @@ package com.minecolonies.api.research.registry;
 import com.minecolonies.api.research.IResearchRequirement;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.Validate;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -58,8 +58,8 @@ public class ResearchRequirementEntry
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder explicitly allowed to create an instance.
         public ResearchRequirementEntry createResearchRequirementEntry()
         {
-            Validate.notNull(readFromNBT);
-            Validate.notNull(registryName);
+            Objects.requireNonNull(readFromNBT);
+            Objects.requireNonNull(registryName);
 
             return new ResearchRequirementEntry(readFromNBT, registryName);
         }

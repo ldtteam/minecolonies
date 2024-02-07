@@ -159,11 +159,11 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             // Add bow enchant effects: Knocback and fire
             final ItemStack bow = user.getItemInHand(InteractionHand.MAIN_HAND);
 
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, bow) > 0)
+            if (bow.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
             {
                 arrow.setSecondsOnFire(100);
             }
-            final int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, bow);
+            final int k = bow.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
             if (k > 0)
             {
                 arrow.setKnockback(k);
@@ -234,7 +234,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
         damage += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
-        damage += EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, heldItem);
+        damage += heldItem.getEnchantmentLevel(Enchantments.POWER_ARROWS);
         damage += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_DAMAGE);
 
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)

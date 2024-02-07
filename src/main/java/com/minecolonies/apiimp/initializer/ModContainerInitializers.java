@@ -4,12 +4,11 @@ import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.inventory.container.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.*;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -28,15 +27,15 @@ public class ModContainerInitializers
         ModContainers.craftingBrewingstand = CONTAINERS.register("crafting_brewingstand", () -> IMenuTypeExtension.create(ContainerCraftingBrewingstand::fromFriendlyByteBuf));
     }
     @SubscribeEvent
-    public static void doClientStuff(final FMLClientSetupEvent event)
+    public static void doClientStuff(final RegisterMenuScreensEvent event)
     {
-        MenuScreens.register(ModContainers.craftingFurnace.get(), WindowFurnaceCrafting::new);
-        MenuScreens.register(ModContainers.craftingGrid.get(), WindowCrafting::new);
-        MenuScreens.register(ModContainers.craftingBrewingstand.get(), WindowBrewingstandCrafting::new);
+        event.register(ModContainers.craftingFurnace.get(), WindowFurnaceCrafting::new);
+        event.register(ModContainers.craftingGrid.get(), WindowCrafting::new);
+        event.register(ModContainers.craftingBrewingstand.get(), WindowBrewingstandCrafting::new);
 
-        MenuScreens.register(ModContainers.buildingInv.get(), WindowBuildingInventory::new);
-        MenuScreens.register(ModContainers.citizenInv.get(), WindowCitizenInventory::new);
-        MenuScreens.register(ModContainers.rackInv.get(), WindowRack::new);
-        MenuScreens.register(ModContainers.graveInv.get(), WindowGrave::new);
+        event.register(ModContainers.buildingInv.get(), WindowBuildingInventory::new);
+        event.register(ModContainers.citizenInv.get(), WindowCitizenInventory::new);
+        event.register(ModContainers.rackInv.get(), WindowRack::new);
+        event.register(ModContainers.graveInv.get(), WindowGrave::new);
     }
 }

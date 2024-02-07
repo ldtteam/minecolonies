@@ -36,7 +36,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -622,14 +621,14 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             }
 
             final Entity source = damageSource.getEntity();
-            if (source instanceof Player)
+            if (source instanceof final Player player)
             {
                 if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
                 {
                     source.hurt(level().damageSources().thorns(this), damage * 0.5f);
                 }
 
-                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage.get(), ((Player) source).getMainHandItem());
+                final float raiderDamageEnchantLevel = player.getMainHandItem().getEnchantmentLevel(ModEnchants.raiderDamage.get());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);

@@ -293,6 +293,7 @@ public class WindowField extends AbstractWindowSkeleton
                 buttonState = 2;
             }
 
+            // TODO: unstitch atlas or split texture
             button.setImage(TEXTURE, dir.get2DDataValue() * BUTTON_SIZE, buttonState * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
             button.setText(Component.literal(String.valueOf(Objects.isNull(farmField) ? "" : farmField.getRadius(dir))));
 

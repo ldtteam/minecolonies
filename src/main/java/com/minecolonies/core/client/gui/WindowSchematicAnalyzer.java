@@ -348,7 +348,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 
         if (next == null)
         {
-            parent.findPaneOfTypeByID(BUTTON_VIEW_CURRENT, ButtonVanilla.class).setText(Component.literal("none"));
+            parent.findPaneOfTypeByID(BUTTON_VIEW_CURRENT, ButtonImage.class).setText(Component.literal("none"));
             box.hide();
             box.findPaneOfTypeByID(BUTTON_SHOW_RES, ButtonImage.class).setVisible(false);
             return;
@@ -363,7 +363,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
             name = next.blueprint.getFilePath().toString().replace("blueprints/minecolonies/", "") + "/" + split[split.length - 1];
         }
         name = name.replace(".blueprint", "");
-        parent.findPaneOfTypeByID(BUTTON_VIEW_CURRENT, ButtonVanilla.class).setText(Component.literal(name));
+        parent.findPaneOfTypeByID(BUTTON_VIEW_CURRENT, ButtonImage.class).setText(Component.literal(name));
 
         box.findPaneOfTypeByID(LABEL_SCORE, Text.class)
           .setText(Component.translatable("com.minecolonies.coremod.gui.analyzer.complexity", Component.literal("" + next.costScore).withStyle(

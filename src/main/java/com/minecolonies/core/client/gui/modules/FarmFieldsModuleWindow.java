@@ -234,13 +234,13 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
     {
         if (isOn)
         {
-            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_ON_NORMAL), true);
-            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_ON_DISABLED), true);
+            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_ON_NORMAL));
+            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_ON_DISABLED));
         }
         else
         {
-            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_OFF_NORMAL), true);
-            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_OFF_DISABLED), true);
+            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_OFF_NORMAL));
+            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_OFF_DISABLED));
         }
     }
 }

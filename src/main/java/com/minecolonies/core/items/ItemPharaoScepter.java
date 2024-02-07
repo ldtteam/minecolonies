@@ -13,7 +13,6 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -80,19 +79,19 @@ public class ItemPharaoScepter extends BowItem
                         abstractarrowentity.setCritArrow(true);
                     }
 
-                    int j = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
+                    int j = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
                     if (j > 0)
                     {
                         abstractarrowentity.setBaseDamage(abstractarrowentity.getBaseDamage() + (double) j * 0.5D + 0.5D);
                     }
 
-                    int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
+                    int k = stack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
                     if (k > 0)
                     {
                         abstractarrowentity.setKnockback(k);
                     }
 
-                    if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0)
+                    if (stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
                     {
                         abstractarrowentity.setSecondsOnFire(100);
                     }

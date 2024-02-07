@@ -155,12 +155,12 @@ public class StatisticsManager implements IStatisticsManager
             statCompound.putString(TAG_ID, stat.getKey());
 
             final ListTag statNBT = new ListTag();
-            for (final Map.Entry<Integer, Integer> dailyStats : stat.getValue().entrySet())
+            for (final Int2IntMap.Entry dailyStats : stat.getValue().int2IntEntrySet())
             {
                 final CompoundTag timeStampTag = new CompoundTag();
 
-                timeStampTag.putInt(TAG_TIME, dailyStats.getKey());
-                timeStampTag.putInt(TAG_QUANTITY, dailyStats.getValue());
+                timeStampTag.putInt(TAG_TIME, dailyStats.getIntKey());
+                timeStampTag.putInt(TAG_QUANTITY, dailyStats.getIntValue());
 
                 statNBT.add(timeStampTag);
             }

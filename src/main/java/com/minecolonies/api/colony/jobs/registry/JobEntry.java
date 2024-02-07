@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.IJobView;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.Validate;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -75,9 +74,9 @@ public final class JobEntry
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
         public JobEntry createJobEntry()
         {
-            Validate.notNull(jobProducer);
-            Validate.notNull(registryName);
-            Validate.notNull(jobViewProducer);
+            Objects.requireNonNull(jobProducer);
+            Objects.requireNonNull(registryName);
+            Objects.requireNonNull(jobViewProducer);
 
             return new JobEntry(jobProducer, jobViewProducer, registryName);
         }
