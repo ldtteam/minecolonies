@@ -1,17 +1,17 @@
 package com.minecolonies.core.network.messages.server;
 
-import com.minecolonies.api.network.IMessage;
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR;
 import static com.minecolonies.core.items.ItemBannerRallyGuards.toggleBanner;
@@ -19,20 +19,14 @@ import static com.minecolonies.core.items.ItemBannerRallyGuards.toggleBanner;
 /**
  * Toggles a rallying banner
  */
-public class ToggleBannerRallyGuardsMessage implements IMessage
+public class ToggleBannerRallyGuardsMessage extends AbstractServerPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "toggle_banner_rally_guards", ToggleBannerRallyGuardsMessage::new);
+
     /**
      * The banner to be toggled.
      */
-    private ItemStack banner;
-
-    /**
-     * Empty constructor used when registering the message
-     */
-    public ToggleBannerRallyGuardsMessage()
-    {
-        super();
-    }
+    private final ItemStack banner;
 
     /**
      * Toggle the banner
@@ -41,33 +35,25 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
      */
     public ToggleBannerRallyGuardsMessage(final ItemStack banner)
     {
-        super();
+        super(TYPE);
         this.banner = banner;
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected ToggleBannerRallyGuardsMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         banner = buf.readItem();
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(banner);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ServerPlayer player = ctxIn.getSender();
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
           (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
 

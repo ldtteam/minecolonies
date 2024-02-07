@@ -17,7 +17,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;

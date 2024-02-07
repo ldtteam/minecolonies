@@ -1,60 +1,43 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.network.IMessage;
-import net.minecraft.server.level.ServerPlayer;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-public class OpenGuiWindowTriggerMessage implements IMessage
+public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_gui_window_trigger", OpenGuiWindowTriggerMessage::new);
+
     /**
      * The window's Resource
      */
-    private String resource;
-
-    /**
-     * Empty constructor used when registering the message.
-     */
-    public OpenGuiWindowTriggerMessage()
-    {
-        super();
-    }
+    private final String resource;
 
     public OpenGuiWindowTriggerMessage(final String resource)
     {
-        super();
+        super(TYPE);
         this.resource = resource;
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeUtf(this.resource);
     }
 
-    @Override
-    public void fromBytes(final FriendlyByteBuf buf)
+    protected OpenGuiWindowTriggerMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.resource = buf.readUtf(32767);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ServerPlayer player = ctxIn.getSender();
-        if (player != null)
-        {
-            AdvancementTriggers.OPEN_GUI_WINDOW.trigger(player, this.resource);
-        }
+        AdvancementTriggers.OPEN_GUI_WINDOW.trigger(player, this.resource);
     }
 }

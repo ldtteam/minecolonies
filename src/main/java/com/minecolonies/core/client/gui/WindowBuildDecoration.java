@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
@@ -18,7 +19,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.MessageUtils;
@@ -81,7 +81,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * A function that will supply the message, given the position of the requested builder, if any.
      */
-    private final Function<BlockPos, IMessage> buildRequestMessage;
+    private final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage;
 
     /**
      * Drop down list for builders.
@@ -111,7 +111,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
       final String packMeta,
       final String path,
       final RotationMirror rotationMirror,
-      Function<BlockPos, IMessage> buildRequestMessage)
+      final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.packMeta = packMeta;

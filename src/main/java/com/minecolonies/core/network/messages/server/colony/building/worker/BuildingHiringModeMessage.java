@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building.worker;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,23 +18,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "building_hiring_mode", BuildingHiringModeMessage::new);
+
     /**
      * The Hiring mode to set.
      */
-    private HiringMode    mode;
+    private final HiringMode    mode;
 
     /**
      * The job id.
      */
-    private int moduleId;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public BuildingHiringModeMessage()
-    {
-        super();
-    }
+    private final int moduleId;
 
     /**
      * Creates object for the hiring mode
@@ -41,29 +38,30 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
      */
     public BuildingHiringModeMessage(@NotNull final IBuildingView building, final HiringMode mode, final int moduleId)
     {
-        super(building);
+        super(TYPE, building);
         this.mode = mode;
         this.moduleId = moduleId;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected BuildingHiringModeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         mode = HiringMode.values()[buf.readInt()];
         moduleId = buf.readInt();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeInt(mode.ordinal());
         buf.writeInt(moduleId);
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        if (building.getModule(moduleId) instanceof IAssignsCitizen module)
+        if (building.getModule(moduleId) instanceof final IAssignsCitizen module)
         {
             module.setHiringMode(mode);
         }

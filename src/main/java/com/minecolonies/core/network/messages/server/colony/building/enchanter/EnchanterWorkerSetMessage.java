@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building.enchanter;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,23 +18,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<BuildingEnchanter>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "enchanter_worker_set", EnchanterWorkerSetMessage::new);
+
     /**
      * The worker to add/remove.
      */
-    private BlockPos worker;
+    private final BlockPos worker;
 
     /**
      * true if add, false if remove.
      */
-    private boolean add;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public EnchanterWorkerSetMessage()
-    {
-        super();
-    }
+    private final boolean add;
 
     /**
      * Create the enchanter worker
@@ -42,27 +39,28 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
      */
     public EnchanterWorkerSetMessage(@NotNull final IBuildingView building, final BlockPos worker, final boolean add)
     {
-        super(building);
+        super(TYPE, building);
         this.worker = worker;
         this.add = add;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected EnchanterWorkerSetMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         worker = buf.readBlockPos();
         add = buf.readBoolean();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeBlockPos(worker);
         buf.writeBoolean(add);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingEnchanter building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingEnchanter building)
     {
         if (add)
         {

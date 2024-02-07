@@ -1,47 +1,46 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.event.ColonyDeletedEvent;
-import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
-import net.minecraft.network.FriendlyByteBuf;
-import com.minecolonies.api.util.MessageUtils;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_DELETE_SUCCESS;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_NOT_FOUND;
 
 /**
  * Message for deleting an owned colony
  */
-public class ColonyDeleteOwnMessage implements IMessage
+public class ColonyDeleteOwnMessage extends AbstractServerPlayMessage
 {
-    @Override
-    public void toBytes(final FriendlyByteBuf buf)
-    {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_delete_own", ColonyDeleteOwnMessage::new);
 
+    @Override
+    protected void toBytes(final FriendlyByteBuf buf)
+    {        
+        // noop
+    }
+
+    protected ColonyDeleteOwnMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    {
+        super(buf, type);
+    }
+
+    public ColonyDeleteOwnMessage()
+    {
+        super(TYPE);
     }
 
     @Override
-    public void fromBytes(final FriendlyByteBuf buf)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-
-    }
-
-    @Nullable
-    @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ServerPlayer player = ctxIn.getSender();
         if (player == null)
         {
             return;
@@ -53,10 +52,7 @@ public class ColonyDeleteOwnMessage implements IMessage
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());
             MessageUtils.format(MESSAGE_INFO_COLONY_DELETE_SUCCESS).sendTo(player);
 
-            if (isLogicalServer)
-            {
-                NeoForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
-            }
+            NeoForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
         }
         else
         {

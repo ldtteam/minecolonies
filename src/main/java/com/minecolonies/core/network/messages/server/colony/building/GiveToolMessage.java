@@ -1,17 +1,19 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -21,18 +23,12 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
  */
 public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "give_tool", GiveToolMessage::new);
+
     /**
      * The item to give.
      */
-    private Item item;
-
-    /**
-     * Empty standard constructor.
-     */
-    public GiveToolMessage()
-    {
-        super();
-    }
+    private final Item item;
 
     /**
      * Create a new tool message.
@@ -41,31 +37,26 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
      */
     public GiveToolMessage(final IBuildingView building, final Item item)
     {
-        super(building);
+        super(TYPE, building);
         this.item = item;
     }
 
     @Override
-    protected void toBytesOverride(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeItem(new ItemStack(item, 1));
     }
 
-    @Override
-    protected void fromBytesOverride(final FriendlyByteBuf buf)
+    protected GiveToolMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         item = buf.readItem().getItem();
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
-        final Player player = ctxIn.getSender();
-        if (player == null)
-        {
-            return;
-        }
-
         final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
         final CompoundTag compound = scepter.getOrCreateTag();
         BlockPosUtil.write(compound, TAG_POS, building.getID());

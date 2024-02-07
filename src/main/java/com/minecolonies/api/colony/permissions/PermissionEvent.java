@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.permissions;
 
-import com.minecolonies.api.network.PacketUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +56,7 @@ public class PermissionEvent
      */
     public PermissionEvent(final FriendlyByteBuf buf)
     {
-        final UUID uuid = PacketUtils.readUUID(buf);
+        final UUID uuid = buf.readUUID();
         if (uuid.equals(UUID.fromString("1-2-3-4-5")))
         {
             this.id = null;
@@ -121,11 +120,11 @@ public class PermissionEvent
     {
         if (id == null)
         {
-            PacketUtils.writeUUID(buf, UUID.fromString("1-2-3-4-5"));
+            buf.writeUUID(UUID.fromString("1-2-3-4-5"));
         }
         else
         {
-            PacketUtils.writeUUID(buf, id);
+            buf.writeUUID(id);
         }
         buf.writeUtf(name);
         buf.writeUtf(action.toString());

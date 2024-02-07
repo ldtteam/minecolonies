@@ -1,42 +1,37 @@
 package com.minecolonies.core.network.messages.client.colony;
 
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
+import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to synch research manager to colony.
  */
-public class ColonyViewResearchManagerViewMessage implements IMessage
+public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMessage
 {
-    private int             colonyId;
-    private FriendlyByteBuf researchManagerData;
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_research_manager_view", ColonyViewResearchManagerViewMessage::new);
+
+    private final int             colonyId;
+    private final FriendlyByteBuf researchManagerData;
 
     /**
      * Dimension of the colony.
      */
-    private ResourceKey<Level> dimension;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public ColonyViewResearchManagerViewMessage()
-    {
-        super();
-    }
+    private final ResourceKey<Level> dimension;
 
     /**
      * Creates a message to send the research manager to the client.
@@ -45,7 +40,7 @@ public class ColonyViewResearchManagerViewMessage implements IMessage
      */
     public ColonyViewResearchManagerViewMessage(final IColony colony, @NotNull final IResearchManager researchManager)
     {
-        super();
+        super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
 
@@ -56,9 +51,9 @@ public class ColonyViewResearchManagerViewMessage implements IMessage
         this.researchManagerData.writeNbt(researchCompound);
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    public ColonyViewResearchManagerViewMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         researchManagerData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
@@ -66,7 +61,7 @@ public class ColonyViewResearchManagerViewMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         researchManagerData.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -74,15 +69,8 @@ public class ColonyViewResearchManagerViewMessage implements IMessage
         buf.writeBytes(researchManagerData);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (colonyView != null)

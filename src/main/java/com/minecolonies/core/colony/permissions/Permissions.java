@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.permissions;
 
 import com.minecolonies.api.colony.permissions.*;
-import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.Colony;
@@ -924,7 +923,7 @@ public class Permissions implements IPermissions
         buf.writeVarInt(players.size());
         for (@NotNull final Map.Entry<UUID, ColonyPlayer> player : players.entrySet())
         {
-            PacketUtils.writeUUID(buf, player.getKey());
+            buf.writeUUID(player.getKey());
             buf.writeUtf(player.getValue().getName());
             buf.writeVarInt(player.getValue().getRank().getId());
         }

@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building.postbox;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,25 +18,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "post_box_request", PostBoxRequestMessage::new);
+
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     /*
      * Whether to deliver what's currently available or entire request
      */
-    private boolean deliverAvailable;
+    private final boolean deliverAvailable;
 
-    private int reqQuantity;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public PostBoxRequestMessage()
-    {
-        super();
-    }
+    private final int reqQuantity;
 
     /**
      * Creates a Transfer Items request
@@ -44,24 +41,25 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
      */
     public PostBoxRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean deliverAvailable)
     {
-        super(building);
+        super(TYPE, building);
         this.itemStack = itemStack;
         reqQuantity = quantity;
         this.deliverAvailable = deliverAvailable;
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
 
         buf.writeItem(itemStack);
         buf.writeBoolean(deliverAvailable);
         buf.writeInt(reqQuantity);
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected PostBoxRequestMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
 
         itemStack = buf.readItem();
         deliverAvailable = buf.readBoolean();
@@ -69,12 +67,11 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final PostBox building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final PostBox building)
     {
 
         final int minCount = (deliverAvailable) ? 1 : reqQuantity;
-        Stack requestStack = new Stack(itemStack, reqQuantity, minCount);
+        final Stack requestStack = new Stack(itemStack, reqQuantity, minCount);
 
         building.createRequest(requestStack, false);
     }

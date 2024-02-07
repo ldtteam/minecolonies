@@ -1,34 +1,25 @@
 package com.minecolonies.core.network.messages.client;
 
-import com.minecolonies.api.network.IMessage;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.datalistener.QuestJsonListener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The message used to synchronize global quest data from a server to a remote client.
  */
-public class GlobalQuestSyncMessage implements IMessage
+public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_quest_sync", GlobalQuestSyncMessage::new);
 
     /**
      * The buffer with the data.
      */
-    private FriendlyByteBuf questBuffer;
-
-    /**
-     * Empty constructor used when registering the message
-     */
-    public GlobalQuestSyncMessage()
-    {
-        super();
-    }
+    private final FriendlyByteBuf questBuffer;
 
     /**
      * Add or Update QuestData on the client.
@@ -37,37 +28,27 @@ public class GlobalQuestSyncMessage implements IMessage
      */
     public GlobalQuestSyncMessage(final FriendlyByteBuf buf)
     {
+        super(TYPE);
         this.questBuffer = new FriendlyByteBuf(buf.copy());
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected GlobalQuestSyncMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         questBuffer = new FriendlyByteBuf(buf.retain());
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         questBuffer.resetReaderIndex();
         buf.writeBytes(questBuffer);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
-        return LogicalSide.CLIENT;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        if (Minecraft.getInstance().level != null)
-        {
-            QuestJsonListener.readGlobalQuestPackets(questBuffer);
-        }
+        QuestJsonListener.readGlobalQuestPackets(questBuffer);
         questBuffer.release();
     }
 }

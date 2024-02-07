@@ -1,32 +1,24 @@
 package com.minecolonies.core.colony.crafting;
 
-import com.minecolonies.api.network.IMessage;
-import net.minecraft.client.Minecraft;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The message used to synchronize crafter recipes from a server to a client.
  */
-public class CustomRecipeManagerMessage implements IMessage
+public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "custom_recipe_manager", CustomRecipeManagerMessage::new);
+
     /**
      * The buffer with the data.
      */
-    private FriendlyByteBuf managerBuffer;
-
-    /**
-     * Empty constructor used when registering the message
-     */
-    public CustomRecipeManagerMessage()
-    {
-        super();
-    }
+    private final FriendlyByteBuf managerBuffer;
 
     /**
      * Add or Update a CustomRecipeManager on the client.
@@ -35,33 +27,26 @@ public class CustomRecipeManagerMessage implements IMessage
      */
     public CustomRecipeManagerMessage(final FriendlyByteBuf buf)
     {
+        super(TYPE);
         this.managerBuffer = new FriendlyByteBuf(buf.copy());
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected CustomRecipeManagerMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         managerBuffer = new FriendlyByteBuf(buf.retain());
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBytes(managerBuffer);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    public void onExecute(final PlayPayloadContext context, final Player player)
     {
-        return LogicalSide.CLIENT;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        if (Minecraft.getInstance().level != null)
+        if (player.level() != null)
         {
             CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
         }

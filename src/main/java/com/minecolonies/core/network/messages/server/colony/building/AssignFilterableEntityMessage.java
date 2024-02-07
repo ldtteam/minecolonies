@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.EntityListModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,28 +18,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage<AbstractBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_filterable_entity", AssignFilterableEntityMessage::new);
+
     /**
      * True if assign, false if remove.
      */
-    private boolean assign;
+    private final boolean assign;
 
     /**
      * The entity in question.
      */
-    private ResourceLocation entity;
+    private final ResourceLocation entity;
 
     /**
      * The id of the module.
      */
-    private int id;
-
-    /**
-     * Empty standard constructor.
-     */
-    public AssignFilterableEntityMessage()
-    {
-        super();
-    }
+    private final int id;
 
     /**
      * Creates the message to add an entity.
@@ -48,33 +45,33 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
      */
     public AssignFilterableEntityMessage(final IBuildingView building, final int id, final ResourceLocation entity, final boolean assign)
     {
-        super(building);
+        super(TYPE, building);
         this.assign = assign;
         this.entity = entity;
         this.id = id;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected AssignFilterableEntityMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.assign = buf.readBoolean();
         this.entity =buf.readResourceLocation();
         this.id = buf.readInt();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeBoolean(this.assign);
         buf.writeResourceLocation(this.entity);
         buf.writeInt(id);
     }
 
     @Override
-    public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
-        if (building.getModule(id) instanceof EntityListModule module)
+        if (building.getModule(id) instanceof final EntityListModule module)
         {
             if (assign)
             {

@@ -1,14 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks.SPIES_GOLD_COST;
 
@@ -17,42 +19,26 @@ import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBar
  */
 public class HireSpiesMessage extends AbstractColonyServerMessage
 {
-    public HireSpiesMessage()
-    {
-    }
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "hire_spies", HireSpiesMessage::new);
 
     public HireSpiesMessage(final IColony colony)
     {
-        super(colony);
+        super(TYPE, colony);
+    }
+
+    protected HireSpiesMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    {
+        super(buf, type);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        final Player player = ctxIn.getSender();
-        if (player == null)
-        {
-            return;
-        }
-
         if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> stack.getItem() == Items.GOLD_INGOT) >= SPIES_GOLD_COST)
         {
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), new ItemStack(Items.GOLD_INGOT), SPIES_GOLD_COST);
             colony.getRaiderManager().setSpiesEnabled(true);
             colony.markDirty();
         }
-    }
-
-    @Override
-    protected void toBytesOverride(final FriendlyByteBuf buf)
-    {
-
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final FriendlyByteBuf buf)
-    {
-
     }
 }

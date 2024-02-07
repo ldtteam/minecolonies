@@ -1,13 +1,15 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
@@ -18,13 +20,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
  */
 public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
 {
-    /**
-     * Empty public constructor.
-     */
-    public ForcePickupMessage()
-    {
-        super();
-    }
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "force_pickup", ForcePickupMessage::new);
 
     /**
      * Creates message for player to force a pickup.
@@ -33,23 +29,17 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
      */
     public ForcePickupMessage(@NotNull final IBuildingView building)
     {
-        super(building);
+        super(TYPE, building);
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected ForcePickupMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         // Noop
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
-    {
-        // Noop
-    }
-
-    @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.createPickupRequest(getPlayerActionPriority(true)))
         {
@@ -57,12 +47,6 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
         }
         else
         {
-            final Player player = ctxIn.getSender();
-            if (player == null)
-            {
-                return;
-            }
-
             MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED).sendTo(player);
         }
     }

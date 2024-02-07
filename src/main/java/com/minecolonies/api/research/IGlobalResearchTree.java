@@ -3,7 +3,6 @@ package com.minecolonies.api.research;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -156,7 +155,7 @@ public interface IGlobalResearchTree
      * Only used for remote clients.
      * @param buf       the buffer of received network data.
      */
-    IMessage handleGlobalResearchTreeMessage(final FriendlyByteBuf buf);
+    void handleGlobalResearchTreeMessage(final FriendlyByteBuf buf);
 
     /**
      * Sends messages to the client from the server describing the Global Research Tree.

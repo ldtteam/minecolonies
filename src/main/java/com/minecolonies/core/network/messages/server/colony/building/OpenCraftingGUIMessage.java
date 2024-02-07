@@ -1,23 +1,24 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.NetworkHooks;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,18 +26,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_crafting_gui", OpenCraftingGUIMessage::new);
+
     /**
      * The type of container.
      */
-    private int id;
-
-    /**
-     * Empty public constructor.
-     */
-    public OpenCraftingGUIMessage()
-    {
-        super();
-    }
+    private final int id;
 
     /**
      * Creates an open inventory message for a building.
@@ -45,32 +40,27 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
      */
     public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int id)
     {
-        super(building);
+        super(TYPE, building);
         this.id = id;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected OpenCraftingGUIMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.id = buf.readInt();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeInt(id);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        final ServerPlayer player = ctxIn.getSender();
-        if (player == null)
-        {
-            return;
-        }
-
-        if (building.getModule(id) instanceof AbstractCraftingBuildingModule module)
+        if (building.getModule(id) instanceof final AbstractCraftingBuildingModule module)
         {
             if (module.canLearn(ModCraftingTypes.SMELTING.get()))
             {

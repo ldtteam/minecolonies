@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "remove_minimum_stock_from_building_module", RemoveMinimumStockFromBuildingModuleMessage::new);
+
     /**
      * The module's id
      */
@@ -26,14 +31,6 @@ public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildin
     private ItemStack itemStack;
 
     /**
-     * Empty constructor used when registering the
-     */
-    public RemoveMinimumStockFromBuildingModuleMessage()
-    {
-        super();
-    }
-
-    /**
      * Creates a Transfer Items request
      *
      * @param building  the building we're executing on.
@@ -41,27 +38,28 @@ public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildin
      */
     public RemoveMinimumStockFromBuildingModuleMessage(final IBuildingView building, final ItemStack itemStack, final int moduleId)
     {
-        super(building);
+        super(TYPE, building);
         this.itemStack = itemStack;
         this.moduleId = moduleId;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected RemoveMinimumStockFromBuildingModuleMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         itemStack = buf.readItem();
         moduleId = buf.readInt();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeItem(itemStack);
         buf.writeInt(moduleId);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.getModule(moduleId) instanceof IMinimumStockModule module)
         {

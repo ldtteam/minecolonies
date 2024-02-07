@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,28 +18,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_filterable_item_message", AssignFilterableItemMessage::new);
+
     /**
      * True if assign, false if remove.
      */
-    private boolean assign;
+    private final boolean assign;
 
     /**
      * The item in question.
      */
-    private ItemStorage item;
+    private final ItemStorage item;
 
     /**
      * The id of the list.
      */
-    private int id;
-
-    /**
-     * Empty standard constructor.
-     */
-    public AssignFilterableItemMessage()
-    {
-        super();
-    }
+    private final int id;
 
     /**
      * Creates the message to add an item.
@@ -48,15 +45,15 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
      */
     public AssignFilterableItemMessage(final IBuildingView building, final int id, final ItemStorage item, final boolean assign)
     {
-        super(building);
+        super(TYPE, building);
         this.assign = assign;
         this.item = item;
         this.id = id;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected AssignFilterableItemMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
 
         this.assign = buf.readBoolean();
         this.item = new ItemStorage(buf.readItem());
@@ -64,8 +61,9 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
 
         buf.writeBoolean(this.assign);
         buf.writeItem(this.item.getItemStack());
@@ -73,10 +71,9 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     }
 
     @Override
-    public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
-        if (building.getModule(id) instanceof ItemListModule module)
+        if (building.getModule(id) instanceof final ItemListModule module)
         {
             if (assign)
             {

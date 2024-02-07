@@ -1,8 +1,10 @@
 package com.minecolonies.core.network.messages.client.colony;
 
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.workorders.view.AbstractWorkOrderView;
 import io.netty.buffer.Unpooled;
@@ -10,30 +12,23 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewWorkOrderMessage implements IMessage
+public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
 {
-    private int                colonyId;
-    private ResourceKey<Level> dimension;
-    private FriendlyByteBuf       workOrderBuffer;
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_workorder", ColonyViewWorkOrderMessage::new);
 
-    /**
-     * Empty constructor used when registering the
-     */
-    public ColonyViewWorkOrderMessage()
-    {
-        super();
-    }
+    private final int                colonyId;
+    private final ResourceKey<Level> dimension;
+    private final FriendlyByteBuf       workOrderBuffer;
 
     /**
      * Updates a {@link AbstractWorkOrderView} of the workOrders.
@@ -43,6 +38,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
      */
     public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)
     {
+        super(TYPE);
         this.colonyId = colony.getID();
         this.workOrderBuffer = new FriendlyByteBuf(Unpooled.buffer());
         this.dimension = colony.getDimension();
@@ -54,9 +50,9 @@ public class ColonyViewWorkOrderMessage implements IMessage
         }
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    public ColonyViewWorkOrderMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         final FriendlyByteBuf newbuf = new FriendlyByteBuf(buf.retain());
         colonyId = newbuf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newbuf.readUtf(32767)));
@@ -64,7 +60,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         workOrderBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -72,15 +68,8 @@ public class ColonyViewWorkOrderMessage implements IMessage
         buf.writeBytes(workOrderBuffer);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewWorkOrderMessage(colonyId, workOrderBuffer, dimension);
         workOrderBuffer.release();

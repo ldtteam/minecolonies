@@ -4,7 +4,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -251,7 +250,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public IMessage handleGlobalResearchTreeMessage(final FriendlyByteBuf buf)
+    public void handleGlobalResearchTreeMessage(final FriendlyByteBuf buf)
     {
         researchTree.clear();
         branchDatas.clear();
@@ -269,7 +268,6 @@ public class GlobalResearchTree implements IGlobalResearchTree
             ResourceLocation branchId = buf.readResourceLocation();
             branchDatas.put(branchId, new GlobalResearchBranch(buf.readNbt()));
         }
-        return null;
     }
 
     @Override

@@ -1,27 +1,24 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Message to set the colony name style.
  */
 public class ColonyNameStyleMessage extends AbstractColonyServerMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_name_style", ColonyNameStyleMessage::new);
+
     /**
      * The chosen style.
      */
-    private String style;
-
-    /**
-     * Default constructor
-     **/
-    public ColonyNameStyleMessage()
-    {
-        super();
-    }
+    private final String style;
 
     /**
      * Change the colony name style from the client to the serverside.
@@ -31,25 +28,26 @@ public class ColonyNameStyleMessage extends AbstractColonyServerMessage
      */
     public ColonyNameStyleMessage(final IColony colony, final String style)
     {
-        super(colony);
+        super(TYPE, colony);
         this.style = style;
     }
 
     @Override
-    protected void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer, IColony colony)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setNameStyle(style);
     }
 
     @Override
-    protected void toBytesOverride(FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeUtf(style);
     }
 
-    @Override
-    protected void fromBytesOverride(FriendlyByteBuf buf)
+    protected ColonyNameStyleMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.style = buf.readUtf(32767);
     }
 }

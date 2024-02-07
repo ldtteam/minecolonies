@@ -1,26 +1,27 @@
 package com.minecolonies.core.network.messages.client;
 
-import com.minecolonies.api.network.IMessage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
 /**
  * Handles spawning item particle effects on top of a block..
  */
-public class LocalizedParticleEffectMessage implements IMessage
+public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "localized_particle_effect", LocalizedParticleEffectMessage::new);
+
     /**
      * Random obj.
      */
@@ -29,22 +30,14 @@ public class LocalizedParticleEffectMessage implements IMessage
     /**
      * The itemStack for the particles.
      */
-    private ItemStack stack;
+    private final ItemStack stack;
 
     /**
      * The entity position.
      */
-    private double posX;
-    private double posY;
-    private double posZ;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public LocalizedParticleEffectMessage()
-    {
-        super();
-    }
+    private final double posX;
+    private final double posY;
+    private final double posZ;
 
     /**
      * Constructor to trigger an item particle message for crushing.
@@ -54,16 +47,16 @@ public class LocalizedParticleEffectMessage implements IMessage
      */
     public LocalizedParticleEffectMessage(final ItemStack stack, final BlockPos pos)
     {
-        super();
+        super(TYPE);
         this.stack = stack;
         this.posX = pos.getX() + 0.5;
         this.posY = pos.getY() + 0.5;
         this.posZ = pos.getZ() + 0.5;
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected LocalizedParticleEffectMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         stack = buf.readItem();
         posX = buf.readDouble();
         posY = buf.readDouble();
@@ -71,7 +64,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(stack);
         buf.writeDouble(posX);
@@ -79,24 +72,14 @@ public class LocalizedParticleEffectMessage implements IMessage
         buf.writeDouble(posZ);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ClientLevel world = Minecraft.getInstance().level;
-        final ItemStack localStack = stack;
-
         for (int i = 0; i < 5; ++i)
         {
             final Vec3 randomPos = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
             final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
-            world.addParticle(new ItemParticleOption(ParticleTypes.ITEM, localStack),
+            player.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
               posX + randomOffset.x,
               posY + randomOffset.y,
               posZ + randomOffset.z,

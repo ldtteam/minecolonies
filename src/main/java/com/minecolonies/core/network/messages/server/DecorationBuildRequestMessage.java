@@ -1,5 +1,7 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -9,24 +11,22 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.workorders.WorkOrderDecoration;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
@@ -34,50 +34,44 @@ import java.util.Optional;
 /**
  * Adds a entry to the builderRequired map.
  */
-public class DecorationBuildRequestMessage implements IMessage
+public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "decoration_build_request", DecorationBuildRequestMessage::new);
+
     /**
      * The id of the building.
      */
-    private BlockPos pos;
+    private final BlockPos pos;
 
     /**
      * The display name of the decoration.
      */
-    private String packName;
+    private final String packName;
 
     /**
      * The name of the decoration.
      */
-    private String path;
+    private final String path;
 
     /**
      * The rotation.
      */
-    private RotationMirror rotationMirror;
+    private final RotationMirror rotationMirror;
 
     /**
      * The dimension.
      */
-    private ResourceKey<Level> dimension;
+    private final ResourceKey<Level> dimension;
 
     /**
      * Type of workorder.
      */
-    private WorkOrderType workOrderType;
+    private final WorkOrderType workOrderType;
 
     /**
      * The builder, or ZERO to auto-assign.
      */
-    private BlockPos builder;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public DecorationBuildRequestMessage()
-    {
-        super();
-    }
+    private final BlockPos builder;
 
     /**
      * Creates a build request for a decoration.
@@ -89,7 +83,7 @@ public class DecorationBuildRequestMessage implements IMessage
      */
     public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final RotationMirror rotationMirror, final BlockPos builder)
     {
-        super();
+        super(TYPE);
         this.workOrderType = workOrderType;
         this.pos = pos;
         this.packName = packName;
@@ -99,9 +93,9 @@ public class DecorationBuildRequestMessage implements IMessage
         this.builder = builder;
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected DecorationBuildRequestMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.workOrderType = WorkOrderType.values()[buf.readInt()];
         this.pos = buf.readBlockPos();
         this.packName = buf.readUtf(32767);
@@ -112,7 +106,7 @@ public class DecorationBuildRequestMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(this.workOrderType.ordinal());
         buf.writeBlockPos(this.pos);
@@ -123,22 +117,14 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeBlockPos(this.builder);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(dimension, pos);
         if (colony == null)
         {
             return;
         }
-        final Player player = ctxIn.getSender();
 
         //Verify player has permission to change this hut its settings
         if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))

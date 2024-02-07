@@ -1,24 +1,26 @@
 package com.minecolonies.core.network.messages.client;
 
-import com.minecolonies.api.network.IMessage;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.particles.ParticleTypes;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
 /**
  * Handles the server causing compost particle effects.
  */
-public class CompostParticleMessage implements IMessage
+public class CompostParticleMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "compost_particle", CompostParticleMessage::new);
+
     /**
      * Random obj for values.
      */
@@ -27,15 +29,7 @@ public class CompostParticleMessage implements IMessage
     /**
      * The position.
      */
-    private BlockPos pos;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public CompostParticleMessage()
-    {
-        super();
-    }
+    private final BlockPos pos;
 
     /**
      * Sends a message for particle effect.
@@ -44,33 +38,26 @@ public class CompostParticleMessage implements IMessage
      */
     public CompostParticleMessage(final BlockPos pos)
     {
-        super();
+        super(TYPE);
         this.pos = pos;
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    public CompostParticleMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         pos = buf.readBlockPos();
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ClientLevel world = Minecraft.getInstance().level;
+        final Level world = player.level();
         final int amount = random.nextInt(15) + 1;
         final BlockState state = world.getBlockState(pos);
         double d0;

@@ -1,12 +1,14 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,13 +16,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildPickUpMessage extends AbstractBuildingServerMessage<IBuilding>
 {
-    /**
-     * Empty constructor used when registering the
-     */
-    public BuildPickUpMessage()
-    {
-        super();
-    }
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "build_pick_up", BuildPickUpMessage::new);
 
     /**
      * Creates a build request
@@ -29,25 +25,17 @@ public class BuildPickUpMessage extends AbstractBuildingServerMessage<IBuilding>
      */
     public BuildPickUpMessage(@NotNull final IBuildingView building)
     {
-        super(building);
+        super(TYPE, building);
+    }
+
+    protected BuildPickUpMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    {
+        super(buf, type);
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-
-    }
-
-    @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
-    {
-
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
-    {
-        final Player player = ctxIn.getSender();
         building.pickUp(player);
     }
 }

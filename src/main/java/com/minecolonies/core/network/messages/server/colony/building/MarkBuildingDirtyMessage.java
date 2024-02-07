@@ -1,11 +1,14 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Send a message to the server to mark the building as dirty. Created: January 20, 2017
@@ -14,33 +17,20 @@ import net.neoforged.neoforge.network.NetworkEvent;
  */
 public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBuilding>
 {
-    /**
-     * Empty constructor used when registering the
-     */
-    public MarkBuildingDirtyMessage()
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "mark_building_dirty", MarkBuildingDirtyMessage::new);
+
+    protected MarkBuildingDirtyMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        super();
-    }
-
-    @Override
-    protected void toBytesOverride(final FriendlyByteBuf buf)
-    {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final FriendlyByteBuf buf)
-    {
-
+        super(buf, type);
     }
 
     public MarkBuildingDirtyMessage(final IBuildingView building)
     {
-        super(building);
+        super(TYPE, building);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         building.markDirty();
     }

@@ -1,22 +1,23 @@
 package com.minecolonies.core.network.messages.client.colony;
 
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.fields.registry.FieldDataManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,30 +27,24 @@ import java.util.Set;
 /**
  * Update message for auto syncing the entire field list.
  */
-public class ColonyViewFieldsUpdateMessage implements IMessage
+public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_fields_update", ColonyViewFieldsUpdateMessage::new);
+
     /**
      * The colony this field belongs to.
      */
-    private int colonyId;
+    private final int colonyId;
 
     /**
      * Dimension of the colony.
      */
-    private ResourceKey<Level> dimension;
+    private final ResourceKey<Level> dimension;
 
     /**
      * The list of field items.
      */
-    private Map<IField, IField> fields;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public ColonyViewFieldsUpdateMessage()
-    {
-        super();
-    }
+    private final Map<IField, IField> fields;
 
     /**
      * Creates a message to handle colony all field views.
@@ -59,7 +54,7 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
      */
     public ColonyViewFieldsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IField> fields)
     {
-        super();
+        super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
         this.fields = new HashMap<>();
@@ -67,50 +62,43 @@ public class ColonyViewFieldsUpdateMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeInt(fields.size());
-        for (IField field : fields.keySet())
+        for (final IField field : fields.keySet())
         {
-            FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
+            final FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
             buf.writeInt(fieldBuffer.readableBytes());
             buf.writeBytes(fieldBuffer);
         }
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected ColonyViewFieldsUpdateMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         fields = new HashMap<>();
-        int fieldCount = buf.readInt();
+        final int fieldCount = buf.readInt();
         for (int i = 0; i < fieldCount; i++)
         {
-            int readableBytes = buf.readInt();
-            FriendlyByteBuf fieldData = new FriendlyByteBuf(Unpooled.buffer(readableBytes));
+            final int readableBytes = buf.readInt();
+            final FriendlyByteBuf fieldData = new FriendlyByteBuf(Unpooled.buffer(readableBytes));
             buf.readBytes(fieldData, readableBytes);
-            IField parsedField = FieldDataManager.bufferToField(fieldData);
+            final IField parsedField = FieldDataManager.bufferToField(fieldData);
             fields.put(parsedField, parsedField);
         }
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (view != null)
         {
-            Set<IField> updatedFields = new HashSet<>();
+            final Set<IField> updatedFields = new HashSet<>();
             view.getFields(field -> true).forEach(existingField -> {
                 if (this.fields.containsKey(existingField))
                 {

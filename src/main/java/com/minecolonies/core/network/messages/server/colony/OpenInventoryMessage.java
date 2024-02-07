@@ -1,22 +1,23 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.tileentities.TileEntityGrave;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,15 +26,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public class OpenInventoryMessage extends AbstractColonyServerMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_inventory", OpenInventoryMessage::new);
+
     /***
      * The inventory name.
      */
-    private String name;
+    private final String name;
 
     /**
      * The inventory type.
      */
-    private InventoryType inventoryType;
+    private final InventoryType inventoryType;
 
     /**
      * The entities id.
@@ -46,23 +49,15 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     private BlockPos tePos;
 
     /**
-     * Empty public constructor.
-     */
-    public OpenInventoryMessage()
-    {
-        super();
-    }
-
-    /**
      * Creates an open inventory message for the citizen.
      *
      * @param name   the name of the citizen.
      * @param id     its id.
      * @param colony the colony of the network message
      */
-    public OpenInventoryMessage(IColonyView colony, @NotNull final String name, final int id)
+    public OpenInventoryMessage(final IColonyView colony, @NotNull final String name, final int id)
     {
-        super(colony);
+        super(TYPE, colony);
         inventoryType = InventoryType.INVENTORY_CITIZEN;
         this.name = name;
         this.entityID = id;
@@ -75,15 +70,15 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
      */
     public OpenInventoryMessage(final IBuildingView building)
     {
-        super(building.getColony());
+        super(TYPE, building.getColony());
         inventoryType = InventoryType.INVENTORY_CHEST;
         name = "";
         tePos = building.getID();
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected OpenInventoryMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
 
         inventoryType = InventoryType.values()[buf.readInt()];
         name = buf.readUtf(32767);
@@ -99,8 +94,9 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
 
         buf.writeInt(inventoryType.ordinal());
         buf.writeUtf(name);
@@ -116,13 +112,8 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        final ServerPlayer player = ctxIn.getSender();
-        if (player == null)
-        {
-            return;
-        }
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:

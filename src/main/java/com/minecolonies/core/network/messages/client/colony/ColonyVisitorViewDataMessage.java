@@ -1,38 +1,41 @@
 package com.minecolonies.core.network.messages.client.colony;
 
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 /**
  * Sends visitor data to the client
  */
-public class ColonyVisitorViewDataMessage implements IMessage
+public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_visitor_view_data", ColonyVisitorViewDataMessage::new);
+
     /**
      * The colony id
      */
-    private int colonyId;
+    private final int colonyId;
 
     /**
      * The dimension the citizen is in.
      */
-    private ResourceKey<Level> dimension;
+    private final ResourceKey<Level> dimension;
 
     /**
      * Visiting entity data
@@ -42,20 +45,12 @@ public class ColonyVisitorViewDataMessage implements IMessage
     /**
      * Visitor buf to read on client side.
      */
-    private FriendlyByteBuf visitorBuf;
+    private final FriendlyByteBuf visitorBuf;
 
     /**
      * If a general refresh is necessary,
      */
-    private boolean refresh;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public ColonyVisitorViewDataMessage()
-    {
-        super();
-    }
+    private final boolean refresh;
 
     /**
      * Updates a {@link com.minecolonies.core.colony.CitizenDataView} of the citizens.
@@ -64,7 +59,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
      */
     public ColonyVisitorViewDataMessage(@NotNull final IColony colony, @NotNull final Set<IVisitorData> visitors, final boolean refresh)
     {
-        super();
+        super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
         this.visitors = visitors;
@@ -78,9 +73,9 @@ public class ColonyVisitorViewDataMessage implements IMessage
         }
     }
 
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    public ColonyVisitorViewDataMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
@@ -88,7 +83,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         visitorBuf.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -98,15 +93,8 @@ public class ColonyVisitorViewDataMessage implements IMessage
         buf.writeBytes(visitorBuf);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
 

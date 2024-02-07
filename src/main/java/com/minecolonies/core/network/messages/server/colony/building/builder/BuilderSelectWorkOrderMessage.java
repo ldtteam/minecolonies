@@ -1,24 +1,21 @@
 package com.minecolonies.core.network.messages.server.colony.building.builder;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage<BuildingBuilder>
 {
-    private int workOrder;
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "builder_select_work_order", BuilderSelectWorkOrderMessage::new);
 
-    /**
-     * Empty standard constructor.
-     */
-    public BuilderSelectWorkOrderMessage()
-    {
-        super();
-    }
+    private final int workOrder;
 
     /**
      * Creates a new BuilderSetManualModeMessage.
@@ -28,24 +25,25 @@ public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage
      */
     public BuilderSelectWorkOrderMessage(@NotNull final IBuildingView building, final int workOrder)
     {
-        super(building);
+        super(TYPE, building);
         this.workOrder = workOrder;
     }
 
-    @Override
-    public void fromBytesOverride(final FriendlyByteBuf buf)
+    protected BuilderSelectWorkOrderMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         workOrder = buf.readInt();
     }
 
     @Override
-    public void toBytesOverride(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeInt(workOrder);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingBuilder building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingBuilder building)
     {
         building.setWorkOrder(workOrder);
     }

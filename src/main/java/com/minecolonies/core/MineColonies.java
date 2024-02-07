@@ -26,21 +26,41 @@ import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.core.colony.IColonyManagerCapability;
+import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.event.*;
 import com.minecolonies.core.loot.SupplyLoot;
+import com.minecolonies.core.network.messages.PermissionsMessage;
+import com.minecolonies.core.network.messages.client.*;
+import com.minecolonies.core.network.messages.client.colony.*;
+import com.minecolonies.core.network.messages.server.*;
+import com.minecolonies.core.network.messages.server.colony.*;
+import com.minecolonies.core.network.messages.server.colony.building.*;
+import com.minecolonies.core.network.messages.server.colony.building.builder.*;
+import com.minecolonies.core.network.messages.server.colony.building.enchanter.*;
+import com.minecolonies.core.network.messages.server.colony.building.fields.*;
+import com.minecolonies.core.network.messages.server.colony.building.guard.*;
+import com.minecolonies.core.network.messages.server.colony.building.home.*;
+import com.minecolonies.core.network.messages.server.colony.building.miner.*;
+import com.minecolonies.core.network.messages.server.colony.building.postbox.*;
+import com.minecolonies.core.network.messages.server.colony.building.university.*;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.*;
+import com.minecolonies.core.network.messages.server.colony.building.worker.*;
+import com.minecolonies.core.network.messages.server.colony.citizen.*;
 import com.minecolonies.core.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
+import com.minecolonies.core.research.GlobalResearchTreeMessage;
 import com.minecolonies.core.structures.MineColoniesStructures;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -53,6 +73,8 @@ import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
@@ -159,8 +181,6 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        Network.getNetwork().registerCommonMessages();
-
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
@@ -231,5 +251,152 @@ public class MineColonies
     public static Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig()
     {
         return config;
+    }
+
+    @SubscribeEvent
+    public static void onNetworkRegistry(final RegisterPayloadHandlerEvent event)
+    {
+        final String modVersion = ModList.get().getModContainerById(Constants.MOD_ID).get().getModInfo().getVersion().toString();
+        final IPayloadRegistrar registry = event.registrar(Constants.MOD_ID).versioned(modVersion);
+        
+        //  ColonyView messages
+        ColonyViewMessage.TYPE.register(registry);
+        ColonyViewCitizenViewMessage.TYPE.register(registry);
+        ColonyViewRemoveCitizenMessage.TYPE.register(registry);
+        ColonyViewBuildingViewMessage.TYPE.register(registry);
+        ColonyViewRemoveBuildingMessage.TYPE.register(registry);
+        ColonyViewFieldsUpdateMessage.TYPE.register(registry);
+        PermissionsMessage.View.TYPE.register(registry);
+        ColonyViewWorkOrderMessage.TYPE.register(registry);
+        ColonyViewRemoveWorkOrderMessage.TYPE.register(registry);
+        UpdateChunkCapabilityMessage.TYPE.register(registry);
+        ColonyViewResearchManagerViewMessage.TYPE.register(registry);
+
+        //  Permission Request messages
+        PermissionsMessage.Permission.TYPE.register(registry);
+        PermissionsMessage.AddPlayer.TYPE.register(registry);
+        PermissionsMessage.RemovePlayer.TYPE.register(registry);
+        PermissionsMessage.ChangePlayerRank.TYPE.register(registry);
+        PermissionsMessage.AddPlayerOrFakePlayer.TYPE.register(registry);
+        PermissionsMessage.AddRank.TYPE.register(registry);
+        PermissionsMessage.RemoveRank.TYPE.register(registry);
+        PermissionsMessage.EditRankType.TYPE.register(registry);
+        PermissionsMessage.SetSubscriber.TYPE.register(registry);
+
+        //  Colony Request messages
+        BuildRequestMessage.TYPE.register(registry);
+        OpenInventoryMessage.TYPE.register(registry);
+        TownHallRenameMessage.TYPE.register(registry);
+        MinerSetLevelMessage.TYPE.register(registry);
+        RecallCitizenMessage.TYPE.register(registry);
+        HireFireMessage.TYPE.register(registry);
+        WorkOrderChangeMessage.TYPE.register(registry);
+        AssignFieldMessage.TYPE.register(registry);
+        AssignmentModeMessage.TYPE.register(registry);
+        GuardSetMinePosMessage.TYPE.register(registry);
+        RecallCitizenHutMessage.TYPE.register(registry);
+        TransferItemsRequestMessage.TYPE.register(registry);
+        MarkBuildingDirtyMessage.TYPE.register(registry);
+        ChangeFreeToInteractBlockMessage.TYPE.register(registry);
+        CreateColonyMessage.TYPE.register(registry);
+        ColonyDeleteOwnMessage.TYPE.register(registry);
+        ColonyViewRemoveMessage.TYPE.register(registry);
+        GiveToolMessage.TYPE.register(registry);
+
+        AssignUnassignMessage.TYPE.register(registry);
+        OpenCraftingGUIMessage.TYPE.register(registry);
+        AddRemoveRecipeMessage.TYPE.register(registry);
+        ChangeRecipePriorityMessage.TYPE.register(registry);
+        ChangeDeliveryPriorityMessage.TYPE.register(registry);
+        ForcePickupMessage.TYPE.register(registry);
+        UpgradeWarehouseMessage.TYPE.register(registry);
+        TransferItemsToCitizenRequestMessage.TYPE.register(registry);
+        UpdateRequestStateMessage.TYPE.register(registry);
+        BuildingSetStyleMessage.TYPE.register(registry);
+        RecallSingleCitizenMessage.TYPE.register(registry);
+        AssignFilterableItemMessage.TYPE.register(registry);
+        TeamColonyColorChangeMessage.TYPE.register(registry);
+        ColonyFlagChangeMessage.TYPE.register(registry);
+        ColonyStructureStyleMessage.TYPE.register(registry);
+        PauseCitizenMessage.TYPE.register(registry);
+        RestartCitizenMessage.TYPE.register(registry);
+        SortWarehouseMessage.TYPE.register(registry);
+        PostBoxRequestMessage.TYPE.register(registry);
+        HireMercenaryMessage.TYPE.register(registry);
+        HutRenameMessage.TYPE.register(registry);
+        BuildingHiringModeMessage.TYPE.register(registry);
+        DecorationBuildRequestMessage.TYPE.register(registry);
+        DirectPlaceMessage.TYPE.register(registry);
+        TeleportToColonyMessage.TYPE.register(registry);
+        EnchanterWorkerSetMessage.TYPE.register(registry);
+        InteractionResponse.TYPE.register(registry);
+        TryResearchMessage.TYPE.register(registry);
+        HireSpiesMessage.TYPE.register(registry);
+        AddMinimumStockToBuildingModuleMessage.TYPE.register(registry);
+        RemoveMinimumStockFromBuildingModuleMessage.TYPE.register(registry);
+        FarmFieldPlotResizeMessage.TYPE.register(registry);
+        FarmFieldUpdateSeedMessage.TYPE.register(registry);
+        AdjustSkillCitizenMessage.TYPE.register(registry);
+        BuilderSelectWorkOrderMessage.TYPE.register(registry);
+        TriggerSettingMessage.TYPE.register(registry);
+        AssignFilterableEntityMessage.TYPE.register(registry);
+        BuildPickUpMessage.TYPE.register(registry);
+        SwitchBuildingWithToolMessage.TYPE.register(registry);
+        ColonyTextureStyleMessage.TYPE.register(registry);
+        MinerRepairLevelMessage.TYPE.register(registry);
+        PlantationFieldBuildRequestMessage.TYPE.register(registry);
+        ResetFilterableItemMessage.TYPE.register(registry);
+        CourierHiringModeMessage.TYPE.register(registry);
+        QuarryHiringModeMessage.TYPE.register(registry);
+        ToggleRecipeMessage.TYPE.register(registry);
+        ColonyNameStyleMessage.TYPE.register(registry);
+        InteractionClose.TYPE.register(registry);
+
+        //Client side only
+        BlockParticleEffectMessage.TYPE.register(registry);
+        CompostParticleMessage.TYPE.register(registry);
+        ItemParticleEffectMessage.TYPE.register(registry);
+        LocalizedParticleEffectMessage.TYPE.register(registry);
+        UpdateChunkRangeCapabilityMessage.TYPE.register(registry);
+        OpenSuggestionWindowMessage.TYPE.register(registry);
+        UpdateClientWithCompatibilityMessage.TYPE.register(registry);
+        CircleParticleEffectMessage.TYPE.register(registry);
+        StreamParticleEffectMessage.TYPE.register(registry);
+        SleepingParticleMessage.TYPE.register(registry);
+        VanillaParticleMessage.TYPE.register(registry);
+        StopMusicMessage.TYPE.register(registry);
+        PlayAudioMessage.TYPE.register(registry);
+        PlayMusicAtPosMessage.TYPE.register(registry);
+        ColonyVisitorViewDataMessage.TYPE.register(registry);
+        SyncPathMessage.TYPE.register(registry);
+        SyncPathReachedMessage.TYPE.register(registry);
+        ReactivateBuildingMessage.TYPE.register(registry);
+        PlaySoundForCitizenMessage.TYPE.register(registry);
+        OpenDecoBuildWindowMessage.TYPE.register(registry);
+        OpenPlantationFieldBuildWindowMessage.TYPE.register(registry);
+        SaveStructureNBTMessage.TYPE.register(registry);
+        GlobalQuestSyncMessage.TYPE.register(registry);
+
+        //JEI Messages
+        TransferRecipeCraftingTeachingMessage.TYPE.register(registry);
+
+        //Advancement Messages
+        OpenGuiWindowTriggerMessage.TYPE.register(registry);
+        ClickGuiButtonTriggerMessage.TYPE.register(registry);
+
+        // Colony-Independent items
+        RemoveFromRallyingListMessage.TYPE.register(registry);
+        ToggleBannerRallyGuardsMessage.TYPE.register(registry);
+
+        // Research-related messages.
+        GlobalResearchTreeMessage.TYPE.register(registry);
+
+        // Crafter Recipe-related messages
+        CustomRecipeManagerMessage.TYPE.register(registry);
+
+        ColonyListMessage.TYPE.register(registry);
+
+        // Resource scroll NBT share message
+        ResourceScrollSaveWarehouseSnapshotMessage.TYPE.register(registry);
     }
 }

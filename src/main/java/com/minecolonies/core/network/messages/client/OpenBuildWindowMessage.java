@@ -1,18 +1,19 @@
 package com.minecolonies.core.network.messages.client;
 
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.api.RotationMirror;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.client.gui.WindowBuildDecoration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Message to open the build window, for example for decorations.
  */
-public abstract class OpenBuildWindowMessage implements IMessage
+public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
 {
     /**
      * Town hall position to create building on.
@@ -34,11 +35,6 @@ public abstract class OpenBuildWindowMessage implements IMessage
      */
     protected RotationMirror rotationMirror;
 
-    protected OpenBuildWindowMessage()
-    {
-        super();
-    }
-
     /**
      * Create a new message.
      *
@@ -46,8 +42,9 @@ public abstract class OpenBuildWindowMessage implements IMessage
      * @param packName the pack of the deco.
      * @param path     the path in the pack.
      */
-    protected OpenBuildWindowMessage(final BlockPos pos, final String packName, final String path, final RotationMirror rotMir)
+    protected OpenBuildWindowMessage(final PlayMessageType<?> type, final BlockPos pos, final String packName, final String path, final RotationMirror rotMir)
     {
+        super(type);
         this.pos = pos;
         this.path = path;
         this.packName = packName;
@@ -55,7 +52,7 @@ public abstract class OpenBuildWindowMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.path);
@@ -63,9 +60,9 @@ public abstract class OpenBuildWindowMessage implements IMessage
         buf.writeByte(this.rotationMirror.ordinal());
     }
 
-    @Override
-    public void fromBytes(final FriendlyByteBuf buf)
+    protected OpenBuildWindowMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.pos = buf.readBlockPos();
         this.path = buf.readUtf(32767);
         this.packName = buf.readUtf(32767);
@@ -73,16 +70,10 @@ public abstract class OpenBuildWindowMessage implements IMessage
     }
 
     @Override
-    public final @NotNull LogicalSide getExecutionSide()
-    {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    public final void onExecute(final PlayPayloadContext context, final Player player)
     {
         new WindowBuildDecoration(this.pos, this.packName, this.path, this.rotationMirror, this::createWorkOrderMessage).open();
     }
 
-    protected abstract IMessage createWorkOrderMessage(BlockPos builder);
+    protected abstract AbstractServerPlayMessage createWorkOrderMessage(BlockPos builder);
 }
