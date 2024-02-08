@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
@@ -146,39 +147,38 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos    the location of the action which was denied
      */
-    private void cancelEvent(final Event event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
+    private void cancelEvent(final ICancellableEvent event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
     {
         event.setResult(Event.Result.DENY);
-        if (event.isCancelable())
+        // TODO: this is event specific now, needs per method call site evaluation
+
+        event.setCanceled(true);
+        if (entity == null)
         {
-            event.setCanceled(true);
-            if (entity == null)
-            {
-                if (colony.hasTownHall())
-                {
-                    colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
-                }
-                return;
-            }
             if (colony.hasTownHall())
             {
-                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
+                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
             }
+            return;
+        }
+        if (colony.hasTownHall())
+        {
+            colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
+        }
 
 
-            if (entity instanceof FakePlayer)
-            {
-                return;
-            }
+        if (entity instanceof FakePlayer)
+        {
+            return;
+        }
 
-            final long worldTime = entity.level().getGameTime();
-            if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
-                  || lastPlayerNotificationTick.get(entity.getUUID()) + (Constants.TICKS_SECOND * 10)
-                       < worldTime)
-            {
-                MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
-                lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
-            }
+        final long worldTime = entity.level().getGameTime();
+        if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
+                || lastPlayerNotificationTick.get(entity.getUUID()) + (Constants.TICKS_SECOND * 10)
+                    < worldTime)
+        {
+            MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
+            lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
         }
     }
 
@@ -320,6 +320,7 @@ public class ColonyPermissionEventHandler
             if (event instanceof PlayerInteractEvent.RightClickBlock && block instanceof AbstractBlockHut
                   && !colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_HUTS))
             {
+                // TODO: subscribing abstract event will crash, this needs split
                 cancelEvent(event, event.getEntity(), colony, Action.ACCESS_HUTS, event.getPos());
                 return;
             }
@@ -369,6 +370,7 @@ public class ColonyPermissionEventHandler
                 if (stack.getItem() instanceof ItemScanTool
                       && !perms.hasPermission(event.getEntity(), Action.USE_SCAN_TOOL))
                 {
+                    // TODO: subscribing abstract event will crash, this needs split
                     cancelEvent(event, event.getEntity(), colony, Action.USE_SCAN_TOOL, event.getPos());
                 }
             }
@@ -417,7 +419,7 @@ public class ColonyPermissionEventHandler
      * @return true if canceled.
      */
     private boolean checkEventCancelation(
-      final Action action, @NotNull final Player playerIn, @NotNull final Level world, @NotNull final Event event,
+      final Action action, @NotNull final Player playerIn, @NotNull final Level world, @NotNull final ICancellableEvent event,
       @Nullable final BlockPos pos)
     {
         @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);

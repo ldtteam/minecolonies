@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import journeymap.client.api.display.Context;
-import journeymap.client.api.event.forge.EntityRadarUpdateEvent;
+import journeymap.client.api.event.EntityRadarUpdateEvent;
 import journeymap.client.api.model.WrappedEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -93,7 +93,7 @@ public class EventListener
     public void onUpdateEntityRadar(@NotNull final EntityRadarUpdateEvent event)
     {
         final WrappedEntity wrapper = event.getWrappedEntity();
-        final LivingEntity entity = wrapper.getEntityLivingRef().get();
+        final Entity entity = wrapper.getEntityRef().get();
 
         if (entity instanceof AbstractEntityCitizen)
         {

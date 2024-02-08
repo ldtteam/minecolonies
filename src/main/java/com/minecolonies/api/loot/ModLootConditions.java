@@ -28,10 +28,10 @@ public final class ModLootConditions
     static
     {
         entityInBiomeTag = DEFERRED_REGISTER.register(ModLootConditions.ENTITY_IN_BIOME_TAG_ID.getPath(),
-          () -> new LootItemConditionType(new EntityInBiomeTag.Serializer()));
+          () -> new LootItemConditionType(EntityInBiomeTag.CODEC));
 
         researchUnlocked = DEFERRED_REGISTER.register(ModLootConditions.RESEARCH_UNLOCKED_ID.getPath(),
-          () -> new LootItemConditionType(new ResearchUnlocked.Serializer()));
+          () -> new LootItemConditionType(ResearchUnlocked.CODEC));
     }
 
 

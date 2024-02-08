@@ -44,12 +44,6 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
     }
 
     @Override
-    public String getName()
-    {
-        return "Fisherman Loot";
-    }
-
-    @Override
     protected void validate(@NotNull final Map<ResourceLocation, LootTable> map,
                             @NotNull final ValidationContext validationtracker)
     {

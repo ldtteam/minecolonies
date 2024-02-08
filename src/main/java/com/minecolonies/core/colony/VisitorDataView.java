@@ -2,8 +2,7 @@ package com.minecolonies.core.colony;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorViewData;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -12,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -73,16 +71,18 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         }
         if (cachedTexture == null)
         {
-            cachedTexture = DefaultPlayerSkin.getDefaultSkin(textureUUID);
+            cachedTexture = DefaultPlayerSkin.get(textureUUID).texture();
             Util.backgroundExecutor().execute(() ->
             {
                 Minecraft minecraft = Minecraft.getInstance();
-                final GameProfile profile = new GameProfile(textureUUID, "mcoltexturequery");
-                minecraft.getMinecraftSessionService().fillProfileProperties(profile, true);
-                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
-                if (!map.isEmpty())
+                final ProfileResult profile = minecraft.getMinecraftSessionService().fetchProfile(textureUUID, true);
+                if (profile != null)
                 {
-                    cachedTexture = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+                    final ResourceLocation newTexture = minecraft.getSkinManager().getInsecureSkin(profile.profile()).texture();
+                    if (newTexture != null)
+                    {
+                        cachedTexture = newTexture;
+                    }
                 }
             });
         }

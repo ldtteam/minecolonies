@@ -388,7 +388,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         final BlockState curBlockState = world.getBlockState(position);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if ((curBlockState.isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock)) || curBlockState.liquid())
+        if ((curBlockState.isSolid() && !(curBlock instanceof PumpkinBlock) && curBlock != Blocks.MELON && !(curBlock instanceof WebBlock)) || curBlockState.liquid())
         {
             if (depth < 0)
             {

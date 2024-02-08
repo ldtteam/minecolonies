@@ -565,7 +565,7 @@ public class EventHandler
      * @param event  the event.
      * @param player the player causing it.
      */
-    private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final Player player)
+    private static void handleEventCancellation(@NotNull final PlayerInteractEvent.RightClickBlock event, @NotNull final Player player)
     {
         final Block heldBlock = Block.byItem(event.getItemStack().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockScarecrow)
@@ -762,7 +762,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event)
     {
-        final double lastTickMs = event.getServer().tickTimes[event.getServer().getTickCount() % 100] * 1.0E-6D;
+        final double lastTickMs = event.getServer().getTickTimesNanos()[event.getServer().getTickCount() % 100] * 1.0E-6D;
         if (lastTickMs > 50)
         {
             TickRateStateMachine.slownessFactor = Mth.clamp(lastTickMs / 50, 1.0D, 5.0D);

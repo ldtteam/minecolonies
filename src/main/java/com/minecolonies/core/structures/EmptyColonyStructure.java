@@ -101,6 +101,7 @@ public class EmptyColonyStructure extends Structure
                   JigsawPlacement.addPieces(
                     context,
                     this.startPool,
+                    // TODO: missing resloc - looks like registry something..
                     this.startJigsawName,
                     this.size,
                     result,
@@ -133,6 +134,7 @@ public class EmptyColonyStructure extends Structure
           JigsawPlacement.addPieces(
             context,
             this.startPool,
+            // TODO: missing resloc - looks like registry something..
             this.startJigsawName,
             this.size,
             blockpos,

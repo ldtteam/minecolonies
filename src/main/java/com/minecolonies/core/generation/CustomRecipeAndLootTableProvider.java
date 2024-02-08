@@ -4,7 +4,6 @@ import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -60,13 +59,6 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
         public ChildLootTableProvider(@NotNull final PackOutput packOutput)
         {
             super(packOutput);
-        }
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return CustomRecipeAndLootTableProvider.this.getName() + " loot tables";
         }
 
         @Override

@@ -80,16 +80,9 @@ public class ColorPalette
         }
 
         @Override
-        public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
-        {
-            this.active = selected != this.color;
-
-            super.render(stack, mouseX, mouseY, partialTicks);
-        }
-
-        @Override
         public void renderWidget(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
         {
+            this.active = selected != this.color;
             int color = this.color.getTextColor();
             boolean pressed = selected == this.color;
 

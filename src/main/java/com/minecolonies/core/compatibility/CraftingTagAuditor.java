@@ -142,23 +142,16 @@ public class CraftingTagAuditor
             writer.write('"');
             writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
             writer.write('"');
-            BuiltInRegistries.BLOCK.tags().getReverseTag(entry.getValue()).ifPresent(tags ->
-            {
-                tags.getTagKeys()
-                        .map(t -> t.location().toString())
-                        .sorted()
-                        .forEach(t ->
-                        {
-                            try
-                            {
-                                writer.write(',');
-                                writer.write(t);
-                            }
-                            catch (IOException e)
-                            {
-                                e.printStackTrace();
-                            }
-                        });
+            entry.getValue().builtInRegistryHolder().tags().map(t -> t.location().toString()).sorted().forEach(t -> {
+                try
+                {
+                    writer.write(',');
+                    writer.write(t);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             });
             writer.newLine();
         }

@@ -189,10 +189,10 @@ public class WindowBannerPicker extends Screen
                 pressed -> layers.remove(activeLayer), DEFAULT_NARRATION)
         {
             @Override
-            public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
+            public void renderWidget(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
             {
                 this.active = activeLayer < layers.size() && activeLayer != 0; // TODO: port this last vital condition
-                super.render(stack, mouseX, mouseY, partialTicks);
+                super.renderWidget(stack, mouseX, mouseY, partialTicks);
             }
         });
     }
@@ -278,7 +278,6 @@ public class WindowBannerPicker extends Screen
     @Override
     public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
         drawFlag();
 
@@ -357,6 +356,7 @@ public class WindowBannerPicker extends Screen
         this.modelRender.xRot= 0.0F;
         this.modelRender.y = -32.0F;
 
+        // TODO: move to guigraphics buffer
         MultiBufferSource.BufferSource source = this.minecraft.renderBuffers().bufferSource();
         BannerRenderer.renderPatterns(
                 transform,
@@ -372,11 +372,11 @@ public class WindowBannerPicker extends Screen
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY)
     {
         if (activeLayer > 0) {
             this.scrollRow = (int) Mth.clamp(
-                    this.scrollRow - scroll,
+                    this.scrollRow - scrollY,
                     0,
                     Math.ceil(this.patterns.size() / PATTERN_COLUMNS) - PATTERN_ROWS + 1 // Extra 1 so it is inclusive
             );
@@ -459,10 +459,10 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void render(final GuiGraphics stack, int p_render_1_, int p_render_2_, float p_render_3_)
+        public void renderWidget(final GuiGraphics stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.active = this.layer <= layers.size();
-            super.render(stack, p_render_1_, p_render_2_, p_render_3_);
+            super.renderWidget(stack, p_render_1_, p_render_2_, p_render_3_);
 
             if (activeLayer == this.layer)
                 stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x66DD99FF);
@@ -503,7 +503,7 @@ public class WindowBannerPicker extends Screen
         public void onPress() { setLayer(this.pattern, colors.getSelected()); }
 
         @Override
-        public void render(final GuiGraphics stack, int p_render_1_, int p_render_2_, float p_render_3_)
+        public void renderWidget(final GuiGraphics stack, int mx, int my, float p_renderButton_3_)
         {
             this.visible = scrollRow * PATTERN_COLUMNS <= this.index && this.index < PATTERN_COLUMNS * (scrollRow + PATTERN_ROWS);
             this.active = activeLayer != 0;
@@ -512,23 +512,10 @@ public class WindowBannerPicker extends Screen
 
             int position = Math.floorDiv(this.index - scrollRow*PATTERN_COLUMNS, PATTERN_COLUMNS);
             this.setY(center(WindowBannerPicker.this.height, PATTERN_ROWS, PATTERN_HEIGHT, position, PATTERN_MARGIN));
+            this.isHovered = mx >= this.getX() && my >= this.getY() && mx < this.getX() + this.width && my < this.getY() + this.height;
 
-            super.render(stack, p_render_1_, p_render_2_, p_render_3_);
+            super.renderWidget(stack, mx, my, p_renderButton_3_);
 
-            try
-            {
-                drawBannerPattern(this.pattern, this.getX(), this.getY());
-            }
-            catch (final Exception ex)
-            {
-                Log.getLogger().warn(pattern.value().getHashname());
-                Log.getLogger().error(ex);
-            }
-        }
-
-        @Override
-        public void renderWidget(final GuiGraphics stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
-        {
             if (this.visible)
             {
                 if (this.isHovered && this.active)
@@ -539,6 +526,16 @@ public class WindowBannerPicker extends Screen
 
                 else
                     stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x33888888);
+            }
+
+            try
+            {
+                drawBannerPattern(this.pattern, this.getX(), this.getY());
+            }
+            catch (final Exception ex)
+            {
+                Log.getLogger().warn(pattern.value().getHashname());
+                Log.getLogger().error(ex);
             }
         }
     }

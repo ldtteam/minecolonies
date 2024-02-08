@@ -49,9 +49,9 @@ public class CombatUtils
 
         // Mod compat, some mods expect it to be set before using their Bows to create a custom arrow *looks at TF*
         arrowEntity.setOwner(shooter);
-        if (rangedWeaponItem instanceof BowItem)
+        if (rangedWeaponItem instanceof final BowItem bow)
         {
-            arrowEntity = ((BowItem) rangedWeaponItem).customArrow(arrowEntity);
+            arrowEntity = bow.customArrow(arrowEntity, asd); // TODO: should be arrow stack
         }
         else if (rangedWeaponItem instanceof ItemSpear)
         {

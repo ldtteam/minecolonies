@@ -188,9 +188,9 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
-                return building.getColony().getNameFileIds().get(index);
+                return Component.literal(building.getColony().getNameFileIds().get(index));
             }
         });
     }

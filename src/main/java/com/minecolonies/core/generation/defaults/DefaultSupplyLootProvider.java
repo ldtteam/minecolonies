@@ -29,13 +29,6 @@ public class DefaultSupplyLootProvider extends SimpleLootTableProvider
         super(packOutput);
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "Supplies Loot Table Provider";
-    }
-
     @Override
     protected void registerTables(@NotNull final LootTableRegistrar registrar)
     {

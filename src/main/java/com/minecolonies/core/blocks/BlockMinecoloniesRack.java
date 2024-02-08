@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.Direction;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
@@ -284,5 +285,11 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     public @NotNull Collection<IMateriallyTexturedBlockComponent> getComponents()
     {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void buildRecipes(final RecipeOutput recipeOutput)
+    {
+        // noop, for DO blocks only        
     }
 }

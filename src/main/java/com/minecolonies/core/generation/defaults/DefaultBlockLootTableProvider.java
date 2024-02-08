@@ -40,12 +40,6 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
     }
 
     @Override
-    public String getName()
-    {
-        return "Mcol Loot";
-    }
-
-    @Override
     protected void registerTables(@NotNull final LootTableRegistrar registrar)
     {
         saveBlocks(Arrays.asList(ModBlocks.getHuts()), registrar);

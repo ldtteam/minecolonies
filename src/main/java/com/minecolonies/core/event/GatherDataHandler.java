@@ -32,7 +32,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultBlockLootTableProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultEntityLootProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultSupplyLootProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultDamageTypeProvider(generator.getPackOutput(), event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new DefaultDamageTypeProvider(generator.getPackOutput(), event.getExistingFileHelper(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultAdvancementsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new DefaultItemTagsProvider(generator.getPackOutput(), event.getLookupProvider(), blockTagsProvider, event.getExistingFileHelper()));

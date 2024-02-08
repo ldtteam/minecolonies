@@ -27,13 +27,6 @@ public class DefaultRecipeLootProvider extends SimpleLootTableProvider
         super(packOutput);
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "DefaultRecipeLootProvider";
-    }
-
     @Override
     protected void registerTables(@NotNull final LootTableRegistrar registrar)
     {

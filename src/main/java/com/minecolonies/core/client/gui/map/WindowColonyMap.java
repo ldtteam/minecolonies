@@ -63,7 +63,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * The zoomable view
      */
-    private final ZoomDragMap dragView;
+    private final ZoomDragView dragView;
 
     /**
      * Colony data beeing currently displayed
@@ -104,13 +104,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         this.building = building;
         playerPos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), 0, Minecraft.getInstance().player.blockPosition().getZ());
         final ZoomDragView parent = findPaneOfTypeByID("dragView", ZoomDragView.class);
-        dragView = new ZoomDragMap();
+        dragView = new ZoomDragView();
         dragView.setSize(parent.getWidth(), parent.getHeight());
         dragView.setPosition(parent.getX(), parent.getY());
-        dragView.enable();
-        dragView.setVisible(true);
-        dragView.setFocus();
-        dragView.setWindow(this);
         parent.addChild(dragView);
         if (addMaps())
         {
@@ -160,7 +156,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             mapImage.setID("map" + mapData.centerX + "-" + mapData.centerZ);
             mapImage.setMapData(mapData);
             mapImage.setSize((int) (512*currentScale), (int) (512*currentScale));
-            dragView.addChildFirst(mapImage);
+            dragView.addChild(mapImage, 0);
             maps.add(mapImage);
         }
 

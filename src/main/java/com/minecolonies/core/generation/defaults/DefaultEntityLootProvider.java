@@ -31,13 +31,6 @@ public class DefaultEntityLootProvider extends SimpleLootTableProvider
         super(packOutput);
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "Entity Loot Table Provider";
-    }
-
     @Override
     protected void registerTables(@NotNull final LootTableRegistrar registrar)
     {
