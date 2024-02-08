@@ -1,0 +1,160 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "gui/minecolonies",
+      "prefix": ""
+    },
+    {
+      "type": "unstitch",
+      "resource": "gui/mcol_unstitch/building/scarecrow",
+      "regions": [
+        {
+          "sprite": "building/scarecrow/south/dark",
+          "x": 0,
+          "y": 0,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/west/dark",
+          "x": 24,
+          "y": 0,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/north/dark",
+          "x": 48,
+          "y": 0,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/east/dark",
+          "x": 72,
+          "y": 0,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/south",
+          "x": 0,
+          "y": 24,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/west",
+          "x": 24,
+          "y": 24,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/north",
+          "x": 48,
+          "y": 24,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/east",
+          "x": 72,
+          "y": 24,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/south/light",
+          "x": 0,
+          "y": 48,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/west/light",
+          "x": 24,
+          "y": 48,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/north/light",
+          "x": 48,
+          "y": 48,
+          "width": 24,
+          "height": 24
+        },
+        {
+          "sprite": "building/scarecrow/east/light",
+          "x": 72,
+          "y": 48,
+          "width": 24,
+          "height": 24
+        }
+      ]
+    },
+    {
+      "type": "unstitch",
+      "resource": "gui/mcol_unstitch/citizen/green_bluehearts",
+      "regions": [
+        {
+          "sprite": "citizen/heart/green",
+          "x": 0,
+          "y": 0,
+          "width": 9,
+          "height": 9
+        },
+        {
+          "sprite": "citizen/heart/green_half",
+          "x": 8,
+          "y": 0,
+          "width": 9,
+          "height": 9
+        },
+        {
+          "sprite": "citizen/heart/blue",
+          "x": 0,
+          "y": 8,
+          "width": 9,
+          "height": 9
+        },
+        {
+          "sprite": "citizen/heart/blue_half",
+          "x": 8,
+          "y": 8,
+          "width": 9,
+          "height": 9
+        }
+      ]
+    },
+    {
+      "type": "unstitch",
+      "resource": "gui/mcol_unstitch/citizen/smileys",
+      "regions": [
+        {
+          "sprite": "citizen/smiley/empty",
+          "x": 16,
+          "y": 0,
+          "width": 9,
+          "height": 9
+        },
+        {
+          "sprite": "citizen/smiley/full",
+          "x": 52,
+          "y": 0,
+          "width": 9,
+          "height": 9
+        },
+        {
+          "sprite": "citizen/smiley/half",
+          "x": 61,
+          "y": 0,
+          "width": 9,
+          "height": 9
+        }
+      ]
+    }
+  ]
+}

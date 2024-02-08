@@ -52,10 +52,9 @@ public class CitizenWindowUtils
      */
     private enum SmileyEnum
     {
-        // TODO: unstitch atlas at src\main\resources\assets\minecolonies\textures\gui\citizen\icons.png
-        EMPTY(new ResourceLocation(Constants.MOD_ID, null), EMPTY_HEART_VALUE, null, null),
-        HALF_RED(new ResourceLocation(Constants.MOD_ID, null), RED_HEART_VALUE - 1, null, EMPTY),
-        RED(new ResourceLocation(Constants.MOD_ID, null), RED_HEART_VALUE, HALF_RED, EMPTY);
+        EMPTY(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/empty"), EMPTY_HEART_VALUE, null, null),
+        HALF_RED(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/full"), RED_HEART_VALUE, HALF_RED, EMPTY);
 
         public final int happinessValue;
         public final SmileyEnum prevSmiley;
@@ -91,12 +90,11 @@ public class CitizenWindowUtils
         HALF_GOLDEN(new ResourceLocation("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
         GOLDEN(new ResourceLocation("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
 
-        // TODO: unstitch atlas at src\main\resources\assets\minecolonies\textures\gui\citizen\green_bluehearts.png
-        HALF_GREEN(new ResourceLocation(Constants.MOD_ID, null), GREEN_HEART_VALUE - 1, null, GOLDEN),
-        GREEN(new ResourceLocation(Constants.MOD_ID, null), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
+        HALF_GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green_half"), GREEN_HEART_VALUE - 1, null, GOLDEN),
+        GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green"), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
 
-        HALF_BLUE(new ResourceLocation(Constants.MOD_ID, null), BLUE_HEART_VALUE - 1, null, GREEN),
-        BLUE(new ResourceLocation(Constants.MOD_ID, null), BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+        HALF_BLUE(new ResourceLocation(Constants.MOD_ID, "citizen/heart/blue_half"), BLUE_HEART_VALUE - 1, null, GREEN),
+        BLUE(new ResourceLocation(Constants.MOD_ID, "citizen/heart/blue"), BLUE_HEART_VALUE, HALF_BLUE, GREEN);
 
         public final int              hpValue;
         public final HeartsEnum       prevHeart;

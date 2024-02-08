@@ -83,12 +83,7 @@ public class WindowField extends AbstractWindowSkeleton
     /**
      * The resource location of the GUI background.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/scarecrow.png");
-
-    /**
-     * The width and height of the directional buttons (they're square)
-     */
-    private static final int BUTTON_SIZE = 24;
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "building/scarecrow/");
 
     /**
      * The tile entity of the scarecrow.
@@ -283,18 +278,17 @@ public class WindowField extends AbstractWindowSkeleton
             ButtonImage button = findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class);
             button.setEnabled(!Objects.isNull(farmField));
 
-            int buttonState = 1;
+            String buttonState = null;
             if (!button.isEnabled())
             {
-                buttonState = 0;
+                buttonState = "dark";
             }
             else if (button.wasCursorInPane())
             {
-                buttonState = 2;
+                buttonState = "light";
             }
 
-            // TODO: unstitch atlas or split texture
-            button.setImage(TEXTURE, dir.get2DDataValue() * BUTTON_SIZE, buttonState * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
+            button.setImage(TEXTURE.withSuffix(dir.getName() + (buttonState == null ? "" : "/" + buttonState)));
             button.setText(Component.literal(String.valueOf(Objects.isNull(farmField) ? "" : farmField.getRadius(dir))));
 
             PaneBuilders.tooltipBuilder()

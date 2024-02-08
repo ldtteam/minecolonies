@@ -1,5 +1,6 @@
 package com.minecolonies.core.event;
 
+import com.ldtteam.blockui.AtlasManager;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -71,6 +72,9 @@ public class TextureReloadListener extends SimplePreparableReloadListener<Textur
     public static void modInitClient(final RegisterClientReloadListenersEvent event)
     {
         event.registerReloadListener(new TextureReloadListener());
+
+        // registry minecolonies gui atlas
+        AtlasManager.INSTANCE.addAtlas(event::registerReloadListener, Constants.MOD_ID);
     }
 }
 
