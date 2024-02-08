@@ -31,7 +31,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
-import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 
 import net.minecraft.network.chat.Component;
 
@@ -40,8 +39,6 @@ import net.minecraft.network.chat.Component;
  */
 public class CitizenWindowUtils
 {
-    public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
-
     /**
      * Private con to hide public.
      */
@@ -55,12 +52,11 @@ public class CitizenWindowUtils
      */
     private enum SmileyEnum
     {
-        EMPTY(HAPPINESS_ICONS_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
-        HALF_RED(HAPPINESS_ICONS_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
-        RED(HAPPINESS_ICONS_LOCATION, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY);
+        // TODO: unstitch atlas at src\main\resources\assets\minecolonies\textures\gui\citizen\icons.png
+        EMPTY(new ResourceLocation(Constants.MOD_ID, null), EMPTY_HEART_VALUE, null, null),
+        HALF_RED(new ResourceLocation(Constants.MOD_ID, null), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(new ResourceLocation(Constants.MOD_ID, null), RED_HEART_VALUE, HALF_RED, EMPTY);
 
-        public final int              X;
-        public final int              Y;
         public final int happinessValue;
         public final SmileyEnum prevSmiley;
         public final SmileyEnum halfSmiley;
@@ -68,12 +64,10 @@ public class CitizenWindowUtils
         public final ResourceLocation Image;
 
         SmileyEnum(
-          final ResourceLocation heartImage, final int x, final int y, final int happinessValue,
+          final ResourceLocation heartImage, final int happinessValue,
           final SmileyEnum halfSmiley, final SmileyEnum prevSmiley)
         {
             this.Image = heartImage;
-            this.X = x;
-            this.Y = y;
             this.happinessValue = happinessValue;
             this.halfSmiley = halfSmiley;
             if (halfSmiley == null)
@@ -89,18 +83,21 @@ public class CitizenWindowUtils
      */
     private enum HeartsEnum
     {
-        EMPTY(GUI_ICONS_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
-        HALF_RED(GUI_ICONS_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
-        RED(GUI_ICONS_LOCATION, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY),
-        HALF_GOLDEN(GUI_ICONS_LOCATION, HALF_GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE - 1, null, RED),
-        GOLDEN(GUI_ICONS_LOCATION, GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
-        HALF_GREEN(GREEN_BLUE_ICON, GREEN_HALF_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE - 1, null, GOLDEN),
-        GREEN(GREEN_BLUE_ICON, GREEN_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
-        HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
-        BLUE(GREEN_BLUE_ICON, BLUE_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+        EMPTY(new ResourceLocation("hud/heart/container"), EMPTY_HEART_VALUE, null, null),
 
-        public final int              X;
-        public final int              Y;
+        HALF_RED(new ResourceLocation("hud/heart/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(new ResourceLocation("hud/heart/full"), RED_HEART_VALUE, HALF_RED, EMPTY),
+
+        HALF_GOLDEN(new ResourceLocation("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
+        GOLDEN(new ResourceLocation("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
+
+        // TODO: unstitch atlas at src\main\resources\assets\minecolonies\textures\gui\citizen\green_bluehearts.png
+        HALF_GREEN(new ResourceLocation(Constants.MOD_ID, null), GREEN_HEART_VALUE - 1, null, GOLDEN),
+        GREEN(new ResourceLocation(Constants.MOD_ID, null), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
+
+        HALF_BLUE(new ResourceLocation(Constants.MOD_ID, null), BLUE_HEART_VALUE - 1, null, GREEN),
+        BLUE(new ResourceLocation(Constants.MOD_ID, null), BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+
         public final int              hpValue;
         public final HeartsEnum       prevHeart;
         public final HeartsEnum       halfHeart;
@@ -108,12 +105,10 @@ public class CitizenWindowUtils
         public final ResourceLocation Image;
 
         HeartsEnum(
-          final ResourceLocation heartImage, final int x, final int y, final int hpValue,
+          final ResourceLocation heartImage, final int hpValue,
           final HeartsEnum halfHeart, final HeartsEnum prevHeart)
         {
             this.Image = heartImage;
-            this.X = x;
-            this.Y = y;
             this.hpValue = hpValue;
             this.halfHeart = halfHeart;
             if (halfHeart == null)
@@ -206,7 +201,7 @@ public class CitizenWindowUtils
     private static void addHeart(final View healthBarView, final int heartPos, final HeartsEnum heart)
     {
         @NotNull final Image heartImage = new Image();
-        heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+        heartImage.setImage(heart.Image, false);
         heartImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
         heartImage.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         healthBarView.addChild(heartImage);
@@ -259,9 +254,7 @@ public class CitizenWindowUtils
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION,
-              EMPTY_SATURATION_ITEM_ROW_POS,
-              SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setImage(new ResourceLocation("hud/food_empty"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
 
             saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
@@ -273,7 +266,7 @@ public class CitizenWindowUtils
         for (saturationPos = 0; saturationPos < ((int) curSaturation); saturationPos++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setImage(new ResourceLocation("hud/food_full"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -283,7 +276,7 @@ public class CitizenWindowUtils
         if (curSaturation / 2 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setImage(new ResourceLocation("hud/food_half"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -355,7 +348,7 @@ public class CitizenWindowUtils
     private static void addSmiley(final View happinessBarView, final int happinessPos, final SmileyEnum smiley)
     {
         @NotNull final Image smileyImage = new Image();
-        smileyImage.setImage(smiley.Image, smiley.X, smiley.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+        smileyImage.setImage(smiley.Image, false);
         smileyImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
         smileyImage.setPosition(happinessPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         happinessBarView.addChild(smileyImage);

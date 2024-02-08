@@ -1,7 +1,5 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.resources.ResourceLocation;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -628,122 +626,6 @@ public final class WindowConstants
     public static final String REQUEST_CANCEL = "cancel";
 
     /**
-     * Xp-bar height.
-     */
-    public static final int XP_HEIGHT = 5;
-
-    /**
-     * The x-distance to the left border of the gui of the xpBar.
-     */
-    public static final int LEFT_BORDER_X = 10;
-
-    /**
-     * The y-distance to the top-left border of the gui of the xpBar.
-     */
-    public static final int LEFT_BORDER_Y = 10;
-
-    /**
-     * The column in which the icon starts.
-     */
-    public static final int XP_BAR_ICON_COLUMN = 0;
-
-    /**
-     * The column where the icon ends.
-     */
-    public static final int XP_BAR_ICON_COLUMN_END = 172;
-
-    /**
-     * The width of the end piece of the xpBar.
-     */
-    public static final int XP_BAR_ICON_COLUMN_END_WIDTH = 10;
-
-    /**
-     * The offset where the end should be placed in the GUI.
-     */
-    public static final int XP_BAR_ICON_END_OFFSET = 90;
-
-    /**
-     * The width of the xpBar (Original width is halved to fit in the gui).
-     */
-    public static final int XP_BAR_WIDTH = 182 / 2;
-
-    /**
-     * The row where the emtpy Happiness bar starts.
-     */
-
-    public static final int HAPPINESS_BAR_EMPTY_ROW = 0;
-
-    /**
-     * The row where the full happiness bar starts.
-     */
-    public static final int HAPPINESS_BAR_FULL_ROW = 0;
-
-    /**
-     * X position of the empty heart icon.
-     */
-    public static final int EMPTY_HEART_ICON_X = 16;
-
-    /**
-     * X position of the full red heart icon.
-     */
-    public static final int RED_HEART_ICON_X = 52;
-
-    /**
-     * X position of the half red heart icon.
-     */
-    public static final int HALF_RED_HEART_ICON_X = 61;
-
-    /**
-     * X position of the full golden heart:
-     */
-    public static final int GOLD_HEART_ICON_X = 160;
-
-    /**
-     * X position of the full golden heart:
-     */
-    public static final int HALF_GOLD_HEART_ICON_X = 169;
-
-    /**
-     * Y position of the empty,red,golden heart icons.
-     */
-    public static final int HEART_ICON_MC_Y = 0;
-
-    /**
-     * The resourcelocation for green and blue hearts
-     */
-    public static final ResourceLocation GREEN_BLUE_ICON = new ResourceLocation("minecolonies:textures/gui/citizen/green_bluehearts.png");
-
-    /**
-     * X position of the full green heart
-     */
-    public static final int GREEN_HEART_ICON_X = 0;
-
-    /**
-     * X position of the full green heart
-     */
-    public static final int GREEN_HALF_HEART_ICON_X = 8;
-
-    /**
-     * Y position of the green hearts
-     */
-    public static final int GREEN_HEARTS_ICON_Y = 0;
-
-    /**
-     * X position of the full blue heart
-     */
-    public static final int BLUE_HEART_ICON_X = 0;
-
-    /**
-     * X position of the full blue heart
-     */
-    public static final int BLUE_HALF_HEART_ICON_X = 8;
-
-    /**
-     * Y position of the blue hearts
-     */
-    public static final int BLUE_HEARTS_ICON_Y = 8;
-
-    /**
      * Dimension of the hearts.
      */
     public static final int HEART_ICON_HEIGHT_WIDTH = 9;
@@ -799,11 +681,6 @@ public final class WindowConstants
     public static final int SATURATION_ICON_POS_Y = 10;
 
     /**
-     * Column of the saturation icon.
-     */
-    public static final int SATURATION_ICON_COLUMN = 27;
-
-    /**
      * Dimension of the hearts.
      */
     public static final int SATURATION_ICON_HEIGHT_WIDTH = 9;
@@ -839,21 +716,6 @@ public final class WindowConstants
      * THe label to find the HealthLavel
      */
     public static final String WINDOW_ID_HEALTHLABEL = "healthLabel";
-
-    /**
-     * The position of the empty saturation icon.
-     */
-    public static final int EMPTY_SATURATION_ITEM_ROW_POS = 16;
-
-    /**
-     * The position of the full saturation icon.
-     */
-    public static final int FULL_SATURATION_ITEM_ROW_POS = 16 + 36;
-
-    /**
-     * The position of the half saturation icon.
-     */
-    public static final int HALF_SATURATION_ITEM_ROW_POS = 16 + 45;
 
     /**
      * The saturation bar of the citizen.
