@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD_NAME;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 
 /**
@@ -85,7 +86,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
         if (getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
-            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(
+            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, SKILL_BONUS_ADD_NAME, (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(
               WorkerBuildingModule.class, m -> m.getJobEntry() == this.getJobRegistryEntry()).getSecondarySkill()) / 2.0 ) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
