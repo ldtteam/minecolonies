@@ -39,7 +39,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultEntityTypeTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new DefaultDamageTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new DefaultResearchProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultRecipeProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultRecipeProvider(generator.getPackOutput(), event.getLookupProvider()));
 
         // workers
         generator.addProvider(event.includeServer(), new DefaultRecipeLootProvider(generator.getPackOutput()));

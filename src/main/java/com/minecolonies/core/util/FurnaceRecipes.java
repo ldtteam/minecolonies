@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
@@ -43,7 +44,8 @@ public class FurnaceRecipes implements IFurnaceRecipes
         recipes.clear();
         reverseRecipes.clear();
         loadUtilityPredicates();
-        recipeManager.byType(RecipeType.SMELTING).values().forEach(recipe -> {
+        recipeManager.getAllRecipesFor(RecipeType.SMELTING).forEach(holder -> {
+            final SmeltingRecipe recipe = holder.value();
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {
@@ -58,7 +60,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
                           1,
                           recipe.getResultItem(level.registryAccess()),
                           Blocks.FURNACE,
-                          recipe.getId());
+                          holder.id());
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 

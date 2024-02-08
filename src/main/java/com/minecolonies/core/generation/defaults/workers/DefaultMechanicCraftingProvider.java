@@ -7,7 +7,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,7 +37,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         CustomRecipeBuilder.create(MECHANIC, MODULE_CRAFTING, "gate_wood")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.OAK_LOG, 5))))
@@ -83,7 +82,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
         deoxidize(consumer, Items.EXPOSED_CUT_COPPER, Items.CUT_COPPER);
     }
 
-    private void deoxidize(@NotNull final Consumer<FinishedRecipe> consumer,
+    private void deoxidize(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                            @NotNull final Item input,
                            @NotNull final Item output)
     {

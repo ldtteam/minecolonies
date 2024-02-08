@@ -3,7 +3,6 @@ package com.minecolonies.core.generation.defaults.workers;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -28,7 +27,7 @@ public class DefaultGlassblowerCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
     }
 }

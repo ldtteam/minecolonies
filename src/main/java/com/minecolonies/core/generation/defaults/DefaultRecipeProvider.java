@@ -7,8 +7,10 @@ import com.minecolonies.api.util.constant.TagConstants;
 import com.minecolonies.core.generation.CompostRecipeBuilder;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -22,7 +24,7 @@ import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 import static com.ldtteam.structurize.items.ModItems.shapeTool;
@@ -34,13 +36,13 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 public class DefaultRecipeProvider extends RecipeProvider
 {
 
-    public DefaultRecipeProvider(final PackOutput output)
+    public DefaultRecipeProvider(final PackOutput output, final CompletableFuture<Provider> lookupProvider)
     {
-        super(output);
+        super(output, lookupProvider);
     }
 
     @Override
-    protected void buildRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void buildRecipes(@NotNull final RecipeOutput consumer)
     {
         buildHutRecipes(consumer);
         buildOtherBlocks(consumer);
@@ -63,7 +65,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer, TagConstants.COMPOSTABLES_RICH);
     }
 
-    private void buildHutRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    private void buildHutRecipes(@NotNull final RecipeOutput consumer)
     {
         registerHutRecipe3(consumer, ModBlocks.blockHutArchery, Items.BOW);
         registerHutRecipe1(consumer, ModBlocks.blockHutBaker, Items.WHEAT);
@@ -218,12 +220,12 @@ public class DefaultRecipeProvider extends RecipeProvider
 //                .save(consumer);
     }
 
-    private static InventoryChangeTrigger.TriggerInstance hasAllOf(ItemLike... items)
+    private static Criterion<?> hasAllOf(ItemLike... items)
     {
         return InventoryChangeTrigger.TriggerInstance.hasItems(items);
     }
 
-    private static InventoryChangeTrigger.TriggerInstance hasAllOf(ItemPredicate... predicates)
+    private static Criterion<?> hasAllOf(ItemPredicate... predicates)
     {
         return InventoryChangeTrigger.TriggerInstance.hasItems(predicates);
     }
@@ -248,7 +250,7 @@ public class DefaultRecipeProvider extends RecipeProvider
      * @param output   the resulting hut block.
      * @param input    the unique input item.
      */
-    private static void registerHutRecipe1(@NotNull final Consumer<FinishedRecipe> consumer,
+    private static void registerHutRecipe1(@NotNull final RecipeOutput consumer,
                                            @NotNull final ItemLike output,
                                            @NotNull final ItemLike input)
     {
@@ -269,7 +271,7 @@ public class DefaultRecipeProvider extends RecipeProvider
      * @param output   the resulting hut block.
      * @param input    the unique input tag.
      */
-    private static void registerHutRecipe1(@NotNull final Consumer<FinishedRecipe> consumer,
+    private static void registerHutRecipe1(@NotNull final RecipeOutput consumer,
                                            @NotNull final ItemLike output,
                                            @NotNull final TagKey<Item> input)
     {
@@ -293,7 +295,7 @@ public class DefaultRecipeProvider extends RecipeProvider
      * @param input    the unique input item.
      * @param name     additional suffix for recipe name to avoid colliding with {@link #registerHutRecipe1}.
      */
-    private static void registerHutRecipe1x2(@NotNull final Consumer<FinishedRecipe> consumer,
+    private static void registerHutRecipe1x2(@NotNull final RecipeOutput consumer,
                                              @NotNull final ItemLike output,
                                              @NotNull final ItemLike input,
                                              @NotNull final String name)
@@ -315,7 +317,7 @@ public class DefaultRecipeProvider extends RecipeProvider
      * @param output   the resulting hut block.
      * @param input    the unique input item (used three times).
      */
-    private static void registerHutRecipe3(@NotNull final Consumer<FinishedRecipe> consumer,
+    private static void registerHutRecipe3(@NotNull final RecipeOutput consumer,
                                            @NotNull final ItemLike output,
                                            @NotNull final ItemLike input)
     {
@@ -330,7 +332,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer);
     }
 
-    private void buildOtherBlocks(@NotNull final Consumer<FinishedRecipe> consumer)
+    private void buildOtherBlocks(@NotNull final RecipeOutput consumer)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockBarrel)
                 .pattern("WTW")
@@ -417,7 +419,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer, new ResourceLocation(MOD_ID, "doublegrass"));
     }
 
-    private void buildFood(@NotNull final Consumer<FinishedRecipe> consumer)
+    private void buildFood(@NotNull final RecipeOutput consumer)
     {
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.breadDough), RecipeCategory.MISC,
             Items.BREAD, 0.35f, 200)
@@ -480,7 +482,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", "campfire_cooking"));
     }
 
-    private void buildOtherItems(@NotNull final Consumer<FinishedRecipe> consumer)
+    private void buildOtherItems(@NotNull final RecipeOutput consumer)
     {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.flagBanner)
                 .pattern(" W ")

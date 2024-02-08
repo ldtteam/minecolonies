@@ -12,18 +12,16 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -46,24 +44,24 @@ public abstract class CustomRecipeProvider implements DataProvider
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
         final PackOutput.PathProvider pathProvider = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "crafterrecipes");
-        final Map<ResourceLocation, CompletableFuture<?>> futures = new HashMap<>();
+        final List<CompletableFuture<?>> futures = new ArrayList<>();
+        final Set<ResourceLocation> dupeKeyCheck = new HashSet<>();
 
         registerRecipes((recipe) ->
         {
-            if (futures.containsKey(recipe.getId()))
+            if (!dupeKeyCheck.add(recipe.id))
             {
-                throw new IllegalStateException("Duplicate recipe " + recipe.getId());
+                throw new IllegalStateException("Duplicate recipe " + recipe.id);
             }
-
-            futures.put(recipe.getId(), DataProvider.saveStable(cache,
-                    recipe.serializeRecipe(),
-                    pathProvider.json(recipe.getId())));
+            futures.add(DataProvider.saveStable(cache,
+                    recipe.json,
+                    pathProvider.json(recipe.id)));
         });
 
-        return CompletableFuture.allOf(futures.values().toArray(new CompletableFuture[0]));
+        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
     }
 
-    protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);
+    protected abstract void registerRecipes(final Consumer<CustomRecipeBuilder> consumer);
 
     /**
      * Helper to construct custom crafterrecipes for datagen
@@ -231,10 +229,10 @@ public abstract class CustomRecipeProvider implements DataProvider
             return this;
         }
 
-        public void build(@NotNull final Consumer<FinishedRecipe> consumer)
+        public void build(@NotNull final Consumer<CustomRecipeBuilder> consumer)
         {
             this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, BuiltInRegistries.BLOCK.getKey(this.intermediate).toString());
-            consumer.accept(new Result(this.json, this.id));
+            consumer.accept(this);
         }
 
         @NotNull
@@ -289,57 +287,6 @@ public abstract class CustomRecipeProvider implements DataProvider
                 jsonItemStorages.add(jsonItemStorage);
             }
             return jsonItemStorages;
-        }
-
-        private static class Result implements FinishedRecipe
-        {
-            final JsonObject json;
-            final ResourceLocation id;
-
-            public Result(final JsonObject json, final ResourceLocation id)
-            {
-                this.json = json;
-                this.id = id;
-            }
-
-            @NotNull
-            @Override
-            public JsonObject serializeRecipe()
-            {
-                return this.json;
-            }
-
-            @NotNull
-            @Override
-            public ResourceLocation getId()
-            {
-                return this.id;
-            }
-
-            @Override
-            public void serializeRecipeData(@NotNull final JsonObject json)
-            {
-            }
-
-            @Override
-            public RecipeSerializer<?> getType()
-            {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public JsonObject serializeAdvancement()
-            {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public ResourceLocation getAdvancementId()
-            {
-                return null;
-            }
         }
     }
 }

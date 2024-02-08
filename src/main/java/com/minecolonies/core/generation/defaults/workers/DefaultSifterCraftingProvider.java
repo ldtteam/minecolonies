@@ -7,11 +7,11 @@ import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import com.minecolonies.core.generation.DatagenLootTableManager;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +25,11 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -273,7 +277,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
         {
@@ -307,7 +311,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
         mesh(consumer, ModJobs.MECHANIC_ID, Items.DIAMOND, ModItems.sifterMeshDiamond, ResearchConstants.SIFTER_DIAMOND);
     }
 
-    private void mesh(@NotNull final Consumer<FinishedRecipe> consumer,
+    private void mesh(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                       @NotNull final ResourceLocation job,
                       @NotNull final ItemLike input,
                       @NotNull final ItemLike output,

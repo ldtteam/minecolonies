@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.ClientConfiguration;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
-import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
@@ -52,11 +51,8 @@ import com.minecolonies.core.network.messages.server.colony.citizen.*;
 import com.minecolonies.core.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
-import com.minecolonies.core.recipes.FoodIngredient;
-import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.research.GlobalResearchTreeMessage;
 import com.minecolonies.core.structures.MineColoniesStructures;
-import net.minecraft.core.registries.Registries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -70,13 +66,11 @@ import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.capabilities.CapabilityManager;
 import net.neoforged.neoforge.common.capabilities.CapabilityToken;
 import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
-import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -218,17 +212,6 @@ public class MineColonies
         event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
-    }
-
-    @SubscribeEvent
-    public static void registerRecipeSerializers(final RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(Registries.RECIPE_SERIALIZER))
-        {
-            CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
-            CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
-            CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
-        }
     }
 
     /**

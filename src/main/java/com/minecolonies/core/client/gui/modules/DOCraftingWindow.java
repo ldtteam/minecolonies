@@ -30,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -170,7 +171,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
     private void addRecipe()
     {
-        final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
+        final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
 
         if (inputInventory.isEmpty() || list.isEmpty())
@@ -178,9 +179,9 @@ public class DOCraftingWindow extends AbstractModuleWindow
             return;
         }
 
-        for (final ArchitectsCutterRecipe recipe : list)
+        for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list)
         {
-            final ItemStack result = recipe.assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
+            final ItemStack result = recipe.value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null)
             {
@@ -211,7 +212,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ItemStack> additionalOutput = new ArrayList<>();
         for (int i = 1; i < inputIndizes.size(); i++)
         {
-            additionalOutput.add(list.get(inputIndizes.get(i)).assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy());
+            additionalOutput.add(list.get(inputIndizes.get(i)).value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy());
         }
 
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
@@ -219,7 +220,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
           input,
           3,
-          list.get(inputIndizes.get(0)).assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy(),
+          list.get(inputIndizes.get(0)).value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy(),
           Blocks.AIR,
           null,
           com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
@@ -244,7 +245,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         resourceList.enable();
         resourceList.show();
 
-        final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
+        final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
         int inputCount = 0;
         for (int i = 0; i < inputInventory.getContainerSize(); i++)
         {
@@ -255,13 +256,13 @@ public class DOCraftingWindow extends AbstractModuleWindow
         }
 
         final List<ArchitectsCutterRecipe> filteredList = new ArrayList<>();
-        for (final ArchitectsCutterRecipe recipe : list)
+        for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list)
         {
-            final ItemStack result = recipe.assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
+            final ItemStack result = recipe.value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null && doBlock.getComponents().size() == inputCount)
             {
-                filteredList.add(recipe);
+                filteredList.add(recipe.value());
             }
         }
 

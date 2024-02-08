@@ -30,6 +30,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
@@ -100,7 +101,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of all the compost recipes
      */
-    private final Map<Item, CompostRecipe> compostRecipes = new HashMap<>();
+    private final Map<Item, RecipeHolder<CompostRecipe>> compostRecipes = new HashMap<>();
 
     /**
      * List of all the items that can be planted.
@@ -334,18 +335,23 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private static void serializeCompostRecipes(
       @NotNull final FriendlyByteBuf buf,
-      @NotNull final Map<Item, CompostRecipe> compostRecipes)
+      @NotNull final Map<Item, RecipeHolder<CompostRecipe>> compostRecipes)
     {
-        final List<CompostRecipe> recipes = compostRecipes.values().stream().distinct().toList();
-        buf.writeCollection(recipes, ModRecipeSerializer.CompostRecipeSerializer.get()::toNetwork);
+        final CompostRecipe.Serializer serializer = ModRecipeSerializer.CompostRecipeSerializer.get();
+        final List<RecipeHolder<CompostRecipe>> recipes = compostRecipes.values().stream().distinct().toList();
+        buf.writeCollection(recipes, (b, holder) -> {
+            b.writeResourceLocation(holder.id());
+            serializer.toNetwork(buf, holder.value());
+        });
     }
 
     @NotNull
-    private static List<CompostRecipe> deserializeCompostRecipes(@NotNull final FriendlyByteBuf buf)
+    private static List<RecipeHolder<CompostRecipe>> deserializeCompostRecipes(@NotNull final FriendlyByteBuf buf)
     {
         final CompostRecipe.Serializer serializer = ModRecipeSerializer.CompostRecipeSerializer.get();
-        final ResourceLocation empty = new ResourceLocation("");
-        return buf.readList(b -> serializer.fromNetwork(empty, b));
+        return buf.readList(b -> {
+            return new RecipeHolder<>(b.readResourceLocation(), serializer.fromNetwork(b));
+        });
     }
 
     /**
@@ -456,7 +462,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Map<Item, CompostRecipe> getCopyOfCompostRecipes()
+    public Map<Item, RecipeHolder<CompostRecipe>> getCopyOfCompostRecipes()
     {
         if (compostRecipes.isEmpty())
         {
@@ -758,21 +764,20 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostRecipes.isEmpty())
         {
-            discoverCompostRecipes(recipeManager.byType(ModRecipeSerializer.CompostRecipeType.get()).values().stream()
-              .map(r -> (CompostRecipe) r).toList());
+            discoverCompostRecipes(recipeManager.getAllRecipesFor(ModRecipeSerializer.CompostRecipeType.get()));
             Log.getLogger().info("Finished discovering compostables " + compostRecipes.size());
         }
     }
 
-    private void discoverCompostRecipes(@NotNull final List<CompostRecipe> recipes)
+    private void discoverCompostRecipes(@NotNull final List<RecipeHolder<CompostRecipe>> recipes)
     {
-        for (final CompostRecipe recipe : recipes)
+        for (final RecipeHolder<CompostRecipe> recipe : recipes)
         {
-            for (final ItemStack stack : recipe.getInput().getItems())
+            for (final ItemStack stack : recipe.value().getInput().getItems())
             {
                 // there can be duplicates due to overlapping tags.  weakest one wins.
                 compostRecipes.merge(stack.getItem(), recipe,
-                  (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
+                  (r1, r2) -> r1.value().getStrength() < r2.value().getStrength() ? r1 : r2);
             }
         }
     }

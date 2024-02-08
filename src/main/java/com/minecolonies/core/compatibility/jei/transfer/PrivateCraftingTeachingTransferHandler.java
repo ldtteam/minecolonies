@@ -19,6 +19,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import java.util.*;
 /**
  * JEI recipe transfer handler for teaching crafting recipes
  */
-public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, CraftingRecipe>
+public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, RecipeHolder<CraftingRecipe>>
 {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
@@ -52,7 +53,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
     @NotNull
     @Override
-    public RecipeType<CraftingRecipe> getRecipeType()
+    public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType()
     {
         return RecipeTypes.CRAFTING;
     }
@@ -61,7 +62,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     @Override
     public IRecipeTransferError transferRecipe(
             @NotNull final ContainerCrafting craftingGUIBuilding,
-            @NotNull final CraftingRecipe recipe,
+            @NotNull final RecipeHolder<CraftingRecipe> recipe,
             @NotNull final IRecipeSlotsView recipeSlots,
             @NotNull final Player player,
             final boolean maxTransfer,

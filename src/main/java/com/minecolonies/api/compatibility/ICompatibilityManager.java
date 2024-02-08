@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -110,7 +111,7 @@ public interface ICompatibilityManager
      *
      * @return the list of compost recipes, indexed by input item.
      */
-    Map<Item, CompostRecipe> getCopyOfCompostRecipes();
+    Map<Item, RecipeHolder<CompostRecipe>> getCopyOfCompostRecipes();
 
     /**
      * Just the possible composting inputs, for item filters.

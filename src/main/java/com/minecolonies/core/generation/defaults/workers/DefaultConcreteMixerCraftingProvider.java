@@ -5,7 +5,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -37,7 +36,7 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         final List<ItemStorage> input = new ArrayList<>();
         input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));

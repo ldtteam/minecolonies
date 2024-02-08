@@ -8,9 +8,9 @@ import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.generation.DatagenLootTableManager;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
+import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -223,7 +223,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         final List<ItemStorage> inputs = Arrays.asList(
                 new ItemStorage(new ItemStack(Items.COBBLESTONE, 64)),
