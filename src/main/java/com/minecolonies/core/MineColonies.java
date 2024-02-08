@@ -175,8 +175,6 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        AdvancementTriggers.preInit();
-
         StandardFactoryControllerInitializer.onPreInit();
 
         event.enqueueWork(ModLootConditions::init);

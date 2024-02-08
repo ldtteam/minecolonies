@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.core.client.gui.WindowHutGuide;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +54,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
     {
         if (needGuide)
         {
-            final Advancement ad = Minecraft.getInstance().player.connection.getAdvancements().getAdvancements().get(GUIDE_ADVANCEMENT);
+            final AdvancementHolder ad = Minecraft.getInstance().player.connection.getAdvancements().get(GUIDE_ADVANCEMENT);
             if (ad == null || !Minecraft.getInstance().player.connection.getAdvancements().progress.getOrDefault(ad, new AdvancementProgress()).isDone())
             {
                 close();

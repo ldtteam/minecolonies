@@ -258,7 +258,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
             if (building != null)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), this.getTargetLevel()));
+                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.get().trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), this.getTargetLevel()));
             }
         }
     }

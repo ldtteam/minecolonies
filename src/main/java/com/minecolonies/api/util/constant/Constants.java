@@ -69,21 +69,21 @@ public final class Constants
     /**
      * Advancement Criterion Names
      */
-    public static final String CRITERION_SUPPLY_PLACED          = "supply_placed";
-    public static final String CRITERION_STRUCTURE_PLACED       = "structure_placed";
-    public static final String CRITERION_CREATE_BUILD_REQUEST   = "create_build_request";
-    public static final String CRITERION_OPEN_GUI_WINDOW        = "open_gui_window";
-    public static final String CRITERION_CLICK_GUI_BUTTON       = "click_gui_button";
-    public static final String CRITERION_CITIZEN_EAT_FOOD       = "citizen_eat_food";
-    public static final String CRITERION_BUILDING_ADD_RECIPE    = "building_add_recipe";
-    public static final String CRITERION_COMPLETE_BUILD_REQUEST = "complete_build_request";
-    public static final String CRITERION_COLONY_POPULATION      = "colony_population";
-    public static final String CRITERION_ARMY_POPULATION        = "army_population";
     public static final String CRITERION_ALL_TOWERS             = "all_barracks_towers";
+    public static final String CRITERION_ARMY_POPULATION        = "army_population";
+    public static final String CRITERION_BUILDING_ADD_RECIPE    = "building_add_recipe";
+    public static final String CRITERION_CITIZEN_BURY           = "citizen_bury";
+    public static final String CRITERION_CITIZEN_EAT_FOOD       = "citizen_eat_food";
+    public static final String CRITERION_CITIZEN_RESURRECT      = "citizen_resurrect";
+    public static final String CRITERION_CLICK_GUI_BUTTON       = "click_gui_button";
+    public static final String CRITERION_COLONY_POPULATION      = "colony_population";
+    public static final String CRITERION_COMPLETE_BUILD_REQUEST = "complete_build_request";
+    public static final String CRITERION_CREATE_BUILD_REQUEST   = "create_build_request";
     public static final String CRITERION_DEEP_MINE              = "deep_mine";
     public static final String CRITERION_MAX_FIELDS             = "max_fields";
-    public static final String CRITERION_CITIZEN_BURY           = "citizen_bury";
-    public static final String CRITERION_CITIZEN_RESURRECT      = "citizen_resurrect";
+    public static final String CRITERION_OPEN_GUI_WINDOW        = "open_gui_window";
+    public static final String CRITERION_STRUCTURE_PLACED       = "structure_placed";
+    public static final String CRITERION_SUPPLY_PLACED          = "supply_placed";
     public static final String CRITERION_UNDERTAKER_TOTEM       = "undertaker_totem";
 
     /**

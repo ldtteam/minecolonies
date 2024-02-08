@@ -388,7 +388,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         // Check if we reached the bottom of the shaft
         if (getLastLadder(buildingMiner.getLadderLocation(), world) < world.getMinBuildHeight() + SHAFT_BASE_DEPTH)
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(job.getColony(), AdvancementTriggers.DEEP_MINE::trigger);
+            AdvancementUtils.TriggerAdvancementPlayersForColony(job.getColony(), AdvancementTriggers.DEEP_MINE.get()::trigger);
         }
 
         // Check if we reached the mineshaft depth limit

@@ -108,7 +108,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
             {
                 MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
                 player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
-                AdvancementTriggers.PLACE_SUPPLY.trigger(player);
+                AdvancementTriggers.PLACE_SUPPLY.get().trigger(player);
             }
 
             SoundUtils.playSuccessSound(player, player.blockPosition());

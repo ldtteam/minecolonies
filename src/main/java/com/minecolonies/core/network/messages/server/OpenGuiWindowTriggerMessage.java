@@ -38,6 +38,6 @@ public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        AdvancementTriggers.OPEN_GUI_WINDOW.trigger(player, this.resource);
+        AdvancementTriggers.OPEN_GUI_WINDOW.get().trigger(player, this.resource);
     }
 }

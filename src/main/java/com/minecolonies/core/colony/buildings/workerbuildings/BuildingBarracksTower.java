@@ -120,7 +120,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
 
             if (allUpgraded)
             {
-                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, AdvancementTriggers.ALL_TOWERS::trigger);
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, AdvancementTriggers.ALL_TOWERS.get()::trigger);
             }
         }
     }

@@ -46,6 +46,6 @@ public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        AdvancementTriggers.CLICK_GUI_BUTTON.trigger(player, this.buttonId, this.resource);
+        AdvancementTriggers.CLICK_GUI_BUTTON.get().trigger(player, this.buttonId, this.resource);
     }
 }

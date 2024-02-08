@@ -180,7 +180,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     return;
                 }
 
-                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
+                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.get().trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
 
 
                 int level = 0;

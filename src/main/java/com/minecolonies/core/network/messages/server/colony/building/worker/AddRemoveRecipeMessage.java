@@ -184,7 +184,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             else
             {
                 SoundUtils.playSuccessSound(player, player.blockPosition());
-                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.get().trigger(playerMP, this.storage));
                 MessageUtils.format(MESSAGE_RECIPE_SAVED).sendTo(player);
             }
         }

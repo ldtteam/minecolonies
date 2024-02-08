@@ -240,7 +240,7 @@ public class EntityAIEatTask implements IStateAI
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
         if (citizenColony != null)
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.get().trigger(playerMP, foodStack));
         }
 
         citizenData.markDirty(60);

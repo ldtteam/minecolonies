@@ -41,13 +41,12 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
  */
 public class FoodIngredient extends Ingredient
 {
-    public static final Codec<FoodIngredient> CODEC = RecordCodecBuilder.create(
-        builder -> builder
-            .group( Codec.INT.optionalFieldOf("min-healing").forGetter(FoodIngredient::getMinHealing),
-                Codec.INT.optionalFieldOf("max-healing").forGetter(FoodIngredient::getMaxHealing),
-                Codec.FLOAT.optionalFieldOf("min-saturation").forGetter(FoodIngredient::getMinSaturation),
-                Codec.FLOAT.optionalFieldOf("max-saturation").forGetter(FoodIngredient::getMaxSaturation))
-            .apply(builder, (minH, maxH, minS, maxS) -> new FoodIngredient(new Builder(minH, maxH, minS, maxS))));
+    public static final Codec<FoodIngredient> CODEC = RecordCodecBuilder.create(builder -> builder
+        .group(Codec.INT.optionalFieldOf("min-healing").forGetter(FoodIngredient::getMinHealing),
+            Codec.INT.optionalFieldOf("max-healing").forGetter(FoodIngredient::getMaxHealing),
+            Codec.FLOAT.optionalFieldOf("min-saturation").forGetter(FoodIngredient::getMinSaturation),
+            Codec.FLOAT.optionalFieldOf("max-saturation").forGetter(FoodIngredient::getMaxSaturation))
+        .apply(builder, (minH, maxH, minS, maxS) -> new FoodIngredient(new Builder(minH, maxH, minS, maxS))));
 
     private final Optional<Integer> minHealing;
     private final Optional<Integer> maxHealing;
