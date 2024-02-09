@@ -1,16 +1,17 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
     <input id="input" size="150 18" pos="20 30" maxlength="25"/>
 
     <list id="resources" size="164 136" pos="13 50">
         <box size="100% 17" linewidth="1">
             <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
-            <label id="resourceName" size="100 12" pos="20 1" color="white"/>
-            <buttonimage label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)" id="switch" pos="120 1" size="29 15"
+            <text id="resourceName" size="100 12" pos="20 1" color="white"/>
+            <button label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)" id="switch" pos="120 1" size="29 15"
                          source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
         </box>
     </list>
-    <buttonimage label ="$(com.minecolonies.coremod.gui.workerhuts.resetdefault)" id="resetDefault" size="86 17" pos="50 194"
+    <button label ="$(com.minecolonies.coremod.gui.workerhuts.resetdefault)" id="resetDefault" size="86 17" pos="50 194"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 </window>

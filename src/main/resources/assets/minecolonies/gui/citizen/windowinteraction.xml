@@ -1,4 +1,4 @@
-<window size="350 170" pause="false" lightbox="false">
+<window size="350 170" pause="false" lightbox="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <switch id="head" size="100% 100%" pos="0 0">
         <view id="interactionView">
             <gradient id="gradient" size="300 170" pos="20 0"/>

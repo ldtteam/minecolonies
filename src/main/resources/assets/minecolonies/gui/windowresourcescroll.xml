@@ -1,35 +1,35 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
     <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 
-    <label size="100% 11" pos="0 11" color="black" textalign="MIDDLE"
+    <text size="100% 11" pos="0 11" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.resourcelist)"/>
 
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="24 22"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="130 15" pos="30 22"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="160 22"/>
-    <label id="workerName" size="90 11" pos="50 24" textalign="MIDDLE" color="blue"/>
+    <text id="workerName" size="90 11" pos="50 24" textalign="MIDDLE" color="blue"/>
 
-    <label size="100% 11" pos="0 38" id="constructionName" label="" color="black" textalign="MIDDLE"/>
+    <text size="100% 11" pos="0 38" id="constructionName" label="" color="black" textalign="MIDDLE"/>
 
-    <label size="100% 11" pos="0 49" id="progress" label="" color="black" textalign="MIDDLE"/>
+    <text size="100% 11" pos="0 49" id="progress" label="" color="black" textalign="MIDDLE"/>
 
     <list id="resources" size="164 71%" pos="13 60">
         <box size="100% 30" linewidth="1">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
             <image id="indeliveryicon" source="minecolonies:textures/gui/citizen/delivery_16x16.png" size="16 16" pos="120 12" visible="false"/>
             <image id="inWarehouseIcon" source="minecolonies:textures/gui/citizen/crate_16x16.png" size="16 16" pos="120 12" visible="false"/>
-            <label id="resourceName" size="135 9" pos="18 2" color="black"/>
-            <label id="resourceMissing" size="65 9" pos="2 18" textalign="MIDDLE" color="black"/>
-            <label id="resourceAvailableNeeded" size="65 9" pos="67 18" textalign="MIDDLE" color="black"/>
-            <label id="indeliveryamount" size="30 9" pos="132 18" textalign="MIDDLE" color="green"/>
-            <label id="inWarehouseAmount" size="30 9" pos="132 18" textalign="MIDDLE" color="yellow"/>
+            <text id="resourceName" size="135 9" pos="18 2" color="black"/>
+            <text id="resourceMissing" size="65 9" pos="2 18" textalign="MIDDLE" color="black"/>
+            <text id="resourceAvailableNeeded" size="65 9" pos="67 18" textalign="MIDDLE" color="black"/>
+            <text id="indeliveryamount" size="30 9" pos="132 18" textalign="MIDDLE" color="green"/>
+            <text id="inWarehouseAmount" size="30 9" pos="132 18" textalign="MIDDLE" color="yellow"/>
 
-            <label id="resourceId" size="1 1" pos="100 100"/>
-            <label id="resourceQuantity" size="1 1" pos="100 100"/>
+            <text id="resourceId" size="1 1" pos="100 100"/>
+            <text id="resourceQuantity" size="1 1" pos="100 100"/>
         </box>
     </list>
 </window>

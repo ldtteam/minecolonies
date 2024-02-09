@@ -1,22 +1,23 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
+    <text size="130 11" pos="30 14" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields):"/>
-    <label id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
+    <text id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode)"/>
-    <buttonimage id="assignmentMode" size="86 17" pos="52 42" textcolor="black"
+    <button id="assignmentMode" size="86 17" pos="52 42" textcolor="black"
                  label="$(com.minecolonies.coremod.gui.hiring.off)"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"/>
-    <label id="fieldCount" size="164 11" pos="13 69" color="black" textalign="MIDDLE"
+    <text id="fieldCount" size="164 11" pos="13 69" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields.fieldcount)"/>
 
     <list id="fields" size="164 143" pos="13 82">
         <box size="100% 24" linewidth="1">
             <itemicon id="icon" size="16 16" pos="4 4"/>
-            <label id="dist" color="black" pos="25 8" size="108 9"/>
+            <text id="dist" color="black" pos="25 8" size="108 9"/>
 
-            <buttonimage id="assign" pos="137 4" size="14 15"
+            <button id="assign" pos="137 4" size="14 15"
                          source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                          disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
         </box>

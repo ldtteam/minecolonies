@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CropBlock;
@@ -32,7 +31,6 @@ import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -79,11 +77,6 @@ public class WindowField extends AbstractWindowSkeleton
      * The ID for the current farmer text.
      */
     private static final String CURRENT_FARMER_TEXT_ID = "current-farmer";
-
-    /**
-     * The resource location of the GUI background.
-     */
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "building/scarecrow/");
 
     /**
      * The tile entity of the scarecrow.
@@ -276,20 +269,8 @@ public class WindowField extends AbstractWindowSkeleton
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
             ButtonImage button = findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class);
-            button.setEnabled(!Objects.isNull(farmField));
-
-            String buttonState = null;
-            if (!button.isEnabled())
-            {
-                buttonState = "dark";
-            }
-            else if (button.wasCursorInPane())
-            {
-                buttonState = "light";
-            }
-
-            button.setImage(TEXTURE.withSuffix(dir.getName() + (buttonState == null ? "" : "/" + buttonState)));
-            button.setText(Component.literal(String.valueOf(Objects.isNull(farmField) ? "" : farmField.getRadius(dir))));
+            button.setEnabled(farmField != null);
+            button.setText(Component.literal(farmField == null ? "" : Integer.toString(farmField.getRadius(dir))));
 
             PaneBuilders.tooltipBuilder()
               .hoverPane(button)

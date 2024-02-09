@@ -1,16 +1,17 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
 
     <switch id="switchpageWorkOrder" size="100% 100%">
         <view>
-            <label size="148 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
+            <text size="148 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
 
             <list id="workOrders" size="164 154" pos="13 35">
                 <box size="100% 30" linewidth="1">
-                    <label id="buildingName" size="150 12" pos="2 2" color="black"/>
-                    <label id="buildingPos" size="50 12" pos="2 17" color="blue"/>
-                    <buttonimage id="manage"
+                    <text id="buildingName" size="150 12" pos="2 2" color="black"/>
+                    <text id="buildingPos" size="50 12" pos="2 17" color="blue"/>
+                    <button id="manage"
                                  size="64 17"
                                  pos="80 13"
                                  textcolor="black"

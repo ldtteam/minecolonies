@@ -1,10 +1,11 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.enchanter.workers)" color="black" textalign="MIDDLE"/>
+    <text id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.enchanter.workers)" color="black" textalign="MIDDLE"/>
     <list id="gatherWorkers" size="164 136" pos="13 40">
         <box size="100% 17" linewidth="1">
-            <label id="workerName" size="110 12" pos="5 1" color="black"/>
-            <buttonimage label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)" id="switch" pos="125 1" size="29 15"
+            <text id="workerName" size="110 12" pos="5 1" color="black"/>
+            <button label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)" id="switch" pos="125 1" size="29 15"
                          source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
         </box>
     </list>

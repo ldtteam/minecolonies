@@ -1,20 +1,20 @@
 <window size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <label id="happinessTitle" size="120 11" color="black" pos="100 61" textalign="MIDDLE"/>
+    <text id="happinessTitle" size="120 11" color="black" pos="100 61" textalign="MIDDLE"/>
     <list id="happinessList" size="148 136" pos="100 83">
         <view size="100% 11">
             <image id="icon" pos="0 0" size="11 11"/>
-            <label id="name" pos="15 0" size="120 11" color="black"/>
+            <text id="name" pos="15 0" size="120 11" color="black"/>
         </view>
     </list>
 
-    <label id="job" size="120 11" color="black" pos="276 28" textalign="MIDDLE"/>
+    <text id="job" size="120 11" color="black" pos="276 28" textalign="MIDDLE"/>
     <image id="gender" size="11 11" pos="396 28" source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
 
-    <label id="health" size="35 8" color="black" pos="271 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
-    <label id="happinessLevel" size="25 8" color="black" pos="316 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
-    <label id="saturation" size="25 8" color="black" pos="351 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
+    <text id="health" size="35 8" color="black" pos="271 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
+    <text id="happinessLevel" size="25 8" color="black" pos="316 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
+    <text id="saturation" size="25 8" color="black" pos="351 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
 
     <image source="minecraft:textures/gui/icons.png" size="9 9" pos="306 46" imageoffset="52 0" imagesize="9 9"/>
     <image source="minecolonies:textures/gui/citizen/icons.png" size="9 9" pos="341 46" imageoffset="52 0" imagesize="9 9"/>
@@ -22,13 +22,13 @@
 
     <entityicon id="entity" size="25 50" pos="396 38" visible="false" />
 
-    <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="306 70" size="86 17"
+    <button label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="306 70" size="86 17"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 
     <input id="search" size="129 17" pos="285 90" maxlength="32" tooltip="$(com.minecolonies.core.townhall.citizen.filter)"/>
     <list id="citizenList" size="148 106" pos="276 110">
         <view size="100% 17">
-            <buttonimage id="name" pos="9 0" size="129 17" textcolor="black"
+            <button id="name" pos="9 0" size="129 17" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
         </view>

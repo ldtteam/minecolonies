@@ -1,9 +1,9 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" size="190 233"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
 
-    <buttonimage id="cancel" size="14 15" pos="165 5"
+    <button id="cancel" size="14 15" pos="165 5"
                  source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
     <image source="minecolonies:textures/gui/dialog.png" pos="10 25" size="170 30"/>
@@ -12,19 +12,19 @@
     <text id="owncolony" size="150 35" pos="25 60" color="black"/>
     <text id="creationpossible" size="150 35" pos="25 95" color="black"/>
 
-    <buttonimage id="delete" size="129 17" pos="25 150" textcolor="black" enabled="false" visible="false"
+    <button id="delete" size="129 17" pos="25 150" textcolor="black" enabled="false" visible="false"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.colony.delete)"/>
 
     <text id="pack" size="150 35" pos="25 128" color="black"/>
-    <buttonimage id="switch" size="129 17" pos="25 150" textcolor="black" enabled="true"
+    <button id="switch" size="129 17" pos="25 150" textcolor="black" enabled="true"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(structurize.gui.buildtool.switchpack)"/>
 
-    <buttonimage id="create" size="129 17" pos="25 180" textcolor="black" enabled="false"
+    <button id="create" size="129 17" pos="25 180" textcolor="black" enabled="false"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.colony.create)"/>
 </window>

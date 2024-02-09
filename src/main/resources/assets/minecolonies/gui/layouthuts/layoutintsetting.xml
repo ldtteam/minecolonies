@@ -1,6 +1,7 @@
-<window size="100% 100%" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="100% 100%" pause="false" lightbox="false">
     <text id="id" size="0 0" pos="0 0" visible="false"/>
-    <text id="desc" size="100% 15" pos="5 5" color="black" textalign="vertical left" wrap="true"/>
+    <text id="desc" size="100% 15" pos="5 5" color="black" textalign="MIDDLE_LEFT" wrap="true"/>
 
-    <input id="trigger" pos="5 25" size="40 15" textcolor="black"/>
+    <input id="trigger" pos="5 25" size="40 15"/>
 </window>

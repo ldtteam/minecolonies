@@ -1,31 +1,32 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+    <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.docrafting)"/>
 
     <list id="resources" size="135 57" pos="20 35">
         <view size="100% 17">
-            <label id="resourceName" size="40 12" pos="0 2" color="black"/>
+            <text id="resourceName" size="40 12" pos="0 2" color="black"/>
             <itemicon id="resourceIcon" size="17 17" pos="40 0"/>
-            <buttonimage id="resourceAdd" size="64 15" pos="60 0" textcolor="black"
+            <button id="resourceAdd" size="64 15" pos="60 0" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_small.png"
                          label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
         </view>
     </list>
 
-    <buttonimage id="request" size="16 16" pos="155 51"
+    <button id="request" size="16 16" pos="155 51"
                  source="minecolonies:textures/gui/citizen/detail_button.png"
                  tooltip="$(com.minecolonies.coremod.gui.citizen.requesttitle)"/>
 
     <list id="resourcesstock" size="170 100" pos="13 100">
         <box size="100% 17" linewidth="1">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
-            <label id="resourceName" size="90 12" pos="20 1" color="black"/>
-            <label id="resourceQty" size="12 12" pos="115 1" color="black"/>
+            <text id="resourceName" size="90 12" pos="20 1" color="black"/>
+            <text id="resourceQty" size="12 12" pos="115 1" color="black"/>
         </box>
     </list>
 
-    <buttonimage id="add" size="64 17" pos="60 210" textcolor="black"
+    <button id="add" size="64 17" pos="60 210" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_small.png"
                  label="$(com.minecolonies.coremod.gui.docrafting.teach)"/>
 </window>

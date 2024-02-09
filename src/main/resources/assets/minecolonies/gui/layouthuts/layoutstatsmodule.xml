@@ -1,6 +1,7 @@
-<window size="190 244" pause="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+    <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.core.gui.modules.stats):"/>
     <view size="200 243" pos="0 0">
         <dropdown id="intervals"
@@ -10,11 +11,11 @@
                   dropDownSize="140 75"
                   source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                   textcolor="black">
-            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"
+            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"
                          label="$(com.minecolonies.coremod.gui.interval.yesterday)"/>
         </dropdown>
         <list id="stats" size="160 160" pos="20 55">
-            <label id="desc" size="160 13" pos="0 0" color="black"> </label>
+            <text id="desc" size="160 13" pos="0 0" color="black"/>
         </list>
     </view>
 </window>

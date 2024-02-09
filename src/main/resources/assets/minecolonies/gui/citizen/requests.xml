@@ -1,7 +1,7 @@
-<window size="210 244" pause="false" lightbox="false">
+<window size="210 244" pause="false" lightbox="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <layout source="minecolonies:gui/citizen/nav.xml"/>
 
-    <label size="164 11" pos="33 14" color="black" textalign="MIDDLE"
+    <text size="164 11" pos="33 14" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
     <list id="requests" size="164 185" pos="33 29">
         <box id="requestx" size="100% 40" linewidth="1">

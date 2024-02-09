@@ -1,13 +1,13 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../java/com/ldtteam/blockout/blockOut.xsd"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
         size="420 240" pause="false" lightbox="false">
 
-    <box id="left" size="140 220" label="list" pos="40 10" linewidth="0">
+    <box id="left" size="140 220" pos="40 10" linewidth="0">
         <layout source="minecolonies:gui/analyzer/analyzedisplay.xml"/>
     </box>
 
-    <box id="right" size="140 220" label="list" pos="250 10" linewidth="0">
+    <box id="right" size="140 220" pos="250 10" linewidth="0">
         <layout source="minecolonies:gui/analyzer/analyzedisplay.xml"/>
     </box>
 
-    <buttonimage id="cancel" source="minecolonies:textures/gui/button_x.png" size="32" pos="235 250"/>
+    <button id="cancel" source="minecolonies:textures/gui/button_x.png" size="32" pos="235 250"/>
 </window>

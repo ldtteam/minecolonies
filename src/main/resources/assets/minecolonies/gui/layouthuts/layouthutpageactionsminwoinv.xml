@@ -1,16 +1,17 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
 
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="24 12"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="130 15" pos="30 12"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="160 12"/>
-    <label id="name" size="128 11" pos="30 14" textalign="MIDDLE" color="red"/>
-    <buttonimage id="editName" size="15 15" pos="150 11" source="minecolonies:textures/gui/builderhut/edit.png"
+    <text id="name" size="128 11" pos="30 14" textalign="MIDDLE" color="red"/>
+    <button id="editName" size="15 15" pos="150 11" source="minecolonies:textures/gui/builderhut/edit.png"
                  tooltip="$(com.minecolonies.gui.edit)"/>
 
-    <buttonimage id="build" size="129 17" pos="30 110" textcolor="black"
+    <button id="build" size="129 17" pos="30 110" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.buildrepair)"/>
-    <buttonimage id="info" size="17 17" pos="14 214"
+    <button id="info" size="17 17" pos="14 214"
                  source="minecolonies:textures/gui/red_wax_information.png" tooltip="$(com.minecolonies.core.building.help)"/>
 </window>
