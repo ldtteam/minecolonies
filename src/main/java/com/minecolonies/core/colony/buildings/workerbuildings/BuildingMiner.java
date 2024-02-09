@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -272,26 +273,26 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param rotateTimes  The amount of time to rotate the structure.
      * @param structurePos The position of the structure.
      */
-    public static void initStructure(final MineNode mineNode, final int rotateTimes, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
+    public static void initStructure(final MineNode mineNode, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
     {
         final String structurePack = buildingMiner.getStructurePack();
-        int rotateCount;
+        RotationMirror rotMir;
         final String style;
 
         if (mineNode == null)
         {
-            rotateCount = getRotationFromVector(buildingMiner);
+            rotMir = getRotationFromVector(buildingMiner);
             style = MineNode.NodeType.SHAFT.getSchematicName();
         }
         else
         {
-            rotateCount = rotateTimes;
+            rotMir = mineNode.getRotationMirror();
             style = mineNode.getStyle().getSchematicName();
         }
 
         if (job == null || job.getWorkOrder() == null)
         {
-            final WorkOrderMiner wo = new WorkOrderMiner(structurePack, style + ".blueprint", style, rotateCount, structurePos, false, buildingMiner.getPosition());
+            final WorkOrderMiner wo = new WorkOrderMiner(structurePack, style + ".blueprint", style, rotMir, structurePos, false, buildingMiner.getPosition());
             wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
             if (job != null)
@@ -311,26 +312,26 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      *
      * @return the rotation.
      */
-    private static int getRotationFromVector(final BuildingMiner buildingMiner)
+    private static RotationMirror getRotationFromVector(final BuildingMiner buildingMiner)
     {
         final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
 
         if (vector.getX() == 1)
         {
-            return 1;
+            return RotationMirror.R90;
         }
         else if (vector.getZ() == 1)
         {
-            return 2;
+            return RotationMirror.R180;
         }
         else if (vector.getX() == -1)
         {
-            return 3;
+            return RotationMirror.R270;
         }
         else if (vector.getZ() == -1)
         {
-            return 4;
+            return RotationMirror.NONE;
         }
-        return 0;
+        return RotationMirror.NONE;
     }
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.workorders;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.IOPool;
@@ -43,22 +44,22 @@ public class WorkOrderMiner extends AbstractWorkOrder
      * @param packName      The name of the pack.
      * @param structureName The path of the blueprint.
      * @param workOrderName The user friendly name of the mine.
-     * @param rotation      The number of times the mine was rotated.
+     * @param rotMir        The the mine rotation and mirror.
      * @param location      The location where the mine should be built.
-     * @param mirror        Is the mine mirrored?
+     * @param keepMirror    Whether should keep mirror in rotMir parameter, usually false.
      * @param minerBuilding The id of the building of the miner.
      */
     public WorkOrderMiner(
       final String packName,
       final String structureName,
       final String workOrderName,
-      final int rotation,
+      final RotationMirror rotMir,
       final BlockPos location,
-      final boolean mirror,
+      final boolean keepMirror,
       final BlockPos minerBuilding)
     {
         // TODO: rotationMirror (and all call sites of this)
-        super(packName, structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
+        super(packName, structureName, workOrderName, WorkOrderType.BUILD, location, keepMirror ? rotMir : RotationMirror.NONE.rotate(rotMir.rotation()), 0, 1);
         this.minerBuilding = minerBuilding;
     }
 

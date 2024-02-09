@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -635,7 +636,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         final int xOffset = SHAFT_RADIUS * vector.getX();
         final int zOffset = SHAFT_RADIUS * vector.getZ();
 
-        initStructure(null, 0, new BlockPos(ladderPos.getX() + xOffset, lastLadder + 1, ladderPos.getZ() + zOffset), building, world, job);
+        initStructure(null, new BlockPos(ladderPos.getX() + xOffset, lastLadder + 1, ladderPos.getZ() + zOffset), building, world, job);
         return LOAD_STRUCTURE;
     }
 
@@ -680,7 +681,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         //normal facing +x
-        int rotation = 0;
+        RotationMirror rotMir = RotationMirror.NONE;
 
         final int workingNodeX = workingNode.getX() > workingNode.getParent().getX() ? 1 : 0;
         final int workingNodeZ = workingNode.getZ() > workingNode.getParent().getZ() ? 1 : 0;
@@ -689,19 +690,19 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (vectorX == -1)
         {
-            rotation = ROTATE_TWICE;
+            rotMir = RotationMirror.R180;
         }
         else if (vectorZ == -1)
         {
-            rotation = ROTATE_THREE_TIMES;
+            rotMir = RotationMirror.R270;
         }
         else if (vectorZ == 1)
         {
-            rotation = ROTATE_ONCE;
+            rotMir = RotationMirror.R90;
         }
 
 
-        if (workingNode.getRot().isPresent() && workingNode.getRot().get() != rotation)
+        if (workingNode.getRotationMirror() != rotMir)
         {
             Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ);
         }
@@ -728,8 +729,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if ((workingNode.getStatus() == MineNode.NodeStatus.AVAILABLE || workingNode.getStatus() == MineNode.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
         {
-            workingNode.setRot(rotation);
-            return executeStructurePlacement(workingNode, standingPosition, rotation);
+            workingNode.setRotationMirror(rotMir);
+            return executeStructurePlacement(workingNode, standingPosition);
         }
         return MINER_CHECK_MINESHAFT;
     }
@@ -757,7 +758,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return true;
     }
 
-    private IAIState executeStructurePlacement(@NotNull final MineNode mineNode, @NotNull final BlockPos standingPosition, final int rotation)
+    private IAIState executeStructurePlacement(@NotNull final MineNode mineNode, @NotNull final BlockPos standingPosition)
     {
         mineNode.setStatus(MineNode.NodeStatus.IN_PROGRESS);
         building.markDirty();
@@ -765,7 +766,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (job.getBlueprint() == null)
         {
             initStructure(mineNode,
-              rotation,
               new BlockPos(mineNode.getX(), building.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel().getDepth(), mineNode.getZ()),
               building,
               world,
@@ -887,7 +887,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 }
                 else
                 {
-                    currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
+                    currentLevel.closeNextNode(structurePlacer.getB().getRotationMirror(), module.getActiveNode(), world);
                     module.setActiveNode(null);
                     module.setOldNode(workingNode);
                     WorkerUtil.updateLevelSign(world, currentLevel, module.getLevelId(currentLevel));

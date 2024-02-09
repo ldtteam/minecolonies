@@ -273,7 +273,6 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
             final int zOffset = SHAFT_RADIUS * vector.getZ();
 
             BuildingMiner.initStructure(null,
-              0,
               new BlockPos(ladderPos.getX() + xOffset, levels.get(level).getDepth(), ladderPos.getZ() + zOffset),
               (BuildingMiner) building,
               building.getColony().getWorld(),

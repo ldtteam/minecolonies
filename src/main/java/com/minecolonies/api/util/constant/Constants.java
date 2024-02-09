@@ -10,10 +10,6 @@ public final class Constants
 {
     public static final String MOD_ID                           = "minecolonies";
     public static final String HARVESTCRAFTMODID                = "harvestcraft";
-    public static final int    ROTATE_0_TIMES                   = 0;
-    public static final int    ROTATE_ONCE                      = 1;
-    public static final int    ROTATE_TWICE                     = 2;
-    public static final int    ROTATE_THREE_TIMES               = 3;
     public static final int    CITIZEN_RESPAWN_INTERVAL_MIN     = 10;
     public static final int    CITIZEN_RESPAWN_INTERVAL_MAX     = 600;
     public static final int    MAX_BUILDING_LEVEL               = 5;
