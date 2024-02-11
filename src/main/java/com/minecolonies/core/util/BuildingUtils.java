@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -41,7 +42,7 @@ public final class BuildingUtils
      */
     public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(IItemHandlerCapProvider.wrap(inventory.player, false),
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && BuiltInRegistries.BLOCK.getKey(((BlockItem) item.getItem()).getBlock())
                   .getPath()
                   .endsWith(hut));

@@ -99,9 +99,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -1731,25 +1728,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenItemHandler.damageItemInHand(this.getUsedItemHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
         }
         super.hurtCurrentlyUsedShield(damage);
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction facing)
-    {
-        if (capability == Capabilities.ITEM_HANDLER)
-        {
-            final ICitizenData data = getCitizenData();
-            if (data == null)
-            {
-                return super.getCapability(capability, facing);
-            }
-            final InventoryCitizen inv = data.getInventory();
-
-            return LazyOptional.of(() -> (T) inv);
-        }
-
-        return super.getCapability(capability, facing);
     }
 
     @Override

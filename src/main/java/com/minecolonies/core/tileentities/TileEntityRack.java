@@ -36,15 +36,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
@@ -86,7 +83,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     /**
      * Last optional we created.
      */
-    private LazyOptional<IItemHandler> lastOptional;
+    private IItemHandler lastItemHandlerCap;
 
     /**
      * Static texture mappings
@@ -475,79 +472,56 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         this.load(tag);
     }
 
-    @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
+    @Nullable
+    public IItemHandler getItemHandlerCap(Direction direction)
     {
         if (version != VERSION)
         {
             version = VERSION;
         }
 
-        if (!remove && capability == Capabilities.ITEM_HANDLER)
+        if (remove)
         {
-            if (lastOptional != null && lastOptional.isPresent())
+            lastItemHandlerCap = new RackInventory(0);
+        }
+
+        if (lastItemHandlerCap != null)
+        {
+            return lastItemHandlerCap;
+        }
+
+        if (getBlockState().getBlock() != ModBlocks.blockRack)
+        {
+            lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
+            return lastItemHandlerCap;
+        }
+
+        final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
+        if (!type.isDoubleVariant())
+        {
+            lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
+            return lastItemHandlerCap;
+        }
+        else
+        {
+            final AbstractTileEntityRack other = getOtherChest();
+            if (other == null)
             {
-                return lastOptional.cast();
+                lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
             }
 
-            if (getBlockState().getBlock() != ModBlocks.blockRack)
+            if (type != RackType.EMPTYAIR)
             {
-                lastOptional = LazyOptional.of(() ->
-                {
-                    if (this.isRemoved())
-                    {
-                        return new RackInventory(0);
-                    }
-
-                    return new CombinedItemHandler(RACK, getInventory());
-                });
-                return lastOptional.cast();
-            }
-
-            final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
-            if (!type.isDoubleVariant())
-            {
-                lastOptional = LazyOptional.of(() ->
-                {
-                    if (this.isRemoved())
-                    {
-                        return new RackInventory(0);
-                    }
-
-                    return new CombinedItemHandler(RACK, getInventory());
-                });
-                return lastOptional.cast();
+                lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory(), other.getInventory());
             }
             else
             {
-                lastOptional = LazyOptional.of(() ->
-                {
-                    if (this.isRemoved())
-                    {
-                        return new RackInventory(0);
-                    }
-
-                    final AbstractTileEntityRack other = getOtherChest();
-                    if (other == null)
-                    {
-                        return new CombinedItemHandler(RACK, getInventory());
-                    }
-
-                    if (type != RackType.EMPTYAIR)
-                    {
-                        return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
-                    }
-                    else
-                    {
-                        return new CombinedItemHandler(RACK, other.getInventory(), getInventory());
-                    }
-                });
-
-                return lastOptional.cast();
+                lastItemHandlerCap = new CombinedItemHandler(RACK, other.getInventory(), getInventory());
             }
+
+            return lastItemHandlerCap;
         }
-        return super.getCapability(capability, dir);
     }
 
 
@@ -594,12 +568,8 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
      */
     private void invalidateCap()
     {
-        if (lastOptional != null && lastOptional.isPresent())
-        {
-            lastOptional.invalidate();
-        }
-
-        lastOptional = null;
+        invalidateCapabilities();
+        lastItemHandlerCap = null;
     }
 
     @Override

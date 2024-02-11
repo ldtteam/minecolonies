@@ -22,9 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -219,15 +217,10 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
 
     //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
 
-    @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side)
+    public @Nullable IItemHandler getItemHandlerCap(Direction direction)
     {
-        if (cap == Capabilities.ITEM_HANDLER && getTileEntity() != null)
-        {
-            return tileEntity.getCapability(cap, side);
-        }
-        return LazyOptional.empty();
+        return tileEntity.getItemHandlerCap(direction);
     }
 
     //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//

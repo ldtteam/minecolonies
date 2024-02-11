@@ -21,6 +21,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -40,9 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,7 +112,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Create the combined inv wrapper for the building.
      */
-    private LazyOptional<CombinedItemHandler> combinedInv;
+    private CombinedItemHandler combinedInv;
 
     /**
      * Pending blueprint future.
@@ -230,14 +229,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 if (WorldUtil.isBlockLoaded(level, pos))
                 {
                     final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    if (entity instanceof AbstractTileEntityRack)
+                    if (entity instanceof final AbstractTileEntityRack rack)
                     {
-                        if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                        if (rack.hasItemStack(notEmptyPredicate))
                         {
                             return pos;
                         }
                     }
-                    else if (isInTileEntity(entity, notEmptyPredicate))
+                    else if (isInTileEntity(IItemHandlerCapProvider.wrap(entity), notEmptyPredicate))
                     {
                         return pos;
                     }
@@ -453,7 +452,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (combinedInv != null)
         {
-            combinedInv.invalidate();
+            invalidateCapabilities();
             combinedInv = null;
         }
         if (!getLevel().isClientSide && colonyId == 0)
@@ -575,11 +574,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         // Do nothing
     }
 
-    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
+    public IItemHandler getItemHandlerCap(final Direction side)
     {
-        if (!remove && capability == Capabilities.ITEM_HANDLER && getBuilding() != null)
+        if (!remove && getBuilding() != null)
         {
             if (combinedInv == null)
             {
@@ -595,10 +593,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             final BlockEntity te = world.getBlockEntity(pos);
                             if (te != null)
                             {
-                                if (te instanceof AbstractTileEntityRack)
+                                if (te instanceof final AbstractTileEntityRack rack)
                                 {
-                                    handlers.add(((AbstractTileEntityRack) te).getInventory());
-                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getBlockPos());
+                                    handlers.add(rack.getInventory());
+                                    rack.setBuildingPos(this.getBlockPos());
                                 }
                                 else
                                 {
@@ -610,11 +608,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 }
                 handlers.add(this.getInventory());
 
-                combinedInv = LazyOptional.of(() -> new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
+                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
             }
-            return (LazyOptional<T>) combinedInv;
+            return combinedInv;
         }
-        return super.getCapability(capability, side);
+        return super.getItemHandlerCap(side);
     }
 
     @Nullable
@@ -689,7 +687,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
             final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
 
-            final int rotation;
+            final int rotation;a // TODO: fail port, check in blame if need fix or remove
             if (structureRotation <= worldRotation)
             {
                 rotation = worldRotation - structureRotation;

@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -18,7 +19,6 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,13 +135,13 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
+        final Set<IItemHandlerCapProvider> tileEntities = getCapabilityProviders(manager, building);
 
         final int total = request.getRequest().getCount();
         int current = 0;
         final List<ItemStack> deliveries = new ArrayList<>();
 
-        for (final ICapabilityProvider tile : tileEntities)
+        for (final IItemHandlerCapProvider tile : tileEntities)
         {
             final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
             for (final ItemStack stack : inv)
@@ -190,11 +190,11 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     }
 
     @NotNull
-    private Set<ICapabilityProvider> getCapabilityProviders(
+    private Set<IItemHandlerCapProvider> getCapabilityProviders(
       @NotNull final IRequestManager manager,
       @NotNull final AbstractBuilding building)
     {
-        final Set<ICapabilityProvider> tileEntities = Sets.newHashSet();
+        final Set<IItemHandlerCapProvider> tileEntities = Sets.newHashSet();
         tileEntities.add(building.getTileEntity());
         tileEntities.removeIf(Objects::isNull);
         return tileEntities;

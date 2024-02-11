@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +30,7 @@ public final class InventoryFunctions
      * @param tester   the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInProvider(final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester)
+    public static boolean matchFirstInProvider(final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> tester)
     {
         return matchInProvider(provider, inv -> slot -> tester, true);
     }
@@ -45,8 +44,8 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchInProvider(
-      @Nullable final ICapabilityProvider provider,
-      @NotNull final Function<ICapabilityProvider, Function<Integer, Predicate<ItemStack>>> tester,
+      @Nullable final IItemHandlerCapProvider provider,
+      @NotNull final Function<IItemHandlerCapProvider, Function<Integer, Predicate<ItemStack>>> tester,
       final boolean stopAfterFirst)
     {
         if (provider == null)
@@ -102,7 +101,7 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithAction(
-      final ICapabilityProvider provider,
+      final IItemHandlerCapProvider provider,
       @NotNull final Predicate<ItemStack> tester,
       @NotNull final IMatchActionResult action)
     {
@@ -185,7 +184,7 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithSimpleAction(
-      final ICapabilityProvider provider,
+      final IItemHandlerCapProvider provider,
       @NotNull final Predicate<ItemStack> tester,
       @NotNull final Consumer<Integer> action)
     {
@@ -210,7 +209,7 @@ public final class InventoryFunctions
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInProvider(final ICapabilityProvider inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
+    public static boolean matchFirstInProvider(final IItemHandlerCapProvider inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
     {
         return matchInProvider(inventory, inv -> slot -> stack -> tester.test(slot, stack), true);
     }
@@ -219,7 +218,7 @@ public final class InventoryFunctions
      * Functional interface describing a Action that is executed ones a Match (the given ItemStack) is found in the given slot.
      */
     @FunctionalInterface
-    public interface IMatchActionResult extends ObjIntConsumer<ICapabilityProvider>
+    public interface IMatchActionResult extends ObjIntConsumer<IItemHandlerCapProvider>
     {
         /**
          * Method executed when a match has been found.
@@ -228,7 +227,7 @@ public final class InventoryFunctions
          * @param slotIndex The slotindex in which this itemstack was found.
          */
         @Override
-        void accept(ICapabilityProvider provider, int slotIndex);
+        void accept(IItemHandlerCapProvider provider, int slotIndex);
     }
 
     /**

@@ -20,6 +20,8 @@ import com.minecolonies.api.items.ModBannerPatterns;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
@@ -54,6 +56,7 @@ import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.research.GlobalResearchTreeMessage;
 import com.minecolonies.core.structures.MineColoniesStructures;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -61,11 +64,12 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.capabilities.CapabilityManager;
 import net.neoforged.neoforge.common.capabilities.CapabilityToken;
-import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
@@ -181,9 +185,22 @@ public class MineColonies
         event.enqueueWork(ModTags::init);
     }
 
-    @SubscribeEvent
+    /**
+     * High event priority so we register before forge defaults.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void registerCaps(final RegisterCapabilitiesEvent event)
     {
+        // only register LivingEntities that have our own capability provider
+        // barbs (pirates, etc.) have cap registered automatically by forge
+        event.registerEntity(ItemHandler.ENTITY, ModEntities.CITIZEN, IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerEntity(ItemHandler.ENTITY, ModEntities.VISITOR, IItemHandlerCapProvider::getItemHandlerCap);
+
+        // BUILDING includes types: WAREHOUSE, ENCHANTER, STASH
+        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.BUILDING.get(), IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.RACK.get(), IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.GRAVE.get(), IItemHandlerCapProvider::getItemHandlerCap);
+
         event.register(IColonyTagCapability.class);
         event.register(IChunkmanagerCapability.class);
         event.register(IColonyManagerCapability.class);

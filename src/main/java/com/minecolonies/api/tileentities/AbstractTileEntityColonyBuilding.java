@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +68,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    public static boolean isInTileEntity(final ICapabilityProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+        public static boolean isInTileEntity(final IItemHandlerCapProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
     }

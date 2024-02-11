@@ -74,9 +74,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -868,7 +865,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
         compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
         stack.setTag(compoundNBT);
-        if (InventoryUtils.addItemStackToProvider(player, stack))
+        if (InventoryUtils.addItemStackToProvider(IItemHandlerCapProvider.wrap(player, false), stack))
         {
             this.destroy();
             colony.getWorld().destroyBlock(this.getPosition(), false);
@@ -1176,8 +1173,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final BlockEntity entity = colony.getWorld().getBlockEntity(getID());
         if (entity != null)
         {
-            final LazyOptional<IItemHandler> handler = entity.getCapability(Capabilities.ITEM_HANDLER, null);
-            handler.ifPresent(handlers::add);
+            final IItemHandler handler = getItemHandlerCap();
+            if (handler != null)
+            {
+                handlers.add(handler);
+            }
         }
 
         return ImmutableList.copyOf(handlers);
@@ -1240,9 +1240,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             for (final BlockPos pos : containerList)
             {
                 final BlockEntity tempTileEntity = world.getBlockEntity(pos);
-                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(tempTileEntity))
+                final IItemHandlerCapProvider wrapped = IItemHandlerCapProvider.wrap(tempTileEntity);
+                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(wrapped))
                 {
-                    return forceItemStackToProvider(tempTileEntity, stack);
+                    return forceItemStackToProvider(wrapped, stack);
                 }
             }
         }
@@ -1254,7 +1255,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Nullable
-    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
+    private ItemStack forceItemStackToProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final ItemStack itemStack)
     {
         final List<ItemStorage> localAlreadyKept = new ArrayList<>();
         return InventoryUtils.forceItemStackToProvider(provider,

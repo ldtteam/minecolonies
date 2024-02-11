@@ -52,8 +52,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -611,9 +609,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                 building.markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
 
+                final IItemHandlerCapProvider wrappedBlockEntity = IItemHandlerCapProvider.wrap(blockEntity);
                 final List<IItemHandler> validHandlers = Lists.newArrayList();
                 validHandlers.add(worker.getItemHandlerCitizen());
-                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(blockEntity));
+                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(wrappedBlockEntity));
 
                 //Check if we either have the requested Items in our inventory or if they are in the building.
                 if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
@@ -623,7 +622,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
-                      InventoryUtils.getItemHandlersFromProvider(blockEntity),
+                      InventoryUtils.getItemHandlersFromProvider(wrappedBlockEntity),
                       firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
@@ -775,12 +774,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         for (final BlockPos pos : building.getContainers())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
+            if (entity instanceof final TileEntityRack rack && rack.hasItemStack(is, 1, false))
             {
-                entity.getCapability(Capabilities.ITEM_HANDLER, null)
-                  .ifPresent((handler) -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler,
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(rack.getItemHandlerCap(),
                     (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack),
-                    getInventory()));
+                    getInventory());
                 return true;
             }
         }
@@ -848,7 +846,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return false;
         }
         return InventoryFunctions.matchFirstInProviderWithAction(
-          entity,
+          IItemHandlerCapProvider.wrap(entity),
           stack -> ItemStackUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
           this::takeItemStackFromProvider
         );
@@ -861,7 +859,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param provider  The provider to take from.
      * @param slotIndex The slot to take.
      */
-    public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
+    public void takeItemStackFromProvider(@NotNull final IItemHandlerCapProvider provider, final int slotIndex)
     {
         InventoryUtils.transferItemStackIntoNextBestSlotFromProvider(provider, slotIndex, worker.getInventoryCitizen());
     }
@@ -1011,16 +1009,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             for (final BlockPos pos : building.getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof final TileEntityRack rack)
                 {
                     if (ToolType.NONE.equals(toolType))
                     {
                         return false;
                     }
 
-                    if (((TileEntityRack) entity).hasItemStack(toolPredicate))
+                    if (rack.hasItemStack(toolPredicate))
                     {
-                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(Capabilities.ITEM_HANDLER, null).orElseGet(null),
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(rack.getItemHandlerCap(),
                           toolPredicate,
                           worker.getInventoryCitizen()))
                         {
@@ -1180,7 +1178,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (amount > 0)
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(Capabilities.ITEM_HANDLER, null).orElseGet(null));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getItemHandlerCap());
 
                 if (getInventory().getHeldItemSlot(InteractionHand.MAIN_HAND) == slotAt)
                 {
@@ -1731,7 +1729,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true; // has already needed transfers...
         }
 
-        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen());
+        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(IItemHandlerCapProvider.wrap(entity), predicate.getA(), amount, worker.getInventoryCitizen());
         existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
         // has already needed transfers...
         return existingAmount >= predicate.getB();

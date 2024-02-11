@@ -21,8 +21,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -470,7 +468,7 @@ public class InventoryUtils
      * @return List of item stacks
      */
     @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, final Block block)
+    public static List<ItemStack> filterProvider(@NotNull final IItemHandlerCapProvider provider, final Block block)
     {
         return filterProvider(provider, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
@@ -483,7 +481,7 @@ public class InventoryUtils
      * @return List of item stacks that match the given predicate.
      */
     @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static List<ItemStack> filterProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getFromProviderForAllSides(provider, itemStackSelectionPredicate);
     }
@@ -496,7 +494,7 @@ public class InventoryUtils
      * @return A combined {@link List}<{@link ItemStack}> as if the given predicate was called on all ItemStacks in all {@link IItemHandler}s of the given provider.
      */
     @NotNull
-    private static List<ItemStack> getFromProviderForAllSides(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> predicate)
+    private static List<ItemStack> getFromProviderForAllSides(@NotNull final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> predicate)
     {
         final Set<ItemStack> combinedList = new HashSet<>();
 
@@ -517,14 +515,23 @@ public class InventoryUtils
      * @return A list with all the unique IItemHandlers a provider has.
      */
     @NotNull
-    public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
+    public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final IItemHandlerCapProvider provider)
     {
-        final Set<IItemHandler> handlerList = new HashSet<>();
+        // used linked so we return direction-less handler as first
+        final Set<IItemHandler> handlerList = new LinkedHashSet<>();
+        final IItemHandler handler = provider.getItemHandlerCap();
+        if (handler != null)
+        {
+            handlerList.add(handler);
+        }
         for (final Direction side : Direction.values())
         {
-            provider.getCapability(Capabilities.ITEM_HANDLER, side).ifPresent(handlerList::add);
+            final IItemHandler itemHandler = provider.getItemHandlerCap(side);
+            if (itemHandler != null)
+            {
+                handlerList.add(itemHandler);
+            }
         }
-        provider.getCapability(Capabilities.ITEM_HANDLER, null).ifPresent(handlerList::add);
         return handlerList;
     }
 
@@ -536,7 +543,7 @@ public class InventoryUtils
      * @return List of item stacks with the given item in inventory
      */
     @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, @Nullable final Item targetItem)
+    public static List<ItemStack> filterProvider(@NotNull final IItemHandlerCapProvider provider, @Nullable final Item targetItem)
     {
         return filterProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem));
     }
@@ -548,7 +555,7 @@ public class InventoryUtils
      * @param block    Block to find.
      * @return Index of the first occurrence.
      */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Block block)
+    public static int findFirstSlotInProviderWith(@NotNull final IItemHandlerCapProvider provider, final Block block)
     {
         return findFirstSlotInProviderWith(provider, getItemFromBlock(block));
     }
@@ -560,7 +567,7 @@ public class InventoryUtils
      * @param targetItem Item to find.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Item targetItem)
+    public static int findFirstSlotInProviderWith(@NotNull final IItemHandlerCapProvider provider, final Item targetItem)
     {
         return findFirstSlotInProviderNotEmptyWith(provider, (ItemStack stack) -> compareItems(stack, targetItem));
     }
@@ -572,7 +579,7 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The predicate to match.
      * @return Index of the first occurrence
      */
-    public static Map<IItemHandler, List<Integer>> findAllSlotsInProviderWith(@NotNull final ICapabilityProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static Map<IItemHandler, List<Integer>> findAllSlotsInProviderWith(@NotNull final IItemHandlerCapProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         final Map<IItemHandler, List<Integer>> map = new HashMap<>();
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
@@ -594,7 +601,7 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The predicate to match.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final IItemHandlerCapProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
@@ -615,7 +622,7 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The list of predicates to match.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, final List<Predicate<ItemStack>> itemStackSelectionPredicate)
+    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final IItemHandlerCapProvider provider, final List<Predicate<ItemStack>> itemStackSelectionPredicate)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
@@ -683,7 +690,7 @@ public class InventoryUtils
      * @param block    The block to count
      * @return Amount of occurrences of stacks that match the given block and ItemDamage
      */
-    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Block block)
+    public static int getItemCountInProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final Block block)
     {
         return getItemCountInProvider(provider, getItemFromBlock(block));
     }
@@ -695,7 +702,7 @@ public class InventoryUtils
      * @param targetItem Item to count.
      * @return Amount of occurrences of stacks that match the given item and ItemDamage
      */
-    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Item targetItem)
+    public static int getItemCountInProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final Item targetItem)
     {
         return getItemCountInProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem));
     }
@@ -707,7 +714,7 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The predicate used to select the stacks to count.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int getItemCountInProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
                  .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
@@ -721,7 +728,7 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The predicate used to select the stacks to count.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int getDurabilityInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int getDurabilityInProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
                  .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getDurability).sum())
@@ -751,7 +758,7 @@ public class InventoryUtils
                 }
                 else if (entity instanceof ChestBlockEntity)
                 {
-                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
+                    totalCount += getItemCountInProvider(IItemHandlerCapProvider.wrap(entity), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
                 }
 
                 if (totalCount > count)
@@ -838,7 +845,7 @@ public class InventoryUtils
                 }
                 else if (entity instanceof ChestBlockEntity)
                 {
-                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack()));
+                    totalCount += getItemCountInProvider(IItemHandlerCapProvider.wrap(entity), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack()));
                 }
             }
         }
@@ -971,7 +978,7 @@ public class InventoryUtils
      * @param block    Block to count
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Block block)
+    public static boolean hasItemInProvider(@NotNull final IItemHandlerCapProvider Provider, @NotNull final Block block)
     {
         return hasItemInProvider(Provider, getItemFromBlock(block));
     }
@@ -983,7 +990,7 @@ public class InventoryUtils
      * @param item     Item to count
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Item item)
+    public static boolean hasItemInProvider(@NotNull final IItemHandlerCapProvider Provider, @NotNull final Item item)
     {
         return hasItemInProvider(Provider, (ItemStack stack) -> compareItems(stack, item));
     }
@@ -995,7 +1002,7 @@ public class InventoryUtils
      * @param itemStackSelectionPredicate The predicate to match the ItemStack to.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static boolean hasItemInProvider(@NotNull final IItemHandlerCapProvider Provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         for (IItemHandler handler : getItemHandlersFromProvider(Provider))
         {
@@ -1013,7 +1020,7 @@ public class InventoryUtils
      * @param provider The {@link ICapabilityProvider}.
      * @return True if the {@link ICapabilityProvider} is full, false when not.
      */
-    public static boolean isProviderFull(@NotNull final ICapabilityProvider provider)
+    public static boolean isProviderFull(@NotNull final IItemHandlerCapProvider provider)
     {
         return getFirstOpenSlotFromProvider(provider) == -1;
     }
@@ -1024,7 +1031,7 @@ public class InventoryUtils
      * @param provider The {@link ICapabilityProvider} to check.
      * @return slot index or -1 if none found.
      */
-    public static int getFirstOpenSlotFromProvider(@NotNull final ICapabilityProvider provider)
+    public static int getFirstOpenSlotFromProvider(@NotNull final IItemHandlerCapProvider provider)
     {
         return getItemHandlersFromProvider(provider).stream()
                  .mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler)
@@ -1042,7 +1049,7 @@ public class InventoryUtils
      * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean isToolInProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
         return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
@@ -1054,7 +1061,7 @@ public class InventoryUtils
      * @param itemStack ItemStack to add.
      * @return True if successful, otherwise false.
      */
-    public static boolean addItemStackToProvider(@NotNull final ICapabilityProvider provider, @Nullable final ItemStack itemStack)
+    public static boolean addItemStackToProvider(@NotNull final IItemHandlerCapProvider provider, @Nullable final ItemStack itemStack)
     {
         return getItemHandlersFromProvider(provider).stream().anyMatch(handler -> addItemStackToItemHandler(handler, itemStack));
     }
@@ -1140,7 +1147,7 @@ public class InventoryUtils
      * @param itemStack ItemStack to add.
      * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer
      */
-    public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable final ItemStack itemStack)
+    public static ItemStack addItemStackToProviderWithResult(@NotNull final IItemHandlerCapProvider provider, @Nullable final ItemStack itemStack)
     {
         ItemStack activeStack = itemStack;
 
@@ -1216,7 +1223,7 @@ public class InventoryUtils
      */
     @Nullable
     public static ItemStack forceItemStackToProvider(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @NotNull final ItemStack itemStack,
       @NotNull final Predicate<ItemStack> itemStackToKeepPredicate)
     {
@@ -1243,7 +1250,7 @@ public class InventoryUtils
      * @param provider {@link ICapabilityProvider} to count item stacks of.
      * @return Amount of item stacks in the {@link ICapabilityProvider}.
      */
-    public static int getAmountOfStacksInProvider(@NotNull final ICapabilityProvider provider)
+    public static int getAmountOfStacksInProvider(@NotNull final IItemHandlerCapProvider provider)
     {
         return getProviderAsList(provider).size();
     }
@@ -1255,7 +1262,7 @@ public class InventoryUtils
      * @return List of item stacks.
      */
     @NotNull
-    public static List<ItemStack> getProviderAsList(@NotNull final ICapabilityProvider provider)
+    public static List<ItemStack> getProviderAsList(@NotNull final IItemHandlerCapProvider provider)
     {
         return filterProvider(provider, (ItemStack stack) -> true);
     }
@@ -1266,7 +1273,7 @@ public class InventoryUtils
      * @param provider The provider to check.
      * @return True when the provider has any {@link IItemHandler}, false when not.
      */
-    public static boolean hasProviderIItemHandler(@NotNull final ICapabilityProvider provider)
+    public static boolean hasProviderIItemHandler(@NotNull final IItemHandlerCapProvider provider)
     {
         return !getItemHandlersFromProvider(provider).isEmpty();
     }
@@ -1277,7 +1284,7 @@ public class InventoryUtils
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of different sides, false when not
      */
-    public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
+    public static boolean isProviderSided(@NotNull final IItemHandlerCapProvider provider)
     {
         return getItemHandlersFromProvider(provider).size() > 1;
     }
@@ -1290,9 +1297,9 @@ public class InventoryUtils
      * @return List of item stacks.
      */
     @NotNull
-    public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
+    public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing)
     {
-        return filterItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), (ItemStack stack) -> true);
+        return filterItemHandler(provider.getItemHandlerCap(facing), (ItemStack stack) -> true);
     }
 
     /**
@@ -1306,11 +1313,11 @@ public class InventoryUtils
      */
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Block block)
     {
-        return filterItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
+        return filterItemHandler(provider.getItemHandlerCap(facing), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
 
     /**
@@ -1324,12 +1331,12 @@ public class InventoryUtils
      */
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Item targetItem,
       final int itemDamage)
     {
-        return filterItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem));
+        return filterItemHandler(provider.getItemHandlerCap(facing), (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -1342,16 +1349,17 @@ public class InventoryUtils
      */
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(Capabilities.ITEM_HANDLER, facing).isPresent())
+        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
+        if (itemHandler == null)
         {
             return Collections.emptyList();
         }
 
-        return filterItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate);
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate);
     }
 
     /**
@@ -1364,7 +1372,7 @@ public class InventoryUtils
      * @return Index of the first occurrence.
      */
     public static int findFirstSlotInProviderForSideWith(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Block block,
       final int itemDamage)
@@ -1381,7 +1389,7 @@ public class InventoryUtils
      * @return Index of the first occurrence
      */
     public static int findFirstSlotInProviderForSideWith(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Item targetItem)
     {
@@ -1397,18 +1405,19 @@ public class InventoryUtils
      * @return Index of the first occurrence
      */
     public static int findFirstSlotInProviderForSideWith(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(Capabilities.ITEM_HANDLER, facing).isPresent())
+        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
+        if (itemHandler == null)
         {
             return -1;
             //TODO: Later harden contract to remove compare on slot := -1
             //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
         }
 
-        return findFirstSlotInItemHandlerWith(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate);
+        return findFirstSlotInItemHandlerWith(itemHandler, itemStackSelectionPredicate);
     }
 
     /**
@@ -1420,7 +1429,7 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given block and ItemDamage
      */
     public static int getItemCountInProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Block block)
     {
@@ -1436,7 +1445,7 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given item and ItemDamage
      */
     public static int getItemCountInProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Item targetItem)
     {
@@ -1452,16 +1461,17 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given predicate.
      */
     public static int getItemCountInProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(Capabilities.ITEM_HANDLER, facing).isPresent())
+        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
+        if (itemHandler == null)
         {
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate).stream()
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream()
                  .mapToInt(ItemStackUtils::getSize)
                  .sum();
     }
@@ -1475,7 +1485,7 @@ public class InventoryUtils
      * @param block    Block to count
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Block block)
+    public static boolean hasItemInProviderForSide(@NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing, @NotNull final Block block)
     {
         return hasItemInProviderForSide(provider, facing, getItemFromBlock(block));
     }
@@ -1489,7 +1499,7 @@ public class InventoryUtils
      * @param item     Item to count
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Item item)
+    public static boolean hasItemInProviderForSide(@NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing, @NotNull final Item item)
     {
         return hasItemInProviderForSide(provider, facing, (ItemStack stack) -> compareItems(stack, item));
     }
@@ -1504,16 +1514,17 @@ public class InventoryUtils
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
     public static boolean hasItemInProviderForSide(
-      @NotNull final ICapabilityProvider provider,
+      @NotNull final IItemHandlerCapProvider provider,
       @Nullable final Direction facing,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.getCapability(Capabilities.ITEM_HANDLER, facing).isPresent())
+        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
+        if (itemHandler == null)
         {
             return false;
         }
 
-        return findFirstSlotInItemHandlerNotEmptyWith(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), itemStackSelectionPredicate) > -1;
+        return findFirstSlotInItemHandlerNotEmptyWith(itemHandler, itemStackSelectionPredicate) > -1;
     }
 
     /**
@@ -1523,7 +1534,7 @@ public class InventoryUtils
      * @param facing   The side to check for.
      * @return True if the {@link ICapabilityProvider} is full, false when not.
      */
-    public static boolean isProviderFull(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
+    public static boolean isProviderFull(@NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing)
     {
         return getFirstOpenSlotFromProviderForSide(provider, facing) == -1;
     }
@@ -1535,14 +1546,15 @@ public class InventoryUtils
      * @param facing   The side to check for.
      * @return slot index or -1 if none found.
      */
-    public static int getFirstOpenSlotFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
+    public static int getFirstOpenSlotFromProviderForSide(@NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing)
     {
-        if (!provider.getCapability(Capabilities.ITEM_HANDLER, facing).isPresent())
+        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
+        if (itemHandler == null)
         {
             return -1;
         }
 
-        return getFirstOpenSlotFromItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null));
+        return getFirstOpenSlotFromItemHandler(itemHandler);
     }
 
     /**
@@ -1556,15 +1568,16 @@ public class InventoryUtils
      * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
      */
     public static boolean isToolInProviderForSide(
-      @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
+      @NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
       final int minimalLevel, final int maximumLevel)
     {
-        if (!provider.getCapability(Capabilities.ITEM_HANDLER, facing).isPresent())
+        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
+        if (itemHandler == null)
         {
             return false;
         }
 
-        return isToolInItemHandler(provider.getCapability(Capabilities.ITEM_HANDLER, facing).orElse(null), toolType, minimalLevel, maximumLevel);
+        return isToolInItemHandler(itemHandler, toolType, minimalLevel, maximumLevel);
     }
 
     /**
@@ -1640,7 +1653,7 @@ public class InventoryUtils
     public static boolean transferItemStackIntoNextFreeSlotInProvider(
       @NotNull final IItemHandler sourceHandler,
       final int sourceIndex,
-      @NotNull final ICapabilityProvider targetProvider)
+      @NotNull final IItemHandlerCapProvider targetProvider)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(targetProvider))
         {
@@ -1931,17 +1944,17 @@ public class InventoryUtils
     }
 
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProvider(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      final int amount, @NotNull final ICapabilityProvider targetProvider)
+      final int amount, @NotNull final IItemHandlerCapProvider targetProvider)
     {
         return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetProvider) == 0;
     }
 
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      final int amount, @NotNull final ICapabilityProvider targetProvider)
+      final int amount, @NotNull final IItemHandlerCapProvider targetProvider)
     {
         int currentAmount = amount;
 
@@ -1959,7 +1972,7 @@ public class InventoryUtils
     }
 
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
       final int amount, @NotNull final IItemHandler targetHandler)
     {
@@ -1967,7 +1980,7 @@ public class InventoryUtils
     }
 
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
       final int amount, @NotNull final IItemHandler targetHandler)
     {
@@ -2110,7 +2123,7 @@ public class InventoryUtils
      * @return True when the swap was successful, false when not.
      */
     public static boolean transferItemStackIntoNextFreeSlotFromProvider(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
@@ -2171,7 +2184,7 @@ public class InventoryUtils
      * @return True when the swap was successful, false when not.
      */
     public static boolean transferXOfItemStackIntoNextFreeSlotFromProvider(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       final int sourceIndex,
       final int count,
       @NotNull final IItemHandler targetHandler)
@@ -2196,7 +2209,7 @@ public class InventoryUtils
      * @return True when the swap was successful, false when not.
      */
     public static boolean transferItemStackIntoNextBestSlotFromProvider(
-      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final IItemHandlerCapProvider sourceProvider,
       final int sourceIndex,
       @NotNull final IItemHandler targetHandler)
     {
@@ -2253,7 +2266,7 @@ public class InventoryUtils
      * @param input    the list of stacks.
      * @return true if succesful.
      */
-    public static boolean removeStacksFromProvider(final ICapabilityProvider provider, final List<ItemStack> input)
+    public static boolean removeStacksFromProvider(final IItemHandlerCapProvider provider, final List<ItemStack> input)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
@@ -2386,7 +2399,7 @@ public class InventoryUtils
      * @param amount   stack size to be considered.
      * @return the slot or -1.
      */
-    public static int findSlotInProviderNotFullWithItem(final ICapabilityProvider provider, final Item item, final int amount)
+    public static int findSlotInProviderNotFullWithItem(final IItemHandlerCapProvider provider, final Item item, final int amount)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
@@ -2592,7 +2605,7 @@ public class InventoryUtils
      * @param provider The provider to check in
      * @return True when all stacks are in the handler, false when not
      */
-    public static boolean areAllItemsInProvider(@NotNull final List<ItemStack> stacks, @NotNull final ICapabilityProvider provider)
+    public static boolean areAllItemsInProvider(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandlerCapProvider provider)
     {
         return areAllItemsInItemHandlerList(stacks, getItemHandlersFromProvider(provider));
     }
@@ -2888,7 +2901,7 @@ public class InventoryUtils
      * @param handlers inventory handlers
      * @return Map of IdentityItemstorage
      */
-    public static Map<ItemStorage, ItemStorage> getAllItemsForProviders(final ICapabilityProvider provider, final IItemHandler... handlers)
+    public static Map<ItemStorage, ItemStorage> getAllItemsForProviders(final IItemHandlerCapProvider provider, final IItemHandler... handlers)
     {
         final Set<IItemHandler> providerHandlers = getItemHandlersFromProvider(provider);
         if (handlers != null)
@@ -2995,7 +3008,7 @@ public class InventoryUtils
      * @return true if any food was transferred
      */
     public static int transferFoodUpToSaturation(
-      final ICapabilityProvider source,
+      final IItemHandlerCapProvider source,
       final IItemHandler target,
       final int requiredSaturation,
       final Predicate<ItemStack> foodPredicate)
@@ -3198,7 +3211,7 @@ public class InventoryUtils
             return ((TileEntityRack) entity).getCount(stack, false, false) >= count;
         }
 
-        return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
+        return getItemCountInProvider(IItemHandlerCapProvider.wrap(entity), itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
     }
 
     public static List<ItemStack> getBuildingInventory(final IBuilding building)

@@ -34,7 +34,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -212,7 +211,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        final IItemHandler handler = building.getCapability(Capabilities.ITEM_HANDLER, null).orElse(null);
+        final IItemHandler handler = building.getItemHandlerCap();
         if (handler == null)
         {
             return false;
@@ -394,14 +393,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (targetBuilding instanceof AbstractBuilding)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  targetBuilding.getCapability(Capabilities.ITEM_HANDLER, null).orElseGet(null), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
+                  targetBuilding.getItemHandlerCap(), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
             }
             else
             {
                 // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items replaced.
                 // Therefore, the keep-predicate always returns true.
                 insertionResultStack =
-                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(Capabilities.ITEM_HANDLER, null).orElseGet(null),
+                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getItemHandlerCap(),
                     stack,
                     itemStack -> true);
             }
@@ -565,18 +564,22 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding
-               && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
-              (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
+        IItemHandler handler = null;
+        if (entity instanceof final TileEntityColonyBuilding hut && InventoryUtils.hasBuildingEnoughElseCount(hut.getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount())
         {
-            final IItemHandler handler = entity.getCapability(Capabilities.ITEM_HANDLER, null).resolve().orElse(null);
-            if (handler != null)
-            {
-                return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,
-                  stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                  is.getCount(),
-                  worker.getInventoryCitizen());
-            }
+            handler = hut.getItemHandlerCap();
+        }
+        else if (entity instanceof final TileEntityRack rack && rack.getCount(new ItemStorage(is)) >= is.getCount())
+        {
+            handler = rack.getItemHandlerCap();
+        }
+
+        if (handler != null)
+        {
+            return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,
+              stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+              is.getCount(),
+              worker.getInventoryCitizen());
         }
 
         return false;

@@ -21,11 +21,13 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -49,6 +51,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -58,7 +61,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider
+public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider, IItemHandlerCapProvider
 {
     public static final int ENTITY_AI_TICKRATE = 5;
 
@@ -795,5 +798,13 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public boolean isSleeping()
     {
         return getCitizenSleepHandler().isAsleep();
+    }
+
+    @Override
+    @Nullable
+    public IItemHandler getItemHandlerCap(final Direction facing)
+    {
+        final ICitizenData data = getCitizenData();
+        return data == null ? null : data.getInventory();
     }
 }

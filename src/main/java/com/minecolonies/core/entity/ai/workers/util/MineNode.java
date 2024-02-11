@@ -12,9 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.ROTATE_ONCE;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_THREE_TIMES;
-import static com.minecolonies.api.util.constant.Constants.ROTATE_TWICE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
 
 /**

@@ -10,7 +10,6 @@ import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessa
 import com.minecolonies.core.util.SortingUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
@@ -40,7 +39,10 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     {
         if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
         {
-            building.getCapability(Capabilities.ITEM_HANDLER, null).ifPresent(inv -> SortingUtils.sort((CombinedItemHandler) inv));
+            if (building.getItemHandlerCap() instanceof final CombinedItemHandler combinedInv)
+            {
+                SortingUtils.sort(combinedInv);
+            }
         }
     }
 }
