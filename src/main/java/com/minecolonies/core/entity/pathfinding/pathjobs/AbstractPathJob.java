@@ -1323,13 +1323,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
     private boolean checkHeadBlock(@Nullable final MNode parent, @NotNull final BlockPos pos)
     {
-        BlockPos localPos = pos;
-        final VoxelShape bb = cachedBlockLookup.getBlockState(localPos).getCollisionShape(world, localPos);
-        if (bb.max(Direction.Axis.Y) < 1)
-        {
-            localPos = pos.above();
-        }
-
+        final VoxelShape bb = cachedBlockLookup.getBlockState(pos).getCollisionShape(world, pos);
         if (!canLeaveBlock(pos.above(), parent, true))
         {
             return true;
@@ -1355,10 +1349,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (parent != null)
         {
-            final BlockState hereState = cachedBlockLookup.getBlockState(localPos.below());
-            final VoxelShape bb1 = cachedBlockLookup.getBlockState(pos).getCollisionShape(world, pos);
-            final VoxelShape bb2 = cachedBlockLookup.getBlockState(localPos.above()).getCollisionShape(world, localPos.above());
-            if ((localPos.above().getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) >= 2)
+            final BlockState hereState = cachedBlockLookup.getBlockState(pos.below());
+            final VoxelShape bb2 = cachedBlockLookup.getBlockState(pos.above()).getCollisionShape(world, pos.above());
+            if ((pos.above().getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb, 0)) >= 2)
             {
                 return false;
             }
@@ -1529,6 +1522,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             {
                 if (dir.getY() != 0)
                 {
+                    if (parentBlock.getBlock() instanceof TrapDoorBlock)
+                    {
+                        return true;
+                    }
                     return (head && parentBlock.getValue(PanelBlock.HALF) == Half.TOP && dir.getY() < 0) || (!head && parentBlock.getValue(PanelBlock.HALF) == Half.BOTTOM
                                                                                                                && dir.getY() > 0);
                 }
