@@ -21,6 +21,7 @@ import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -362,6 +363,9 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColony().getDay());
-        parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + entity.getType().getDescription().toString());
+        if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
+        {
+            parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
+        }
     }
 }
