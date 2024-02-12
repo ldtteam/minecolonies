@@ -1,16 +1,12 @@
 package com.minecolonies.core.generation.defaults.workers;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.loot.ResearchUnlocked;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
@@ -21,16 +17,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.Map;
+import java.lang.reflect.Field;
 
 /**
  * Datagen for fisherman loot tables
  */
 public class DefaultFishermanLootProvider extends SimpleLootTableProvider
 {
-    private static final Gson GSON = Deserializers.createLootTableSerializer().create();
-
     public DefaultFishermanLootProvider(@NotNull final PackOutput packOutput)
     {
         super(packOutput);
@@ -41,27 +34,6 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
     {
         registerStandardLoot(registrar);
         registerBonusLoot(registrar);
-    }
-
-    @Override
-    protected void validate(@NotNull final Map<ResourceLocation, LootTable> map,
-                            @NotNull final ValidationContext validationtracker)
-    {
-        ValidationContext newTracker = new ValidationContext(LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
-            @Nullable
-            public <T> T getElement(@NotNull LootDataId<T> id) {
-                if (id.location().equals(BuiltInLootTables.FISHING_FISH) ||
-                      id.location().equals(BuiltInLootTables.FISHING_JUNK) ||
-                      id.location().equals(BuiltInLootTables.FISHING_TREASURE))
-                {
-                    return (T) map.get(id.location());
-                }
-                return null;
-            }
-        });
-
-
-        super.validate(map, newTracker);
     }
 
     private void registerStandardLoot(@NotNull final LootTableRegistrar registrar)
@@ -145,7 +117,27 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
     private static int getWeightForEntry(@NotNull final LootPoolSingletonContainer.Builder<?> entry)
     {
         // because it would be too easy for it to just have a public getter...
-        final JsonObject json = GSON.toJsonTree(entry.build()).getAsJsonObject();
-        return GsonHelper.getAsInt(json, "weight", 1);
+        if (weightField == null)
+        {
+            try
+            {
+                weightField = LootPoolSingletonContainer.Builder.class.getDeclaredField("weight");
+                weightField.setAccessible(true);
+            }
+            catch (final NoSuchFieldException | SecurityException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        try
+        {
+            return weightField.getInt(entry);
+        }
+        catch (final IllegalArgumentException | IllegalAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
+
+    private static Field weightField = null;
 }

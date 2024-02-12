@@ -4,6 +4,8 @@ import com.google.gson.*;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +43,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE
  */
 public final class LootTableAnalyzer
 {
-    private static final Gson GSON = Deserializers.createLootTableSerializer().create();
-
     private LootTableAnalyzer() { }
 
     /**
@@ -71,7 +70,7 @@ public final class LootTableAnalyzer
     {
         try
         {
-            final JsonObject lootTableJson = GSON.toJsonTree(lootTable).getAsJsonObject();
+            final JsonObject lootTableJson = (JsonObject) Util.getOrThrow(LootTable.CODEC.encodeStart(JsonOps.INSTANCE, lootTable), IllegalStateException::new);
             return toDrops(lootTableManager, lootTableJson);
         }
         catch (final JsonParseException ex)

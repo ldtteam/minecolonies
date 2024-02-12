@@ -1,24 +1,19 @@
 package com.minecolonies.core.generation;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +23,7 @@ import java.util.Map;
  */
 public class DatagenLootTableManager extends LootDataManager
 {
-    private static final Gson GSON = Deserializers.createLootTableSerializer().create();
+    private static final Gson GSON = new GsonBuilder().create();
     private final ExistingFileHelper               existingFileHelper;
     private final Map<ResourceLocation, LootTable> tables = new HashMap<>();
 
@@ -42,30 +37,28 @@ public class DatagenLootTableManager extends LootDataManager
     @Override
     public LootTable getLootTable(@NotNull final ResourceLocation location)
     {
-        final LootTable table = this.tables.get(location);
-        if (table != null) return table;
-
-        try
-        {
-            final Resource resource = existingFileHelper.getResource(location, PackType.SERVER_DATA, ".json", "loot_tables");
-            try (final InputStream inputstream = resource.open();
-                 final Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
-            )
+        return tables.computeIfAbsent(location, loc -> {
+            LootTable result = null;
+            try
             {
-                final JsonElement jsonobject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
-                final LootTable loottable = CommonHooks.loadLootTable(GSON, location, jsonobject, false);
-                if (loottable != null)
-                {
-                    this.tables.put(location, loottable);
-                    return loottable;
-                }
+                result = loadLootType(loc, LootDataType.TABLE);
             }
-        }
-        catch (final Throwable e)
-        {
-            e.printStackTrace();
-        }
+            catch (final Throwable e)
+            {
+                e.printStackTrace();
+            }
+            return result != null ? result : LootTable.EMPTY;
+        });
+    }
 
-        return LootTable.EMPTY;
+    @Nullable
+    private <T> T loadLootType(final ResourceLocation location, final LootDataType<T> type) throws Exception
+    {
+        final Resource resource = existingFileHelper.getResource(location, PackType.SERVER_DATA, ".json", type.directory());
+        try (final var reader = resource.openAsReader())
+        {
+            final JsonElement jsonElement = GsonHelper.fromJson(GSON, reader, JsonElement.class);
+            return type.deserialize(location, jsonElement).orElse(null);
+        }
     }
 }
