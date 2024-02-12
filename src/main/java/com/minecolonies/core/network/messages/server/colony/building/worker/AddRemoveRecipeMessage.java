@@ -129,7 +129,10 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
               gridSize,
               primaryOutput, intermediary);
         }
-        // TODO: storage cant be null
+        else
+        {
+            throw new UnsupportedOperationException("Not used now, implement it later if needed..");
+        }
         this.id = id;
     }
 

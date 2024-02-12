@@ -72,7 +72,7 @@ public class ItemPharaoScepter extends BowItem
                 {
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
                     AbstractArrow abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
-                    abstractarrowentity = customArrow(abstractarrowentity);
+                    abstractarrowentity = customArrow(abstractarrowentity, arrowitem.getDefaultInstance());
                     abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(), 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
                     {
@@ -131,7 +131,7 @@ public class ItemPharaoScepter extends BowItem
 
     @NotNull
     @Override
-    public AbstractArrow customArrow(@NotNull AbstractArrow arrow)
+    public AbstractArrow customArrow(@NotNull AbstractArrow arrow, final ItemStack projectileStack)
     {
         if (arrow.getOwner() == null)
         {
