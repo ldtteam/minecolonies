@@ -1,14 +1,11 @@
 package com.minecolonies.core.entity.other;
 
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -36,14 +33,13 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.ToolActions;
-import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
-import net.neoforged.neoforge.network.PlayMessages;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class NewBobberEntity extends Projectile implements IEntityAdditionalSpawnData
+public class NewBobberEntity extends Projectile implements IEntityWithComplexSpawn
 {
     private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.INT);
     public  static final int                    XP_PER_CATCH       = 2;
@@ -77,16 +73,6 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
     {
         super(type, world);
         this.noCulling = true;
-    }
-
-    /**
-     * Client side constructor.
-     * @param spawnEntity spawn message.
-     * @param world the client world.
-     */
-    public NewBobberEntity(final PlayMessages.SpawnEntity spawnEntity, final Level world)
-    {
-        this(ModEntities.FISHHOOK, world);
     }
 
     /**
@@ -591,13 +577,6 @@ public class NewBobberEntity extends Projectile implements IEntityAdditionalSpaw
     public boolean canChangeDimensions()
     {
         return false;
-    }
-
-    @Override
-    @NotNull
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override

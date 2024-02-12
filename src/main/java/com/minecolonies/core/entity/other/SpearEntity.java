@@ -4,8 +4,6 @@ import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -79,12 +77,6 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         this.setPos(thrower.getX(), thrower.getEyeY() - 0.1, thrower.getZ());
         this.shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), 0.0F, 2.5F, 1.0F);
         getAddEntityPacket();
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @NotNull

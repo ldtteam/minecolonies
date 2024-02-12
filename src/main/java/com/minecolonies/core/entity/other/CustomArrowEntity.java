@@ -1,13 +1,11 @@
 package com.minecolonies.core.entity.other;
 
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -52,13 +50,6 @@ public class CustomArrowEntity extends Arrow
     {
         // TODO add enderman damage hit research here. Note that this is also used by mobs, so check the shooter first.
         super.doPostHurtEffects(target);
-    }
-
-    @Override
-    @NotNull
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override

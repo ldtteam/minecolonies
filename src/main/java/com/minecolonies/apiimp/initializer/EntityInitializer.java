@@ -58,8 +58,7 @@ public class EntityInitializer
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                 .sized(0.25F, 0.25F)
-                .setShouldReceiveVelocityUpdates(true)
-                .setCustomClientFactory(NewBobberEntity::new));
+                .setShouldReceiveVelocityUpdates(true));
 
             ModEntities.VISITOR = build(registry, "visitor", EntityType.Builder.of(VisitorCitizen::new, MobCategory.CREATURE)
               .setTrackingRange(ENTITY_TRACKING_RANGE)
