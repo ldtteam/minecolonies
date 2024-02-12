@@ -108,7 +108,16 @@ public class WindowStatsModule extends AbstractModuleWindow
                 if (id.contains(";"))
                 {
                     final String[] split = id.split(";");
-                    resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + split[0], stat, Component.translatable(split[1])));
+                    if (id.contains("'"))
+                    {
+                        //todo remove in 1.20.4
+                        final String[] split2 = split[1].split("'");
+                        resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + split[0], stat, Component.translatable(split2[1])));
+                    }
+                    else
+                    {
+                        resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + split[0], stat, Component.translatable(split[1])));
+                    }
                 }
                 else
                 {
