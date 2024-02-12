@@ -16,10 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -32,16 +30,9 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     public static final String REGISTRY_NAME = "colony_banner";
     public static final String REGISTRY_NAME_WALL = "colony_wall_banner";
 
-    public AbstractColonyFlagBanner()
+    public AbstractColonyFlagBanner(final DyeColor dyeColor, final Properties properties)
     {
-        super(
-            DyeColor.WHITE,
-            Properties.of().mapColor(MapColor.WOOD)
-              .sound(SoundType.WOOD)
-                .noCollission()
-                .strength(1F)
-                .sound(SoundType.WOOD)
-        );
+        super(dyeColor, properties);
     }
 
     @Override

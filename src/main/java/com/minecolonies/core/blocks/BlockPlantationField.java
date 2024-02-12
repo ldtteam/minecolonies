@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.WindowPlantationField;
 import com.minecolonies.core.colony.fields.PlantationField;
 import com.minecolonies.core.tileentities.TileEntityPlantationField;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +45,8 @@ import java.util.Map;
  */
 public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
 {
+    public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
+
     /**
      * If the block is mirrored.
      */
@@ -74,8 +77,19 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      */
     public BlockPlantationField()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+    }
+
+    public BlockPlantationField(final Properties properties)
+    {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false));
+    }
+
+    @Override
+    protected MapCodec<BlockPlantationField> codec()
+    {
+        return CODEC;
     }
 
     @Override

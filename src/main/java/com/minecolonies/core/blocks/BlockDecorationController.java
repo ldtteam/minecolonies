@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowDecorationController;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -51,6 +52,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
  */
 public class BlockDecorationController extends AbstractBlockMinecoloniesDirectional<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock, SimpleWaterloggedBlock
 {
+    public static final MapCodec<BlockDecorationController> CODEC = simpleCodec(BlockDecorationController::new);
+
     /**
      * The hardness this block has.
      */
@@ -91,8 +94,19 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
      */
     public BlockDecorationController()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+    }
+
+    public BlockDecorationController(final Properties properties)
+    {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false).setValue(WATERLOGGED, false));
+    }
+
+    @Override
+    protected MapCodec<BlockDecorationController> codec()
+    {
+        return CODEC;
     }
 
     @Override

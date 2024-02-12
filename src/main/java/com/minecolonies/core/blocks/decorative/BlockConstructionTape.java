@@ -2,6 +2,7 @@ package com.minecolonies.core.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.util.constant.Constants;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -34,6 +35,8 @@ import net.minecraft.core.Direction.Plane;
  */
 public class BlockConstructionTape extends AbstractBlockMinecoloniesConstructionTape<BlockConstructionTape>
 {
+    public static final MapCodec<BlockConstructionTape> CODEC = simpleCodec(BlockConstructionTape::new);
+
     /**
      * This blocks name.
      */
@@ -44,7 +47,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     public BlockConstructionTape()
     {
-        super(Properties.of()
+        this(Properties.of()
                 .mapColor(MapColor.PLANT)
                 .sound(SoundType.WOOD)
                 .replaceable()
@@ -53,6 +56,11 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .isRedstoneConductor((state, getter, pos) -> false)
                 .forceSolidOff()
                 .strength(0.0f).noCollission().noLootTable());
+    }
+
+    public BlockConstructionTape(final Properties properties)
+    {
+        super(properties);
 
         this.shapes = makeShapes(2, 2, 16, 0, 16);
 
@@ -65,6 +73,12 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .setValue(WATERLOGGED, false)
                 .setValue(CORNER, false)
         );
+    }
+
+    @Override
+    protected MapCodec<BlockConstructionTape> codec()
+    {
+        return CODEC;
     }
 
     @Override
