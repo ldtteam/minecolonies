@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.EffectCures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,8 +51,7 @@ public class ItemMilkyBread extends AbstractItemMinecolonies
         
         if (!worldIn.isClientSide)
         {
-            // TODO: removeEffectsCuredBy - some weird arg
-            entityLiving.curePotionEffects(new ItemStack(Items.MILK_BUCKET));
+            entityLiving.removeEffectsCuredBy(EffectCures.MILK);
         }
 
         return super.finishUsingItem(stack, worldIn, entityLiving);

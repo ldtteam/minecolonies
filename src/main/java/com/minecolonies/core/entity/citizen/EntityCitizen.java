@@ -97,7 +97,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.Team;
+import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -244,7 +244,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Cache the entire team object.
      */
-    private Team cachedTeam;
+    private PlayerTeam cachedTeam;
 
     /**
      * The citizen AI
@@ -1759,7 +1759,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public Team getTeam()
+    public PlayerTeam getTeam()
     {
         if (level() == null || (level().isClientSide && cachedTeamName == null))
         {

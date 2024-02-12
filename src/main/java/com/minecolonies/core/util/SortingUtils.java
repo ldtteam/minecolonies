@@ -166,8 +166,7 @@ public final class SortingUtils
      */
     private static int getId(final Item item)
     {
-        // TODO: remove this arghhhh
-        return BuiltInRegistries.ITEM.getID(item);
+        return BuiltInRegistries.ITEM.getId(item);
     }
 
     /**

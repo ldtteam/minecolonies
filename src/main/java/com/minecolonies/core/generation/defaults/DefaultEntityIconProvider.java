@@ -63,7 +63,8 @@ public class DefaultEntityIconProvider implements DataProvider
         final PackOutput.PathProvider outputProvider = generator.getPackOutput().createPathProvider(PackOutput.Target.RESOURCE_PACK, "textures/entity_icon");
 
         final IModFileInfo modFileInfo = ModList.get().getModFileById(MOD_ID);
-        try (final PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo))
+        final String name = "mod:" + MOD_ID; // see usage of ResourcePackLoader#createPackForMod
+        try (final PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo).openPrimary(name))
         {
             final List<CompletableFuture<?>> icons = new ArrayList<>();
 

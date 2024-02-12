@@ -45,7 +45,6 @@ import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.neoforged.neoforge.common.ToolActions;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -349,22 +348,20 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
 
         // Set up Objectives and scores. 
-        if (!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
+        if (world.getScoreboard().getObjective(OBJECTIVE_HUT_LEVEL) == null)
         {
-            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ObjectiveCriteria.DUMMY, Component.literal("Worker Building Level"), ObjectiveCriteria.RenderType.INTEGER);
+            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ObjectiveCriteria.DUMMY, Component.literal("Worker Building Level"), ObjectiveCriteria.RenderType.INTEGER, false, null);
         }
-        if (!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
+        if (world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL) == null)
         {
             world.getScoreboard()
-              .addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, Component.literal("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER);
+              .addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, Component.literal("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER, false, null);
         }
         final Objective hutLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_HUT_LEVEL);
         final Objective secondarySkillLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL);
 
-        Score s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), hutLevelObjective);
-        s.setScore(building.getBuildingLevel());
-        s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), secondarySkillLevelObjective);
-        s.setScore(getSecondarySkillLevel());
+        world.getScoreboard().getOrCreatePlayerScore(worker, hutLevelObjective).set(building.getBuildingLevel());
+        world.getScoreboard().getOrCreatePlayerScore(worker, secondarySkillLevelObjective).set(getSecondarySkillLevel());
 
         final ExpeditionLog expeditionLog = building.getFirstModuleOccurance(ExpeditionLogModule.class).getLog();
         expeditionLog.reset();

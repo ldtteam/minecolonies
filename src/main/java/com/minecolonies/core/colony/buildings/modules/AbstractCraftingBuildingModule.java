@@ -475,7 +475,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     final IRecipeStorage storage = recipeManager.getRecipes().get(token);
 
                     //Let's verify that this recipe doesn't exist in an improved form
-                    if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
+                    if(storage != null && ItemStack.matches(storage.getPrimaryOutput(), recipeStorage.getPrimaryOutput()))
                     {
                         List<ItemStorage> recipeInput1 = storage.getCleanedInput();
                         List<ItemStorage> recipeInput2 = recipeStorage.getCleanedInput();

@@ -75,7 +75,7 @@ public abstract class AbstractBlockGate extends DoorBlock
 
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(hardness, hardness * 5).noOcclusion(), BlockSetType.SPRUCE);
+        super(BlockSetType.SPRUCE, Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(hardness, hardness * 5).noOcclusion());
         registerDefaultState(defaultBlockState());
         this.name = name;
         this.maxWidth = maxWidth;
@@ -92,13 +92,14 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player)
+    public BlockState playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player)
     {
         int count = removeGate(worldIn, pos, state.getValue(FACING).getClockWise());
         for (int i = 0; i < count; i++)
         {
             Block.dropResources(state, worldIn, pos, null, player, player.getMainHandItem());
         }
+        return super.playerWillDestroy(worldIn, pos, state, player);
     }
 
     /**
