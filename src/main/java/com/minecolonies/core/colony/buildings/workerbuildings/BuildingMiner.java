@@ -286,7 +286,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         else
         {
-            rotMir = mineNode.getRotationMirror();
+            rotMir = mineNode.getRotationMirror().orElse(RotationMirror.NONE);
             style = mineNode.getStyle().getSchematicName();
         }
 

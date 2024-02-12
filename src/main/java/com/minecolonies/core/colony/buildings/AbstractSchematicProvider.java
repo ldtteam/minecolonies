@@ -22,6 +22,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +58,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * The rotation and mirror of the building.
      */
     @Nullable
-    protected RotationMirror rotationMirror = null;
+    private RotationMirror rotationMirror = null;
+
+    /**
+     * Used as holder for old value during invalidation (so we can keep mirror or return old rotation if new inaccessible)
+     */
+    private RotationMirror lastRotationMirror = null;
 
     /**
      * The building style.
@@ -147,7 +154,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         this.path = path;
         getTileEntity().setBlueprintPath(path);
-        rotationMirror = null;
+        invalidateRotationMirror();
         this.markDirty();
     }
 
@@ -161,7 +168,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         compound.putString(TAG_PATH, getBlueprintPath());
 
         compound.putInt(TAG_SCHEMATIC_LEVEL, buildingLevel);
-        compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
+        compound.putByte(TAG_ROTATION_MIRROR, (byte) getRotationMirror().ordinal());
 
         getCorners();
         BlockPosUtil.write(compound, TAG_CORNER1, this.lowerCorner);
@@ -188,12 +195,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
         else
         {
-            isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
+            // TODO: remove this later (data break introduced in 1.20.4)
 
-            // TODO: rotationMirror (the optional rotation is a bit of problem)
+            final Mirror mirror = compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE;
             if (compound.contains(TAG_ROTATION))
             {
-                this.cachedRotation = compound.getInt(TAG_ROTATION);
+                rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], mirror);
+            }
+            else
+            {
+                rotationMirror = null; // should be null anyway, manually invalidate so data are applied as in old loader
+                lastRotationMirror = RotationMirror.NONE.mirrorate(mirror);
             }
         }
 
@@ -327,14 +339,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
           .collect(Collectors.toUnmodifiableSet());
     }
 
-    private void resolveRotationMirror()
+    private RotationMirror resolveRotationMirror()
     {
-        // TODO: rotationMirror
-        if (cachedRotation != -1)
-        {
-            return cachedRotation;
-        }
-
         try
         {
             Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
@@ -350,21 +356,22 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                     if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
                     {
                         Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", this.path));
-                        return 0;
+                        return lastRotationMirror == null ? RotationMirror.NONE : lastRotationMirror;
                     }
 
                     final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
                     final int worldRotation = colony.getWorld().getBlockState(this.location).getValue(AbstractBlockHut.FACING).get2DDataValue();
 
+                    final int rotation;
                     if (structureRotation <= worldRotation)
                     {
-                        cachedRotation = worldRotation - structureRotation;
+                        rotation = worldRotation - structureRotation;
                     }
                     else
                     {
-                        cachedRotation = 4 + worldRotation - structureRotation;
+                        rotation = 4 + worldRotation - structureRotation;
                     }
-                    return cachedRotation;
+                    return RotationMirror.of(Rotation.values()[rotation], lastRotationMirror == null ? Mirror.NONE : lastRotationMirror.mirror());
                 }
             }
             else
@@ -377,10 +384,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         {
             Log.getLogger()
               .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path), e);
-            return 0;
+            return lastRotationMirror == null ? RotationMirror.NONE : lastRotationMirror;
         }
 
-        return 0;
+        return lastRotationMirror == null ? RotationMirror.NONE : lastRotationMirror;
     }
 
     /**
@@ -427,7 +434,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 blueprint = blueprintFuture.get();
                 if (blueprint != null)
                 {
-                    blueprint.setRotationMirror(rotationMirror, colony.getWorld());
+                    blueprint.setRotationMirror(getRotationMirror(), colony.getWorld());
                     final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
                     if (info.getTileEntityData() != null)
                     {
@@ -492,7 +499,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void setStructurePack(final String pack)
     {
         this.structurePack = pack;
-        cachedRotation = -1;
+        invalidateRotationMirror();
         this.markDirty();
         getTileEntity().setStructurePack(StructurePacks.getStructurePack(pack));
     }
@@ -527,9 +534,19 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         if (rotationMirror == null)
         {
-            resolveRotationMirror();
+            rotationMirror = resolveRotationMirror();
+            lastRotationMirror = null;
         }
         return rotationMirror;
+    }
+
+    public void invalidateRotationMirror()
+    {
+        if (rotationMirror != null)
+        {
+            lastRotationMirror = rotationMirror;
+            rotationMirror = null;
+        }
     }
 
     @Override

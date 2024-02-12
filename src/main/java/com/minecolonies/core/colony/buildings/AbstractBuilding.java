@@ -694,7 +694,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
 
-        buf.writeByte(rotationMirror.ordinal());
+        buf.writeByte(getRotationMirror().ordinal());
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundTag requestSystemCompound = new CompoundTag();
@@ -963,7 +963,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        rotationMirror = null;
+        invalidateRotationMirror();
         ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 

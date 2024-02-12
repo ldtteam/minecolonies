@@ -56,7 +56,7 @@ public class MineNode
     /**
      * The rotation that was calculated and used at build time
      */
-    private RotationMirror rotMir;
+    private Optional<RotationMirror> rotMir = Optional.empty();
 
     /**
      * Central position of parent node.
@@ -182,7 +182,7 @@ public class MineNode
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
 
-        compound.putByte(TAG_ROTATION_MIRROR, (byte) rotMir.ordinal());
+        rotMir.ifPresent(r -> compound.putByte(TAG_ROTATION_MIRROR, (byte) r.ordinal()));
 
         compound.putString(TAG_STYLE, style.name());
         compound.putString(TAG_STATUS, status.name());
@@ -454,7 +454,7 @@ public class MineNode
      *
      * @return
      */
-    public RotationMirror getRotationMirror()
+    public Optional<RotationMirror> getRotationMirror()
     {
         return rotMir;
     }
@@ -464,8 +464,8 @@ public class MineNode
      *
      * @param rot
      */
-    public void setRotationMirror(RotationMirror rot)
+    public void setRotationMirror(final RotationMirror rot)
     {
-        this.rotMir = rot;
+        this.rotMir = Optional.ofNullable(rot);
     }
 }

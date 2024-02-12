@@ -702,7 +702,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
 
-        if (workingNode.getRotationMirror() != rotMir)
+        if (workingNode.getRotationMirror().isPresent() && workingNode.getRotationMirror().get() != rotMir)
         {
             Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ);
         }

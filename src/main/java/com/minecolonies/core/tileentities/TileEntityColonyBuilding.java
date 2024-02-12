@@ -38,6 +38,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -93,6 +96,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * Check if the building has a mirror.
      */
     private RotationMirror rotationMirror;
+    private Boolean oldMirror;
 
     /**
      * The style of the building.
@@ -365,8 +369,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         }
         else
         {
-            // TODO: rotationMirror (where is rotation here?)
-            mirror = compound.getBoolean(TAG_MIRROR);
+            // TODO: remove this later (data break introduced in 1.20.4)
+            oldMirror = compound.getBoolean(TAG_MIRROR);
         }
 
         String packName;
@@ -438,7 +442,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY, colonyId);
-        compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
+        if (rotationMirror != null)
+        {
+            compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
+        }
+        else
+        {
+            // TODO: remove this later (data break introduced in 1.20.4)
+            // in case nothing updated this internal state
+            compound.putBoolean(TAG_MIRROR, Objects.requireNonNullElse(oldMirror, false));
+        }
         compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
         compound.putString(TAG_PATH, path == null ? "" : path);
         if (registryName != null)
@@ -687,7 +700,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
             final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
 
-            final int rotation;a // TODO: fail port, check in blame if need fix or remove
+            final int rotation;
             if (structureRotation <= worldRotation)
             {
                 rotation = worldRotation - structureRotation;
@@ -696,8 +709,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             {
                 rotation = 4 + worldRotation - structureRotation;
             }
+            if (oldMirror != null)
+            {
+                rotationMirror = RotationMirror.NONE.mirrorate(oldMirror ? Mirror.FRONT_BACK : Mirror.NONE);
+            }
 
-            blueprint.setRotationMirror(rotationMirror, level);
+            blueprint.setRotationMirror(RotationMirror.of(Rotation.values()[rotation], rotationMirror.mirror()), level);
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
 
             if (info.getTileEntityData() != null)

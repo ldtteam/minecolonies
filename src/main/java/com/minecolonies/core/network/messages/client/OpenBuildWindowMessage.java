@@ -18,22 +18,22 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
     /**
      * Town hall position to create building on.
      */
-    protected BlockPos pos;
+    protected final BlockPos pos;
 
     /**
      * The colony name.
      */
-    protected String path;
+    protected final String path;
 
     /**
      * The structure pack name.
      */
-    protected String packName;
+    protected final String packName;
 
     /**
      * The rotation and mirror.
      */
-    protected RotationMirror rotationMirror;
+    protected final RotationMirror rotationMirror;
 
     /**
      * Create a new message.

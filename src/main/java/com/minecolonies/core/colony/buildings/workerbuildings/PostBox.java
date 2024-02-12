@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IRSComponent;
@@ -85,10 +86,9 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     }
 
     @Override
-    public int getRotation()
+    public RotationMirror getRotationMirror()
     {
-        // TODO: rotationMirror
-        return 0;
+        return RotationMirror.NONE.mirrorate(super.getRotationMirror().mirror());
     }
 
     /**
