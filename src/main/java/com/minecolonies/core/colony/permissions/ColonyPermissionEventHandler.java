@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
+import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.ContainerPlacementHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -22,6 +23,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.monster.Enemy;
@@ -32,7 +34,6 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -147,10 +148,9 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos    the location of the action which was denied
      */
-    private void cancelEvent(final ICancellableEvent event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
+    private <T extends Event & ICancellableEvent> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
     {
         event.setResult(Event.Result.DENY);
-        // TODO: this is event specific now, needs per method call site evaluation
 
         event.setCanceled(true);
         if (entity == null)
@@ -308,27 +308,22 @@ public class ColonyPermissionEventHandler
      *
      * @param event PlayerInteractEvent
      */
-    @SubscribeEvent
-    public void on(final PlayerInteractEvent event)
+    public <T extends PlayerInteractEvent & ICancellableEvent> void onPlayerInteract(final T event)
     {
-        if (colony.isCoordInColony(event.getLevel(), event.getPos())
-              && !(event instanceof PlayerInteractEvent.EntityInteract || event instanceof PlayerInteractEvent.EntityInteractSpecific))
+        if (colony.isCoordInColony(event.getLevel(), event.getPos()))
         {
             final Block block = event.getLevel().getBlockState(event.getPos()).getBlock();
 
             // Huts
-            if (event instanceof PlayerInteractEvent.RightClickBlock && block instanceof AbstractBlockHut
-                  && !colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_HUTS))
+            if (event instanceof PlayerInteractEvent.RightClickBlock && block instanceof AbstractBlockHut && !colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_HUTS))
             {
-                // TODO: subscribing abstract event will crash, this needs split
                 cancelEvent(event, event.getEntity(), colony, Action.ACCESS_HUTS, event.getPos());
                 return;
             }
 
             final Permissions perms = colony.getPermissions();
 
-            if (isFreeToInteractWith(block, event.getPos())
-                  && perms.hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
+            if (isFreeToInteractWith(block, event.getPos()) && perms.hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
             {
                 return;
             }
@@ -341,8 +336,7 @@ public class ColonyPermissionEventHandler
                     return;
                 }
 
-                if (block instanceof BaseEntityBlock && !perms.hasPermission(event.getEntity(),
-                  Action.OPEN_CONTAINER))
+                if (ContainerPlacementHandler.CONTAINERS.contains(block) && !perms.hasPermission(event.getEntity(), Action.OPEN_CONTAINER))
                 {
                     cancelEvent(event, event.getEntity(), colony, Action.OPEN_CONTAINER, event.getPos());
                     return;
@@ -367,14 +361,41 @@ public class ColonyPermissionEventHandler
                     return;
                 }
 
-                if (stack.getItem() instanceof ItemScanTool
-                      && !perms.hasPermission(event.getEntity(), Action.USE_SCAN_TOOL))
+                if (stack.getItem() instanceof ItemScanTool && !perms.hasPermission(event.getEntity(), Action.USE_SCAN_TOOL))
                 {
-                    // TODO: subscribing abstract event will crash, this needs split
                     cancelEvent(event, event.getEntity(), colony, Action.USE_SCAN_TOOL, event.getPos());
                 }
             }
         }
+
+        if (event.isCanceled())
+        {
+            event.setCancellationResult(InteractionResult.FAIL);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLeftClickBlock(final PlayerInteractEvent.LeftClickBlock event)
+    {
+        onPlayerInteract(event);
+    }
+
+    @SubscribeEvent
+    public void onRightClickBlock(final PlayerInteractEvent.RightClickBlock event)
+    {
+        onPlayerInteract(event);
+    }
+
+    @SubscribeEvent
+    public void onRightClickItem(final PlayerInteractEvent.RightClickItem event)
+    {
+        onPlayerInteract(event);
+    }
+
+    @SubscribeEvent
+    public void onItemOnBlock(final UseItemOnBlockEvent event)
+    {
+        onPlayerInteract(event);
     }
 
     /**
@@ -418,8 +439,8 @@ public class ColonyPermissionEventHandler
      * @param pos      the position.  Can be null if no target was provided to the event.
      * @return true if canceled.
      */
-    private boolean checkEventCancelation(
-      final Action action, @NotNull final Player playerIn, @NotNull final Level world, @NotNull final ICancellableEvent event,
+    private <T extends Event & ICancellableEvent> boolean checkEventCancelation(
+      final Action action, @NotNull final Player playerIn, @NotNull final Level world, @NotNull final T event,
       @Nullable final BlockPos pos)
     {
         @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
