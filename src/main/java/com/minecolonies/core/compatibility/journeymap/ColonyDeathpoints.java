@@ -6,9 +6,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IGraveData;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
-import journeymap.client.api.display.DisplayType;
-import journeymap.client.api.display.Waypoint;
-import journeymap.client.api.model.MapImage;
+import journeymap.common.api.waypoint.Waypoint;
+import journeymap.common.api.waypoint.WaypointFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +32,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JO
 public class ColonyDeathpoints
 {
     private static final Map<ResourceKey<Level>, Map<Integer, Map<BlockPos, Waypoint>>> overlays = new HashMap<>();
-    private static final Lazy<MapImage> deathIcon = Lazy.of(ColonyDeathpoints::loadIcon);
 
     /**
      * Static utility class
@@ -65,7 +62,7 @@ public class ColonyDeathpoints
             {
                 if (waypointEntry.getValue() != null)
                 {
-                    jmap.getApi().remove(waypointEntry.getValue());
+                    jmap.getApi().removeWaypoint(MOD_ID, waypointEntry.getValue());
                     waypointEntry.setValue(null);
                 }
             }
@@ -98,7 +95,7 @@ public class ColonyDeathpoints
             {
                 if (waypointEntry.getValue() != null)
                 {
-                    jmap.getApi().remove(waypointEntry.getValue());
+                    jmap.getApi().removeWaypoint(MOD_ID, waypointEntry.getValue());
                 }
                 iterator.remove();
             }
@@ -136,7 +133,7 @@ public class ColonyDeathpoints
                 {
                     if (waypoint != null)
                     {
-                        jmap.getApi().remove(waypoint);
+                        jmap.getApi().removeWaypoint(MOD_ID, waypoint);
                     }
                 }
                 colonyEntry.getValue().clear();
@@ -170,8 +167,6 @@ public class ColonyDeathpoints
                                                 @NotNull final ChunkAccess chunk,
                                                 @NotNull final BlockPos pos)
     {
-        if (!jmap.getApi().playerAccepts(MOD_ID, DisplayType.Waypoint)) return null;
-
         final BlockEntity blockEntity = chunk.getBlockEntity(pos);
         if (blockEntity instanceof AbstractTileEntityGrave)
         {
@@ -181,22 +176,15 @@ public class ColonyDeathpoints
                 final Component text = grave.getCitizenJobName() == null
                                               ? Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
                                               : Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
-                final Waypoint waypoint = new Waypoint(MOD_ID, text.getString(), colony.getDimension(), pos);
-                waypoint.setEditable(true)
-                        .setPersistent(false)
-                        .setIcon(deathIcon.get())
-                        .setColor(0x888888);
-                jmap.show(waypoint);
+                final Waypoint waypoint = WaypointFactory.createClientWaypoint(MOD_ID, pos, text.getString(), colony.getDimension(), false);
+                waypoint.setPersistent(false);
+                waypoint.setIconResourceLoctaion(new ResourceLocation(MOD_ID, "textures/icons/grave_icon.png"));
+                waypoint.setColor(0x888888);
+                jmap.getApi().addWaypoint(MOD_ID, waypoint);
                 return waypoint;
             }
         }
 
         return null;
-    }
-
-    @NotNull
-    private static MapImage loadIcon()
-    {
-        return new MapImage(new ResourceLocation(MOD_ID, "textures/icons/grave_icon.png"), 16, 16);
     }
 }
