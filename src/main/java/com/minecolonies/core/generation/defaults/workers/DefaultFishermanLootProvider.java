@@ -4,8 +4,8 @@ import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.loot.ResearchUnlocked;
 import com.minecolonies.api.research.util.ResearchConstants;
-import com.minecolonies.core.generation.SimpleLootTableProvider;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.*;
@@ -13,32 +13,27 @@ import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.function.BiConsumer;
 
 /**
  * Datagen for fisherman loot tables
  */
-public class DefaultFishermanLootProvider extends SimpleLootTableProvider
+public class DefaultFishermanLootProvider implements LootTableSubProvider
 {
-    public DefaultFishermanLootProvider(@NotNull final PackOutput packOutput)
-    {
-        super(packOutput);
-    }
-
     @Override
-    protected void registerTables(@NotNull final LootTableRegistrar registrar)
+    public void generate(final BiConsumer<ResourceLocation, LootTable.Builder> generator)
     {
-        registerStandardLoot(registrar);
-        registerBonusLoot(registrar);
+        registerStandardLoot(generator);
+        registerBonusLoot(generator);
     }
 
-    private void registerStandardLoot(@NotNull final LootTableRegistrar registrar)
+    private void registerStandardLoot(final BiConsumer<ResourceLocation, LootTable.Builder> generator)
     {
-        registrar.register(ModLootTables.FISHING, LootContextParamSets.FISHING, LootTable.lootTable()
+        generator.accept(ModLootTables.FISHING, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
@@ -49,23 +44,23 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_FISH).setWeight(85).setQuality(-1))
                 ));
 
-        registrar.register(ModLootTables.FISHING_JUNK, LootContextParamSets.FISHING, LootTable.lootTable()
+        generator.accept(ModLootTables.FISHING_JUNK, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(LootTableReference.lootTableReference(BuiltInLootTables.FISHING_JUNK).setWeight(1))
                 ));
 
-        registrar.register(ModLootTables.FISHING_TREASURE, LootContextParamSets.FISHING, LootTable.lootTable()
+        generator.accept(ModLootTables.FISHING_TREASURE, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(LootTableReference.lootTableReference(BuiltInLootTables.FISHING_TREASURE).setWeight(1))
                 ));
 
-        registrar.register(ModLootTables.FISHING_FISH, LootContextParamSets.FISHING, LootTable.lootTable()
+        generator.accept(ModLootTables.FISHING_FISH, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(LootTableReference.lootTableReference(BuiltInLootTables.FISHING_FISH).setWeight(1))
                 ));
     }
 
-    private void registerBonusLoot(@NotNull final LootTableRegistrar registrar)
+    private void registerBonusLoot(final BiConsumer<ResourceLocation, LootTable.Builder> generator)
     {
         final int skillBonus = 1;       // 0.1% bonus chance per skill point (sort of)
         final int spongeWeight = 1;     // 0.1% chance (before skill bonus)
@@ -93,11 +88,11 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                 LootItem.lootTableItem(Items.PRISMARINE_CRYSTALS).setWeight(crystalWeight).setQuality(skillBonus)
         );
 
-        registrar.register(ModLootTables.FISHERMAN_BONUS.get(1), LootContextParamSets.EMPTY, noBonus);
-        registrar.register(ModLootTables.FISHERMAN_BONUS.get(2), LootContextParamSets.EMPTY, noBonus);
-        registrar.register(ModLootTables.FISHERMAN_BONUS.get(3), LootContextParamSets.ALL_PARAMS, level3);
-        registrar.register(ModLootTables.FISHERMAN_BONUS.get(4), LootContextParamSets.ALL_PARAMS, level45);
-        registrar.register(ModLootTables.FISHERMAN_BONUS.get(5), LootContextParamSets.ALL_PARAMS, level45);
+        generator.accept(ModLootTables.FISHERMAN_BONUS.get(1), noBonus);
+        generator.accept(ModLootTables.FISHERMAN_BONUS.get(2), noBonus);
+        generator.accept(ModLootTables.FISHERMAN_BONUS.get(3), level3);
+        generator.accept(ModLootTables.FISHERMAN_BONUS.get(4), level45);
+        generator.accept(ModLootTables.FISHERMAN_BONUS.get(5), level45);
     }
 
     private static LootTable.Builder makeLoot(int emptyWeight, @NotNull final LootPoolSingletonContainer.Builder<?>... entries)

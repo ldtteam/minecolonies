@@ -1,5 +1,6 @@
 package com.minecolonies.core.recipes;
 
+import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
@@ -33,7 +34,7 @@ public class PlantIngredient extends Ingredient
 
     private PlantIngredient(final Stream<? extends Value> itemLists)
     {
-        super(itemLists);
+        super(itemLists, ModIngredientTypeInitializer.PLANT_INGREDIENT_TYPE);
     }
 
     @NotNull

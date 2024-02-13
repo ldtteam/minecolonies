@@ -1,5 +1,6 @@
 package com.minecolonies.core.recipes;
 
+import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -55,7 +56,7 @@ public class FoodIngredient extends Ingredient
 
     private FoodIngredient(final Builder builder)
     {
-        super(buildItemLists(builder));
+        super(buildItemLists(builder), ModIngredientTypeInitializer.FOOD_INGREDIENT_TYPE);
 
         this.minHealing = builder.minHealing;
         this.maxHealing = builder.maxHealing;

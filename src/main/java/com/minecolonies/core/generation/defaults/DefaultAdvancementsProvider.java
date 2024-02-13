@@ -40,6 +40,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -58,6 +59,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         // this is mostly redundant with the standard root, but it lets people see a Minecolonies
         // advancement before that tab is visible...
         Advancement.Builder.advancement()
+          .parent(new ResourceLocation("story/root"))
           .display(ModItems.supplyChest,
             Component.translatable("advancements.minecolonies.root.title"),
             Component.translatable("advancements.minecolonies.root.description"),
@@ -509,7 +511,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         return new DisplayInfo(new ItemStack(icon),
                 Component.translatable("advancements.minecolonies." + name + ".title"),
                 Component.translatable("advancements.minecolonies." + name + ".description"),
-                null, frame, true, true, false);
+                Optional.empty(), frame, true, true, false);
     }
 
     private static DisplayInfo makeHidden(@NotNull final AdvancementType frame,
@@ -519,7 +521,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         return new DisplayInfo(new ItemStack(icon),
                 Component.translatable("advancements.minecolonies." + name + ".title"),
                 Component.translatable("advancements.minecolonies." + name + ".description"),
-                null, frame, true, true, true);
+                Optional.empty(), frame, true, true, true);
     }
 
     private static List<ItemPredicate> item(@NotNull final ItemLike item)

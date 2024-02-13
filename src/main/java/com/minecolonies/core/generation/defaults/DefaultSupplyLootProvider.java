@@ -1,41 +1,36 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.core.generation.SimpleLootTableProvider;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTable.Builder;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetNameFunction;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiConsumer;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Loot table generator for supply camp/ship
  */
-public class DefaultSupplyLootProvider extends SimpleLootTableProvider
+public class DefaultSupplyLootProvider implements LootTableSubProvider
 {
-    public DefaultSupplyLootProvider(@NotNull PackOutput packOutput)
-    {
-        super(packOutput);
-    }
-
     @Override
-    protected void registerTables(@NotNull final LootTableRegistrar registrar)
+    public void generate(final BiConsumer<ResourceLocation, Builder> generator)
     {
         final CompoundTag instantTag = new CompoundTag();
         instantTag.putString(PLACEMENT_NBT, INSTANT_PLACEMENT);
 
-        registrar.register(new ResourceLocation(MOD_ID, "chests/supplycamp"), LootContextParamSets.CHEST,
+        generator.accept(new ResourceLocation(MOD_ID, "chests/supplycamp"), 
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyCamp)
@@ -47,7 +42,7 @@ public class DefaultSupplyLootProvider extends SimpleLootTableProvider
                                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(8))))
                         ));
 
-        registrar.register(new ResourceLocation(MOD_ID, "chests/supplyship"), LootContextParamSets.CHEST,
+        generator.accept(new ResourceLocation(MOD_ID, "chests/supplyship"), 
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyChest)

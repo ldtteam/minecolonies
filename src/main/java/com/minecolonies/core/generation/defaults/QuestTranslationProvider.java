@@ -56,7 +56,7 @@ public class QuestTranslationProvider implements DataProvider
         final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "quests");
         final List<CompletableFuture<?>> quests = new ArrayList<>();
 
-        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", Path.of("..", "src", "main", "resources"), false))
+        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", Path.of("..", "..", "src", "main", "resources"), false))
         {
             pack.listResources(PackType.SERVER_DATA, MOD_ID, "quests", (questId, stream) ->
             {
