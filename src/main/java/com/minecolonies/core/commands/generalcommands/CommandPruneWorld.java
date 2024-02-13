@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_PRUNE_WORLD_WARNING;
-import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 
 /**
  * Command for pruning world region files to colonies
@@ -83,7 +82,7 @@ public class CommandPruneWorld implements IMCOPCommand
 
         // Colony list for this world
         List<IColony> colonies = new ArrayList<>();
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
         if (cap != null)
         {
             colonies = cap.getColonies();

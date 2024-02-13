@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.capability.IColonyManagerCapability;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.Colony;
@@ -34,7 +35,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
-import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
@@ -349,15 +349,22 @@ public final class BackUpHelper
      * @param colonyID    id of the colony to delete
      * @param dimensionID dimension of the colony to delete
      */
-    public static void markColonyDeleted(final int colonyID, final ResourceKey<Level> dimensionID) throws IOException
+    public static void markColonyDeleted(final int colonyID, final ResourceKey<Level> dimensionID)
     {
         final Path saveDir = getRootSaveDir();
         final Path toDelete = getFolderForDimension(saveDir, dimensionID.location()).resolve(String.format(FILENAME_COLONY, colonyID));
         if (Files.exists(toDelete))
         {
             final Path fileName = getFolderForDimension(saveDir, dimensionID.location()).resolve(String.format(FILENAME_COLONY_DELETED, colonyID));
-            Files.delete(fileName);
-            Files.move(toDelete, fileName);
+            try
+            {
+                Files.delete(fileName);
+                Files.move(toDelete, fileName);
+            }
+            catch (final IOException e)
+            {
+                Log.getLogger().error("Exception when marking colony as deleted!", e);
+            }
         }
     }
 
@@ -444,7 +451,11 @@ public final class BackUpHelper
                 return;
             }
 
-            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).ifPresent(cap -> cap.addColony(loadedColony));
+            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(colonyWorld);
+            if (cap != null)
+            {
+                cap.addColony(loadedColony);
+            }
 
             if (claimChunks)
             {

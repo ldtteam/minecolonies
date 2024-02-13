@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony;
 
-import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -20,9 +19,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.CapabilityManager;
-import net.neoforged.neoforge.common.capabilities.CapabilityToken;
 import net.neoforged.neoforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +32,6 @@ import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAM
  */
 public interface IColony
 {
-    Capability<IColonyTagCapability> CLOSE_COLONY_CAP = CapabilityManager.get(new CapabilityToken<>() {});
-
     void onWorldLoad(@NotNull Level w);
 
     void onWorldUnload(@NotNull Level w);

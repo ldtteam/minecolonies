@@ -12,7 +12,6 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
@@ -27,9 +26,6 @@ import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.commands.EntryPoint;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
-import com.minecolonies.core.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
-import com.minecolonies.core.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
-import com.minecolonies.core.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
@@ -39,7 +35,6 @@ import com.minecolonies.core.util.ChunkDataHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -63,7 +58,6 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.TickEvent;
@@ -125,29 +119,6 @@ public class EventHandler
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
             }
         }
-    }
-
-    /**
-     * Event called to attach capabilities on a chunk.
-     *
-     * @param event the event.
-     */
-    @SubscribeEvent
-    public static void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<LevelChunk> event)
-    {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closecolony"), new MinecoloniesChunkCapabilityProvider());
-    }
-
-    /**
-     * Event called to attach capabilities on the world.
-     *
-     * @param event the event.
-     */
-    @SubscribeEvent
-    public static void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<Level> event)
-    {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkupdate"), new MinecoloniesWorldCapabilityProvider());
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonymanager"), new MinecoloniesWorldColonyManagerCapabilityProvider(event.getObject().dimension() == Level.OVERWORLD));
     }
 
     /**

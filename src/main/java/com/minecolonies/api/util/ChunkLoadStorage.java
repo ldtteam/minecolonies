@@ -1,16 +1,16 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.capability.IColonyTagCapability;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -40,20 +40,31 @@ public class ChunkLoadStorage
      */
     private static final int MAX_CHUNK_CLAIMS = 20;
 
+    private static final Codec<List<Tuple<Short, BlockPos>>> BUILDING_CODEC = Codec.pair(Codec.SHORT, BlockPos.CODEC).xmap(Tuple::new, Tuple::toCodecPair).listOf();
+    public static final Codec<ChunkLoadStorage> CODEC = RecordCodecBuilder.create(builder -> builder
+        .group(Codec.LONG.fieldOf(TAG_POS).forGetter(s -> s.xz),
+            ResourceLocation.CODEC.fieldOf(TAG_DIMENSION).forGetter(s -> s.dimension),
+            ExtraCodecs.strictOptionalField(Codec.SHORT.listOf(), TAG_CLAIM_LIST, List.of()).forGetter(s -> s.owningChanges),
+            ExtraCodecs.strictOptionalField(Codec.SHORT.listOf(), TAG_COLONIES_TO_REMOVE, List.of()).forGetter(s -> s.coloniesToRemove),
+            ExtraCodecs.strictOptionalField(Codec.SHORT.listOf(), TAG_COLONIES_TO_ADD, List.of()).forGetter(s -> s.coloniesToAdd),
+            ExtraCodecs.strictOptionalField(BUILDING_CODEC, TAG_BUILDINGS_CLAIM, List.of()).forGetter(s -> s.claimingBuilding),
+            ExtraCodecs.strictOptionalField(BUILDING_CODEC, TAG_BUILDINGS_UNCLAIM, List.of()).forGetter(s -> s.unClaimingBuilding))
+        .apply(builder, ChunkLoadStorage::new));
+
     /**
      * The colony id.
      */
-    private final List<Short> owningChanges = new ArrayList<>();
+    private final List<Short> owningChanges;
 
     /**
      * The list of colonies to be added to this loc.
      */
-    private final List<Short> coloniesToRemove = new ArrayList<>();
+    private final List<Short> coloniesToRemove;
 
     /**
      * The list of colonies to be removed from this loc.
      */
-    private final List<Short> coloniesToAdd = new ArrayList<>();
+    private final List<Short> coloniesToAdd;
 
     /**
      * XZ pos as long.
@@ -68,39 +79,39 @@ public class ChunkLoadStorage
     /**
      * The building claiming this.
      */
-    private final List<Tuple<Short, BlockPos>> claimingBuilding = new ArrayList<>();
+    private final List<Tuple<Short, BlockPos>> claimingBuilding;
 
     /**
      * The building unclaiming this.
      */
-    private final List<Tuple<Short, BlockPos>> unClaimingBuilding = new ArrayList<>();
+    private final List<Tuple<Short, BlockPos>> unClaimingBuilding;
 
-    /**
-     * Intitialize a ChunLoadStorage from nbt.
-     *
-     * @param compound the compound to use.
-     */
-    public ChunkLoadStorage(final CompoundTag compound)
+    private ChunkLoadStorage(final long xz,
+        final ResourceLocation dimension,
+        final List<Short> owningChanges,
+        final List<Short> coloniesToRemove,
+        final List<Short> coloniesToAdd,
+        final List<Tuple<Short, BlockPos>> claimingBuilding,
+        final List<Tuple<Short, BlockPos>> unClaimingBuilding)
     {
-        if (compound.contains(TAG_ID))
-        {
-            this.owningChanges.add(compound.getShort(TAG_ID));
-        }
+        this.xz = xz;
+        this.dimension = dimension;
+        this.owningChanges = owningChanges;
+        this.coloniesToRemove = coloniesToRemove;
+        this.coloniesToAdd = coloniesToAdd;
+        this.claimingBuilding = claimingBuilding;
+        this.unClaimingBuilding = unClaimingBuilding;
+    }
 
-        this.xz = compound.getLong(TAG_POS);
-        this.dimension = new ResourceLocation(compound.getString(TAG_DIMENSION));
-
-        owningChanges.addAll(NBTUtils.streamCompound(compound.getList(TAG_CLAIM_LIST, Tag.TAG_COMPOUND))
-          .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
-        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_ADD, Tag.TAG_COMPOUND))
-                               .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
-        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_REMOVE, Tag.TAG_COMPOUND))
-                                  .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
-
-        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Tag.TAG_COMPOUND))
-                                  .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
-        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_UNCLAIM, Tag.TAG_COMPOUND))
-                                    .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
+    private ChunkLoadStorage(final long xz, final ResourceLocation dimension)
+    {
+        this.xz = xz;
+        this.dimension = dimension;
+        this.owningChanges = new ArrayList<>();
+        this.coloniesToRemove = new ArrayList<>();
+        this.coloniesToAdd = new ArrayList<>();
+        this.claimingBuilding = new ArrayList<>();
+        this.unClaimingBuilding = new ArrayList<>();
     }
 
     /**
@@ -114,9 +125,8 @@ public class ChunkLoadStorage
      */
     public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final ResourceLocation dimension, final boolean forceOwnership)
     {
+        this(xz, dimension);
         this.owningChanges.add((short) (forceOwnership && add ? colonyId : NO_COLONY_ID));
-        this.xz = xz;
-        this.dimension = dimension;
 
         if (add)
         {
@@ -138,8 +148,7 @@ public class ChunkLoadStorage
      */
     public ChunkLoadStorage(final int colonyId, final long xz, final ResourceLocation dimension, final BlockPos building, final boolean add)
     {
-        this.xz = xz;
-        this.dimension = dimension;
+        this(xz, dimension);
         if (add)
         {
             claimingBuilding.add(new Tuple<>((short) colonyId, building));
@@ -148,33 +157,6 @@ public class ChunkLoadStorage
         {
             unClaimingBuilding.add(new Tuple<>((short) colonyId, building));
         }
-    }
-
-    /**
-     * Write the ChunkLoadStorage to NBT.
-     *
-     * @return the compound.
-     */
-    public CompoundTag toNBT()
-    {
-        final CompoundTag compound = new CompoundTag();
-        compound.putLong(TAG_POS, xz);
-        compound.putString(TAG_DIMENSION, dimension.toString());
-
-        compound.put(TAG_CLAIM_LIST, owningChanges.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
-        compound.put(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
-        compound.put(TAG_COLONIES_TO_REMOVE, coloniesToRemove.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
-        compound.put(TAG_BUILDINGS, claimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toListNBT()));
-        compound.put(TAG_BUILDINGS, unClaimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toListNBT()));
-
-        return compound;
-    }
-
-    private static CompoundTag getCompoundOfColonyId(final int id)
-    {
-        final CompoundTag compound = new CompoundTag();
-        compound.putInt(TAG_COLONY_ID, id);
-        return compound;
     }
 
     /**
@@ -324,30 +306,5 @@ public class ChunkLoadStorage
                 }
             }
         }
-    }
-
-    /**
-     * Write the tuple to NBT.
-     *
-     * @param tuple the tuple to write.
-     * @return the resulting compound.
-     */
-    private static CompoundTag writeTupleToNBT(final Tuple<Short, BlockPos> tuple)
-    {
-        final CompoundTag compound = new CompoundTag();
-        compound.putShort(TAG_COLONY_ID, tuple.getA());
-        BlockPosUtil.write(compound, TAG_BUILDING, tuple.getB());
-        return compound;
-    }
-
-    /**
-     * Read the tuple from NBT.
-     *
-     * @param compound the compound to extract it from.
-     * @return the tuple.
-     */
-    private static Tuple<Short, BlockPos> readTupleFromNbt(final CompoundTag compound)
-    {
-        return new Tuple<>(compound.getShort(TAG_COLONY_ID), BlockPosUtil.read(compound, TAG_BUILDING));
     }
 }

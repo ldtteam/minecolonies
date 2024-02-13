@@ -4,10 +4,6 @@ import com.ldtteam.common.config.Configurations;
 import com.ldtteam.common.language.LanguageHandler;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.capability.IChunkmanagerCapability;
-import com.minecolonies.api.colony.capability.IColonyManagerCapability;
-import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import com.minecolonies.api.configuration.ClientConfiguration;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
@@ -67,9 +63,6 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.CapabilityManager;
-import net.neoforged.neoforge.common.capabilities.CapabilityToken;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
@@ -82,10 +75,6 @@ import java.util.function.Consumer;
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
-    public static final Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP = CapabilityManager.get(new CapabilityToken<>() {});
-
-    public static final Capability<IColonyManagerCapability> COLONY_MANAGER_CAP = CapabilityManager.get(new CapabilityToken<>() {});
-
     /**
      * The config instance.
      */
@@ -200,10 +189,6 @@ public class MineColonies
         event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.BUILDING.get(), IItemHandlerCapProvider::getItemHandlerCap);
         event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.RACK.get(), IItemHandlerCapProvider::getItemHandlerCap);
         event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.GRAVE.get(), IItemHandlerCapProvider::getItemHandlerCap);
-
-        event.register(IColonyTagCapability.class);
-        event.register(IChunkmanagerCapability.class);
-        event.register(IColonyManagerCapability.class);
     }
 
     @SubscribeEvent

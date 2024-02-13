@@ -17,11 +17,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.TranslationConstants.COLONY_SIZE_CHANGE;
-import static com.minecolonies.core.MineColonies.*;
 
 /**
  * Class to take care of chunk data helper.
@@ -49,7 +47,7 @@ public final class ChunkDataHelper
         // If colony is farther away from a capability then this times the default colony distance it will delete the capability.
         final int distanceToDelete = MineColonies.getConfig().getServer().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;
 
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = IChunkmanagerCapability.getCapability(world);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
@@ -58,7 +56,7 @@ public final class ChunkDataHelper
 
         if (!chunkManager.getAllChunkStorages().isEmpty())
         {
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
             if (cap == null)
             {
                 return;
@@ -114,7 +112,7 @@ public final class ChunkDataHelper
             Log.getLogger().warn("Trying to claim zero chunk!", new Exception());
         }
 
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
         storage.applyToCap(cap, chunk);
 
         if (cap != null)
@@ -133,7 +131,7 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final Level world, final boolean add, final int id, final BlockPos center)
     {
-        final int range = getConfig().getServer().initialColonySize.get();
+        final int range = MineColonies.getConfig().getServer().initialColonySize.get();
         staticClaimInRange(id, add, center, add ? range : range * 2, world, false);
     }
 
@@ -172,7 +170,7 @@ public final class ChunkDataHelper
      */
     public static boolean canClaimChunksInRange(final Level w, final BlockPos pos, final int range)
     {
-        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability worldCapability = IChunkmanagerCapability.getCapability(w);
         if (worldCapability == null)
         {
             return true;
@@ -186,7 +184,7 @@ public final class ChunkDataHelper
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 final LevelChunk chunk = w.getChunk(i, j);
-                final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+                final IColonyTagCapability colonyCap = IColonyTagCapability.getCapability(chunk);
                 if (colonyCap == null)
                 {
                     return true;
@@ -222,7 +220,7 @@ public final class ChunkDataHelper
       final boolean force)
     {
         final Level world = colony.getWorld();
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = IChunkmanagerCapability.getCapability(world);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
@@ -234,7 +232,7 @@ public final class ChunkDataHelper
         final int chunkX = center.getX() >> 4;
         final int chunkZ = center.getZ() >> 4;
 
-        final int maxColonySize = getConfig().getServer().maxColonySize.get();
+        final int maxColonySize = MineColonies.getConfig().getServer().maxColonySize.get();
 
         for (int i = chunkX - range; i <= chunkX + range; i++)
         {
@@ -279,14 +277,14 @@ public final class ChunkDataHelper
       final Tuple<BlockPos, BlockPos> corners)
     {
         final Level world = colony.getWorld();
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = IChunkmanagerCapability.getCapability(world);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
             return;
         }
 
-        final int maxColonySize = getConfig().getServer().maxColonySize.get();
+        final int maxColonySize = MineColonies.getConfig().getServer().maxColonySize.get();
         final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
 
         for (final ChunkPos chunk : ChunkPos.rangeClosed(new ChunkPos(corners.getA()), new ChunkPos(corners.getB())).toList())
@@ -322,7 +320,7 @@ public final class ChunkDataHelper
       final Level world,
       final boolean forceOwnerChange)
     {
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = IChunkmanagerCapability.getCapability(world);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
@@ -369,7 +367,7 @@ public final class ChunkDataHelper
         }
 
         final LevelChunk chunk = (LevelChunk) world.getChunk(chunkBlockPos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
         if (cap == null)
         {
             return false;
@@ -433,7 +431,7 @@ public final class ChunkDataHelper
         }
 
         final LevelChunk chunk = world.getChunkAt(chunkBlockPos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
         if (cap == null)
         {
             return false;

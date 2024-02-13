@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
-
 /**
  * Helper class for late applying caps on client side, due to loading order
  */
@@ -64,7 +62,7 @@ public class ChunkClientDataHelper
      */
     public static void applyCap(final ChunkCapData chunkCapData, final LevelChunk chunk)
     {
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
         if (cap != null)
         {
             cap.setOwningColony(chunkCapData.getOwningColony(), chunk);

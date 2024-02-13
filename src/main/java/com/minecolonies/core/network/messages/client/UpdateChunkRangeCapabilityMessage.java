@@ -18,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
-
 /**
  * Update the ChunkCapability with a colony.
  */
@@ -54,7 +52,7 @@ public class UpdateChunkRangeCapabilityMessage extends AbstractClientPlayMessage
                 if (!checkLoaded || WorldUtil.isEntityChunkLoaded(world, chunkX, chunkZ))
                 {
                     final LevelChunk chunk = world.getChunk(chunkX, chunkZ);
-                    final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                    final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
                     if (cap != null)
                     {
                         caps.add(new ChunkCapData(chunkX, chunkZ, cap.getOwningColony(), cap.getStaticClaimColonies(), cap.getAllClaimingBuildings()));

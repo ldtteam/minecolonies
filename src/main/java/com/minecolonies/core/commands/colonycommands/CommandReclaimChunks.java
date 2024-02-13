@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.Constants.CHUNKS_TO_CLAIM_THRESHOLD;
-import static com.minecolonies.core.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
 public class CommandReclaimChunks implements IMCOPCommand
@@ -41,7 +40,7 @@ public class CommandReclaimChunks implements IMCOPCommand
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
 
-        final IChunkmanagerCapability chunkManager = sender.level().getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = IChunkmanagerCapability.getCapability(sender.level());
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());

@@ -43,7 +43,6 @@ import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
-import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 import static com.minecolonies.core.MineColonies.getConfig;
 
 /**
@@ -81,7 +80,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(w);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -189,7 +188,7 @@ public final class ColonyManager implements IColonyManager
 
             Log.getLogger().info("Deleting colony: " + colony.getID());
 
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
             if (cap == null)
             {
                 Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -221,7 +220,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByWorld(final int id, final Level world)
     {
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -239,7 +238,7 @@ public final class ColonyManager implements IColonyManager
         {
             return null;
         }
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -316,7 +315,7 @@ public final class ColonyManager implements IColonyManager
     @NotNull
     public List<IColony> getColonies(@NotNull final Level w)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(w);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -332,7 +331,11 @@ public final class ColonyManager implements IColonyManager
         final List<IColony> allColonies = new ArrayList<>();
         for (final Level world : net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
-            world.getCapability(COLONY_MANAGER_CAP, null).ifPresent(c -> allColonies.addAll(c.getColonies()));
+            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+            if (cap != null)
+            {
+                allColonies.addAll(cap.getColonies());
+            }
         }
         return allColonies;
     }
@@ -810,7 +813,8 @@ public final class ColonyManager implements IColonyManager
         int top = 0;
         for (final Level world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
-            final int tempTop = world.getCapability(COLONY_MANAGER_CAP, null).map(IColonyManagerCapability::getTopID).orElse(0);
+            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+            final int tempTop = cap == null ? 0 : cap.getTopID();
             if (tempTop > top)
             {
                 top = tempTop;
