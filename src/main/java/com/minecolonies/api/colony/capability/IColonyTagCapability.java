@@ -1,5 +1,7 @@
-package com.minecolonies.api.colony;
+package com.minecolonies.api.colony.capability;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;

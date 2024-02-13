@@ -2,7 +2,7 @@ package com.minecolonies.core.network.messages.client;
 
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import com.minecolonies.api.util.ChunkCapData;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;

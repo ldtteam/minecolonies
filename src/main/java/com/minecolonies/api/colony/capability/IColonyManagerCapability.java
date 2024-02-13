@@ -1,4 +1,4 @@
-package com.minecolonies.core.colony;
+package com.minecolonies.api.colony.capability;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.ColonyList;
 import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

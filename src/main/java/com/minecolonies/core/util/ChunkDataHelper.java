@@ -1,13 +1,13 @@
 package com.minecolonies.core.util;
 
-import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.capability.IChunkmanagerCapability;
+import com.minecolonies.api.colony.capability.IColonyManagerCapability;
+import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;

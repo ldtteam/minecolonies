@@ -1,6 +1,6 @@
 package com.minecolonies.core.commands.colonycommands;
 
-import com.minecolonies.api.colony.IChunkmanagerCapability;
+import com.minecolonies.api.colony.capability.IChunkmanagerCapability;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;

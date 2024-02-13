@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

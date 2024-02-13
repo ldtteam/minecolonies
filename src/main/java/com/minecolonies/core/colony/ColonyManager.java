@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.capability.IColonyManagerCapability;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.managers.events.ColonyManagerLoadedEvent;
 import com.minecolonies.api.colony.managers.events.ColonyManagerUnloadedEvent;

@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony;
+package com.minecolonies.api.colony.capability;
 
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.NBTUtils;

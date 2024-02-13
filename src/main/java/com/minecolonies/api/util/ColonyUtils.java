@@ -2,7 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.models.blockstates.VariantProperties.Rotation;
 import net.minecraft.util.Tuple;

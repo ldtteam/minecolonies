@@ -1,7 +1,7 @@
 package com.minecolonies.core.event.capabilityproviders;
 
-import com.minecolonies.api.colony.IChunkmanagerCapability;
 import net.minecraft.nbt.Tag;
+import com.minecolonies.api.colony.capability.IChunkmanagerCapability;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.capabilities.ICapabilitySerializable;

@@ -1,7 +1,7 @@
 package com.minecolonies.core.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.core.colony.IColonyManagerCapability;
+import com.minecolonies.api.colony.capability.IColonyManagerCapability;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
