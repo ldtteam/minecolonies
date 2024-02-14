@@ -22,6 +22,7 @@ import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -352,6 +353,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColony().getDay());
-        parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + entity.getType().getDescription().toString());
+        if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
+        {
+            parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
+        }
     }
 }

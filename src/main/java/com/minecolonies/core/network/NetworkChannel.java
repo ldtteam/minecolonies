@@ -106,7 +106,6 @@ public class NetworkChannel
         setupInternalMessages();
 
         int idx = 0;
-        registerMessage(++idx, ServerUUIDMessage.class, ServerUUIDMessage::new);
 
         //  ColonyView messages
         registerMessage(++idx, ColonyViewMessage.class, ColonyViewMessage::new);

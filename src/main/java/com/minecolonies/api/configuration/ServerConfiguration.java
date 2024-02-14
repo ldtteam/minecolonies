@@ -142,8 +142,8 @@ public class ServerConfiguration extends AbstractConfiguration
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
-        forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
-        loadtime = defineInteger(builder, "loadtime", 10,1,1440);
+        forceLoadColony = defineBoolean(builder, "forceloadcolony", true);
+        loadtime = defineInteger(builder, "loadtime", 10, 1, 1440);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
         noSupplyPlacementRestrictions = defineBoolean(builder, "nosupplyplacementrestrictions", false);

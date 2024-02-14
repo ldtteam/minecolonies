@@ -1,5 +1,5 @@
 {
-  "type": "minecolonies:empty_nether_colony",
+  "type": "minecolonies:empty_colony",
 
   "start_pool": "minecolonies:warpednetherlands_pool",
   "size": 5,
@@ -13,6 +13,7 @@
   },
   "terrain_adaptation": "beard_box",
 
+  "allow_cave": true,
   "adapt_noise": true,
   "spawn_overrides": {
     "creature": {

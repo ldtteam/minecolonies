@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 
+import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.quests.QuestParseConstant.RARITY_ID;
 
 /**
@@ -38,6 +39,7 @@ public class RandomQuestTriggerTemplate implements IQuestTriggerTemplate
     @Override
     public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
-        return new BooleanTriggerReturnData(oneInChance > 0 && colony.getWorld().random.nextInt(oneInChance) < 1);
+        // Attempted once every 500 ticks.
+        return new BooleanTriggerReturnData(oneInChance > 0 && colony.getWorld().random.nextInt(oneInChance) < MAX_TICKRATE);
     }
 }

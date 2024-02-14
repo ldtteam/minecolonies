@@ -985,6 +985,7 @@
   "com.minecolonies.coremod.gui.analyzer.select": "Select Schematic",
   "com.minecolonies.coremod.gui.analyzer.buildings": "Buildings: %d",
   "com.minecolonies.coremod.gui.analyzer.complexity": "Complexity-score: %d",
+  "com.minecolonies.coremod.gui.analyzer.blockcounts": "Different blocks : %d",
   "com.minecolonies.coremod.gui.analyzer.score": "Score: %s total: %s",
   "com.minecolonies.coremod.gui.analyzer.size": "Size %s",
   "com.minecolonies.coremod.tooltip.schematic.tier": "Schematic tier: %s",

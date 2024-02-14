@@ -273,20 +273,6 @@ public interface IColonyManager
     void setCapLoaded();
 
     /**
-     * Get the Universal Unique ID for the server.
-     *
-     * @return the server Universal Unique ID for ther
-     */
-    UUID getServerUUID();
-
-    /**
-     * Set the server UUID.
-     *
-     * @param uuid the universal unique id
-     */
-    void setServerUUID(UUID uuid);
-
-    /**
      * When a world unloads, all colonies in that world are informed. Additionally, when the last world is unloaded, delete all colonies.
      *
      * @param world World.

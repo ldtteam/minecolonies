@@ -1,10 +1,8 @@
 package com.minecolonies.core.event;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.datalistener.*;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
-import com.minecolonies.core.network.messages.client.ServerUUIDMessage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
@@ -36,10 +34,8 @@ public class FMLEventHandler
     {
         if (event.getEntity() instanceof ServerPlayer)
         {
-            Network.getNetwork().sendToPlayer(new ServerUUIDMessage(), (ServerPlayer) event.getEntity());
-
             // This automatically reloads the owner of the colony if failed.
-            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayer) event.getEntity()).level, event.getEntity());
+            IColonyManager.getInstance().getIColonyByOwner(event.getEntity().level, event.getEntity());
             //ColonyManager.syncAllColoniesAchievements();
         }
     }

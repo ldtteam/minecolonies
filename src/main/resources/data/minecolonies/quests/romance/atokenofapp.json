@@ -7,7 +7,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 1
+      "rarity": 500
     },
     {
       "type": "minecolonies:citizen",
@@ -100,7 +100,6 @@
     },
     {
       "type": "minecolonies:delivery",
-      "unlocks-rewards": [0, 1],
       "details": {
         "target": 1,
         "item": "minecraft:dandelion",
@@ -109,6 +108,7 @@
       }
     },
     {
+      "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Thank you so much for delivering that gift. You're a true friend.",

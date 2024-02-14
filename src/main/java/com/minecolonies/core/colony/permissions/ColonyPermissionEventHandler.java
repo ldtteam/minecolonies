@@ -239,6 +239,10 @@ public class ColonyPermissionEventHandler
             }
             colony.getBuildingManager().removeLeisureSite(event.getPos());
         }
+        else
+        {
+            checkEventCancelation(Action.BREAK_BLOCKS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos());
+        }
     }
 
     /**

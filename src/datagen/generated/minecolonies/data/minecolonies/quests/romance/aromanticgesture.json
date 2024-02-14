@@ -53,12 +53,7 @@
         "next-objective": 2,
         "qty": 1,
         "target": 1
-      },
-      "unlocks-rewards": [
-        0,
-        1,
-        2
-      ]
+      }
     },
     {
       "type": "minecolonies:dialogue",
@@ -81,7 +76,12 @@
         }
       ],
       "target": 1,
-      "text": "minecolonies.quests.romance.aromanticgesture.obj2"
+      "text": "minecolonies.quests.romance.aromanticgesture.obj2",
+      "unlocks-rewards": [
+        0,
+        1,
+        2
+      ]
     }
   ],
   "parents": [],
@@ -113,7 +113,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 1
+      "rarity": 500
     },
     {
       "type": "minecolonies:citizen",

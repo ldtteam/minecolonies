@@ -43,6 +43,10 @@
     {
       "structure": "minecolonies:colonial_colony",
       "weight": 1
+    },
+    {
+      "structure": "minecolonies:warpednetherlands_colony",
+      "weight": 1
     }
   ],
   "placement": {

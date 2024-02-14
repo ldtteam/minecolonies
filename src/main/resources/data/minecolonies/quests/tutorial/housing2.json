@@ -1,0 +1,122 @@
+{
+  "name": "Upgrade the Shed!",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/builder2"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/builder2"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Now that you got a level 2 builder the next logical step is upgrading your residences. Residences house 2 citizens per housing level up to a five citizens at level five.",
+      "options": [
+        {
+          "answer": "Sounds existing! What do you want me to do?.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Upgrade two of your residences to level 2 and come back to me later then!",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+                  "options": [
+                    {
+                      "answer": "Noted!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 10
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+            "options": [
+              {
+                "answer": "Noted!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:residence",
+        "count-existing": true,
+        "lvl": 2,
+        "qty": 2,
+        "target": 0,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Amazing! This is the best way to attract new citizens to your colony! Not only that! Citizens are also considerably happier in higher residence tiers! Here I found these racks earlier. I'm sure they will come in handy!",
+      "options": [
+        {
+          "answer": "Thank you. Bye!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:blockminecoloniesrack",
+        "qty": 8
+      }
+    }
+  ]
+}
