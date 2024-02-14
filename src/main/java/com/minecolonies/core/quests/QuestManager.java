@@ -240,9 +240,12 @@ public class QuestManager implements IQuestManager
         for (final Tag element : availableListTag)
         {
             final ResourceLocation key = new ResourceLocation(((CompoundTag) element).getString(TAG_ID));
-            final IQuestInstance colonyQuest = availableQuests.containsKey(key) ? availableQuests.get(key) : new QuestInstance(colony);
-            colonyQuest.deserializeNBT((CompoundTag) element);
-            localAvailableQuests.put(colonyQuest.getId(), colonyQuest);
+            if (GLOBAL_SERVER_QUESTS.containsKey(key))
+            {
+                final IQuestInstance colonyQuest = availableQuests.containsKey(key) ? availableQuests.get(key) : new QuestInstance(colony);
+                colonyQuest.deserializeNBT((CompoundTag) element);
+                localAvailableQuests.put(colonyQuest.getId(), colonyQuest);
+            }
         }
 
         this.availableQuests.clear();
@@ -253,9 +256,12 @@ public class QuestManager implements IQuestManager
         for (final Tag element : inProgressListTag)
         {
             final ResourceLocation key = new ResourceLocation(((CompoundTag) element).getString(TAG_ID));
-            final IQuestInstance colonyQuest = this.inProgressQuests.containsKey(key) ? this.inProgressQuests.get(key) : new QuestInstance(colony);
-            colonyQuest.deserializeNBT((CompoundTag) element);
-            localInProgressQuests.put(colonyQuest.getId(), colonyQuest);
+            if (GLOBAL_SERVER_QUESTS.containsKey(key))
+            {
+                final IQuestInstance colonyQuest = this.inProgressQuests.containsKey(key) ? this.inProgressQuests.get(key) : new QuestInstance(colony);
+                colonyQuest.deserializeNBT((CompoundTag) element);
+                localInProgressQuests.put(colonyQuest.getId(), colonyQuest);
+            }
         }
 
         this.inProgressQuests.clear();
@@ -300,7 +306,10 @@ public class QuestManager implements IQuestManager
             for (Map.Entry<ResourceLocation, Integer> entry : finishedQuests.entrySet())
             {
                 IQuestTemplate template = GLOBAL_SERVER_QUESTS.get(entry.getKey());
-                data.add(new FinishedQuest(template, entry.getValue()));
+                if (template != null)
+                {
+                    data.add(new FinishedQuest(template, entry.getValue()));
+                }
             }
             finishedQuestsCache = Collections.unmodifiableList(data);
         }
