@@ -27,9 +27,11 @@ public final class Expedition implements IExpedition
     /**
      * Nbt tag constants.
      */
-    private static final String TAG_EQUIPMENT   = "equipment";
-    private static final String TAG_MEMBERS     = "members";
-    private static final String TAG_MEMBER_TYPE = "memberType";
+    static final String TAG_EQUIPMENT       = "equipment";
+    static final String TAG_EQUIPMENT_ITEM  = "equipmentItem";
+    static final String TAG_EQUIPMENT_COUNT = "equipmentCount";
+    static final String TAG_MEMBERS         = "members";
+    static final String TAG_MEMBER_TYPE     = "memberType";
 
     /**
      * The dimension to send the expedition to.
@@ -75,6 +77,7 @@ public final class Expedition implements IExpedition
      * @param compound the compound data.
      * @return the expedition instance.
      */
+    @NotNull
     public static Expedition loadFromNBT(final CompoundTag compound)
     {
         return Serializer.read(compound);
@@ -148,6 +151,11 @@ public final class Expedition implements IExpedition
         member.died();
     }
 
+    /**
+     * Write this expedition builder to compound data.
+     *
+     * @param compound the compound tag.
+     */
     @Override
     public void write(final CompoundTag compound)
     {
@@ -165,6 +173,7 @@ public final class Expedition implements IExpedition
          * @param compound the NBT data.
          * @return the expedition instance.
          */
+        @NotNull
         public static Expedition read(final CompoundTag compound)
         {
             final ResourceKey<Level> dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
@@ -203,10 +212,10 @@ public final class Expedition implements IExpedition
          */
         public static void write(final Expedition expedition, final CompoundTag compound)
         {
-            compound.putString(TAG_DIMENSION, expedition.getTargetDimension().location().toString());
+            compound.putString(TAG_DIMENSION, expedition.dimensionId.location().toString());
 
             final ListTag memberTag = new ListTag();
-            for (final IExpeditionMember member : expedition.getMembers())
+            for (final IExpeditionMember member : expedition.members)
             {
                 final CompoundTag memberCompound = new CompoundTag();
                 if (member instanceof ExpeditionCitizenMember)

@@ -35,6 +35,16 @@ public interface IJobView
     JobEntry getEntry();
 
     /**
+     * Get whether this job is a guard job.
+     */
+    boolean isGuard();
+
+    /**
+     * Get whether this job is a guard job that actively engages in combat.
+     */
+    boolean isCombatGuard();
+
+    /**
      * Set the job entry of the view.
      * @param jobEntry the entry to set.
      */

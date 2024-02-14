@@ -11,9 +11,11 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
+import com.minecolonies.core.colony.expeditions.ExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.interactionhandling.ExpeditionaryInteraction;
@@ -33,6 +35,7 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_INTERACTION_INQUIRY;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION_TYPE;
 
 /**
@@ -233,6 +236,24 @@ public class VisitorManager implements IVisitorManager
         return data;
     }
 
+    public void spawnExpeditionary()
+    {
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
+        if (expeditionType != null)
+        {
+            final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
+            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE, expeditionType.getId());
+            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ExpeditionBuilder());
+            newVisitor.triggerInteraction(new ExpeditionaryInteraction(Component.translatable(EXPEDITION_INTERACTION_INQUIRY, expeditionType.getToText()),
+              ChatPriority.IMPORTANT));
+
+            spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
+              newVisitor,
+              colony.getWorld(),
+              BlockPosUtil.getSurroundingEmptyBlock(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition(), 1, 2));
+        }
+    }
+
     @Override
     public IVisitorData createAndRegisterVisitorData(final IVisitorType visitorType)
     {
@@ -277,15 +298,7 @@ public class VisitorManager implements IVisitorManager
 
             if (visitorMap.values().stream().noneMatch(f -> f.getVisitorType().equals(ModVisitorTypes.expeditionary.get())))
             {
-                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
-                if (expeditionType != null)
-                {
-                    final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
-                    newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE, expeditionType.getId());
-                    newVisitor.triggerInteraction(new ExpeditionaryInteraction(Component.translatable(EXPEDITION_INTERACTION_INQUIRY), ChatPriority.IMPORTANT));
-
-                    spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(), newVisitor, colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition());
-                }
+                spawnExpeditionary();
             }
         }
     }

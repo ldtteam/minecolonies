@@ -66,19 +66,15 @@ public class RegularVisitorType implements IVisitorType
     @Override
     public @NotNull InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
     {
+        IVisitorType.super.onPlayerInteraction(visitor, player, level, hand);
+
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
             final ItemStack remainingItem = usedStack.finishUsingItem(level, visitor);
             if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem() && (!player.getInventory().add(remainingItem)))
             {
-                InventoryUtils.spawnItemStack(
-                  player.level,
-                  player.getX(),
-                  player.getY(),
-                  player.getZ(),
-                  remainingItem
-                );
+                InventoryUtils.spawnItemStack(player.level, player.getX(), player.getY(), player.getZ(), remainingItem);
             }
 
             if (!level.isClientSide())

@@ -14,6 +14,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
@@ -30,8 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.*;
-import static com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
+import static com.minecolonies.core.client.gui.generic.ResourceItem.*;
 
 /**
  * BOWindow for the resource list item.
@@ -113,7 +113,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
                     resource.setAmountInDelivery(resource.getAmountInDelivery() + delivery.getStack().getCount());
                 }
             }
-            supplied += Math.min(resource.getAvailable(), resource.getAmount());
+            supplied += Math.min(resource.getAmountAvailable(), resource.getAmount());
 
             total += resource.getAmount();
         }
@@ -125,7 +125,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
               moduleView.getProgress() + "%"));
         }
 
-        resources.sort(new BuildingBuilderResource.ResourceComparator(NOT_NEEDED, HAVE_ENOUGH, IN_DELIVERY, NEED_MORE, DONT_HAVE));
+        resources.sort(new ResourceComparator());
     }
 
     /**
@@ -242,8 +242,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 break;
         }
 
-        resourceLabel.setText(Component.literal(resource.getName()));
-        final int missing = resource.getMissingFromPlayer();
+        resourceLabel.setText(resource.getName());
+        final int missing = resource.getAmountPlayer() + resource.getAmountAvailable() - resource.getAmount();
         if (missing < 0)
         {
             resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
@@ -253,9 +253,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
             resourceMissingLabel.clearText();
         }
 
-        neededLabel.setText(Component.literal(resource.getAvailable() + " / " + resource.getAmount()));
+        neededLabel.setText(Component.literal(resource.getAmountAvailable() + " / " + resource.getAmount()));
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Component.literal(Integer.toString(index)));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAmountAvailable())));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1);
         stack.setTag(resource.getItemStack().getTag());

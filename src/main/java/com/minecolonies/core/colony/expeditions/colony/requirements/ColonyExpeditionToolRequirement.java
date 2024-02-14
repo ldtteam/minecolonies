@@ -1,14 +1,21 @@
 package com.minecolonies.core.colony.expeditions.colony.requirements;
 
-import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Colony expedition requirements for providing any kind of {@link com.minecolonies.api.util.constant.ToolType}.
  */
-public class ColonyExpeditionToolRequirement implements IColonyExpeditionRequirement
+public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
 {
     /**
      * The required tool type.
@@ -19,6 +26,11 @@ public class ColonyExpeditionToolRequirement implements IColonyExpeditionRequire
      * The minimum amount to fulfill this requirement.
      */
     private final int amount;
+
+    /**
+     * Cached set of icons, because lookup is expensive.
+     */
+    private List<ItemStack> iconsCached;
 
     /**
      * Default constructor.
@@ -33,8 +45,67 @@ public class ColonyExpeditionToolRequirement implements IColonyExpeditionRequire
     }
 
     @Override
-    public boolean isFulFilled(final IItemHandler itemHandler)
+    @NotNull
+    public ResourceLocation getId()
     {
-        return InventoryUtils.getItemCountInItemHandler(itemHandler, stack -> ItemStackUtils.hasToolLevel(stack, this.toolType, 0, 5)) >= this.amount;
+        return new ResourceLocation(Constants.MOD_ID, "tool/" + toolType.getName());
+    }
+
+    @Override
+    public ToolRequirementHandler createHandler(final InventorySupplier inventory)
+    {
+        return new ToolRequirementHandler(inventory);
+    }
+
+    /**
+     * Tool handler instance used for verifying if the given item handler contains the required tool.
+     */
+    public class ToolRequirementHandler extends RequirementHandler
+    {
+        /**
+         * Default constructor.
+         *
+         * @param inventory supplier for obtaining the inventory.
+         */
+        private ToolRequirementHandler(final InventorySupplier inventory)
+        {
+            super(inventory);
+        }
+
+        @Override
+        public ResourceLocation getId()
+        {
+            return ColonyExpeditionToolRequirement.this.getId();
+        }
+
+        @Override
+        public Component getName()
+        {
+            return Component.translatable("com.minecolonies.core.expedition.gui.items.requirement.type.tool", toolType.getDisplayName());
+        }
+
+        @Override
+        public List<ItemStack> getIcon()
+        {
+            if (iconsCached == null)
+            {
+                iconsCached =
+                  IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(stack -> ItemStackUtils.isTool(stack, toolType)).toList();
+            }
+
+            return iconsCached;
+        }
+
+        @Override
+        public int getAmount()
+        {
+            return amount;
+        }
+
+        @Override
+        public Predicate<ItemStack> getItemPredicate()
+        {
+            return stack -> ItemStackUtils.isTool(stack, toolType);
+        }
     }
 }

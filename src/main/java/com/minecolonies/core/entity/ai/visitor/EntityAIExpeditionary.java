@@ -5,9 +5,12 @@ import com.minecolonies.api.entity.ai.statemachine.states.EntityState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.util.WorldUtil;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
  * AI for expeditionaries, they hang around in the town hall and not much else.
@@ -35,8 +38,8 @@ public class EntityAIExpeditionary implements IState
         this.visitor = entity;
 
         ITickRateStateMachine<IState> stateMachine = entity.getEntityStateController();
-        stateMachine.addTransition(new TickingTransition<>(EntityState.INIT, this::isEntityLoaded, () -> VisitorState.IDLE, 50));
-        stateMachine.addTransition(new TickingTransition<>(VisitorState.IDLE, () -> true, this::decide, 50));
+        stateMachine.addTransition(new TickingTransition<>(EntityState.INIT, this::isEntityLoaded, () -> VisitorState.WANDERING, 50));
+        stateMachine.addTransition(new TickingTransition<>(VisitorState.WANDERING, () -> true, this::wander, 50));
     }
 
     /**
@@ -46,7 +49,7 @@ public class EntityAIExpeditionary implements IState
      */
     private boolean isEntityLoaded()
     {
-        if (visitor.getCitizenColonyHandler().getColony() == null || visitor.getCitizenData() == null || visitor.getCitizenData().getHomeBuilding() == null)
+        if (visitor.getCitizenColonyHandler().getColony() == null || visitor.getCitizenData() == null)
         {
             return false;
         }
@@ -61,10 +64,11 @@ public class EntityAIExpeditionary implements IState
      *
      * @return next state
      */
-    private VisitorState decide()
+    private VisitorState wander()
     {
-        visitor.isWorkerAtSiteWithMove(townhall.getPosition(), 20);
-        return VisitorState.IDLE;
+        visitor.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, townhall.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+
+        return VisitorState.WANDERING;
     }
 
     /**
@@ -72,9 +76,6 @@ public class EntityAIExpeditionary implements IState
      */
     public enum VisitorState implements IState
     {
-        IDLE,
-        SLEEPING,
-        SITTING,
         WANDERING
     }
 }

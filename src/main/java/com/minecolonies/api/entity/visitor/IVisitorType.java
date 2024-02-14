@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
 /**
  * Specific handler actions for interacting with different types of visitors.
  */
@@ -57,7 +59,10 @@ public interface IVisitorType
     @NotNull
     default InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
     {
-        // Nothing should happen by default.
+        // Pause the visitor and temporarily look at the player
+        visitor.getEntityStateController().setCurrentDelay(TICKS_SECOND * 3);
+        visitor.getNavigation().stop();
+        visitor.getLookControl().setLookAt(player);
         return InteractionResult.PASS;
     }
 }

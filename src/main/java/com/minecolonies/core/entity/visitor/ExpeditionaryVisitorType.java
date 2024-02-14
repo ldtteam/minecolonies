@@ -2,15 +2,20 @@ package com.minecolonies.core.entity.visitor;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
-import com.minecolonies.core.colony.expeditions.Expedition;
+import com.minecolonies.core.colony.expeditions.ExpeditionBuilder;
 import com.minecolonies.core.entity.ai.visitor.EntityAIExpeditionary;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
+
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Visitor type for expeditionary visitors in the town hall.
@@ -21,7 +26,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
      * Extra data fields.
      */
     public static final ColonyExpeditionTypeData EXTRA_DATA_EXPEDITION_TYPE = new ColonyExpeditionTypeData();
-    public static final ExpeditionData           EXTRA_DATA_EXPEDITION      = new ExpeditionData();
+    public static final ExpeditionBuilderData    EXTRA_DATA_EXPEDITION      = new ExpeditionBuilderData();
 
     @Override
     public ResourceLocation getId()
@@ -45,6 +50,15 @@ public class ExpeditionaryVisitorType implements IVisitorType
     public List<IVisitorExtraData<?>> getExtraDataKeys()
     {
         return List.of(EXTRA_DATA_EXPEDITION_TYPE, EXTRA_DATA_EXPEDITION);
+    }
+
+    @Override
+    public @NotNull InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
+    {
+        visitor.getEntityStateController().setCurrentDelay(TICKS_SECOND * 10);
+        visitor.getNavigation().stop();
+        visitor.getLookControl().setLookAt(player);
+        return InteractionResult.PASS;
     }
 
     /**
@@ -75,36 +89,27 @@ public class ExpeditionaryVisitorType implements IVisitorType
     }
 
     /**
-     * Extra data for storing the expedition instance.
+     * Extra data for storing the expedition builder instance.
      */
-    public static class ExpeditionData extends AbstractVisitorExtraData<Optional<Expedition>>
+    public static class ExpeditionBuilderData extends AbstractVisitorExtraData<ExpeditionBuilder>
     {
-        private static final String TAG_VALUE = "value";
-
-        public ExpeditionData()
+        public ExpeditionBuilderData()
         {
-            super("expedition", Optional.empty());
+            super("expedition", new ExpeditionBuilder());
         }
 
         @Override
         public CompoundTag serializeNBT()
         {
             final CompoundTag compound = new CompoundTag();
-            getValue().ifPresent(val -> {
-                final CompoundTag valueCompound = new CompoundTag();
-                val.write(valueCompound);
-                compound.put(TAG_VALUE, valueCompound);
-            });
+            getValue().write(compound);
             return compound;
         }
 
         @Override
         public void deserializeNBT(final CompoundTag compoundTag)
         {
-            if (compoundTag.contains(TAG_VALUE))
-            {
-                setValue(Optional.of(Expedition.loadFromNBT(compoundTag.getCompound(TAG_VALUE))));
-            }
+            setValue(ExpeditionBuilder.loadFromNBT(compoundTag));
         }
     }
 }

@@ -1058,4 +1058,53 @@ public final class BlockPosUtil
                  && location.getY() >= y1 - 1 && location.getY() <= y2 + 1
                  && location.getZ() >= z1 - 1 && location.getZ() <= z2 + 1;
     }
+
+    /**
+     * Find the first viable empty position around a given block, given a max search radius.
+     * Searches horizontally first. In case no free position can be found at all within the entire area
+     *
+     * @param world     the level.
+     * @param pos       the input position.
+     * @param distance  the maximum distance to look around the input position (all axis).
+     * @param minHeight the height that should be empty in order for the location to be valid.
+     * @return the output position.
+     */
+    public static BlockPos getSurroundingEmptyBlock(final Level world, final BlockPos pos, final int distance, final int minHeight)
+    {
+        if (world.getBlockState(pos).isAir())
+        {
+            return pos;
+        }
+
+        for (int y = 0; y < distance; y++)
+        {
+            for (int x = -distance; x < distance; x++)
+            {
+                for (int z = -distance; z < distance; z++)
+                {
+                    final BlockPos currentPos = pos.offset(x, y, z);
+                    if (!world.getBlockState(currentPos).isAir())
+                    {
+                        continue;
+                    }
+
+                    boolean isFullyFree = true;
+                    for (int height = 1; height < minHeight; height++)
+                    {
+                        if (!world.getBlockState(currentPos.above(height)).isAir())
+                        {
+                            isFullyFree = false;
+                        }
+                    }
+
+                    if (isFullyFree)
+                    {
+                        return currentPos;
+                    }
+                }
+            }
+        }
+
+        return pos;
+    }
 }

@@ -94,4 +94,27 @@ public final class ExpeditionVisitorMember implements IExpeditionMember
         compound.putString(TAG_NAME, this.name);
         compound.putBoolean(TAG_DIED, this.died);
     }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final ExpeditionVisitorMember that = (ExpeditionVisitorMember) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id;
+    }
 }

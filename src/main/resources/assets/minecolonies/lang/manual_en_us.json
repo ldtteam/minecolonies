@@ -2539,5 +2539,11 @@
   "com.minecolonies.core.expedition.gui.difficulty.easy": "Easy",
   "com.minecolonies.core.expedition.gui.difficulty.medium": "Medium",
   "com.minecolonies.core.expedition.gui.difficulty.hard": "Hard",
-  "com.minecolonies.core.expedition.gui.difficulty.nightmare": "Nightmare"
+  "com.minecolonies.core.expedition.gui.difficulty.nightmare": "Nightmare",
+  "com.minecolonies.core.expedition.gui.items.header": "Required Items",
+  "com.minecolonies.core.expedition.gui.items.requirement.met": "All requirements are met",
+  "com.minecolonies.core.expedition.gui.items.requirement.not_met": "Some requirements are not met",
+  "com.minecolonies.core.expedition.gui.items.requirement.type.food": "Any food",
+  "com.minecolonies.core.expedition.gui.items.requirement.type.item": "%s",
+  "com.minecolonies.core.expedition.gui.items.requirement.type.tool": "Any %s"
 }

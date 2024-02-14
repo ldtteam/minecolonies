@@ -8,8 +8,8 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionFoodRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionItemRequirement;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionToolRequirement;
-import com.minecolonies.core.colony.expeditions.colony.requirements.IColonyExpeditionRequirement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -23,10 +23,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -89,7 +86,7 @@ public class ColonyExpeditionType
     /**
      * The list of requirements for this expedition type to be sent.
      */
-    private final List<IColonyExpeditionRequirement> requirements;
+    private final List<ColonyExpeditionRequirement> requirements;
 
     /**
      * The minimum amount of guards needed for this expedition.
@@ -106,7 +103,7 @@ public class ColonyExpeditionType
       final @NotNull Difficulty difficulty,
       final ResourceKey<Level> dimension,
       final ResourceLocation lootTable,
-      final List<IColonyExpeditionRequirement> requirements,
+      final List<ColonyExpeditionRequirement> requirements,
       final int guards)
     {
         this.id = id;
@@ -136,7 +133,7 @@ public class ColonyExpeditionType
         final ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(object.getAsJsonPrimitive(PROP_DIMENSION).getAsString()));
         final ResourceLocation lootTable = new ResourceLocation(object.getAsJsonPrimitive(PROP_LOOT_TABLE).getAsString());
 
-        final List<IColonyExpeditionRequirement> requirements = new ArrayList<>();
+        final Set<ColonyExpeditionRequirement> requirements = new HashSet<>();
         if (object.has(PROP_REQUIREMENTS) && object.get(PROP_REQUIREMENTS).isJsonArray())
         {
             final JsonArray jsonRequirements = object.getAsJsonArray(PROP_REQUIREMENTS);
@@ -147,7 +144,11 @@ public class ColonyExpeditionType
                     continue;
                 }
 
-                requirements.add(parseRequirement(jsonRequirement.getAsJsonObject()));
+                final ColonyExpeditionRequirement requirement = parseRequirement(jsonRequirement.getAsJsonObject());
+                if (requirement != null)
+                {
+                    requirements.add(requirement);
+                }
             }
         }
 
@@ -159,7 +160,7 @@ public class ColonyExpeditionType
               Arrays.stream(Difficulty.values()).map(m -> m.key).collect(Collectors.joining(", "))));
         }
 
-        return new ColonyExpeditionType(id, name, toText, difficulty, dimension, lootTable, requirements, guards);
+        return new ColonyExpeditionType(id, name, toText, difficulty, dimension, lootTable, requirements.stream().toList(), guards);
     }
 
     /**
@@ -169,9 +170,9 @@ public class ColonyExpeditionType
      * @return a requirement instance or null.
      */
     @Nullable
-    private static IColonyExpeditionRequirement parseRequirement(final JsonObject requirement)
+    private static ColonyExpeditionRequirement parseRequirement(final JsonObject requirement)
     {
-        final int amount = requirement.has(PROP_REQUIREMENT_AMOUNT) ? requirement.getAsJsonPrimitive(PROP_REQUIREMENT_AMOUNT).getAsInt() : 1;
+        final int amount = Math.max(requirement.has(PROP_REQUIREMENT_AMOUNT) ? requirement.getAsJsonPrimitive(PROP_REQUIREMENT_AMOUNT).getAsInt() : 1, 1);
         return switch (requirement.get(PROP_REQUIREMENT_TYPE).getAsString())
         {
             case REQUIREMENT_TYPE_TOOL ->
@@ -224,7 +225,7 @@ public class ColonyExpeditionType
      *
      * @return the component.
      */
-    public Object getToText()
+    public Component getToText()
     {
         return toText;
     }
@@ -247,6 +248,16 @@ public class ColonyExpeditionType
     public ResourceLocation getLootTable()
     {
         return lootTable;
+    }
+
+    /**
+     * Get the list of requirements for this expedition type to be sent.
+     *
+     * @return the unmodifiable list.
+     */
+    public List<ColonyExpeditionRequirement> getRequirements()
+    {
+        return requirements;
     }
 
     /**

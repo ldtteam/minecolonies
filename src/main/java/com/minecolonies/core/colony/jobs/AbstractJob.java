@@ -229,6 +229,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
             StandardFactoryController.getInstance().serialize(buffer, token);
         }
         buffer.writeRegistryId(IJobRegistry.getInstance(), getJobRegistryEntry());
+        buffer.writeBoolean(isGuard());
+        buffer.writeBoolean(isCombatGuard());
     }
 
     /**
