@@ -139,10 +139,8 @@ public class MineColonies
 
         modBus.addListener(GatherDataHandler::dataGeneratorSetup);
 
-        forgeBus.register(this.getClass());
         modBus.register(this.getClass());
         modBus.register(ClientRegistryHandler.class);
-        modBus.register(ModCreativeTabs.class);
 
         InteractionValidatorInitializer.init();
         switch (dist)

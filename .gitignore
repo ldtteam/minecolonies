@@ -28,6 +28,7 @@
 /runData
 /runClient
 /runServer
+/runs/*
 .cache
 /libs
 gradle\.properties
