@@ -17,16 +17,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.click_gui_button_fulfill.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:resourcescroll"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.click_gui_button_fulfill.title"
     }

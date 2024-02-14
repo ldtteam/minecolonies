@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.guard_tower.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutguardtower"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.guard_tower.title"
     }

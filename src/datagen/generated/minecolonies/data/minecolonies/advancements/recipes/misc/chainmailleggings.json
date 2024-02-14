@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_iron",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_iron"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:chainmailleggings"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

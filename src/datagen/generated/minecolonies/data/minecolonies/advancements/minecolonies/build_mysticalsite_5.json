@@ -10,16 +10,13 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.mysticalsite_5.description"
     },
     "frame": "challenge",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutmysticalsite"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.mysticalsite_5.title"
     }

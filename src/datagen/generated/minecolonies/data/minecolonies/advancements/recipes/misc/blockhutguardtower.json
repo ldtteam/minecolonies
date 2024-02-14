@@ -27,14 +27,13 @@
   },
   "requirements": [
     [
-      "has_items",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_items"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:blockhutguardtower"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

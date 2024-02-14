@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_compost",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_compost"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:composted_dirt"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

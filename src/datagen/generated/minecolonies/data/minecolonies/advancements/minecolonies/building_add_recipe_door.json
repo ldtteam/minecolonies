@@ -81,16 +81,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.building_add_recipe_door.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecraft:oak_door"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.building_add_recipe_door.title"
     }

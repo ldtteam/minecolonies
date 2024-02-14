@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_fern",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_fern"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:doublefern"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

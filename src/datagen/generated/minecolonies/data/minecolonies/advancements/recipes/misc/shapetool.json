@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_stick",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_stick"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:shapetool"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

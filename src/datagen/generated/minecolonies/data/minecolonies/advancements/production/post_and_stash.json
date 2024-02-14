@@ -25,16 +25,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.post_and_stash.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockpostbox"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.post_and_stash.title"
     }

@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_scimitar",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_scimitar"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:iron_nugget_from_iron_scimitar_smelting"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

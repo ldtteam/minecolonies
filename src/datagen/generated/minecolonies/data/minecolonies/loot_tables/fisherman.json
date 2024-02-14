@@ -18,7 +18,7 @@
               "terms": [
                 {
                   "condition": "minecolonies:entity_in_biome_tag",
-                  "tag": "minecraft:is_ocean"
+                  "tag": "#minecraft:is_ocean"
                 },
                 {
                   "condition": "minecolonies:research_unlocked",

@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.smeltery_5.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutsmeltery"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.smeltery_5.title"
     }

@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.combat_academy.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutcombatacademy"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.combat_academy.title"
     }

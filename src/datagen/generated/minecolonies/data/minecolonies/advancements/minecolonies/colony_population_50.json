@@ -9,16 +9,13 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.colony_population_50.description"
     },
     "frame": "goal",
-    "hidden": false,
     "icon": {
       "item": "minecraft:diamond"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.colony_population_50.title"
     }
