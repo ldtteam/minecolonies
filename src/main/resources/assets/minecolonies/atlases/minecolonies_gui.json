@@ -7,87 +7,89 @@
     },
     {
       "type": "unstitch",
-      "resource": "gui/mcol_unstitch/building/scarecrow",
+      "resource": "minecolonies:gui/mcol_unstitch/building/scarecrow",
+      "divisor_x": 128,
+      "divisor_y": 128,
       "regions": [
         {
-          "sprite": "building/scarecrow/south/dark",
+          "sprite": "minecolonies:building/scarecrow/south/dark",
           "x": 0,
           "y": 0,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/west/dark",
+          "sprite": "minecolonies:building/scarecrow/west/dark",
           "x": 24,
           "y": 0,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/north/dark",
+          "sprite": "minecolonies:building/scarecrow/north/dark",
           "x": 48,
           "y": 0,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/east/dark",
+          "sprite": "minecolonies:building/scarecrow/east/dark",
           "x": 72,
           "y": 0,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/south",
+          "sprite": "minecolonies:building/scarecrow/south",
           "x": 0,
           "y": 24,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/west",
+          "sprite": "minecolonies:building/scarecrow/west",
           "x": 24,
           "y": 24,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/north",
+          "sprite": "minecolonies:building/scarecrow/north",
           "x": 48,
           "y": 24,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/east",
+          "sprite": "minecolonies:building/scarecrow/east",
           "x": 72,
           "y": 24,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/south/light",
+          "sprite": "minecolonies:building/scarecrow/south/light",
           "x": 0,
           "y": 48,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/west/light",
+          "sprite": "minecolonies:building/scarecrow/west/light",
           "x": 24,
           "y": 48,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/north/light",
+          "sprite": "minecolonies:building/scarecrow/north/light",
           "x": 48,
           "y": 48,
           "width": 24,
           "height": 24
         },
         {
-          "sprite": "building/scarecrow/east/light",
+          "sprite": "minecolonies:building/scarecrow/east/light",
           "x": 72,
           "y": 48,
           "width": 24,
@@ -97,31 +99,33 @@
     },
     {
       "type": "unstitch",
-      "resource": "gui/mcol_unstitch/citizen/green_bluehearts",
+      "resource": "minecolonies:gui/mcol_unstitch/citizen/green_bluehearts",
+      "divisor_x": 256,
+      "divisor_y": 256,
       "regions": [
         {
-          "sprite": "citizen/heart/green",
+          "sprite": "minecolonies:citizen/heart/green",
           "x": 0,
           "y": 0,
           "width": 9,
           "height": 9
         },
         {
-          "sprite": "citizen/heart/green_half",
+          "sprite": "minecolonies:citizen/heart/green_half",
           "x": 8,
           "y": 0,
           "width": 9,
           "height": 9
         },
         {
-          "sprite": "citizen/heart/blue",
+          "sprite": "minecolonies:citizen/heart/blue",
           "x": 0,
           "y": 8,
           "width": 9,
           "height": 9
         },
         {
-          "sprite": "citizen/heart/blue_half",
+          "sprite": "minecolonies:citizen/heart/blue_half",
           "x": 8,
           "y": 8,
           "width": 9,
@@ -131,24 +135,26 @@
     },
     {
       "type": "unstitch",
-      "resource": "gui/mcol_unstitch/citizen/smileys",
+      "resource": "minecolonies:gui/mcol_unstitch/citizen/smileys",
+      "divisor_x": 87,
+      "divisor_y": 9,
       "regions": [
         {
-          "sprite": "citizen/smiley/empty",
+          "sprite": "minecolonies:citizen/smiley/empty",
           "x": 16,
           "y": 0,
           "width": 9,
           "height": 9
         },
         {
-          "sprite": "citizen/smiley/full",
+          "sprite": "minecolonies:citizen/smiley/full",
           "x": 52,
           "y": 0,
           "width": 9,
           "height": 9
         },
         {
-          "sprite": "citizen/smiley/half",
+          "sprite": "minecolonies:citizen/smiley/half",
           "x": 61,
           "y": 0,
           "width": 9,

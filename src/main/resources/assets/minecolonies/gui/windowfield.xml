@@ -18,11 +18,11 @@
 
     <itemicon id="dir-center" size="16 16" pos="133 73" item="minecolonies:blockhutfield"/>
     <button id="dir-resize-north" size="24 24" pos="129 45" textcolor="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/east" highlight="minecolonies:building/scarecrow/east/light" disabled="minecolonies:building/scarecrow/east/dark"/>
+        source="minecolonies:building/scarecrow/north" highlight="minecolonies:building/scarecrow/north/light" disabled="minecolonies:building/scarecrow/north/dark"/>
     <button id="dir-resize-south" size="24 24" pos="129 93" textcolor="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/east" highlight="minecolonies:building/scarecrow/east/light" disabled="minecolonies:building/scarecrow/east/dark"/>
+        source="minecolonies:building/scarecrow/south" highlight="minecolonies:building/scarecrow/south/light" disabled="minecolonies:building/scarecrow/south/dark"/>
     <button id="dir-resize-west" size="24 24" pos="105 69" textcolor="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/east" highlight="minecolonies:building/scarecrow/east/light" disabled="minecolonies:building/scarecrow/east/dark"/>
+        source="minecolonies:building/scarecrow/west" highlight="minecolonies:building/scarecrow/west/light" disabled="minecolonies:building/scarecrow/west/dark"/>
     <button id="dir-resize-east" size="24 24" pos="153 69" textcolor="white" textalign="MIDDLE"
         source="minecolonies:building/scarecrow/east" highlight="minecolonies:building/scarecrow/east/light" disabled="minecolonies:building/scarecrow/east/dark"/>
 </window>
