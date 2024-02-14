@@ -16,9 +16,9 @@
     <text id="happinessLevel" size="25 8" color="black" pos="316 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
     <text id="saturation" size="25 8" color="black" pos="351 47" textalign="MIDDLE_RIGHT" textscale="0.7"/>
 
-    <image source="minecraft:textures/gui/icons.png" size="9 9" pos="306 46" imageoffset="52 0" imagesize="9 9"/>
-    <image source="minecolonies:textures/gui/citizen/icons.png" size="9 9" pos="341 46" imageoffset="52 0" imagesize="9 9"/>
-    <image source="minecraft:textures/gui/icons.png" size="9 9" pos="376 46" imageoffset="52 27" imagesize="9 9"/>
+    <image source="minecraft:hud/heart/full" size="9 9" pos="306 46"/>
+    <image source="minecolonies:citizen/smiley/full" size="9 9" pos="341 46"/>
+    <image source="minecraft:hud/food_full" size="9 9" pos="376 46"/>
 
     <entityicon id="entity" size="25 50" pos="396 38" visible="false" />
 

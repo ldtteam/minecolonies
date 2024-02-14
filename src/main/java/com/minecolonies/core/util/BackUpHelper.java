@@ -292,7 +292,7 @@ public final class BackUpHelper
         {
             if (file != null)
             {
-                Files.createDirectories(file);
+                Files.createDirectories(file.getParent());
                 NbtIo.write(compound, file);
             }
         }

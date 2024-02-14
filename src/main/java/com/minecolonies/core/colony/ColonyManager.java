@@ -597,7 +597,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldTick(final TickEvent.@NotNull LevelTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END)
+        if (event.phase == TickEvent.Phase.END && !event.level.isClientSide)
         {
             getColonies(event.level).forEach(c -> c.onWorldTick(event));
         }

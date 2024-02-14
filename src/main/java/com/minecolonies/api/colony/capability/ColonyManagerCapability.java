@@ -37,7 +37,7 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
 
     public static final Codec<ColonyManagerCapability> CODEC = CompoundTag.CODEC.xmap(tag -> new ColonyManagerCapability().readNBT(tag), ColonyManagerCapability::writeNBT);
     
-    public static final String NAME = new ResourceLocation(Constants.MOD_ID, "chunk_manager").toDebugFileName();
+    public static final String NAME = new ResourceLocation(Constants.MOD_ID, "colony_manager").toDebugFileName();
     public static final Factory<ColonyManagerCapability> FACTORY = new Factory<>(ColonyManagerCapability::new, CodecUtil.nbtDecoder(CODEC, LOGGER, ColonyManagerCapability::new));
 
     /**
