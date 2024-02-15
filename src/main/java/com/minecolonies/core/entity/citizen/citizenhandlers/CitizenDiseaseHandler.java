@@ -144,11 +144,6 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public boolean isSick()
     {
-        if (true)
-        {
-            return false;
-        }
-
         return !disease.isEmpty();
     }
 
