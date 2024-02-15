@@ -2546,5 +2546,6 @@
   "com.minecolonies.core.expedition.gui.items.requirement.not_met": "Some requirements are not met",
   "com.minecolonies.core.expedition.gui.items.requirement.type.food": "Any food",
   "com.minecolonies.core.expedition.gui.items.requirement.type.item": "%s",
-  "com.minecolonies.core.expedition.gui.items.requirement.type.tool": "Any %s"
+  "com.minecolonies.core.expedition.gui.items.requirement.type.tool": "Any %s",
+  "com.minecolonies.core.expedition.gui.guards.header": "Guards"
 }

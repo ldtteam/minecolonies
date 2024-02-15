@@ -10,10 +10,18 @@
             <image id="diff_4" source="minecolonies:textures/gui/visitor/expeditionary/sword_backdrop.png" size="16 16" pos="48 0" visible="false"/>
         </view>
 
-        <text size="120 15" pos="0 44" color="black" text="$(com.minecolonies.core.expedition.gui.items.header)"/>
+        <text size="164 15" pos="0 44" color="black" text="$(com.minecolonies.core.expedition.gui.items.header)" textScale="0.8"/>
         <list id="expedition_items" size="164 140" pos="0 64">
             <view size="100% 30">
                 <layout source="minecolonies:gui/generic/resource.xml"/>
+            </view>
+        </list>
+
+        <text size="164 15" pos="176 44" color="black" text="$(com.minecolonies.core.expedition.gui.guards.header)" textScale="0.8"/>
+        <list id="expedition_guards" size="164 140" pos="0 64">
+            <view size="100% 35">
+                <label id="citizen" size="164 12" pos="5 0" color="blue"/>
+                <label id="attributes" size="164 16" pos="2 18" color="black" textscale="0.7"/>
             </view>
         </list>
     </view>

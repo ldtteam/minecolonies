@@ -97,6 +97,10 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(visitorData::getInventory)).collect(Collectors.toList());
         requirements.sort(new ResourceComparator());
 
+        final List<ICitizenDataView> allGuards = visitorData.getColony().getCitizens().values().stream()
+                                                   .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard())
+                                                   .toList();
+
         registerButton(RESOURCE_ADD, this::transferItems);
     }
 
@@ -131,10 +135,6 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             iconPane.setVisible(true);
             iconPane.setImage(new ResourceLocation("textures/item/" + currentDifficulty.getIcon().toString() + ".png"), false);
         }
-
-        final List<ICitizenDataView> allGuards = visitorData.getColony().getCitizens().values().stream()
-                                                   .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard())
-                                                   .toList();
 
         PaneBuilders.tooltipBuilder()
           .append(Component.translatable(EXPEDITIONARY_DIFFICULTY, Component.translatable(EXPEDITIONARY_DIFFICULTY_PREFIX + currentDifficulty.getKey()))
