@@ -27,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -78,7 +79,7 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public IColony createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
+    public IColony createColony(@NotNull final ServerLevel w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
         final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(w);
         if (cap == null)
@@ -109,7 +110,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void deleteColonyByWorld(final int id, final boolean canDestroy, final Level world)
+    public void deleteColonyByWorld(final int id, final boolean canDestroy, final ServerLevel world)
     {
         deleteColony(getColonyByWorld(id, world), canDestroy);
     }
@@ -128,14 +129,13 @@ public final class ColonyManager implements IColonyManager
      */
     private void deleteColony(@Nullable final IColony iColony, final boolean canDestroy)
     {
-        if (!(iColony instanceof Colony))
+        if (!(iColony instanceof final Colony colony))
         {
             return;
         }
 
-        final Colony colony = (Colony) iColony;
         final int id = colony.getID();
-        final Level world = colony.getWorld();
+        final ServerLevel world = colony.getWorld();
 
         if (world == null)
         {
@@ -220,7 +220,11 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByWorld(final int id, final Level world)
     {
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+        if (!(world instanceof final ServerLevel serverLevel))
+        {
+            return getColonyView(id, world.dimension());
+        }
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(serverLevel);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -233,7 +237,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final ResourceKey<Level> registryKey)
     {
-        final Level world = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
+        final ServerLevel world = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
         if (world == null)
         {
             return null;
@@ -315,7 +319,11 @@ public final class ColonyManager implements IColonyManager
     @NotNull
     public List<IColony> getColonies(@NotNull final Level w)
     {
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(w);
+        if (!(w instanceof final ServerLevel serverLevel))
+        {
+            return colonyViews.get(w.dimension()).getCopyAsList();
+        }
+        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(serverLevel);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -329,7 +337,7 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final Level world : net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final ServerLevel world : net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
             if (cap != null)
@@ -604,9 +612,9 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void onWorldLoad(@NotNull final Level world)
+    public void onWorldLoad(@NotNull final Level w)
     {
-        if (!world.isClientSide)
+        if (w instanceof final ServerLevel world)
         {
             // Late-load restore if cap was not loaded
             if (!capLoaded)
@@ -811,7 +819,7 @@ public final class ColonyManager implements IColonyManager
     public int getTopColonyId()
     {
         int top = 0;
-        for (final Level world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
             final int tempTop = cap == null ? 0 : cap.getTopID();

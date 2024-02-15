@@ -218,7 +218,7 @@ public class Colony implements IColony
      * The world the colony currently runs on.
      */
     @Nullable
-    private Level world = null;
+    private ServerLevel world = null;
 
     /**
      * The name of the colony.
@@ -338,7 +338,7 @@ public class Colony implements IColony
      * @param c  The center of the colony (location of Town Hall).
      */
     @SuppressWarnings("squid:S2637")
-    Colony(final int id, @Nullable final Level w, final BlockPos c)
+    Colony(final int id, @Nullable final ServerLevel w, final BlockPos c)
     {
         this(id, w);
         center = c;
@@ -354,7 +354,7 @@ public class Colony implements IColony
      * @param id    The current id for the colony.
      * @param world The world the colony exists in.
      */
-    protected Colony(final int id, @Nullable final Level world)
+    protected Colony(final int id, @Nullable final ServerLevel world)
     {
         questManager = new QuestManager(this);
         this.id = id;
@@ -683,7 +683,7 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @Nullable
-    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final Level world)
+    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final ServerLevel world)
     {
         try
         {
@@ -983,7 +983,7 @@ public class Colony implements IColony
      * @param w World object.
      */
     @Override
-    public void onWorldLoad(@NotNull final Level w)
+    public void onWorldLoad(@NotNull final ServerLevel w)
     {
         if (w.dimension() == dimensionId)
         {
@@ -1311,7 +1311,7 @@ public class Colony implements IColony
      * @return World the colony is in.
      */
     @Nullable
-    public Level getWorld()
+    public ServerLevel getWorld()
     {
         return world;
     }

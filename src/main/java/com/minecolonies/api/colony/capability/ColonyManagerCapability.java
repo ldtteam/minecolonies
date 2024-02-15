@@ -17,7 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
     }
 
     @Override
-    public IColony createColony(@NotNull final Level w, @NotNull final BlockPos pos)
+    public IColony createColony(@NotNull final ServerLevel w, @NotNull final BlockPos pos)
     {
         return colonies.create(w, pos);
     }

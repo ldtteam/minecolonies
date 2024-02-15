@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.TickEvent;
@@ -37,7 +38,7 @@ public interface IColonyManager
      * @return the created colony instance.
      */
     @Nullable
-    IColony createColony(@NotNull Level w, BlockPos pos, @NotNull Player player, @NotNull String colonyName, @NotNull String pack);
+    IColony createColony(@NotNull ServerLevel w, BlockPos pos, @NotNull Player player, @NotNull String colonyName, @NotNull String pack);
 
     /**
      * Delete the colony in a world.
@@ -46,7 +47,7 @@ public interface IColonyManager
      * @param canDestroy if can destroy the buildings.
      * @param world      the world.
      */
-    void deleteColonyByWorld(int id, boolean canDestroy, Level world);
+    void deleteColonyByWorld(int id, boolean canDestroy, ServerLevel world);
 
     /**
      * Delete the colony by dimension.

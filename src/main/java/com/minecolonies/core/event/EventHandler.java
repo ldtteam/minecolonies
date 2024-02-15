@@ -213,12 +213,11 @@ public class EventHandler
     @SubscribeEvent
     public static void onEnteringChunk(final TickEvent.PlayerTickEvent event)
     {
-        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide() || event.player.level().getGameTime() % 100 != 0)
+        if (event.phase != TickEvent.Phase.END || !(event.player.level() instanceof final ServerLevel world) || event.player.level().getGameTime() % 100 != 0)
         {
             return;
         }
 
-        final Level world = event.player.level();
         final ChunkPos chunkPos = event.player.chunkPosition();
 
         final ChunkPos oldPos = playerPositions.get(event.player.getUUID());

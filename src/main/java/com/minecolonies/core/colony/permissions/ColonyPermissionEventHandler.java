@@ -22,6 +22,7 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -190,15 +191,14 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.BreakEvent event)
     {
-        final LevelAccessor world = event.getLevel();
-        if (world.isClientSide())
+        if (!(event.getPlayer().level() instanceof final ServerLevel world))
         {
             return;
         }
 
         if (event.getState().getBlock() instanceof AbstractBlockHut)
         {
-            @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(event.getPlayer().level(), event.getPos());
+            @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, event.getPos());
             if (building == null)
             {
                 return;
@@ -218,7 +218,7 @@ public class ColonyPermissionEventHandler
 
             if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
             {
-                if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos()))
+                if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), world, event, event.getPos()))
                 {
                     return;
                 }
@@ -228,12 +228,12 @@ public class ColonyPermissionEventHandler
 
             if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall)
             {
-                IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getPlayer().level());
+                IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, world);
             }
         }
         else if (event.getState().getBlock() instanceof BlockDecorationController)
         {
-            if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos()))
+            if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), world, event, event.getPos()))
             {
                 return;
             }

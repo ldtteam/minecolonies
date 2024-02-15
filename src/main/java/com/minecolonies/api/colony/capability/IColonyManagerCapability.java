@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.capability;
 
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -22,7 +21,7 @@ public interface IColonyManagerCapability
      * @param pos the position of the colony.
      * @return the created colony.
      */
-    IColony createColony(@NotNull final Level w, @NotNull final BlockPos pos);
+    IColony createColony(@NotNull final ServerLevel w, @NotNull final BlockPos pos);
 
     /**
      * Delete a colony with a certain id.
@@ -62,22 +61,9 @@ public interface IColonyManagerCapability
     int getTopID();
 
     @Nullable
-    static IColonyManagerCapability getCapability(final Level level)
+    static IColonyManagerCapability getCapability(final ServerLevel level)
     {
-        final ColonyManagerCapability cap;
-        if (level instanceof final ServerLevel serverLevel)
-        {
-            cap = serverLevel.getDataStorage().computeIfAbsent(ColonyManagerCapability.FACTORY, ColonyManagerCapability.NAME);
-        }
-        else if (level instanceof ClientLevel)
-        {
-            // TODO: client getter or throw
-        }
-        else
-        {
-            cap = null;
-        }
-
+        final ColonyManagerCapability cap = level.getDataStorage().computeIfAbsent(ColonyManagerCapability.FACTORY, ColonyManagerCapability.NAME);
         if (cap != null)
         {
             cap.processAfterLoadHook(level.dimension() == Level.OVERWORLD);

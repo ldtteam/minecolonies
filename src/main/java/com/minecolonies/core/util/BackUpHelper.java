@@ -14,6 +14,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -443,7 +444,7 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final Level colonyWorld = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+            final ServerLevel colonyWorld = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             final Colony loadedColony = Colony.loadColony(compound, colonyWorld);
             if (loadedColony == null || colonyWorld == null)
             {

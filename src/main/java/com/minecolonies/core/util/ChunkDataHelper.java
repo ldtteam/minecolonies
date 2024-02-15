@@ -11,6 +11,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -42,7 +43,7 @@ public final class ChunkDataHelper
      * @param chunk the chunk.
      * @param world the worldg to.
      */
-    public static void loadChunk(final LevelChunk chunk, final Level world)
+    public static void loadChunk(final LevelChunk chunk, final ServerLevel world)
     {
         // If colony is farther away from a capability then this times the default colony distance it will delete the capability.
         final int distanceToDelete = MineColonies.getConfig().getServer().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;

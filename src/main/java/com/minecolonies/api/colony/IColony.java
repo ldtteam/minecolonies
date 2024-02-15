@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -32,7 +33,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAM
  */
 public interface IColony
 {
-    void onWorldLoad(@NotNull Level w);
+    void onWorldLoad(@NotNull ServerLevel w);
 
     void onWorldUnload(@NotNull Level w);
 

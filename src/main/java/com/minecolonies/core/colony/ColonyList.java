@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @param position The position for the Colony center.
      * @return The newly created Colony.
      */
-    public Colony create(final Level world, final BlockPos position)
+    public Colony create(final ServerLevel world, final BlockPos position)
     {
         final int colonyID = getNextColonyID();
         if (colonyID >= list.length)
@@ -213,9 +213,9 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return List of Colonies.
      */
     @NotNull
-    public List<T> getCopyAsList()
+    public List<IColony> getCopyAsList()
     {
-        final List<T> copyList = new ArrayList<>();
+        final List<IColony> copyList = new ArrayList<>();
         for (final T colony : this)
         {
             copyList.add(colony);

@@ -47,6 +47,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
@@ -1292,7 +1293,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onWorldLoad(@NotNull final Level w)
+    public void onWorldLoad(final ServerLevel w)
     {
 
     }
