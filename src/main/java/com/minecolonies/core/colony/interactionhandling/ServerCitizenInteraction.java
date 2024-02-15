@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
@@ -177,11 +178,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         for (final Component element : parents)
         {
             final CompoundTag elementTag = new CompoundTag();
-            elementTag.putString(TAG_PARENT, Component.Serializer.toJson(element));
+            NBTUtils.writeNullableComponent(elementTag, TAG_PARENT, element);
             list.add(elementTag);
         }
         compoundNBT.put(TAG_PARENTS, list);
-        compoundNBT.putString(TAG_VALIDATOR_ID, Component.Serializer.toJson(validatorId));
+        NBTUtils.writeNullableComponent(compoundNBT, TAG_VALIDATOR_ID, validatorId);
         return compoundNBT;
     }
 
@@ -194,9 +195,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(NBTUtils.readNullableComponent(compoundNBT, TAG_PARENT));
         }
-        this.validatorId = Component.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = NBTUtils.readNullableComponent(compoundNBT, TAG_VALIDATOR_ID);
         loadValidator();
     }
 

@@ -13,13 +13,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
  */
 public class ColonyViewMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view", ColonyViewMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view", ColonyViewMessage::new, true, false);
 
     /**
      * The colony id.
@@ -87,9 +88,9 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final PlayPayloadContext ctxIn, @Nullable final Player player)
     {
-        IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, player.level(), isNewSubscription, dim);
+        IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, isNewSubscription, dim);
         colonyBuffer.release();
     }
 }

@@ -38,7 +38,7 @@ public class PermissionsMessage
      */
     public static class View extends AbstractClientPlayMessage
     {
-        public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "permission_view", View::new);
+        public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "permission_view", View::new, true, false);
 
         private final int          colonyID;
         private final FriendlyByteBuf data;
@@ -74,7 +74,7 @@ public class PermissionsMessage
 
         
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+        protected void onExecute(final PlayPayloadContext ctxIn, @Nullable final Player player)
         {
             IColonyManager.getInstance().handlePermissionsViewMessage(colonyID, data, dimension);
             data.release();

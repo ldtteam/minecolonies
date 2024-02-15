@@ -664,14 +664,13 @@ public final class ColonyManager implements IColonyManager
     public void handleColonyViewMessage(
       final int colonyId,
       @NotNull final FriendlyByteBuf colonyData,
-      @NotNull final Level world,
       final boolean isNewSubscription,
       final ResourceKey<Level> dim)
     {
         IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
         {
-            view = ColonyView.createFromNetwork(colonyId);
+            view = ColonyView.createFromNetwork(colonyId, dim);
             if (colonyViews.containsKey(dim))
             {
                 colonyViews.get(dim).add(view);
@@ -683,7 +682,7 @@ public final class ColonyManager implements IColonyManager
                 colonyViews.put(dim, list);
             }
         }
-        view.handleColonyViewMessage(colonyData, world, isNewSubscription);
+        view.handleColonyViewMessage(colonyData, isNewSubscription);
 
         NeoForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
     }

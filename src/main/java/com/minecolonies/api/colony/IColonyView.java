@@ -172,7 +172,7 @@ public interface IColonyView extends IColony
      * @param world             the world it is in.
      * @return null == no response.
      */
-    void handleColonyViewMessage(@NotNull FriendlyByteBuf buf, @NotNull Level world, boolean isNewSubscription);
+    void handleColonyViewMessage(@NotNull FriendlyByteBuf buf, boolean isNewSubscription);
 
     /**
      * Update permissions.

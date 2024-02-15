@@ -172,7 +172,7 @@ public final class ColonyView implements IColonyView
     /**
      * The world.
      */
-    private Level world;
+    private final ResourceKey<Level> world;
 
     /**
      * Print progress.
@@ -250,9 +250,10 @@ public final class ColonyView implements IColonyView
      *
      * @param id The current id for the colony.
      */
-    private ColonyView(final int id)
+    private ColonyView(final int id, final ResourceKey<Level> dim)
     {
         this.id = id;
+        this.world = dim;
         this.researchManager = new ResearchManager(this);
         this.questManager = new QuestManager(this);
     }
@@ -264,9 +265,9 @@ public final class ColonyView implements IColonyView
      * @return the new colony view.
      */
     @NotNull
-    public static ColonyView createFromNetwork(final int id)
+    public static ColonyView createFromNetwork(final int id, final ResourceKey<Level> dim)
     {
-        return new ColonyView(id);
+        return new ColonyView(id, dim);
     }
 
     /**
@@ -755,9 +756,8 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    public void handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, @NotNull final Level world, final boolean isNewSubscription)
+    public void handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, final boolean isNewSubscription)
     {
-        this.world = world;
         //  General Attributes
         name = buf.readUtf(32767);
         dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
@@ -830,7 +830,7 @@ public final class ColonyView implements IColonyView
         if (isNewSubscription
               && StructurePacks.hasPack(this.style)
               && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null
-              && this.isCoordInColony(world, Minecraft.getInstance().player.blockPosition())
+              && false // this.isCoordInColony(world, Minecraft.getInstance().player.blockPosition()) TODO: move this somewhere else
         )
         {
             StructurePacks.selectedPack = StructurePacks.getStructurePack(this.style);
@@ -1224,7 +1224,7 @@ public final class ColonyView implements IColonyView
     @Override
     public PlayerTeam getTeam()
     {
-        return world.getScoreboard().getPlayerTeam(getTeamName());
+        return getWorld().getScoreboard().getPlayerTeam(getTeamName());
     }
 
     @Override
@@ -1236,7 +1236,12 @@ public final class ColonyView implements IColonyView
     @Override
     public Level getWorld()
     {
-        return world;
+        final Level level = Minecraft.getInstance().level;
+        if (level == null || !level.dimension().equals(world))
+        {
+            throw new IllegalStateException("Cannot get colony view level");
+        }
+        return level;
     }
 
     @NotNull
@@ -1487,7 +1492,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void usedMercenaries()
     {
-        mercenaryLastUseTime = world.getGameTime();
+        mercenaryLastUseTime = getWorld().getGameTime();
     }
 
     @Override

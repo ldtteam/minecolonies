@@ -106,20 +106,20 @@ public final class BackUpHelper
                         if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType) == null)
                         {
                             markColonyDeleted(i, dimensionType);
-                            addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.location()).resolve(String.format(FILENAME_COLONY_DELETED, i)), zos, saveDir);
                         }
                         else
                         {
-                            addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.location()).resolve(String.format(FILENAME_COLONY, i)), zos, saveDir);
                         }
                     }
                     else if (Files.exists(fileDeleted))
                     {
-                        addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
+                        addToZipFile(getFolderForDimension(dimensionType.location()).resolve(String.format(FILENAME_COLONY_DELETED, i)), zos, saveDir);
                     }
                 }
             }
-            addToZipFile(getSaveLocation().getFileName().toString(), zos, saveDir);
+            addToZipFile(getSaveLocation().getFileName(), zos, saveDir);
             zos.close();
 
             final List<Path> fileList = new ArrayList<>();
@@ -241,7 +241,7 @@ public final class BackUpHelper
      * @param zos      the output stream.
      * @param folder   the folder.
      */
-    private static void addToZipFile(final String fileName, final ZipOutputStream zos, final Path folder)
+    private static void addToZipFile(final Path fileName, final ZipOutputStream zos, final Path folder)
     {
         addFileToZipWithPath(fileName, zos, folder.resolve(fileName));
     }
@@ -253,6 +253,30 @@ public final class BackUpHelper
      * @param zos     zip
      * @param file    file to put
      */
+    private static void addFileToZipWithPath(final Path zipPath, final ZipOutputStream zos, final Path file)
+    {
+        try
+        {
+            zos.putNextEntry(new ZipEntry(zipPath.toString()));
+            Files.copy(file, zos);
+        }
+        catch (final Exception e)
+        {
+            /*
+             * Intentionally not being thrown.
+             */
+            Log.getLogger().warn("Error packing " + zipPath + " into the zip.", e);
+        }
+    }
+
+    /**
+     * Add the file to the given zip, with the path
+     *
+     * @param zipPath path to use in the zip
+     * @param zos     zip
+     * @param file    file to put
+     */
+    @Deprecated
     private static void addFileToZipWithPath(final String zipPath, final ZipOutputStream zos, final Path file)
     {
         try

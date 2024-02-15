@@ -289,7 +289,7 @@ public interface IColonyManager
      * @param dim               the dimension.
      * @param world             the world it is in.
      */
-    void handleColonyViewMessage(int colonyId, @NotNull FriendlyByteBuf colonyData, @NotNull Level world, boolean isNewSubscription, ResourceKey<Level> dim);
+    void handleColonyViewMessage(int colonyId, @NotNull FriendlyByteBuf colonyData, boolean isNewSubscription, ResourceKey<Level> dim);
 
     /**
      * Get IColonyView by ID.
