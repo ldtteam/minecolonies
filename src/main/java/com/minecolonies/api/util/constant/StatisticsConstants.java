@@ -27,9 +27,9 @@ public final class StatisticsConstants
     /**
      * Generic building Stats
      */
-    public static final String ITEM_USED = "item_used";
+    public static final String ITEM_USED     = "item_used";
     public static final String ITEM_OBTAINED = "item_obtained";
-    public static final String MOB_KILLED = "mob_killed";
+    public static final String MOB_KILLED    = "mob_killed";
 
     /**
      * Specific building stats.
