@@ -261,6 +261,16 @@ public class ColonyExpeditionType
     }
 
     /**
+     * Get the required guard count for this expedition type.
+     *
+     * @return the amount of guards required.
+     */
+    public int getGuards()
+    {
+        return guards;
+    }
+
+    /**
      * The expedition difficulty.
      */
     public enum Difficulty

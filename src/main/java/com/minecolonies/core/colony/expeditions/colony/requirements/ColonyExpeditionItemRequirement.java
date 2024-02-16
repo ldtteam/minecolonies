@@ -73,6 +73,18 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
         }
 
         @Override
+        public Predicate<ItemStack> getItemPredicate()
+        {
+            return stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getDefaultInstance());
+        }
+
+        @Override
+        public ItemStack getDefaultItemStack()
+        {
+            return item.getDefaultInstance();
+        }
+
+        @Override
         public Component getName()
         {
             return Component.translatable("com.minecolonies.core.expedition.gui.items.requirement.type.item", item.getDescription());
@@ -88,12 +100,6 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
         public int getAmount()
         {
             return amount;
-        }
-
-        @Override
-        public Predicate<ItemStack> getItemPredicate()
-        {
-            return stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getDefaultInstance());
         }
     }
 }

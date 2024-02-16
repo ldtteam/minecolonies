@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -38,19 +40,28 @@ public class ResourceItem
     }
 
     /**
-     * Update method to render a single item.
+     * Update method to render a single resource item.
+     * If the
      *
-     * @param index   the item index.
-     * @param rowPane the parenting pane.
+     * @param resource the resource to update the pane with.
+     * @param index    the item index.
+     * @param rowPane  the parenting pane.
+     * @param <T>      the generic type of the resource instance.
      */
-    public static <T extends Resource> void updateResourcePane(final T resource, final int index, @NotNull final Pane rowPane)
+    public static <T extends Resource> void updateResourcePane(final T resource, final Player player, final int index, @NotNull final Pane rowPane)
     {
         final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
         final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
         final Text neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
         final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
-        switch (resource.getAvailabilityStatus())
+        ResourceAvailability availabilityStatus = resource.getAvailabilityStatus();
+        if (!availabilityStatus.equals(ResourceAvailability.NOT_NEEDED) && player.isCreative())
+        {
+            availabilityStatus = ResourceAvailability.HAVE_ENOUGH;
+        }
+
+        switch (availabilityStatus)
         {
             case DONT_HAVE:
                 addButton.disable();
@@ -242,12 +253,14 @@ public class ResourceItem
         @Override
         public int compare(final Resource resource1, final Resource resource2)
         {
-            if (resource1.getAvailabilityStatus() == resource2.getAvailabilityStatus())
+            final ResourceAvailability status1 = resource1.getAvailabilityStatus();
+            final ResourceAvailability status2 = resource2.getAvailabilityStatus();
+            if (Objects.equals(status1, status2))
             {
                 return resource1.getName().toString().compareTo(resource2.getName().toString());
             }
 
-            return resource1.getAvailabilityStatus().getOrder().compareTo(resource2.getAvailabilityStatus().getOrder());
+            return status1.getOrder().compareTo(status2.getOrder());
         }
     }
 }

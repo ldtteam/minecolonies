@@ -79,6 +79,37 @@ public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
         }
 
         @Override
+        public Predicate<ItemStack> getItemPredicate()
+        {
+            return stack -> ItemStackUtils.isTool(stack, toolType);
+        }
+
+        @Override
+        public ItemStack getDefaultItemStack()
+        {
+            final List<ItemStack> allowedTools = IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream()
+                                                   .filter(stack -> ItemStackUtils.isTool(stack, toolType))
+                                                   .toList();
+
+            if (allowedTools.isEmpty())
+            {
+                return ItemStack.EMPTY;
+            }
+
+            ItemStack bestTool = allowedTools.get(0);
+            for (int i = 1; i < allowedTools.size(); i++)
+            {
+                final ItemStack tool = allowedTools.get(i);
+                if (ItemStackUtils.isBetterTool(tool, bestTool))
+                {
+                    bestTool = tool;
+                }
+            }
+
+            return bestTool;
+        }
+
+        @Override
         public Component getName()
         {
             return Component.translatable("com.minecolonies.core.expedition.gui.items.requirement.type.tool", toolType.getDisplayName());
@@ -100,12 +131,6 @@ public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
         public int getAmount()
         {
             return amount;
-        }
-
-        @Override
-        public Predicate<ItemStack> getItemPredicate()
-        {
-            return stack -> ItemStackUtils.isTool(stack, toolType);
         }
     }
 }

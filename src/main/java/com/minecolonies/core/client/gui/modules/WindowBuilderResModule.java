@@ -124,7 +124,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                ResourceItem.updateResourcePane(resources.get(index), index, rowPane);
+                ResourceItem.updateResourcePane(resources.get(index), mc.player, index, rowPane);
             }
         });
 

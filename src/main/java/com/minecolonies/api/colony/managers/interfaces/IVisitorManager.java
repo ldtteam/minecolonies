@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Visitor manager to manage visiting entities
@@ -28,4 +29,12 @@ public interface IVisitorManager extends IEntityManager<IVisitorData>
      * @return new IVisitorData
      */
     IVisitorData createAndRegisterVisitorData(final IVisitorType visitorType);
+
+    /**
+     * Get the current active expeditionary, if any.
+     *
+     * @return the active expeditionary visitor data.
+     */
+    @Nullable
+    IVisitorData getActiveExpeditionary();
 }

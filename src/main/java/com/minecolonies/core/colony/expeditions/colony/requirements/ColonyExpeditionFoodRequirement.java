@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -71,6 +72,18 @@ public class ColonyExpeditionFoodRequirement extends ColonyExpeditionRequirement
         }
 
         @Override
+        public Predicate<ItemStack> getItemPredicate()
+        {
+            return ItemStackUtils.ISFOOD;
+        }
+
+        @Override
+        public ItemStack getDefaultItemStack()
+        {
+            return Items.COOKED_BEEF.getDefaultInstance();
+        }
+
+        @Override
         public Component getName()
         {
             return Component.translatable("com.minecolonies.core.expedition.gui.items.requirement.type.food");
@@ -91,12 +104,6 @@ public class ColonyExpeditionFoodRequirement extends ColonyExpeditionRequirement
         public int getAmount()
         {
             return amount;
-        }
-
-        @Override
-        public Predicate<ItemStack> getItemPredicate()
-        {
-            return ItemStackUtils.ISFOOD;
         }
     }
 }

@@ -76,6 +76,11 @@ public abstract class ColonyExpeditionRequirement
          */
         public abstract Predicate<ItemStack> getItemPredicate();
 
+        /**
+         * Get the default item stack to provide the visitor with in case they are getting items creatively inserted.
+         */
+        public abstract ItemStack getDefaultItemStack();
+
         @Override
         public final int getAmountAvailable()
         {

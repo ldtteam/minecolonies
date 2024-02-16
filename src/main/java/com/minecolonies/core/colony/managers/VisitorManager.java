@@ -29,6 +29,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -262,6 +263,19 @@ public class VisitorManager implements IVisitorManager
         data.initForNewCivilian();
         visitorMap.put(data.getId(), data);
         return data;
+    }
+
+    @Override
+    public @Nullable IVisitorData getActiveExpeditionary()
+    {
+        for (final IVisitorData visitor : visitorMap.values())
+        {
+            if (visitor.getVisitorType().equals(ModVisitorTypes.expeditionary.get()))
+            {
+                return visitor;
+            }
+        }
+        return null;
     }
 
     @Override

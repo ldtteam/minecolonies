@@ -95,7 +95,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
           module.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
-        ResourceItem.updateResourcePane(resource, 0, this);
+        ResourceItem.updateResourcePane(resource, mc.player, 0, this);
 
         if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
         {

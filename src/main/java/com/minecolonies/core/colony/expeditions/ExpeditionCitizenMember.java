@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.expeditions;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
@@ -57,6 +58,18 @@ public final class ExpeditionCitizenMember implements IExpeditionMember
         this.died = false;
     }
 
+    /**
+     * Default constructor.
+     *
+     * @param citizenDataView the citizen to create the expedition member for.
+     */
+    public ExpeditionCitizenMember(final ICitizenDataView citizenDataView)
+    {
+        this.id = citizenDataView.getId();
+        this.name = citizenDataView.getName();
+        this.died = false;
+    }
+
     @Override
     public int getId()
     {
@@ -96,6 +109,12 @@ public final class ExpeditionCitizenMember implements IExpeditionMember
     }
 
     @Override
+    public int hashCode()
+    {
+        return id;
+    }
+
+    @Override
     public boolean equals(final Object o)
     {
         if (this == o)
@@ -110,11 +129,5 @@ public final class ExpeditionCitizenMember implements IExpeditionMember
         final ExpeditionCitizenMember that = (ExpeditionCitizenMember) o;
 
         return id == that.id;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return id;
     }
 }

@@ -1,11 +1,11 @@
 <box size="100% 30" linewidth="1">
-    <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
-    <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
-    <label id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
+    <text id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
+    <text id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
+    <text id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
 
     <buttonimage id="resourceAdd" size="14 15" label="↥" pos="100 12"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
-    <label id="resourceId" size="1 1" pos="100 100"/>
-    <label id="resourceQuantity" size="1 1" pos="100 100"/>
+    <text id="resourceId" size="1 1" pos="100 100"/>
+    <text id="resourceQuantity" size="1 1" pos="100 100"/>
 </box>

@@ -32,7 +32,7 @@ public class ExpeditionBuilder
      * The members of the expedition.
      */
     @NotNull
-    private final List<IExpeditionMember> members;
+    private final Map<Integer, IExpeditionMember> members;
 
     /**
      * The dimension to send the expedition to.
@@ -46,7 +46,7 @@ public class ExpeditionBuilder
     public ExpeditionBuilder()
     {
         this.equipment = new HashMap<>();
-        this.members = new ArrayList<>();
+        this.members = new HashMap<>();
     }
 
     /**
@@ -87,13 +87,26 @@ public class ExpeditionBuilder
     }
 
     /**
+     * Get all members for this expedition.
+     *
+     * @return the map of members.
+     */
+    public Map<Integer, IExpeditionMember> getMembers()
+    {
+        return Collections.unmodifiableMap(members);
+    }
+
+    /**
      * Adds a member to the list of members.
      *
      * @param members the new members.
      */
-    public void addMember(final List<IExpeditionMember> members)
+    public void addMembers(final List<IExpeditionMember> members)
     {
-        this.members.addAll(members);
+        for (final IExpeditionMember member : members)
+        {
+            this.members.put(member.getId(), member);
+        }
     }
 
     /**
@@ -103,7 +116,7 @@ public class ExpeditionBuilder
      */
     public void removeMember(final IExpeditionMember member)
     {
-        this.members.remove(member);
+        this.members.remove(member.getId());
     }
 
     /**
@@ -116,7 +129,7 @@ public class ExpeditionBuilder
         final List<ItemStack> fullEquipment = equipment.entrySet().stream()
                                                 .map(entry -> entry.getKey().copyWithCount(entry.getValue()))
                                                 .toList();
-        return new Expedition(dimensionId, fullEquipment, members);
+        return new Expedition(dimensionId, fullEquipment, members.values().stream().toList());
     }
 
     /**
@@ -174,7 +187,7 @@ public class ExpeditionBuilder
             final ExpeditionBuilder builder = new ExpeditionBuilder();
             builder.dimensionId = dimensionId;
             builder.equipment.putAll(equipment);
-            builder.members.addAll(members);
+            builder.addMembers(members);
             return builder;
         }
 
@@ -189,7 +202,7 @@ public class ExpeditionBuilder
             compound.putString(TAG_DIMENSION, expeditionBuilder.dimensionId.location().toString());
 
             final ListTag memberTag = new ListTag();
-            for (final IExpeditionMember member : expeditionBuilder.members)
+            for (final IExpeditionMember member : expeditionBuilder.members.values())
             {
                 final CompoundTag memberCompound = new CompoundTag();
                 if (member instanceof ExpeditionCitizenMember)

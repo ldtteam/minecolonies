@@ -68,10 +68,17 @@ public class TransferItemsMessage extends AbstractColonyServerMessage
 
             if (needed > 0)
             {
-                InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(new InvWrapper(ctxIn.getSender().getInventory()),
-                  handler.getItemPredicate(),
-                  needed,
-                  visitor.getInventory());
+                if (ctxIn.getSender().isCreative())
+                {
+                    InventoryUtils.addItemStackToItemHandler(visitor.getInventory(), handler.getDefaultItemStack().copyWithCount(needed));
+                }
+                else
+                {
+                    InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(new InvWrapper(ctxIn.getSender().getInventory()),
+                      handler.getItemPredicate(),
+                      needed,
+                      visitor.getInventory());
+                }
             }
         }
     }
