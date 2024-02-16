@@ -321,7 +321,8 @@ public final class ColonyManager implements IColonyManager
     {
         if (!(w instanceof final ServerLevel serverLevel))
         {
-            return colonyViews.get(w.dimension()).getCopyAsList();
+            final ColonyList<IColonyView> list = colonyViews.get(w.dimension());
+            return list == null || list.isEmpty() ? List.of() : list.getCopyAsList();
         }
         final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(serverLevel);
         if (cap == null)
