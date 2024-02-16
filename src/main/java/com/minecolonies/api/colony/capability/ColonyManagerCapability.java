@@ -35,7 +35,13 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
 {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final Codec<ColonyManagerCapability> CODEC = CompoundTag.CODEC.xmap(tag -> new ColonyManagerCapability().readNBT(tag), ColonyManagerCapability::writeNBT);
+    public static final Codec<ColonyManagerCapability> CODEC = CompoundTag.CODEC.xmap(tag -> {
+        final var cap = new ColonyManagerCapability();
+        IColonyManager.getInstance().setLoadingCap(cap);
+        cap.readNBT(tag);
+        IColonyManager.getInstance().setLoadingCap(null);
+        return cap;
+    }, ColonyManagerCapability::writeNBT);
     
     public static final String NAME = new ResourceLocation(Constants.MOD_ID, "colony_manager").toDebugFileName();
     public static final Factory<ColonyManagerCapability> FACTORY = new Factory<>(ColonyManagerCapability::new, CodecUtil.nbtDecoder(CODEC, LOGGER, ColonyManagerCapability::new));
@@ -97,6 +103,12 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
         return colonies.getTopID();
     }
 
+    @Override
+    public boolean isDirty()
+    {
+        return true;
+    }
+
     private CompoundTag writeNBT()
     {
         final CompoundTag compound = new CompoundTag();
@@ -111,16 +123,13 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
         return compound;
     }
 
-    private ColonyManagerCapability readNBT(final CompoundTag compound)
+    private void readNBT(final CompoundTag compound)
     {
-        // Notify that we did load the cap for this world
-        IColonyManager.getInstance().setCapLoaded();
-
         if (!compound.contains(TAG_COLONIES) || !compound.contains(TAG_COLONY_MANAGER))
         {
             BackUpHelper.loadMissingColonies();
             BackUpHelper.loadManagerBackup();
-            return this;
+            return;
         }
 
         // Load all colonies from Nbt
@@ -159,7 +168,7 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
         }
 
         freshLoaded = compound;
-        return this;
+        return;
     }
 
     void processAfterLoadHook(final boolean overworld)

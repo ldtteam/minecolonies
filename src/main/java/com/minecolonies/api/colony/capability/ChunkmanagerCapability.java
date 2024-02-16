@@ -81,4 +81,10 @@ public class ChunkmanagerCapability extends SavedData implements IChunkmanagerCa
     {
         return chunkStorages;
     }
+
+    @Override
+    public boolean isDirty()
+    {
+        return true;
+    }
 }

@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * SavedData per chunk wrapper
  */
-public class PerChunkSavedData<T> extends SavedData
+public class PerChunkSavedData<T extends PerChunkSavedData.IDirty> extends SavedData
 {
     /**
      * Actual live data
@@ -34,7 +34,7 @@ public class PerChunkSavedData<T> extends SavedData
      * @param codec type codec
      * @param logger logger for encoding/decoding errors
      */
-    public static <T> Factory<PerChunkSavedData<T>> factory(final Supplier<T> constructor, final Codec<T> codec, final Logger logger)
+    public static <T extends IDirty> Factory<PerChunkSavedData<T>> factory(final Supplier<T> constructor, final Codec<T> codec, final Logger logger)
     {
         final Function<CompoundTag, T> decoder = CodecUtil.nbtDecoder(codec, logger, () -> null);
         final Function<T, CompoundTag> encoder = CodecUtil.nbtEncoder(codec, logger, () -> null);
@@ -80,6 +80,12 @@ public class PerChunkSavedData<T> extends SavedData
         return tag;
     }
 
+    @Override
+    public boolean isDirty()
+    {
+        return chunkCapabilities.values().stream().anyMatch(IDirty::isDirty);
+    }
+
     public T get(final LevelChunk chunk)
     {
         return get(chunk.getPos());
@@ -88,5 +94,10 @@ public class PerChunkSavedData<T> extends SavedData
     public T get(final ChunkPos chunkPos)
     {
         return chunkCapabilities.computeIfAbsent(chunkPos.toLong(), key -> factory.get());
+    }
+
+    public static interface IDirty
+    {
+        boolean isDirty();
     }
 }

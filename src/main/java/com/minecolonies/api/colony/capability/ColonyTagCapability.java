@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.capability;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.capability.PerChunkSavedData.IDirty;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CodecUtil;
 import com.minecolonies.api.util.Log;
@@ -27,7 +28,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 /**
  * The implementation of the colonyTagCapability.
  */
-public class ColonyTagCapability implements IColonyTagCapability
+public class ColonyTagCapability implements IColonyTagCapability, IDirty
 {
     public static final Codec<ColonyTagCapability> CODEC = RecordCodecBuilder.create(builder -> builder
         .group(CodecUtil.strictOptionalField(CodecUtil.set(Codec.INT, HashSet::new), TAG_COLONIES, HashSet::new).forGetter(cap -> cap.colonies),
@@ -247,5 +248,11 @@ public class ColonyTagCapability implements IColonyTagCapability
     public Map<Integer, Set<BlockPos>> getAllClaimingBuildings()
     {
         return claimingBuildings;
+    }
+
+    @Override
+    public boolean isDirty()
+    {
+        return true;
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.capability.IColonyManagerCapability;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import net.minecraft.core.BlockPos;
@@ -269,9 +270,9 @@ public interface IColonyManager
     void onWorldLoad(@NotNull Level world);
 
     /**
-     * Sets the cap for this world to loaded
+     * @param cap null if loaded, 
      */
-    void setCapLoaded();
+    void setLoadingCap(@Nullable IColonyManagerCapability cap);
 
     /**
      * When a world unloads, all colonies in that world are informed. Additionally, when the last world is unloaded, delete all colonies.
@@ -426,4 +427,11 @@ public interface IColonyManager
      * @param pos the pos to open it at.
      */
     void openReactivationWindow(final BlockPos pos);
+
+    /**
+     * Adds colony directly to cap. Use only during loading!
+     *
+     * @param colony loaded colony
+     */
+    void addColonyDirect(IColony colony, ServerLevel world);
 }

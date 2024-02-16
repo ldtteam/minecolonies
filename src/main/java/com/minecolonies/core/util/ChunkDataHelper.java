@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.capability.IChunkmanagerCapability;
-import com.minecolonies.api.colony.capability.IColonyManagerCapability;
 import com.minecolonies.api.colony.capability.IColonyTagCapability;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
@@ -57,12 +56,6 @@ public final class ChunkDataHelper
 
         if (!chunkManager.getAllChunkStorages().isEmpty())
         {
-            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
-            if (cap == null)
-            {
-                return;
-            }
-
             final ChunkLoadStorage existingStorage = chunkManager.getChunkStorage(chunk.getPos().x, chunk.getPos().z);
             if (existingStorage != null)
             {

@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.capability.IColonyManagerCapability;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.Colony;
@@ -476,11 +475,7 @@ public final class BackUpHelper
                 return;
             }
 
-            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(colonyWorld);
-            if (cap != null)
-            {
-                cap.addColony(loadedColony);
-            }
+            IColonyManager.getInstance().addColonyDirect(loadedColony, colonyWorld);
 
             if (claimChunks)
             {

@@ -74,14 +74,26 @@ public final class ColonyManager implements IColonyManager
     private boolean schematicDownloaded = false;
 
     /**
-     * If the manager finished loading already.
+     * Used during cap deserialization
      */
-    private boolean capLoaded = false;
+    private IColonyManagerCapability loadingColonyManagerCap;
+
+    @Nullable
+    private IColonyManagerCapability getColonyManager(final ServerLevel w)
+    {
+        return loadingColonyManagerCap != null ? loadingColonyManagerCap : IColonyManagerCapability.getCapability(w);
+    }
+
+    @Override
+    public void setLoadingCap(@Nullable final IColonyManagerCapability cap)
+    {
+        loadingColonyManagerCap = cap;        
+    }
 
     @Override
     public IColony createColony(@NotNull final ServerLevel w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(w);
+        final IColonyManagerCapability cap = getColonyManager(w);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -188,7 +200,7 @@ public final class ColonyManager implements IColonyManager
 
             Log.getLogger().info("Deleting colony: " + colony.getID());
 
-            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+            final IColonyManagerCapability cap = getColonyManager(world);
             if (cap == null)
             {
                 Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -224,7 +236,7 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyView(id, world.dimension());
         }
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(serverLevel);
+        final IColonyManagerCapability cap = getColonyManager(serverLevel);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -242,7 +254,7 @@ public final class ColonyManager implements IColonyManager
         {
             return null;
         }
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+        final IColonyManagerCapability cap = getColonyManager(world);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -324,7 +336,7 @@ public final class ColonyManager implements IColonyManager
             final ColonyList<IColonyView> list = colonyViews.get(w.dimension());
             return list == null || list.isEmpty() ? List.of() : list.getCopyAsList();
         }
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(serverLevel);
+        final IColonyManagerCapability cap = getColonyManager(serverLevel);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -340,7 +352,7 @@ public final class ColonyManager implements IColonyManager
         final List<IColony> allColonies = new ArrayList<>();
         for (final ServerLevel world : net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
-            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+            final IColonyManagerCapability cap = getColonyManager(world);
             if (cap != null)
             {
                 allColonies.addAll(cap.getColonies());
@@ -617,14 +629,6 @@ public final class ColonyManager implements IColonyManager
     {
         if (w instanceof final ServerLevel world)
         {
-            // Late-load restore if cap was not loaded
-            if (!capLoaded)
-            {
-                BackUpHelper.loadMissingColonies();
-                BackUpHelper.loadManagerBackup();
-            }
-            capLoaded = false;
-
             for (@NotNull final IColony c : getColonies(world))
             {
                 c.onWorldLoad(world);
@@ -632,12 +636,6 @@ public final class ColonyManager implements IColonyManager
 
             NeoForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
         }
-    }
-
-    @Override
-    public void setCapLoaded()
-    {
-        this.capLoaded = true;
     }
 
     @Override
@@ -821,7 +819,7 @@ public final class ColonyManager implements IColonyManager
         int top = 0;
         for (final ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
-            final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+            final IColonyManagerCapability cap = getColonyManager(world);
             final int tempTop = cap == null ? 0 : cap.getTopID();
             if (tempTop > top)
             {
@@ -835,5 +833,15 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+    }
+
+    @Override
+    public void addColonyDirect(final IColony colony, final ServerLevel world)
+    {
+        final IColonyManagerCapability cap = getColonyManager(world);
+        if (cap != null)
+        {
+            cap.addColony(colony);
+        }
     }
 }
