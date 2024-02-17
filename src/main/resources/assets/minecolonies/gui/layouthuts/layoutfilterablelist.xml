@@ -9,9 +9,9 @@
             <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
             <text id="resourceName" size="100 12" pos="20 1" color="white"/>
             <button label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)" id="switch" pos="120 1" size="29 15"
-                         source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" color="black"/>
         </box>
     </list>
     <button label ="$(com.minecolonies.coremod.gui.workerhuts.resetdefault)" id="resetDefault" size="86 17" pos="50 194"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
 </window>

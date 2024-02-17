@@ -5,7 +5,7 @@
            label="$(com.minecolonies.coremod.gui.workerhuts.fields):"/>
     <text id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode)"/>
-    <button id="assignmentMode" size="86 17" pos="52 42" textcolor="black"
+    <button id="assignmentMode" size="86 17" pos="52 42" color="black"
                  label="$(com.minecolonies.coremod.gui.hiring.off)"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"/>

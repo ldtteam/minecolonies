@@ -35,17 +35,17 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.cancel"), null),
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.fulfill"), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.cancel"), Component.empty()),
+      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.fulfill"), Component.empty())};
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuplesAsync = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), Component.empty())};
 
     /**
      * The request this is related to.

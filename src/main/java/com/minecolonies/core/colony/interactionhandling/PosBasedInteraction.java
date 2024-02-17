@@ -29,10 +29,10 @@ public class PosBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), Component.empty())};
 
     /**
      * The position this is related to.

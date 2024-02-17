@@ -2,31 +2,31 @@
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <view id="movein" size="148 16" pos="100 100" tooltip="$(com.minecolonies.coremod.gui.townhall.movein.tooltip)">
         <text id="1" label="$(com.minecolonies.coremod.gui.townhall.movein)" pos="0 3" size="148 11" color="black"/>
-        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.townhall.off)" textcolor="black"
+        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.townhall.off)" color="black"
                      source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
     </view>
 
     <view id="job" size="148 16" pos="100 120" tooltip="$(com.minecolonies.coremod.gui.townhall.jobhiring.tooltip)">
         <text id="2" label="$(com.minecolonies.coremod.gui.townhall.jobhiring)" pos="0 0" size="148 11" color="black"/>
-        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.hiring.off)" textcolor="black"
+        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.hiring.off)" color="black"
                      source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
     </view>
 
     <view id="housing" size="148 16" pos="100 140" tooltip="$(com.minecolonies.coremod.gui.townhall.housing.tooltip)">
         <text id="3" label="$(com.minecolonies.coremod.gui.townhall.housing)" pos="0 0" size="148 11" color="black"/>
-        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.hiring.off)" textcolor="black"
+        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.hiring.off)" color="black"
                      source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
     </view>
 
     <view id="entermessages" size="148 16" pos="100 160" tooltip="$(com.minecolonies.coremod.gui.townhall.entermsgs.tooltip)">
         <text id="desc" label="$(com.minecolonies.coremod.gui.townhall.entermsgs)" pos="0 3" size="148 11" color="black"/>
-        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.townhall.off)" textcolor="black"
+        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.townhall.off)" color="black"
                      source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
     </view>
 
     <view id="tape" size="148 16" pos="100 180" tooltip="$(com.minecolonies.coremod.gui.townhall.tape.tooltip)">
         <text id="desc" label="$(com.minecolonies.coremod.gui.townhall.tape)" pos="0 3" size="148 11" color="black"/>
-        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.townhall.off)" textcolor="black"
+        <button id="trigger" size="29 16" pos="120 0" label="$(com.minecolonies.coremod.gui.townhall.off)" color="black"
                      source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
     </view>
 </window>

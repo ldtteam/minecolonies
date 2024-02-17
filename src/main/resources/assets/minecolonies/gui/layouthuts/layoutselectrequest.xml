@@ -3,7 +3,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
     <text size="120 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <button id="cancel" label="X" textcolor="red" pos="160 11" size="14 15"
+    <button id="cancel" label="X" color="red" pos="160 11" size="14 15"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
 
     <list id="requests" size="170 170" pos="13 30">
@@ -16,7 +16,7 @@
             <text id="shortDetail" size="130 12" pos="20 1" color="black"/>
             <text id="requester" size="130 12" pos="20 13" color="black"/>
 
-            <button id="select" size="37 16" pos="20 23" textcolor="black"
+            <button id="select" size="37 16" pos="20 23" color="black"
                          label="$(com.minecolonies.coremod.gui.scantool.select)"
                          source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
         </box>

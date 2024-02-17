@@ -3,17 +3,17 @@
     <text id="id" size="0 0" pos="0 0" visible="false"/>
     <text id="desc" size="100% 15" pos="5 5" color="black" textalign="MIDDLE_LEFT" wrap="true"/>
 
-    <button id="trigger" pos="5 25" size="145 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+    <button id="trigger" pos="5 25" size="145 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
     <button id="setPositions"
                  label="$(com.minecolonies.coremod.gui.workerhuts.targetpatrol)"
-                 textcolor="black"
+                 color="black"
                  pos="70 25"
                  size="80 17"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
     <button id="helpButton"
                  label="?"
                  textalign="MIDDLE"
-                 textcolor="red"
+                 color="red"
                  pos="135 25"
                  size="15 15"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>

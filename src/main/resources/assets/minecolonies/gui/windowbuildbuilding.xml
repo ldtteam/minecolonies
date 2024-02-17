@@ -3,22 +3,22 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
     <button id="previousStyle" size="14 15" pos="40 0" label="&lt;"
-                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
     <dropdown id="style"
               size="129 17"
               pos="55 0"
               maxContentHeight="75"
               dropDownSize="140 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-              textcolor="black">
+              color="black">
         <view size="100% 15">
             <text id="id" size="100% 100%" label="" pos="0 0"/>
             <button id="button" size="129 17" pos="0 0"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black"/>
         </view>
     </dropdown>
     <button id="nextStyle" size="14 15" pos="185 0" label="&gt;"
-                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
 
     <dropdown id="worker"
               size="129 17"
@@ -26,16 +26,16 @@
               maxContentHeight="75"
               dropDownSize="140 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-              textcolor="black">
+              color="black">
         <view size="100% 15">
             <text id="id" size="100% 100%" label="" pos="0 0"/>
             <button id="button" size="129 17" pos="0 0"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black"/>
         </view>
     </dropdown>
 
     <button id="cancel" size="14 15" pos="400 0"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 
     <list id="resources" size="80% 80%" pos="30 20">
         <box size="100% 30" linewidth="1">
@@ -46,14 +46,14 @@
     </list>
     <button id="repair" align="TOP_MIDDLE" size="129 17" pos="-120 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.repair)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.repair)" color="black"/>
     <button id="build" align="TOP_MIDDLE" size="129 17" pos="10 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" color="black"/>
     <button id="deconstruct" align="TOP_MIDDLE" size="129 17" pos="140 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.deconstruct)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.deconstruct)" color="black"/>
     <button id="pickup" align="TOP_MIDDLE" size="129 17" pos="140 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.pickup)" textcolor="black" visible="false"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.pickup)" color="black" visible="false"/>
 </window>

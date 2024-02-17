@@ -19,14 +19,14 @@
     <list id="workOrderList" size="148 166" pos="276 50">
         <view size="100% 30">
             <box size="100% 30" linewidth="1">
-                <button id="plus" label="↥" pos="0 0" size="14 15" textcolor="black"
+                <button id="plus" label="↥" pos="0 0" size="14 15" color="black"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                <button id="minus" label="↧" pos="0 15" size="14 15" textcolor="black"
+                <button id="minus" label="↧" pos="0 15" size="14 15" color="black"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
                 <text id="assignee" size="80 8" pos="25 20" textalign="MIDDLE_LEFT" color="gray"/>
 
                 <text id="work" size="105 17" pos="17 2" textalign="MIDDLE_LEFT" color="black"/>
-                <button id="delete" label="X" textcolor="red" pos="122 8" size="14 15"
+                <button id="delete" label="X" color="red" pos="122 8" size="14 15"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
                 <text id="hiddenId" size="1 1" pos="100 100"/>
             </box>

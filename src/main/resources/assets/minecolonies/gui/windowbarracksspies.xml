@@ -4,12 +4,12 @@
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
 
     <button id="cancel" size="14 15" pos="165 5"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 
     <text id="text" size="150 85" pos="15 5" color="black"/>
     <itemicon id="hireSpiesIcon" size="25 25" pos="15 90"/>
     <text id="amount" size="15 15" pos="45 96" color="black"/>
-    <button id="hireSpies" size="86 17" pos="65 98" textcolor="black"
+    <button id="hireSpies" size="86 17" pos="65 98" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
                  label="$(com.minecolonies.coremod.gui.barracks.spieshire)"/>

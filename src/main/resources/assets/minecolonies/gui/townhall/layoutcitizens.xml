@@ -23,12 +23,12 @@
     <entityicon id="entity" size="25 50" pos="396 38" visible="false" />
 
     <button label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="306 70" size="86 17"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
 
     <input id="search" size="129 17" pos="285 90" maxlength="32" tooltip="$(com.minecolonies.core.townhall.citizen.filter)"/>
     <list id="citizenList" size="148 106" pos="276 110">
         <view size="100% 17">
-            <button id="name" pos="9 0" size="129 17" textcolor="black"
+            <button id="name" pos="9 0" size="129 17" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
         </view>

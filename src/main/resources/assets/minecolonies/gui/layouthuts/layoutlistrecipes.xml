@@ -31,7 +31,7 @@
     </list>
 
 
-    <button id="crafting" size="129 17" pos="30 200" textcolor="black"
+    <button id="crafting" size="129 17" pos="30 200" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
 </window>

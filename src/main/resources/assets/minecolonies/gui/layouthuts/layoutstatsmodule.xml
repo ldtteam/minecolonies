@@ -10,8 +10,8 @@
                   maxContentHeight="75"
                   dropDownSize="140 75"
                   source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                  textcolor="black">
-            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"
+                  color="black">
+            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black"
                          label="$(com.minecolonies.coremod.gui.interval.yesterday)"/>
         </dropdown>
         <list id="stats" size="160 160" pos="20 55">

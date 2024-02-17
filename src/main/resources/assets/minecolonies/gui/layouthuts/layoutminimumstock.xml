@@ -10,10 +10,10 @@
                     <text id="resourceQty" size="12 12" pos="115 1" color="black"/>
 
                     <button label="X" id="removeStock" pos="130 1" size="29 15"
-                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red"/>
+                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" color="red"/>
                 </box>
             </list>
-            <button id="addStock" size="86 17" pos="50 160" textcolor="black"
+            <button id="addStock" size="86 17" pos="50 160" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.warehouse.add)"/>
 </window>

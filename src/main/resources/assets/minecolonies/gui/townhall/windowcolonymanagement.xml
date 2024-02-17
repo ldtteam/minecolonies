@@ -4,7 +4,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
 
     <button id="cancel" size="14 15" pos="165 5"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 
     <image source="minecolonies:textures/gui/dialog.png" pos="10 25" size="170 30"/>
     <text id="nearbycolony" size="150 35" pos="25 25" color="black"/>
@@ -12,18 +12,18 @@
     <text id="owncolony" size="150 35" pos="25 60" color="black"/>
     <text id="creationpossible" size="150 35" pos="25 95" color="black"/>
 
-    <button id="delete" size="129 17" pos="25 150" textcolor="black" enabled="false" visible="false"
+    <button id="delete" size="129 17" pos="25 150" color="black" enabled="false" visible="false"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.colony.delete)"/>
 
     <text id="pack" size="150 35" pos="25 128" color="black"/>
-    <button id="switch" size="129 17" pos="25 150" textcolor="black" enabled="true"
+    <button id="switch" size="129 17" pos="25 150" color="black" enabled="true"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(structurize.gui.buildtool.switchpack)"/>
 
-    <button id="create" size="129 17" pos="25 180" textcolor="black" enabled="false"
+    <button id="create" size="129 17" pos="25 180" color="black" enabled="false"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.colony.create)"/>

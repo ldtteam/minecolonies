@@ -29,7 +29,7 @@
         </view>
     </list>
 
-    <button id="repair" size="130 17" pos="30 90" textcolor="black"
+    <button id="repair" size="130 17" pos="30 90" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.repair)"/>
 </window>

@@ -2,5 +2,5 @@
     size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
     <text id="desc" size="120 100" pos="30 10" color="black" textscale="1.0"/>
-    <button  id="giveTool" pos="25 120" size="129 17" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black" label="$(com.minecolonies.coremod.gui.givetool)"/>
+    <button  id="giveTool" pos="25 120" size="129 17" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black" label="$(com.minecolonies.coremod.gui.givetool)"/>
 </window>

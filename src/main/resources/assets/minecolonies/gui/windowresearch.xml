@@ -4,5 +4,5 @@
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide.png" size="400 244"/>
     <zoomdragview id="dragView" size="360 224" pos="20 10">
     </zoomdragview>
-    <button id="cancel" size="14 15" pos="360 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+    <button id="cancel" size="14 15" pos="360 10" source="minecolonies:textures/gui/button_x.png" color="black"/>
 </window>

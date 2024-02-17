@@ -13,7 +13,7 @@
             <input id="qty" size="25 18" pos="113 1" maxlength="25"/>
 
             <button label="$(com.minecolonies.coremod.gui.workerhuts.request)" id="request" pos="140 1" size="64 15"
-                         source="minecolonies:textures/gui/builderhut/builder_button_small.png" textcolor="black"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_small.png" color="black"/>
         </box>
     </list>
 
@@ -27,6 +27,6 @@
 
     <button id="deliverAvailable" pos="42 195" size="40 15"/>
     <text id="test" pos="90 195" size="158 11" color="black" label="Deliver what's available"/>
-    <button id="inventory" size="86 17" pos="97 210" textcolor="black" label="$(container.inventory)"
+    <button id="inventory" size="86 17" pos="97 210" color="black" label="$(container.inventory)"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
 </window>

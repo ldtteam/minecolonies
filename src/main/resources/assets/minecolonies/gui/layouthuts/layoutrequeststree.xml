@@ -9,10 +9,10 @@
     <text id="requester" size="130 9" pos="20 13" color="black"/>
 
     <!-- Color green if possible? -->
-    <button id="fulfill" size="37 16" pos="20 23" textcolor="black"
+    <button id="fulfill" size="37 16" pos="20 23" color="black"
                  label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
     <!-- button to cancel the request-->
-    <button id="cancel" size="37 16" pos="70 23" textcolor="black"
+    <button id="cancel" size="37 16" pos="70 23" color="black"
                  label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 </window>

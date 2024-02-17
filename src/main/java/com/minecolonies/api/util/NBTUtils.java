@@ -69,6 +69,6 @@ public class NBTUtils
 
     public static Component readNullableComponent(final CompoundTag tag, final String key)
     {
-        return tag.contains(key, Tag.TAG_COMPOUND) ? Component.Serializer.fromJson(tag.getString(key)) : null;
+        return tag.contains(key, Tag.TAG_COMPOUND) ? Component.Serializer.fromJson(tag.getString(key)) : Component.empty();
     }
 }

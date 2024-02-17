@@ -18,12 +18,12 @@
                               maxContentHeight="100"
                               dropDownSize="129 100"
                               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                              textcolor="black"
+                              color="black"
                               scrollbarOffset="9 0"
                               dropfixx="276">
                         <view size="100% 15">
                             <text id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
-                            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black"/>
                         </view>
                     </dropdown>
                 </box>
@@ -49,7 +49,7 @@
             <list id="rankButtonList" size="100 110" pos="46 105">
                 <box size="100% 15" linewidth="0">
                     <text id="rankId" />
-                    <button id="rankButton" size="86 15" pos="2 2" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                    <button id="rankButton" size="86 15" pos="2 2" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
                 </box>
             </list>
 
@@ -60,12 +60,12 @@
                       maxContentHeight="100"
                       dropDownSize="129 100"
                       source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                      textcolor="black"
+                      color="black"
                       scrollbarOffset="9 0"
                       dropfixx="276">
                 <view size="100% 15">
                     <text id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
-                    <button id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                    <button id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
                 </view>
             </dropdown>
 
@@ -85,7 +85,7 @@
                 </box>
             </list>
 
-            <button id="removeRank" size="129 17" pos="201 200" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red"/>
+            <button id="removeRank" size="129 17" pos="201 200" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="red"/>
         </view>
         <!-- todo adjust this, separate blocks and pos, and make pos list a pos-start to pos-end -->
         <view id="freeBlockList">

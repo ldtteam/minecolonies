@@ -4,10 +4,10 @@
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide_structure.png" size="400 244"/>
     <zoomdragview id="dragView" size="360 224" pos="20 10">
     </zoomdragview>
-    <button id="exit" size="14 15" pos="360 10" source="minecolonies:textures/gui/button_x.png" tooltip="close" textcolor="black"/>
-    <text id="scale" size="28 15" pos="360 220" textcolor="black"/>
-    <button id="inventory" size="17 17" pos="20 210" textcolor="black"
+    <button id="exit" size="14 15" pos="360 10" source="minecolonies:textures/gui/button_x.png" tooltip="close" color="black"/>
+    <text id="scale" size="28 15" pos="360 220" color="black"/>
+    <button id="inventory" size="17 17" pos="20 210" color="black"
                  source="minecolonies:textures/gui/chest.png"
                  label="" tooltip="Inventory"/>
-    <text id="warning" size="368 30" pos="30 120" textcolor="black" textscale="1.5" label="$(com.minecolonies.coremod.townhall.map.warning)"/>
+    <text id="warning" size="368 30" pos="30 120" color="black" textscale="1.5" label="$(com.minecolonies.coremod.townhall.map.warning)"/>
 </window>

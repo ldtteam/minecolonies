@@ -4,11 +4,11 @@
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
 
     <button id="cancel" size="14 15" pos="165 5"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 
     <text id="text" size="150 75" pos="15 15" color="black" text="$(com.minecolonies.coremod.gui.reactivate.message)" textscale="0.75"/>
 
-    <button id="reactivate" size="86 17" pos="50 100" textcolor="black"
+    <button id="reactivate" size="86 17" pos="50 100" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.coremod.gui.reactivate.button)"/>
 </window>

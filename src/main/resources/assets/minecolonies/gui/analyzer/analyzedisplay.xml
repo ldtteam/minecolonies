@@ -1,8 +1,8 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
         size="420 240" pause="false" lightbox="false">
 
-    <button id="selectleft" size="14 30" pos="1 1" textcolor="black" label="&lt;"/>
-    <button id="selectright" size="14 30" pos="126 1" textcolor="black" label="&gt;"/>
+    <button id="selectleft" size="14 30" pos="1 1" color="black" label="&lt;"/>
+    <button id="selectright" size="14 30" pos="126 1" color="black" label="&gt;"/>
     <button id="viewschem" text="none" size="111 30" pos="15 1"/>
     <button id="selectschematic" size="111 15" pos="15 30" label="$(com.minecolonies.coremod.gui.analyzer.select)"/>
 
@@ -12,7 +12,7 @@
         <text id="blockcounts" size="100% 14" pos="3 29" color="white"/>
         <text id="buildings" size="100% 14" pos="3 43" color="white"/>
         <button label="$(com.ldtteam.structurize.gui.scantool.showres)" id="showresources" pos="3 57" size="86 20"
-                     source="structurize:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                     source="structurize:textures/gui/builderhut/builder_button_medium.png" color="black"/>
         <list id="resources" size="100% 120" pos="0 57" childspacing="-1" visible="false">
             <box size="100% 19" linewidth="1">
                 <itemicon id="resourceIcon" size="16 16" pos="1 1"/>

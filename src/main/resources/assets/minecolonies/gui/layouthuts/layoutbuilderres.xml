@@ -14,7 +14,7 @@
             <text id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
 
             <button id="resourceAdd" size="14 15" label="↥" pos="100 12"
-                         source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
 
             <text id="resourceId" size="1 1" pos="100 100"/>
             <text id="resourceQuantity" size="1 1" pos="100 100"/>

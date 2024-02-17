@@ -12,21 +12,21 @@
         </view>
     </list>
 
-    <button id="hire" size="129 17" pos="30 74" textcolor="black"
+    <button id="hire" size="129 17" pos="30 74" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
-    <button id="recall" size="129 17" pos="30 92" textcolor="black"
+    <button id="recall" size="129 17" pos="30 92" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 
     <text id="prioValue" size="95 15" pos="30 135" textalign="MIDDLE_LEFT" color="black"/>
 
-    <button id="deliveryPrioDown" size="14 15" pos="127 135" textcolor="black"
+    <button id="deliveryPrioDown" size="14 15" pos="127 135" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="-"/>
-    <button id="deliveryPrioUp" size="14 15" pos="144 135" textcolor="black"
+    <button id="deliveryPrioUp" size="14 15" pos="144 135" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" label="+"/>
 
-    <button id="forcePickup" size="129 17" pos="30 154" textcolor="black"
+    <button id="forcePickup" size="129 17" pos="30 154" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.forcepickup)"/>
 </window>

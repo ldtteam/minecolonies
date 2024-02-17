@@ -2,15 +2,15 @@
 
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
 
-    <text id="name" size="150 11" pos="15 10" textcolor="black" textalign="TOP_MIDDLE"/>
+    <text id="name" size="150 11" pos="15 10" color="black" textalign="TOP_MIDDLE"/>
 
     <button id="cancel" size="14 15" pos="400 0"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 
     <button id="repair" size="86 17" pos="50 50"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.repair)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.repair)" color="black"/>
     <button id="build" size="86 17" pos="50 70"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" color="black"/>
 </window>

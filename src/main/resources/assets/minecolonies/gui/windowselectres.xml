@@ -16,7 +16,7 @@
             <itemicon id="resourceIcon" size="17 17" pos="1 1"/>
             <text id="resourceName" size="140 12" pos="30 1" color="white"/>
             <button label="$(com.minecolonies.coremod.gui.scantool.select)" id="select" pos="160 1" size="86 17"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
         </box>
     </list>
 

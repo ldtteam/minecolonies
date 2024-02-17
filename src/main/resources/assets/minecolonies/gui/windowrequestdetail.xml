@@ -16,12 +16,12 @@
     <text id="shortDetail" size="170 40" pos="12 60" color="black"/>
     <itemicon id="detailIcon" size="9 9" pos="80 75"/>
 
-    <button id="back" size="37 16" pos="35 105" textcolor="black"
+    <button id="back" size="37 16" pos="35 105" color="black"
                  label="$(com.minecolonies.coremod.gui.back)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
-    <button id="fulfill" size="37 16" pos="76 105" textcolor="black"
+    <button id="fulfill" size="37 16" pos="76 105" color="black"
                  label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
-    <button id="cancel" size="37 16" pos="117 105" textcolor="black"
+    <button id="cancel" size="37 16" pos="117 105" color="black"
                  label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 </window>

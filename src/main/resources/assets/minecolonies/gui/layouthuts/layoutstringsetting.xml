@@ -3,5 +3,5 @@
     <text id="id" size="0 0" pos="0 0" visible="false"/>
     <text id="desc" size="100% 15" pos="5 5" color="black" textalign="MIDDLE_LEFT" wrap="true"/>
 
-    <button id="trigger" pos="5 25" size="145 17" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+    <button id="trigger" pos="5 25" size="145 17" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black"/>
 </window>

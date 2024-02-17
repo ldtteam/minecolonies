@@ -5,7 +5,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
     <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.allinventory)"/>
     <input id="names" size="132 18" pos="15 30" maxlength="25"/>
-    <button id="sortStorageFilter" size="14 15" pos="158 31" textcolor="black"
+    <button id="sortStorageFilter" size="14 15" pos="158 31" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                  label="v^"/>
     <list id="allinventorylist" size="165 156" pos="15 55">
@@ -13,12 +13,12 @@
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
             <text id="ressourceStackName" size="100 12" pos="20 3" color="black"/>
             <text id="quantities" size="25 18" pos="117 1" color="black"/>
-            <button id="locate" size="14 15" pos="141 1" textcolor="black"
+            <button id="locate" size="14 15" pos="141 1" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                          label="?"/>
         </box>
     </list>
-    <button id="back" size="86 17" pos="50 215" textcolor="black"
+    <button id="back" size="86 17" pos="50 215" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.coremod.gui.back)"/>
 </window>

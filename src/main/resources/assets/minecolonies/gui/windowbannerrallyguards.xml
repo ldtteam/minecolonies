@@ -14,11 +14,11 @@
                 <text id="guardtype" size="130 12" pos="20 1" color="black"/>
                 <text id="position" size="130 12" pos="20 13" color="black"/>
                 <!-- button to cancel the request-->
-                <button id="remove" size="74 16" pos="74 25" textcolor="black"
+                <button id="remove" size="74 16" pos="74 25" color="black"
                              label="$(com.minecolonies.coremod.item.bannerrallyguards.gui.remove)" source="minecolonies:textures/gui/citizen/colonist_button_medium.png"/>
             </box>
         </list>
     </box>
-    <button id="rally" size="147 16" pos="20 213" textcolor="black" source="minecolonies:textures/gui/citizen/colonist_button_big.png"/>
+    <button id="rally" size="147 16" pos="20 213" color="black" source="minecolonies:textures/gui/citizen/colonist_button_big.png"/>
 
 </window>

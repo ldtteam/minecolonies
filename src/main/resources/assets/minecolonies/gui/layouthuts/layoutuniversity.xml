@@ -6,7 +6,7 @@
     <text id="maxresearchwarn" size="180 10" pos="10 28" color="black" textalign="MIDDLE"/>
     <list id="researches" size="164 175" pos="10 40">
         <box size="100% 28" linewidth="0">
-            <button id="name" size="129 17" pos="2 10" align="MIDDLE" textcolor="black"
+            <button id="name" size="129 17" pos="2 10" align="MIDDLE" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"/>
         </box>

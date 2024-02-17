@@ -14,7 +14,7 @@
         <text id="resourceId" size="1 1" pos="100 100"/>
         <text id="resourceQuantity" size="1 1" pos="100 100"/>
     </box>
-    <button id="sort" size="86 17" pos="50 70" textcolor="black"
+    <button id="sort" size="86 17" pos="50 70" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.warehouse.sort)"/>

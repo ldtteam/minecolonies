@@ -12,7 +12,7 @@
         </box>
     </list>
 
-    <button id="hireSpies" size="129 17" pos="30 129" textcolor="black"
+    <button id="hireSpies" size="129 17" pos="30 129" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.spies)"/>
     <itemicon id="hireSpiesIcon" size="15 15" pos="130 129"/>

@@ -8,7 +8,7 @@
         <view size="100% 17">
             <text id="resourceName" size="40 12" pos="0 2" color="black"/>
             <itemicon id="resourceIcon" size="17 17" pos="40 0"/>
-            <button id="resourceAdd" size="64 15" pos="60 0" textcolor="black"
+            <button id="resourceAdd" size="64 15" pos="60 0" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_small.png"
                          label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
         </view>
@@ -26,7 +26,7 @@
         </box>
     </list>
 
-    <button id="add" size="64 17" pos="60 210" textcolor="black"
+    <button id="add" size="64 17" pos="60 210" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_small.png"
                  label="$(com.minecolonies.coremod.gui.docrafting.teach)"/>
 </window>

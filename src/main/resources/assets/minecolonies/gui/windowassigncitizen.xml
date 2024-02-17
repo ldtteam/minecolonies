@@ -8,7 +8,7 @@
         <view size="100% 34">
             <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
             <text id="citizen" size="100% 12" pos="5 2" color="blue"/>
-            <button id="fire" size="44 10" pos="120 2" textcolor="black"
+            <button id="fire" size="44 10" pos="120 2" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
                          label="$(com.minecolonies.coremod.gui.hiring.buttonfire)" textscale="0.8"/>
 
@@ -20,7 +20,7 @@
         <view size="100% 34">
             <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
             <text id="citizen" size="100% 12" pos="5 2" color="blue"/>
-            <button id="hire" size="44 10" pos="120 2" textcolor="black"
+            <button id="hire" size="44 10" pos="120 2" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
                          label="$(com.minecolonies.coremod.gui.hiring.buttonassign)" textscale="0.8"/>
 
@@ -29,9 +29,9 @@
     </list>
 
     <text id="buildingassignmentmode" size="200 11" pos="40 210" color="black" label="$(com.minecolonies.coremod.gui.buildingassignmentmode)"/>
-    <button id="mode" size="169 17" pos="170 207" textcolor="black"
+    <button id="mode" size="169 17" pos="170 207" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_large.png"/>
 
     <button id="cancel" size="14 15" pos="375 10"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 </window>

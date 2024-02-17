@@ -5,7 +5,7 @@
 
     <text size="158 11" pos="16 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <button id="important" size="14 15" pos="150 23" textcolor="red" label="!" tooltip="$(com.minecolonies.coremod.gui.request.hideshow)" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
+    <button id="important" size="14 15" pos="150 23" color="red" label="!" tooltip="$(com.minecolonies.coremod.gui.request.hideshow)" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
     <list id="requests" size="158 184" pos="16 44">
         <box id="requestx" size="100% 40" linewidth="1">
             <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>

@@ -14,7 +14,7 @@
                     <button id="manage"
                                  size="64 17"
                                  pos="80 13"
-                                 textcolor="black"
+                                 color="black"
                                  source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
                 </box>
             </list>

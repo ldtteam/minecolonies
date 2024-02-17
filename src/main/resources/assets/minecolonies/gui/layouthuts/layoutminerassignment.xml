@@ -12,10 +12,10 @@
         </view>
     </list>
 
-    <button id="hire" size="129 17" pos="30 74" textcolor="black"
+    <button id="hire" size="129 17" pos="30 74" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
-    <button id="recall" size="129 17" pos="30 92" textcolor="black"
+    <button id="recall" size="129 17" pos="30 92" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
     <text id="text" size="150 45" pos="30 120" color="black" text="$(com.minecolonies.coremod.gui.quarry.desc)"/>

@@ -9,7 +9,7 @@
     <button id="editName" size="15 15" pos="150 11" source="minecolonies:textures/gui/builderhut/edit.png"
                  tooltip="$(com.minecolonies.gui.edit)"/>
 
-    <button id="build" size="129 17" pos="30 110" textcolor="black"
+    <button id="build" size="129 17" pos="30 110" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.buildrepair)"/>
     <button id="info" size="17 17" pos="14 214"
