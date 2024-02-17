@@ -15,7 +15,7 @@ import java.util.EnumMap;
  */
 public class ItemPlateArmor extends ArmorItem
 {
-    public static final ArmorMaterial PLATE_ARMOR = new MineColoniesArmorMaterial("minecolonies:plate_armor", 33, Util.make(new EnumMap<>(Type.class), map -> {
+    public static final ArmorMaterial PLATE_ARMOR = new MineColoniesArmorMaterial("minecolonies:plate_armor", 37, Util.make(new EnumMap<>(Type.class), map -> {
         map.put(Type.BOOTS, 3);
         map.put(Type.LEGGINGS, 6);
         map.put(Type.CHESTPLATE, 8);
