@@ -329,11 +329,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final String blueprintPath)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof AbstractTileEntityColonyBuilding)
+        if (tileEntity instanceof final AbstractTileEntityColonyBuilding hut)
         {
-            ((AbstractTileEntityColonyBuilding) tileEntity).setRotationMirror(rotMir);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setPackName(style);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setBlueprintPath(blueprintPath);
+            hut.setRotationMirror(rotMir);
+            hut.setPackName(style);
+            hut.setBlueprintPath(blueprintPath);
         }
 
         setPlacedBy(worldIn, pos, state, placer, stack);

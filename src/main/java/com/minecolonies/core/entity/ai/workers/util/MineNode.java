@@ -5,7 +5,6 @@ import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,6 @@ public class MineNode
      */
     private static final String TAG_X       = "idX";
     private static final String TAG_Z       = "idZ";
-    private static final String TAG_ROT     = "rotation";
     private static final String TAG_STYLE   = "Style";
     private static final String TAG_STATUS  = "Status";
     private static final String TAG_PARENTX = "ParentX";
@@ -152,22 +150,7 @@ public class MineNode
         }
         node.setStyle(style);
         node.setStatus(status);
-
-        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
-        {
-            node.setRotationMirror(RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)]);
-        }
-        else if (compound.contains(TAG_ROT))
-        {
-            // TODO: remove this later (data break introduced in 1.20.4)
-            node.setRotationMirror(switch (compound.getInt(TAG_ROT))
-            {
-                case 1 -> RotationMirror.R90;
-                case 2 -> RotationMirror.R180;
-                case 3 -> RotationMirror.R270;
-                default -> RotationMirror.NONE;
-            });
-        }
+        node.setRotationMirror(RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)]);
 
         return node;
     }

@@ -19,11 +19,8 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.workorders.view.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -583,15 +580,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         translationKey = compound.getString(TAG_TRANSLATION_KEY);
         workOrderType = WorkOrderType.values()[compound.getInt(TAG_WO_TYPE)];
         location = BlockPosUtil.read(compound, TAG_LOCATION);
-        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
-        {
-            this.rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
-        }
-        else
-        {
-            // TODO: remove this later (data break introduced in 1.20.4)
-            this.rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], compound.getBoolean(TAG_IS_MIRRORED) ? Mirror.FRONT_BACK : Mirror.NONE);
-        }
+        rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
         targetLevel = compound.getInt(TAG_TARGET_LEVEL);
         amountOfResources = compound.getInt(TAG_AMOUNT_OF_RESOURCES);

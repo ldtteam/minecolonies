@@ -221,7 +221,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         }
         else
         {
-            // TODO: remove this later (data break introduced in 1.20.4)
+            // TODO: remove this later (data break introduced in 1.20.4) because of blueprint data
             this.rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE);
         }
         if(compound.contains(TAG_PATH))

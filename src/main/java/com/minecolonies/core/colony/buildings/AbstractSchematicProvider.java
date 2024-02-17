@@ -5,7 +5,6 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
@@ -20,12 +19,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,11 +54,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      */
     @Nullable
     private RotationMirror rotationMirror = null;
-
-    /**
-     * Used as holder for old value during invalidation (so we can keep mirror or return old rotation if new inaccessible)
-     */
-    private RotationMirror lastRotationMirror = null;
 
     /**
      * The building style.
@@ -154,7 +144,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         this.path = path;
         getTileEntity().setBlueprintPath(path);
-        invalidateRotationMirror();
         this.markDirty();
     }
 
@@ -189,25 +178,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         deserializerStructureInformationFrom(compound);
 
-        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
-        {
-            this.rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
-        }
-        else
-        {
-            // TODO: remove this later (data break introduced in 1.20.4)
-
-            final Mirror mirror = compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE;
-            if (compound.contains(TAG_ROTATION))
-            {
-                rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], mirror);
-            }
-            else
-            {
-                rotationMirror = null; // should be null anyway, manually invalidate so data are applied as in old loader
-                lastRotationMirror = RotationMirror.NONE.mirrorate(mirror);
-            }
-        }
+        this.rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
 
         if (compound.contains(TAG_CORNER1) && compound.contains(TAG_CORNER2))
         {
@@ -339,57 +310,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
           .collect(Collectors.toUnmodifiableSet());
     }
 
-    private RotationMirror resolveRotationMirror()
-    {
-        try
-        {
-            Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
-            if (blueprint == null && this.path.endsWith("0.blueprint"))
-            {
-                blueprint = StructurePacks.getBlueprint(this.structurePack, this.path.replace("0.blueprint", "1.blueprint"), true);
-            }
-            if (blueprint != null)
-            {
-                final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
-                if (structureState != null)
-                {
-                    if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
-                    {
-                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", this.path));
-                        return lastRotationMirror == null ? RotationMirror.NONE : lastRotationMirror;
-                    }
-
-                    final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
-                    final int worldRotation = colony.getWorld().getBlockState(this.location).getValue(AbstractBlockHut.FACING).get2DDataValue();
-
-                    final int rotation;
-                    if (structureRotation <= worldRotation)
-                    {
-                        rotation = worldRotation - structureRotation;
-                    }
-                    else
-                    {
-                        rotation = 4 + worldRotation - structureRotation;
-                    }
-                    return RotationMirror.of(Rotation.values()[rotation], lastRotationMirror == null ? Mirror.NONE : lastRotationMirror.mirror());
-                }
-            }
-            else
-            {
-                Log.getLogger()
-                  .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path));
-            }
-        }
-        catch (Exception e)
-        {
-            Log.getLogger()
-              .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path), e);
-            return lastRotationMirror == null ? RotationMirror.NONE : lastRotationMirror;
-        }
-
-        return lastRotationMirror == null ? RotationMirror.NONE : lastRotationMirror;
-    }
-
     /**
      * Load updated TE data from the schematic if missing.
      */
@@ -499,7 +419,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void setStructurePack(final String pack)
     {
         this.structurePack = pack;
-        invalidateRotationMirror();
         this.markDirty();
         getTileEntity().setStructurePack(StructurePacks.getStructurePack(pack));
     }
@@ -532,21 +451,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public RotationMirror getRotationMirror()
     {
-        if (rotationMirror == null)
-        {
-            rotationMirror = resolveRotationMirror();
-            lastRotationMirror = null;
-        }
         return rotationMirror;
-    }
-
-    public void invalidateRotationMirror()
-    {
-        if (rotationMirror != null)
-        {
-            lastRotationMirror = rotationMirror;
-            rotationMirror = null;
-        }
     }
 
     @Override

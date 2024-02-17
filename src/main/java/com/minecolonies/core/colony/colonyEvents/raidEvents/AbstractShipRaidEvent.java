@@ -35,8 +35,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
@@ -510,15 +508,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
-        if (compound.contains(TAG_SHIP_ROTMIR, Tag.TAG_BYTE))
-        {
-            shipRotationMirror = RotationMirror.values()[compound.getByte(TAG_SHIP_ROTMIR)];
-        }
-        else
-        {
-            // TODO: remove this later (data break introduced in 1.20.4)
-            shipRotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_SHIPROTATION)], Mirror.NONE);
-        }
+        shipRotationMirror = RotationMirror.values()[compound.getByte(TAG_SHIP_ROTMIR)];
         wayPoints = BlockPosUtil.readPosListFromNBT(compound, TAG_WAYPOINT);
     }
 

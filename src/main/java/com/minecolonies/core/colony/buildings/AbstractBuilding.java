@@ -963,7 +963,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        invalidateRotationMirror();
         ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
