@@ -1,20 +1,26 @@
 package com.minecolonies.core.items;
 
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.Util;
 import net.minecraft.sounds.SoundEvents;
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.EnumMap;
 
 /**
  * Class handling the Plate Armor.
  */
 public class ItemPlateArmor extends ArmorItem
 {
-    public static final ArmorMaterial PLATE_ARMOR =
-      new MineColoniesArmorMaterial("minecolonies:plate_armor", 20, new int[] {4, 7, 9, 4}, 6, SoundEvents.ARMOR_EQUIP_IRON, 2F, Ingredient.of(Items.IRON_INGOT));
+    public static final ArmorMaterial PLATE_ARMOR = new MineColoniesArmorMaterial("minecolonies:plate_armor", 33, Util.make(new EnumMap<>(Type.class), map -> {
+        map.put(Type.BOOTS, 2);
+        map.put(Type.LEGGINGS, 6);
+        map.put(Type.CHESTPLATE, 8);
+        map.put(Type.HELMET, 2);
+    }), 9, SoundEvents.ARMOR_EQUIP_IRON, 0F, 0.0F, () -> Ingredient.of(Items.IRON_INGOT));
 
     /**
      * Constructor method for the Plate Armor
