@@ -69,17 +69,20 @@ public class MineColoniesArmorMaterial implements ArmorMaterial
         return this.enchantmentValue;
     }
 
-    public @NotNull SoundEvent getEquipSound()
+    @NotNull
+    public SoundEvent getEquipSound()
     {
         return this.sound;
     }
 
-    public @NotNull Ingredient getRepairIngredient()
+    @NotNull
+    public Ingredient getRepairIngredient()
     {
         return this.repairIngredient.get();
     }
 
-    public @NotNull String getName()
+    @NotNull
+    public String getName()
     {
         return this.name;
     }
