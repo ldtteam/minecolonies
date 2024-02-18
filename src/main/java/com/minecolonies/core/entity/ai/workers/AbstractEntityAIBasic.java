@@ -17,13 +17,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -37,6 +36,7 @@ import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.util.WorkerUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
@@ -690,9 +690,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param rawSkillLevel to apply the curve to
      * @return effective skill level to use in linear bonus functions
      */
-    protected int getEffectiveSkillLevel(int rawSkillLevel)
+    protected static int getEffectiveSkillLevel(int rawSkillLevel)
     {
         return (int) (((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1) / 10.0, 2));
+    }
+
+    /**
+     * Returns the inverted skill level, to use in chance based calcs
+     *
+     * @param rawSkillLevel
+     * @return
+     */
+    protected static int getInvertedEffectiveSkillLevel(final int rawSkillLevel)
+    {
+        return Math.max(1, 100 - getEffectiveSkillLevel(rawSkillLevel));
     }
 
     /**
