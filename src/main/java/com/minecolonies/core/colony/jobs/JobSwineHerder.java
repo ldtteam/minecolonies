@@ -1,11 +1,15 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkSwineHerder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
  * The SwineHerder job
@@ -50,5 +54,17 @@ public class JobSwineHerder extends AbstractJob<EntityAIWorkSwineHerder, JobSwin
     public int getDiseaseModifier()
     {
         return 2;
+    }
+
+    @Override
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
+    {
+        if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
+          .isInBuilding(getCitizen().getEntity().get().blockPosition()))
+        {
+            getCitizen().getWorkBuilding().getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
+        }
+
+        return super.onStackPickUp(pickedUpStack);
     }
 }
