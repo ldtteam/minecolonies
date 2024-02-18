@@ -28,11 +28,7 @@ import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.network.messages.client.OpenSuggestionWindowMessage;
-import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
-import com.minecolonies.core.network.messages.client.UpdateChunkRangeCapabilityMessage;
-import com.minecolonies.core.util.ChunkClientDataHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -133,13 +129,6 @@ public class EventHandler
         {
             ChunkDataHelper.loadChunk((LevelChunk) event.getChunk(), (ServerLevel) event.getLevel());
         }
-        else if (event.getLevel() instanceof ClientLevel)
-        {
-            if (event.getChunk() instanceof LevelChunk)
-            {
-                ChunkClientDataHelper.applyLate((LevelChunk) event.getChunk());
-            }
-        }
     }
 
     /**
@@ -237,10 +226,7 @@ public class EventHandler
 
         ChunkDataHelper.loadChunk(chunk, world);
 
-        new UpdateChunkRangeCapabilityMessage(world, chunkPos.x, chunkPos.z, 8, true).sendToPlayer((ServerPlayer) event.player);
-
         final ChunkCapData chunkCapData = ColonyUtils.getChunkCapData(chunk);
-        new UpdateChunkCapabilityMessage(chunkCapData).sendToPlayer((ServerPlayer) event.player);
 
         // Check if we get into a differently claimed chunk
         if (chunkCapData.getOwningColony() != -1)

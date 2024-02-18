@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;

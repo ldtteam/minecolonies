@@ -319,7 +319,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (getBuildingLevel() == 0)
         {
-            ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
+            ChunkDataHelper.claimBuildingChunks((Colony) colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
         }
     }
 
@@ -437,7 +437,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
-        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
+        ChunkDataHelper.claimBuildingChunks((Colony) colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
         getModulesByType(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
@@ -963,7 +963,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
+        ChunkDataHelper.claimBuildingChunks((Colony) colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());

@@ -30,6 +30,9 @@ public final class NbtTagConstants
     public static final String TAG_PRIO              = "prio";
     public static final String TAG_LAST_ONLINE       = "lastOnlineTime";
     public static final String TAG_SOUND_PROFILE     = "soundProfile";
+    public static final String TAG_CLAIM_DATA        = "colonyclaimdata";
+    public static final String TAG_CHUNK_CLAIM       = "chunkclaimdata";
+    public static final String TAG_CHUNK_POS         = "chunkpos";
 
     /**
      * @deprecated Superseeded by request-based pickup system.

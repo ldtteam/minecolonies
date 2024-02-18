@@ -2,7 +2,8 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.minecolonies.api.colony.capability.IColonyTagCapability;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
@@ -64,7 +65,7 @@ public final class ColonyUtils
      */
     public static int getOwningColony(final LevelChunk chunk)
     {
-        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
+        final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? NO_COLONY_ID : cap.getOwningColony();
     }
 
@@ -75,7 +76,7 @@ public final class ColonyUtils
      */
     public static Map<Integer, Set<BlockPos>> getAllClaimingBuildings(final LevelChunk chunk)
     {
-        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
+        final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new HashMap<>() : cap.getAllClaimingBuildings();
     }
 
@@ -86,7 +87,7 @@ public final class ColonyUtils
      */
     public static List<Integer> getStaticClaims(final LevelChunk chunk)
     {
-        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
+        final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new ArrayList<>() : cap.getStaticClaimColonies();
     }
 
@@ -98,7 +99,7 @@ public final class ColonyUtils
     @Nullable
     public static ChunkCapData getChunkCapData(final LevelChunk chunk)
     {
-        final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
+        final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new ChunkCapData(chunk.getPos().x, chunk.getPos().z) : new ChunkCapData(chunk.getPos().x, chunk.getPos().z, cap.getOwningColony(), cap.getStaticClaimColonies(), cap.getAllClaimingBuildings());
     }
 }

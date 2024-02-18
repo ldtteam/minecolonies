@@ -495,9 +495,9 @@ public final class BackUpHelper
      *
      * @param colony
      */
-    public static void reclaimChunks(final IColony colony)
+    public static void reclaimChunks(final Colony colony)
     {
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony, colony.getCenter());
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             ChunkDataHelper.claimBuildingChunks(colony,

@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.claim.ChunkClaimData;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
@@ -37,6 +39,8 @@ import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.core.network.messages.server.colony.TownHallRenameMessage;
 import com.minecolonies.core.quests.QuestManager;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -50,6 +54,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -419,6 +424,14 @@ public final class ColonyView implements IColonyView
         else
         {
             buf.writeInt(-1);
+        }
+
+        final Long2ObjectMap<ChunkClaimData> colonyClaimData = colony.getClaimData();
+        buf.writeInt(colonyClaimData.size());
+        for (final Long2ObjectMap.Entry<ChunkClaimData> entry : colonyClaimData.long2ObjectEntrySet())
+        {
+            buf.writeLong(entry.getLongKey());
+            buf.writeNbt(entry.getValue().serializeNBT());
         }
 
         final CompoundTag graveTag = new CompoundTag();
@@ -870,6 +883,21 @@ public final class ColonyView implements IColonyView
             {
                 ticketedChunks.add(buf.readLong());
             }
+        }
+
+        final Long2ObjectMap<ChunkClaimData> colonyClaimData = new Long2ObjectOpenHashMap<>();
+        int size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            final ChunkClaimData chunkClaimData = new ChunkClaimData();
+            final long pos = buf.readLong();
+            chunkClaimData.deserializeNBT(buf.readNbt());
+            colonyClaimData.put(pos, chunkClaimData);
+        }
+
+        if (Minecraft.getInstance().getSingleplayerServer() == null)
+        {
+            IColonyManager.getInstance().addClaimData(this, colonyClaimData);
         }
 
         this.graveManager.read(buf.readNbt());

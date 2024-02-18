@@ -16,10 +16,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly ("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal"){
-        transitive = false
-    }
-    runtimeOnly ("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal"){
+    implementation ("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal"){
         transitive = false
     }
 
@@ -49,23 +46,10 @@ dependencies {
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
          runtimeOnly "flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}-neoforge"
     }
-    // replace "compileOnly" with "library" when you want to include it for testing
-    // TODO: update comment, see below
+    // replace "compileOnly" with "implementation" when you want to include it for testing
     // compileOnly "slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
     // compileOnly "slimeknights.mantle:Mantle:${project.exactMinecraftVersion}-${project.mantleVersion}")
 
     // apiCompileOnly "slimeknights.mantle:Mantle:${project.exactMinecraftVersion}-${project.mantleVersion}")
     // apiCompileOnly "slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
 }
-
-// TODO: this needs adjust to neogradle
-// configurations {
-//     library
-//     implementation.extendsFrom library
-// }
-
-// minecraft.runs.all {
-//     lazyToken('minecraft_classpath') {
-//         configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-//     }
-// }

@@ -1,18 +1,15 @@
-package com.minecolonies.api.colony.capability;
+package com.minecolonies.api.colony.savedata;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.util.CodecUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.ColonyList;
 import com.minecolonies.core.util.BackUpHelper;
-import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -20,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,20 +27,21 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_MANA
 /**
  * The implementation of the colonyTagCapability.
  */
-public class ColonyManagerCapability extends SavedData implements IColonyManagerCapability
+public class ServerColonySaveData extends SavedData implements IServerColonySaveData
 {
-    private static final Logger LOGGER = LogUtils.getLogger();
-
-    public static final Codec<ColonyManagerCapability> CODEC = CompoundTag.CODEC.xmap(tag -> {
-        final var cap = new ColonyManagerCapability();
-        IColonyManager.getInstance().setLoadingCap(cap);
-        cap.readNBT(tag);
-        IColonyManager.getInstance().setLoadingCap(null);
-        return cap;
-    }, ColonyManagerCapability::writeNBT);
-    
+    /**
+     * World save data name.
+     */
     public static final String NAME = new ResourceLocation(Constants.MOD_ID, "colony_manager").toDebugFileName();
-    public static final Factory<ColonyManagerCapability> FACTORY = new Factory<>(ColonyManagerCapability::new, CodecUtil.nbtDecoder(CODEC, LOGGER, ColonyManagerCapability::new));
+
+    /**
+     * Worldsavedata factory.
+     */
+    public static final Factory<ServerColonySaveData> FACTORY = new Factory<>(ServerColonySaveData::new, d -> {
+        final ServerColonySaveData colonyManagerData = new ServerColonySaveData();
+        colonyManagerData.readNBT(d);
+        return colonyManagerData;
+    });
 
     /**
      * The list of all colonies.
@@ -56,15 +53,17 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
      * Is this the main overworld cap?
      */
     private boolean overworld;
-    private CompoundTag freshLoaded = null;
 
-    private ColonyManagerCapability()
-    {}
-
-    @Override
-    public CompoundTag save(final CompoundTag tag)
+    private ServerColonySaveData()
     {
-        return CodecUtil.nbtEncoder(CODEC, LOGGER, () -> tag).apply(this);
+
+    }
+
+    @NotNull
+    @Override
+    public CompoundTag save(final @NotNull CompoundTag tag)
+    {
+        return writeNBT(tag);
     }
 
     @Override
@@ -109,7 +108,7 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
         return true;
     }
 
-    private CompoundTag writeNBT()
+    private CompoundTag writeNBT(final CompoundTag inputTag)
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(TAG_COLONIES, colonies.stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
@@ -120,12 +119,23 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
             IColonyManager.getInstance().write(managerCompound);
             compound.put(TAG_COLONY_MANAGER, managerCompound);
         }
-        return compound;
+
+        inputTag.put(Constants.MOD_ID, compound);
+        return inputTag;
     }
 
-    private void readNBT(final CompoundTag compound)
+    @Override
+    public IServerColonySaveData setOverworld(final boolean overworld)
     {
-        if (!compound.contains(TAG_COLONIES) || !compound.contains(TAG_COLONY_MANAGER))
+        this.overworld = overworld;
+        return this;
+    }
+
+    private void readNBT(final CompoundTag inputTag)
+    {
+        final CompoundTag compound = inputTag.getCompound(Constants.MOD_ID);
+
+        if (!compound.contains(TAG_COLONIES))
         {
             BackUpHelper.loadMissingColonies();
             BackUpHelper.loadManagerBackup();
@@ -142,6 +152,12 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
                 tempColonies.put(colony.getCenter(), colony);
                 colonies.add(colony);
             }
+        }
+
+        if (compound.contains(TAG_COLONY_MANAGER))
+        {
+            IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
+            this.overworld = true;
         }
 
         // Check if some colonies are missing
@@ -166,25 +182,5 @@ public class ColonyManagerCapability extends SavedData implements IColonyManager
                 Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
             }
         }
-
-        freshLoaded = compound;
-        return;
-    }
-
-    void processAfterLoadHook(final boolean overworld)
-    {
-        if (freshLoaded == null)
-        {
-            return;
-        }
-
-        this.overworld = overworld;
-
-        if (freshLoaded.contains(TAG_COLONY_MANAGER) && overworld)
-        {
-            IColonyManager.getInstance().read(freshLoaded.getCompound(TAG_COLONY_MANAGER));
-        }
-
-        freshLoaded = null;
     }
 }

@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.minecolonies.core.util.ChunkDataHelper;
@@ -105,7 +106,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             return;
         }
-        ChunkDataHelper.claimBuildingChunks(colony, true, barracks, barrack.getClaimRadius(newLevel), barrack.getCorners());
+        ChunkDataHelper.claimBuildingChunks((Colony) colony, true, barracks, barrack.getClaimRadius(newLevel), barrack.getCorners());
 
         if (newLevel == barrack.getMaxBuildingLevel())
         {

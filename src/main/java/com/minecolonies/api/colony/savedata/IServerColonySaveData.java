@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.capability;
+package com.minecolonies.api.colony.savedata;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.core.BlockPos;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Capability for the colony tag for chunks
  */
-public interface IColonyManagerCapability
+public interface IServerColonySaveData
 {
     /**
      * Create a colony and return it.
@@ -60,14 +60,20 @@ public interface IColonyManagerCapability
      */
     int getTopID();
 
-    @Nullable
-    static IColonyManagerCapability getCapability(final ServerLevel level)
+    /**
+     * Set as overworld.
+     * @param b if overworld.
+     * @return itself.
+     */
+    IServerColonySaveData setOverworld(boolean b);
+
+    /**
+     * Get the save data for a given server level.
+     * @param level the server level to get it from.
+     * @return the savedata.
+     */
+    static IServerColonySaveData getSaveData(final ServerLevel level)
     {
-        final ColonyManagerCapability cap = level.getDataStorage().computeIfAbsent(ColonyManagerCapability.FACTORY, ColonyManagerCapability.NAME);
-        if (cap != null)
-        {
-            cap.processAfterLoadHook(level.dimension() == Level.OVERWORLD);
-        }
-        return cap;
+        return level.getDataStorage().computeIfAbsent(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME).setOverworld(level.dimension() == Level.OVERWORLD);
     }
 }

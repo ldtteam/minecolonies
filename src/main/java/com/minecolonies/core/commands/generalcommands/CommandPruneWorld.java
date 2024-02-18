@@ -1,7 +1,7 @@
 package com.minecolonies.core.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.capability.IColonyManagerCapability;
+import com.minecolonies.api.colony.savedata.IServerColonySaveData;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -82,7 +82,7 @@ public class CommandPruneWorld implements IMCOPCommand
 
         // Colony list for this world
         List<IColony> colonies = new ArrayList<>();
-        final IColonyManagerCapability cap = IColonyManagerCapability.getCapability(world);
+        final IServerColonySaveData cap = IServerColonySaveData.getSaveData(world);
         if (cap != null)
         {
             colonies = cap.getColonies();

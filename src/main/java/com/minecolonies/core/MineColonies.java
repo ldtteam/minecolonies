@@ -253,7 +253,6 @@ public class MineColonies
         PermissionsMessage.View.TYPE.register(registry);
         ColonyViewWorkOrderMessage.TYPE.register(registry);
         ColonyViewRemoveWorkOrderMessage.TYPE.register(registry);
-        UpdateChunkCapabilityMessage.TYPE.register(registry);
         ColonyViewResearchManagerViewMessage.TYPE.register(registry);
 
         //  Permission Request messages
@@ -341,7 +340,6 @@ public class MineColonies
         CompostParticleMessage.TYPE.register(registry);
         ItemParticleEffectMessage.TYPE.register(registry);
         LocalizedParticleEffectMessage.TYPE.register(registry);
-        UpdateChunkRangeCapabilityMessage.TYPE.register(registry);
         OpenSuggestionWindowMessage.TYPE.register(registry);
         UpdateClientWithCompatibilityMessage.TYPE.register(registry);
         CircleParticleEffectMessage.TYPE.register(registry);

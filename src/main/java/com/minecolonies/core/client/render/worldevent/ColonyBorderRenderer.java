@@ -3,8 +3,9 @@ package com.minecolonies.core.client.render.worldevent;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.capability.IColonyTagCapability;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.util.MutableChunkPos;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -64,7 +65,7 @@ public class ColonyBorderRenderer
                     if (chunk.isEmpty()) { continue; }
                     final ChunkPos chunkPos = chunk.getPos();
 
-                    final IColonyTagCapability cap = IColonyTagCapability.getCapability(chunk);
+                    final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(ctx.nearestColony.getDimension(), chunkPos);;
                     if (cap != null)
                     {
                         coloniesMap.put(chunkPos, cap.getOwningColony());

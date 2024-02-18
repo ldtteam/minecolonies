@@ -3,15 +3,19 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.capability.IColonyManagerCapability;
+import com.minecolonies.api.colony.claim.ChunkClaimData;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.core.colony.Colony;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -270,11 +274,6 @@ public interface IColonyManager
     void onWorldLoad(@NotNull Level world);
 
     /**
-     * @param cap null if loaded, 
-     */
-    void setLoadingCap(@Nullable IColonyManagerCapability cap);
-
-    /**
      * When a world unloads, all colonies in that world are informed. Additionally, when the last world is unloaded, delete all colonies.
      *
      * @param world World.
@@ -288,7 +287,6 @@ public interface IColonyManager
      * @param colonyData        {@link FriendlyByteBuf} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
-     * @param world             the world it is in.
      */
     void handleColonyViewMessage(int colonyId, @NotNull FriendlyByteBuf colonyData, boolean isNewSubscription, ResourceKey<Level> dim);
 
@@ -434,4 +432,27 @@ public interface IColonyManager
      * @param colony loaded colony
      */
     void addColonyDirect(IColony colony, ServerLevel world);
+
+    /**
+     * Add claim data of a colony.
+     * @param colony the colony from which to add the claim data.
+     * @param claimData the claim data to add.
+     */
+    void addClaimData(IColony colony, Long2ObjectMap<ChunkClaimData> claimData);
+
+    /**
+     * Get the claim data for a dimension and pos.
+     * @param dimension the dim.
+     * @param pos the pos.
+     * @return the claim data.
+     */
+    IChunkClaimData getClaimData(ResourceKey<Level> dimension, ChunkPos pos);
+
+    /**
+     * New chunk to track claim of.
+     * @param colony the colony claiming it.
+     * @param pos the chunk pos.
+     * @param chunkClaimData the claim data to track.
+     */
+    void addNewChunk(Colony colony, ChunkPos pos, ChunkClaimData chunkClaimData);
 }

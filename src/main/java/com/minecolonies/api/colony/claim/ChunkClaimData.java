@@ -1,44 +1,29 @@
-package com.minecolonies.api.colony.capability;
+package com.minecolonies.api.colony.claim;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.capability.PerChunkSavedData.IDirty;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CodecUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
-import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.saveddata.SavedData.Factory;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDINGS_CLAIM;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The implementation of the colonyTagCapability.
  */
-public class ColonyTagCapability implements IColonyTagCapability, IDirty
+public class ChunkClaimData implements IChunkClaimData, INBTSerializable<CompoundTag>
 {
-    public static final Codec<ColonyTagCapability> CODEC = RecordCodecBuilder.create(builder -> builder
-        .group(CodecUtil.strictOptionalField(CodecUtil.set(Codec.INT, HashSet::new), TAG_COLONIES, HashSet::new).forGetter(cap -> cap.colonies),
-            ExtraCodecs.strictOptionalField(Codec.INT, TAG_ID, NO_COLONY_ID).forGetter(cap -> cap.owningColony),
-            CodecUtil.strictOptionalFieldMap(Codec.unboundedMap(Codec.INT, CodecUtil.set(BlockPos.CODEC, HashSet::new)), TAG_BUILDINGS_CLAIM, HashMap::new).forGetter(cap -> cap.claimingBuildings))
-        .apply(builder, ColonyTagCapability::new));
-    
-    public static final String NAME = new ResourceLocation(Constants.MOD_ID, "colony_tag").toDebugFileName();
-    public static final Factory<PerChunkSavedData<ColonyTagCapability>> FACTORY = PerChunkSavedData.factory(ColonyTagCapability::new, CODEC, LogUtils.getLogger());
-
     /**
      * The set of all close colonies. Only relevant in non dynamic claiming.
      */
@@ -54,12 +39,12 @@ public class ColonyTagCapability implements IColonyTagCapability, IDirty
      */
     private final Map<Integer, Set<BlockPos>> claimingBuildings;
 
-    private ColonyTagCapability()
+    public ChunkClaimData()
     {
         this(new HashSet<>(), NO_COLONY_ID, new HashMap<>());
     }
 
-    private ColonyTagCapability(final Set<Integer> colonies, final int owningColony, final Map<Integer, Set<BlockPos>> claimingBuildings)
+    private ChunkClaimData(final Set<Integer> colonies, final int owningColony, final Map<Integer, Set<BlockPos>> claimingBuildings)
     {
         this.colonies = colonies;
         this.owningColony = owningColony;
@@ -251,8 +236,63 @@ public class ColonyTagCapability implements IColonyTagCapability, IDirty
     }
 
     @Override
-    public boolean isDirty()
+    public CompoundTag serializeNBT()
     {
-        return true;
+        final CompoundTag compound = new CompoundTag();
+        compound.putInt(TAG_ID, owningColony);
+
+        final ListTag colonyClaimTag = new ListTag();
+        for (final int colonyId : colonies)
+        {
+            colonyClaimTag.add(IntTag.valueOf(colonyId));
+        }
+        compound.put(TAG_COLONIES, colonyClaimTag);
+
+        for (final Map.Entry<Integer, Set<BlockPos>> entry : claimingBuildings.entrySet())
+        {
+            final CompoundTag perColonyEntry = new CompoundTag();
+            perColonyEntry.putInt(TAG_ID, entry.getKey());
+
+            final ListTag buildingListTag = new ListTag();
+            for (final BlockPos pos : entry.getValue())
+            {
+                BlockPosUtil.writeToListNBT(buildingListTag, pos);
+            }
+            perColonyEntry.put(TAG_BUILDINGS_CLAIM, buildingListTag);
+        }
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag compound)
+    {
+        // Set owning
+        owningColony = compound.getInt(TAG_ID);
+
+        final ListTag colonyClaim = compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND);
+        for (int i = 0; i < colonyClaim.size(); i++)
+        {
+            colonies.add(colonyClaim.getInt(i));
+        }
+
+        final ListTag buildingClaim = compound.getList(TAG_BUILDINGS_CLAIM, Tag.TAG_COMPOUND);
+        for (int i = 0; i < buildingClaim.size(); i++)
+        {
+            final CompoundTag perColonyCompound = buildingClaim.getCompound(i);
+            final int id = perColonyCompound.getInt(TAG_ID);
+            final Set<BlockPos> buildings = claimingBuildings.computeIfAbsent(id, HashSet::new);
+
+            final ListTag buildingList = perColonyCompound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
+            for (int j = 0; j < buildingList.size(); j++)
+            {
+                buildings.add(BlockPosUtil.readFromListNBT(buildingList, j));
+            }
+        }
+
+        if (owningColony == NO_COLONY_ID && !getStaticClaimColonies().isEmpty())
+        {
+            owningColony = getStaticClaimColonies().get(0);
+        }
     }
 }

@@ -1,17 +1,15 @@
-package com.minecolonies.api.colony.capability;
+package com.minecolonies.api.colony.claim;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 /**
  * Capability for the colony tag for chunks
  */
-public interface IColonyTagCapability
+public interface IChunkClaimData
 {
     /**
      * Remove a colony from the list. Only relevant in non dynamic claiming.
@@ -91,14 +89,4 @@ public interface IColonyTagCapability
      */
     @NotNull
     Map<Integer, Set<BlockPos>> getAllClaimingBuildings();
-
-    @Nullable
-    static IColonyTagCapability getCapability(final LevelChunk chunk)
-    {
-        if (chunk.getLevel() instanceof final ServerLevel serverLevel)
-        {
-            return serverLevel.getDataStorage().computeIfAbsent(ColonyTagCapability.FACTORY, ColonyTagCapability.NAME).get(chunk);
-        }
-        // TODO: client getter or throw
-    }
 }

@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.claim.ChunkClaimData;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -42,6 +44,8 @@ import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
 import com.minecolonies.api.util.ColonyUtils;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -328,6 +332,14 @@ public class Colony implements IColony
      */
     private int day = 0;
 
+    /**
+     * Colony claim data.
+     */
+    private Long2ObjectMap<ChunkClaimData> claimData = new Long2ObjectOpenHashMap<>();
+
+    /**
+     * Townhall settings module.
+     */
     private final SettingsModule settingsModule = (SettingsModule) BuildingEntry.produceModuleWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key);
 
     /**
@@ -839,6 +851,16 @@ public class Colony implements IColony
             settingsModule.deserializeNBT(compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
         }
 
+        @NotNull final ListTag claimTagList = compound.getList(TAG_CLAIM_DATA, Tag.TAG_COMPOUND);
+        for (int i = 0; i < claimTagList.size(); i++)
+        {
+            @NotNull final CompoundTag chunkCompound = claimTagList.getCompound(i);
+            final ChunkClaimData chunkClaimData = new ChunkClaimData();
+            chunkClaimData.deserializeNBT(chunkCompound.getCompound(TAG_CHUNK_CLAIM));
+            claimData.put(chunkCompound.getLong(TAG_CHUNK_POS), chunkClaimData);
+        }
+        IColonyManager.getInstance().addClaimData(this, claimData);
+
         this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
     }
@@ -948,6 +970,15 @@ public class Colony implements IColony
         final CompoundTag settings = new CompoundTag();
         settingsModule.serializeNBT(settings);
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
+
+        @NotNull final ListTag claimTagList = new ListTag();
+        for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet())
+        {
+            @NotNull final CompoundTag chunkCompound = new CompoundTag();
+            chunkCompound.put(TAG_CHUNK_CLAIM, chunkClaimData.getValue().serializeNBT());
+            chunkCompound.putLong(TAG_CHUNK_POS, chunkClaimData.getLongKey());
+        }
+        compound.put(TAG_CLAIM_DATA, claimTagList);
 
         this.colonyTag = compound;
 
@@ -1949,5 +1980,23 @@ public class Colony implements IColony
     public ISettingsModule getSettings()
     {
         return settingsModule;
+    }
+
+    /**
+     * Get the claim data from the colony.
+     * @return the claim data map.
+     */
+    public Long2ObjectMap<ChunkClaimData> getClaimData()
+    {
+        return claimData;
+    }
+
+    public IChunkClaimData claimNewChunk(final ChunkPos pos)
+    {
+        final ChunkClaimData chunkClaimData = new ChunkClaimData();
+        claimData.put(pos.toLong(), chunkClaimData);
+        IColonyManager.getInstance().addNewChunk(this, pos, chunkClaimData);
+        this.markDirty();
+        return chunkClaimData;
     }
 }
