@@ -37,7 +37,6 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -55,6 +54,7 @@ import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResol
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.ChunkDataHelper;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
@@ -106,11 +106,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * Breeding setting.
      */
     public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "breeding"));
-
-    /**
-     * Feeding setting.
-     */
-    public static final ISettingKey<BoolSetting> FEEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "feeding"));
 
     public static final ISettingKey<BoolSetting> USE_SHEARS = new SettingKey<>(BoolSetting.class, new ResourceLocation(Constants.MOD_ID, "useshears"));
 
