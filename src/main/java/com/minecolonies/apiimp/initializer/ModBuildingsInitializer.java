@@ -109,6 +109,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(CHICKENHERDER_HERDING)
           .addBuildingModuleProducer(CHICKENHERDER_SETTINGS_BREEDING)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.combatAcademy = DEFERRED_REGISTER.register(ModBuildings.COMBAT_ACADEMY_ID, () -> new BuildingEntry.Builder()
@@ -156,6 +157,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(COWHERDER_HERDING)
           .addBuildingModuleProducer(COWHERDER_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.crusher = DEFERRED_REGISTER.register(ModBuildings.CRUSHER_ID, () -> new BuildingEntry.Builder()
@@ -290,6 +292,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(SHEPERD_HERDING)
           .addBuildingModuleProducer(SHEPERD_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.sifter = DEFERRED_REGISTER.register(ModBuildings.SIFTER_ID, () -> new BuildingEntry.Builder()
@@ -350,6 +353,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(SWINEHERDER_HERDING)
           .addBuildingModuleProducer(SWINEHERDER_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.townHall = DEFERRED_REGISTER.register(ModBuildings.TOWNHALL_ID, () -> new BuildingEntry.Builder()
@@ -518,6 +522,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(RABBITHERDER_HERDING)
           .addBuildingModuleProducer(RABBITHERDER_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.concreteMixer = DEFERRED_REGISTER.register(ModBuildings.CONCRETE_ID, () -> new BuildingEntry.Builder()
