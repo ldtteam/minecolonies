@@ -29,7 +29,7 @@ public class AssignGuardMessage extends AbstractColonyServerMessage
     private boolean assign;
 
     /**
-     * Default constructor.
+     * Deserialization constructor.
      */
     public AssignGuardMessage()
     {

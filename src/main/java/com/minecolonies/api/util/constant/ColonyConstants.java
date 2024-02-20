@@ -45,6 +45,11 @@ public final class ColonyConstants
     public static final int UPDATE_SUBSCRIBERS_INTERVAL = 20;
 
     /**
+     * How often the travelers get updated in ticks.
+     */
+    public static final int UPDATE_TRAVELING_INTERVAL = 20;
+
+    /**
      * How often the colony state gets updated in ticks.
      */
     public static final int UPDATE_STATE_INTERVAL   = 100;

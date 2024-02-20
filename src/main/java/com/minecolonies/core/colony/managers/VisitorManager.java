@@ -251,7 +251,7 @@ public class VisitorManager implements IVisitorManager
             spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
               newVisitor,
               colony.getWorld(),
-              BlockPosUtil.getSurroundingEmptyBlock(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition(), 1, 2));
+              BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition()));
         }
     }
 

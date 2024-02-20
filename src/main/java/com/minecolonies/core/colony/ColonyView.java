@@ -1588,4 +1588,10 @@ public final class ColonyView implements IColonyView
     {
         return null;
     }
+
+    @Override
+    public ITravelingManager getTravelingManager()
+    {
+        return null;
+    }
 }

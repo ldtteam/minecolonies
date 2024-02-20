@@ -20,7 +20,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraftforge.common.extensions.IForgeItemStack;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -52,6 +51,11 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     private static final int EXPEDITION_INVENTORY_SIZE = 27;
 
     /**
+     * Random instance.
+     */
+    private static final Random random = new Random();
+
+    /**
      * The inventory for the expedition.
      */
     private final ItemStackHandler inventory = new ItemStackHandler(EXPEDITION_INVENTORY_SIZE);
@@ -59,13 +63,12 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     /**
      * The expedition type for this colony expedition.
      */
-    private ColonyExpeditionType expeditionType;
+    private ResourceLocation expeditionTypeId;
 
     /**
      * Contains a set of items that still have yet to be found.
      */
-    @Nullable
-    private Deque<ItemStack> remainingItems;
+    private Deque<ItemStack> remainingItems = new ArrayDeque<>();
 
     /**
      * The minimum time that the expedition is able to end at.
@@ -85,12 +88,24 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     /**
      * Create a new colony expedition event.
      *
-     * @param colony     the colony instance.
-     * @param expedition the expedition instance.
+     * @param colony         the colony instance.
+     * @param expeditionType the expedition type.
+     * @param expedition     the expedition instance.
      */
-    public ColonyExpeditionEvent(final IColony colony, final IExpedition expedition)
+    public ColonyExpeditionEvent(final IColony colony, final ColonyExpeditionType expeditionType, final IExpedition expedition)
     {
         super(colony.getEventManager().getAndTakeNextEventID(), colony, expedition);
+        expedition.getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
+
+        expeditionTypeId = expeditionType.getId();
+        final LootParams lootParams = new Builder((ServerLevel) colony.getWorld())
+                                        .withLuck(expeditionType.getDifficulty().getLuckLevel())
+                                        .create(LootContextParamSet.builder().build());
+
+        final LootTable lootTable = getColony().getWorld().getServer().getLootData().getLootTable(expeditionType.getLootTable());
+
+        // Copy the items, natively a Stack implementation, to a deque, so we can pop the first item off each colony tick.
+        remainingItems = new ArrayDeque<>(lootTable.getRandomItems(lootParams));
     }
 
     /**
@@ -130,12 +145,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     @Override
     public void onUpdate()
     {
-        // Skip the update entirely if we're not embarked just yet
-        if (!getExpedition().getStatus().equals(ExpeditionStatus.EMBARKED) || remainingItems == null)
-        {
-            return;
-        }
-
         // We have to continuously check if the minimum end time of the expedition has already passed
         if (!isMinimumTimeElapsed && endTime < getColony().getWorld().getGameTime())
         {
@@ -145,26 +154,26 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         // If the minimum time has passed and the loot table is empty, we can finish the expedition
         if (isMinimumTimeElapsed && isRemainingItemsEmpty)
         {
-            if (getExpedition().getActiveMembers().isEmpty())
+            if (expedition.getActiveMembers().isEmpty())
             {
-                getExpedition().setStatus(ExpeditionStatus.KILLED);
+                expedition.setStatus(ExpeditionStatus.KILLED);
                 return;
             }
 
-            final int chance = new Random().nextInt(100);
+            final int chance = random.nextInt(100);
             if (chance <= 2)
             {
-                getExpedition().setStatus(ExpeditionStatus.LOST);
+                expedition.setStatus(ExpeditionStatus.LOST);
             }
             else
             {
-                getExpedition().setStatus(ExpeditionStatus.RETURNED);
+                expedition.setStatus(ExpeditionStatus.RETURNED);
             }
             return;
         }
 
         // If the deque is empty, we can set the flag for loot table empty to be done.
-        if (remainingItems.isEmpty())
+        if (remainingItems == null || remainingItems.isEmpty())
         {
             isRemainingItemsEmpty = true;
             return;
@@ -186,51 +195,36 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         }
         else
         {
-            getExpedition().rewardFound(nextItem);
+            expedition.rewardFound(nextItem);
         }
     }
 
     @Override
     public void onStart()
     {
+        super.onStart();
         final Level world = getColony().getWorld();
         if (!world.isClientSide)
         {
             endTime = world.getGameTime() + TICKS_HOUR;
-
-            getExpedition().getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
-
-            final LootParams lootParams = new Builder((ServerLevel) world)
-                                            .withLuck(expeditionType.getDifficulty().getLuckLevel())
-                                            .create(LootContextParamSet.builder().build());
-
-            final LootTable lootTable = getColony().getWorld().getServer().getLootData().getLootTable(expeditionType.getLootTable());
-
-            // Copy the items, natively a Stack implementation, to a deque, so we can pop the first item off each colony tick.
-            remainingItems = new ArrayDeque<>(lootTable.getRandomItems(lootParams));
         }
     }
 
     @Override
     public void onFinish()
     {
-        getColony().getExpeditionManager().addExpedition(getExpedition(), ColonyExpeditionEvent.class);
+        getColony().getExpeditionManager().addExpedition(expedition, ColonyExpeditionEvent.class);
     }
 
     @Override
     public CompoundTag serializeNBT()
     {
         final CompoundTag compound = new CompoundTag();
-        compound.putString(TAG_EXPEDITION_TYPE, expeditionType.getId().toString());
+        compound.putString(TAG_EXPEDITION_TYPE, expeditionTypeId.toString());
         compound.put(TAG_INVENTORY, inventory.serializeNBT());
-
-        if (remainingItems != null)
-        {
-            compound.put(TAG_REMAINING_ITEMS, remainingItems.stream()
-                                                .map(IForgeItemStack::serializeNBT)
-                                                .collect(NBTUtils.toListNBT()));
-        }
-
+        compound.put(TAG_REMAINING_ITEMS, remainingItems.stream()
+                                            .map(IForgeItemStack::serializeNBT)
+                                            .collect(NBTUtils.toListNBT()));
         compound.putLong(TAG_END_TIME, endTime);
         compound.putBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED, isMinimumTimeElapsed);
         compound.putBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY, isRemainingItemsEmpty);
@@ -240,16 +234,11 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     @Override
     public void deserializeNBT(final CompoundTag compoundTag)
     {
-        expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(new ResourceLocation(compoundTag.getString(TAG_EXPEDITION_TYPE)));
+        expeditionTypeId = new ResourceLocation(compoundTag.getString(TAG_EXPEDITION_TYPE));
         inventory.deserializeNBT(compoundTag.getCompound(TAG_INVENTORY));
-
-        if (compoundTag.contains(TAG_REMAINING_ITEMS))
-        {
-            remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND))
-                               .map(ItemStack::of)
-                               .collect(Collectors.toCollection(ArrayDeque::new));
-        }
-
+        remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND))
+                           .map(ItemStack::of)
+                           .collect(Collectors.toCollection(ArrayDeque::new));
         endTime = compoundTag.getLong(TAG_END_TIME);
         isMinimumTimeElapsed = compoundTag.getBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED);
         isRemainingItemsEmpty = compoundTag.getBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY);

@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.expeditions;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpedition;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.function.TriFunction;
@@ -20,6 +21,11 @@ public abstract class AbstractExpeditionEvent implements IColonyEvent
     private static final String TAG_EXPEDITION = "expedition";
 
     /**
+     * The expedition instance.
+     */
+    protected final IExpedition expedition;
+
+    /**
      * The event ID.
      */
     private final int id;
@@ -28,11 +34,6 @@ public abstract class AbstractExpeditionEvent implements IColonyEvent
      * The colony this event is for.
      */
     private final IColony colony;
-
-    /**
-     * The expedition instance.
-     */
-    private final IExpedition expedition;
 
     /**
      * Internal constructor.
@@ -83,6 +84,12 @@ public abstract class AbstractExpeditionEvent implements IColonyEvent
         return id;
     }
 
+    @Override
+    public void onStart()
+    {
+        expedition.setStatus(ExpeditionStatus.EMBARKED);
+    }
+
     /**
      * Get the colony for this event.
      *
@@ -94,7 +101,7 @@ public abstract class AbstractExpeditionEvent implements IColonyEvent
     }
 
     /**
-     * Get the expedition instance belonging to this event.
+     * Get the expedition instance for this event.
      *
      * @return the expedition instance.
      */

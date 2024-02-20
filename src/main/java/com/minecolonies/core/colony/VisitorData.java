@@ -6,12 +6,10 @@ import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.entity.visitor.IVisitorExtraData;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +76,8 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public @NotNull IVisitorType getVisitorType()
+    @NotNull
+    public IVisitorType getVisitorType()
     {
         return visitorType;
     }
@@ -107,33 +106,9 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public void updateEntityIfNecessary()
+    protected void respawnAfterUpdate(final BlockPos position)
     {
-        if (getEntity().isPresent())
-        {
-            final Entity entity = getEntity().get();
-            if (entity.isAlive() && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
-            {
-                return;
-            }
-        }
-
-        if (getLastPosition() != BlockPos.ZERO && (getLastPosition().getX() != 0 && getLastPosition().getZ() != 0) && WorldUtil.isEntityBlockLoaded(getColony().getWorld(),
-          getLastPosition()))
-        {
-            getColony().getVisitorManager().spawnOrCreateVisitor(visitorType, this, getColony().getWorld(), getLastPosition());
-        }
-        else if (getHomeBuilding() != null)
-        {
-            if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getHomeBuilding().getID()))
-            {
-                final BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(getColony().getWorld(), getHomeBuilding().getID());
-                if (spawnPos != null)
-                {
-                    getColony().getVisitorManager().spawnOrCreateVisitor(visitorType, this, getColony().getWorld(), spawnPos);
-                }
-            }
-        }
+        getColony().getVisitorManager().spawnOrCreateVisitor(visitorType, this, getColony().getWorld(), position);
     }
 
     @Override

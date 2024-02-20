@@ -1,14 +1,16 @@
 package com.minecolonies.core.colony.interactionhandling;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.ICitizen;
-import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IVisitorViewData;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.client.gui.visitor.expeditionary.MainWindowExpeditionary;
+import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionEvent;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -77,5 +79,36 @@ public class ExpeditionaryInteraction extends ServerCitizenInteraction
         }
 
         return !response.equals(returnAnswer);
+    }
+
+    @Override
+    public boolean isValid(final ICitizenData citizen)
+    {
+        if (!super.isValid(citizen))
+        {
+            return false;
+        }
+
+        if (!(citizen instanceof IVisitorData visitorData))
+        {
+            return false;
+        }
+
+        for (final IColonyEvent event : citizen.getColony().getEventManager().getEvents().values())
+        {
+            if (event instanceof ColonyExpeditionEvent expeditionEvent)
+            {
+                for (final IExpeditionMember member : expeditionEvent.getExpedition().getMembers())
+                {
+                    // If the leader of the input expedition is already present as part of another expedition, we can remove this interaction.
+                    if (new ExpeditionVisitorMember(visitorData).equals(member))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }

@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.expeditions;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import net.minecraft.nbt.CompoundTag;
@@ -43,6 +44,18 @@ public final class ExpeditionVisitorMember implements IExpeditionMember
         this.id = compound.getInt(TAG_ID);
         this.name = compound.getString(TAG_NAME);
         this.died = compound.getBoolean(TAG_DIED);
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param visitorData the visitor to create the expedition member for.
+     */
+    public ExpeditionVisitorMember(final IVisitorData visitorData)
+    {
+        this.id = visitorData.getId();
+        this.name = visitorData.getName();
+        this.died = false;
     }
 
     /**

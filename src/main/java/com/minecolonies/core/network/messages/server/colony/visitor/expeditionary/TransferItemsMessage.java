@@ -22,17 +22,36 @@ import java.util.Optional;
  */
 public class TransferItemsMessage extends AbstractColonyServerMessage
 {
+    /**
+     * The id of the visitor.
+     */
     private int visitorId;
 
+    /**
+     * The id of the expedition type.
+     */
     private ResourceLocation expeditionType;
 
+    /**
+     * The id of the requirement to fulfill.
+     */
     private ResourceLocation requirementId;
 
+    /**
+     * Deserialization constructor.
+     */
     public TransferItemsMessage()
     {
         super();
     }
 
+    /**
+     * Default constructor.
+     *
+     * @param visitorViewData the visitor view data.
+     * @param expeditionType  the expedition type.
+     * @param requirementId   the requirement to fulfill.
+     */
     public TransferItemsMessage(final IVisitorViewData visitorViewData, final ColonyExpeditionType expeditionType, final ResourceLocation requirementId)
     {
         super(visitorViewData.getColony());

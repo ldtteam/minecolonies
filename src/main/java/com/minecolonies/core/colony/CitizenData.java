@@ -871,15 +871,42 @@ public class CitizenData implements ICitizenData
             }
         }
 
+        // Check if we are traveling, we don't spawn an entity if we are traveling.
+        if (getColony().getTravelingManager().isTravelling(this))
+        {
+            return;
+        }
+
+        // Okay we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
+        final Optional<BlockPos> travelingTargetCandidate = getColony().getTravelingManager().getTravellingTargetFor(this);
+        if (travelingTargetCandidate.isPresent())
+        {
+            // We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
+            getColony().getTravelingManager().finishTravellingFor(this);
+            nextRespawnPos = travelingTargetCandidate.get();
+            lastPosition = nextRespawnPos;
+        }
+
         if (nextRespawnPos != null)
         {
-            colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), nextRespawnPos, true);
+            respawnAfterUpdate(nextRespawnPos);
             nextRespawnPos = null;
         }
         else
         {
-            colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
+            respawnAfterUpdate(lastPosition);
         }
+    }
+
+    /**
+     * Method called from {@link CitizenData#updateEntityIfNecessary()} to trigger a respawn of the entity
+     * at the given position.
+     *
+     * @param position the position to spawn at.
+     */
+    protected void respawnAfterUpdate(final BlockPos position)
+    {
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), position, true);
     }
 
     @Override

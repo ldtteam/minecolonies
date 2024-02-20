@@ -3,7 +3,6 @@ package com.minecolonies.api.entity.visitor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for extra visitor data.
@@ -23,7 +22,7 @@ public interface IVisitorExtraData<S> extends INBTSerializable<CompoundTag>
      *
      * @return the value.
      */
-    @Nullable
+    @NotNull
     S getValue();
 
     /**

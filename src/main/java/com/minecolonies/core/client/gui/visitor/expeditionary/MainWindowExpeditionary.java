@@ -22,6 +22,7 @@ import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
 import com.minecolonies.core.colony.expeditions.Expedition;
 import com.minecolonies.core.colony.expeditions.ExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
+import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType.Difficulty;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
@@ -385,11 +386,6 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      */
     private void startExpedition()
     {
-        if (true)
-        {
-            return;
-        }
-
         // Gather the inventory and the armor slots from the inventory.
         final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(visitorData.getInventory());
         for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
@@ -401,10 +397,11 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             }
         }
         expeditionBuilder.addEquipment(equipment);
+        expeditionBuilder.addMembers(List.of(new ExpeditionVisitorMember(visitorData)));
 
         final Expedition expedition = expeditionBuilder.build();
         expedition.setStatus(ExpeditionStatus.EMBARKED);
-        Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expedition));
+        Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expeditionType, expedition));
     }
 
     /**

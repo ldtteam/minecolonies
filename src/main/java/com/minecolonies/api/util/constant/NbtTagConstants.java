@@ -732,6 +732,14 @@ public final class NbtTagConstants
     public static final String TAG_SUPPLIER      = "supplier";
 
     /**
+     * Traveling nbt tags.
+     */
+    public static final String TAG_INITIAL_TRAVEL_TIME   = "initialTravelTime";
+    public static final String TAG_REMAINING_TRAVEL_TIME = "remainingTravelTime";
+    public static final String TAG_CAN_RECALL            = "canRecall";
+    public static final String TRAVELER_DATA             = "travelerData";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

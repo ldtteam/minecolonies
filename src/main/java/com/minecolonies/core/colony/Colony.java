@@ -197,6 +197,11 @@ public class Colony implements IColony
     private final IExpeditionManager expeditionManager = new ExpeditionManager(this);
 
     /**
+     * The traveling manager used for traveling large distances
+     */
+    private final TravelingManager travelingManager = new TravelingManager(this);
+
+    /**
      * The Positions which players can freely interact.
      */
     private ImmutableSet<BlockPos> freePositions = ImmutableSet.of();
@@ -462,6 +467,7 @@ public class Colony implements IColony
         workManager.onColonyTick(this);
         reproductionManager.onColonyTick(this);
         questManager.onColonyTick();
+        travelingManager.onTick();
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)
@@ -1950,6 +1956,12 @@ public class Colony implements IColony
     public IExpeditionManager getExpeditionManager()
     {
         return expeditionManager;
+    }
+
+    @Override
+    public ITravelingManager getTravelingManager()
+    {
+        return travelingManager;
     }
 
     @Override

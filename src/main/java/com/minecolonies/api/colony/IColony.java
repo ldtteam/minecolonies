@@ -486,9 +486,17 @@ public interface IColony
 
     /**
      * Get the expedition manager of the colony.
+     *
      * @return the expedition manager.
      */
     IExpeditionManager getExpeditionManager();
+
+    /**
+     * Get the traveling manager used for traveling large distances.
+     *
+     * @return the travelling manager.
+     */
+    ITravelingManager getTravelingManager();
 
     /**
      * Get citizen from colony.

@@ -17,13 +17,15 @@ public abstract class AbstractVisitorExtraData<S> implements IVisitorExtraData<S
     }
 
     @Override
-    public final @NotNull String getKey()
+    @NotNull
+    public final String getKey()
     {
         return key;
     }
 
     @Override
-    public final @NotNull S getValue()
+    @NotNull
+    public final S getValue()
     {
         return value;
     }
