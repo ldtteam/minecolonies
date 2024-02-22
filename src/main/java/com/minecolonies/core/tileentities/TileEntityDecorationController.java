@@ -305,7 +305,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     @Override
     public void mirror(final Mirror mirror)
     {
-        this.rotMir.mirrorate(mirror);
+        this.rotMir = this.rotMir.mirrorate(mirror);
     }
 
     /**
