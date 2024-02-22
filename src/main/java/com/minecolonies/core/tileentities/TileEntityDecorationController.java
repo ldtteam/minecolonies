@@ -3,19 +3,20 @@ package com.minecolonies.core.tileentities;
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -51,14 +52,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     private BlockPos corner2 = BlockPos.ZERO;
 
     /**
-     * The used rotation.
+     * The used rotation/mirror.
      */
-    private Rotation rotation = Rotation.NONE;
-
-    /**
-     * The used mirror.
-     */
-    private boolean mirror;
+    private RotationMirror rotMir = RotationMirror.NONE;
 
     /**
      * Map of block positions relative to TE pos and string tags
@@ -218,8 +214,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     {
         super.load(compound);
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
-        this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
-        this.mirror = compound.getBoolean(TAG_MIRROR);
+        this.rotMir = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)],
+                compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE);
         if(compound.contains(TAG_PATH))
         {
             this.schematicPath = compound.getString(TAG_PATH);
@@ -248,8 +244,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     {
         super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
-        compound.putInt(TAG_ROTATION, this.rotation.ordinal());
-        compound.putBoolean(TAG_MIRROR, this.mirror);
+        compound.putInt(TAG_ROTATION, this.rotMir.rotation().ordinal());
+        compound.putBoolean(TAG_MIRROR, this.rotMir.isMirrored());
         compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
         compound.putString(TAG_PATH, schematicPath == null ? "" : schematicPath);
         compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);
@@ -303,13 +299,13 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     @Override
     public void rotate(final Rotation rotationIn)
     {
-        this.rotation = rotationIn;
+        this.rotMir = this.rotMir.rotate(rotationIn);
     }
 
     @Override
     public void mirror(final Mirror mirror)
     {
-        this.mirror = mirror != Mirror.NONE;
+        this.rotMir.mirrorate(mirror);
     }
 
     /**
@@ -318,7 +314,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
      */
     public Rotation getRotation()
     {
-        return rotation;
+        return this.rotMir.rotation();
     }
 
     /**
@@ -327,6 +323,6 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
      */
     public boolean getMirror()
     {
-        return this.mirror;
+        return this.rotMir.isMirrored();
     }
 }
