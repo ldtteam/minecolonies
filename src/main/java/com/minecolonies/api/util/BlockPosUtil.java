@@ -480,6 +480,94 @@ public final class BlockPosUtil
     }
 
     /**
+     * Manhatten distance
+     */
+    public static int distManhattan(final BlockPos pos, final int x2, final int y2, final int z2)
+    {
+        int xDist = Math.abs(pos.getX() - x2);
+        int yDist = Math.abs(pos.getY() - y2);
+        int zDist = Math.abs(pos.getZ() - z2);
+        return xDist + yDist + zDist;
+    }
+
+    /**
+     * Manhatten distance
+     */
+    public static int distManhattan(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        int xDist = Math.abs(x1 - x2);
+        int yDist = Math.abs(y1 - y2);
+        int zDist = Math.abs(z1 - z2);
+        return xDist + yDist + zDist;
+    }
+
+    /**
+     * Square distance
+     */
+    public static int distSqr(final BlockPos pos, final BlockPos pos2)
+    {
+        int xDist = pos.getX() - pos2.getX();
+        int yDist = pos.getY() - pos2.getY();
+        int zDist = pos.getZ() - pos2.getZ();
+        return xDist * xDist + yDist * yDist + zDist * zDist;
+    }
+
+    /**
+     * Square distance
+     */
+    public static int distSqr(final BlockPos pos, final int x2, final int y2, final int z2)
+    {
+        int xDist = pos.getX() - x2;
+        int yDist = pos.getY() - y2;
+        int zDist = pos.getZ() - z2;
+        return xDist * xDist + yDist * yDist + zDist * zDist;
+    }
+
+    /**
+     * Square distance
+     */
+    public static int distSqr(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        int xDist = x1 - x2;
+        int yDist = y1 - y2;
+        int zDist = z1 - z2;
+        return xDist * xDist + yDist * yDist + zDist * zDist;
+    }
+
+    /**
+     * Euclidean distance
+     */
+    public static double dist(final BlockPos pos, final int x2, final int y2, final int z2)
+    {
+        int xDist = pos.getX() - x2;
+        int yDist = pos.getY() - y2;
+        int zDist = pos.getZ() - z2;
+        return Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+    }
+
+    /**
+     * Euclidean distance
+     */
+    public static double dist(final BlockPos pos, final BlockPos pos2)
+    {
+        int xDist = pos.getX() - pos2.getX();
+        int yDist = pos.getY() - pos2.getY();
+        int zDist = pos.getZ() - pos2.getZ();
+        return Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+    }
+
+    /**
+     * Euclidean distance
+     */
+    public static double dist(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        int xDist = x1 - x2;
+        int yDist = y1 - y2;
+        int zDist = z1 - z2;
+        return Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+    }
+
+    /**
      * Returns a radial bounding box aligned to chunk boundaries.  Note that the Y coordinate
      * is also aligned to chunk-like sizes; this does not return full world height.  (It also
      * might return Y coordinates outside the world limits, so clip before using if needed.)

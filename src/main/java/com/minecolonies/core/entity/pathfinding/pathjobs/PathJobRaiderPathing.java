@@ -4,14 +4,15 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.colony.managers.RaidManager;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -55,49 +56,51 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return Math.sqrt(direction.distSqr(pos));
+        return BlockPosUtil.dist(direction, x, y, z);
     }
 
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (start.distSqr(n.pos) < 50 * 50)
+        if (BlockPosUtil.distSqr(start, n.x, n.y, n.z) < 50 * 50)
         {
             return false;
         }
 
-        return (direction.distSqr(n.pos) < 50 * 50) && RaidManager.isValidSpawnPoint(buildings, n.pos);
+        return (BlockPosUtil.distSqr(direction, n.x, n.y, n.z) < 50 * 50) && RaidManager.isValidSpawnPoint(buildings, tempWorldPos.set(n.x, n.y, n.z));
     }
 
     @Override
     protected double getNodeResultScore(final MNode n)
     {
-        return Math.sqrt(direction.distSqr(n.pos));
+        return BlockPosUtil.dist(direction, n.x, n.y, n.z);
     }
 
     @Override
-    protected boolean isPassable(final BlockPos pos, final boolean head, final MNode currentnode)
+    protected boolean isPassable(final int x, final int y, final int z, final boolean head, final MNode currentnode)
     {
         return true;
     }
 
     @Override
-    protected boolean onLadderGoingDown(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
+    protected boolean onLadderGoingDown(@NotNull final MNode currentNode, final int dX, final int dY, final int dZ)
     {
         return !currentNode.isSwimming();
     }
 
     @Override
-    protected boolean onLadderGoingUp(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
+    protected boolean onLadderGoingUp(@NotNull final MNode currentNode, final int dX, final int dY, final int dZ)
     {
-        if (SurfaceType.getSurfaceType(world, world.getBlockState(currentNode.pos), currentNode.pos) == SurfaceType.WALKABLE)
+        if (SurfaceType.getSurfaceType(cachedBlockLookup,
+          cachedBlockLookup.getBlockState(currentNode.x, currentNode.y, currentNode.z),
+          tempWorldPos.set(currentNode.x, currentNode.y, currentNode.z)) == SurfaceType.WALKABLE)
         {
             return true;
         }
 
-        if (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0)
+        if (dY >= 0 || dX != 0 || dZ != 0)
         {
             if (currentNode.isLadder())
             {
@@ -107,7 +110,8 @@ public class PathJobRaiderPathing extends AbstractPathJob
             for (final Direction dir : HORIZONTAL_DIRS)
             {
                 final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
-                if (BlockUtils.isAnySolid(world.getBlockState(currentNode.pos.relative(dir))) && Blocks.LADDER.canSurvive(toPlace, world, currentNode.pos))
+                if (BlockUtils.isAnySolid(cachedBlockLookup.getBlockState(currentNode.x + dir.getStepX(), currentNode.y + dir.getStepY(), currentNode.z + dir.getStepZ()))
+                      && Blocks.LADDER.canSurvive(toPlace, world, tempWorldPos.set(currentNode.x, currentNode.y, currentNode.z)))
                 {
                     return true;
                 }
@@ -118,19 +122,20 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected int getGroundHeight(final MNode parent, @NotNull final BlockPos pos)
+    protected int getGroundHeight(final MNode parent, final int x, final int y, final int z)
     {
-        final int height = super.getGroundHeight(parent, pos);
-        if (height != pos.getY())
+        final int height = super.getGroundHeight(parent, x, y, z);
+        if (height != y)
         {
             addCost = 0.5;
         }
 
-        if ((parent.pos.getX() - pos.getX() == 0 && parent.pos.getZ() - pos.getZ() == 0)
-              || (Math.abs(height - pos.getY()) > 1) && SurfaceType.getSurfaceType(world, world.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE)
+        if ((parent.x - x == 0 && parent.z - z == 0)
+              || (Math.abs(height - y) > 1)
+                   && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(x, y - 1, z), tempWorldPos.set(x, y - 1, z)) == SurfaceType.WALKABLE)
         {
             addCost = 3.5;
-            return pos.getY();
+            return y;
         }
 
         return height;
@@ -138,7 +143,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
 
     @Override
     protected double computeCost(
-      @NotNull final BlockPos dPos,
+      final int dX, final int dY, final int dZ,
       final boolean isSwimming,
       final boolean onPath,
       final boolean onRails,
@@ -146,20 +151,20 @@ public class PathJobRaiderPathing extends AbstractPathJob
       final boolean swimStart,
       final boolean corner,
       final BlockState state,
-      final BlockPos blockPos)
+      final int x, final int y, final int z)
     {
         double modifier = addCost;
         addCost = 1.0;
-        if (!super.isPassable(blockPos, false, null))
+        if (!super.isPassable(x, y, z, false, null))
         {
             modifier *= THROUGH_BLOCK_COST;
         }
 
-        if (!corner && SurfaceType.getSurfaceType(world, world.getBlockState(blockPos.below()), blockPos.below()) != SurfaceType.WALKABLE)
+        if (!corner && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(x, y - 1, z), tempWorldPos.set(x, y - 1, z)) != SurfaceType.WALKABLE)
         {
             modifier *= THROUGH_BLOCK_COST;
         }
 
-        return super.computeCost(dPos, isSwimming, onPath, onRails, railsExit, swimStart, corner, state, blockPos) * modifier;
+        return super.computeCost(dX, dY, dZ, isSwimming, onPath, onRails, railsExit, swimStart, corner, state, x, y, z) * modifier;
     }
 }

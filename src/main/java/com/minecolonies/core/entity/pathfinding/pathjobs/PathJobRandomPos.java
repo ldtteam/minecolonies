@@ -7,13 +7,13 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,20 +135,20 @@ public class PathJobRandomPos extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return Math.sqrt(destination.distSqr(new BlockPos(pos.getX(), pos.getY(), pos.getZ())));
+        return BlockPosUtil.dist(destination, x, y, z);
     }
 
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        if (random.nextInt(minDistFromStart*minDistFromStart) == 0
-              && isInRestrictedArea(n.pos)
-              && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
-              && SurfaceType.getSurfaceType(world, world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
-              && (maxDistToDest == -1 || destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
-              && !SurfaceType.isWater(world, n.pos.below()))
+        if (random.nextInt(minDistFromStart * minDistFromStart) == 0
+              && isInRestrictedArea(n.x, n.y, n.z)
+              && BlockPosUtil.distSqr(start, n.x, n.y, n.z) > minDistFromStart * minDistFromStart
+              && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z)) == SurfaceType.WALKABLE
+              && (maxDistToDest == -1 || BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < this.maxDistToDest * this.maxDistToDest)
+              && !SurfaceType.isWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z)))
         {
             return true;
         }

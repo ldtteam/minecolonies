@@ -1,13 +1,13 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +25,8 @@ public class PathJobMoveToLocation extends AbstractPathJob
     private final        BlockPos destination;
     // 0 = exact match
     private              float    destinationSlack           = DESTINATION_SLACK_NONE;
+
+    // TODO: Adjust and scale heuristics, overestimate for large distances to lower cost & increase reachability
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -58,7 +60,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination) != destination.getY())
+        if (getGroundHeight(null, destination.getX(), destination.getY(), destination.getZ()) != destination.getY())
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
@@ -73,9 +75,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return Math.sqrt(destination.distSqr(pos));
+        return BlockPosUtil.distManhattan(destination, x, y, z);
     }
 
     /**
@@ -89,16 +91,16 @@ public class PathJobMoveToLocation extends AbstractPathJob
     {
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
-            return n.pos.getX() == destination.getX()
-                     && n.pos.getY() == destination.getY()
-                     && n.pos.getZ() == destination.getZ();
+            return n.x == destination.getX()
+                     && n.y == destination.getY()
+                     && n.z == destination.getZ();
         }
 
-        if (n.pos.getY() == destination.getY() - 1)
+        if (n.y == destination.getY() - 1)
         {
-            return destination.closerThan(new Vec3i(n.pos.getX(), destination.getY(), n.pos.getZ()), DESTINATION_SLACK_ADJACENT);
+            return BlockPosUtil.distSqr(destination, n.x, destination.getY(), n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
         }
-        return destination.closerThan(n.pos, DESTINATION_SLACK_ADJACENT);
+        return BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
     }
 
     /**
@@ -111,6 +113,6 @@ public class PathJobMoveToLocation extends AbstractPathJob
     protected double getNodeResultScore(@NotNull final MNode n)
     {
         //  For Result Score lower is better
-        return destination.distManhattan(n.pos);
+        return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z);
     }
 }
