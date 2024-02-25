@@ -399,6 +399,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             case CLEAR_WATER:
                 //water
                 result = placer.clearWaterStep(world, progress);
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    this.storeProgressPos(NULL_POS, structurePlacer.getB().getStage());
+                }
                 break;
             case CLEAR_NON_SOLIDS:
                 // clear air

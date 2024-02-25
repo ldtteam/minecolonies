@@ -1699,6 +1699,17 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
     }
 
+    @NotNull
+    @Override
+    public Iterable<ItemStack> getAllSlots()
+    {
+        if (citizenData != null)
+        {
+            return citizenData.getInventory().getIterableArmorAndHandInv();
+        }
+        return super.getAllSlots();
+    }
+
     @Override
     public int getArmorValue()
     {

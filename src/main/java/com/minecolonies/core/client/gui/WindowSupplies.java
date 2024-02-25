@@ -108,7 +108,6 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                 blueprint -> {
                     if (blueprint == null)
                     {
-                        cancelClicked();
                         return;
                     }
                     RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);

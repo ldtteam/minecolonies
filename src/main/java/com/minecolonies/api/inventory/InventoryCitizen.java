@@ -1,5 +1,6 @@
 package com.minecolonies.api.inventory;
 
+import com.google.common.collect.Iterables;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_INV_SLOTS;
@@ -664,5 +666,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
         }
 
         mainInventory.set(slot, stack);
+    }
+
+    /**
+     * Get an iterable of armor and hand inventory.
+     * @return the itemstack iterable.
+     */
+    public Iterable<ItemStack> getIterableArmorAndHandInv()
+    {
+        return Iterables.concat(armorInventory, List.of(getStackInSlot(mainItem), getStackInSlot(offhandItem)));
     }
 }
