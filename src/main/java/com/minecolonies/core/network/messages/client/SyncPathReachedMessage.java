@@ -75,9 +75,12 @@ public class SyncPathReachedMessage implements IMessage
     {
         for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath)
         {
-            if (reached.contains(node.pos))
+            for (final BlockPos reachedPos : reached)
             {
-                node.setReachedByWorker(true);
+                if (reachedPos.getX() == node.x && reachedPos.getY() == node.y && reachedPos.getZ() == node.z)
+                {
+                    node.setReachedByWorker(true);
+                }
             }
         }
     }

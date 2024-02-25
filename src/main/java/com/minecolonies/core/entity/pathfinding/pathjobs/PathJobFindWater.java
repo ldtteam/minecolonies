@@ -1,18 +1,18 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Find and return a path to the nearest water. Created: March 25, 2016
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 public class PathJobFindWater extends AbstractPathJob
 {
     private static final int                                  MIN_DISTANCE = 40;
-    private static final int                                  MAX_RANGE    = 250;
+    private static final int                                  MAX_RANGE    = 100;
     private final        BlockPos                             hutLocation;
     @NotNull
     private final        ArrayList<Tuple<BlockPos, BlockPos>> ponds;
@@ -60,12 +60,13 @@ public class PathJobFindWater extends AbstractPathJob
         return (WaterPathResult) super.getResult();
     }
 
+    // TODO: recheck heuristic
     @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        final int dx = pos.getX() - hutLocation.getX();
-        final int dy = pos.getY() - hutLocation.getY();
-        final int dz = pos.getZ() - hutLocation.getZ();
+        final int dx = x - hutLocation.getX();
+        final int dy = y - hutLocation.getY();
+        final int dz = z - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D;
@@ -75,14 +76,14 @@ public class PathJobFindWater extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        if (squareDistance(hutLocation, n.pos) > MAX_RANGE)
+        if (BlockPosUtil.distSqr(hutLocation, n.x, n.y, n.z) > MAX_RANGE * MAX_RANGE)
         {
             return false;
         }
 
         if (isWater(n))
         {
-            getResult().parent = n.pos;
+            getResult().parent = new BlockPos(n.x, n.y, n.z);
             getResult().isEmpty = ponds.isEmpty();
             return true;
         }
@@ -103,37 +104,31 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (world.getBlockState(n.pos).getBlock() != Blocks.WATER && world.getBlockState(n.pos.below()).getBlock() != Blocks.WATER)
+        if (cachedBlockLookup.getBlockState(n.x, n.y, n.z).getBlock() != Blocks.WATER && cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z).getBlock() != Blocks.WATER)
         {
-            if (n.pos.getX() == n.parent.pos.getX())
+            if (n.x == n.parent.x)
             {
-                final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
-                return Pond.checkWater(world, n.pos.offset(0, -1, dz), getResult()) || Pond.checkWater(world, n.pos.offset(-1, -1, 0), getResult()) || Pond.checkWater(world,
-                  n.pos.offset(1, -1, 0),
+                final int dz = n.z > n.parent.z ? 1 : -1;
+                return Pond.checkWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z + dz), getResult()) || Pond.checkWater(cachedBlockLookup,
+                  tempWorldPos.set(n.x - 1, n.y - 1, n.z),
+                  getResult()) || Pond.checkWater(cachedBlockLookup,
+                  tempWorldPos.set(n.x + 1, n.y - 1, n.z),
                   getResult());
             }
             else
             {
-                final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-                return Pond.checkWater(world, n.pos.offset(dx, -1, 0), getResult()) || Pond.checkWater(world, n.pos.offset(0, -1, -1), getResult()) || Pond.checkWater(world,
-                  n.pos.offset(0, -1, 1),
+                final int dx = n.x > n.parent.x ? 1 : -1;
+                return Pond.checkWater(cachedBlockLookup, tempWorldPos.set(n.x + dx, n.y - 1, n.z), getResult()) || Pond.checkWater(cachedBlockLookup,
+                  tempWorldPos.set(n.x, n.y - 1, n.z - 1),
+                  getResult()) || Pond.checkWater(cachedBlockLookup,
+                  tempWorldPos.set(n.x, n.y - 1, n.z + 1),
                   getResult());
             }
         }
 
-        return getResult().pond != null && !ponds.contains(new Tuple<>(n.pos, n.parent.pos)) && !pondsAreNear(ponds, n.pos);
-    }
-
-    /**
-     * Creates the distance to calculate it in a stream.
-     *
-     * @param range   the range.
-     * @param newPond the pond.
-     * @return a predicate of the position.
-     */
-    private static Predicate<BlockPos> generateDistanceFrom(final int range, @NotNull final BlockPos newPond)
-    {
-        return pond -> squareDistance(pond, newPond) < range;
+        // TODO: Recheck condition, might want a different data structure than a list<tuple> aswell? since creating a new tuple and searching the whole list is kinda slow
+        return getResult().pond != null && !ponds.contains(new Tuple<>(new BlockPos(n.x, n.y, n.z), new BlockPos(n.parent.x, n.parent.y, n.parent.z))) && !pondsAreNear(ponds,
+          tempWorldPos.set(n.x, n.y, n.z));
     }
 
     /**
@@ -149,8 +144,15 @@ public class PathJobFindWater extends AbstractPathJob
         {
             return false;
         }
-        @NotNull final Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
-        return ponds.stream().anyMatch(p -> compare.test(p.getB()));
+
+        for (Tuple<BlockPos, BlockPos> p : ponds)
+        {
+            if (squareDistance(p.getB(), newPond) < MIN_DISTANCE * MIN_DISTANCE)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

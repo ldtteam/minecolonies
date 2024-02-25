@@ -43,28 +43,29 @@ public class PathJobPathway extends AbstractPathJob
         setPathingOptions(new PathingOptions().withJumpCost(100).withStartSwimCost(30).withSwimCost(5).withCanSwim(true).withCanEnterDoors(true));
     }
 
+    // TODO: Before usage not thread safe chunk/cap access. Should be using passed along info
     @Override
-    protected double computeHeuristic(final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        final LevelChunk chunk = (LevelChunk) world.getChunk(pos.getX() >> 4, pos.getZ() >> 4);
+        final LevelChunk chunk = (LevelChunk) world.getChunk(x >> 4, z >> 4);
         if (ColonyUtils.getOwningColony(chunk) == colonyid)
         {
-            return Math.sqrt(end.distSqr(pos)) / (ColonyUtils.getAllClaimingBuildings(chunk).size() + 1);
+            return Math.sqrt(BlockPosUtil.distSqr(end.getX(), end.getY(), end.getZ(), x, y, z)) / (ColonyUtils.getAllClaimingBuildings(chunk).size() + 1);
         }
 
-        return Math.sqrt(end.distSqr(pos));
+        return Math.sqrt(BlockPosUtil.distSqr(end.getX(), end.getY(), end.getZ(), x, y, z));
     }
 
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        return (end.distSqr(n.pos) < 5 * 5);
+        return BlockPosUtil.distSqr(end, n.x, n.y, n.z) < 5 * 5;
     }
 
     @Override
     protected double getNodeResultScore(final MNode n)
     {
-        final double dist = Math.sqrt(end.distSqr(n.pos));
+        final double dist = BlockPosUtil.dist(end, n.x, n.y, n.z);
         if (dist < 15)
         {
             return n.getCost();
@@ -74,13 +75,13 @@ public class PathJobPathway extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(final BlockPos pos, final boolean head, final MNode currentnode)
+    protected boolean isPassable(final int x, final int y, final int z, final boolean head, final MNode currentnode)
     {
-        if (super.isPassable(pos, head, currentnode))
+        if (super.isPassable(x, y, z, head, currentnode))
         {
             for (final IBuilding building : buildings)
             {
-                if (BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), pos)
+                if (BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), tempWorldPos.set(x, y, z))
                       && !BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), end)
                       && !BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), start))
                 {
@@ -95,14 +96,14 @@ public class PathJobPathway extends AbstractPathJob
     }
 
     @Override
-    protected double calcAdditionalCost(final double stepCost, final MNode parent, final BlockPos pos, final BlockState state)
+    protected double calcAdditionalCost(final double stepCost, final MNode parent, final int x, final int y, final int z, final BlockState state)
     {
-        if (parent.parent != null && parent.pos.getX() == parent.parent.pos.getX() && pos.getX() != parent.pos.getX())
+        if (parent.parent != null && parent.x == parent.parent.x && x != parent.x)
         {
             return stepCost * 10;
         }
 
-        if (parent.parent != null && parent.pos.getZ() == parent.parent.pos.getZ() && pos.getZ() != parent.pos.getZ())
+        if (parent.parent != null && parent.z == parent.parent.z && z != parent.z)
         {
             return stepCost * 10;
         }

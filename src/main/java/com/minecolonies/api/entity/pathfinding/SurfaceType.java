@@ -7,6 +7,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.ShapeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -87,7 +88,7 @@ public enum SurfaceType
         }
 
         final VoxelShape shape = blockState.getShape(world, pos);
-        if (shape.max(Direction.Axis.Y) < 0.5 && isDangerous(world.getBlockState(pos.below())))
+        if (ShapeUtil.max(shape, Direction.Axis.Y) < 0.5 && isDangerous(world.getBlockState(pos.below())))
         {
             return SurfaceType.NOT_PASSABLE;
         }
@@ -97,7 +98,7 @@ public enum SurfaceType
             return SurfaceType.WALKABLE;
         }
 
-        if (shape.max(Direction.Axis.Y) > 1.0)
+        if (ShapeUtil.max(shape, Direction.Axis.Y) > 1.0)
         {
             return SurfaceType.NOT_PASSABLE;
         }
@@ -118,8 +119,8 @@ public enum SurfaceType
             return SurfaceType.DROPABLE;
         }
 
-        if ((BlockUtils.isAnySolid(blockState) && (shape.max(Direction.Axis.X) - shape.min(Direction.Axis.X)) > 0.75
-               && (shape.max(Direction.Axis.Z) - shape.min(Direction.Axis.Z)) > 0.75)
+        if ((BlockUtils.isAnySolid(blockState) && ShapeUtil.max(shape, Direction.Axis.X) - ShapeUtil.min(shape, Direction.Axis.X) > 0.75
+               && (ShapeUtil.max(shape, Direction.Axis.Z) - ShapeUtil.min(shape, Direction.Axis.Z)) > 0.75)
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
               || block instanceof FloatingCarpetBlock
               || block instanceof CarpetBlock)

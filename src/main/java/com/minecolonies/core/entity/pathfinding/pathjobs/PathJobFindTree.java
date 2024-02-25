@@ -52,7 +52,7 @@ public class PathJobFindTree extends AbstractPathJob
      * Fake goal when using restricted area
      */
     private final BlockPos boxCenter;
-    private final int dyntreesize;
+    private final int      dyntreesize;
 
     /**
      * AbstractPathJob constructor.
@@ -92,7 +92,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param home             the position of the worker hut.
      * @param startRestriction start of the restricted area.
      * @param endRestriction   end of the restricted area.
-     * @param excludedTrees       the trees the lj is not supposed to cut.
+     * @param excludedTrees    the trees the lj is not supposed to cut.
      * @param dyntreesize      the radius a dynamic tree must have
      * @param entity           the entity.
      * @param colony           the colony.
@@ -110,22 +110,22 @@ public class PathJobFindTree extends AbstractPathJob
       final LivingEntity entity)
     {
         super(world,
-            start,
-            startRestriction,
-            endRestriction,
-            (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5),
-            AREA_SHRINK,
-            false,
-            new TreePathResult(),
-            entity,
-            AbstractAdvancedPathNavigate.RestrictionType.XZ);
+          start,
+          startRestriction,
+          endRestriction,
+          (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5),
+          AREA_SHRINK,
+          false,
+          new TreePathResult(),
+          entity,
+          AbstractAdvancedPathNavigate.RestrictionType.XZ);
         this.excludedTrees = excludedTrees;
         this.hutLocation = home;
         this.colony = colony;
         this.dyntreesize = dyntreesize;
 
         final BlockPos size = startRestriction.subtract(endRestriction);
-        this.boxCenter = endRestriction.offset(size.getX()/2, size.getY()/2, size.getZ()/2);
+        this.boxCenter = endRestriction.offset(size.getX() / 2, size.getY() / 2, size.getZ() / 2);
     }
 
     @NotNull
@@ -136,9 +136,9 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return Math.sqrt(boxCenter == null ? pos.distSqr(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter));
+        return boxCenter == null ? BlockPosUtil.dist(hutLocation, x, y, z) * TIE_BREAKER : BlockPosUtil.dist(boxCenter, x, y, z);
     }
 
     @Override
@@ -149,15 +149,21 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isNearTree(@NotNull final MNode n)
     {
-        if (n.pos.getX() == n.parent.pos.getX())
+        if (n.parent == null)
         {
-            final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
-            return isTree(n.pos.offset(0, 0, dz)) || isTree(n.pos.offset(-1, 0, 0)) || isTree(n.pos.offset(1, 0, 0));
+            return false;
+        }
+
+        // TODO: Recheck logic
+        if (n.x == n.parent.x)
+        {
+            final int dz = n.z > n.parent.z ? 1 : -1;
+            return isTree(tempWorldPos.set(n.x, n.y, n.z + dz)) || isTree(tempWorldPos.set(n.x - 1, n.y, n.z)) || isTree(tempWorldPos.set(n.x + 1, n.y, n.z));
         }
         else
         {
-            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isTree(n.pos.offset(dx, 0, 0)) || isTree(n.pos.offset(0, 0, -1)) || isTree(n.pos.offset(0, 0, 1));
+            final int dx = n.x > n.parent.x ? 1 : -1;
+            return isTree(tempWorldPos.set(n.x + dx, n.y, n.z)) || isTree(tempWorldPos.set(n.x, n.y, n.z - 1)) || isTree(tempWorldPos.set(n.x, n.y, n.z + 1));
         }
     }
 
@@ -179,8 +185,8 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent, final boolean head)
+    protected boolean isPassable(@NotNull final BlockState block, final int x, final int y, final int z, final MNode parent, final boolean head)
     {
-        return super.isPassable(block, pos, parent, head) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, x, y, z, parent, head) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(x, y, z)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }
