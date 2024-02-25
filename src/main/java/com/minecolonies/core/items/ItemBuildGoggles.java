@@ -2,6 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.*;
@@ -10,12 +11,17 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.List;
 
 public class ItemBuildGoggles extends ArmorItem
 {
-    public static final ArmorMaterial GOGGLES =
-            new MineColoniesArmorMaterial("minecolonies:build_goggles", 2, new int[] {0, 0, 0, 0}, 20, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, Ingredient.EMPTY);
+    public static final ArmorMaterial GOGGLES = new MineColoniesArmorMaterial("minecolonies:build_goggles", 2, Util.make(new EnumMap<>(Type.class), map -> {
+        map.put(Type.BOOTS, 0);
+        map.put(Type.LEGGINGS, 0);
+        map.put(Type.CHESTPLATE, 0);
+        map.put(Type.HELMET, 0);
+    }), 20, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, 0.0F, () -> Ingredient.EMPTY);
 
     /**
      * Constructor
