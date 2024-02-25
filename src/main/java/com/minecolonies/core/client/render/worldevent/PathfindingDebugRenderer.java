@@ -1,15 +1,16 @@
 package com.minecolonies.core.client.render.worldevent;
 
 import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.joml.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -72,10 +73,10 @@ public class PathfindingDebugRenderer
     private static void debugDrawNode(final MNode n, final int argbColor, final WorldEventContext ctx)
     {
         ctx.poseStack.pushPose();
-        ctx.poseStack.translate(n.pos.getX() + 0.375d, n.pos.getY() + 0.375d, n.pos.getZ() + 0.375d);
+        ctx.poseStack.translate(n.x + 0.375d, n.y + 0.375d, n.z + 0.375d);
 
         final Entity entity = Minecraft.getInstance().getCameraEntity();
-        if (n.pos.closerThan(entity.blockPosition(), 5d))
+        if (BlockPosUtil.distSqr(entity.blockPosition(), n.x, n.y, n.z) < 5d * 5d)
         {
             renderDebugText(n, ctx);
         }
@@ -88,9 +89,9 @@ public class PathfindingDebugRenderer
         {
             final Matrix4f lineMatrix = ctx.poseStack.last().pose();
 
-            final float pdx = n.parent.pos.getX() - n.pos.getX() + 0.125f;
-            final float pdy = n.parent.pos.getY() - n.pos.getY() + 0.125f;
-            final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
+            final float pdx = n.parent.x - n.x + 0.125f;
+            final float pdy = n.parent.y - n.y + 0.125f;
+            final float pdz = n.parent.z - n.z + 0.125f;
 
             final VertexConsumer buffer = ctx.bufferSource.getBuffer(WorldRenderMacros.LINES);
 

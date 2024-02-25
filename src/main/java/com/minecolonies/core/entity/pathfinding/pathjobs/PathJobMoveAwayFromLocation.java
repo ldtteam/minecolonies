@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
@@ -89,13 +90,12 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * For MoveAwayFromLocation we want our heuristic to weight.
      *
-     * @param pos Position to compute heuristic from.
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return Math.sqrt(preferredDirection.distSqr(pos)) + 100 / Math.max(1, Math.sqrt(avoid.distSqr(pos)));
+        return Math.sqrt(BlockPosUtil.distSqr(preferredDirection, x, y, z) + 100 / Math.max(1, BlockPosUtil.dist(avoid, x, y, z)));
     }
 
     /**
@@ -107,7 +107,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        return Math.sqrt(avoid.distSqr(n.pos)) > avoidDistance;
+        return BlockPosUtil.dist(avoid, n.x, n.y, n.z) > avoidDistance;
     }
 
     /**
@@ -119,6 +119,6 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double getNodeResultScore(@NotNull final MNode n)
     {
-        return -avoid.distSqr(n.pos);
+        return -BlockPosUtil.distSqr(avoid, n.x, n.y, n.z);
     }
 }

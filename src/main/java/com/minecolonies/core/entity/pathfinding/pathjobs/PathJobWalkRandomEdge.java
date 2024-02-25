@@ -1,9 +1,10 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,15 +33,15 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return entity.get().blockPosition().distManhattan(pos);
+        return BlockPosUtil.distManhattan(entity.get().blockPosition(), x, y, z);
     }
 
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (start.getY() - n.pos.getY() > 3)
+        if (start.getY() - n.y > 3)
         {
             return false;
         }
@@ -49,7 +50,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
         {
             for (final Direction direction : Direction.Plane.HORIZONTAL)
             {
-                if (world.isEmptyBlock(n.pos.below().relative(direction)))
+                if (cachedBlockLookup.getBlockState(n.x + direction.getStepX(), n.y - 1 + direction.getStepY(), n.z + direction.getStepZ()).isAir())
                 {
                     return true;
                 }
@@ -62,6 +63,6 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     @Override
     protected double getNodeResultScore(final MNode n)
     {
-        return start.distManhattan(n.pos);
+        return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }
 }
