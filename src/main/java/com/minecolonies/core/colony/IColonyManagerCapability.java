@@ -149,11 +149,16 @@ public interface IColonyManagerCapability
             {
                 final CompoundTag compound = (CompoundTag) nbt;
 
-                if (!compound.contains(TAG_COLONIES) || !compound.contains(TAG_COLONY_MANAGER))
+                if (!compound.contains(TAG_COLONIES))
                 {
                     BackUpHelper.loadMissingColonies();
                     BackUpHelper.loadManagerBackup();
                     return;
+                }
+
+                if (overworld && !compound.contains(TAG_COLONY_MANAGER))
+                {
+                    BackUpHelper.loadManagerBackup();
                 }
 
                 // Load all colonies from Nbt
