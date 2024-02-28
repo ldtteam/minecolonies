@@ -7,9 +7,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.util.BackUpHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
@@ -151,7 +151,6 @@ public interface IColonyManagerCapability
 
                 if (!compound.contains(TAG_COLONIES))
                 {
-                    BackUpHelper.loadMissingColonies();
                     BackUpHelper.loadManagerBackup();
                     return;
                 }
@@ -172,9 +171,6 @@ public interface IColonyManagerCapability
                         instance.addColony(colony);
                     }
                 }
-
-                // Check if some colonies are missing
-                BackUpHelper.loadMissingColonies();
 
                 // Check colonies for duplicates causing issues.
                 for (final BlockPos pos : tempColonies.keySet())
@@ -203,7 +199,6 @@ public interface IColonyManagerCapability
             }
             else
             {
-                BackUpHelper.loadMissingColonies();
                 BackUpHelper.loadManagerBackup();
             }
         }
