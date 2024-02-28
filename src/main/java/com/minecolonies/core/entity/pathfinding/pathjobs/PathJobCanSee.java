@@ -1,12 +1,13 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,20 +38,20 @@ public class PathJobCanSee extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return searchingEntity.blockPosition().distManhattan(pos);
+        return BlockPosUtil.distManhattan(start.getX(), start.getY(), start.getZ(), x, y, z);
     }
 
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (end.getY() - n.pos.getY() > 2)
+        if (end.getY() - n.y > 2)
         {
             return false;
         }
 
-        return canSeeTargetFromPos(n.pos);
+        return canSeeTargetFromPos(tempWorldPos.set(n.x, n.y, n.z));
     }
 
     /**
@@ -63,7 +64,7 @@ public class PathJobCanSee extends AbstractPathJob
     protected double getNodeResultScore(@NotNull final MNode n)
     {
         //  For Result Score lower is better
-        return start.distManhattan(n.pos);
+        return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }
 
     private boolean canSeeTargetFromPos(final BlockPos pos)

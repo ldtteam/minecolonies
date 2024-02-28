@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.pathfinding;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +20,9 @@ public class MNode implements Comparable<MNode>
      * The position of the node.
      */
     @NotNull
-    public final BlockPos pos;
+    public final int x;
+    public final int y;
+    public final int z;
 
     /**
      * The hash of the node.
@@ -97,32 +98,32 @@ public class MNode implements Comparable<MNode>
     /**
      * Create initial Node.
      *
-     * @param pos       coordinates of node.
      * @param heuristic heuristic estimate.
      */
-    public MNode(@NotNull final BlockPos pos, final double heuristic)
+    public MNode(@NotNull final int posX, final int posY, final int posZ, final double heuristic)
     {
-        this(null, pos, 0, heuristic, heuristic);
+        this(null, posX, posY, posZ, 0, heuristic, heuristic);
     }
 
     /**
      * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate.
      *
      * @param parent    parent node arrives from.
-     * @param pos       coordinate of node.
      * @param cost      node cost.
      * @param heuristic heuristic estimate.
      * @param score     node total score.
      */
-    public MNode(@Nullable final MNode parent, @NotNull final BlockPos pos, final double cost, final double heuristic, final double score)
+    public MNode(@Nullable final MNode parent, @NotNull final int posX, final int posY, final int posZ, final double cost, final double heuristic, final double score)
     {
         this.parent = parent;
-        this.pos = pos;
+        this.x = posX;
+        this.y = posY;
+        this.z = posZ;
         this.steps = parent == null ? 0 : (parent.steps + 1);
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
-        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
+        this.hash = posX ^ ((posZ << HASH_A) | (posZ >> HASH_B)) ^ (posY << HASH_C);
     }
 
     /**
@@ -133,13 +134,15 @@ public class MNode implements Comparable<MNode>
     {
         if (byteBuf.readBoolean())
         {
-            this.parent = new MNode(byteBuf.readBlockPos(), 0);
+            this.parent = new MNode(byteBuf.readVarInt(), byteBuf.readVarInt(), byteBuf.readVarInt(), 0);
         }
-        this.pos = byteBuf.readBlockPos();
+        this.x = byteBuf.readVarInt();
+        this.y = byteBuf.readVarInt();
+        this.z = byteBuf.readVarInt();
         this.cost = byteBuf.readDouble();
         this.heuristic = byteBuf.readDouble();
         this.score = byteBuf.readDouble();
-        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
+        this.hash = x ^ ((z << HASH_A) | (z >> HASH_B)) ^ (y << HASH_C);
         this.isReachedByWorker = byteBuf.readBoolean();
     }
 
@@ -152,9 +155,13 @@ public class MNode implements Comparable<MNode>
         byteBuf.writeBoolean(this.parent != null);
         if (this.parent != null)
         {
-            byteBuf.writeBlockPos(this.parent.pos);
+            byteBuf.writeVarInt(this.parent.x);
+            byteBuf.writeVarInt(this.parent.y);
+            byteBuf.writeVarInt(this.parent.z);
         }
-        byteBuf.writeBlockPos(this.pos);
+        byteBuf.writeVarInt(this.x);
+        byteBuf.writeVarInt(this.y);
+        byteBuf.writeVarInt(this.z);
         byteBuf.writeDouble(this.cost);
         byteBuf.writeDouble(this.heuristic);
         byteBuf.writeDouble(this.score);
@@ -201,9 +208,9 @@ public class MNode implements Comparable<MNode>
         if (o != null && o.getClass() == this.getClass())
         {
             @Nullable final MNode other = (MNode) o;
-            return pos.getX() == other.pos.getX()
-                     && pos.getY() == other.pos.getY()
-                     && pos.getZ() == other.pos.getZ();
+            return x == other.x
+                     && y == other.y
+                     && z == other.z;
         }
 
         return false;
