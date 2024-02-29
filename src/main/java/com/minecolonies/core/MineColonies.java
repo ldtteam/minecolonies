@@ -135,12 +135,12 @@ public class MineColonies
         {
             forgeBus.register(ClientEventHandler.class);
             forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
+            modBus.register(ClientRegistryHandler.class);
         }
 
         modBus.addListener(GatherDataHandler::dataGeneratorSetup);
 
         modBus.register(this.getClass());
-        modBus.register(ClientRegistryHandler.class);
 
         InteractionValidatorInitializer.init();
         switch (dist)

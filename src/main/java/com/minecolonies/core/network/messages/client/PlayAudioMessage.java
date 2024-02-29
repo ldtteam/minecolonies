@@ -13,6 +13,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.List;
@@ -68,6 +70,7 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
