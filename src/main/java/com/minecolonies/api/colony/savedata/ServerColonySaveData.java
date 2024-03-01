@@ -137,7 +137,6 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
 
         if (!compound.contains(TAG_COLONIES))
         {
-            BackUpHelper.loadMissingColonies();
             BackUpHelper.loadManagerBackup();
             return;
         }
@@ -159,9 +158,6 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
             IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
             this.overworld = true;
         }
-
-        // Check if some colonies are missing
-        BackUpHelper.loadMissingColonies();
 
         // Check colonies for duplicates causing issues.
         for (final BlockPos pos : tempColonies.keySet())

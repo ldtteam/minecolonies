@@ -54,7 +54,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
         colonyId = buf.readInt();
         citizenId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        this.citizenBuffer = new FriendlyByteBuf(buf.retain());
+        this.citizenBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
@@ -64,13 +64,12 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
         buf.writeUtf(dimension.location().toString());
-        buf.writeBytes(citizenBuffer);
+        buf.writeByteArray(citizenBuffer.array());
     }
 
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewCitizensMessage(colonyId, citizenId, citizenBuffer, dimension);
-        citizenBuffer.release();
     }
 }

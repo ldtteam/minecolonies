@@ -39,14 +39,14 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
     protected UpdateClientWithCompatibilityMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        this.buffer = new FriendlyByteBuf(buf.retain());
+        this.buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
     protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
-        this.buffer.resetReaderIndex();
-        buf.writeBytes(this.buffer);
+        buf.writeByteArray(this.buffer.array());
+        this.buffer.resetWriterIndex();
     }
 
     @Override
@@ -62,6 +62,5 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
         {
             Log.getLogger().error("Failed to load compatibility manager", e);
         }
-        this.buffer.release();
     }
 }

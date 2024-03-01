@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.claim.ChunkClaimData;
-import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
@@ -54,7 +53,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -62,6 +60,8 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -768,6 +768,7 @@ public final class ColonyView implements IColonyView
      * @param isNewSubscription Whether this is a new subscription of not.
      * @return null == no response.
      */
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, final boolean isNewSubscription)
     {
@@ -1261,6 +1262,7 @@ public final class ColonyView implements IColonyView
         return lastContactInHours;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public Level getWorld()
     {

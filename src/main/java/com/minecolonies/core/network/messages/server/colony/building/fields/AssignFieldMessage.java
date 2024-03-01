@@ -59,7 +59,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         fieldData.resetReaderIndex();
         buf.writeBoolean(assign);
         buf.writeInt(moduleID);
-        buf.writeBytes(fieldData);
+        buf.writeByteArray(fieldData.array());
     }
 
     protected AssignFieldMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
@@ -67,8 +67,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         super(buf, type);
         assign = buf.readBoolean();
         moduleID = buf.readInt();
-        fieldData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
-        buf.readBytes(fieldData, buf.readableBytes());
+        fieldData = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override

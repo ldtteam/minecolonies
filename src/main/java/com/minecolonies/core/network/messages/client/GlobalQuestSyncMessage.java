@@ -4,6 +4,7 @@ import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.datalistener.QuestJsonListener;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
@@ -35,14 +36,14 @@ public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
     protected GlobalQuestSyncMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        questBuffer = new FriendlyByteBuf(buf.retain());
+        questBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
     protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         questBuffer.resetReaderIndex();
-        buf.writeBytes(questBuffer);
+        buf.writeByteArray(questBuffer.array());
     }
 
     @Override

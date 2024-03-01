@@ -3,12 +3,14 @@ package com.minecolonies.core.event;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.datalistener.*;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
+import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +51,12 @@ public class FMLEventHandler
         event.addListener(new CitizenNameListener());
         event.addListener(new QuestJsonListener());
         event.addListener(new ItemNbtListener());
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(@NotNull final ServerStartedEvent event)
+    {
+        BackUpHelper.loadMissingColonies();
     }
 
     @SubscribeEvent

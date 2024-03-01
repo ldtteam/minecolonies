@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.constant.Constants;
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,7 +25,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_research_manager_view", ColonyViewResearchManagerViewMessage::new);
 
     private final int             colonyId;
-    private final FriendlyByteBuf researchManagerData;
+    private final CompoundTag researchManagerData;
 
     /**
      * Dimension of the colony.
@@ -44,11 +43,9 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
 
-        this.researchManagerData = new FriendlyByteBuf(Unpooled.buffer());
-
         final CompoundTag researchCompound = new CompoundTag();
         researchManager.writeToNBT(researchCompound);
-        this.researchManagerData.writeNbt(researchCompound);
+        this.researchManagerData = researchCompound;
     }
 
     public ColonyViewResearchManagerViewMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
@@ -56,17 +53,15 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        researchManagerData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
-        buf.readBytes(researchManagerData, buf.readableBytes());
+        researchManagerData = buf.readNbt();
     }
 
     @Override
     protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
-        researchManagerData.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
-        buf.writeBytes(researchManagerData);
+        buf.writeNbt(researchManagerData);
     }
 
     @Override
@@ -75,7 +70,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (colonyView != null)
         {
-            colonyView.handleColonyViewResearchManagerUpdate(researchManagerData.readNbt());
+            colonyView.handleColonyViewResearchManagerUpdate(researchManagerData);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -70,11 +71,10 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
     protected ColonyViewMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        final FriendlyByteBuf newBuf = new FriendlyByteBuf(buf.retain());
-        colonyId = newBuf.readInt();
-        isNewSubscription = newBuf.readBoolean();
-        dim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newBuf.readUtf(32767)));
-        colonyBuffer = newBuf;
+        colonyId = buf.readInt();
+        isNewSubscription = buf.readBoolean();
+        dim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        colonyBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
@@ -84,13 +84,12 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
         buf.writeUtf(dim.location().toString());
-        buf.writeBytes(colonyBuffer);
+        buf.writeByteArray(colonyBuffer.array());
     }
 
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, @Nullable final Player player)
     {
         IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, isNewSubscription, dim);
-        colonyBuffer.release();
     }
 }

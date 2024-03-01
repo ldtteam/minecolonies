@@ -71,7 +71,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         {
             final FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
             buf.writeInt(fieldBuffer.readableBytes());
-            buf.writeBytes(fieldBuffer);
+            buf.writeByteArray(fieldBuffer.array());
         }
     }
 
@@ -85,9 +85,9 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         for (int i = 0; i < fieldCount; i++)
         {
             final int readableBytes = buf.readInt();
-            final FriendlyByteBuf fieldData = new FriendlyByteBuf(Unpooled.buffer(readableBytes));
-            buf.readBytes(fieldData, readableBytes);
+            final FriendlyByteBuf fieldData = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray(readableBytes)));
             final IField parsedField = FieldDataManager.bufferToField(fieldData);
+            fieldData.release();
             fields.put(parsedField, parsedField);
         }
     }

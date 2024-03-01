@@ -53,7 +53,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     public ColonyViewWorkOrderMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        final FriendlyByteBuf newbuf = new FriendlyByteBuf(buf.retain());
+        final FriendlyByteBuf newbuf = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
         colonyId = newbuf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newbuf.readUtf(32767)));
         workOrderBuffer = newbuf;
@@ -65,14 +65,13 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
         workOrderBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
-        buf.writeBytes(workOrderBuffer);
+        buf.writeByteArray(workOrderBuffer.array());
     }
 
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewWorkOrderMessage(colonyId, workOrderBuffer, dimension);
-        workOrderBuffer.release();
     }
 }
 

@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.crafting;
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
@@ -34,13 +35,13 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     protected CustomRecipeManagerMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        managerBuffer = new FriendlyByteBuf(buf.retain());
+        managerBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
     protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
-        buf.writeBytes(managerBuffer);
+        buf.writeByteArray(managerBuffer.array());
     }
 
     @Override
@@ -50,6 +51,5 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
         {
             CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
         }
-        managerBuffer.release();
     }
 }

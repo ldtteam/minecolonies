@@ -91,7 +91,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony createColony(@NotNull final ServerLevel w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
-        final IServerColonySaveData cap = getColonySaveData(w);
+        final IServerColonySaveData cap = IServerColonySaveData.getOrComputeSaveData(w);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);

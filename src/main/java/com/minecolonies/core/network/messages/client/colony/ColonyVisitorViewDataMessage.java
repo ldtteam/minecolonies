@@ -79,7 +79,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
-        this.visitorBuf = new FriendlyByteBuf(buf.retain());
+        this.visitorBuf = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         buf.writeUtf(dimension.location().toString());
         buf.writeBoolean(refresh);
         buf.writeInt(visitors.size());
-        buf.writeBytes(visitorBuf);
+        buf.writeByteArray(visitorBuf.array());
     }
 
     @Override
@@ -106,6 +106,5 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         {
             colony.handleColonyViewVisitorMessage(visitorBuf, refresh);
         }
-        visitorBuf.release();
     }
 }

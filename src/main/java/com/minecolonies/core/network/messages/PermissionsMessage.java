@@ -66,10 +66,9 @@ public class PermissionsMessage
         protected View(final FriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
-            final FriendlyByteBuf newBuf = new FriendlyByteBuf(buf.retain());
-            colonyID = newBuf.readInt();
-            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newBuf.readUtf(32767)));
-            data = newBuf;
+            colonyID = buf.readInt();
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+            data = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
         }
 
         
@@ -77,7 +76,6 @@ public class PermissionsMessage
         protected void onExecute(final PlayPayloadContext ctxIn, @Nullable final Player player)
         {
             IColonyManager.getInstance().handlePermissionsViewMessage(colonyID, data, dimension);
-            data.release();
         }
 
         @Override
@@ -86,7 +84,7 @@ public class PermissionsMessage
             data.resetReaderIndex();
             buf.writeInt(colonyID);
             buf.writeUtf(dimension.location().toString());
-            buf.writeBytes(data);
+            buf.writeByteArray(data.array());
         }
     }
 

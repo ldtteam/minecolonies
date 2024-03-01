@@ -72,8 +72,13 @@ public interface IServerColonySaveData
      * @param level the server level to get it from.
      * @return the savedata.
      */
-    static IServerColonySaveData getSaveData(final ServerLevel level)
+    static IServerColonySaveData getOrComputeSaveData(final ServerLevel level)
     {
         return level.getDataStorage().computeIfAbsent(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME).setOverworld(level.dimension() == Level.OVERWORLD);
+    }
+
+    static IServerColonySaveData getSaveData(final ServerLevel level)
+    {
+        return level.getDataStorage().get(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME);
     }
 }
