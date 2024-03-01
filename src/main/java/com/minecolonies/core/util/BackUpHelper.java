@@ -382,7 +382,10 @@ public final class BackUpHelper
             final Path fileName = getFolderForDimension(saveDir, dimensionID.location()).resolve(String.format(FILENAME_COLONY_DELETED, colonyID));
             try
             {
-                Files.delete(toDelete);
+                if (Files.exists(fileName))
+                {
+                    Files.delete(fileName);
+                }
                 Files.move(toDelete, fileName);
             }
             catch (final IOException e)
