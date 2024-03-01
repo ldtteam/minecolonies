@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_quest_sync", GlobalQuestSyncMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_quest_sync", GlobalQuestSyncMessage::new, true, false);
 
     /**
      * The buffer with the data.
@@ -50,6 +50,5 @@ public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
     protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         QuestJsonListener.readGlobalQuestPackets(questBuffer);
-        questBuffer.release();
     }
 }

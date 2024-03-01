@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "custom_recipe_manager", CustomRecipeManagerMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "custom_recipe_manager", CustomRecipeManagerMessage::new, true, false);
 
     /**
      * The buffer with the data.
@@ -47,9 +47,6 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     @Override
     public void onExecute(final PlayPayloadContext context, final Player player)
     {
-        if (player.level() != null)
-        {
-            CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
-        }
+        CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
     }
 }

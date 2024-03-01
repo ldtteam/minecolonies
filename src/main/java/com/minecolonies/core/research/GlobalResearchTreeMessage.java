@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_research_tree", GlobalResearchTreeMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_research_tree", GlobalResearchTreeMessage::new, true, false);
 
     /**
      * The buffer with the data.
@@ -48,9 +48,6 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     @Override
     public void onExecute(final PlayPayloadContext context, final Player player)
     {
-        if (player.level() != null)
-        {
-            IGlobalResearchTree.getInstance().handleGlobalResearchTreeMessage(treeBuffer);
-        }
+        IGlobalResearchTree.getInstance().handleGlobalResearchTreeMessage(treeBuffer);
     }
 }

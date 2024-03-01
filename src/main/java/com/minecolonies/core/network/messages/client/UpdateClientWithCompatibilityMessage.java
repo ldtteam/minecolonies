@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "update_client_with_compatibility", UpdateClientWithCompatibilityMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "update_client_with_compatibility", UpdateClientWithCompatibilityMessage::new, true, false);
 
     private final FriendlyByteBuf buffer;
 
