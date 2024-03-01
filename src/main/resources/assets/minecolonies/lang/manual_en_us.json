@@ -2550,5 +2550,6 @@
   "com.minecolonies.core.expedition.gui.items.requirement.type.tool": "Any %s",
   "com.minecolonies.core.expedition.gui.guards.header": "Required Guards (%d)",
   "com.minecolonies.core.expedition.gui.guards.subheader.met": "Enough guards",
-  "com.minecolonies.core.expedition.gui.guards.subheader.not_met": "Guards needed: %d"
+  "com.minecolonies.core.expedition.gui.guards.subheader.not_met": "Guards needed: %d",
+  "com.minecolonies.core.expedition.start": "[%s]: Thanks for the help, we will be leaving soon to start the expedition!"
 }

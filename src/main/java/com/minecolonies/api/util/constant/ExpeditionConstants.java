@@ -25,4 +25,6 @@ public class ExpeditionConstants
     public static final String EXPEDITIONARY_GUARDS_SUBHEADER_MET     = "com.minecolonies.core.expedition.gui.guards.subheader.met";
     @NonNls
     public static final String EXPEDITIONARY_GUARDS_SUBHEADER_NOT_MET = "com.minecolonies.core.expedition.gui.guards.subheader.not_met";
+    @NonNls
+    public static final String EXPEDITION_START_MESSAGE               = "com.minecolonies.core.expedition.start";
 }

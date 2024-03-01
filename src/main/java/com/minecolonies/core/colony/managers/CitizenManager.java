@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.managers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
-import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -357,13 +356,8 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void removeCivilian(@NotNull final ICivilianData citizen)
+    public void removeCivilian(@NotNull final ICitizenData citizen)
     {
-        if (!(citizen instanceof ICitizenData))
-        {
-            return;
-        }
-
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
@@ -450,7 +444,7 @@ public class CitizenManager implements ICitizenManager
 
     @NotNull
     @Override
-    public Map<Integer, ICivilianData> getCivilianDataMap()
+    public Map<Integer, ICitizenData> getCivilianDataMap()
     {
         return Collections.unmodifiableMap(citizens);
     }

@@ -10,6 +10,7 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
+import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -19,10 +20,10 @@ import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.generic.ResourceItem;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
-import com.minecolonies.core.colony.expeditions.Expedition;
-import com.minecolonies.core.colony.expeditions.ExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition.GuardsComparator;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType.Difficulty;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
@@ -39,8 +40,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
@@ -87,20 +88,35 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     /**
      * The builder instance for the expedition.
      */
-    private final ExpeditionBuilder expeditionBuilder;
+    private final ColonyExpedition expedition;
+
+    /**
+     * Cache of the members for easier O(1) lookup.
+     */
+    private final Set<Integer> membersByIdCache;
+
+    /**
+     * The comparator instance for the resources list.
+     */
+    private final ResourceComparator resourceComparator;
+
+    /**
+     * The comparator instance for the guards list.
+     */
+    private final GuardsComparator guardsComparator;
 
     /**
      * The requirements for this expedition type.
      */
     private final List<RequirementHandler> requirements;
 
-    private final ScrollingList itemsList;
-    private final ScrollingList guardsList;
-
     /**
      * The list of guards in the colony.
      */
-    private List<ICitizenDataView> guards;
+    private final List<ICitizenDataView> guards;
+
+    private final ScrollingList itemsList;
+    private final ScrollingList guardsList;
 
     /**
      * Default constructor.
@@ -117,15 +133,19 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             throw new IllegalStateException(String.format("Expedition with id '%s' does not exist.", expeditionTypeId.toString()));
         }
 
-        expeditionBuilder = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION);
+        expedition = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION);
 
+        membersByIdCache = expedition.getMembers().stream().map(IExpeditionMember::getId).collect(Collectors.toSet());
+
+        resourceComparator = new ResourceComparator();
         requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(visitorData::getInventory)).collect(Collectors.toList());
-        requirements.sort(new ResourceComparator());
+        requirements.sort(resourceComparator);
 
+        guardsComparator = new GuardsComparator(expedition);
         guards = visitorData.getColony().getCitizens().values().stream()
                    .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard())
-                   .sorted(new GuardsComparator())
-                   .toList();
+                   .collect(Collectors.toList());
+        guards.sort(guardsComparator);
 
         itemsList = findPaneOfTypeByID(ID_EXPEDITION_ITEMS, ScrollingList.class);
         guardsList = findPaneOfTypeByID(ID_EXPEDITION_GUARDS, ScrollingList.class);
@@ -189,7 +209,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     public void onUpdate()
     {
         super.onUpdate();
-        requirements.sort(new ResourceComparator());
+        requirements.sort(resourceComparator);
     }
 
     /**
@@ -208,7 +228,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
                      ? Component.translatable(EXPEDITIONARY_ITEMS_SUBHEADER_MET)
                      : Component.translatable(EXPEDITIONARY_ITEMS_SUBHEADER_NOT_MET));
 
-        final int currentGuardCount = expeditionBuilder.getMembers().size();
+        final int currentGuardCount = expedition.getMembers().size();
         final boolean guardRequirementMet = currentGuardCount >= expeditionType.getGuards();
         findPaneOfTypeByID(ID_EXPEDITION_GUARDS_SUBHEADER, Text.class)
           .setText(guardRequirementMet
@@ -261,7 +281,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             @Override
             public boolean isChecked(final int index)
             {
-                return expeditionBuilder.getMembers().containsKey(guards.get(index).getId());
+                return membersByIdCache.contains(guards.get(index).getId());
             }
 
             @Override
@@ -270,19 +290,18 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
                 final ICitizenDataView guard = guards.get(index);
                 if (checked)
                 {
-                    expeditionBuilder.addMembers(List.of(new ExpeditionCitizenMember(guard)));
+                    expedition.addMember(new ExpeditionCitizenMember(guard));
+                    membersByIdCache.add(guard.getId());
                 }
                 else
                 {
-                    expeditionBuilder.removeMember(new ExpeditionCitizenMember(guard));
+                    expedition.removeMember(new ExpeditionCitizenMember(guard));
+                    membersByIdCache.remove(guard.getId());
                 }
 
                 Network.getNetwork().sendToServer(new AssignGuardMessage(guard, checked));
 
-                guards = visitorData.getColony().getCitizens().values().stream()
-                           .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard())
-                           .sorted(new GuardsComparator())
-                           .toList();
+                guards.sort(guardsComparator);
 
                 renderHeaders();
             }
@@ -396,36 +415,10 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
                 equipment.add(armorItem);
             }
         }
-        expeditionBuilder.addEquipment(equipment);
-        expeditionBuilder.addMembers(List.of(new ExpeditionVisitorMember(visitorData)));
+        expedition.setEquipment(equipment);
+        expedition.addMember(new ExpeditionVisitorMember(visitorData));
 
-        final Expedition expedition = expeditionBuilder.build();
         expedition.setStatus(ExpeditionStatus.EMBARKED);
         Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expeditionType, expedition));
-    }
-
-    /**
-     * Comparator class for sorting guards in a predictable order in the window.
-     */
-    class GuardsComparator implements Comparator<ICitizenDataView>
-    {
-        @Override
-        public int compare(final ICitizenDataView guard1, final ICitizenDataView guard2)
-        {
-            if (expeditionBuilder.getMembers().containsKey(guard1.getId()) && expeditionBuilder.getMembers().containsKey(guard2.getId()))
-            {
-                return guard1.getName().compareTo(guard2.getName());
-            }
-            else if (expeditionBuilder.getMembers().containsKey(guard1.getId()))
-            {
-                return -1;
-            }
-            else if (expeditionBuilder.getMembers().containsKey(guard2.getId()))
-            {
-                return 1;
-            }
-
-            return guard1.getName().compareTo(guard2.getName());
-        }
     }
 }

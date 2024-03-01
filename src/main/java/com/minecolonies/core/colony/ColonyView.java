@@ -1584,7 +1584,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public IExpeditionManager getExpeditionManager()
+    public IColonyExpeditionManager getExpeditionManager()
     {
         return null;
     }

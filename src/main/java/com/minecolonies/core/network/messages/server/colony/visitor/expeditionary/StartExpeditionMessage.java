@@ -2,12 +2,10 @@ package com.minecolonies.core.network.messages.server.colony.visitor.expeditiona
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.expeditions.IExpedition;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.colony.expeditions.Expedition;
-import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionEvent;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
@@ -20,6 +18,7 @@ import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraftforge.network.NetworkEvent.Context;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_START_MESSAGE;
 
 /**
  * Network message for triggering a colony expedition start.
@@ -34,7 +33,7 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
     /**
      * The provided expedition instance.
      */
-    private IExpedition expedition;
+    private ColonyExpedition expedition;
 
     /**
      * Deserialization constructor.
@@ -50,7 +49,7 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
      * @param expeditionType the expedition type.
      * @param expedition     the input expedition instance.
      */
-    public StartExpeditionMessage(final IColony colony, final ColonyExpeditionType expeditionType, final IExpedition expedition)
+    public StartExpeditionMessage(final IColony colony, final ColonyExpeditionType expeditionType, final ColonyExpedition expedition)
     {
         super(colony);
         this.expeditionTypeId = expeditionType.getId();
@@ -67,24 +66,19 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
             return;
         }
 
-        final IExpeditionMember expeditionLeader = expedition.getMembers().stream().filter(ExpeditionVisitorMember.class::isInstance).findFirst().orElseThrow();
-        for (final IColonyEvent event : colony.getEventManager().getEvents().values())
+        // Attempt to create the expedition.
+        final ColonyExpedition newExpedition = colony.getExpeditionManager().addExpedition(expedition);
+        if (newExpedition == null)
         {
-            if (event instanceof ColonyExpeditionEvent expeditionEvent)
-            {
-                for (final IExpeditionMember member : expeditionEvent.getExpedition().getMembers())
-                {
-                    // If the leader of the input expedition is already present as part of another expedition, we likely managed to double-click the start button
-                    // or re-open the interface before the interaction managed to go away. We do not want to allow duplications to enter the events.
-                    if (expeditionLeader.equals(member))
-                    {
-                        return;
-                    }
-                }
-            }
+            return;
         }
 
-        // Add all guards to the travelling manager and de-spawn them.
+        MessageUtils.format(EXPEDITION_START_MESSAGE, expedition.getLeader().getName());
+
+        // Create the event related to this expedition.
+        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expeditionType, newExpedition));
+
+        // Add all members to the travelling manager and de-spawn them.
         final BlockPos townHallReturnPosition = BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition());
         for (final IExpeditionMember member : expedition.getMembers())
         {
@@ -96,8 +90,6 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
                 memberData.getEntity().ifPresent(entity -> entity.remove(RemovalReason.DISCARDED));
             }
         }
-
-        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expeditionType, expedition));
     }
 
     @Override
@@ -113,6 +105,6 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
     protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
         expeditionTypeId = buf.readResourceLocation();
-        expedition = Expedition.loadFromNBT(buf.readNbt());
+        expedition = ColonyExpedition.loadFromNBT(buf.readNbt());
     }
 }

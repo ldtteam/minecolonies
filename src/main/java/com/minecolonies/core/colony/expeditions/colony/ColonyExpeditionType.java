@@ -275,10 +275,10 @@ public class ColonyExpeditionType
      */
     public enum Difficulty
     {
-        EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY),
-        MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY),
-        HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY),
-        NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true));
+        EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY, 30, 5),
+        MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY, 45, 10),
+        HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15),
+        NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30);
 
         /**
          * The key of the difficulty, used in the json files.
@@ -311,9 +311,19 @@ public class ColonyExpeditionType
         private final Style style;
 
         /**
+         * The base amount of ticks the expedition will take.
+         */
+        private final int baseTime;
+
+        /**
+         * The amount of random time that can be added/removed from the base time.
+         */
+        private final int randomTime;
+
+        /**
          * Internal constructor.
          */
-        Difficulty(final String key, final int level, final int luckLevel, final Item icon, final boolean hidden, final Style style)
+        Difficulty(final String key, final int level, final int luckLevel, final Item icon, final boolean hidden, final Style style, final int baseTime, final int randomTime)
         {
             this.key = key;
             this.level = level;
@@ -321,6 +331,8 @@ public class ColonyExpeditionType
             this.icon = icon;
             this.hidden = hidden;
             this.style = style;
+            this.baseTime = baseTime;
+            this.randomTime = randomTime;
         }
 
         /**
@@ -400,6 +412,26 @@ public class ColonyExpeditionType
         public int getLuckLevel()
         {
             return luckLevel;
+        }
+
+        /**
+         * Get the base amount of ticks the expedition will take.
+         *
+         * @return the amount of time.
+         */
+        public int getBaseTime()
+        {
+            return baseTime;
+        }
+
+        /**
+         * Get the amount of random time that can be added/removed from the base time.
+         *
+         * @return the amount of time.
+         */
+        public int getRandomTime()
+        {
+            return randomTime;
         }
     }
 }

@@ -2,28 +2,17 @@ package com.minecolonies.api.colony.expeditions;
 
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Main interface for an expedition instance.
  */
 public interface IExpedition
 {
-    /**
-     * The dimension this expedition is going to.
-     *
-     * @return the dimension key.
-     */
-    @NotNull
-    ResourceKey<Level> getTargetDimension();
-
     /**
      * Get the status of the expedition.
      *
@@ -44,14 +33,14 @@ public interface IExpedition
      * @return the expedition members.
      */
     @NotNull
-    List<IExpeditionMember> getMembers();
+    Collection<IExpeditionMember> getMembers();
 
     /**
      * Get the equipment given to the expedition at start time.
      *
      * @return the equipment list.
      */
-    List<ItemStack> getEquipment();
+    Collection<ItemStack> getEquipment();
 
     /**
      * Get the currently active members of the expedition.
@@ -59,7 +48,7 @@ public interface IExpedition
      * @return the expedition members.
      */
     @NotNull
-    List<IExpeditionMember> getActiveMembers();
+    Collection<IExpeditionMember> getActiveMembers();
 
     /**
      * The results of this expedition.

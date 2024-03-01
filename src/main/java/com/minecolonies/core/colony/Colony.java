@@ -194,7 +194,7 @@ public class Colony implements IColony
     /**
      * Expedition manager for this colony
      */
-    private final IExpeditionManager expeditionManager = new ExpeditionManager(this);
+    private final IColonyExpeditionManager expeditionManager = new ColonyExpeditionManager(this);
 
     /**
      * The traveling manager used for traveling large distances
@@ -1953,7 +1953,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public IExpeditionManager getExpeditionManager()
+    public IColonyExpeditionManager getExpeditionManager()
     {
         return expeditionManager;
     }

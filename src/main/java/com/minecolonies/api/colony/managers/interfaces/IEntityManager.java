@@ -59,7 +59,7 @@ public interface IEntityManager<T extends ICivilianData>
      * @return Map of civilian in the colony, with as key the civilian ID, and as value the civilian data.
      */
     @NotNull
-    Map<Integer, ICivilianData> getCivilianDataMap();
+    Map<Integer, T> getCivilianDataMap();
 
     /**
      * Get civilian by ID.
@@ -74,7 +74,7 @@ public interface IEntityManager<T extends ICivilianData>
      *
      * @param civilian data to remove.
      */
-    void removeCivilian(@NotNull ICivilianData civilian);
+    void removeCivilian(@NotNull T civilian);
 
     /**
      * Marks civilian data dirty.

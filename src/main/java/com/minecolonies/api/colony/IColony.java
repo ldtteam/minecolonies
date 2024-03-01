@@ -489,7 +489,7 @@ public interface IColony
      *
      * @return the expedition manager.
      */
-    IExpeditionManager getExpeditionManager();
+    IColonyExpeditionManager getExpeditionManager();
 
     /**
      * Get the traveling manager used for traveling large distances.

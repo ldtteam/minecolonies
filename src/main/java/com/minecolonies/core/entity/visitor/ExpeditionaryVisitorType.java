@@ -2,7 +2,7 @@ package com.minecolonies.core.entity.visitor;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
-import com.minecolonies.core.colony.expeditions.ExpeditionBuilder;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.entity.ai.visitor.EntityAIExpeditionary;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -26,7 +27,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
      * Extra data fields.
      */
     public static final ColonyExpeditionTypeData EXTRA_DATA_EXPEDITION_TYPE = new ColonyExpeditionTypeData();
-    public static final ExpeditionBuilderData    EXTRA_DATA_EXPEDITION      = new ExpeditionBuilderData();
+    public static final ColonyExpeditionData     EXTRA_DATA_EXPEDITION      = new ColonyExpeditionData();
 
     @Override
     public ResourceLocation getId()
@@ -91,11 +92,11 @@ public class ExpeditionaryVisitorType implements IVisitorType
     /**
      * Extra data for storing the expedition builder instance.
      */
-    public static class ExpeditionBuilderData extends AbstractVisitorExtraData<ExpeditionBuilder>
+    public static class ColonyExpeditionData extends AbstractVisitorExtraData<ColonyExpedition>
     {
-        public ExpeditionBuilderData()
+        public ColonyExpeditionData()
         {
-            super("expedition", new ExpeditionBuilder());
+            super("expedition", new ColonyExpedition(-1, Level.OVERWORLD, new ArrayList<>(), new ArrayList<>()));
         }
 
         @Override
@@ -109,7 +110,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
         @Override
         public void deserializeNBT(final CompoundTag compoundTag)
         {
-            setValue(ExpeditionBuilder.loadFromNBT(compoundTag));
+            setValue(ColonyExpedition.loadFromNBT(compoundTag));
         }
     }
 }

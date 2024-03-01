@@ -149,16 +149,16 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
         final Component response = getPossibleResponses().get(responseId);
-        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData visitorViewData)
+        if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData visitorData)
         {
             IColony colony = data.getColony();
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
             {
-                final ItemStack recruitCost = visitorViewData.getExtraDataValue(EXTRA_DATA_RECRUIT_COST);
+                final ItemStack recruitCost = visitorData.getExtraDataValue(EXTRA_DATA_RECRUIT_COST);
                 if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), recruitCost, recruitCost.getCount(), true, true))
                 {
                     // Recruits visitor as new citizen and respawns entity
-                    colony.getVisitorManager().removeCivilian(data);
+                    colony.getVisitorManager().removeCivilian(visitorData);
                     data.setHomeBuilding(null);
                     data.setJob(null);
 

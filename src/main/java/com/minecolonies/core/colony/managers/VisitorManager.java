@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.managers;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -15,7 +14,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
-import com.minecolonies.core.colony.expeditions.ExpeditionBuilder;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.interactionhandling.ExpeditionaryInteraction;
@@ -199,7 +198,7 @@ public class VisitorManager implements IVisitorManager
 
     @NotNull
     @Override
-    public Map<Integer, ICivilianData> getCivilianDataMap()
+    public Map<Integer, IVisitorData> getCivilianDataMap()
     {
         return Collections.unmodifiableMap(visitorMap);
     }
@@ -244,7 +243,7 @@ public class VisitorManager implements IVisitorManager
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
             newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE, expeditionType.getId());
-            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ExpeditionBuilder());
+            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ColonyExpedition(-1, expeditionType.getDimension(), new ArrayList<>(), new ArrayList<>()));
             newVisitor.triggerInteraction(new ExpeditionaryInteraction(Component.translatable(EXPEDITION_INTERACTION_INQUIRY, expeditionType.getToText()),
               ChatPriority.IMPORTANT));
 
@@ -279,7 +278,7 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void removeCivilian(@NotNull final ICivilianData citizen)
+    public void removeCivilian(@NotNull final IVisitorData citizen)
     {
         final IVisitorData data = visitorMap.remove(citizen.getId());
         if (data != null && data.getEntity().isPresent())
@@ -310,7 +309,7 @@ public class VisitorManager implements IVisitorManager
                 data.updateEntityIfNecessary();
             }
 
-            if (visitorMap.values().stream().noneMatch(f -> f.getVisitorType().equals(ModVisitorTypes.expeditionary.get())))
+            if (colony.getExpeditionManager().canStartNewExpedition())
             {
                 spawnExpeditionary();
             }

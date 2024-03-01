@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.expeditions.colony;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.managers.interfaces.IExpeditionManager;
+import com.minecolonies.api.colony.managers.interfaces.IColonyExpeditionManager;
 import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -84,7 +84,7 @@ public class ColonyExpeditionTypeManager
 
     /**
      * Obtain a random expedition type from the map of possible expedition types.
-     * The target dimension must be reachable according to {@link IExpeditionManager#canGoToDimension(ResourceKey)}.
+     * The target dimension must be reachable according to {@link IColonyExpeditionManager#canGoToDimension(ResourceKey)}.
      * This method can also return null, if there are no expedition types available at all.
      *
      * @param colony the colony reference to get the expedition manager for.
@@ -93,7 +93,7 @@ public class ColonyExpeditionTypeManager
     @Nullable
     public ColonyExpeditionType getRandomExpeditionType(final IColony colony)
     {
-        final IExpeditionManager expeditionManager = colony.getExpeditionManager();
+        final IColonyExpeditionManager expeditionManager = colony.getExpeditionManager();
         final List<ColonyExpeditionType> expeditionTypes = new ArrayList<>(possibleTypes.values());
 
         ColonyExpeditionType chosenExpeditionType = null;

@@ -3,7 +3,9 @@ package com.minecolonies.core.colony.expeditions.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpedition;
+import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.expeditions.AbstractExpeditionEvent;
@@ -26,9 +28,11 @@ import java.util.Deque;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
 
+/**
+ * Event class for simulating colony expeditions.
+ */
 public class ColonyExpeditionEvent extends AbstractExpeditionEvent
 {
     /**
@@ -39,6 +43,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     /**
      * NBT tags.
      */
+    private static final String TAG_EXPEDITION_ID              = "expeditionId";
     private static final String TAG_EXPEDITION_TYPE            = "expeditionType";
     private static final String TAG_REMAINING_ITEMS            = "remainingItems";
     private static final String TAG_END_TIME                   = "endTime";
@@ -59,6 +64,11 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * The inventory for the expedition.
      */
     private final ItemStackHandler inventory = new ItemStackHandler(EXPEDITION_INVENTORY_SIZE);
+
+    /**
+     * The id of this expedition.
+     */
+    private int expeditionId;
 
     /**
      * The expedition type for this colony expedition.
@@ -86,18 +96,27 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     private boolean isRemainingItemsEmpty = false;
 
     /**
+     * The cached expedition instance.
+     */
+    private ColonyExpedition cachedExpedition;
+
+    /**
      * Create a new colony expedition event.
      *
      * @param colony         the colony instance.
      * @param expeditionType the expedition type.
      * @param expedition     the expedition instance.
      */
-    public ColonyExpeditionEvent(final IColony colony, final ColonyExpeditionType expeditionType, final IExpedition expedition)
+    public ColonyExpeditionEvent(final IColony colony, final ColonyExpeditionType expeditionType, final ColonyExpedition expedition)
     {
-        super(colony.getEventManager().getAndTakeNextEventID(), colony, expedition);
+        super(colony);
+        id = colony.getEventManager().getAndTakeNextEventID();
+        expeditionId = expedition.getId();
+        expeditionTypeId = expeditionType.getId();
+
+        // Move the equipment into the temporary event storage for inventory simulation.
         expedition.getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
 
-        expeditionTypeId = expeditionType.getId();
         final LootParams lootParams = new Builder((ServerLevel) colony.getWorld())
                                         .withLuck(expeditionType.getDifficulty().getLuckLevel())
                                         .create(LootContextParamSet.builder().build());
@@ -111,13 +130,11 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     /**
      * Create a new colony expedition event.
      *
-     * @param id         the event ID.
-     * @param colony     the colony instance.
-     * @param expedition the expedition instance.
+     * @param colony the colony instance.
      */
-    private ColonyExpeditionEvent(final int id, final IColony colony, final IExpedition expedition)
+    private ColonyExpeditionEvent(final IColony colony)
     {
-        super(id, colony, expedition);
+        super(colony);
     }
 
     /**
@@ -130,6 +147,67 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     public static ColonyExpeditionEvent loadFromNBT(final IColony colony, final CompoundTag compound)
     {
         return AbstractExpeditionEvent.loadFromNBT(colony, compound, ColonyExpeditionEvent::new);
+    }
+
+    @Override
+    public IExpedition getExpedition()
+    {
+        if (cachedExpedition == null)
+        {
+            cachedExpedition = colony.getExpeditionManager().getExpedition(expeditionId);
+        }
+        return cachedExpedition;
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        final Level world = getColony().getWorld();
+        if (!world.isClientSide)
+        {
+            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+            if (expeditionType == null)
+            {
+                Log.getLogger().warn("Expedition cannot start because of a missing expedition type: '{}'", expeditionTypeId);
+                return;
+            }
+
+            final int randomTimeOffset = expeditionType.getDifficulty().getRandomTime();
+            final int randomTime = random.nextInt(-randomTimeOffset, randomTimeOffset);
+
+            endTime = world.getGameTime() + 1; //expeditionType.getDifficulty().getBaseTime() + randomTime;
+        }
+    }
+
+    @Override
+    public CompoundTag serializeNBT()
+    {
+        final CompoundTag compound = super.serializeNBT();
+        compound.putInt(TAG_EXPEDITION_ID, expeditionId);
+        compound.putString(TAG_EXPEDITION_TYPE, expeditionTypeId.toString());
+        compound.put(TAG_INVENTORY, inventory.serializeNBT());
+        compound.put(TAG_REMAINING_ITEMS, remainingItems.stream()
+                                            .map(IForgeItemStack::serializeNBT)
+                                            .collect(NBTUtils.toListNBT()));
+        compound.putLong(TAG_END_TIME, endTime);
+        compound.putBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED, isMinimumTimeElapsed);
+        compound.putBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY, isRemainingItemsEmpty);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag compoundTag)
+    {
+        expeditionId = compoundTag.getInt(TAG_EXPEDITION_ID);
+        expeditionTypeId = new ResourceLocation(compoundTag.getString(TAG_EXPEDITION_TYPE));
+        inventory.deserializeNBT(compoundTag.getCompound(TAG_INVENTORY));
+        remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND))
+                           .map(ItemStack::of)
+                           .collect(Collectors.toCollection(ArrayDeque::new));
+        endTime = compoundTag.getLong(TAG_END_TIME);
+        isMinimumTimeElapsed = compoundTag.getBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED);
+        isRemainingItemsEmpty = compoundTag.getBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY);
     }
 
     private void processAdventureToken(final ItemStack itemStack)
@@ -154,20 +232,20 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         // If the minimum time has passed and the loot table is empty, we can finish the expedition
         if (isMinimumTimeElapsed && isRemainingItemsEmpty)
         {
-            if (expedition.getActiveMembers().isEmpty())
+            if (getExpedition().getActiveMembers().isEmpty())
             {
-                expedition.setStatus(ExpeditionStatus.KILLED);
+                getExpedition().setStatus(ExpeditionStatus.KILLED);
                 return;
             }
 
             final int chance = random.nextInt(100);
             if (chance <= 2)
             {
-                expedition.setStatus(ExpeditionStatus.LOST);
+                getExpedition().setStatus(ExpeditionStatus.LOST);
             }
             else
             {
-                expedition.setStatus(ExpeditionStatus.RETURNED);
+                getExpedition().setStatus(ExpeditionStatus.RETURNED);
             }
             return;
         }
@@ -195,52 +273,19 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         }
         else
         {
-            expedition.rewardFound(nextItem);
-        }
-    }
-
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        final Level world = getColony().getWorld();
-        if (!world.isClientSide)
-        {
-            endTime = world.getGameTime() + TICKS_HOUR;
+            getExpedition().rewardFound(nextItem);
         }
     }
 
     @Override
     public void onFinish()
     {
-        getColony().getExpeditionManager().addExpedition(expedition, ColonyExpeditionEvent.class);
-    }
+        colony.getExpeditionManager().finishExpedition(expeditionId);
 
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        final CompoundTag compound = new CompoundTag();
-        compound.putString(TAG_EXPEDITION_TYPE, expeditionTypeId.toString());
-        compound.put(TAG_INVENTORY, inventory.serializeNBT());
-        compound.put(TAG_REMAINING_ITEMS, remainingItems.stream()
-                                            .map(IForgeItemStack::serializeNBT)
-                                            .collect(NBTUtils.toListNBT()));
-        compound.putLong(TAG_END_TIME, endTime);
-        compound.putBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED, isMinimumTimeElapsed);
-        compound.putBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY, isRemainingItemsEmpty);
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundTag compoundTag)
-    {
-        expeditionTypeId = new ResourceLocation(compoundTag.getString(TAG_EXPEDITION_TYPE));
-        inventory.deserializeNBT(compoundTag.getCompound(TAG_INVENTORY));
-        remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND))
-                           .map(ItemStack::of)
-                           .collect(Collectors.toCollection(ArrayDeque::new));
-        endTime = compoundTag.getLong(TAG_END_TIME);
-        isMinimumTimeElapsed = compoundTag.getBoolean(TAG_FLAG_MINIMUM_TIME_ELAPSED);
-        isRemainingItemsEmpty = compoundTag.getBoolean(TAG_FLAG_REMAINING_ITEMS_EMPTY);
+        // Remove all members to the travelling manager and re-spawn them.
+        for (final IExpeditionMember member : getExpedition().getActiveMembers())
+        {
+            colony.getTravelingManager().finishTravellingFor(member.getId());
+        }
     }
 }

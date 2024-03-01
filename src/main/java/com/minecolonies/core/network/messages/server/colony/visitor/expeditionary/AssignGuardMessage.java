@@ -9,8 +9,6 @@ import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-import java.util.List;
-
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
 
 /**
@@ -67,7 +65,7 @@ public class AssignGuardMessage extends AbstractColonyServerMessage
         {
             if (assign)
             {
-                activeExpeditionary.getExtraDataValue(EXTRA_DATA_EXPEDITION).addMembers(List.of(new ExpeditionCitizenMember(guardCitizen)));
+                activeExpeditionary.getExtraDataValue(EXTRA_DATA_EXPEDITION).addMember(new ExpeditionCitizenMember(guardCitizen));
             }
             else
             {
