@@ -977,6 +977,7 @@ public class Colony implements IColony
             @NotNull final CompoundTag chunkCompound = new CompoundTag();
             chunkCompound.put(TAG_CHUNK_CLAIM, chunkClaimData.getValue().serializeNBT());
             chunkCompound.putLong(TAG_CHUNK_POS, chunkClaimData.getLongKey());
+            claimTagList.add(chunkCompound);
         }
         compound.put(TAG_CLAIM_DATA, claimTagList);
 
