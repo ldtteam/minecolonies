@@ -119,8 +119,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         tag.putString(NbtTagConstants.TAG_HANDLER_TYPE, getType());
         return tag;
     }
-
-
+    
     /**
      * Deserialize the response handler from NBT.
      */
@@ -136,6 +135,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];
     }
+
     @Override
     public boolean isPrimary()
     {
