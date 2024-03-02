@@ -103,13 +103,13 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     public CompoundTag serializeNBT()
     {
         final CompoundTag tag = new CompoundTag();
-        NBTUtils.writeNullableComponent(tag, TAG_INQUIRY, this.inquiry);
+        tag.putString(TAG_INQUIRY, Component.Serializer.toJson(this.inquiry));
         final ListTag list = new ListTag();
         for (final Map.Entry<Component, Component> element : responses.entrySet())
         {
             final CompoundTag elementTag = new CompoundTag();
-            NBTUtils.writeNullableComponent(elementTag, TAG_RESPONSE, element.getKey());
-            NBTUtils.writeNullableComponent(elementTag, TAG_NEXT_INQUIRY, element.getValue());
+            elementTag.putString(TAG_RESPONSE, Component.Serializer.toJson(element.getKey()));
+            elementTag.putString(TAG_NEXT_INQUIRY, Component.Serializer.toJson(element.getValue()));
 
             list.add(elementTag);
         }
@@ -120,22 +120,22 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         return tag;
     }
 
+
     /**
      * Deserialize the response handler from NBT.
      */
     public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
     {
-        this.inquiry = NBTUtils.readNullableComponent(compoundNBT, TAG_INQUIRY);
+        this.inquiry = Component.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
         final ListTag list = compoundNBT.getList(TAG_RESPONSES, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundTag nbt = list.getCompound(i);
-            this.responses.put(NBTUtils.readNullableComponent(nbt, TAG_RESPONSE), NBTUtils.readNullableComponent(nbt, TAG_NEXT_INQUIRY));
+            this.responses.put(Component.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), Component.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];
     }
-
     @Override
     public boolean isPrimary()
     {

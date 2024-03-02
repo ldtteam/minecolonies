@@ -58,17 +58,4 @@ public class NBTUtils
             return list.getCompound(currentIndex++);
         }
     }
-
-    public static void writeNullableComponent(final CompoundTag tag, final String key, final Component component)
-    {
-        if (component != null)
-        {
-            tag.putString(key, Component.Serializer.toJson(component));
-        }
-    }
-
-    public static Component readNullableComponent(final CompoundTag tag, final String key)
-    {
-        return tag.contains(key, Tag.TAG_COMPOUND) ? Component.Serializer.fromJson(tag.getString(key)) : Component.empty();
-    }
 }

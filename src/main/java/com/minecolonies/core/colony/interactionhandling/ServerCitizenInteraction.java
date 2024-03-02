@@ -178,11 +178,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         for (final Component element : parents)
         {
             final CompoundTag elementTag = new CompoundTag();
-            NBTUtils.writeNullableComponent(elementTag, TAG_PARENT, element);
+            elementTag.putString(TAG_PARENT, Component.Serializer.toJson(element));
             list.add(elementTag);
         }
         compoundNBT.put(TAG_PARENTS, list);
-        NBTUtils.writeNullableComponent(compoundNBT, TAG_VALIDATOR_ID, validatorId);
+        compoundNBT.putString(TAG_VALIDATOR_ID, Component.Serializer.toJson(validatorId));
         return compoundNBT;
     }
 
@@ -195,9 +195,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(NBTUtils.readNullableComponent(compoundNBT, TAG_PARENT));
+            this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = NBTUtils.readNullableComponent(compoundNBT, TAG_VALIDATOR_ID);
+        this.validatorId = Component.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 
