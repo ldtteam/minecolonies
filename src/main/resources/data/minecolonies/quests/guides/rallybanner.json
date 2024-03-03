@@ -2,7 +2,7 @@
   "name": "Rally the Troops",
   "max-occurrences": 1,
   "parents": [
-    "minecolonies:tutorial/welcome"
+    "minecolonies:tutorial/builder"
   ],
   "triggers": [
     {
