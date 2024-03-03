@@ -2,7 +2,7 @@
   "name": "The Builder's Glasses",
   "max-occurrences": 1,
   "parents": [
-    "minecolonies:tutorial/welcome"
+    "minecolonies:tutorial/builder"
   ],
   "triggers": [
     {

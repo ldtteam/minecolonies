@@ -8,6 +8,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
@@ -300,6 +301,10 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     public void checkFeatureUnlock()
     {
+        if (!building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+        {
+            return;
+        }
         final String player = Minecraft.getInstance().player.getStringUUID();
         new Thread(() -> {
             try
