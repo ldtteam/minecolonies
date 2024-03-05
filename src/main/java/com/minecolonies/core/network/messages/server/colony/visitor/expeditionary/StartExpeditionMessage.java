@@ -2,9 +2,12 @@ package com.minecolonies.core.network.messages.server.colony.visitor.expeditiona
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
+import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionEvent;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
@@ -73,14 +76,20 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
             return;
         }
 
-        MessageUtils.format(EXPEDITION_START_MESSAGE, expedition.getLeader().getName());
+        final IVisitorData leaderData = newExpedition.getLeader().resolveCivilianData(colony);
+        leaderData.removeInteractions(ModInteractionResponseHandlers.EXPEDITION.getPath());
+
+        MessageUtils.format(EXPEDITION_START_MESSAGE, expedition.getLeader().getName())
+          .withPriority(MessagePriority.IMPORTANT)
+          .sendTo(colony)
+          .forManagers();
 
         // Create the event related to this expedition.
         colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expeditionType, newExpedition));
 
         // Add all members to the travelling manager and de-spawn them.
         final BlockPos townHallReturnPosition = BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition());
-        for (final IExpeditionMember member : expedition.getMembers())
+        for (final IExpeditionMember<?> member : expedition.getMembers())
         {
             colony.getTravelingManager().startTravellingTo(member.getId(), townHallReturnPosition, TICKS_HOUR, false);
 

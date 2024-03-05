@@ -33,7 +33,7 @@ public interface IExpedition
      * @return the expedition members.
      */
     @NotNull
-    Collection<IExpeditionMember> getMembers();
+    Collection<IExpeditionMember<?>> getMembers();
 
     /**
      * Get the equipment given to the expedition at start time.
@@ -48,7 +48,7 @@ public interface IExpedition
      * @return the expedition members.
      */
     @NotNull
-    Collection<IExpeditionMember> getActiveMembers();
+    Collection<IExpeditionMember<?>> getActiveMembers();
 
     /**
      * The results of this expedition.
@@ -83,7 +83,7 @@ public interface IExpedition
      *
      * @param member the member that were lost.
      */
-    void memberLost(final IExpeditionMember member);
+    void memberLost(final IExpeditionMember<?> member);
 
     /**
      * Write this expedition to compound data.

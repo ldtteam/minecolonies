@@ -36,7 +36,7 @@ public class Expedition implements IExpedition
      * The members of the expedition.
      */
     @NotNull
-    protected final Map<Integer, IExpeditionMember> members;
+    protected final Map<Integer, IExpeditionMember<?>> members;
 
     /**
      * The results of this expedition.
@@ -54,7 +54,7 @@ public class Expedition implements IExpedition
      * @param equipment the list of equipment for this expedition.
      * @param members   the members for this expedition.
      */
-    public Expedition(final @NotNull Collection<ItemStack> equipment, final @NotNull Collection<IExpeditionMember> members)
+    public Expedition(final @NotNull Collection<ItemStack> equipment, final @NotNull Collection<IExpeditionMember<?>> members)
     {
         this.equipment = equipment;
         this.members = members.stream().collect(Collectors.toMap(IExpeditionMember::getId, v -> v));
@@ -69,7 +69,7 @@ public class Expedition implements IExpedition
     @NotNull
     public static Expedition loadFromNBT(final CompoundTag compound)
     {
-        final List<IExpeditionMember> members = new ArrayList<>();
+        final List<IExpeditionMember<?>> members = new ArrayList<>();
         final ListTag membersList = compound.getList(TAG_MEMBERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < membersList.size(); ++i)
         {
@@ -109,7 +109,7 @@ public class Expedition implements IExpedition
 
     @Override
     @NotNull
-    public Collection<IExpeditionMember> getMembers()
+    public Collection<IExpeditionMember<?>> getMembers()
     {
         return this.members.values();
     }
@@ -123,7 +123,7 @@ public class Expedition implements IExpedition
 
     @Override
     @NotNull
-    public Collection<IExpeditionMember> getActiveMembers()
+    public Collection<IExpeditionMember<?>> getActiveMembers()
     {
         return this.members.values().stream().filter(f -> !f.isDead()).toList();
     }
@@ -154,7 +154,7 @@ public class Expedition implements IExpedition
     }
 
     @Override
-    public void memberLost(final IExpeditionMember member)
+    public void memberLost(final IExpeditionMember<?> member)
     {
         this.results.getLast().memberLost(member);
         member.died();
@@ -169,7 +169,7 @@ public class Expedition implements IExpedition
     public void write(final CompoundTag compound)
     {
         final ListTag memberTag = new ListTag();
-        for (final IExpeditionMember member : members.values())
+        for (final IExpeditionMember<?> member : members.values())
         {
             final CompoundTag memberCompound = new CompoundTag();
             if (member instanceof ExpeditionCitizenMember)

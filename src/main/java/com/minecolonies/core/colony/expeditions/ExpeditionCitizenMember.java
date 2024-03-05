@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.expeditions;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import net.minecraft.nbt.CompoundTag;
@@ -14,7 +13,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 /**
  * Citizen expedition members.
  */
-public final class ExpeditionCitizenMember implements IExpeditionMember
+public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizenData>
 {
     /**
      * Nbt tag constants.
@@ -95,7 +94,8 @@ public final class ExpeditionCitizenMember implements IExpeditionMember
     }
 
     @Override
-    public @Nullable ICivilianData resolveCivilianData(final IColony colony)
+    @Nullable
+    public ICitizenData resolveCivilianData(final IColony colony)
     {
         return colony.getCitizenManager().getCivilian(this.id);
     }

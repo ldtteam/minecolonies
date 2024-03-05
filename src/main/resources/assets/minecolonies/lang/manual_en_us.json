@@ -2536,6 +2536,10 @@
   "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!",
 
   "com.minecolonies.core.expedition.interaction": "Hello! I am going on an expedition to %s, but I need some people and supplies. Could you help me out?",
+  "com.minecolonies.core.expedition.interaction.view": "View Expedition",
+  "com.minecolonies.core.expedition.interaction.view_results": "View Loot",
+  "com.minecolonies.core.expedition.interaction.not_now": "Maybe Later",
+  "com.minecolonies.core.expedition.interaction.not_interested": "I'm not interested",
   "com.minecolonies.core.expedition.gui.difficulty": "Difficulty: %s",
   "com.minecolonies.core.expedition.gui.difficulty.easy": "Easy",
   "com.minecolonies.core.expedition.gui.difficulty.medium": "Medium",
@@ -2551,5 +2555,6 @@
   "com.minecolonies.core.expedition.gui.guards.header": "Required Guards (%d)",
   "com.minecolonies.core.expedition.gui.guards.subheader.met": "Enough guards",
   "com.minecolonies.core.expedition.gui.guards.subheader.not_met": "Guards needed: %d",
-  "com.minecolonies.core.expedition.start": "[%s]: Thanks for the help, we will be leaving soon to start the expedition!"
+  "com.minecolonies.core.expedition.start": "[%s]: Thanks for the help, we will be leaving soon to start the expedition!",
+  "com.minecolonies.core.expedition.finish": "[%s]: We've returned from our expedition! I've left your share of rewards at the Town Hall."
 }

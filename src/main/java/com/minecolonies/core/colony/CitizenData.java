@@ -1566,9 +1566,25 @@ public class CitizenData implements ICitizenData
             this.citizenChatOptions.put(handler.getId(), handler);
             for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())
             {
-                this.citizenChatOptions.put(childHandler.getId(), (ServerCitizenInteraction) childHandler);
+                this.citizenChatOptions.put(childHandler.getId(), childHandler);
             }
             markDirty(20 * 5);
+        }
+    }
+
+    @Override
+    public void removeInteractions(@NotNull final String type)
+    {
+        final Iterator<IInteractionResponseHandler> iterator = this.citizenChatOptions.values().iterator();
+        while (iterator.hasNext())
+        {
+            final IInteractionResponseHandler handler = iterator.next();
+
+            if (handler.getType().equals(type))
+            {
+                iterator.remove();
+                markDirty(20 * 5);
+            }
         }
     }
 

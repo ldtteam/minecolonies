@@ -1,14 +1,18 @@
 package com.minecolonies.core.colony.expeditions.colony;
 
+import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
-import com.minecolonies.api.colony.expeditions.IExpedition;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.expeditions.AbstractExpeditionEvent;
+import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
+import com.minecolonies.core.colony.interactionhandling.ExpeditionFinishedInteraction;
 import com.minecolonies.core.items.ItemAdventureToken;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -28,6 +32,7 @@ import java.util.Deque;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_FINISH_MESSAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
 
 /**
@@ -150,7 +155,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     }
 
     @Override
-    public IExpedition getExpedition()
+    public ColonyExpedition getExpedition()
     {
         if (cachedExpedition == null)
         {
@@ -282,10 +287,21 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     {
         colony.getExpeditionManager().finishExpedition(expeditionId);
 
+        MessageUtils.format(EXPEDITION_FINISH_MESSAGE, getExpedition().getLeader().getName())
+          .withPriority(MessagePriority.IMPORTANT)
+          .sendTo(colony)
+          .forManagers();
+
         // Remove all members to the travelling manager and re-spawn them.
-        for (final IExpeditionMember member : getExpedition().getActiveMembers())
+        for (final IExpeditionMember<?> member : getExpedition().getActiveMembers())
         {
             colony.getTravelingManager().finishTravellingFor(member.getId());
+
+            if (member instanceof ExpeditionVisitorMember)
+            {
+                final ICivilianData leaderData = member.resolveCivilianData(colony);
+                leaderData.triggerInteraction(new ExpeditionFinishedInteraction(getExpedition()));
+            }
         }
     }
 }

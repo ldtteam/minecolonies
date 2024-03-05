@@ -48,7 +48,7 @@ public final class ColonyExpedition extends Expedition
       final int id,
       final @NotNull ResourceKey<Level> dimensionId,
       final @NotNull Collection<ItemStack> equipment,
-      final @NotNull Collection<IExpeditionMember> members)
+      final @NotNull Collection<IExpeditionMember<?>> members)
     {
         super(equipment, members);
         this.id = id;
@@ -97,7 +97,7 @@ public final class ColonyExpedition extends Expedition
      *
      * @param member the new member to add.
      */
-    public void addMember(final IExpeditionMember member)
+    public void addMember(final IExpeditionMember<?> member)
     {
         if (!status.equals(ExpeditionStatus.CREATED))
         {
@@ -112,7 +112,7 @@ public final class ColonyExpedition extends Expedition
      *
      * @param member the new member to add.
      */
-    public void removeMember(final IExpeditionMember member)
+    public void removeMember(final IExpeditionMember<?> member)
     {
         if (!status.equals(ExpeditionStatus.CREATED))
         {
@@ -152,9 +152,9 @@ public final class ColonyExpedition extends Expedition
      * @return the member instance.
      */
     @Nullable
-    public IExpeditionMember getLeader()
+    public ExpeditionVisitorMember getLeader()
     {
-        for (final IExpeditionMember member : members.values())
+        for (final IExpeditionMember<?> member : members.values())
         {
             if (member instanceof ExpeditionVisitorMember visitorMember)
             {

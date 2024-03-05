@@ -4,12 +4,13 @@ import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for the colony expedition manager. From here all outgoing expeditions to external places are managed.
  */
-public interface IColonyExpeditionManager
+public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
 {
     /**
      * Get the expedition with the given id.
@@ -50,18 +51,4 @@ public interface IColonyExpeditionManager
      * @return whether the target dimension is allowed or not.
      */
     boolean canGoToDimension(final ResourceKey<Level> dimension);
-
-    /**
-     * Writes the expedition manager to compound data.
-     *
-     * @param compound the compound data to read from.
-     */
-    void read(final CompoundTag compound);
-
-    /**
-     * Writes the expedition manager to compound data.
-     *
-     * @param compound the compound data to write to.
-     */
-    void write(final CompoundTag compound);
 }

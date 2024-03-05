@@ -168,6 +168,13 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     void triggerInteraction(@NotNull IInteractionResponseHandler handler);
 
     /**
+     * Remove all interactions of the given type.
+     *
+     * @param type the handler type.
+     */
+    void removeInteractions(@NotNull String type);
+
+    /**
      * Get the texture suffix.
      *
      * @return the suffix.

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface for expedition members.
  */
-public interface IExpeditionMember
+public interface IExpeditionMember<T extends ICivilianData>
 {
     /**
      * Get the id of the expedition member.
@@ -43,7 +43,7 @@ public interface IExpeditionMember
      * @return the civilian data, or null.
      */
     @Nullable
-    ICivilianData resolveCivilianData(final IColony colony);
+    T resolveCivilianData(final IColony colony);
 
     /**
      * Write this member to compound data.

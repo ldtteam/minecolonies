@@ -756,6 +756,9 @@ public class Colony implements IColony
         questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
+        expeditionManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EXPEDITION_MANAGER));
+        travelingManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_TRAVELING_MANAGER));
+
         if (compound.contains(TAG_RESEARCH))
         {
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
@@ -912,6 +915,9 @@ public class Colony implements IColony
 
         compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT());
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
+        compound.put(NbtTagConstants.TAG_EXPEDITION_MANAGER, expeditionManager.serializeNBT());
+        compound.put(NbtTagConstants.TAG_TRAVELING_MANAGER, travelingManager.serializeNBT());
+
         raidManager.write(compound);
 
         @NotNull final CompoundTag researchManagerCompound = new CompoundTag();

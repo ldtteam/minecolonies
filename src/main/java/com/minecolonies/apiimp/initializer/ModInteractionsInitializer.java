@@ -53,10 +53,16 @@ public final class ModInteractionsInitializer
                                                      .setRegistryName(ModInteractionResponseHandlers.QUEST_ACTION)
                                                      .createEntry());
 
-        ModInteractionResponseHandlers.expeditionary = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.EXPEDITIONARY.getPath(),
+        ModInteractionResponseHandlers.expedition = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.EXPEDITION.getPath(),
           () -> new InteractionResponseHandlerEntry.Builder()
-                  .setResponseHandlerProducer(ExpeditionaryInteraction::new)
-                  .setRegistryName(ModInteractionResponseHandlers.EXPEDITIONARY)
+                  .setResponseHandlerProducer(ExpeditionInteraction::new)
+                  .setRegistryName(ModInteractionResponseHandlers.EXPEDITION)
+                  .createEntry());
+
+        ModInteractionResponseHandlers.expeditionFinished = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.EXPEDITION_FINISHED.getPath(),
+          () -> new InteractionResponseHandlerEntry.Builder()
+                  .setResponseHandlerProducer(ExpeditionFinishedInteraction::new)
+                  .setRegistryName(ModInteractionResponseHandlers.EXPEDITION_FINISHED)
                   .createEntry());
     }
 }

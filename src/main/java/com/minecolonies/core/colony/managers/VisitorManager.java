@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.managers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -17,13 +16,12 @@ import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
-import com.minecolonies.core.colony.interactionhandling.ExpeditionaryInteraction;
+import com.minecolonies.core.colony.interactionhandling.ExpeditionInteraction;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -33,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
-import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_INTERACTION_INQUIRY;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION_TYPE;
@@ -244,8 +241,7 @@ public class VisitorManager implements IVisitorManager
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
             newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE, expeditionType.getId());
             newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ColonyExpedition(-1, expeditionType.getDimension(), new ArrayList<>(), new ArrayList<>()));
-            newVisitor.triggerInteraction(new ExpeditionaryInteraction(Component.translatable(EXPEDITION_INTERACTION_INQUIRY, expeditionType.getToText()),
-              ChatPriority.IMPORTANT));
+            newVisitor.triggerInteraction(new ExpeditionInteraction(expeditionType));
 
             spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
               newVisitor,

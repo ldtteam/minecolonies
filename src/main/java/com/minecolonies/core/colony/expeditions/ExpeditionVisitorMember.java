@@ -1,6 +1,5 @@
 package com.minecolonies.core.colony.expeditions;
 
-import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.IVisitorViewData;
@@ -14,7 +13,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 /**
  * Visitor expedition members.
  */
-public final class ExpeditionVisitorMember implements IExpeditionMember
+public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitorData>
 {
     /**
      * Nbt tag constants.
@@ -95,7 +94,8 @@ public final class ExpeditionVisitorMember implements IExpeditionMember
     }
 
     @Override
-    public @Nullable ICivilianData resolveCivilianData(final IColony colony)
+    @Nullable
+    public IVisitorData resolveCivilianData(final IColony colony)
     {
         return colony.getVisitorManager().getCivilian(this.id);
     }

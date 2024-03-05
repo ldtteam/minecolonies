@@ -85,7 +85,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     @Nullable
     public ColonyExpedition addExpedition(final ColonyExpedition expedition)
     {
-        final IExpeditionMember leader = expedition.getLeader();
+        final IExpeditionMember<?> leader = expedition.getLeader();
         if (leader == null)
         {
             return null;
@@ -144,25 +144,9 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
-    public void read(final CompoundTag compound)
+    public CompoundTag serializeNBT()
     {
-        final ListTag activeExpeditionsCompound = compound.getList(TAG_ACTIVE_EXPEDITIONS, Tag.TAG_COMPOUND);
-        activeExpeditions.putAll(NBTUtils.streamCompound(activeExpeditionsCompound)
-                                   .map(ColonyExpedition::loadFromNBT)
-                                   .collect(Collectors.toMap(ColonyExpedition::getId, v -> v)));
-
-        final ListTag finishedExpeditionsCompound = compound.getList(TAG_FINISHED_EXPEDITIONS, Tag.TAG_COMPOUND);
-        finishedExpeditions.addAll(NBTUtils.streamCompound(finishedExpeditionsCompound)
-                                     .map(ColonyExpedition::loadFromNBT)
-                                     .toList());
-
-        isRuinedPortalDiscovered = compound.getBoolean(TAG_RUINED_PORTAL_DISCOVER);
-        isStrongholdDiscovered = compound.getBoolean(TAG_STRONGHOLD_PORTAL_DISCOVER);
-    }
-
-    @Override
-    public void write(final CompoundTag compound)
-    {
+        final CompoundTag compound = new CompoundTag();
         final ListTag activeExpeditionsCompound = activeExpeditions.values().stream()
                                                     .map(expedition -> {
                                                         final CompoundTag expeditionItemCompound = new CompoundTag();
@@ -183,6 +167,24 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
 
         compound.putBoolean(TAG_RUINED_PORTAL_DISCOVER, isRuinedPortalDiscovered);
         compound.putBoolean(TAG_STRONGHOLD_PORTAL_DISCOVER, isStrongholdDiscovered);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag compound)
+    {
+        final ListTag activeExpeditionsCompound = compound.getList(TAG_ACTIVE_EXPEDITIONS, Tag.TAG_COMPOUND);
+        activeExpeditions.putAll(NBTUtils.streamCompound(activeExpeditionsCompound)
+                                   .map(ColonyExpedition::loadFromNBT)
+                                   .collect(Collectors.toMap(ColonyExpedition::getId, v -> v)));
+
+        final ListTag finishedExpeditionsCompound = compound.getList(TAG_FINISHED_EXPEDITIONS, Tag.TAG_COMPOUND);
+        finishedExpeditions.addAll(NBTUtils.streamCompound(finishedExpeditionsCompound)
+                                     .map(ColonyExpedition::loadFromNBT)
+                                     .toList());
+
+        isRuinedPortalDiscovered = compound.getBoolean(TAG_RUINED_PORTAL_DISCOVER);
+        isStrongholdDiscovered = compound.getBoolean(TAG_STRONGHOLD_PORTAL_DISCOVER);
     }
 
     /**

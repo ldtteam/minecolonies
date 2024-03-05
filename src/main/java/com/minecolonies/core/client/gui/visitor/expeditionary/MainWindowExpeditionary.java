@@ -420,5 +420,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
 
         expedition.setStatus(ExpeditionStatus.EMBARKED);
         Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expeditionType, expedition));
+
+        close();
     }
 }
