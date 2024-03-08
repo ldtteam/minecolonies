@@ -79,7 +79,7 @@ public class QuestDialogueInteraction extends StandardInteraction
 
     public QuestDialogueInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData)
     {
-        super(inquiry, null, priority);
+        super(inquiry, Component.empty(), priority);
         this.questId = location;
         this.index = index;
         this.currentElement = ((DialogueObjectiveTemplateTemplate) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();

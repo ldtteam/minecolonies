@@ -76,7 +76,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
       final boolean primary,
       final IChatPriority priority,
       final Predicate<ICitizenData> validator,
-      final Component validatorId,
+      @NotNull final Component validatorId,
       final Tuple<Component, Component>... responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);

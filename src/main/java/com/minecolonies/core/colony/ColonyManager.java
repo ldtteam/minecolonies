@@ -232,7 +232,7 @@ public final class ColonyManager implements IColonyManager
     {
         if (!(world instanceof final ServerLevel serverLevel))
         {
-            return getColonyView(id, world.dimension());
+            return null;
         }
         final IServerColonySaveData cap = getColonySaveData(serverLevel);
         if (cap == null)
@@ -273,6 +273,7 @@ public final class ColonyManager implements IColonyManager
                 return building;
             }
         }
+
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final IColony otherColony : getColonies(w))
@@ -334,8 +335,7 @@ public final class ColonyManager implements IColonyManager
     {
         if (!(w instanceof final ServerLevel serverLevel))
         {
-            final ColonyList<IColonyView> list = colonyViews.get(w.dimension());
-            return list == null || list.isEmpty() ? List.of() : list.getCopyAsList();
+            return Collections.emptyList();
         }
         final IServerColonySaveData cap = getColonySaveData(serverLevel);
         if (cap == null)

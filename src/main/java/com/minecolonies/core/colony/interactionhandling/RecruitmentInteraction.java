@@ -72,7 +72,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
       final Component inquiry,
       final IChatPriority priority)
     {
-        super(inquiry, true, priority, d -> true, null, responses);
+        super(inquiry, true, priority, d -> true, Component.empty(), responses);
     }
 
     @Override
