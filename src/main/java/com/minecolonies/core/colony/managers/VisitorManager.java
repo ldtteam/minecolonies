@@ -33,7 +33,6 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
-import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION_TYPE;
 
 /**
  * Manages all visiting entities to the colony
@@ -239,8 +238,8 @@ public class VisitorManager implements IVisitorManager
         if (expeditionType != null)
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
-            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE, expeditionType.getId());
-            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ColonyExpedition(-1, expeditionType.getDimension(), new ArrayList<>(), new ArrayList<>()));
+            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION,
+              new ColonyExpedition(-1, expeditionType.getDimension(), new ArrayList<>(), new ArrayList<>(), expeditionType.getId()));
             newVisitor.triggerInteraction(new ExpeditionInteraction(expeditionType));
 
             spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),

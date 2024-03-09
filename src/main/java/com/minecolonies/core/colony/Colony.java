@@ -1959,6 +1959,7 @@ public class Colony implements IColony
     }
 
     @Override
+    @NotNull
     public IColonyExpeditionManager getExpeditionManager()
     {
         return expeditionManager;

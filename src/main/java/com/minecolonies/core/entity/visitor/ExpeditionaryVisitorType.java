@@ -26,8 +26,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
     /**
      * Extra data fields.
      */
-    public static final ColonyExpeditionTypeData EXTRA_DATA_EXPEDITION_TYPE = new ColonyExpeditionTypeData();
-    public static final ColonyExpeditionData     EXTRA_DATA_EXPEDITION      = new ColonyExpeditionData();
+    public static final ColonyExpeditionData EXTRA_DATA_EXPEDITION = new ColonyExpeditionData();
 
     @Override
     public ResourceLocation getId()
@@ -50,7 +49,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
     @Override
     public List<IVisitorExtraData<?>> getExtraDataKeys()
     {
-        return List.of(EXTRA_DATA_EXPEDITION_TYPE, EXTRA_DATA_EXPEDITION);
+        return List.of(EXTRA_DATA_EXPEDITION);
     }
 
     @Override
@@ -63,40 +62,13 @@ public class ExpeditionaryVisitorType implements IVisitorType
     }
 
     /**
-     * Extra data for storing the expedition type instance.
-     */
-    public static class ColonyExpeditionTypeData extends AbstractVisitorExtraData<ResourceLocation>
-    {
-        private static final String TAG_VALUE = "value";
-
-        public ColonyExpeditionTypeData()
-        {
-            super("expedition-type", new ResourceLocation(""));
-        }
-
-        @Override
-        public CompoundTag serializeNBT()
-        {
-            final CompoundTag compound = new CompoundTag();
-            compound.putString(TAG_VALUE, getValue().toString());
-            return compound;
-        }
-
-        @Override
-        public void deserializeNBT(final CompoundTag compoundTag)
-        {
-            setValue(new ResourceLocation(compoundTag.getString(TAG_VALUE)));
-        }
-    }
-
-    /**
      * Extra data for storing the expedition builder instance.
      */
     public static class ColonyExpeditionData extends AbstractVisitorExtraData<ColonyExpedition>
     {
         public ColonyExpeditionData()
         {
-            super("expedition", new ColonyExpedition(-1, Level.OVERWORLD, new ArrayList<>(), new ArrayList<>()));
+            super("expedition", new ColonyExpedition(-1, Level.OVERWORLD, new ArrayList<>(), new ArrayList<>(), new ResourceLocation("")));
         }
 
         @Override

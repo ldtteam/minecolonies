@@ -7,11 +7,20 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Interface for the colony expedition manager. From here all outgoing expeditions to external places are managed.
  */
 public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
 {
+    /**
+     * Get a list of all the active expeditions in the colony.
+     *
+     * @return an unmodifiable list.
+     */
+    List<ColonyExpedition> getActiveExpeditions();
+
     /**
      * Get the expedition with the given id.
      *
@@ -51,4 +60,18 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
      * @return whether the target dimension is allowed or not.
      */
     boolean canGoToDimension(final ResourceKey<Level> dimension);
+
+    /**
+     * Whether the expedition manager class is dirty and the client needs to be updated.
+     *
+     * @return true if so.
+     */
+    boolean isDirty();
+
+    /**
+     * Update the dirty flag of the expedition manager.
+     *
+     * @param dirty the new dirty state.
+     */
+    void setDirty(boolean dirty);
 }

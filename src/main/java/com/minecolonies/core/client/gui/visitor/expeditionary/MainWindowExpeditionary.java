@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
-import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION_TYPE;
 
 /**
  * Main window for the expeditionary their GUI.
@@ -126,14 +125,13 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         super(Constants.MOD_ID + EXPEDITIONARY_MAIN_RESOURCE_SUFFIX);
         this.visitorData = visitorData;
 
-        final ResourceLocation expeditionTypeId = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION_TYPE);
-        expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+        expedition = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION);
+
+        expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
         if (expeditionType == null)
         {
-            throw new IllegalStateException(String.format("Expedition with id '%s' does not exist.", expeditionTypeId.toString()));
+            throw new IllegalStateException(String.format("Expedition with id '%s' does not exist.", expedition.getExpeditionTypeId()));
         }
-
-        expedition = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION);
 
         membersByIdCache = expedition.getMembers().stream().map(IExpeditionMember::getId).collect(Collectors.toSet());
 

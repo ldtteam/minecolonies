@@ -20,6 +20,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -67,11 +68,27 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     private boolean isStrongholdDiscovered;
 
     /**
+     * The cached list of active expeditions for {@link ColonyExpeditionManager#getActiveExpeditions()}.
+     */
+    private List<ColonyExpedition> activeExpeditionsCache;
+
+    /**
+     * Whether this manager is dirty.
+     */
+    private boolean dirty;
+
+    /**
      * Default constructor.
      */
     public ColonyExpeditionManager(final IColony colony)
     {
         this.colony = colony;
+    }
+
+    @Override
+    public List<ColonyExpedition> getActiveExpeditions()
+    {
+        return activeExpeditionsCache;
     }
 
     @Override
@@ -96,8 +113,12 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
             return null;
         }
 
-        final ColonyExpedition expeditionWithId = new ColonyExpedition(leader.getId(), expedition.getTargetDimension(), expedition.getEquipment(), expedition.getMembers());
+        final ColonyExpedition expeditionWithId =
+          new ColonyExpedition(leader.getId(), expedition.getTargetDimension(), expedition.getEquipment(), expedition.getMembers(), expedition.getExpeditionTypeId());
         activeExpeditions.put(expeditionWithId.getId(), expeditionWithId);
+        activeExpeditionsCache = activeExpeditions.values().stream().toList();
+
+        dirty = true;
         return expeditionWithId;
     }
 
@@ -107,6 +128,9 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         if (activeExpeditions.containsKey(id))
         {
             finishedExpeditions.add(activeExpeditions.remove(id));
+            activeExpeditionsCache = activeExpeditions.values().stream().toList();
+
+            dirty = true;
         }
     }
 
@@ -144,6 +168,18 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
+    public boolean isDirty()
+    {
+        return dirty;
+    }
+
+    @Override
+    public void setDirty(final boolean dirty)
+    {
+        this.dirty = dirty;
+    }
+
+    @Override
     public CompoundTag serializeNBT()
     {
         final CompoundTag compound = new CompoundTag();
@@ -177,6 +213,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         activeExpeditions.putAll(NBTUtils.streamCompound(activeExpeditionsCompound)
                                    .map(ColonyExpedition::loadFromNBT)
                                    .collect(Collectors.toMap(ColonyExpedition::getId, v -> v)));
+        activeExpeditionsCache = activeExpeditions.values().stream().toList();
 
         final ListTag finishedExpeditionsCompound = compound.getList(TAG_FINISHED_EXPEDITIONS, Tag.TAG_COMPOUND);
         finishedExpeditions.addAll(NBTUtils.streamCompound(finishedExpeditionsCompound)

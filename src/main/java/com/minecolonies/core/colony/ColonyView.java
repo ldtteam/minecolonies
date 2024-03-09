@@ -29,6 +29,7 @@ import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.colony.managers.ColonyExpeditionManager;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
 import com.minecolonies.core.colony.permissions.PermissionsView;
@@ -242,6 +243,11 @@ public final class ColonyView implements IColonyView
     private IQuestManager questManager;
 
     /**
+     * Client side expedition manager.
+     */
+    private IColonyExpeditionManager expeditionManager;
+
+    /**
      * Day in the colony.
      */
     private int day;
@@ -256,6 +262,7 @@ public final class ColonyView implements IColonyView
         this.id = id;
         this.researchManager = new ResearchManager(this);
         this.questManager = new QuestManager(this);
+        this.expeditionManager = new ColonyExpeditionManager(this);
     }
 
     /**
@@ -427,6 +434,19 @@ public final class ColonyView implements IColonyView
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
         buf.writeNbt(colony.getQuestManager().serializeNBT());
         buf.writeInt(colony.getDay());
+
+        // Write expedition manager
+        if (colony.getExpeditionManager().isDirty() || hasNewSubscribers)
+        {
+            buf.writeBoolean(true);
+            buf.writeNbt(colony.getExpeditionManager().serializeNBT());
+
+            colony.getExpeditionManager().setDirty(false);
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
     }
 
     /**
@@ -878,6 +898,12 @@ public final class ColonyView implements IColonyView
         this.statisticManager.deserialize(buf);
         this.questManager.deserializeNBT(buf.readNbt());
         this.day = buf.readInt();
+
+        if (buf.readBoolean())
+        {
+            this.expeditionManager.deserializeNBT(buf.readNbt());
+        }
+
         return null;
     }
 
@@ -1584,9 +1610,10 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    @NotNull
     public IColonyExpeditionManager getExpeditionManager()
     {
-        return null;
+        return expeditionManager;
     }
 
     @Override

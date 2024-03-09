@@ -523,6 +523,8 @@
   "com.minecolonies.coremod.gui.townhall.mercenaryhire": "Hire",
   "com.minecolonies.coremod.gui.townhall.mercenarystory": "You've encountered some Mercenaries near your colony, and they offer to help with defending your colony. A price they did not name, but you get the feeling that they will not leave bare-handed. Hire at your own risk!",
 
+  "com.minecolonies.coremod.gui.townhall.expeditions": "Expeditions",
+
   "com.minecolonies.coremod.gui.townhall.recall": "Recall Citizens",
   "com.minecolonies.coremod.gui.townhall.recallone": "Recall Citizen",
 
@@ -2556,5 +2558,14 @@
   "com.minecolonies.core.expedition.gui.guards.subheader.met": "Enough guards",
   "com.minecolonies.core.expedition.gui.guards.subheader.not_met": "Guards needed: %d",
   "com.minecolonies.core.expedition.start": "[%s]: Thanks for the help, we will be leaving soon to start the expedition!",
-  "com.minecolonies.core.expedition.finish": "[%s]: We've returned from our expedition! I've left your share of rewards at the Town Hall."
+  "com.minecolonies.core.expedition.finish": "[%s]: We've returned from our expedition! I've left your share of rewards at the Town Hall.",
+  "com.minecolonies.core.expedition.gui.townhall.header": "Expeditions Overview",
+  "com.minecolonies.core.expedition.gui.townhall.header_active": "Active Expeditions",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.to_text": "To %s",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.CREATED": "Ongoing",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.EMBARKED": "Ongoing",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.RETURNED": "Safely Returned",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.KILLED": "Not Returned",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.LOST": "Not Returned",
+  "com.minecolonies.core.expedition.gui.townhall.no_chosen": "Please choose an expedition to view more details."
 }

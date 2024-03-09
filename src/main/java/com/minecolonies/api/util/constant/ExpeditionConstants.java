@@ -37,4 +37,9 @@ public class ExpeditionConstants
     public static final String EXPEDITION_START_MESSAGE                       = "com.minecolonies.core.expedition.start";
     @NonNls
     public static final String EXPEDITION_FINISH_MESSAGE                      = "com.minecolonies.core.expedition.finish";
+
+    @NonNls
+    public static final String EXPEDITION_TOWNHALL_LIST_TO_TEXT = "com.minecolonies.core.expedition.gui.townhall.expedition_list.to_text";
+    @NonNls
+    public static final String EXPEDITION_TOWNHALL_LIST_STATUS  = "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.";
 }

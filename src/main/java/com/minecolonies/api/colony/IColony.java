@@ -489,6 +489,7 @@ public interface IColony
      *
      * @return the expedition manager.
      */
+    @NotNull
     IColonyExpeditionManager getExpeditionManager();
 
     /**

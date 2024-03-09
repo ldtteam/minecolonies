@@ -87,6 +87,11 @@ public final class WindowConstants
     /**
      * Id of the mercenary button in the GUI.
      */
+    public static final String BUTTON_EXPEDITIONS = "expeditions";
+
+    /**
+     * Id of the mercenary button in the GUI.
+     */
     public static final String BUTTON_TOWNHALLMAP = "map";
 
     /**

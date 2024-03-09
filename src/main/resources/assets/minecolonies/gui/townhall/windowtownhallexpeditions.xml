@@ -1,0 +1,37 @@
+<window size="400 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockui/blockui.xsd">
+
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" pos="0 0" size="400 244"/>
+
+    <view pos="15 15" size="370 214">
+        <view size="180 100%">
+            <text size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header)" color="black" textscale="1.2"/>
+
+            <box linewidth="1" pos="5 17" size="170 1" color="gray"/>
+
+            <text pos="0 20" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_active)" color="black"/>
+            <box pos="0 40" size="100% 45" linewidth="1">
+                <list id="active_expeditions" size="100% 100%">
+                    <box size="180 45" linewidth="1">
+                        <text id="expedition_name" pos="5 5" size="142 15" color="black"/>
+                        <buttonimage id="expedition_open" pos="152 5" size="14 15" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
+                        <text id="expedition_status" pos="5 25" size="142 15" color="black" textscale="0.8"/>
+                    </box>
+                </list>
+            </box>
+        </view>
+
+        <box linewidth="1" pos="185 0" size="1 100%" color="gray"/>
+
+        <view pos="190 0" size="180 100%">
+            <text id="empty_text"
+                  size="75% 100%"
+                  align="TOP_MIDDLE"
+                  text="$(com.minecolonies.core.expedition.gui.townhall.no_chosen)"
+                  color="black"
+                  textscale="0.8"
+                  textalign="MIDDLE"/>
+        </view>
+    </view>
+</window>

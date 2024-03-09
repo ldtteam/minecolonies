@@ -49,7 +49,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * NBT tags.
      */
     private static final String TAG_EXPEDITION_ID              = "expeditionId";
-    private static final String TAG_EXPEDITION_TYPE            = "expeditionType";
     private static final String TAG_REMAINING_ITEMS            = "remainingItems";
     private static final String TAG_END_TIME                   = "endTime";
     private static final String TAG_FLAG_MINIMUM_TIME_ELAPSED  = "flagMinTimeElapsed";
@@ -74,11 +73,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * The id of this expedition.
      */
     private int expeditionId;
-
-    /**
-     * The expedition type for this colony expedition.
-     */
-    private ResourceLocation expeditionTypeId;
 
     /**
      * Contains a set of items that still have yet to be found.
@@ -117,7 +111,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         super(colony);
         id = colony.getEventManager().getAndTakeNextEventID();
         expeditionId = expedition.getId();
-        expeditionTypeId = expeditionType.getId();
 
         // Move the equipment into the temporary event storage for inventory simulation.
         expedition.getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
@@ -171,10 +164,10 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         final Level world = getColony().getWorld();
         if (!world.isClientSide)
         {
-            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(getExpedition().getExpeditionTypeId());
             if (expeditionType == null)
             {
-                Log.getLogger().warn("Expedition cannot start because of a missing expedition type: '{}'", expeditionTypeId);
+                Log.getLogger().warn("Expedition cannot start because of a missing expedition type: '{}'", getExpedition().getExpeditionTypeId());
                 return;
             }
 
@@ -190,7 +183,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     {
         final CompoundTag compound = super.serializeNBT();
         compound.putInt(TAG_EXPEDITION_ID, expeditionId);
-        compound.putString(TAG_EXPEDITION_TYPE, expeditionTypeId.toString());
         compound.put(TAG_INVENTORY, inventory.serializeNBT());
         compound.put(TAG_REMAINING_ITEMS, remainingItems.stream()
                                             .map(IForgeItemStack::serializeNBT)
@@ -205,7 +197,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     public void deserializeNBT(final CompoundTag compoundTag)
     {
         expeditionId = compoundTag.getInt(TAG_EXPEDITION_ID);
-        expeditionTypeId = new ResourceLocation(compoundTag.getString(TAG_EXPEDITION_TYPE));
         inventory.deserializeNBT(compoundTag.getCompound(TAG_INVENTORY));
         remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND))
                            .map(ItemStack::of)

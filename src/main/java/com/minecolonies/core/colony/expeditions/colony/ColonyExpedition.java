@@ -27,6 +27,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 public final class ColonyExpedition extends Expedition
 {
     /**
+     * NBT tags.
+     */
+    private static final String TAG_EXPEDITION_TYPE = "expeditionType";
+
+    /**
      * The id for this expedition.
      */
     private final int id;
@@ -36,6 +41,12 @@ public final class ColonyExpedition extends Expedition
      */
     @NotNull
     private final ResourceKey<Level> dimensionId;
+
+    /**
+     * The expedition type.
+     */
+    @NotNull
+    private final ResourceLocation expeditionTypeId;
 
     /**
      * Deserialization constructor.
@@ -48,11 +59,13 @@ public final class ColonyExpedition extends Expedition
       final int id,
       final @NotNull ResourceKey<Level> dimensionId,
       final @NotNull Collection<ItemStack> equipment,
-      final @NotNull Collection<IExpeditionMember<?>> members)
+      final @NotNull Collection<IExpeditionMember<?>> members,
+      final @NotNull ResourceLocation expeditionTypeId)
     {
         super(equipment, members);
         this.id = id;
         this.dimensionId = dimensionId;
+        this.expeditionTypeId = expeditionTypeId;
     }
 
     /**
@@ -68,7 +81,8 @@ public final class ColonyExpedition extends Expedition
 
         final int id = compound.getInt(TAG_ID);
         final ResourceKey<Level> dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
-        return new ColonyExpedition(id, dimensionId, base.getEquipment(), base.getMembers());
+        final ResourceLocation expeditionTypeId = new ResourceLocation(compound.getString(TAG_EXPEDITION_TYPE));
+        return new ColonyExpedition(id, dimensionId, base.getEquipment(), base.getMembers(), expeditionTypeId);
     }
 
     /**
@@ -90,6 +104,16 @@ public final class ColonyExpedition extends Expedition
     public ResourceKey<Level> getTargetDimension()
     {
         return this.dimensionId;
+    }
+
+    /**
+     * Get the expedition type id for this expedition.
+     *
+     * @return the expedition type id.
+     */
+    public ResourceLocation getExpeditionTypeId()
+    {
+        return expeditionTypeId;
     }
 
     /**
@@ -144,6 +168,7 @@ public final class ColonyExpedition extends Expedition
         super.write(compound);
         compound.putInt(TAG_ID, id);
         compound.putString(TAG_DIMENSION, dimensionId.location().toString());
+        compound.putString(TAG_EXPEDITION_TYPE, expeditionTypeId.toString());
     }
 
     /**
