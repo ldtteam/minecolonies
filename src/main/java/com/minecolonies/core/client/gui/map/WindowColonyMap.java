@@ -338,7 +338,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             uiBuilding.setVisible(true);
 
-            dragView.removeChild(this.buildings.get(buildingView));
             this.buildings.put(buildingView, uiBuilding);
         }
 
