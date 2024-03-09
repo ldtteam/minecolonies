@@ -50,13 +50,13 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     /**
      * The recruit answer
      */
-    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.recruit"), null);
+    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.recruit"), Component.empty());
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.showstats"), null),
+      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.showstats"), Component.empty()),
       recruitAnswer,
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.notnow"), null)};
+      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.notnow"), Component.empty())};
 
     /**
      * Chance for a bad visitor
