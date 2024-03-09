@@ -91,7 +91,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             {
                 return InteractionResult.FAIL;
             }
-            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection());
+            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection(), ctx.getItemInHand());
         }
 
         return InteractionResult.FAIL;
@@ -109,7 +109,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
                 return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
-            placeSupplyShip(worldIn, null, playerIn.getDirection());
+            placeSupplyShip(worldIn, null, playerIn.getDirection(), stack);
         }
 
         return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
@@ -118,10 +118,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Places a supply chest on the given position looking to the given direction.
      *
-     * @param pos       the position to place the supply chest at.
-     * @param direction the direction the supply chest should face.
+     * @param pos        the position to place the supply chest at.
+     * @param direction  the direction the supply chest should face.
+     * @param itemInHand
      */
-    private void placeSupplyShip(Level world, @Nullable final BlockPos pos, @NotNull final Direction direction)
+    private void placeSupplyShip(Level world, @Nullable final BlockPos pos, @NotNull final Direction direction, final ItemStack itemInHand)
     {
         final String name = WorldUtil.isNetherType(world)
                               ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
@@ -130,11 +131,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         if (pos == null)
         {
-            new WindowSupplies(pos, name).open();
+            new WindowSupplies(pos, name, itemInHand).open();
             return;
         }
 
-        new WindowSupplies(pos, name).open();
+        new WindowSupplies(pos, name, itemInHand).open();
     }
 
     /**

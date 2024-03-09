@@ -55,7 +55,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(ctx.getPlayer());
                 return InteractionResult.FAIL;
             }
-            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection());
+            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection(), ctx.getItemInHand());
         }
 
         return InteractionResult.FAIL;
@@ -73,7 +73,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
                 return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
-            placeSupplyCamp(null, playerIn.getDirection());
+            placeSupplyCamp(null, playerIn.getDirection(), stack);
         }
 
         return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
@@ -85,15 +85,15 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param pos       the position to place the supply camp at.
      * @param direction the direction the supply camp should face.
      */
-    private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction)
+    private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction, final ItemStack itemInHand)
     {
         if (pos == null)
         {
-            new WindowSupplies(pos, "supplycamp").open();
+            new WindowSupplies(pos, "supplycamp", itemInHand).open();
             return;
         }
 
-        new WindowSupplies(pos, "supplycamp").open();
+        new WindowSupplies(pos, "supplycamp", itemInHand).open();
     }
 
     /**

@@ -21,6 +21,7 @@ import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
@@ -54,16 +55,19 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
      * Current selected structure pack.
      */
     private static StructurePackMeta structurePack = null;
+    private final ItemStack itemInHand;
 
     /**
      * Create a new supply tool window.
-     * @param pos the pos its initiated at.
+     *
+     * @param pos        the pos its initiated at.
+     * @param itemInHand
      */
-    public WindowSupplies(@Nullable final BlockPos pos, final String type)
+    public WindowSupplies(@Nullable final BlockPos pos, final String type, final ItemStack itemInHand)
     {
         super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
-
         registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
+        this.itemInHand = itemInHand;
 
         if (!type.equals(WindowSupplies.type))
         {
@@ -91,7 +95,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         {
             final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
             previewData.setBlueprint(null);
-            return new WindowSupplies(previewData.getPos(), type);
+            return new WindowSupplies(previewData.getPos(), type, itemInHand);
         }, pack -> Files.exists(pack.getPath().resolve("decorations/supplies/" + type + ".blueprint"))).open();
     }
 
