@@ -478,29 +478,46 @@ public final class ItemStackUtils
      */
     private static int getArmorLevel(final ArmorMaterial material)
     {
-        final int damageReductionAmount = material.getDefenseForType(ArmorItem.Type.CHESTPLATE);
-        if (damageReductionAmount <= ArmorMaterials.LEATHER.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        final float armorLevel = getArmorValue(material);
+
+        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER))
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterials.GOLD.getDefenseForType(ArmorItem.Type.CHESTPLATE) && material != ArmorMaterials.CHAIN)
+        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD))
         {
             return 1;
         }
-        else if (damageReductionAmount <= ArmorMaterials.CHAIN.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN))
         {
             return 2;
         }
-        else if (damageReductionAmount <= ArmorMaterials.IRON.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON))
         {
             return 3;
         }
-        else if (damageReductionAmount <= ArmorMaterials.DIAMOND.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND))
         {
             return 4;
         }
 
         return 5;
+    }
+
+    /**
+     * Calculate the full armor level of an entire kit of armor combined.
+     *
+     * @param material type of material of the armor.
+     * @return the armor value.
+     */
+    private static float getArmorValue(final ArmorMaterial material)
+    {
+        int value = 0;
+        for (final ArmorItem.Type type : ArmorItem.Type.values())
+        {
+            value += material.getDefenseForType(type);
+        }
+        return value + material.getToughness() * 4;
     }
 
     /**

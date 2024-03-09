@@ -1,13 +1,17 @@
 package com.minecolonies.core.entity.pathfinding;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Small block lookup cache, to avoid repeated lookups
  */
-public class CachingBlockLookup
+public class CachingBlockLookup implements BlockGetter
 {
     /**
      * Center of the cache
@@ -39,6 +43,13 @@ public class CachingBlockLookup
         this.world = world;
     }
 
+    @Nullable
+    @Override
+    public BlockEntity getBlockEntity(final BlockPos p_45570_)
+    {
+        return null;
+    }
+
     /**
      * Get a blockstate
      *
@@ -67,6 +78,12 @@ public class CachingBlockLookup
 
             return state;
         }
+    }
+
+    @Override
+    public FluidState getFluidState(final BlockPos pos)
+    {
+        return getBlockState(pos).getFluidState();
     }
 
     /**
@@ -103,18 +120,28 @@ public class CachingBlockLookup
 
     /**
      * Resets the cache's position and data
-     *
-     * @param next
      */
-    public void resetToNextPos(final BlockPos next)
+    public void resetToNextPos(final int x, final int y, final int z)
     {
         for (int i = 0; i < states.length; i++)
         {
             states[i] = null;
         }
 
-        centerX = next.getX() + 2;
-        centerY = next.getY() + 2;
-        centerZ = next.getZ() + 2;
+        centerX = x + 2;
+        centerY = y + 2;
+        centerZ = z + 2;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        return world.getHeight();
+    }
+
+    @Override
+    public int getMinBuildHeight()
+    {
+        return world.getMinBuildHeight();
     }
 }

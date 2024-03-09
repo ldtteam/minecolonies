@@ -1,6 +1,7 @@
 package com.minecolonies.core.tileentities;
 
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
@@ -62,14 +63,9 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     private BlockPos corner2 = BlockPos.ZERO;
 
     /**
-     * The used rotation.
+     * The used rotation/mirror.
      */
-    private Rotation rotation = Rotation.NONE;
-
-    /**
-     * The used mirror.
-     */
-    private boolean mirror;
+    private RotationMirror rotMir = RotationMirror.NONE;
 
     /**
      * Map of block positions relative to TE pos and string tags
@@ -159,7 +155,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
      */
     public Rotation getRotation()
     {
-        return rotation;
+        return this.rotMir.rotation();
     }
 
     /**
@@ -169,7 +165,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
      */
     public boolean getMirror()
     {
-        return this.mirror;
+        return this.rotMir.isMirrored();
     }
 
     private FieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
@@ -305,13 +301,13 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     @Override
     public void rotate(final Rotation rotationIn)
     {
-        this.rotation = rotationIn;
+        this.rotMir = this.rotMir.rotate(rotationIn);
     }
 
     @Override
     public void mirror(final Mirror mirror)
     {
-        this.mirror = mirror != Mirror.NONE;
+        this.rotMir = this.rotMir.mirrorate(mirror);
     }
 
     @Override
@@ -326,8 +322,8 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         super.load(compound);
         super.readSchematicDataFromNBT(compound);
-        this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
-        this.mirror = compound.getBoolean(TAG_MIRROR);
+        this.rotMir = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)],
+                compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE);
         if (compound.contains(TAG_PATH))
         {
             this.schematicPath = compound.getString(TAG_PATH);
@@ -356,8 +352,8 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
-        compound.putInt(TAG_ROTATION, this.rotation.ordinal());
-        compound.putBoolean(TAG_MIRROR, this.mirror);
+        compound.putInt(TAG_ROTATION, this.rotMir.rotation().ordinal());
+        compound.putBoolean(TAG_MIRROR, this.rotMir.isMirrored());
         compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
         compound.putString(TAG_PATH, schematicPath == null ? "" : schematicPath);
         compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);
