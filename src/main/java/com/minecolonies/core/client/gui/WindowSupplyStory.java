@@ -93,6 +93,9 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
         this.findPaneOfTypeByID("place", Button.class).setText(Component.translatable("com.minecolonies.core.gui.supplies.place", Component.translatable(stack.getItem().getDescriptionId())));
     }
 
+    /**
+     * Redirect to placement window.
+     */
     private void place()
     {
         Network.getNetwork().sendToServer(new MarkStoryReadOnItem(hand));

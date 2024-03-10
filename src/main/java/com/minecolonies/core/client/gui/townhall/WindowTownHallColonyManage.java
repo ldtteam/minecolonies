@@ -37,7 +37,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     private final BlockPos pos;
 
     /**
-     * If its a reactivation creation.
+     * If it is a reactivated colony.
      */
     private final boolean reactivate;
 
