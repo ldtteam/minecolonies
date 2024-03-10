@@ -87,7 +87,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
             {
                 return InteractionResult.FAIL;
             }
-            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10).above(), ctx.getHand(), ctx.getItemInHand());
+            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getHorizontalDirection(), SUPPLY_OFFSET_DISTANCE).above(), ctx.getHand(), ctx.getItemInHand());
         }
 
         return InteractionResult.FAIL;
@@ -193,7 +193,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
             }
         }
 
-        if (needsAirAbove.size() > sizeX*sizeZ/3 || needsWaterList.size() > sizeX*sizeZ/3)
+        if (needsAirAbove.size() > sizeX*sizeZ*SUPPLY_TOLERANCE_FRACTION || needsWaterList.size() > sizeX*sizeZ*SUPPLY_TOLERANCE_FRACTION)
         {
             placementErrorList.addAll(needsAirAbove);
             placementErrorList.addAll(needsWaterList);

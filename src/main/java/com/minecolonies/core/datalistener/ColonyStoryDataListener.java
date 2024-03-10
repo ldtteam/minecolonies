@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Loads and listens to custom visitor data added
+ * Loads and listens to colony story data changes.
  */
 public class ColonyStoryDataListener extends SimpleJsonResourceReloadListener
 {
@@ -22,7 +22,7 @@ public class ColonyStoryDataListener extends SimpleJsonResourceReloadListener
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**
-     * List of custom visitor data
+     * List of story and lore elements loaded from data.
      */
     public static List<String> abandonedColonyNames = new ArrayList<>();
     public static List<String> abandonedColonyStories = new ArrayList<>();

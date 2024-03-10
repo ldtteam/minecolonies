@@ -65,7 +65,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(ctx.getPlayer());
                 return InteractionResult.FAIL;
             }
-            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10).above(), ctx.getPlayer().getDirection(), ctx.getItemInHand(), ctx.getHand());
+            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getHorizontalDirection(), SUPPLY_OFFSET_DISTANCE).above(), ctx.getPlayer().getDirection(), ctx.getItemInHand(), ctx.getHand());
         }
 
         return InteractionResult.FAIL;
@@ -169,7 +169,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
             }
         }
 
-        if (needsAirAbove.size() > sizeX*sizeZ/3 || needsSolidBelow.size() > sizeX*sizeZ/3)
+        if (needsAirAbove.size() > sizeX*sizeZ*SUPPLY_TOLERANCE_FRACTION || needsSolidBelow.size() > sizeX*sizeZ*SUPPLY_TOLERANCE_FRACTION)
         {
             placementErrorList.addAll(needsAirAbove);
             placementErrorList.addAll(needsSolidBelow);

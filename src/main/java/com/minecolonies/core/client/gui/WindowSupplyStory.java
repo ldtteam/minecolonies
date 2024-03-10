@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.items.ISupplyItem.SUPPLY_OFFSET_DISTANCE;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -47,7 +48,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
         super(MOD_ID + SUPPLIES_STORY_RESOURCE_SUFFIX);
         if (pos == null)
         {
-            this.pos = mc.player.blockPosition().relative(mc.player.getDirection(), 10);
+            this.pos = mc.player.blockPosition().relative(mc.player.getDirection(), SUPPLY_OFFSET_DISTANCE);
         }
         else
         {
