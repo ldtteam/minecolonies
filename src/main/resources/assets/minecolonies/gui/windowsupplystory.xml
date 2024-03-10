@@ -1,19 +1,18 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" size="190 130"
-        lightbox="true" type="VANILLA"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" size="400 244"
+        lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_short.png" size="190 130"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
-    <buttonimage id="cancel" size="14 15" pos="165 9" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+    <buttonimage id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
-    <text id="text1" size="160 90" color="black" pos="15 15" textscale="1"/>
+    <text id="text" size="340 195" color="black" pos="40 15" textscale="0.8" textalign="MIDDLE"/>
 
-    <buttonimage id="selectstyle" size="129 17" pos="30 100" textcolor="black"
+    <buttonimage id="colonyStylePicker" size="129 17" pos="60 215" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
-                 label="$(com.minecolonies.core.founding.pickup)"/>
+                 label="$(com.minecolonies.core.gui.supplies.selectstyle)"/>
 
-    <buttonimage id="pickup" size="129 17" pos="30 100" textcolor="black"
+    <buttonimage id="place" size="129 17" pos="220 215" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
-                 label="$(com.minecolonies.core.founding.pickup)"/>
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"/>
 </window>

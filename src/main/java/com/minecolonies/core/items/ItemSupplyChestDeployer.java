@@ -8,10 +8,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.api.items.ISupplyItem;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
+import com.minecolonies.core.client.gui.WindowSupplyStory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.Item;
@@ -22,11 +24,13 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -34,7 +38,7 @@ import net.minecraft.world.InteractionResultHolder;
 /**
  * Class to handle the placement of the supplychest and with it the supplyship.
  */
-public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
+public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements ISupplyItem
 {
     /**
      * StructureIterator name and location.
@@ -45,21 +49,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * StructureIterator name for nether dimension
      */
     private static final String SUPPLY_SHIP_STRUCTURE_NAME_NETHER = "nethership";
-
-    /**
-     * Offset south/west of the supply chest.
-     */
-    private static final int OFFSET_DISTANCE = 14;
-
-    /**
-     * Offset south/east of the supply chest.
-     */
-    private static final int OFFSET_LEFT = 5;
-
-    /**
-     * Offset y of the supply chest.
-     */
-    private static final int OFFSET_Y = 0;
 
     /**
      * Height to scan in which should be air.
@@ -85,13 +74,18 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
+        if (!ctx.getItemInHand().getOrCreateTag().contains(TAG_RANDOM_KEY))
+        {
+            ctx.getItemInHand().getTag().putLong(TAG_RANDOM_KEY, ctx.getClickedPos().asLong());
+        }
+
         if (ctx.getLevel().isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
                 return InteractionResult.FAIL;
             }
-            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection(), ctx.getItemInHand());
+            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10), ctx.getHand(), ctx.getItemInHand());
         }
 
         return InteractionResult.FAIL;
@@ -102,6 +96,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
+        if (!stack.getOrCreateTag().contains(TAG_RANDOM_KEY))
+        {
+            stack.getTag().putLong(TAG_RANDOM_KEY, playerIn.blockPosition().asLong());
+        }
+
         if (worldIn.isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
@@ -109,7 +108,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
                 return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
-            placeSupplyShip(worldIn, null, playerIn.getDirection(), stack);
+            placeSupplyShip(worldIn, null, hand, stack);
         }
 
         return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
@@ -119,23 +118,29 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Places a supply chest on the given position looking to the given direction.
      *
      * @param pos        the position to place the supply chest at.
-     * @param direction  the direction the supply chest should face.
+     * @param hand       the hand that was used to place it.
      * @param itemInHand
      */
-    private void placeSupplyShip(Level world, @Nullable final BlockPos pos, @NotNull final Direction direction, final ItemStack itemInHand)
+    private void placeSupplyShip(Level world, @Nullable final BlockPos pos, final InteractionHand hand, final ItemStack itemInHand)
     {
         final String name = WorldUtil.isNetherType(world)
                               ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                               : SUPPLY_SHIP_STRUCTURE_NAME;
 
 
-        if (pos == null)
+        if (!itemInHand.getOrCreateTag().contains(TAG_SAW_STORY))
         {
-            new WindowSupplies(pos, name, itemInHand).open();
+            new WindowSupplyStory(pos, name, itemInHand, hand).open();
             return;
         }
 
-        new WindowSupplies(pos, name, itemInHand).open();
+        if (pos == null)
+        {
+            new WindowSupplies(pos, name).open();
+            return;
+        }
+
+        new WindowSupplies(pos, name).open();
     }
 
     /**
@@ -162,6 +167,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final int waterLevel = BlueprintTagUtils.getNumberOfGroundLevels(ship, DEFAULT_WATER_LEVELS);
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
 
+        final List<PlacementError> needsAirAbove = new ArrayList<>();
+        final List<PlacementError> needsWaterList = new ArrayList<>();
+
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
             for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
@@ -170,18 +178,24 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 {
                     if (y < zeroPos.getY() + waterLevel)
                     {
-                        checkFluidAndNotInColony(world, new BlockPos(x, y, z), placementErrorList, placer);
+                        checkFluidAndNotInColony(world, new BlockPos(x, y, z), needsWaterList, placer);
                     }
                     else if (BlockUtils.isAnySolid(world.getBlockState(new BlockPos(x, y, z))))
                     {
-                        final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z));
-                        placementErrorList.add(placementError);
+                        needsAirAbove.add(new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z)));
                     }
                 }
             }
         }
 
-        return placementErrorList.isEmpty();
+        if (needsAirAbove.size() > sizeX*sizeZ/3 || needsWaterList.size() > sizeX*sizeZ/3)
+        {
+            placementErrorList.addAll(needsAirAbove);
+            placementErrorList.addAll(needsWaterList);
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -199,19 +213,16 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isWater && isOverworld)
         {
-            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
-            placementErrorList.add(placementError);
+            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos));
         }
         else if (!world.getBlockState(pos).getFluidState().getType().isSame(Fluids.LAVA) && !isOverworld)
         {
-            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
-            placementErrorList.add(placementError);
+            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos));
         }
 
         if (!notInAnyColony)
         {
-            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
-            placementErrorList.add(placementError);
+            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos));
         }
     }
 

@@ -29,7 +29,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 {
-    private static final String BUTTON_CLOSE  = "cancel";
     private static final String BUTTON_CREATE = "create";
 
     /**
@@ -48,7 +47,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         this.pos = pos;
         this.reactivate = reactivate;
 
-        registerButton(BUTTON_CLOSE, this::close);
+        registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_CREATE, this::onCreate);
 
         this.findPaneOfTypeByID("colonyname", TextField.class).setText(preName.isEmpty() ? Component.translatable(DEFAULT_COLONY_NAME, player.getName()).getString() : preName);

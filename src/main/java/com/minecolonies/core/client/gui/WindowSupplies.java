@@ -21,7 +21,6 @@ import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
@@ -55,7 +54,6 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
      * Current selected structure pack.
      */
     private static StructurePackMeta structurePack = null;
-    private final ItemStack itemInHand;
 
     /**
      * Create a new supply tool window.
@@ -63,26 +61,26 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
      * @param pos        the pos its initiated at.
      * @param itemInHand
      */
-    public WindowSupplies(@Nullable final BlockPos pos, final String type, final ItemStack itemInHand)
+    public WindowSupplies(@Nullable final BlockPos pos, final String type)
     {
         super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
         registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
-        this.itemInHand = itemInHand;
 
         if (!type.equals(WindowSupplies.type))
         {
             HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
             RenderingCache.removeBlueprint("supplies");
         }
-        else if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
-        {
-            loadBlueprint();
-        }
         WindowSupplies.type = type;
 
         if (pos != null)
         {
             RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
+        }
+
+        if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
+        {
+            loadBlueprint();
         }
     }
 
@@ -95,7 +93,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         {
             final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
             previewData.setBlueprint(null);
-            return new WindowSupplies(previewData.getPos(), type, itemInHand);
+            return new WindowSupplies(previewData.getPos(), type);
         }, pack -> Files.exists(pack.getPath().resolve("decorations/supplies/" + type + ".blueprint"))).open();
     }
 

@@ -27,7 +27,6 @@ public class WindowTownHallDeleteAbandonColony extends AbstractWindowSkeleton
     /**
      * String constants.
      */
-    private static final String BUTTON_CLOSE  = "cancel";
     private static final String DELETE_PROCEED = "com.minecolonies.core.gui.colony.delete.proceed";
     private static final String ABANDON_PROCEED = "com.minecolonies.core.gui.colony.abandon.proceed";
     private static final String DELETE_WARNING =    "com.minecolonies.core.gui.colony.delete.warning";
@@ -43,7 +42,7 @@ public class WindowTownHallDeleteAbandonColony extends AbstractWindowSkeleton
         super(MOD_ID + TOWNHALL_DELETE_ABANDON_GUI);
         this.pos = pos;
 
-        registerButton(BUTTON_CLOSE, this::close);
+        registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_PICKUP_BUILDING, this::pickup);
         registerButton(BUTTON_DELETE, this::deleteColony);
         registerButton(BUTTON_ABANDON, this::abandonColony);

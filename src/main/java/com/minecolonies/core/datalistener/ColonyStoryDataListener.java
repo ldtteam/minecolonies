@@ -27,6 +27,9 @@ public class ColonyStoryDataListener extends SimpleJsonResourceReloadListener
     public static List<String> abandonedColonyNames = new ArrayList<>();
     public static List<String> abandonedColonyStories = new ArrayList<>();
 
+    public static List<String> supplyShipStories = new ArrayList<>();
+    public static List<String> supplyCampStories = new ArrayList<>();
+
     /**
      * Create a new listener.
      */
@@ -40,6 +43,8 @@ public class ColonyStoryDataListener extends SimpleJsonResourceReloadListener
     {
         abandonedColonyNames.clear();
         abandonedColonyStories.clear();
+        supplyShipStories.clear();
+        supplyCampStories.clear();
 
         final JsonObject data = (JsonObject) jsonElementMap.get(new ResourceLocation("minecolonies:abandonedcolonies"));
         final JsonArray namesArray = data.get("names").getAsJsonArray();
@@ -52,6 +57,18 @@ public class ColonyStoryDataListener extends SimpleJsonResourceReloadListener
         for (final JsonElement story : storiesJsonArray)
         {
             abandonedColonyStories.add(story.getAsString());
+        }
+
+        final JsonArray campStories = data.get("camp_stories").getAsJsonArray();
+        for (final JsonElement story : campStories)
+        {
+            supplyCampStories.add(story.getAsString());
+        }
+
+        final JsonArray shipStories = data.get("ship_stories").getAsJsonArray();
+        for (final JsonElement story : shipStories)
+        {
+            supplyShipStories.add(story.getAsString());
         }
     }
 }

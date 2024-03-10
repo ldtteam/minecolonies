@@ -1262,6 +1262,11 @@ public final class WindowConstants
     public static final String SUPPLIES_STORY_RESOURCE_SUFFIX = ":gui/windowsupplystory.xml";
 
     /**
+     * Placement button
+     */
+    public static final String BUTTON_PLACE = "place";
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private WindowConstants()

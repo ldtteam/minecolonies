@@ -12,16 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_PICKUP_BUILDING;
-import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_CANT_CREATE_GUI;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  *  UI to notify the player that a colony can't be created here.
  */
 public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
 {
-    private static final String BUTTON_CLOSE  = "cancel";
-
     /**
      * Townhall position
      */
@@ -31,7 +28,7 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
     {
         super(MOD_ID + TOWNHALL_CANT_CREATE_GUI);
         this.pos = pos;
-        registerButton(BUTTON_CLOSE, this::close);
+        registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_PICKUP_BUILDING, this::pickup);
         final Text text = this.findPaneOfTypeByID("text1", Text.class);
         text.setText(warningMsg);

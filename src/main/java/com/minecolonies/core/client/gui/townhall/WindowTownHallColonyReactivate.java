@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_CANCEL;
 import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_REACTIVATE_GUI;
 
 /**
@@ -18,7 +19,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY
  */
 public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
 {
-    private static final String BUTTON_CLOSE  = "cancel";
     private static final String BUTTON_CREATE = "create";
 
     /**
@@ -40,7 +40,7 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
         this.closestDistance = closestDistance;
         this.world = world;
 
-        registerButton(BUTTON_CLOSE, this::close);
+        registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_CREATE, this::onCreate);
 
         final Random random = new Random(pos.asLong());

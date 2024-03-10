@@ -2564,6 +2564,12 @@
   "com.minecolonies.coremod.progress.colony_founded": "News spreads swiftly of the newly founded settlement. Before long, pioneers from distant lands will flock to join the ranks of your burgeoning colony.",
   "com.minecolonies.coremod.progress.colony_reactivated": "Word of a courageous adventurer dedicated to restoring the glory of %s swiftly traverses the land. Eager settlers and former residents alike are drawn to your townhall, inspired by the opportunity to contribute their skills and efforts to this noble endeavor.",
 
-  "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state."
+  "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state.",
 
+  "com.minecolonies.core.gui.supplies.selectstyle": "Select Style",
+  "com.minecolonies.core.gui.supplies.place": "Place %s",
+  "com.minecolonies.core.gui.supplies.guide": "Use these supplies to assemble a %s to serve as a foundation for your own colony. Within it, aside from §2ample resources§r, you shall find\na salvaged §2townhall block§r and §2build tool§r to lay the groundworks of the new colony. Founding a colony demands resilience; beyond the basic necessities of shelter, sustenance, and healing, lies the imperative to fortify against the looming threats of piracy and barbarism. Yet, should you endure these trials, the potential for growth knows no bounds. From artisans to scholars, miners to alchemists, your settlement holds the promise of evolving into a §2self-sustaining bastion of prosperity and knowledge§r.",
+
+  "com.minecolonies.core.gui.supplycamp.guide": "Make sure to find a flat, open area large enough for the camp's layout to place it.",
+  "com.minecolonies.core.gui.supplyship.guide": "Make sure to place it in open waters spacious enough to accommodate the ship's size."
 }
