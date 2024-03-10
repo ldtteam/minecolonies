@@ -66,6 +66,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         this.refresh = refresh;
 
         visitorBuf = new FriendlyByteBuf(Unpooled.buffer());
+        visitorBuf.writeInt(visitors.size());
         for (final IVisitorData data : visitors)
         {
             visitorBuf.writeInt(data.getId());
@@ -89,7 +90,6 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeBoolean(refresh);
-        buf.writeInt(visitors.size());
         buf.writeByteArray(visitorBuf.array());
     }
 
