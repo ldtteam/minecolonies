@@ -1,5 +1,6 @@
 package com.minecolonies.core.util;
 
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
@@ -175,14 +177,12 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
         if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
             return ToolType.SHEARS;
         }
-
-        String toolName = "";
 
         if (blockHardness > 0f)
         {
@@ -190,17 +190,22 @@ public final class WorkerUtil
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
+                    if (state.getBlock() instanceof IMateriallyTexturedBlock materiallyTexturedBlock)
+                    {
+                        if (materiallyTexturedBlock.isCorrectToolForDrops(state, tool.getB(), level, pos))
+                        {
+                            return tool.getA();
+                        }
+                    }
                     if (tool.getB().isCorrectToolForDrops(state))
                     {
-                        toolName = tool.getA().getName();
-                        break;
+                        return tool.getA();
                     }
                 }
             }
         }
 
-        final IToolType toolType = ToolType.getToolType(toolName);
-        return toolType;
+        return ToolType.NONE;
     }
 
     /**
