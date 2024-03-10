@@ -343,7 +343,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             uiBuilding.setVisible(true);
 
-            dragView.removeChild(this.buildings.get(buildingView));
             this.buildings.put(buildingView, uiBuilding);
         }
 
@@ -390,7 +389,10 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     citizenView.setSize(citizenView.getWidth() + 6, citizenView.getHeight() + 6);
                 }
 
-                dragView.removeChild(citizens.get(data));
+                if (citizens.containsKey(data))
+                {
+                    dragView.removeChild(citizens.get(data));
+                }
                 citizens.put(data, citizenView);
             }
         }
