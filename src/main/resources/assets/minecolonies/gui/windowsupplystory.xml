@@ -9,10 +9,10 @@
 
     <buttonimage id="colonyStylePicker" size="129 17" pos="60 215" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.gui.supplies.selectstyle)"/>
 
     <buttonimage id="place" size="129 17" pos="220 215" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"/>
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
 </window>

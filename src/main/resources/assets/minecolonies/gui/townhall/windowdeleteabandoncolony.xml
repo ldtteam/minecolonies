@@ -9,17 +9,17 @@
 
     <buttonimage id="pickup" size="129 17" pos="70 150" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.pickup)"/>
 
     <buttonimage id="delete" size="129 17" pos="200 150" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.delete)"/>
 
     <buttonimage id="abandon" size="129 17" pos="130 180" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.abandon)"/>
 
 

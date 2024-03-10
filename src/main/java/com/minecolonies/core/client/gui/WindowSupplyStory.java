@@ -9,9 +9,12 @@ import com.minecolonies.core.datalistener.ColonyStoryDataListener;
 import com.minecolonies.core.network.messages.server.MarkStoryReadOnItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -59,34 +62,34 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
         registerButton(BUTTON_PLACE, this::place);
 
         final Random random = new Random(stack.getTag().getLong(TAG_RANDOM_KEY));
-        String story = "";
+        List<MutableComponent> story = new ArrayList<>();
 
         if (stack.getOrCreateTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT)) // if free dungeon loot nbt tag on item.
         {
             if (stack.getItem() == ModItems.supplyCamp)
             {
-                story+= ColonyStoryDataListener.supplyCampStories.get(random.nextInt(ColonyStoryDataListener.supplyCampStories.size()));
+                story.add(Component.literal(ColonyStoryDataListener.supplyCampStories.get(random.nextInt(ColonyStoryDataListener.supplyCampStories.size()))));
             }
             else
             {
-                story += ColonyStoryDataListener.supplyShipStories.get(random.nextInt(ColonyStoryDataListener.supplyShipStories.size()));
+                story.add(Component.literal(ColonyStoryDataListener.supplyShipStories.get(random.nextInt(ColonyStoryDataListener.supplyShipStories.size()))));
             }
-            story += "\n\n";
+            story.add(Component.empty());
         }
 
-        story += Component.translatable("com.minecolonies.core.gui.supplies.guide", Component.translatable(stack.getItem().getDescriptionId())).getString();
+        story.add(Component.translatable("com.minecolonies.core.gui.supplies.guide", Component.translatable(stack.getItem().getDescriptionId())));
+        story.add(Component.empty());
 
         if (stack.getItem() == ModItems.supplyCamp)
         {
-            story += "\n\n" + Component.translatable("com.minecolonies.core.gui.supplycamp.guide").getString();
+            story.add(Component.translatable("com.minecolonies.core.gui.supplycamp.guide"));
         }
         else
         {
-            story += "\n\n" + Component.translatable("com.minecolonies.core.gui.supplyship.guide").getString();
+            story.add(Component.translatable("com.minecolonies.core.gui.supplyship.guide"));
         }
 
-
-        this.findPaneOfTypeByID("text", Text.class).setText(Component.translatable(story));
+        this.findPaneOfTypeByID("text", Text.class).setText(story);
         this.findPaneOfTypeByID("place", Button.class).setText(Component.translatable("com.minecolonies.core.gui.supplies.place", Component.translatable(stack.getItem().getDescriptionId())));
     }
 

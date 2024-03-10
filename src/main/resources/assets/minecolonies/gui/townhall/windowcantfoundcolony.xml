@@ -9,6 +9,6 @@
 
     <buttonimage id="pickup" size="129 17" pos="30 100" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.pickup)"/>
 </window>
