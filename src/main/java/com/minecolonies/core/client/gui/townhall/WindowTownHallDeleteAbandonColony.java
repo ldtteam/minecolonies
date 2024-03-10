@@ -11,10 +11,10 @@ import com.minecolonies.core.network.messages.server.PickupBlockMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyAbandonOwnMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyDeleteOwnMessage;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -37,10 +37,11 @@ public class WindowTownHallDeleteAbandonColony extends AbstractWindowSkeleton
      */
     private final BlockPos pos;
 
-    public WindowTownHallDeleteAbandonColony(final Player player, final BlockPos pos, final Level world, final String oldColonyName, final BlockPos oldColonyPos, final int oldColonyId)
+    public WindowTownHallDeleteAbandonColony(final BlockPos pos, final String oldColonyName, final BlockPos oldColonyPos, final int oldColonyId)
     {
         super(MOD_ID + TOWNHALL_DELETE_ABANDON_GUI);
         this.pos = pos;
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
 
         registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_PICKUP_BUILDING, this::pickup);

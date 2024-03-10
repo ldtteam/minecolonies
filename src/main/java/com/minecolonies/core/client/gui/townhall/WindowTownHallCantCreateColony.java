@@ -5,9 +5,11 @@ import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.network.messages.server.PickupBlockMessage;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -24,9 +26,10 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
      */
     private BlockPos pos;
 
-    public WindowTownHallCantCreateColony(final Player player, final BlockPos pos, final Level world, final MutableComponent warningMsg, final boolean displayConfigTooltip)
+    public WindowTownHallCantCreateColony(final BlockPos pos, final MutableComponent warningMsg, final boolean displayConfigTooltip)
     {
         super(MOD_ID + TOWNHALL_CANT_CREATE_GUI);
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
         this.pos = pos;
         registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_PICKUP_BUILDING, this::pickup);

@@ -2,7 +2,6 @@ package com.minecolonies.core.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.client.gui.townhall.WindowTownHallDeleteAbandonColony;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -52,7 +51,7 @@ public class OpenDeleteAbandonColonyMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        new WindowTownHallDeleteAbandonColony(Minecraft.getInstance().player, currentTownHallPos, Minecraft.getInstance().level, oldColonyName, oldColonyPos, oldColonyId).open();
+        new WindowTownHallDeleteAbandonColony(currentTownHallPos, oldColonyName, oldColonyPos, oldColonyId).open();
     }
 
     @Override

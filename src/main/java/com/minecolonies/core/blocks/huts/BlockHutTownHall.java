@@ -197,10 +197,10 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             {
                 building.openGui(player.isShiftKeyDown());
             }
-            else if (worldIn.getGameTime() > timeout)
+            else if (System.currentTimeMillis() > timeout)
             {
                 Network.getNetwork().sendToServer(new GetColonyInfoMessage(pos));
-                timeout = worldIn.getGameTime() + 20;
+                timeout = System.currentTimeMillis() + 1000;
             }
         }
         return InteractionResult.SUCCESS;

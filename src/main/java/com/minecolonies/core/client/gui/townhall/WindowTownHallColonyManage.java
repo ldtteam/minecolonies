@@ -10,13 +10,12 @@ import com.minecolonies.core.network.messages.server.CreateColonyMessage;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -41,16 +40,17 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
      */
     private final boolean reactivate;
 
-    public WindowTownHallColonyManage(final Player player, final BlockPos pos, final Level world, final String closestName, final int closestDistance, final String preName, final boolean reactivate)
+    public WindowTownHallColonyManage(final BlockPos pos, final String closestName, final int closestDistance, final String preName, final boolean reactivate)
     {
         super(MOD_ID + TOWNHALL_COLONY_MANAGEMENT_GUI);
         this.pos = pos;
         this.reactivate = reactivate;
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
 
         registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_CREATE, this::onCreate);
 
-        this.findPaneOfTypeByID("colonyname", TextField.class).setText(preName.isEmpty() ? Component.translatable(DEFAULT_COLONY_NAME, player.getName()).getString() : preName);
+        this.findPaneOfTypeByID("colonyname", TextField.class).setText(preName.isEmpty() ? Component.translatable(DEFAULT_COLONY_NAME, mc.player.getName()).getString() : preName);
         this.findPaneOfTypeByID("text1", Text.class).setText(Component.translatable("com.minecolonies.core.settlementcovenant1", Math.max(13, Minecraft.getInstance().level.getGameTime() / TICKS_SECOND / 60 / 100)));
         if (closestDistance < 1000)
         {

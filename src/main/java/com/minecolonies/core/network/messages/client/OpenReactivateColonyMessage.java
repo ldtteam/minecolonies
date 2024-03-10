@@ -2,7 +2,6 @@ package com.minecolonies.core.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.client.gui.townhall.WindowTownHallColonyReactivate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -38,7 +37,7 @@ public class OpenReactivateColonyMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        new WindowTownHallColonyReactivate(Minecraft.getInstance().player, townHallPos, Minecraft.getInstance().level, closestName, closestDistance).open();
+        new WindowTownHallColonyReactivate(townHallPos, closestName, closestDistance).open();
     }
 
     @Override

@@ -106,7 +106,7 @@ public class GetColonyInfoMessage implements IMessage
             }
             else
             {
-                Network.getNetwork().sendToPlayer(new OpenColonyFoundingCovenantMessage(nextColony.getName(), (int) BlockPosUtil.getDistance(nextColony.getCenter(), pos) - (getConfig().getServer().initialColonySize.get() << 4), pos), sender);
+                Network.getNetwork().sendToPlayer(new OpenColonyFoundingCovenantMessage(nextColony == null ? "" : nextColony.getName(), nextColony == null ? Integer.MAX_VALUE : (int) BlockPosUtil.getDistance(nextColony.getCenter(), pos) - (getConfig().getServer().initialColonySize.get() << 4), pos), sender);
             }
         }
         else

@@ -2,7 +2,6 @@ package com.minecolonies.core.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.client.gui.townhall.WindowTownHallCantCreateColony;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -48,7 +47,7 @@ public class OpenCantFoundColonyWarningMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        new WindowTownHallCantCreateColony(Minecraft.getInstance().player, townHallPos, Minecraft.getInstance().level, (MutableComponent) warningMessageTranslationKey, displayConfigTooltip).open();
+        new WindowTownHallCantCreateColony(townHallPos, (MutableComponent) warningMessageTranslationKey, displayConfigTooltip).open();
     }
 
     @Override

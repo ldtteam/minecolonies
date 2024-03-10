@@ -3,8 +3,10 @@ package com.minecolonies.core.client.gui.townhall;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.datalistener.ColonyStoryDataListener;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -26,19 +28,16 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
      */
     private final BlockPos pos;
     private final String preName;
-    private final Level world;
     private final int closestDistance;
     private final String closestName;
-    private final Player player;
 
-    public WindowTownHallColonyReactivate(final Player player, final BlockPos pos, final Level world, final String closestName, final int closestDistance)
+    public WindowTownHallColonyReactivate(final BlockPos pos, final String closestName, final int closestDistance)
     {
         super(MOD_ID + TOWNHALL_COLONY_REACTIVATE_GUI);
-        this.player = player;
         this.pos = pos;
         this.closestName = closestName;
         this.closestDistance = closestDistance;
-        this.world = world;
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
 
         registerButton(BUTTON_CANCEL, this::close);
         registerButton(BUTTON_CREATE, this::onCreate);
@@ -48,7 +47,7 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
         final String story = ColonyStoryDataListener.abandonedColonyStories.get(random.nextInt(ColonyStoryDataListener.abandonedColonyStories.size()));
 
         this.findPaneOfTypeByID("title", Text.class).setText(Component.translatable("com.minecolonies.core.gui.colony.reactivate.title", this.preName));
-        this.findPaneOfTypeByID("text1", Text.class).setText(Component.translatable(story, this.preName, Component.translatable(world.getBiome(pos).unwrapKey().get().location().toLanguageKey("biome"))));
+        this.findPaneOfTypeByID("text1", Text.class).setText(Component.translatable(story, this.preName, Component.translatable(mc.level.getBiome(pos).unwrapKey().get().location().toLanguageKey("biome"))));
         this.findPaneOfTypeByID("text2", Text.class).setText(Component.translatable("com.minecolonies.core.gui.colony.reactivate.question", this.preName));
     }
 
@@ -57,6 +56,6 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
      */
     public void onCreate()
     {
-        new WindowTownHallColonyManage(player, pos, world, closestName, closestDistance, preName, true).open();
+        new WindowTownHallColonyManage(pos, closestName, closestDistance, preName, true).open();
     }
 }

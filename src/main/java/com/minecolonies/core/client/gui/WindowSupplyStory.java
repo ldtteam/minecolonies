@@ -4,12 +4,15 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.datalistener.ColonyStoryDataListener;
 import com.minecolonies.core.network.messages.server.MarkStoryReadOnItem;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
@@ -24,6 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Supply Story Window.
+ * todo add new art for this later.
  */
 public class WindowSupplyStory extends AbstractWindowSkeleton
 {
@@ -46,6 +50,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
     public WindowSupplyStory(final BlockPos pos, final String type, final ItemStack stack, final InteractionHand hand)
     {
         super(MOD_ID + SUPPLIES_STORY_RESOURCE_SUFFIX);
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
         if (pos == null)
         {
             this.pos = mc.player.blockPosition().relative(mc.player.getDirection(), SUPPLY_OFFSET_DISTANCE);
