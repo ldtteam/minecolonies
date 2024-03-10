@@ -33,6 +33,10 @@ public class ColonyWaypointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
+        if (!RenderingCache.hasBlueprint("blueprint"))
+        {
+            return;
+        }
         final Blueprint structure = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
         if (structure != null && structure.getFilePath().toString().contains(WAYPOINT_STRING) && ctx.nearestColony != null)
         {

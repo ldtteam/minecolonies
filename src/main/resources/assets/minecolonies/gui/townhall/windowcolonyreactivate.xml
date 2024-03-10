@@ -1,0 +1,18 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" size="400 244"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
+
+    <buttonimage id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+
+    <text id="title" size="300 15" color="black" pos="60 12" textscale="1.25" textalign="MIDDLE"/>
+
+    <text id="text1" size="340 170" color="black" pos="40 30" textscale="0.75" textalign="TOP_LEFT"/>
+
+    <text id="text2" size="340 30" color="black" pos="60 185" textscale="0.8"/>
+
+    <buttonimage id="create" size="169 17" pos="115 210" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_large.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_large_disabled.png"
+                 label="$(com.minecolonies.core.gui.reactivate.button)"/>
+</window>

@@ -57,12 +57,13 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
 
     /**
      * Create a new supply tool window.
-     * @param pos the pos its initiated at.
+     *
+     * @param pos        the pos its initiated at.
+     * @param itemInHand
      */
     public WindowSupplies(@Nullable final BlockPos pos, final String type)
     {
         super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
-
         registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
 
         if (!type.equals(WindowSupplies.type))
@@ -70,15 +71,16 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
             RenderingCache.removeBlueprint("supplies");
         }
-        else if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
-        {
-            loadBlueprint();
-        }
         WindowSupplies.type = type;
 
         if (pos != null)
         {
             RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
+        }
+
+        if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
+        {
+            loadBlueprint();
         }
     }
 

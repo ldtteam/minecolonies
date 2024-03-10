@@ -160,6 +160,21 @@ public final class WindowConstants
     public static final String BUTTON_DELETE = "delete";
 
     /**
+     * The id of the abandon button in the GUI.
+     */
+    public static final String BUTTON_ABANDON = "abandon";
+
+    /**
+     * The id of the confirm delete button in the GUI.
+     */
+    public static final String BUTTON_CONFIRM_DELETE = "confirmdelete";
+
+    /**
+     * The id of the confirm abandon button in the GUI.
+     */
+    public static final String BUTTON_CONFIRM_ABANDON = "confirmabandon";
+
+    /**
      * Id of the input bar to add players. in the GUI.
      */
     public static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
@@ -1096,6 +1111,21 @@ public final class WindowConstants
     public static final String INTERACTION_RESOURCE_SUFFIX = ":gui/citizen/windowinteraction.xml";
 
     /**
+     * String of the Townhall colony management GUI.
+     */
+    public static final String TOWNHALL_CANT_CREATE_GUI = ":gui/townhall/windowcantfoundcolony.xml";
+
+    /**
+     * String of the Townhall colony abandon delete GUI.
+     */
+    public static final String TOWNHALL_DELETE_ABANDON_GUI = ":gui/townhall/windowdeleteabandoncolony.xml";
+
+    /**
+     * String of the Townhall colony management GUI.
+     */
+    public static final String TOWNHALL_COLONY_REACTIVATE_GUI = ":gui/townhall/windowcolonyreactivate.xml";
+
+    /**
      * Id of the chat label.
      */
     public static final String CHAT_LABEL_ID = "chat";
@@ -1225,6 +1255,16 @@ public final class WindowConstants
      * Supplies window.
      */
     public static final String SUPPLIES_RESOURCE_SUFFIX = ":gui/windowsupplies.xml";
+
+    /**
+     * Supplies story window.
+     */
+    public static final String SUPPLIES_STORY_RESOURCE_SUFFIX = ":gui/windowsupplystory.xml";
+
+    /**
+     * Placement button
+     */
+    public static final String BUTTON_PLACE = "place";
 
     /**
      * Private constructor to hide implicit public one.
