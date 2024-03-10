@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
 
+import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
@@ -15,6 +16,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -85,7 +87,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
             {
                 return InteractionResult.FAIL;
             }
-            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10), ctx.getHand(), ctx.getItemInHand());
+            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10).above(), ctx.getHand(), ctx.getItemInHand());
         }
 
         return InteractionResult.FAIL;
@@ -170,19 +172,22 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
         final List<PlacementError> needsAirAbove = new ArrayList<>();
         final List<PlacementError> needsWaterList = new ArrayList<>();
 
-        for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
+        for (int z = 0; z < sizeZ; z++)
         {
-            for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
+            for (int x = 0; x < sizeX; x++)
             {
-                for (int y = zeroPos.getY(); y <= zeroPos.getY() + waterLevel + SCAN_HEIGHT; y++)
+                for (int y = 0; y <= Math.min(waterLevel + SCAN_HEIGHT, ship.getSizeY() - 1); y++)
                 {
-                    if (y < zeroPos.getY() + waterLevel)
+                    final BlockPos worldPos = new BlockPos(zeroPos.getX() + x, zeroPos.getY() + y, zeroPos.getZ() + z);
+                    final BlockState state = ship.getBlockState(new BlockPos(x,y,z));
+
+                    if (y < waterLevel)
                     {
-                        checkFluidAndNotInColony(world, new BlockPos(x, y, z), needsWaterList, placer);
+                        checkFluidAndNotInColony(world, worldPos, needsWaterList, placer, state);
                     }
-                    else if (BlockUtils.isAnySolid(world.getBlockState(new BlockPos(x, y, z))))
+                    else if (BlockUtils.isAnySolid(world.getBlockState(worldPos)) && state.getBlock() != ModBlocks.blockSubstitution.get())
                     {
-                        needsAirAbove.add(new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z)));
+                        needsAirAbove.add(new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, worldPos));
                     }
                 }
             }
@@ -205,19 +210,24 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
      * @param pos                the first position.
      * @param placementErrorList a list of placement errors.
      * @param placer             the player placing the supply camp.
+     * @param state              blueprint block at pos.
      */
-    private static void checkFluidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer)
+    private static void checkFluidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer, final BlockState state)
     {
         final boolean isOverworld = WorldUtil.isOverworldType(world);
         final boolean isWater = SurfaceType.isWater(world, pos);
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
-        if (!isWater && isOverworld)
+
+        if (state.getBlock() != ModBlocks.blockFluidSubstitution.get())
         {
-            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos));
-        }
-        else if (!world.getBlockState(pos).getFluidState().getType().isSame(Fluids.LAVA) && !isOverworld)
-        {
-            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos));
+            if (!isWater && isOverworld)
+            {
+                placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos));
+            }
+            else if (!world.getBlockState(pos).getFluidState().getType().isSame(Fluids.LAVA) && !isOverworld)
+            {
+                placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos));
+            }
         }
 
         if (!notInAnyColony)

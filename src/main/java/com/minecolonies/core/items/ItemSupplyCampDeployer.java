@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
 
+import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
@@ -64,7 +65,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(ctx.getPlayer());
                 return InteractionResult.FAIL;
             }
-            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10), ctx.getPlayer().getDirection(), ctx.getItemInHand(), ctx.getHand());
+            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getHorizontalDirection(), 10).above(), ctx.getPlayer().getDirection(), ctx.getItemInHand(), ctx.getHand());
         }
 
         return InteractionResult.FAIL;
@@ -145,20 +146,25 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
         final int sizeX = blueprint.getSizeX();
         final int sizeZ = blueprint.getSizeZ();
-        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1;
+        final int groundHeight = BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1;
+        final int groundLevel = zeroPos.getY() + groundHeight;
 
         final List<PlacementError> needsAirAbove = new ArrayList<>();
         final List<PlacementError> needsSolidBelow = new ArrayList<>();
 
-        for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
+        for (int z = 0; z < sizeZ; z++)
         {
-            for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
+            for (int x = 0; x < sizeX; x++)
             {
-                checkIfSolidAndNotInColony(world, new BlockPos(x, groundLevel, z), needsSolidBelow, placer);
-
-                if (BlockUtils.isAnySolid(world.getBlockState(new BlockPos(x, groundLevel + 1, z))))
+                final BlockPos worldPos = new BlockPos(zeroPos.getX() + x, groundLevel, zeroPos.getZ() + z);
+                if (blueprint.getBlockState(new BlockPos(x, groundHeight, z)).getBlock() != ModBlocks.blockSubstitution.get())
                 {
-                    needsAirAbove.add(new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, groundLevel + 1, z)));
+                    checkIfSolidAndNotInColony(world, worldPos, needsSolidBelow, placer);
+                }
+
+                if (BlockUtils.isAnySolid(world.getBlockState(worldPos.above())))
+                {
+                    needsAirAbove.add(new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, worldPos.above()));
                 }
             }
         }
