@@ -1,10 +1,13 @@
-package com.minecolonies.core.network.messages.client;
+package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.event.ColonyCreatedEvent;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.core.Network;
+import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
@@ -127,7 +130,8 @@ public class CreateColonyMessage implements IMessage
             pack = hut.getStructurePack().getName();
         }
 
-        if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
+        final boolean reactivate = hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED);
+        if (reactivate)
         {
             hut.reactivate();
             if (hut.getStructurePack() != null)
@@ -144,7 +148,7 @@ public class CreateColonyMessage implements IMessage
         {
             if (!world.isClientSide)
             {
-                MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()).sendTo(sender);
+                MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() - spawnDistance).sendTo(sender);
             }
             return;
         }
@@ -152,7 +156,7 @@ public class CreateColonyMessage implements IMessage
         {
             if (!world.isClientSide)
             {
-                MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
+                MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, spawnDistance - MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
             }
             return;
         }
@@ -168,10 +172,22 @@ public class CreateColonyMessage implements IMessage
         if (ownedColony == null)
         {
             final IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
-            createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-            MessageUtils.format(MESSAGE_COLONY_FOUNDED)
-              .withPriority(MessagePriority.IMPORTANT)
-              .sendTo(sender);
+            final IBuilding building = createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+
+            if (reactivate)
+            {
+                MessageUtils.format(MESSAGE_COLONY_REACTIVATED, colonyName)
+                  .withPriority(MessagePriority.IMPORTANT)
+                  .sendTo(sender);
+            }
+            else
+            {
+                MessageUtils.format(MESSAGE_COLONY_FOUNDED)
+                  .withPriority(MessagePriority.IMPORTANT)
+                  .sendTo(sender);
+            }
+
+            Network.getNetwork().sendToPlayer(new OpenBuildingUIMessage(building), sender);
 
             if (isLogicalServer)
             {

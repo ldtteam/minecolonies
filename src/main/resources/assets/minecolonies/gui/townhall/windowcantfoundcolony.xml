@@ -1,0 +1,14 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" size="190 130"
+        lightbox="true" type="VANILLA"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_short.png" size="190 130"/>
+
+    <buttonimage id="cancel" size="14 15" pos="165 9" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+
+    <text id="text1" size="160 90" color="black" pos="15 15" textscale="1"/>
+
+    <buttonimage id="pickup" size="129 17" pos="30 100" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
+                 label="$(com.minecolonies.core.founding.pickup)"/>
+</window>
