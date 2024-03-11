@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -139,20 +140,21 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         // We'll do that even for branches that will close the WindowResearchTree for now,
         // since down the road we may want to be able to cancel or start multiple researches without
         // closing and reopening the WindowResearchTree.
-        if (button.getParent().getChildren().contains(undoButton))
+        final View parent = button.getParent();
+        if (parent.getChildren().contains(undoButton))
         {
-            button.getParent().removeChild(undoButton);
+            parent.removeChild(undoButton);
         }
         for (ItemIcon icon : undoCostIcons)
         {
-            if (button.getParent().getChildren().contains(icon))
+            if (parent.getChildren().contains(icon))
             {
-                button.getParent().removeChild(icon);
+                parent.removeChild(icon);
             }
         }
-        if (button.getParent().getChildren().contains(undoText))
+        if (parent.getChildren().contains(undoText))
         {
-            button.getParent().removeChild(undoText);
+            parent.removeChild(undoText);
         }
 
         // Check for an empty button Id.  These reflect disabled buttons normally
