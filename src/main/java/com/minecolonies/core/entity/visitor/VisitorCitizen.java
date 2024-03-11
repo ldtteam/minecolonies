@@ -7,11 +7,17 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
+import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
@@ -22,18 +28,17 @@ import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
+import com.minecolonies.core.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.MovementHandler;
-import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -54,48 +59,59 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
-import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
  * Visitor citizen entity
  */
-public class
-VisitorCitizen extends AbstractEntityCitizen
+public class VisitorCitizen extends AbstractEntityVisitor
 {
     /**
-     * The citizen experience handler
+     * The visitor type.
      */
-    private ICitizenExperienceHandler citizenExperienceHandler;
+    private final IVisitorType visitorType;
 
     /**
-     * It's citizen Id.
+     * The citizen id.
      */
-    private int          citizenId = 0;
+    private int citizenId = 0;
+
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
     private IWalkToProxy proxy;
+
+    /**
+     * The location used for requests
+     */
+    private ILocation location = null;
+
     /**
      * Reference to the data representation inside the colony.
      */
     @Nullable
-    private ICitizenData citizenData;
+    private IVisitorData visitorData;
+
+    /**
+     * Citizen data view.
+     */
+    private ICitizenDataView citizenDataView;
 
     /**
      * The citizen chat handler.
      */
-    private ICitizenChatHandler      citizenChatHandler;
+    private ICitizenChatHandler citizenChatHandler;
+
     /**
      * The citizen item handler.
      */
-    private ICitizenItemHandler      citizenItemHandler;
+    private ICitizenItemHandler citizenItemHandler;
+
     /**
      * The citizen inv handler.
      */
@@ -105,10 +121,11 @@ VisitorCitizen extends AbstractEntityCitizen
      * The citizen colony handler.
      */
     private ICitizenColonyHandler citizenColonyHandler;
+
     /**
      * The citizen job handler.
      */
-    private ICitizenJobHandler    citizenJobHandler;
+    private ICitizenJobHandler citizenJobHandler;
 
     /**
      * The citizen sleep handler.
@@ -116,14 +133,13 @@ VisitorCitizen extends AbstractEntityCitizen
     private ICitizenSleepHandler citizenSleepHandler;
 
     /**
-     * Citizen data view.
+     * The citizen experience handler
      */
-    private ICitizenDataView citizenDataView;
+    private ICitizenExperienceHandler citizenExperienceHandler;
 
     /**
-     * The location used for requests
+     * The citizen disease handler.
      */
-    private ILocation              location = null;
     private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
@@ -132,7 +148,7 @@ VisitorCitizen extends AbstractEntityCitizen
      * @param type  the Entity type.
      * @param world the world.
      */
-    public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
+    public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world, final IVisitorType visitorType)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -146,10 +162,22 @@ VisitorCitizen extends AbstractEntityCitizen
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
         this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
+        this.visitorType = visitorType;
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
         initTasks();
+    }
+
+    /**
+     * Create a visitor citizen class for the given visitor type.
+     *
+     * @param visitorType the type of the visitor.
+     * @return the visitor instance.
+     */
+    public static EntityType.EntityFactory<AbstractEntityVisitor> forVisitorType(final IVisitorType visitorType)
+    {
+        return (type, level) -> new VisitorCitizen(type, level, visitorType);
     }
 
     private void initTasks()
@@ -161,17 +189,7 @@ VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
-        new EntityAIVisitor(this);
-    }
-
-    @Override
-    public ILocation getLocation()
-    {
-        if (location == null)
-        {
-            location = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
-        }
-        return location;
+        this.visitorType.createStateMachine(this);
     }
 
     @Override
@@ -179,7 +197,7 @@ VisitorCitizen extends AbstractEntityCitizen
     {
         if (!(damageSource.getEntity() instanceof EntityCitizen) && super.hurt(damageSource, damage))
         {
-            if (damageSource.getEntity() instanceof LivingEntity && damage > 1.01f)
+            if (damageSource.getEntity() instanceof LivingEntity livingEntity && damage > 1.01F)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
                 if (home.hasModule(BuildingModules.TAVERN_VISITOR))
@@ -190,7 +208,7 @@ VisitorCitizen extends AbstractEntityCitizen
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
                         if (data != null && data.getEntity().isPresent() && data.getEntity().get().getLastHurtByMob() == null)
                         {
-                            data.getEntity().get().setLastHurtByMob((LivingEntity) damageSource.getEntity());
+                            data.getEntity().get().setLastHurtByMob(livingEntity);
                         }
                     }
                 }
@@ -214,6 +232,138 @@ VisitorCitizen extends AbstractEntityCitizen
         return false;
     }
 
+    @Override
+    public void die(DamageSource cause)
+    {
+        super.die(cause);
+        if (!level.isClientSide())
+        {
+            IColony colony = getCitizenColonyHandler().getColony();
+            if (colony != null && getCitizenData() != null)
+            {
+                colony.getVisitorManager().removeCivilian(getCitizenData());
+                if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
+                {
+                    TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
+                    tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
+                }
+
+                final String deathLocation = BlockPosUtil.getString(blockPosition());
+
+                MessageUtils.format(MESSAGE_INFO_COLONY_VISITOR_DIED, getCitizenData().getName(), cause.getMsgId(), deathLocation)
+                  .withPriority(MessagePriority.DANGER)
+                  .sendTo(colony)
+                  .forManagers();
+            }
+        }
+    }
+
+    @Override
+    protected void dropEquipment()
+    {
+        //Drop actual inventory
+        for (int i = 0; i < getInventoryCitizen().getSlots(); i++)
+        {
+            final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
+            if (ItemStackUtils.getSize(itemstack) > 0)
+            {
+                citizenItemHandler.entityDropItem(itemstack);
+            }
+        }
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor)
+    {
+        super.onSyncedDataUpdated(dataAccessor);
+        if (citizenColonyHandler != null)
+        {
+            citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player playerEntity)
+    {
+        return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
+    }
+
+    @Override
+    public ICitizenDataView getCitizenDataView()
+    {
+        if (this.citizenDataView == null)
+        {
+            citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getVisitor(citizenId);
+                    return this.citizenDataView;
+                }
+            }
+        }
+        else
+        {
+            return this.citizenDataView;
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void defineSynchedData()
+    {
+        super.defineSynchedData();
+        entityData.define(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
+        entityData.define(DATA_CITIZEN_ID, citizenId);
+    }
+
+    @Override
+    public void aiStep()
+    {
+        super.aiStep();
+
+        if (lastHurtByPlayerTime > 0)
+        {
+            markDirty(0);
+        }
+
+        if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
+        {
+            citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getVisitor(citizenId);
+                    getEntityData().set(DATA_STYLE, colonyView.getTextureStyleId());
+                }
+            }
+        }
+        else
+        {
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            if (tickCount % 500 == 0)
+            {
+                this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
+            }
+        }
+    }
+
+    @Override
+    public ILocation getLocation()
+    {
+        if (location == null)
+        {
+            location = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
+        }
+        return location;
+    }
+
     /**
      * Checks if a worker is at his working site. If he isn't, sets it's path to the location
      *
@@ -231,27 +381,10 @@ VisitorCitizen extends AbstractEntityCitizen
         return proxy.walkToBlock(site, range, true);
     }
 
-    @Nullable
     @Override
-    public ICitizenData getCitizenData()
+    public IVisitorData getCitizenData()
     {
-        return citizenData;
-    }
-
-    @Override
-    public ICivilianData getCivilianData()
-    {
-        return citizenData;
-    }
-
-    @Override
-    public void setCivilianData(@Nullable final ICivilianData data)
-    {
-        if (data != null && data instanceof IVisitorData)
-        {
-            this.citizenData = (IVisitorData) data;
-            data.initEntityValues();
-        }
+        return visitorData;
     }
 
     /**
@@ -271,18 +404,6 @@ VisitorCitizen extends AbstractEntityCitizen
     public IItemHandler getItemHandlerCitizen()
     {
         return getInventoryCitizen();
-    }
-
-    /**
-     * Mark the citizen dirty to synch the data with the client.
-     */
-    @Override
-    public void markDirty(final int time)
-    {
-        if (citizenData != null)
-        {
-            citizenData.markDirty(time);
-        }
     }
 
     @Override
@@ -306,10 +427,10 @@ VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void decreaseSaturationForAction()
     {
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
-            citizenData.markDirty(20 * 20);
+            visitorData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
+            visitorData.markDirty(20 * 20);
         }
     }
 
@@ -319,33 +440,11 @@ VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
-            citizenData.markDirty(20 * 60 * 2);
+            visitorData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
+            visitorData.markDirty(20 * 60 * 2);
         }
-    }
-
-    /**
-     * Getter for the citizen id.
-     *
-     * @return the id.
-     */
-    @Override
-    public int getCivilianID()
-    {
-        return citizenId;
-    }
-
-    /**
-     * Setter for the citizen id.
-     *
-     * @param id the id to set.
-     */
-    @Override
-    public void setCitizenId(final int id)
-    {
-        this.citizenId = id;
     }
 
     @Override
@@ -468,169 +567,16 @@ VisitorCitizen extends AbstractEntityCitizen
 
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player playerEntity)
+    public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions)
     {
-        return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
-    }
 
-    /**
-     * Called when a player tries to interact with a citizen.
-     *
-     * @param player which interacts with the citizen.
-     * @return If citizen should interact or not.
-     */
-    @Override
-    public InteractionResult checkAndHandleImportantInteractions(final Player player, @NotNull final InteractionHand hand)
-    {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level.dimension());
-        if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-        {
-            return InteractionResult.FAIL;
-        }
-
-        if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).getItem() instanceof NameTagItem)
-        {
-            return super.checkAndHandleImportantInteractions(player, hand);
-        }
-
-        final InteractionResult result = directPlayerInteraction(player, hand);
-        if (result != null)
-        {
-            return result;
-        }
-
-        if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
-        {
-            if (player.isShiftKeyDown())
-            {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
-            }
-            else
-            {
-                final ICitizenDataView citizenDataView = getCitizenDataView();
-                if (citizenDataView != null)
-                {
-                    new WindowInteraction(citizenDataView).open();
-                }
-            }
-        }
-        return InteractionResult.SUCCESS;
-    }
-
-    /**
-     * Direct interaction on right click
-     *
-     * @param player
-     * @param hand
-     * @return
-     */
-    private InteractionResult directPlayerInteraction(final Player player, final InteractionHand hand)
-    {
-        final ItemStack usedStack = player.getItemInHand(hand);
-        if (ISFOOD.test(usedStack))
-        {
-            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
-            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
-            {
-                if (!player.getInventory().add(remainingItem))
-                {
-                    InventoryUtils.spawnItemStack(
-                      player.level,
-                      player.getX(),
-                      player.getY(),
-                      player.getZ(),
-                      remainingItem
-                    );
-                }
-            }
-
-            if (!level.isClientSide())
-            {
-                getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
-
-                playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                // Position needs to be centered on citizen, Eat AI wrong too?
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    getXRot(),
-                    getYRot(),
-                    getEyeHeight()), this);
-
-                citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
-            }
-            return InteractionResult.CONSUME;
-        }
-        return null;
     }
 
     @Override
-    public ICitizenDataView getCitizenDataView()
+    public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
     {
-        if (this.citizenDataView == null)
-        {
-            citizenColonyHandler.updateColonyClient();
-            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
-            {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
-                if (colonyView != null)
-                {
-                    this.citizenDataView = colonyView.getVisitor(citizenId);
-                    return this.citizenDataView;
-                }
-            }
-        }
-        else
-        {
-            return this.citizenDataView;
-        }
 
-        return null;
-    }
-
-    @Override
-    protected void defineSynchedData()
-    {
-        super.defineSynchedData();
-        entityData.define(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
-        entityData.define(DATA_CITIZEN_ID, citizenId);
-    }
-
-    @Override
-    public void aiStep()
-    {
-        super.aiStep();
-
-        if (lastHurtByPlayerTime > 0)
-        {
-            markDirty(0);
-        }
-
-        if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
-        {
-            citizenColonyHandler.updateColonyClient();
-            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
-            {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
-                if (colonyView != null)
-                {
-                    this.citizenDataView = colonyView.getVisitor(citizenId);
-                    getEntityData().set(DATA_STYLE, colonyView.getTextureStyleId());
-                }
-            }
-        }
-        else
-        {
-            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
-            if (tickCount % 500 == 0)
-            {
-                this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
-            }
-        }
     }
 
     @Override
@@ -639,9 +585,9 @@ VisitorCitizen extends AbstractEntityCitizen
         super.addAdditionalSaveData(compound);
 
         compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            compound.putInt(TAG_CITIZEN, citizenData.getId());
+            compound.putInt(TAG_CITIZEN, visitorData.getId());
         }
 
         citizenDiseaseHandler.write(compound);
@@ -665,65 +611,97 @@ VisitorCitizen extends AbstractEntityCitizen
         citizenDiseaseHandler.read(compound);
     }
 
+    /**
+     * Called when a player tries to interact with a citizen.
+     *
+     * @param player which interacts with the citizen.
+     * @return If citizen should interact or not.
+     */
     @Override
-    public void die(DamageSource cause)
+    public InteractionResult checkAndHandleImportantInteractions(final Player player, @NotNull final InteractionHand hand)
     {
-        super.die(cause);
-        if (!level.isClientSide())
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level.dimension());
+        if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
-            IColony colony = getCitizenColonyHandler().getColony();
-            if (colony != null && getCitizenData() != null)
+            return InteractionResult.FAIL;
+        }
+
+        if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).getItem() instanceof NameTagItem)
+        {
+            return super.checkAndHandleImportantInteractions(player, hand);
+        }
+
+        final InteractionResult result = visitorType.onPlayerInteraction(this, player, level, hand);
+        if (result.consumesAction())
+        {
+            return result;
+        }
+
+        if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
+        {
+            if (player.isShiftKeyDown())
             {
-                colony.getVisitorManager().removeCivilian(getCitizenData());
-                if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
+            }
+            else
+            {
+                final ICitizenDataView citizenDataView = getCitizenDataView();
+                if (citizenDataView != null)
                 {
-                    TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
-                    tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
+                    new WindowInteraction(citizenDataView).open();
                 }
-
-                final String deathLocation = BlockPosUtil.getString(blockPosition());
-
-                MessageUtils.format(MESSAGE_INFO_COLONY_VISITOR_DIED, getCitizenData().getName(), cause.getMsgId(), deathLocation)
-                  .withPriority(MessagePriority.DANGER)
-                  .sendTo(colony)
-                  .forManagers();
             }
         }
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void dropEquipment()
+    public IVisitorData getCivilianData()
     {
-        //Drop actual inventory
-        for (int i = 0; i < getInventoryCitizen().getSlots(); i++)
+        return visitorData;
+    }
+
+    @Override
+    public void setCivilianData(@Nullable final ICivilianData data)
+    {
+        if (data instanceof IVisitorData newVisitorData)
         {
-            final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
-            if (ItemStackUtils.getSize(itemstack) > 0)
-            {
-                citizenItemHandler.entityDropItem(itemstack);
-            }
+            this.visitorData = newVisitorData;
+            data.initEntityValues();
         }
     }
 
+    /**
+     * Mark the citizen dirty to synch the data with the client.
+     */
     @Override
-    public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions)
+    public void markDirty(final int time)
     {
-
-    }
-
-    @Override
-    public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
-    {
-
-    }
-
-    @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> dataAccessor)
-    {
-        super.onSyncedDataUpdated(dataAccessor);
-        if (citizenColonyHandler != null)
+        if (visitorData != null)
         {
-            citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+            visitorData.markDirty(time);
         }
+    }
+
+    /**
+     * Getter for the citizen id.
+     *
+     * @return the id.
+     */
+    @Override
+    public int getCivilianID()
+    {
+        return citizenId;
+    }
+
+    /**
+     * Setter for the citizen id.
+     *
+     * @param id the id to set.
+     */
+    @Override
+    public void setCitizenId(final int id)
+    {
+        this.citizenId = id;
     }
 }

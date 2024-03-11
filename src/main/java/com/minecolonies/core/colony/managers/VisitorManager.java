@@ -8,19 +8,20 @@ import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.visitor.IVisitorType;
+import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -200,17 +201,11 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public <T extends IVisitorData> T getVisitor(int citizenId)
-    {
-        return (T) visitorMap.get(citizenId);
-    }
-
-    @Override
-    public IVisitorData spawnOrCreateCivilian(ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
+    public IVisitorData spawnOrCreateCivilian(IVisitorData data, final Level world, final BlockPos spawnPos, final boolean force)
     {
         if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
         {
-            return (IVisitorData) data;
+            return data;
         }
 
         if (data == null)
@@ -222,7 +217,7 @@ public class VisitorManager implements IVisitorManager
 
         if (citizenEntity == null)
         {
-            return (IVisitorData) data;
+            return data;
         }
 
         citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
@@ -230,14 +225,25 @@ public class VisitorManager implements IVisitorManager
 
         citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
 
-        return (IVisitorData) data;
+        return data;
     }
 
     @Override
     public IVisitorData createAndRegisterCivilianData()
     {
+        return createAndRegisterVisitor(ModVisitorTypes.visitor.get());
+    }
+
+    /**
+     * Create visitor data for the given visitor type.
+     *
+     * @param visitorType the input visitor type.
+     * @return the generated visitor data.
+     */
+    private IVisitorData createAndRegisterVisitor(final IVisitorType visitorType)
+    {
         markDirty();
-        final IVisitorData data = new VisitorData(nextVisitorID--, colony);
+        final IVisitorData data = new VisitorData(nextVisitorID--, colony, visitorType);
         data.initForNewCivilian();
         visitorMap.put(data.getId(), data);
         return data;

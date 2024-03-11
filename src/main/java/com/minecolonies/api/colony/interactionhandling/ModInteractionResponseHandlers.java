@@ -34,6 +34,6 @@ public final class ModInteractionResponseHandlers
 
     private ModInteractionResponseHandlers()
     {
-        throw new IllegalStateException("Tried to initialize: ModJobs but this is a Utility class.");
+        throw new IllegalStateException("Tried to initialize: ModInteractionResponseHandlers but this is a Utility class.");
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * The interface of the citizen manager.
  */
-public interface ICitizenManager extends IEntityManager
+public interface ICitizenManager extends IEntityManager<ICitizenData>
 {
 
     /**
