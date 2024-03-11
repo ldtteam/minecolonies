@@ -475,6 +475,31 @@ public class SettingsFactories
     }
 
     /**
+     * Specific factory for the guard patrol mode setting.
+     */
+    public static class GuardHireTraineeSettingFactory extends AbstractBoolSettingFactory<GuardHireTraineeSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<GuardHireTraineeSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(GuardHireTraineeSetting.class);
+        }
+
+        @Override
+        public @NotNull GuardHireTraineeSetting getNewInstance(final boolean def, final boolean current)
+        {
+            return new GuardHireTraineeSetting(current, def);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return SerializationIdentifierConstants.HIRE_TRAINEE_SETTINGS_ID;
+        }
+    }
+
+    /**
      * Specific factory for the string setting with desc.
      */
     public static class CrafterRecipeSettingFactory extends AbstractStringSettingsFactory<CrafterRecipeSetting>

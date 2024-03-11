@@ -524,7 +524,7 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> GUARD_SETTINGS = new BuildingEntry.ModuleProducer<>("guard_settings", () -> new SettingsModule()
       .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW, GuardTaskSetting.PATROL_MINE))
       .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
-      .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
+      .with(AbstractBuildingGuards.HIRE_TRAINEE, new GuardHireTraineeSetting(true))
       .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
       .with(AbstractBuildingGuards.FOLLOW_MODE, new GuardFollowModeSetting()), () -> SettingsModuleView::new);
 
