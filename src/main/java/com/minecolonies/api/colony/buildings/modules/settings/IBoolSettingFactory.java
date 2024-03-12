@@ -31,10 +31,9 @@ public interface IBoolSettingFactory<T extends ISetting> extends IFactory<Factor
 
         final boolean def = (Boolean) context[0];
         final boolean current = (Boolean) context[1];
-        final String tooltipKey = (String) context[2];
-        return getNewInstance(def, current, tooltipKey);
+        return getNewInstance(def, current);
     }
 
     @NotNull
-    T getNewInstance(final boolean def, final boolean current, final @NotNull String tooltipKey);
+    T getNewInstance(final boolean def, final boolean current);
 }

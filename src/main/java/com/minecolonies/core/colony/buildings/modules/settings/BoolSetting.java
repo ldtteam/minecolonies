@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.OFF;
 import static com.minecolonies.api.util.constant.WindowConstants.ON;
@@ -21,11 +20,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.ON;
  */
 public class BoolSetting implements ISetting<Boolean>
 {
-    /**
-     * The value of the setting.
-     */
-    private final String tooltipKey;
-
     /**
      * Default value of the setting.
      */
@@ -43,32 +37,20 @@ public class BoolSetting implements ISetting<Boolean>
      */
     public BoolSetting(final boolean init)
     {
-        this(init, "");
+        this.value = init;
+        this.defaultValue = init;
     }
 
     /**
      * Create a new boolean setting.
      *
-     * @param init       the initial value.
-     * @param tooltipKey the translation key for a tooltip to display for this setting.
+     * @param value the value.
+     * @param def   the default value.
      */
-    public BoolSetting(final boolean init, final @NotNull String tooltipKey)
-    {
-        this(init, init, tooltipKey);
-    }
-
-    /**
-     * Create a new boolean setting.
-     *
-     * @param value      the value.
-     * @param def        the default value.
-     * @param tooltipKey the translation key for a tooltip to display for this setting.
-     */
-    public BoolSetting(final boolean value, final boolean def, final @NotNull String tooltipKey)
+    public BoolSetting(final boolean value, final boolean def)
     {
         this.value = value;
         this.defaultValue = def;
-        this.tooltipKey = tooltipKey;
     }
 
     /**
@@ -131,16 +113,5 @@ public class BoolSetting implements ISetting<Boolean>
     public Boolean getValue()
     {
         return value;
-    }
-
-    /**
-     * Get the translation key for the tooltip.
-     *
-     * @return the translation key.
-     */
-    @NotNull
-    public String getTooltipKey()
-    {
-        return tooltipKey;
     }
 }

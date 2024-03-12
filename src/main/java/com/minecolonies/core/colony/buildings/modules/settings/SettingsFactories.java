@@ -41,11 +41,6 @@ public class SettingsFactories
          */
         private static final String TAG_DEFAULT = "default";
 
-        /**
-         * Compound tag for the tooltip.
-         */
-        private static final String TAG_TOOLTIP = "tooltip";
-
         @NotNull
         @Override
         public TypeToken<FactoryVoidInput> getFactoryInputType()
@@ -57,7 +52,7 @@ public class SettingsFactories
         @Override
         public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT), nbt.getString(TAG_TOOLTIP));
+            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
         }
 
         @NotNull
@@ -67,7 +62,6 @@ public class SettingsFactories
             final CompoundTag compound = new CompoundTag();
             compound.putBoolean(TAG_VALUE, storage.getValue());
             compound.putBoolean(TAG_DEFAULT, storage.getDefault());
-            compound.putString(TAG_TOOLTIP, storage.getTooltipKey());
             return compound;
         }
 
@@ -76,14 +70,13 @@ public class SettingsFactories
         {
             packetBuffer.writeBoolean(input.getValue());
             packetBuffer.writeBoolean(input.getDefault());
-            packetBuffer.writeUtf(input.getTooltipKey());
         }
 
         @NotNull
         @Override
         public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
-            return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean(), buffer.readUtf(32767));
+            return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
         }
     }
 
@@ -101,9 +94,9 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BoolSetting getNewInstance(final boolean value, final boolean def, final @NotNull String tooltip)
+        public BoolSetting getNewInstance(final boolean value, final boolean def)
         {
-            return new BoolSetting(value, def, tooltip);
+            return new BoolSetting(value, def);
         }
 
         @Override
