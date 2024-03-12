@@ -36,13 +36,4 @@ public interface IStringSetting<S> extends ISetting<S>
      * @param value the value to set.
      */
     void set(final S value);
-
-    @Override
-    default void copyValue(final ISetting<S> setting)
-    {
-        if (setting instanceof final IStringSetting<S> other)
-        {
-            set(other.getValue());
-        }
-    }
 }

@@ -76,6 +76,7 @@ public class SettingsFactories
         {
             packetBuffer.writeBoolean(input.getValue());
             packetBuffer.writeBoolean(input.getDefault());
+            packetBuffer.writeUtf(input.getTooltipKey());
         }
 
         @NotNull
