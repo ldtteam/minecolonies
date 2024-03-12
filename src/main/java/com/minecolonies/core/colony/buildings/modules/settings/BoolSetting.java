@@ -54,6 +54,16 @@ public class BoolSetting implements ISetting<Boolean>
     }
 
     /**
+     * Get the setting value.
+     *
+     * @return the set value.
+     */
+    public Boolean getValue()
+    {
+        return value;
+    }
+
+    /**
      * Get the default value.
      *
      * @return the default value.
@@ -77,7 +87,7 @@ public class BoolSetting implements ISetting<Boolean>
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(btn -> settingsModuleView.trigger(key));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
@@ -107,11 +117,5 @@ public class BoolSetting implements ISetting<Boolean>
         {
             this.value = other.value;
         }
-    }
-
-    @Override
-    public Boolean getValue()
-    {
-        return value;
     }
 }
