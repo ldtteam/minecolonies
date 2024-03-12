@@ -2109,7 +2109,8 @@
   "com.minecolonies.coremod.setting.minecolonies:buildmode": "Construction Strategy:",
 
   "com.minecolonies.coremod.settings.reason.needsresearch": "Please research \"%s\" in the university to unlock this",
-  "com.minecolonies.coremod.settings.reason.hiringmode": "Please set the hiring mode of one or more jobs to automatic to unlock this",
+
+  "com.minecolonies.coremod.settings.tooltip.hiringmode": "This setting only works when any of the jobs can be hired automatically.",
 
   "com.minecolonies.coremod.gui.citizen.family": "Family",
   "com.minecolonies.coremod.gui.citizen.job": "Job",

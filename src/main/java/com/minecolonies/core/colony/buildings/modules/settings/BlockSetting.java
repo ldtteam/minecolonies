@@ -157,7 +157,7 @@ public class BlockSetting implements ISetting<BlockItem>
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(SWITCH));
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(triggerButton, settingsModuleView);
     }
 
     @Override

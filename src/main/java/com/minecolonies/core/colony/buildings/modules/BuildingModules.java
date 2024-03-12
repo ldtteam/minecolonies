@@ -25,6 +25,7 @@ import net.minecraft.world.item.Items;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_HOSTILES;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.HIRE_TRAINEE_TOOLTIP;
 import static com.minecolonies.core.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
@@ -524,7 +525,7 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> GUARD_SETTINGS = new BuildingEntry.ModuleProducer<>("guard_settings", () -> new SettingsModule()
       .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW, GuardTaskSetting.PATROL_MINE))
       .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
-      .with(AbstractBuildingGuards.HIRE_TRAINEE, new GuardHireTraineeSetting(true))
+      .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true, HIRE_TRAINEE_TOOLTIP))
       .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
       .with(AbstractBuildingGuards.FOLLOW_MODE, new GuardFollowModeSetting()), () -> SettingsModuleView::new);
 

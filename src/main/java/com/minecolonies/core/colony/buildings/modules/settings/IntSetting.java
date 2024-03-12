@@ -109,7 +109,7 @@ public class IntSetting implements ISetting<Integer>
     {
         final TextField field = pane.findPaneOfTypeByID("trigger", TextField.class);
         field.setEnabled(isActive(settingsModuleView));
-        setInActiveHoverPane(field, settingsModuleView);
+        setHoverPane(field, settingsModuleView);
         if (!field.getText().equals(String.valueOf(this.value)))
         {
             field.setText(String.valueOf(value));

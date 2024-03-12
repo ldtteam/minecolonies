@@ -49,4 +49,8 @@ public class GuiTranslationConstants
     public static final String QUEST_LOG_COMPLETED_MULTIPLE_TEXT = "com.minecolonies.coremod.item.questlog.gui.completed_multiple";
     @NonNls
     public static final String QUEST_LOG_TRACK_CITIZEN_TEXT      = "com.minecolonies.coremod.item.questlog.gui.track_citizen";
+
+    // Settings list
+    @NonNls
+    public static final String HIRE_TRAINEE_TOOLTIP = "com.minecolonies.coremod.settings.tooltip.hiringmode";
 }

@@ -11,6 +11,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.WindowConstants.OFF;
 import static com.minecolonies.api.util.constant.WindowConstants.ON;
@@ -20,6 +22,11 @@ import static com.minecolonies.api.util.constant.WindowConstants.ON;
  */
 public class BoolSetting implements ISetting<Boolean>
 {
+    /**
+     * The value of the setting.
+     */
+    private final String tooltipKey;
+
     /**
      * Default value of the setting.
      */
@@ -37,30 +44,32 @@ public class BoolSetting implements ISetting<Boolean>
      */
     public BoolSetting(final boolean init)
     {
-        this.value = init;
-        this.defaultValue = init;
+        this(init, "");
     }
 
     /**
      * Create a new boolean setting.
      *
-     * @param value the value.
-     * @param def   the default value.
+     * @param init       the initial value.
+     * @param tooltipKey the translation key for a tooltip to display for this setting.
      */
-    public BoolSetting(final boolean value, final boolean def)
+    public BoolSetting(final boolean init, final @NotNull String tooltipKey)
     {
-        this.value = value;
-        this.defaultValue = def;
+        this(init, init, tooltipKey);
     }
 
     /**
-     * Get the setting value.
+     * Create a new boolean setting.
      *
-     * @return the set value.
+     * @param value      the value.
+     * @param def        the default value.
+     * @param tooltipKey the translation key for a tooltip to display for this setting.
      */
-    public Boolean getValue()
+    public BoolSetting(final boolean value, final boolean def, final @NotNull String tooltipKey)
     {
-        return value;
+        this.value = value;
+        this.defaultValue = def;
+        this.tooltipKey = tooltipKey;
     }
 
     /**
@@ -87,7 +96,7 @@ public class BoolSetting implements ISetting<Boolean>
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(btn -> settingsModuleView.trigger(key));
     }
 
     @Override
@@ -101,7 +110,7 @@ public class BoolSetting implements ISetting<Boolean>
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(value ? ON : OFF));
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(triggerButton, settingsModuleView);
     }
 
     @Override
@@ -117,5 +126,29 @@ public class BoolSetting implements ISetting<Boolean>
         {
             this.value = other.value;
         }
+    }
+
+    @Nullable
+    @Override
+    public Component getTooltip()
+    {
+        return Component.translatable(tooltipKey);
+    }
+
+    @Override
+    public Boolean getValue()
+    {
+        return value;
+    }
+
+    /**
+     * Get the translation key for the tooltip.
+     *
+     * @return the translation key.
+     */
+    @NotNull
+    public String getTooltipKey()
+    {
+        return tooltipKey;
     }
 }

@@ -8,14 +8,13 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +41,11 @@ public class SettingsFactories
          */
         private static final String TAG_DEFAULT = "default";
 
+        /**
+         * Compound tag for the tooltip.
+         */
+        private static final String TAG_TOOLTIP = "tooltip";
+
         @NotNull
         @Override
         public TypeToken<FactoryVoidInput> getFactoryInputType()
@@ -53,7 +57,7 @@ public class SettingsFactories
         @Override
         public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
+            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT), nbt.getString(TAG_TOOLTIP));
         }
 
         @NotNull
@@ -63,6 +67,7 @@ public class SettingsFactories
             final CompoundTag compound = new CompoundTag();
             compound.putBoolean(TAG_VALUE, storage.getValue());
             compound.putBoolean(TAG_DEFAULT, storage.getDefault());
+            compound.putString(TAG_TOOLTIP, storage.getTooltipKey());
             return compound;
         }
 
@@ -77,7 +82,7 @@ public class SettingsFactories
         @Override
         public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
-            return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
+            return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean(), buffer.readUtf(32767));
         }
     }
 
@@ -95,9 +100,9 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BoolSetting getNewInstance(final boolean value, final boolean def)
+        public BoolSetting getNewInstance(final boolean value, final boolean def, final @NotNull String tooltip)
         {
-            return new BoolSetting(value, def);
+            return new BoolSetting(value, def, tooltip);
         }
 
         @Override
@@ -471,31 +476,6 @@ public class SettingsFactories
         public short getSerializationId()
         {
             return SerializationIdentifierConstants.FOLLOW_MODE_SETTINGS_ID;
-        }
-    }
-
-    /**
-     * Specific factory for the guard patrol mode setting.
-     */
-    public static class GuardHireTraineeSettingFactory extends AbstractBoolSettingFactory<GuardHireTraineeSetting>
-    {
-        @NotNull
-        @Override
-        public TypeToken<GuardHireTraineeSetting> getFactoryOutputType()
-        {
-            return TypeToken.of(GuardHireTraineeSetting.class);
-        }
-
-        @Override
-        public @NotNull GuardHireTraineeSetting getNewInstance(final boolean def, final boolean current)
-        {
-            return new GuardHireTraineeSetting(current, def);
-        }
-
-        @Override
-        public short getSerializationId()
-        {
-            return SerializationIdentifierConstants.HIRE_TRAINEE_SETTINGS_ID;
         }
     }
 

@@ -105,25 +105,47 @@ public interface ISetting<S>
     void copyValue(final ISetting<S> setting);
 
     /**
-     * Generates the hover pane for inactive settings.
+     * Generates the hover pane for this setting.
      *
      * @param component          the component to put the hover pane on.
      * @param settingsModuleView the module view that holds the setting.
      */
-    default void setInActiveHoverPane(final Pane component, final ISettingsModuleView settingsModuleView)
+    default void setHoverPane(final Pane component, final ISettingsModuleView settingsModuleView)
     {
+        final Component tooltip = getTooltip();
         final Component inActiveReason = getInactiveReason();
-        if (!isActive(settingsModuleView) && inActiveReason != null)
+
+        if (tooltip == null && inActiveReason == null)
+        {
+            component.setHoverPane(null);
+            return;
+        }
+
+        if (isActive(settingsModuleView))
         {
             PaneBuilders.tooltipBuilder()
-              .append(inActiveReason)
+              .append(tooltip)
               .hoverPane(component)
               .build();
         }
         else
         {
-            component.setHoverPane(null);
+            PaneBuilders.tooltipBuilder()
+              .append(inActiveReason != null ? inActiveReason : tooltip)
+              .hoverPane(component)
+              .build();
         }
+    }
+
+    /**
+     * Get a tooltip that is always shown over the setting, unless overwritten by {@link ISetting#getInactiveReason()}.
+     *
+     * @return a component stating a tooltip.
+     */
+    @Nullable
+    default Component getTooltip()
+    {
+        return null;
     }
 
     /**
@@ -149,6 +171,7 @@ public interface ISetting<S>
 
     /**
      * Get the setting value.
+     *
      * @return the value.
      */
     S getValue();

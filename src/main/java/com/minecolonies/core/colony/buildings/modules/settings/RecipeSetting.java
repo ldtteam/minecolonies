@@ -168,7 +168,7 @@ public class RecipeSetting implements ICraftingSetting
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(stack.getPrimaryOutput().getDescriptionId()));
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(triggerButton, settingsModuleView);
         pane.findPaneOfTypeByID("iconto", ItemIcon.class).setItem(stack.getPrimaryOutput());
         pane.findPaneOfTypeByID("iconfrom", ItemIcon.class).setItem(stack.getCleanedInput().get(0).getItemStack());
     }

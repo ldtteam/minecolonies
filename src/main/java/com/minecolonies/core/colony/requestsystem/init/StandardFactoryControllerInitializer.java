@@ -88,7 +88,6 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardPatrolModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardTaskSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardFollowModeSettingFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardHireTraineeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.CrafterRecipeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BuilderModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.DynamicTreesSettingFactory());

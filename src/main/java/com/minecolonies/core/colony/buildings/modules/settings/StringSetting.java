@@ -116,7 +116,7 @@ public class StringSetting implements IStringSetting<String>
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(getDisplayText());
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(triggerButton, settingsModuleView);
     }
 
     /**
