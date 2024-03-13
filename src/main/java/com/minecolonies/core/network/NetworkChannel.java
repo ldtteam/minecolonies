@@ -152,6 +152,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
         registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
+        registerMessage(++idx, ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
 
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
         registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
@@ -202,6 +203,9 @@ public class NetworkChannel
         registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
         registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
+        registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
+        registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
+        registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
         registerMessage(++idx, TransferItemsMessage.class, TransferItemsMessage::new);
         registerMessage(++idx, AssignGuardMessage.class, AssignGuardMessage::new);
         registerMessage(++idx, StartExpeditionMessage.class, StartExpeditionMessage::new);
@@ -230,6 +234,11 @@ public class NetworkChannel
         registerMessage(++idx, OpenPlantationFieldBuildWindowMessage.class, OpenPlantationFieldBuildWindowMessage::new);
         registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
         registerMessage(++idx, GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
+        registerMessage(++idx, OpenColonyFoundingCovenantMessage.class, OpenColonyFoundingCovenantMessage::new);
+        registerMessage(++idx, OpenBuildingUIMessage.class, OpenBuildingUIMessage::new);
+        registerMessage(++idx, OpenCantFoundColonyWarningMessage.class, OpenCantFoundColonyWarningMessage::new);
+        registerMessage(++idx, OpenDeleteAbandonColonyMessage.class, OpenDeleteAbandonColonyMessage::new);
+        registerMessage(++idx, OpenReactivateColonyMessage.class, OpenReactivateColonyMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);

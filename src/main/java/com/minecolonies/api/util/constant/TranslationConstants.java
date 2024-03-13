@@ -210,9 +210,11 @@ public final class TranslationConstants
     @NonNls
     public static final String ALL_BARBARIANS_MERCY_MESSAGE                                         = "com.minecolonies.core.barbarians.mercy";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                 = "com.minecolonies.coremod.tooclose";
+    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                 = "com.minecolonies.core.founding.tooclosetospawn";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.coremod.toofar";
+    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.core.founding.toofarfromspawn";
+    @NonNls
+    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_OTHER_COLONY                          = "com.minecolonies.core.founding.tooclosetocolony";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.count";
     @NonNls
@@ -627,6 +629,8 @@ public final class TranslationConstants
     @NonNls
     public static final String MESSAGE_COLONY_FOUNDED                             = "com.minecolonies.coremod.progress.colony_founded";
     @NonNls
+    public static final String MESSAGE_COLONY_REACTIVATED                         = "com.minecolonies.coremod.progress.colony_reactivated";
+    @NonNls
     public static final String WARNING_COLONY_FOUNDING_FAILED                     = "com.minecolonies.coremod.gui.colony.create.failed";
     @NonNls
     public static final String WARNING_CRUSHER_DAILY_LIMIT                        = "com.minecolonies.coremod.crusher.toomuch";
@@ -679,7 +683,10 @@ public final class TranslationConstants
     public static final String MESSAGE_INFO_COLONY_DELETE_SUCCESS           = "com.minecolonies.coremod.gui.colony.delete.success";
     @NonNls
     public static final String MESSAGE_INFO_COLONY_NOT_FOUND                = "com.minecolonies.coremod.colony.notfound";
-
+    @NonNls
+    public static final String MESSAGE_INFO_COLONY_DESTROY_SUCCESS           = "com.minecolonies.core.gui.colony.destroy.success";
+    @NonNls
+    public static final String MESSAGE_INFO_COLONY_ABANDON_SUCCESS           = "com.minecolonies.core.gui.colony.abandon.success";
     //</editor-fold>
 
     //<editor-fold desc="Citizen keys">
