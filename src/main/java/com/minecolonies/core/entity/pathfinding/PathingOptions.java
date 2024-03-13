@@ -58,7 +58,7 @@ public class PathingOptions
     public double nonLadderClimbableCost = 4D;
 
     /**
-     * Cost to climb a non ladder.
+     * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.
      */
     public double randomnessFactor = 0.1;
 
