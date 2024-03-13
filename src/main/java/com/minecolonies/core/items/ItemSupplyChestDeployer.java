@@ -8,13 +8,13 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ISupplyItem;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -215,7 +215,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     private static void checkFluidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer, final BlockState state)
     {
         final boolean isOverworld = WorldUtil.isOverworldType(world);
-        final boolean isWater = SurfaceType.isWater(world, pos);
+        final boolean isWater = PathfindingUtils.isWater(world, pos);
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
 
         if (state.getBlock() != ModBlocks.blockFluidSubstitution.get())
