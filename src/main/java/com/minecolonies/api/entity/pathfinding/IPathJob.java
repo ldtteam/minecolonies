@@ -1,5 +1,7 @@
 package com.minecolonies.api.entity.pathfinding;
 
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.concurrent.Callable;

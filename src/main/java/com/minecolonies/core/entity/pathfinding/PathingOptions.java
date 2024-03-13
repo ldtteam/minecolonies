@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding;
 
 /**
  * Configuration values for pathing, used by pathjobs and normally set through the navigator
@@ -58,13 +58,18 @@ public class PathingOptions
     public double nonLadderClimbableCost = 4D;
 
     /**
+     * Cost to climb a non ladder.
+     */
+    public double randomnessFactor = 0.1;
+
+    /**
      * Whether to use minecart rail pathing
      */
-    private boolean canUseRails  = false;
+    private boolean canUseRails        = false;
     /**
      * Can swim
      */
-    private boolean canSwim      = false;
+    private boolean canSwim            = false;
     /**
      * Allowed to enter doors?
      */
@@ -245,6 +250,7 @@ public class PathingOptions
         canOpenDoors = pathingOptions.canOpenDoors;
         canClimbNonLadders = pathingOptions.canClimbNonLadders;
         canPassDanger = pathingOptions.canPassDanger;
+        randomnessFactor = pathingOptions.randomnessFactor;
     }
 
 }
