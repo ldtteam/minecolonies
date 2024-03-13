@@ -225,7 +225,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
         {
-            newCitizen.triggerInteraction(new RecruitmentInteraction(Component.translatable(
+            newCitizen.triggerInteraction(new RecruitmentInteraction(Component.translatableEscape(
               "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
               ChatPriority.IMPORTANT));
         }

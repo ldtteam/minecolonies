@@ -1375,13 +1375,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
-            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
-              request.getLongDisplayString()), ChatPriority.PENDING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
+              request.getLongDisplayString()), ChatPriority.PENDING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
         }
         else
         {
-            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
-              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
+              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
 
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
@@ -2004,7 +2004,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final int citizenId = getCitizensByRequest().get(request.getId());
         if (citizenId == -1)
         {
-            return Component.translatable(getBuildingDisplayName());
+            return Component.translatableEscape(getBuildingDisplayName());
         }
 
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
@@ -2013,7 +2013,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return Component.literal(citizenData.getName());
         }
 
-        final MutableComponent jobName = Component.translatable(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
+        final MutableComponent jobName = Component.translatableEscape(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         return jobName.append(Component.literal(" " + citizenData.getName()));
     }
 

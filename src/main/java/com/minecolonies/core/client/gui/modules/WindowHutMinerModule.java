@@ -115,7 +115,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
 
                 rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Component.literal(Integer.toString(index)));
                 rowPane.findPaneOfTypeByID("nONodes", Text.class)
-                  .setText(Component.translatable(MINER_NODES)
+                  .setText(Component.translatableEscape(MINER_NODES)
                              .append(": ")
                              .append(String.valueOf(levelsInfo.get(index).getA())));
                 rowPane.findPaneOfTypeByID("yLevel", Text.class)

@@ -708,7 +708,7 @@ public class EventHandler
                     entity.remove(Entity.RemovalReason.DISCARDED);
                     Tuple<Item, Integer> cost = recruitCosts.get(world.random.nextInt(recruitCosts.size()));
                     visitorData.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
-                    visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
+                    visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatableEscape(
                             "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
                 }
             }

@@ -146,7 +146,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     public Component getTitleAsTextComponent()
     {
-        return Component.translatable(this.job.getJobRegistryEntry().getTranslationKey());
+        return Component.translatableEscape(this.job.getJobRegistryEntry().getTranslationKey());
     }
 
     @NotNull
@@ -272,7 +272,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                 final String key = contents.getKey() + ".tip";
                 if (I18n.exists(key))
                 {
-                    tip = (Component.translatable(key, contents.getArgs())).getString();
+                    tip = (Component.translatableEscape(key, contents.getArgs())).getString();
                 }
             }
             result.add(new InfoBlock(text, tip, new Rect2i(x, y, width, height)));
@@ -363,7 +363,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                 if (!recipeModId.equals(ingredientModId))
                 {
                     final String modName = modIdHelper.getFormattedModNameForModId(recipeModId);
-                    final MutableComponent recipeBy = Component.translatable("jei.tooltip.recipe.by", modName);
+                    final MutableComponent recipeBy = Component.translatableEscape("jei.tooltip.recipe.by", modName);
                     tooltip.add(recipeBy.withStyle(ChatFormatting.GRAY));
                 }
             }
@@ -371,7 +371,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
             if (showAdvanced)
             {
-                final MutableComponent recipeId = Component.translatable("jei.tooltip.recipe.id", id.toString());
+                final MutableComponent recipeId = Component.translatableEscape("jei.tooltip.recipe.id", id.toString());
                 tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
             }
         }
@@ -398,24 +398,24 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
             if (probability >= 1)
             {
-                    tooltip.add(Component.translatable(key,
+                    tooltip.add(Component.translatableEscape(key,
                         Math.round(probability)));
             }
             else
             {
-                    tooltip.add(Component.translatable(key,
+                    tooltip.add(Component.translatableEscape(key,
                         Math.round(probability * 100) / 100f));
             }
 
             if (this.drop.getConditional())
             {
-                tooltip.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
+                tooltip.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
             }
 
             final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
             if (showAdvanced)
             {
-                final MutableComponent recipeId = Component.translatable("com.minecolonies.coremod.jei.loottableid", id.toString());
+                final MutableComponent recipeId = Component.translatableEscape("com.minecolonies.coremod.jei.loottableid", id.toString());
                 tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
             }
         }

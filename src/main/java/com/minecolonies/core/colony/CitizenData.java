@@ -1687,15 +1687,15 @@ public class CitizenData implements ICitizenData
 
         if (job != null && job.getWorkBuilding() != null && !job.getWorkBuilding().isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
-              Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
+            triggerInteraction(new StandardInteraction(Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_WORK),
+              Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_WORK),
               ChatPriority.CHITCHAT));
         }
 
         if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
-              Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
+            triggerInteraction(new StandardInteraction(Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_HOME),
+              Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
 

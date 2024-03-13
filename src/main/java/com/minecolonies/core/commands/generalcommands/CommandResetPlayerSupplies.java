@@ -37,13 +37,13 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             }
             else
             {
-                context.getSource().sendSuccess(() -> Component.translatable(COMMAND_PLAYER_NOT_FOUND, username), true);
+                context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_PLAYER_NOT_FOUND, username), true);
             }
             return 0;
         }
 
         player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
-        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_RESET_SUPPLY_SUCCESS), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_RESET_SUPPLY_SUCCESS), true);
         MessageUtils.format(COMMAND_RESET_SUPPLY_SUCCESS).sendTo(player);
         return 1;
     }

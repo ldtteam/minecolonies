@@ -510,7 +510,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public Component getDisplayName()
     {
-        return Component.translatable(getTranslationKey());
+        return Component.translatableEscape(getTranslationKey());
     }
 
     /**

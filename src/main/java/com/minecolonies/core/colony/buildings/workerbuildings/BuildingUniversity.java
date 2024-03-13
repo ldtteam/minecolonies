@@ -170,7 +170,7 @@ public class BuildingUniversity extends AbstractBuilding
             citizen.applyResearchEffects();
         }
 
-        final MutableComponent message = Component.translatable(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
+        final MutableComponent message = Component.translatableEscape(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
           MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()));
 
         MessageUtils.format(message).sendTo(colony).forManagers();

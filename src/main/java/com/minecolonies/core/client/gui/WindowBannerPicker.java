@@ -220,7 +220,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
-                Component.translatable(BASE_GUI_DONE),
+                Component.translatableEscape(BASE_GUI_DONE),
                 pressed -> {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<Holder<BannerPattern>, DyeColor> pair : layers)
@@ -234,7 +234,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 0, 10),
                 this.height - 40,
                 80, SIDE,
-                Component.translatable("gui.cancel"),
+                Component.translatableEscape("gui.cancel"),
                 pressed -> window.open(), DEFAULT_NARRATION
         ));
     }
@@ -297,7 +297,7 @@ public class WindowBannerPicker extends Screen
 
         // Render the instructions
         stack.drawCenteredString(this.font,
-                Component.translatable("com.minecolonies.coremod.gui.flag.choose").getString(),
+                Component.translatableEscape("com.minecolonies.coremod.gui.flag.choose").getString(),
                 this.width /2,
                 16,
                 0xFFFFFF /* white */
@@ -439,7 +439,7 @@ public class WindowBannerPicker extends Screen
                     x - (layer == 0 ? width*2 : 0), y,
                     width * (layer == 0 ? 3 : 1), height,
                     layer == 0
-                            ? Component.translatable("com.minecolonies.coremod.gui.flag.base_layer")
+                            ? Component.translatableEscape("com.minecolonies.coremod.gui.flag.base_layer")
                             : Component.literal(String.valueOf(layer)),
                     pressed -> {},
                     DEFAULT_NARRATION

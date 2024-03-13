@@ -59,10 +59,10 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     @NotNull
     private static DialogueElement buildDialogueTree(final EntityType<?> entityToKill)
     {
-        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.kill", entityToKill.getDescription());
-        final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+        final Component text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.kill", entityToKill.getDescription());
+        final AnswerElement answer1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
-        final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
+        final AnswerElement answer2 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.cancel"),
                 new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
         return new DialogueElement(text, List.of(answer1, answer2));
     }
@@ -100,7 +100,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     {
         if (quest.getCurrentObjectiveInstance() instanceof EntityKillProgressInstance progress)
         {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress",
+            return Component.translatableEscape("com.minecolonies.coremod.questobjectives.kill.progress",
               progress.currentProgress,
               entitiesToKill,
               entityToKill.getDescription().plainCopy().setStyle(style));

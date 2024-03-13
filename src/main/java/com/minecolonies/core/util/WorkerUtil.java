@@ -319,9 +319,9 @@ public final class WorkerUtil
                 final BlockState blockState = world.getBlockState(levelSignPos);
 
                 final SignText text = new SignText()
-                    .setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId))
+                    .setMessage(0, Component.translatableEscape(MINER_MINE_NODE).append(": " + levelId))
                     .setMessage(1, Component.literal("Y: " + (level.getDepth() + 1)))
-                    .setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()))
+                    .setMessage(2, Component.translatableEscape(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()))
                     .setMessage(3, Component.literal(""));
 
                 teLevelSign.setText(text, true);

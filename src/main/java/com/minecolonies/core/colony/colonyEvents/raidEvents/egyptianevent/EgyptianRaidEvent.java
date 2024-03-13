@@ -175,6 +175,6 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return Component.translatable(RAID_EGYPTIAN);
+        return Component.translatableEscape(RAID_EGYPTIAN);
     }
 }

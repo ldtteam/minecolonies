@@ -138,7 +138,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.getBuildingLevel() == 0)
         {
-            buttonBuild.setText(Component.translatable("com.minecolonies.coremod.gui.workerhuts.build"));
+            buttonBuild.setText(Component.translatableEscape("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
@@ -149,12 +149,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            buttonBuild.setText(Component.translatable(ACTION_UPGRADE));
+            buttonBuild.setText(Component.translatableEscape(ACTION_UPGRADE));
         }
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatable(ACTION_BUILD));
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatableEscape(ACTION_BUILD));
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
     }
@@ -231,7 +231,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void updateBuilders()
     {
         builders.clear();
-        builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())

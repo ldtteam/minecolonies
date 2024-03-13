@@ -182,7 +182,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             if (!module.addRecipe(token))
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
-                MessageUtils.format(UNABLE_TO_ADD_RECIPE_MESSAGE, Component.translatable(building.getBuildingDisplayName())).sendTo(player);
+                MessageUtils.format(UNABLE_TO_ADD_RECIPE_MESSAGE, Component.translatableEscape(building.getBuildingDisplayName())).sendTo(player);
             }
             else
             {

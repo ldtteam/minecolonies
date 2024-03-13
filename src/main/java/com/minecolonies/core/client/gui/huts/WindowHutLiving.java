@@ -95,7 +95,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen(home.getResidents().get(index));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal((citizenDataView.getJob().isEmpty() ? "" : (Component.translatable(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName()));
+                    rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal((citizenDataView.getJob().isEmpty() ? "" : (Component.translatableEscape(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName()));
                 }
             }
         });
@@ -108,7 +108,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void refreshView()
     {
-        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatable(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
+        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatableEscape(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
         citizen.refreshElementPanes();
     }
 

@@ -76,7 +76,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
-        findPaneOfTypeByID(TEXT_ID, Text.class).setText(Component.translatable(DESCRIPTION_BARRACKS_HIRE_SPIES));
+        findPaneOfTypeByID(TEXT_ID, Text.class).setText(Component.translatableEscape(DESCRIPTION_BARRACKS_HIRE_SPIES));
     }
 
     @Override

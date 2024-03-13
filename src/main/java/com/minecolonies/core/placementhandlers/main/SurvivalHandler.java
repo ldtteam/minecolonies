@@ -59,7 +59,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @Override
     public Component getDisplayName()
     {
-        return Component.translatable("com.minecolonies.coremod.blueprint.placement");
+        return Component.translatableEscape("com.minecolonies.coremod.blueprint.placement");
     }
 
     @Override

@@ -32,7 +32,7 @@ public class ItemGate extends BlockItem
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint2 = Component.translatable(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
+        final MutableComponent guiHint2 = Component.translatableEscape(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
         tooltip.add(guiHint2);
     }

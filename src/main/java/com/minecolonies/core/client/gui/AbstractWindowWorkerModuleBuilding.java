@@ -96,12 +96,12 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         Component component;
         if (prio == 0)
         {
-            component = Component.translatable(TEXT_PICKUP_PRIORITY)
-              .append(Component.translatable(TEXT_PICKUP_PRIORITY_NEVER));
+            component = Component.translatableEscape(TEXT_PICKUP_PRIORITY)
+              .append(Component.translatableEscape(TEXT_PICKUP_PRIORITY_NEVER));
         }
         else
         {
-            component = Component.translatable(TEXT_PICKUP_PRIORITY)
+            component = Component.translatableEscape(TEXT_PICKUP_PRIORITY)
               .append(Component.literal(prio + "/10"));
         }
         findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(component);
@@ -166,7 +166,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         {
             for (final int worker : module.getAssignedCitizens())
             {
-                workers.add(new Tuple<>(Component.translatable(module.getJobEntry().getTranslationKey()).getString(), worker));
+                workers.add(new Tuple<>(Component.translatableEscape(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
@@ -189,7 +189,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
+                          .setText(Component.literal(Component.translatableEscape(workers.get(index).getA()).getString() + ": " + worker.getName()));
                     }
                 }
             });

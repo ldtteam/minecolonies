@@ -35,17 +35,17 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), Component.empty()),
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.cancel"), Component.empty()),
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.fulfill"), Component.empty())};
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.cancel"), Component.empty()),
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.fulfill"), Component.empty())};
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuplesAsync = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), Component.empty())};
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_IGNORE), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_SKIP), Component.empty())};
 
     /**
      * The request this is related to.
@@ -186,7 +186,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         super.onServerResponseTriggered(responseId, player, data);
         final Component response = getPossibleResponses().get(responseId);
-        if (response.equals(Component.translatable("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
+        if (response.equals(Component.translatableEscape("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }

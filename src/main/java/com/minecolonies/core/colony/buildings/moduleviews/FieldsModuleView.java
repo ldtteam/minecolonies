@@ -177,7 +177,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (getOwnedFields().size() >= maxFieldCount)
         {
-            return Component.translatable(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
+            return Component.translatableEscape(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
         return null;
     }

@@ -60,7 +60,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         if (existingColony != null)
         {
             // Colony here
-            findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(Component.translatable(MESSAGE_COLONY_INSIDE,
+            findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_INSIDE,
               existingColony.getName(),
               existingColony.getPermissions().getOwnerName()));
         }
@@ -71,12 +71,12 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
             if (closeColonyID != 0)
             {
-                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(Component.translatable(MESSAGE_COLONY_NEARBY, closeColonyID));
+                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_NEARBY, closeColonyID));
             }
             else
             {
                 // No close colony
-                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(Component.translatable(MESSAGE_COLONY_NO_NEARBY));
+                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_NO_NEARBY));
             }
         }
 
@@ -90,21 +90,21 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).show();
             findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).enable();
             pack.hide();
-            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(Component.translatable(MESSAGE_COLONY_OWN, ownerColony.getCenter()));
+            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_OWN, ownerColony.getCenter()));
 
             if (MineColonies.getConfig().getServer().allowInfiniteColonies.get())
             {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(MESSAGE_COLONY_CREATE_DENIED_EXISTING_ABANDON));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_CREATE_DENIED_EXISTING_ABANDON));
             }
             else
             {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(MESSAGE_COLONY_CREATE_DENIED_EXISTING));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_CREATE_DENIED_EXISTING));
             }
         }
         else
         {
-            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(Component.translatable(MESSAGE_COLONY_NONE));
-            pack.setText(Component.translatable(PACK_DESC, StructurePacks.selectedPack.getName()));
+            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_NONE));
+            pack.setText(Component.translatableEscape(PACK_DESC, StructurePacks.selectedPack.getName()));
 
             if (existingColony != null || !IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
             {
@@ -120,7 +120,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
                 if (colony != null)
                 {
-                    findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()));
+                    findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()));
                 }
             }
         }
@@ -129,19 +129,19 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
           Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getLevelData().getXSpawn(), world.getLevelData().getYSpawn(), world.getLevelData().getZSpawn())));
         if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatableEscape(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
               MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()));
         }
         else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
         {
-            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatableEscape(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
               MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()));
         }
 
         if (findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).isTextEmpty())
         {
             findPaneOfTypeByID(BUTTON_CREATE, ButtonImage.class).enable();
-            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatable(MESSAGE_COLONY_CREATE_ALLOWED));
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(Component.translatableEscape(MESSAGE_COLONY_CREATE_ALLOWED));
         }
 
         registerButton(BUTTON_SWITCH, () -> new WindowSwitchPack(() -> new WindowTownHallColonyManage(player, pos, world)).open());
@@ -156,7 +156,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     public void onCreate()
     {
         final Player player = Minecraft.getInstance().player;
-        final Component colonyName = Component.translatable(DEFAULT_COLONY_NAME, player.getName());
+        final Component colonyName = Component.translatableEscape(DEFAULT_COLONY_NAME, player.getName());
 
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, player);        
         Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player.blockPosition(),

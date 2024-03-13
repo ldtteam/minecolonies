@@ -131,7 +131,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 }
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
                     setDelay(NO_MESH_DELAY);
                 }
             }

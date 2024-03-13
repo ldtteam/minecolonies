@@ -154,7 +154,7 @@ public class CitizenAI implements IStateAI
         // Raiding
         if (citizen.getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
-            citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
+            citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             citizen.setVisibleStatusIfNone(RAIDED);
             return CitizenAIState.SLEEP;
         }
@@ -212,9 +212,9 @@ public class CitizenAI implements IStateAI
         {
             if (lastState != CitizenAIState.MOURN)
             {
-                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
+                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
                   citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator().next()),
-                  Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+                  Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
                   ChatPriority.IMPORTANT));
 
                 citizen.setVisibleStatusIfNone(MOURNING);
@@ -234,7 +234,7 @@ public class CitizenAI implements IStateAI
             if (!citizen.getCitizenData().getColony().getRaiderManager().isRaided()
                   && !citizen.getCitizenData().getCitizenMournHandler().isMourning())
             {
-                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
+                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
             return CitizenAIState.IDLE;
         }

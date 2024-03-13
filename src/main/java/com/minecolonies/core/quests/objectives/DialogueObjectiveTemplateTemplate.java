@@ -125,7 +125,7 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
         final ICitizen citizen = quest.getColony().getCitizen(target == 0 ? quest.getQuestGiverId() : target - 1);
         if (citizen != null)
         {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
+            return Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
         }
         else
         {

@@ -156,24 +156,24 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         {
             if (buildingView.getBuildingLevel() == 0)
             {
-                buttonBuild.setText(Component.translatable(ACTION_CANCEL_BUILD));
+                buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_BUILD));
             }
             else
             {
-                buttonBuild.setText(Component.translatable(ACTION_CANCEL_UPGRADE));
+                buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_UPGRADE));
             }
         }
         else if (buildingView.isRepairing())
         {
-            buttonBuild.setText(Component.translatable(ACTION_CANCEL_REPAIR));
+            buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_REPAIR));
         }
         else if (buildingView.isDeconstructing())
         {
-            buttonBuild.setText(Component.translatable(ACTION_CANCEL_DECONSTRUCTION));
+            buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_DECONSTRUCTION));
         }
         else
         {
-            buttonBuild.setText(Component.translatable(ACTION_BUILD_REPAIR));
+            buttonBuild.setText(Component.translatableEscape(ACTION_BUILD_REPAIR));
         }
     }
 
@@ -185,7 +185,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
 
         if (title != null)
         {
-            final MutableComponent component = Component.translatable(building.getBuildingDisplayName());
+            final MutableComponent component = Component.translatableEscape(building.getBuildingDisplayName());
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);
         }

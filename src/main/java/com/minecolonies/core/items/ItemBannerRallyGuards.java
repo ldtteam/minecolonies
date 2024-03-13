@@ -525,11 +525,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
+        final MutableComponent guiHint = Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
         tooltip.add(guiHint);
 
-        final MutableComponent rallyHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
+        final MutableComponent rallyHint = Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
         rallyHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
         tooltip.add(rallyHint);
 
@@ -537,13 +537,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
         if (guardTowerPositions.isEmpty())
         {
-            final MutableComponent emptyTooltip = Component.translatable(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            final MutableComponent emptyTooltip = Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
             emptyTooltip.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
             tooltip.add(emptyTooltip);
         }
         else
         {
-            final MutableComponent numGuardTowers = Component.translatable(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
+            final MutableComponent numGuardTowers = Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
             numGuardTowers.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
             tooltip.add(numGuardTowers);
         }

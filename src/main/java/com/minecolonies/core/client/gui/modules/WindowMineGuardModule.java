@@ -56,7 +56,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
                 if (assignedGuards < getMaxGuards())
                 {
                     new GuardSetMinePosMessage(guardbuilding, buildingView.getPosition()).sendToServer();
-                    button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+                    button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                     guardbuilding.setMinePos(buildingView.getPosition());
                     assignedGuards++;
                 }
@@ -64,7 +64,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
             else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
             {
                 new GuardSetMinePosMessage(guardbuilding).sendToServer();
-                button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                 guardbuilding.setMinePos(null);
                 assignedGuards--;
             }
@@ -158,7 +158,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
                         final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
                         if (guardbuilding.getMinePos() == null)
                         {
-                            button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                            button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                             if (assignedGuards >= getMaxGuards())
                             {
                                 button.setEnabled(false);
@@ -170,11 +170,11 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
                         }
                         else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
                         {
-                            button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+                            button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                         }
                         else
                         {
-                            button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                            button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                             button.setEnabled(false);
                         }
                     }

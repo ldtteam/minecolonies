@@ -100,7 +100,7 @@ public class BoolSetting implements ISetting<Boolean>
     {
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
-        triggerButton.setText(Component.translatable(value ? ON : OFF));
+        triggerButton.setText(Component.translatableEscape(value ? ON : OFF));
         setInActiveHoverPane(triggerButton, settingsModuleView);
     }
 

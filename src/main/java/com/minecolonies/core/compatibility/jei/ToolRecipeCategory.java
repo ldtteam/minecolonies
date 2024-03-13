@@ -68,7 +68,7 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
     @Override
     public Component getTitle()
     {
-        return Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "tools");
+        return Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "tools");
     }
 
     @NotNull
@@ -130,7 +130,7 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
         int x = SLOT_X;
         for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
         {
-            final Component text = Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction", i);
+            final Component text = Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction", i);
             stack.drawString(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0, false);
             x += 18;
         }

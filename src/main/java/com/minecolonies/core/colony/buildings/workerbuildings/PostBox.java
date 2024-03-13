@@ -118,7 +118,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         @Override
         public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
-            return Component.translatable("block.minecolonies.blockpostbox.name");
+            return Component.translatableEscape("block.minecolonies.blockpostbox.name");
         }
     }
 }

@@ -121,7 +121,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
 
-        findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(Component.translatable(ACTION_BUILD));
+        findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(Component.translatableEscape(ACTION_BUILD));
         findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
         findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
@@ -167,7 +167,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         }
 
         builders.clear();
-        builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())

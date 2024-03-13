@@ -39,7 +39,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     public CompostRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        this.title = Component.translatable(ModBlocks.blockBarrel.getDescriptionId()).getString();
+        this.title = Component.translatableEscape(ModBlocks.blockBarrel.getDescriptionId()).getString();
 
         this.background = guiHelper.createBlankDrawable(80, 50);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.blockBarrel));

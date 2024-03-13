@@ -221,7 +221,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
      */
     public String getJobDisplayName()
     {
-        return Component.translatable(jobEntry.getTranslationKey()).getString();
+        return Component.translatableEscape(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull

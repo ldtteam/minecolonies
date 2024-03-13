@@ -47,8 +47,8 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
         final String firstParent = citizen.getParents().getA();
         final String secondParent = citizen.getParents().getB();
 
-        findPaneOfTypeByID("parentA", Text.class).setText(firstParent.isEmpty() ? Component.translatable("com.minecolonies.coremod.gui.citizen.family.unknown") : Component.literal(firstParent));
-        findPaneOfTypeByID("parentB", Text.class).setText(secondParent.isEmpty() ? Component.translatable("com.minecolonies.coremod.gui.citizen.family.unknown") : Component.literal(secondParent));
+        findPaneOfTypeByID("parentA", Text.class).setText(firstParent.isEmpty() ? Component.translatableEscape("com.minecolonies.coremod.gui.citizen.family.unknown") : Component.literal(firstParent));
+        findPaneOfTypeByID("parentB", Text.class).setText(secondParent.isEmpty() ? Component.translatableEscape("com.minecolonies.coremod.gui.citizen.family.unknown") : Component.literal(secondParent));
 
         final int partner = citizen.getPartner();
         final ICitizenDataView partnerView = colony.getCitizen(partner);

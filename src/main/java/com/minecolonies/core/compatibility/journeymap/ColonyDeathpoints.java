@@ -174,8 +174,8 @@ public class ColonyDeathpoints
             if (grave != null)
             {
                 final Component text = grave.getCitizenJobName() == null
-                                              ? Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
-                                              : Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
+                                              ? Component.translatableEscape(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
+                                              : Component.translatableEscape(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
                 final Waypoint waypoint = WaypointFactory.createClientWaypoint(MOD_ID, pos, text.getString(), colony.getDimension(), false);
                 waypoint.setPersistent(false);
                 waypoint.setIconResourceLoctaion(new ResourceLocation(MOD_ID, "textures/icons/grave_icon.png"));

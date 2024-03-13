@@ -101,12 +101,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             }
             else
             {
-                MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+                MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
             }
         }
         else
         {
-            MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+            MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
         }
     }
 
@@ -327,7 +327,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 String name = builderBuildingView.getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
                               ? Component.literal(ChatFormatting.DARK_PURPLE + name)
-                              : Component.translatable(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
+                              : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }

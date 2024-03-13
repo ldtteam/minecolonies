@@ -140,7 +140,7 @@ public class CraftingTagAuditor
             writer.write(entry.getKey().location().toString());
             writer.write(',');
             writer.write('"');
-            writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
+            writer.write(Component.translatableEscape(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
             writer.write('"');
             entry.getValue().builtInRegistryHolder().tags().map(t -> t.location().toString()).sorted().forEach(t -> {
                 try

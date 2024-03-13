@@ -114,7 +114,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
             return IDLE;
         }

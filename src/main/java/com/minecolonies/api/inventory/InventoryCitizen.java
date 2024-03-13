@@ -220,7 +220,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     @Override
     public Component getName()
     {
-        return Component.translatable(this.hasCustomName() ? this.customName : "citizen.inventory");
+        return Component.translatableEscape(this.hasCustomName() ? this.customName : "citizen.inventory");
     }
 
     /**

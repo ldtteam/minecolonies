@@ -50,13 +50,13 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     /**
      * The recruit answer
      */
-    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.recruit"), Component.empty());
+    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.recruit"), Component.empty());
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.showstats"), Component.empty()),
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.showstats"), Component.empty()),
       recruitAnswer,
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.notnow"), Component.empty())};
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.notnow"), Component.empty())};
 
     /**
      * Chance for a bad visitor
@@ -104,7 +104,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                 .append(Component.literal(dataView.getName() + ": "))
                 .append(this.getInquiry())
                 .emptyLines(1)
-                .append(Component.translatable(
+                .append(Component.translatableEscape(
                     colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],

@@ -44,7 +44,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     protected List<Component> generateInfoBlocks(@NotNull FishingRecipe recipe)
     {
         return Collections.singletonList(
-                Component.translatable(PARTIAL_JEI_INFO + "onelevelrestriction",
+                Component.translatableEscape(PARTIAL_JEI_INFO + "onelevelrestriction",
                         recipe.getLevel()));
     }
 

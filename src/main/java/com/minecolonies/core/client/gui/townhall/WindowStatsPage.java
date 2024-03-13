@@ -95,7 +95,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
         }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
-        totalCitizenLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+        totalCitizenLabel.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
           citizensSize,
           Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
         List<MutableComponent> hoverText = new ArrayList<>();
@@ -105,20 +105,20 @@ public class WindowStatsPage extends AbstractWindowTownHall
         }
         else if(citizensSize < citizensCap)
         {
-            hoverText.add(Component.translatable(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
+            hoverText.add(Component.translatableEscape(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
             totalCitizenLabel.setColors(ORANGE);
         }
         else
         {
             if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverText.add(Component.translatable(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
+                hoverText.add(Component.translatableEscape(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
             }
             else
             {
-                hoverText.add(Component.translatable( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
+                hoverText.add(Component.translatableEscape( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
             }
-            totalCitizenLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
+            totalCitizenLabel.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
         }
         PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
@@ -200,21 +200,21 @@ public class WindowStatsPage extends AbstractWindowTownHall
                 if (index < theList.size())
                 {
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
-                    final String jobString = Component.translatable(entry.getKey()).getString();
+                    final String jobString = Component.translatableEscape(entry.getKey()).getString();
                     final String formattedJobString = jobString.substring(0, 1).toUpperCase(Locale.US) + jobString.substring(1);
 
-                    final Component numberOfWorkers = Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, formattedJobString, entry.getValue().getA(), entry.getValue().getB());
+                    final Component numberOfWorkers = Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, formattedJobString, entry.getValue().getA(), entry.getValue().getB());
                     label.setText(numberOfWorkers);
                 }
                 else
                 {
                     if (index == maxJobs + 1)
                     {
-                        label.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount));
+                        label.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount));
                     }
                     else
                     {
-                        label.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, childCount));
+                        label.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, childCount));
                     }
                 }
             }
@@ -256,7 +256,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
                 }
 
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("desc", Text.class);
-                resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + stats.get(index), stat));
+                resourceLabel.setText(Component.translatableEscape(PARTIAL_STATS_MODIFIER_NAME + stats.get(index), stat));
             }
         });
 
@@ -274,7 +274,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
             @Override
             public MutableComponent getLabel(final int index)
             {
-                return Component.translatable((String) INTERVAL.keySet().toArray()[index]);
+                return Component.translatableEscape((String) INTERVAL.keySet().toArray()[index]);
             }
         });
         intervalDropdown.setSelectedIndex(new ArrayList<>(INTERVAL.keySet()).indexOf(selectedInterval));

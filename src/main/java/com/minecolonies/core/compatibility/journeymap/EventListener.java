@@ -108,7 +108,7 @@ public class EventListener
                     return;
                 }
 
-                jobName = Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "visitor");
+                jobName = Component.translatableEscape(PARTIAL_JOURNEY_MAP_INFO + "visitor");
             }
             else
             {
@@ -124,7 +124,7 @@ public class EventListener
                     return;
                 }
 
-                jobName = Component.translatable(jobEntry == null
+                jobName = Component.translatableEscape(jobEntry == null
                         ? PARTIAL_JOURNEY_MAP_INFO + "unemployed"
                         : jobEntry.getTranslationKey());
             }

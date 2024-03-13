@@ -35,12 +35,12 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         final ICitizenData newCitizen = colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true);
-        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_CITIZEN_SPAWN_SUCCESS, newCitizen.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_CITIZEN_SPAWN_SUCCESS, newCitizen.getName()), true);
 
         NeoForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.COMMANDS));
 

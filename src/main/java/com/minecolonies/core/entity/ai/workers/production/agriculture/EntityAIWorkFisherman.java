@@ -362,7 +362,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             {
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(WATER_TOO_FAR), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(WATER_TOO_FAR), ChatPriority.IMPORTANT));
                 }
             }
 

@@ -139,12 +139,12 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (requester instanceof IBuildingView)
         {
             final IBuildingView bwv = (IBuildingView) requester;
-            return Component.translatable(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
+            return Component.translatableEscape(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         if (requester instanceof IBuilding)
         {
             final IBuilding building = (IBuilding) requester;
-            return Component.translatable(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
+            return Component.translatableEscape(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
     }

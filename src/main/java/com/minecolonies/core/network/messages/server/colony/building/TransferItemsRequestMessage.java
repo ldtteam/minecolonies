@@ -127,7 +127,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
 
         if (!ItemStackUtils.isEmpty(remainingItemStack))
         {
-            MessageUtils.format(Component.translatable("entity.builder.inventoryfull", remainingItemStack.getDisplayName()).withStyle(ChatFormatting.RED)).sendTo(player);
+            MessageUtils.format(Component.translatableEscape("entity.builder.inventoryfull", remainingItemStack.getDisplayName()).withStyle(ChatFormatting.RED)).sendTo(player);
         }
 
         if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)

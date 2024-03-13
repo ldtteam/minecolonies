@@ -364,7 +364,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")).withStyle(ChatFormatting.BLACK));
                 }
 
-                PaneBuilders.tooltipBuilder().hoverPane(findPaneByID(REQUEST_DETAIL)).build().setText(Component.translatable(DETAILS));
+                PaneBuilders.tooltipBuilder().hoverPane(findPaneByID(REQUEST_DETAIL)).build().setText(Component.translatableEscape(DETAILS));
                 if (!cancellable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();

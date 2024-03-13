@@ -73,17 +73,17 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
 
     private void buildDialogueTrees()
     {
-        final Component ready = Component.translatable("com.minecolonies.coremod.questobjectives.delivery.ready", item.getDisplayName());
-        final AnswerElement ready1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.delivery.ready.give"),
+        final Component ready = Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.ready", item.getDisplayName());
+        final AnswerElement ready1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.ready.give"),
                 new IQuestDialogueAnswer.NextObjectiveDialogueAnswer(this.nextObjective));
-        final AnswerElement ready2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.delivery.ready.later"),
+        final AnswerElement ready2 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.ready.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
         this.readyDialogueElement = new DialogueElement(ready, List.of(ready1, ready2));
 
-        final Component waiting = Component.translatable("com.minecolonies.coremod.questobjectives.delivery.waiting", item.getDisplayName());
-        final AnswerElement waiting1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+        final Component waiting = Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.waiting", item.getDisplayName());
+        final AnswerElement waiting1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
-        final AnswerElement waiting2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.delivery.waiting.cancel"),
+        final AnswerElement waiting2 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.waiting.cancel"),
                 new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
         this.waitingDialogueElement = new DialogueElement(waiting, List.of(waiting1, waiting2));
     }
@@ -143,7 +143,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
     @Override
     public Component getProgressText(final IQuestInstance quest, final Style style)
     {
-        return Component.translatable("com.minecolonies.coremod.questobjectives.delivery.progress",
+        return Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.progress",
           0,
           quantity,
           item.getDisplayName().plainCopy().setStyle(style));

@@ -303,7 +303,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             if (new Rect2i(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "intermediate.tip", recipe.getIntermediate().getName()));
+                tooltips.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "intermediate.tip", recipe.getIntermediate().getName()));
             }
         }
 

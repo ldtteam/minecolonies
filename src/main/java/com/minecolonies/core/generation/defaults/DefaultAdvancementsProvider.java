@@ -61,8 +61,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         Advancement.Builder.advancement()
           .parent(new ResourceLocation("story/root"))
           .display(ModItems.supplyChest,
-            Component.translatable("advancements.minecolonies.root.title"),
-            Component.translatable("advancements.minecolonies.root.description"),
+            Component.translatableEscape("advancements.minecolonies.root.title"),
+            Component.translatableEscape("advancements.minecolonies.root.description"),
             null,
             AdvancementType.TASK, false, false, false)
           .addCriterion("supply_ship", PlaceSupplyTriggerInstance.placeSupply())
@@ -85,8 +85,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final AdvancementHolder root = Advancement.Builder.advancement()
                 .display(ModItems.supplyChest,
-                        Component.translatable("advancements.minecolonies.root.title"),
-                        Component.translatable("advancements.minecolonies.root.description"),
+                        Component.translatableEscape("advancements.minecolonies.root.title"),
+                        Component.translatableEscape("advancements.minecolonies.root.description"),
                         new ResourceLocation("textures/block/light_gray_wool.png"),
                         AdvancementType.TASK, true, true, false)
                 .addCriterion("supply_ship_placed", PlaceSupplyTriggerInstance.placeSupply())
@@ -251,8 +251,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final AdvancementHolder root = Advancement.Builder.advancement()
                 .display(ModBlocks.blockHutBuilder,
-                        Component.translatable("advancements.minecolonies.root.production.title"),
-                        Component.translatable("advancements.minecolonies.root.production.description"),
+                        Component.translatableEscape("advancements.minecolonies.root.production.title"),
+                        Component.translatableEscape("advancements.minecolonies.root.production.description"),
                         new ResourceLocation("structurize:textures/block/cactus/cactus_planks.png"),
                         AdvancementType.TASK, false, false, false)
                 .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 1))
@@ -448,8 +448,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final AdvancementHolder root = Advancement.Builder.advancement()
                 .display(ModBlocks.blockHutBarracks,
-                        Component.translatable("advancements.minecolonies.root.military.title"),
-                        Component.translatable("advancements.minecolonies.root.military.description"),
+                        Component.translatableEscape("advancements.minecolonies.root.military.title"),
+                        Component.translatableEscape("advancements.minecolonies.root.military.description"),
                         new ResourceLocation("textures/block/stone_bricks.png"),
                         AdvancementType.TASK, true, false, false)
                 .addCriterion("guardtower", completeBuildRequest(ModBuildings.guardTower.get(), 1))
@@ -509,8 +509,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                                     @NotNull final String name)
     {
         return new DisplayInfo(new ItemStack(icon),
-                Component.translatable("advancements.minecolonies." + name + ".title"),
-                Component.translatable("advancements.minecolonies." + name + ".description"),
+                Component.translatableEscape("advancements.minecolonies." + name + ".title"),
+                Component.translatableEscape("advancements.minecolonies." + name + ".description"),
                 Optional.empty(), frame, true, true, false);
     }
 
@@ -519,8 +519,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                                           @NotNull final String name)
     {
         return new DisplayInfo(new ItemStack(icon),
-                Component.translatable("advancements.minecolonies." + name + ".title"),
-                Component.translatable("advancements.minecolonies." + name + ".description"),
+                Component.translatableEscape("advancements.minecolonies." + name + ".title"),
+                Component.translatableEscape("advancements.minecolonies." + name + ".description"),
                 Optional.empty(), frame, true, true, true);
     }
 

@@ -53,7 +53,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
         if (world.random.nextInt(10) == 0)
         {
             // Fail chance
-            player.displayClientMessage(Component.translatable(
+            player.displayClientMessage(Component.translatableEscape(
               "minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               ChatFormatting.GOLD)), true);
 
@@ -127,11 +127,11 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = Component.translatable(TOOL_COLONY_TELEPORT_AREA_SCROLL_DESCRIPTION);
+        final MutableComponent guiHint = Component.translatableEscape(TOOL_COLONY_TELEPORT_AREA_SCROLL_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        MutableComponent colonyDesc = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
+        MutableComponent colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
         if (stack.getOrCreateTag().contains(TAG_DESC))
         {
@@ -147,7 +147,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
             }
         }
 
-        final MutableComponent guiHint2 = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
+        final MutableComponent guiHint2 = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }

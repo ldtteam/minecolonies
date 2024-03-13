@@ -48,7 +48,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         {
             statusIcon.setImage(citizen.getVisibleStatus().getIcon(), false);
             PaneBuilders.tooltipBuilder()
-                .append(Component.translatable(citizen.getVisibleStatus().getTranslationKey()))
+                .append(Component.translatableEscape(citizen.getVisibleStatus().getTranslationKey()))
                 .hoverPane(statusIcon)
                 .build();
         }

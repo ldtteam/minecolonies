@@ -122,7 +122,7 @@ public class JEIPlugin implements IModPlugin
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM_STACK,
-                Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
+                Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());

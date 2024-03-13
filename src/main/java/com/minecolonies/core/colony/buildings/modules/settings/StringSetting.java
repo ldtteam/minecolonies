@@ -125,7 +125,7 @@ public class StringSetting implements IStringSetting<String>
      */
     protected Component getDisplayText()
     {
-        return Component.translatable(settings.get(currentIndex));
+        return Component.translatableEscape(settings.get(currentIndex));
     }
 
     @Override

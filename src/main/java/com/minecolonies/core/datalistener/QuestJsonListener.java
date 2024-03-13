@@ -177,7 +177,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             questTimeout = 10;
         }
 
-        final Component questName = Component.translatable(jsonObject.get(NAME).getAsString());
+        final Component questName = Component.translatableEscape(jsonObject.get(NAME).getAsString());
 
         final List<IQuestRewardTemplate> questRewards = new ArrayList<>();
         for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())

@@ -201,7 +201,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         if (hives.isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_HIVES), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_HIVES), ChatPriority.BLOCKING));
             setDelay(NO_HIVES_DELAY);
             return DECIDE;
         }
@@ -209,7 +209,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         ItemListModule flowersModule = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
         if (flowersModule.getList().isEmpty() && building.getSetting(BuildingBeekeeper.BREEDING).getValue())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS), ChatPriority.BLOCKING));
             setDelay(NO_FLOWERS_DELAY);
             return DECIDE;
         }
@@ -242,7 +242,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 job.tickNoBees();
                 if (job.checkForBeeInteraction())
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_BEES), ChatPriority.BLOCKING));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_BEES), ChatPriority.BLOCKING));
                 }
             }
             else

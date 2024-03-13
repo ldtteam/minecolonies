@@ -32,7 +32,7 @@ public class ToolModuleWindow extends AbstractModuleWindow
 
         this.moduleView = moduleView;
 
-        findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.tooldesc." + BuiltInRegistries.ITEM.getKey(moduleView.getTool()).getPath()));
+        findPaneOfTypeByID("desc", Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.tooldesc." + BuiltInRegistries.ITEM.getKey(moduleView.getTool()).getPath()));
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);
     }
 

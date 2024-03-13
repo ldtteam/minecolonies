@@ -92,7 +92,7 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
     protected void init()
     {
         super.init();
-        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.BREWING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
+        final Component buttonDisplay = Component.translatableEscape(module.canLearn(ModCraftingTypes.BREWING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */

@@ -122,7 +122,7 @@ public class ScanCommand extends AbstractCommand
         {
             if (!BlockPosUtil.isInbetween(slot.getBox().getAnchor().get(), slot.getBox().getPos1(), slot.getBox().getPos2()))
             {
-                player.displayClientMessage(Component.translatable(ANCHOR_POS_OUTSIDE_SCHEMATIC), false);
+                player.displayClientMessage(Component.translatableEscape(ANCHOR_POS_OUTSIDE_SCHEMATIC), false);
                 return;
             }
         }
@@ -130,7 +130,7 @@ public class ScanCommand extends AbstractCommand
         final BoundingBox box = BoundingBox.fromCorners(slot.getBox().getPos1(), slot.getBox().getPos2());
         if (box.getXSpan() * box.getYSpan() * box.getZSpan() > Structurize.getConfig().getServer().schematicBlockLimit.get())
         {
-            player.displayClientMessage(Component.translatable(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
+            player.displayClientMessage(Component.translatableEscape(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
             return;
         }
 
@@ -139,7 +139,7 @@ public class ScanCommand extends AbstractCommand
         String fileName;
         if (slot.getName().isEmpty())
         {
-            fileName = Component.translatable("item.sceptersteel.scanformat", "", currentMillisString).getString();
+            fileName = Component.translatableEscape("item.sceptersteel.scanformat", "", currentMillisString).getString();
         }
         else
         {
@@ -166,7 +166,7 @@ public class ScanCommand extends AbstractCommand
 
             if (list.size() > 1)
             {
-                player.displayClientMessage(Component.translatable("com.ldtteam.structurize.gui.scantool.scanbadanchor", fileName), false);
+                player.displayClientMessage(Component.translatableEscape("com.ldtteam.structurize.gui.scantool.scanbadanchor", fileName), false);
             }
         }
 
@@ -285,7 +285,7 @@ public class ScanCommand extends AbstractCommand
             player = world.getServer().getPlayerList().getPlayer(profile.getId());
             if (player == null)
             {
-                source.sendFailure(Component.translatable(PLAYER_NOT_FOUND, profile.getName()));
+                source.sendFailure(Component.translatableEscape(PLAYER_NOT_FOUND, profile.getName()));
                 return 0;
             }
         } 
@@ -295,13 +295,13 @@ public class ScanCommand extends AbstractCommand
         } 
         else
         {
-            source.sendFailure(Component.translatable(PLAYER_NOT_FOUND));
+            source.sendFailure(Component.translatableEscape(PLAYER_NOT_FOUND));
             return 0;
         }
 
 
         saveStructure(world, player, new ScanToolData.Slot(name, new BoxPreviewData(from, to, anchorPos)), true);
-        source.sendFailure(Component.translatable(SCAN_SUCCESS_MESSAGE));
+        source.sendFailure(Component.translatableEscape(SCAN_SUCCESS_MESSAGE));
         return 1;
     }
 

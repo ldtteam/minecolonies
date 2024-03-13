@@ -59,7 +59,7 @@ public class CommandRaid implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -69,20 +69,20 @@ public class CommandRaid implements IMCOPCommand
             final IRaiderManager.RaidSpawnResult result = colony.getRaiderManager().raiderEvent(raidType, true, allowShips);
             if (result == IRaiderManager.RaidSpawnResult.SUCCESS)
             {
-                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_SUCCESS, colony.getName()), true);
+                context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_RAID_NOW_SUCCESS, colony.getName()), true);
                 return 1;
             }
-            context.getSource().sendFailure(Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), result));
+            context.getSource().sendFailure(Component.translatableEscape(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), result));
         }
         else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
         {
             if (!colony.getRaiderManager().canRaid(true))
             {
-                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), IRaiderManager.RaidSpawnResult.CANNOT_RAID), true);
+                context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), IRaiderManager.RaidSpawnResult.CANNOT_RAID), true);
                 return 1;
             }
             colony.getRaiderManager().setRaidNextNight(true, raidType, allowShips);
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_TONIGHT_SUCCESS, colony.getName()), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_RAID_TONIGHT_SUCCESS, colony.getName()), true);
         }
         return 1;
     }

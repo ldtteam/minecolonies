@@ -124,7 +124,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         setIsAsleep(true);
 
-        citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
+        citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
 
         if (citizen.getCitizenData() != null)
         {
@@ -283,7 +283,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
                 if (workHomeDistance > MAX_NO_COMPLAIN_DISTANCE)
                 {
                     citizen.getCitizenData()
-                      .triggerInteraction(new SimpleNotificationInteraction(Component.translatable("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
+                      .triggerInteraction(new SimpleNotificationInteraction(Component.translatableEscape("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
                 }
             }
             return true;

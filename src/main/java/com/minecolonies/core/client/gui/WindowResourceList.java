@@ -119,7 +119,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
         if (total > 0)
         {
-            findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.res",
+            findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.res",
               (int) ((supplied / total) * 100) + "%",
               moduleView.getProgress() + "%"));
         }

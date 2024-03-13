@@ -280,17 +280,17 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatableEscape("com.minecolonies.core.townhall.patreon.textures"))
               .paragraphBreak()
               .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
+              .appendNL(Component.translatableEscape("com.minecolonies.core.townhall.patreon"))
               .paragraphBreak()
               .build();
 
             PaneBuilders.tooltipBuilder().hoverPane(namePane)
-              .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
+              .append(Component.translatableEscape("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
               .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak()
+              .appendNL(Component.translatableEscape("com.minecolonies.core.townhall.patreon")).paragraphBreak()
               .build();
         }
     }

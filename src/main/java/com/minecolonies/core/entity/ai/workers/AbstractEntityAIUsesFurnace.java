@@ -192,7 +192,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -202,7 +202,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData()
-                  .triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                  .triggerInteraction(new StandardInteraction(Component.translatableEscape(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -240,7 +240,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         }
 
         if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-          req -> req.getShortDisplayString().getSiblings().contains(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE))))
+          req -> req.getShortDisplayString().getSiblings().contains(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE))))
         {
             worker.getCitizenData()
               .createRequestAsync(new StackList(getAllowedFuel(), RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE, STACKSIZE * furnaceModule.getFurnaces().size(), 1));
@@ -456,7 +456,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData()
-                  .triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                  .triggerInteraction(new StandardInteraction(Component.translatableEscape(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             return START_WORKING;
         }

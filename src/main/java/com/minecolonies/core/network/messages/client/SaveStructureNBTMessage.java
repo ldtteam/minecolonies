@@ -102,7 +102,7 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
                                                                   .resolve(BLUEPRINT_FOLDER)
                                                                   .resolve(Minecraft.getInstance().getUser().getName().toLowerCase(Locale.US))
                                                                   .resolve(SCANS_FOLDER).resolve(fileName)));
-            player.displayClientMessage(Component.translatable("Scan successfully saved as %s", fileName), false);
+            player.displayClientMessage(Component.translatableEscape("Scan successfully saved as %s", fileName), false);
         }
     }
 }

@@ -562,7 +562,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         try
         {
             final MutableComponent component = Component.literal("");
-            component.append(Component.translatable(this.getCustomName().isEmpty() ? this.getBuildingType().getTranslationKey() : this.getCustomName()));
+            component.append(Component.translatableEscape(this.getCustomName().isEmpty() ? this.getBuildingType().getTranslationKey() : this.getCustomName()));
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
             {
                 return component;

@@ -221,7 +221,7 @@ public class WindowField extends AbstractWindowSkeleton
      */
     private void updateOwner()
     {
-        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_NO_ASSIGNED_FARMER));
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatableEscape(FIELD_GUI_NO_ASSIGNED_FARMER));
 
         IColonyView colonyView = getCurrentColony();
         if (colonyView == null || farmField == null || !farmField.isTaken())
@@ -247,7 +247,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_ASSIGNED_FARMER, citizen.getName()));
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatableEscape(FIELD_GUI_ASSIGNED_FARMER, citizen.getName()));
     }
 
     /**
@@ -274,8 +274,8 @@ public class WindowField extends AbstractWindowSkeleton
 
             PaneBuilders.tooltipBuilder()
               .hoverPane(button)
-              .append(Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + dir.getSerializedName()))
-              .appendNL(Component.translatable(getDirectionalTranslationKey(dir)).setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY)))
+              .append(Component.translatableEscape(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + dir.getSerializedName()))
+              .appendNL(Component.translatableEscape(getDirectionalTranslationKey(dir)).setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY)))
               .build();
         }
     }

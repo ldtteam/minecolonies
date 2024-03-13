@@ -218,7 +218,7 @@ public class BuildingFarmer extends AbstractBuilding
 
             if (field instanceof FarmField farmField && farmField.getSeed().isEmpty())
             {
-                return Component.translatable(FIELD_LIST_FARMER_NO_SEED);
+                return Component.translatableEscape(FIELD_LIST_FARMER_NO_SEED);
             }
 
             return null;

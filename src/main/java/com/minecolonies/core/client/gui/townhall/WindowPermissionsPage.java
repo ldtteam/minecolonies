@@ -151,7 +151,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     {
         new PermissionsMessage.SetSubscriber(building.getColony(), actionsRank, !actionsRank.isSubscriber()).sendToServer();
         actionsRank.setSubscriber(!actionsRank.isSubscriber());
-        button.setText(Component.translatable(actionsRank.isSubscriber()
+        button.setText(Component.translatableEscape(actionsRank.isSubscriber()
                                                    ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                    : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
@@ -268,11 +268,11 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         else
         {
             AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(playerNameField);
-            hoverText.append(Component.translatable("com.minecolonies.coremod.gui.townhall.player_permission_error")).paragraphBreak();
+            hoverText.append(Component.translatableEscape("com.minecolonies.coremod.gui.townhall.player_permission_error")).paragraphBreak();
             hoverText.build();
 
             AbstractTextBuilder.TooltipBuilder hoverText2 = PaneBuilders.tooltipBuilder().hoverPane(rankNameField);
-            hoverText2.append(Component.translatable("com.minecolonies.core.gui.townhall.rank_permission_error")).paragraphBreak();
+            hoverText2.append(Component.translatableEscape("com.minecolonies.core.gui.townhall.rank_permission_error")).paragraphBreak();
             hoverText2.build();
 
             rankNameField.setEnabled(false);
@@ -282,7 +282,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         }
 
         findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-        findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
+        findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatableEscape(actionsRank.isSubscriber()
                                                                                                       ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                                                                       : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
@@ -340,7 +340,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             @Override
             public MutableComponent getLabel(final int i)
             {
-                return Component.translatable(rankTypes.get(i));
+                return Component.translatableEscape(rankTypes.get(i));
             }
         });
         dropdown.setHandler(this::changeRankMode);
@@ -362,7 +362,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(!actionsRank.isInitial());
 
             findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
+            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatableEscape(actionsRank.isSubscriber()
                                                                                                           ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                                                                           : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
@@ -394,7 +394,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
 
-                    actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
+                    actionLabel.setText(Component.translatableEscape(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
             }
         });
     }
@@ -515,11 +515,11 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         if (!enable)
         {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+            button.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
         else
         {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
+            button.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
         }
     }
 
@@ -540,13 +540,13 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Action action = actions.get(index);
-                final Component name =Component.translatable(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
+                final Component name =Component.translatableEscape(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
 
                 final boolean isTriggered = building.getColony().getPermissions().hasPermission(actionsRank, action);
                 final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
-                onOffButton.setText(isTriggered ? Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
-                                      : Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                onOffButton.setText(isTriggered ? Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                                      : Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Text.class).setText(Component.literal(Integer.toString(index)));
 
                 if (!building.getColony().getPermissions().canAlterPermission(building.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))

@@ -161,7 +161,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (building.getLadderLocation() == null || building.getCobbleLocation() == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(INVALID_MINESHAFT), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(INVALID_MINESHAFT), ChatPriority.BLOCKING));
             return START_WORKING;
         }
 
@@ -398,7 +398,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             //If the miner hut has been placed too deep.
             if (buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getNumberOfLevels() == 0)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
                 return IDLE;
             }
             worker.getCitizenData().setVisibleStatus(MINING);

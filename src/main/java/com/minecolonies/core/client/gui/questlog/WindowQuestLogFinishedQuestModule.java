@@ -28,17 +28,17 @@ public class WindowQuestLogFinishedQuestModule implements WindowQuestLogQuestMod
     @Override
     public void renderQuestItem(final FinishedQuest quest, final IColonyView colonyView, final Pane row)
     {
-        setText(row, LABEL_QUEST_NAME, Component.translatable(QUEST_LOG_NAME_PREFIX).append(quest.template().getName()));
+        setText(row, LABEL_QUEST_NAME, Component.translatableEscape(QUEST_LOG_NAME_PREFIX).append(quest.template().getName()));
 
         if (quest.template().getMaxOccurrence() > 1)
         {
             setText(row,
               LABEL_COMPLETED_COUNT,
-              Component.translatable(QUEST_LOG_COMPLETED_MULTIPLE_TEXT, quest.finishedCount(), quest.template().getMaxOccurrence()).withStyle(ChatFormatting.GOLD));
+              Component.translatableEscape(QUEST_LOG_COMPLETED_MULTIPLE_TEXT, quest.finishedCount(), quest.template().getMaxOccurrence()).withStyle(ChatFormatting.GOLD));
         }
         else
         {
-            setText(row, LABEL_COMPLETED_COUNT, Component.translatable(QUEST_LOG_COMPLETED_ONCE_TEXT).withStyle(ChatFormatting.GOLD));
+            setText(row, LABEL_COMPLETED_COUNT, Component.translatableEscape(QUEST_LOG_COMPLETED_ONCE_TEXT).withStyle(ChatFormatting.GOLD));
         }
     }
 

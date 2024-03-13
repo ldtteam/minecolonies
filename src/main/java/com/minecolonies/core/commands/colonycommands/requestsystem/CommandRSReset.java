@@ -28,18 +28,18 @@ public class CommandRSReset implements IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseResetCommand.get())
         {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 
         colony.getRequestManager().reset();
-        context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_REQUEST_SYSTEM_RESET_SUCCESS, colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_REQUEST_SYSTEM_RESET_SUCCESS, colony.getName()), true);
 
         return 1;
     }

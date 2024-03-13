@@ -112,14 +112,14 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (quarry == null)
         {
             walkToBuilding();
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
         if (quarry.getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
             walkToBuilding();
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -559,12 +559,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         boolean isCanceled = false;
         if (job.findQuarry() == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             isCanceled = true;
         }
         else if (job.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             isCanceled = true;
         }
         else if (job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))

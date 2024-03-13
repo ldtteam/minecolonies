@@ -394,7 +394,7 @@ public class CitizenWindowUtils
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(Component.translatable(LABEL_HAPPINESS_MODIFIER));
+        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(Component.translatableEscape(LABEL_HAPPINESS_MODIFIER));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
@@ -410,15 +410,15 @@ public class CitizenWindowUtils
             label.setSize(136, 11);
             label.setPosition(70, yPos);
             label.setColors(BLACK);
-            label.setText(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_NAME + name));
+            label.setText(Component.translatableEscape(PARTIAL_HAPPINESS_MODIFIER_NAME + name));
             window.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_DESCRIPTION + name)).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatableEscape(PARTIAL_HAPPINESS_MODIFIER_DESCRIPTION + name)).build();
 
             if (value > 1.0)
             {
                 image.setImage(new ResourceLocation(HAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_POSITIVE))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_POSITIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -426,7 +426,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(new ResourceLocation(SATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_NEUTRAL))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_NEUTRAL))
                     .hoverPane(image)
                     .build();
             }
@@ -434,7 +434,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -442,7 +442,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_NEGATIVE))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_NEGATIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -470,25 +470,25 @@ public class CitizenWindowUtils
                 return;
             }
 
-            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatable(LABEL_CITIZEN_JOB, Component.translatable(citizen.getJob())));
-            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(Component.translatable(DESCRIPTION_CITIZEN_JOB));
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatableEscape(LABEL_CITIZEN_JOB, Component.translatableEscape(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(Component.translatableEscape(DESCRIPTION_CITIZEN_JOB));
 
             final Skill primary = moduleView.getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
-              .setText(Component.translatable(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
+              .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
               .setImage(new ResourceLocation(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
@@ -496,20 +496,20 @@ public class CitizenWindowUtils
 
             final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
-              .setText(Component.translatable(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
+              .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
               .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);

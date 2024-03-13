@@ -363,7 +363,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Override
     protected void onException(final RuntimeException e)
     {
-        worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
+        worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
 
         try
         {
@@ -1076,7 +1076,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (citizenData != null)
             {
                 citizenData
-                  .triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
+                  .triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
             }
 
@@ -1271,13 +1271,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (building.getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW,
+              Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW,
                 new ItemStack(target.getBlock()).getHoverName(),
                 pos.getX(),
                 pos.getY(),
                 pos.getZ()),
               ChatPriority.IMPORTANT,
-              Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW),
+              Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW),
               pos));
         }
         updateToolFlag(toolType, required);

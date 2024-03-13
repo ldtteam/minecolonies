@@ -26,10 +26,10 @@ public class StandardInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), Component.empty()),
-      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), Component.empty())};
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_IGNORE), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_SKIP), Component.empty())};
 
     /**
      * The server interaction response handler with custom validator.

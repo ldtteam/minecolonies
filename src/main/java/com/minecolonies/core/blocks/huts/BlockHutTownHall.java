@@ -129,7 +129,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         final List<MutableComponent> requirements = new ArrayList<>();
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatable("com.minecolonies.coremod.hut.cost", Component.translatable("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
               ChatFormatting.RED)));
         }
 

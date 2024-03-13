@@ -146,11 +146,11 @@ public class GuardTaskSetting extends StringSettingWithDesc
         Component component;
         if (building.getMinePos() != null)
         {
-            component = Component.translatable("com.minecolonies.coremod.gui.worherhuts.patrollingmine", building.getMinePos().toShortString());
+            component = Component.translatableEscape("com.minecolonies.coremod.gui.worherhuts.patrollingmine", building.getMinePos().toShortString());
         }
         else
         {
-            component = Component.translatable("com.minecolonies.coremod.job.guard.assignmine");
+            component = Component.translatableEscape("com.minecolonies.coremod.job.guard.assignmine");
         }
         PaneBuilders.tooltipBuilder()
           .append(component)

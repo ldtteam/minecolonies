@@ -475,7 +475,7 @@ public class EntityAIEatTask implements IStateAI
 
         if (restaurantPos == null)
         {
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO_RESTAURANT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_RESTAURANT), ChatPriority.BLOCKING));
             return CHECK_FOR_FOOD;
         }
         return GO_TO_RESTAURANT;
@@ -499,17 +499,17 @@ public class EntityAIEatTask implements IStateAI
 
         if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
         {
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(RAW_FOOD), ChatPriority.PENDING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(RAW_FOOD), ChatPriority.PENDING));
         }
         else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
         {
             if (citizenData.isChild())
             {
-                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
             }
             else
             {
-                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(BETTER_FOOD), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD), ChatPriority.BLOCKING));
             }
         }
 

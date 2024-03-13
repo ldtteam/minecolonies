@@ -370,7 +370,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 if (!data.getJob().isEmpty())
                 {
                     citizenImage.setSize(8, 8);
-                    builder.newLine().append(Component.translatable("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
+                    builder.newLine().append(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
                 }
                 builder.color(COLOR_TEXT_FULFILLED).build();
                 citizenView.setSize(citizenImage.getWidth(), citizenImage.getHeight());

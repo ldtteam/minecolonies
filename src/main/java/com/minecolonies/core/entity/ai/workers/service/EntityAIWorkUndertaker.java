@@ -436,7 +436,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             // couldn't find a place to dig a grave
             worker.getCitizenChatHandler()
-              .sendLocalizedChat(Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
+              .sendLocalizedChat(Component.translatableEscape(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
             return IDLE;
         }
 

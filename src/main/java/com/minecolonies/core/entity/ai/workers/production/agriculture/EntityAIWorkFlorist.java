@@ -147,7 +147,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (building.getPlantGround().isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -183,7 +183,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         {
             if (!isThereCompostedLand(building, world))
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_COMPOST), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_COMPOST), ChatPriority.BLOCKING));
                 return START_WORKING;
             }
             return DECIDE;
@@ -227,7 +227,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             }
             else
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
             }
         }
 

@@ -417,7 +417,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
-                      .triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
+                      .triggerInteraction(new StandardInteraction(Component.translatableEscape(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
                     return null;
                 }
             }

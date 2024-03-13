@@ -66,7 +66,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     {
         super(building, res);
         this.moduleView = moduleView;
-        findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
+        findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatableEscape(moduleView.getDesc().toLowerCase(Locale.US)));
 
         pullResourcesFromHut();
 
@@ -107,7 +107,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
 
         if (total > 0)
         {
-            findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
+            findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
         }
 
         resources.sort(new BuildingBuilderResource.ResourceComparator());
@@ -139,7 +139,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         new MarkBuildingDirtyMessage(this.buildingView).sendToServer();
 
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
-        findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
+        findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
     }
 
     /**

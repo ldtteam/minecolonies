@@ -123,7 +123,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
+        final Component buttonDisplay = Component.translatableEscape(module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
@@ -171,7 +171,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     @Override
     protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
     {
-        stack.drawString(this.font, Component.translatable("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR, false);
+        stack.drawString(this.font, Component.translatableEscape("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR, false);
     }
 
     /**

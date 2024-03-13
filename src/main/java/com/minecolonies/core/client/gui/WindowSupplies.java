@@ -182,7 +182,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             for (final PlacementError error : placementErrorList)
             {
                 HighlightManager.addHighlight(RENDER_BOX_CATEGORY + i++, new TimedBoxRenderData(error.getPos())
-                  .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
+                  .addText(Component.translatableEscape(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0x80FF0000)
                   .setDuration(Duration.ofSeconds(60)));
             }

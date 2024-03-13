@@ -804,8 +804,8 @@ public final class BlockPosUtil
          */
         DirectionResult(final String longText, final String shortText)
         {
-            this.longText = Component.translatable(longText);
-            this.shortText = Component.translatable(shortText);
+            this.longText = Component.translatableEscape(longText);
+            this.shortText = Component.translatableEscape(shortText);
         }
 
         /**

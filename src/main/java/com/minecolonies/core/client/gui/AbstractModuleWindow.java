@@ -71,7 +71,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(LABEL_MAIN_TAB_NAME));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(LABEL_MAIN_TAB_NAME));
         }
 
         for (IBuildingModuleView view : building.getAllModuleViews())
@@ -103,7 +103,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(view.getDesc().toLowerCase(Locale.US)));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(view.getDesc().toLowerCase(Locale.US)));
         }
     }
 }

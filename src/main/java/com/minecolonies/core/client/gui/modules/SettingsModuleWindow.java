@@ -52,7 +52,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
     {
         super(building, res);
 
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatableEscape(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
 
         settingsList = window.findPaneOfTypeByID(LIST_SETTINGS, ScrollingList.class);
@@ -126,7 +126,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
                     final Text rowDescriptionField = rowPane.findPaneOfTypeByID("desc", Text.class);
                     if (rowDescriptionField != null)
                     {
-                        rowDescriptionField.setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+                        rowDescriptionField.setText(Component.translatableEscape("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
                     }
                 }
 

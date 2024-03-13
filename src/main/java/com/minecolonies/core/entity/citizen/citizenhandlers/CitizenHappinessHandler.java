@@ -120,13 +120,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             {
                 ((TimeBasedHappinessModifier) happinessModifier).dayEnd(citizenData);
             }
-            if (InteractionValidatorRegistry.hasValidator(Component.translatable(NO + happinessModifier.getId())))
+            if (InteractionValidatorRegistry.hasValidator(Component.translatableEscape(NO + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
-            if (InteractionValidatorRegistry.hasValidator(Component.translatable(DEMANDS + happinessModifier.getId())))
+            if (InteractionValidatorRegistry.hasValidator(Component.translatableEscape(DEMANDS + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
         cachedHappiness = -1;

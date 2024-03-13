@@ -127,7 +127,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY), true);
         }
     }
 }

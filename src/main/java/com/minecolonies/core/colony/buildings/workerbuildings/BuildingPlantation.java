@@ -350,12 +350,12 @@ public class BuildingPlantation extends AbstractBuilding
 
             if (getCurrentPlantsPlusField(field) > maxConcurrentPlants)
             {
-                return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
+                return Component.translatableEscape(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
             }
 
             if (!hasRequiredResearchForField(field))
             {
-                return Component.translatable(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
+                return Component.translatableEscape(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
             }
             return null;
         }

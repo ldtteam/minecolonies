@@ -142,7 +142,7 @@ public class ClientEventHandler
                     }
                 }
 
-                event.getToolTip().add(Component.translatable("com.minecolonies.coremod.tooltip.schematic.tier", tier));
+                event.getToolTip().add(Component.translatableEscape("com.minecolonies.coremod.tooltip.schematic.tier", tier));
             }
         }
     }
@@ -207,7 +207,7 @@ public class ClientEventHandler
 
                     for (IGlobalResearch research : researches)
                     {
-                        toolTip.add(Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
+                        toolTip.add(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
                           MutableComponent.create(research.getName())).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
@@ -226,7 +226,7 @@ public class ClientEventHandler
                 // appear to be an easy way to get the schematic name from a BuildingEntry ... or
                 // unless we can change how colony.hasBuilding uses its parameter...
 
-                final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
+                final MutableComponent reqLevelText = Component.translatableEscape(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
                 if (colony != null && colony.hasBuilding(schematicName, minimumLevel, true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
@@ -239,7 +239,7 @@ public class ClientEventHandler
             }
             else
             {
-                final MutableComponent reqBuildingTxt = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
+                final MutableComponent reqBuildingTxt = Component.translatableEscape(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
                                                           .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
                 toolTip.add(reqBuildingTxt);
             }
@@ -305,8 +305,8 @@ public class ClientEventHandler
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            tooltip.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
-            tooltip.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
+            tooltip.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
+            tooltip.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
         }
     }
 
@@ -326,7 +326,7 @@ public class ClientEventHandler
             {
                 if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    event.getLeft().add(Component.translatable(DEBUG_NO_CLOSE_COLONY).getString());
+                    event.getLeft().add(Component.translatableEscape(DEBUG_NO_CLOSE_COLONY).getString());
                     return;
                 }
                 colony = IColonyManager.getInstance().getClosestIColony(world, pos);
@@ -337,13 +337,13 @@ public class ClientEventHandler
                 }
 
                 event.getLeft()
-                  .add(Component.translatable(DEBUG_NEXT_COLONY,
+                  .add(Component.translatableEscape(DEBUG_NEXT_COLONY,
                     (int) Math.sqrt(colony.getDistanceSquared(pos)),
                     IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
             }
 
-            event.getLeft().add(colony.getName() + " : " + Component.translatable(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
+            event.getLeft().add(colony.getName() + " : " + Component.translatableEscape(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

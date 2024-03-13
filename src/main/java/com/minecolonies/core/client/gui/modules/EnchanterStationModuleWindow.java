@@ -100,17 +100,17 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
                 String text = "";
                 if (bView instanceof AbstractBuildingView)
                 {
-                    text += bView.getCustomName().isEmpty() ? Component.translatable(bView.getBuildingType().getTranslationKey()).getString() : bView.getCustomName();
+                    text += bView.getCustomName().isEmpty() ? Component.translatableEscape(bView.getBuildingType().getTranslationKey()).getString() : bView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";
                     rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(Component.literal(text));
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                     if (selectedBuildings.contains(bView.getID()))
                     {
-                        switchButton.setText(Component.translatable(ON));
+                        switchButton.setText(Component.translatableEscape(ON));
                     }
                     else
                     {
-                        switchButton.setText(Component.translatable(OFF));
+                        switchButton.setText(Component.translatableEscape(OFF));
                     }
                 }
             }
@@ -129,12 +129,12 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
 
         if (buttonText.equals(OFF))
         {
-            button.setText(Component.translatable(ON));
+            button.setText(Component.translatableEscape(ON));
             module.addWorker(allBuildings.get(row).getID());
         }
         else
         {
-            button.setText(Component.translatable(OFF));
+            button.setText(Component.translatableEscape(OFF));
             module.removeWorker(allBuildings.get(row).getID());
         }
         selectedBuildings = module.getBuildingsToGatherFrom();

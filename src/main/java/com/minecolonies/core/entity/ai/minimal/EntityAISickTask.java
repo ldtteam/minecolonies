@@ -412,16 +412,16 @@ public class EntityAISickTask implements IStateAI
                 return CitizenAIState.IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO_HOSPITAL, disease.getName(), disease.getCureString()),
-              Component.translatable(NO_HOSPITAL),
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+              Component.translatableEscape(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return WANDER;
         }
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
-              Component.translatable(WAITING_FOR_CURE),
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
+              Component.translatableEscape(WAITING_FOR_CURE),
               ChatPriority.BLOCKING));
         }
 

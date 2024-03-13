@@ -194,7 +194,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
         final int maxLevel = list.get(list.size() - 1);
         if (list.size() == maxLevel - minLevel + 1)
         {
-            return Component.translatable("%s-%s", Integer.toString(minLevel), Integer.toString(maxLevel));
+            return Component.translatableEscape("%s-%s", Integer.toString(minLevel), Integer.toString(maxLevel));
         }
         return Component.literal(String.join(",", list.stream().map(i -> Integer.toString(i)).toList()));
     }

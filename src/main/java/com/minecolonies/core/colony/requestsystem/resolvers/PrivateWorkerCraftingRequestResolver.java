@@ -69,17 +69,17 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         }
         else
         {
-            return Component.translatable(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+            return Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
         if (request == null)
         {
-            return Component.translatable(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+            return Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
         return request.getRequester().getRequesterDisplayName(manager, request)
                  .append(Component.literal(" ("))
-                 .append(Component.translatable(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
+                 .append(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
                  .append(Component.literal(")"));
     }
 

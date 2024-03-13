@@ -856,7 +856,7 @@ public class GlobalResearch implements IGlobalResearch
                         this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(rootObject
                                                                                                      .get(RESEARCH_REQUIRED_RESEARCH_PROP)
                                                                                                      .getAsString()),
-                          Component.translatable(rootObject.get(RESEARCH_NAME_PROP).getAsString())));
+                          Component.translatableEscape(rootObject.get(RESEARCH_NAME_PROP).getAsString())));
                     }
                     else
                     {

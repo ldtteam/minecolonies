@@ -67,7 +67,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         if (arg < 3)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
             return 0;
         }
 

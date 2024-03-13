@@ -370,13 +370,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(level, pos);
         if (colonyView == null)
         {
-            requirements.add(Component.translatable("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatable("com.minecolonies.coremod.hut.cost", Component.translatable("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
@@ -388,8 +388,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            requirements.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
-            requirements.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
+            requirements.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
+            requirements.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
         }
 
         return requirements;
@@ -410,15 +410,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public List<MutableComponent> getDesc()
     {
         final List<MutableComponent> desc = new ArrayList<>();
-        desc.add(Component.translatable(getBuildingEntry().getTranslationKey()));
-        desc.add(Component.translatable(getBuildingEntry().getTranslationKey() + ".desc"));
+        desc.add(Component.translatableEscape(getBuildingEntry().getTranslationKey()));
+        desc.add(Component.translatableEscape(getBuildingEntry().getTranslationKey() + ".desc"));
         return desc;
     }
 
     @Override
     public Component getBlueprintDisplayName()
     {
-        return Component.translatable(getBuildingEntry().getTranslationKey());
+        return Component.translatableEscape(getBuildingEntry().getTranslationKey());
     }
 
     @Override

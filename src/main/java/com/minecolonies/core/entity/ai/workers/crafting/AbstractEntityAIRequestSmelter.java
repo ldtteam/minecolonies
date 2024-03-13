@@ -251,7 +251,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FUEL), ChatPriority.IMPORTANT));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(FURNACE_USER_NO_FUEL), ChatPriority.IMPORTANT));
             }
             return ImmutableList.of();
         }
@@ -676,7 +676,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(AbstractEntityAIBasic.STANDARD_DELAY);
             return START_WORKING;
@@ -800,7 +800,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -833,7 +833,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData()
-                  .triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                  .triggerInteraction(new StandardInteraction(Component.translatableEscape(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(AbstractEntityAIBasic.STANDARD_DELAY);
             return START_WORKING;

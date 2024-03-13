@@ -191,7 +191,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                 }
                 else
                 {
-                    data.triggerInteraction(new StandardInteraction(Component.translatable(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
+                    data.triggerInteraction(new StandardInteraction(Component.translatableEscape(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
                 }
             }
 
@@ -360,7 +360,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                 {
                     if (InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen()))
                     {
-                        data.triggerInteraction(new StandardInteraction(Component.translatable(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
+                        data.triggerInteraction(new StandardInteraction(Component.translatableEscape(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
                         currentPatient = null;
                         return DECIDE;
                     }

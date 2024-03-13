@@ -43,7 +43,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
     public Component getDisplayName()
     {
         // this should never actually be visible
-        return Component.translatable("com.minecolonies.coremod.supplies.placement");
+        return Component.translatableEscape("com.minecolonies.coremod.supplies.placement");
     }
 
     @Override

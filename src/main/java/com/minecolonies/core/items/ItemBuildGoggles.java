@@ -38,12 +38,12 @@ public class ItemBuildGoggles extends ArmorItem
     {
         super.appendHoverText(stack, world, components, flags);
 
-        components.add(Component.translatable("\"%s\"",
-                        Component.translatable("item.minecolonies.build_goggles.lore")
+        components.add(Component.translatableEscape("\"%s\"",
+                        Component.translatableEscape("item.minecolonies.build_goggles.lore")
                                 .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC))
                 .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 
-        components.add(Component.translatable(ColonyBlueprintRenderer.willRenderBlueprints()
+        components.add(Component.translatableEscape(ColonyBlueprintRenderer.willRenderBlueprints()
                 ? "item.minecolonies.build_goggles.enabled" : "item.minecolonies.build_goggles.disabled")
                 .withStyle(ChatFormatting.GRAY));
     }

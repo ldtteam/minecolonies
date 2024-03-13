@@ -142,6 +142,6 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return Component.translatable(RAID_BARBARIAN);
+        return Component.translatableEscape(RAID_BARBARIAN);
     }
 }

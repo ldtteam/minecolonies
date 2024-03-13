@@ -27,7 +27,7 @@ public class MessageUtils
      */
     public static MessageBuilder format(final String key, final Object... args)
     {
-        return format(Component.translatable(key, args));
+        return format(Component.translatableEscape(key, args));
     }
 
     /**
@@ -136,7 +136,7 @@ public class MessageUtils
          */
         public MessageBuilder append(final String key, final Object... args)
         {
-            return append(Component.translatable(key, args));
+            return append(Component.translatableEscape(key, args));
         }
 
         /**

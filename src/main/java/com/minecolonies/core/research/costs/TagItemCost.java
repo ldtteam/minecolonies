@@ -72,7 +72,7 @@ public class TagItemCost implements IResearchCost
     @Override
     public Component getTranslatedName()
     {
-        return Component.translatable(String.format("com.minecolonies.coremod.research.tags.%s", this.tag.location()));
+        return Component.translatableEscape(String.format("com.minecolonies.coremod.research.tags.%s", this.tag.location()));
     }
 
     @Override

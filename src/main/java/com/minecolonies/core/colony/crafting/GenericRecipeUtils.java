@@ -36,24 +36,24 @@ public final class GenericRecipeUtils
         final List<Component> restrictions = new ArrayList<>();
         if (customRecipe.getMinBuildingLevel() == customRecipe.getMaxBuildingLevel())
         {
-            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction",
+            restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction",
                     customRecipe.getMinBuildingLevel()));
         }
         else if (customRecipe.getMinBuildingLevel() > 1 || customRecipe.getMaxBuildingLevel() < CONST_DEFAULT_MAX_BUILDING_LEVEL)
         {
-            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
+            restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
                     customRecipe.getMinBuildingLevel(), customRecipe.getMaxBuildingLevel()));
         }
         for (final ResourceLocation researchId : customRecipe.getRequiredResearchIds())
         {
             final Component researchName = getResearchDisplayName(researchId);
-            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
+            restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
                     researchName));
         }
         for (final ResourceLocation researchId : customRecipe.getExcludedResearchIds())
         {
             final Component researchName = getResearchDisplayName(researchId);
-            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
+            restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
                     researchName));
         }
         return restrictions;

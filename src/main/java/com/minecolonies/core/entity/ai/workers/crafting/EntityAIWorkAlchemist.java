@@ -865,7 +865,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
@@ -1048,7 +1048,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;

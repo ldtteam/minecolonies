@@ -59,7 +59,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
          */
         public static DialogueElement parse(final JsonObject jsonObject)
         {
-            final Component text = Component.translatable(jsonObject.get(TEXT_ID).getAsString());
+            final Component text = Component.translatableEscape(jsonObject.get(TEXT_ID).getAsString());
             final List<AnswerElement> answerElementList = new ArrayList<>();
             for (final JsonElement answerOption : jsonObject.getAsJsonArray(OPTIONS_ID))
             {
@@ -132,7 +132,7 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
         public static AnswerElement parse(final JsonObject jsonObject)
         {
             final JsonObject resultObj = jsonObject.getAsJsonObject(RESULT_ID);
-            return new AnswerElement(Component.translatable(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().get(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
+            return new AnswerElement(Component.translatableEscape(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().get(new ResourceLocation(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
         }
     }
 }

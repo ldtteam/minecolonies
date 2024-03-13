@@ -611,11 +611,11 @@ public final class ItemStackUtils
     {
         if (toolGrade >= 0 && toolGrade <= 4)
         {
-            return Component.translatable("com.minecolonies.coremod.armorlevel." + toolGrade);
+            return Component.translatableEscape("com.minecolonies.coremod.armorlevel." + toolGrade);
         }
 
         // this shouldn't really ever happen, but just in case...
-        return Component.translatable("com.minecolonies.coremod.armorlevel.etc");
+        return Component.translatableEscape("com.minecolonies.coremod.armorlevel.etc");
     }
 
     /**
@@ -628,10 +628,10 @@ public final class ItemStackUtils
     {
         if (toolGrade >= 0 && toolGrade <= 4)
         {
-            return Component.translatable("com.minecolonies.coremod.toollevel." + toolGrade);
+            return Component.translatableEscape("com.minecolonies.coremod.toollevel." + toolGrade);
         }
 
-        return Component.translatable("com.minecolonies.coremod.toollevel.etc");
+        return Component.translatableEscape("com.minecolonies.coremod.toollevel.etc");
     }
 
     /**

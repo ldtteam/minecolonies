@@ -70,8 +70,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
         {
             final ButtonImage sortButton = findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class);
             PaneBuilders.tooltipBuilder()
-                .append(Component.translatable("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
-                .appendNL(Component.translatable("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
+                .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
+                .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
                 .hoverPane(sortButton)
                 .build();
             sortButton.disable();
@@ -116,7 +116,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
-        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatable(LABEL_X_OF_Z,
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatableEscape(LABEL_X_OF_Z,
           module.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
@@ -153,8 +153,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
                     neededLabel.hide();
                     addButton.setText(Component.literal("X").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_RED)));
                     PaneBuilders.tooltipBuilder()
-                        .append(Component.translatable("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
-                        .appendNL(Component.translatable("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
+                        .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
+                        .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
                         .hoverPane(addButton)
                         .build();
                 }

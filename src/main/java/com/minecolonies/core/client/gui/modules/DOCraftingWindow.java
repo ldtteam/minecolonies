@@ -101,7 +101,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
     private void updateInputs(final int index, final Pane rowPane)
     {
         rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class)
-                .setText(Component.translatable(DOCRAFTING_BLOCK, index + 1));
+                .setText(Component.translatableEscape(DOCRAFTING_BLOCK, index + 1));
 
         final ItemIcon icon = rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class);
         inputIcons.set(index, icon);

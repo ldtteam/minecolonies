@@ -137,7 +137,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         String customParentName = getCustomParentName();
         String customName = getCustomName();
-        Component buildingComponent = customName.isEmpty() ? Component.translatable(getTranslationKey()) : Component.literal(customName);
+        Component buildingComponent = customName.isEmpty() ? Component.translatableEscape(getTranslationKey()) : Component.literal(customName);
 
         if (parentTranslationKey.isEmpty())
         {
@@ -145,8 +145,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         }
         else
         {
-            Component parentComponent = customParentName.isEmpty() ? Component.translatable(parentTranslationKey) : Component.literal(customParentName);
-            return Component.translatable("%s / %s", parentComponent, buildingComponent);
+            Component parentComponent = customParentName.isEmpty() ? Component.translatableEscape(parentTranslationKey) : Component.literal(customParentName);
+            return Component.translatableEscape("%s / %s", parentComponent, buildingComponent);
         }
     }
 

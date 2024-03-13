@@ -33,13 +33,13 @@ public class CommandColonyRaidsInfo implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_DISABLED_IN_CONFIG), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 

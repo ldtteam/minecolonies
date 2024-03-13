@@ -142,7 +142,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
-                      .triggerInteraction(new StandardInteraction(Component.translatable(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                      .triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }

@@ -58,7 +58,7 @@ public class ItemScrollBuff extends AbstractItemScroll
         }
         else
         {
-            player.displayClientMessage(Component.translatable("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+            player.displayClientMessage(Component.translatableEscape("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               ChatFormatting.GOLD)), true);
             player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, TICKS_SECOND * 10));
             SoundUtils.playSoundForPlayer(player, SoundEvents.TOTEM_USE, 0.04f, 1.0f);
@@ -83,7 +83,7 @@ public class ItemScrollBuff extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = Component.translatable(TOOL_GENERIC_SCROLL_BUFF_DESCRIPTION);
+        final MutableComponent guiHint = Component.translatableEscape(TOOL_GENERIC_SCROLL_BUFF_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
     }

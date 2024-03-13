@@ -91,7 +91,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
         {
             for (final int worker : module.getAssignedCitizens())
             {
-                workers.add(new Tuple<>(Component.translatable(module.getJobEntry().getTranslationKey()).getString(), worker));
+                workers.add(new Tuple<>(Component.translatableEscape(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
@@ -114,7 +114,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
+                          .setText(Component.literal(Component.translatableEscape(workers.get(index).getA()).getString() + ": " + worker.getName()));
                     }
                 }
             });

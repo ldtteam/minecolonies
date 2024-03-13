@@ -53,7 +53,7 @@ public class WindowInfo extends AbstractWindowSkeleton
             final View view = pageBuilder.get();
             switchView.addChild(view);
 
-            final Text name = nameBuilder.get().append(Component.translatable(translationPrefix + i + ".name")).build();
+            final Text name = nameBuilder.get().append(Component.translatableEscape(translationPrefix + i + ".name")).build();
             name.setPosition(30, 0);
             name.setSize(90, 11);
             name.setTextAlignment(Alignment.MIDDLE);

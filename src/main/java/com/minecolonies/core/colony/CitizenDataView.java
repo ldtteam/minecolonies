@@ -236,7 +236,7 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public MutableComponent getJobComponent()
     {
-        return job.isEmpty() ? Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED) : Component.translatable(job);
+        return job.isEmpty() ? Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED) : Component.translatableEscape(job);
     }
 
     @Override
