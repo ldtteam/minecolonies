@@ -124,6 +124,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private PathingOptions pathingOptions = new PathingOptions();
 
     /**
+     * Whether the path reached its destination
+     */
+    private boolean reachesDestination = false;
+
+    /**
      * AbstractPathJob constructor.
      *
      * @param world  the world within which to path.
@@ -261,8 +266,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         // breakpoint at which we start scoring potential ending points
         final double heuristicCutoff = bestNode.getHeuristic() > 0 ? bestNode.getHeuristic() / 3 : 200;
 
-        boolean isAtDestination = false;
-
         while (!nodesToVisit.isEmpty())
         {
             if (Thread.currentThread().isInterrupted())
@@ -280,7 +283,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 break;
             }
 
-            if (isAtDestination && extraNodes > 0)
+            if (reachesDestination && extraNodes > 0)
             {
                 extraNodes--;
                 if (extraNodes == 0)
@@ -292,9 +295,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             handleDebugOptions(node);
             node.setVisited();
 
-            if (!isAtDestination && isAtDestination(node))
+            if (!reachesDestination && isAtDestination(node))
             {
-                isAtDestination = true;
+                reachesDestination = true;
                 bestNode = node;
                 bestNodeEndScore = getEndNodeScore(node);
                 result.setPathReachesDestination(true);
@@ -317,7 +320,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                     final double nodeEndSCore = getEndNodeScore(node);
                     if (nodeEndSCore < bestNodeEndScore)
                     {
-                        if (!isAtDestination || isAtDestination(node))
+                        if (!reachesDestination || isAtDestination(node))
                         {
                             bestNode = node;
                             bestNodeEndScore = nodeEndSCore;
@@ -803,7 +806,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         doDebugPrinting(points);
 
-        return new Path(Arrays.asList(points), new BlockPos(targetNode.x, targetNode.y, targetNode.z), result.isPathReachingDestination());
+        return new Path(Arrays.asList(points), new BlockPos(targetNode.x, targetNode.y, targetNode.z), reachesDestination);
     }
 
     /**
