@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding.pathresults;
 
 import net.minecraft.core.BlockPos;
 

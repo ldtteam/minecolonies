@@ -1,5 +1,6 @@
-package com.minecolonies.api.entity.pathfinding.proxy;
+package com.minecolonies.core.entity.pathfinding.proxy;
 
+import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.core.BlockPos;
