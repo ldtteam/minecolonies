@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.visitor;
 
+import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
@@ -68,7 +69,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
     {
         public ColonyExpeditionData()
         {
-            super("expedition", new ColonyExpedition(-1, Level.OVERWORLD, new ArrayList<>(), new ArrayList<>(), new ResourceLocation("")));
+            super("expedition", new ColonyExpedition(new ArrayList<>(), new ArrayList<>(), ExpeditionStatus.CREATED, -1, Level.OVERWORLD, new ResourceLocation("")));
         }
 
         @Override

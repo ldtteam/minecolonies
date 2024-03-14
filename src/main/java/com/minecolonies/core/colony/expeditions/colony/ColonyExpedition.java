@@ -51,18 +51,22 @@ public final class ColonyExpedition extends Expedition
     /**
      * Deserialization constructor.
      *
-     * @param dimensionId the target dimension for this expedition.
-     * @param equipment   the list of equipment for this expedition.
-     * @param members     the members for this expedition.
+     * @param equipment        the list of equipment for this expedition.
+     * @param members          the members for this expedition.
+     * @param status           the status of the expedition.
+     * @param id               the id of the expedition.
+     * @param dimensionId      the target dimension for this expedition.
+     * @param expeditionTypeId the expedition type.
      */
     public ColonyExpedition(
-      final int id,
-      final @NotNull ResourceKey<Level> dimensionId,
       final @NotNull Collection<ItemStack> equipment,
       final @NotNull Collection<IExpeditionMember<?>> members,
+      final @NotNull ExpeditionStatus status,
+      final int id,
+      final @NotNull ResourceKey<Level> dimensionId,
       final @NotNull ResourceLocation expeditionTypeId)
     {
-        super(equipment, members);
+        super(equipment, members, status);
         this.id = id;
         this.dimensionId = dimensionId;
         this.expeditionTypeId = expeditionTypeId;
@@ -82,7 +86,7 @@ public final class ColonyExpedition extends Expedition
         final int id = compound.getInt(TAG_ID);
         final ResourceKey<Level> dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
         final ResourceLocation expeditionTypeId = new ResourceLocation(compound.getString(TAG_EXPEDITION_TYPE));
-        return new ColonyExpedition(id, dimensionId, base.getEquipment(), base.getMembers(), expeditionTypeId);
+        return new ColonyExpedition(base.getEquipment(), base.getMembers(), base.getStatus(), id, dimensionId, expeditionTypeId);
     }
 
     /**

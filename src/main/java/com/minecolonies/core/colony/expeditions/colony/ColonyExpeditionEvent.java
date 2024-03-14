@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.expeditions.colony;
 
-import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.InventoryUtils;
@@ -288,9 +288,9 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         {
             colony.getTravelingManager().finishTravellingFor(member.getId());
 
-            if (member instanceof ExpeditionVisitorMember)
+            if (member instanceof ExpeditionVisitorMember visitorMember)
             {
-                final ICivilianData leaderData = member.resolveCivilianData(colony);
+                final IVisitorData leaderData = visitorMember.resolveCivilianData(colony);
                 leaderData.triggerInteraction(new ExpeditionFinishedInteraction(getExpedition()));
             }
         }

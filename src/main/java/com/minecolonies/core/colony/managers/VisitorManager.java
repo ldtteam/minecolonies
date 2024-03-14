@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.managers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -232,6 +233,9 @@ public class VisitorManager implements IVisitorManager
         return data;
     }
 
+    /**
+     * Spawn an expeditionary citizen.
+     */
     public void spawnExpeditionary()
     {
         final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
@@ -239,7 +243,7 @@ public class VisitorManager implements IVisitorManager
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
             newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION,
-              new ColonyExpedition(-1, expeditionType.getDimension(), new ArrayList<>(), new ArrayList<>(), expeditionType.getId()));
+              new ColonyExpedition(new ArrayList<>(), new ArrayList<>(), ExpeditionStatus.CREATED, newVisitor.getId(), expeditionType.getDimension(), expeditionType.getId()));
             newVisitor.triggerInteraction(new ExpeditionInteraction(expeditionType));
 
             spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),

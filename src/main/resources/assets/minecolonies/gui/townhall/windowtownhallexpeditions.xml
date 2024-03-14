@@ -10,32 +10,40 @@
             <text size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header)" color="white"/>
 
             <text pos="0 20" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_active)" color="black"/>
-            <box pos="0 40" size="100% 36" linewidth="1">
+            <box pos="0 35" size="100% 36" linewidth="1">
                 <list id="active_expeditions"
                       size="100% 100%"
                       emptytext="$(com.minecolonies.core.expedition.gui.townhall.empty_list_active)"
                       emptyscale="0.8"
                       emptycolor="black">
-                    <box size="180 36" linewidth="1">
+                    <box size="172 36" linewidth="1">
                         <text id="expedition_name" pos="3 3" size="148 15" color="black"/>
-                        <buttonimage id="expedition_open" pos="155 3" size="14 15" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                        <image id="expedition_open_overlay" pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png"/>
+                        <buttonimage id="expedition_open"
+                                     pos="155 3"
+                                     size="14 15"
+                                     source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                                     disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
+                        <image pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png" enabled="false"/>
                         <text id="expedition_status" pos="3 18" size="169 15" color="black" textscale="0.8"/>
                     </box>
                 </list>
             </box>
 
-            <text pos="0 80" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_finished)" color="black"/>
-            <box pos="0 100" size="100% 114" linewidth="1">
+            <text pos="0 75" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_finished)" color="black"/>
+            <box pos="0 90" size="100% 124" linewidth="1">
                 <list id="finished_expeditions"
                       size="100% 100%"
                       emptytext="$(com.minecolonies.core.expedition.gui.townhall.empty_list_finished)"
                       emptyscale="0.8"
                       emptycolor="black">
-                    <box size="180 36" linewidth="1">
+                    <box size="172 36" linewidth="1">
                         <text id="expedition_name" pos="3 3" size="148 15" color="black"/>
-                        <buttonimage id="expedition_open" pos="155 3" size="14 15" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                        <image id="expedition_open_overlay" pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png"/>
+                        <buttonimage id="expedition_open"
+                                     pos="155 3"
+                                     size="14 15"
+                                     source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                                     disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
+                        <image pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png" enabled="false"/>
                         <text id="expedition_status" pos="3 18" size="169 15" color="black" textscale="0.8"/>
                     </box>
                 </list>

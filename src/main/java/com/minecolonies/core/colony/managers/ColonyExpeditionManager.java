@@ -110,27 +110,24 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
-    @Nullable
-    public ColonyExpedition addExpedition(final ColonyExpedition expedition)
+    public boolean addExpedition(final ColonyExpedition expedition)
     {
         final IExpeditionMember<?> leader = expedition.getLeader();
         if (leader == null)
         {
-            return null;
+            return false;
         }
 
         if (activeExpeditions.containsKey(leader.getId()))
         {
-            return null;
+            return false;
         }
 
-        final ColonyExpedition expeditionWithId =
-          new ColonyExpedition(leader.getId(), expedition.getTargetDimension(), expedition.getEquipment(), expedition.getMembers(), expedition.getExpeditionTypeId());
-        activeExpeditions.put(expeditionWithId.getId(), expeditionWithId);
-        activeExpeditionsCache = activeExpeditions.values().stream().toList();
+        activeExpeditions.put(expedition.getId(), expedition);
+        updateCaches();
 
         dirty = true;
-        return expeditionWithId;
+        return true;
     }
 
     @Override
@@ -139,8 +136,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         if (activeExpeditions.containsKey(id))
         {
             finishedExpeditions.add(activeExpeditions.remove(id));
-            activeExpeditionsCache = activeExpeditions.values().stream().toList();
-            finishedExpeditionsCache = finishedExpeditions.stream().toList();
+            updateCaches();
 
             dirty = true;
         }
@@ -222,19 +218,30 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     public void deserializeNBT(final CompoundTag compound)
     {
         final ListTag activeExpeditionsCompound = compound.getList(TAG_ACTIVE_EXPEDITIONS, Tag.TAG_COMPOUND);
+        activeExpeditions.clear();
         activeExpeditions.putAll(NBTUtils.streamCompound(activeExpeditionsCompound)
                                    .map(ColonyExpedition::loadFromNBT)
                                    .collect(Collectors.toMap(ColonyExpedition::getId, v -> v)));
-        activeExpeditionsCache = activeExpeditions.values().stream().toList();
 
         final ListTag finishedExpeditionsCompound = compound.getList(TAG_FINISHED_EXPEDITIONS, Tag.TAG_COMPOUND);
+        finishedExpeditions.clear();
         finishedExpeditions.addAll(NBTUtils.streamCompound(finishedExpeditionsCompound)
                                      .map(ColonyExpedition::loadFromNBT)
                                      .toList());
-        finishedExpeditionsCache = finishedExpeditions.stream().toList();
+
+        updateCaches();
 
         isRuinedPortalDiscovered = compound.getBoolean(TAG_RUINED_PORTAL_DISCOVER);
         isStrongholdDiscovered = compound.getBoolean(TAG_STRONGHOLD_PORTAL_DISCOVER);
+    }
+
+    /**
+     * Update the cache lists for the list getters.
+     */
+    private void updateCaches()
+    {
+        activeExpeditionsCache = activeExpeditions.values().stream().toList();
+        finishedExpeditionsCache = finishedExpeditions.stream().toList();
     }
 
     /**

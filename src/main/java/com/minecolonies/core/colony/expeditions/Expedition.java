@@ -25,6 +25,7 @@ public class Expedition implements IExpedition
     private static final String TAG_EQUIPMENT   = "equipment";
     private static final String TAG_MEMBERS     = "members";
     private static final String TAG_MEMBER_TYPE = "memberType";
+    private static final String TAG_STATUS      = "status";
 
     /**
      * The equipment given to the expedition prior to starting.
@@ -53,11 +54,13 @@ public class Expedition implements IExpedition
      *
      * @param equipment the list of equipment for this expedition.
      * @param members   the members for this expedition.
+     * @param status    the status of the expedition.
      */
-    public Expedition(final @NotNull Collection<ItemStack> equipment, final @NotNull Collection<IExpeditionMember<?>> members)
+    public Expedition(final @NotNull Collection<ItemStack> equipment, final @NotNull Collection<IExpeditionMember<?>> members, final ExpeditionStatus status)
     {
         this.equipment = equipment;
         this.members = members.stream().collect(Collectors.toMap(IExpeditionMember::getId, v -> v));
+        this.status = status;
     }
 
     /**
@@ -91,8 +94,9 @@ public class Expedition implements IExpedition
         {
             equipment.add(ItemStack.of(equipmentList.getCompound(i)));
         }
+        final ExpeditionStatus status = compound.contains(TAG_STATUS) ? ExpeditionStatus.valueOf(compound.getString(TAG_STATUS)) : ExpeditionStatus.CREATED;
 
-        return new Expedition(equipment, members);
+        return new Expedition(equipment, members, status);
     }
 
     @Override
@@ -191,5 +195,6 @@ public class Expedition implements IExpedition
             equipmentTag.add(itemStack.serializeNBT());
         }
         compound.put(TAG_EQUIPMENT, equipmentTag);
+        compound.putString(TAG_STATUS, status.name());
     }
 }

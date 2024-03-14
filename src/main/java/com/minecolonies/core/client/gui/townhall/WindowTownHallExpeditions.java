@@ -1,7 +1,10 @@
 package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonHandler;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.ScrollingList.DataProvider;
@@ -34,12 +37,11 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
     /**
      * ID constants.
      */
-    private static final String LIST_ACTIVE_EXPEDITIONS        = "active_expeditions";
-    private static final String LIST_FINISHED_EXPEDITIONS      = "finished_expeditions";
-    private static final String LABEL_EXPEDITION_NAME          = "expedition_name";
-    private static final String LABEL_EXPEDITION_STATUS        = "expedition_status";
-    private static final String BUTTON_EXPEDITION_OPEN         = "expedition_open";
-    private static final String BUTTON_EXPEDITION_OPEN_OVERLAY = "expedition_open_overlay";
+    private static final String LIST_ACTIVE_EXPEDITIONS   = "active_expeditions";
+    private static final String LIST_FINISHED_EXPEDITIONS = "finished_expeditions";
+    private static final String LABEL_EXPEDITION_NAME     = "expedition_name";
+    private static final String LABEL_EXPEDITION_STATUS   = "expedition_status";
+    private static final String BUTTON_EXPEDITION_OPEN    = "expedition_open";
 
     /**
      * The client side colony data
@@ -70,9 +72,9 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         this.colony = colony;
 
         this.activeExpeditionsList = findPaneOfTypeByID(LIST_ACTIVE_EXPEDITIONS, ScrollingList.class);
-        setupExpeditionList(activeExpeditionsList, () -> colony.getExpeditionManager().getActiveExpeditions(), true);
+        setupExpeditionList(activeExpeditionsList, colony.getExpeditionManager()::getActiveExpeditions, true);
         this.finishedExpeditionsList = findPaneOfTypeByID(LIST_FINISHED_EXPEDITIONS, ScrollingList.class);
-        setupExpeditionList(finishedExpeditionsList, () -> colony.getExpeditionManager().getFinishedExpeditions(), false);
+        setupExpeditionList(finishedExpeditionsList, colony.getExpeditionManager()::getFinishedExpeditions, false);
 
         registerButton(BUTTON_EXPEDITION_OPEN, this::openExpedition);
     }
@@ -111,9 +113,8 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                   Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + expedition.getStatus().name()).withStyle(expedition.getStatus().getStatusType().getDisplayColor());
                 pane.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
 
-                final boolean isOpenActive = openedExpedition == null || openedExpedition.isActive == isActive && openedExpedition.listIndex == index;
+                final boolean isOpenActive = openedExpedition == null || openedExpedition.isActive != isActive || openedExpedition.listIndex != index;
                 pane.findPaneOfTypeByID(BUTTON_EXPEDITION_OPEN, ButtonImage.class).setEnabled(isOpenActive);
-                pane.findPaneOfTypeByID(BUTTON_EXPEDITION_OPEN_OVERLAY, Image.class).setEnabled(isOpenActive);
             }
         });
     }

@@ -70,13 +70,13 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
         }
 
         // Attempt to create the expedition.
-        final ColonyExpedition newExpedition = colony.getExpeditionManager().addExpedition(expedition);
-        if (newExpedition == null)
+        final boolean isAdded = colony.getExpeditionManager().addExpedition(expedition);
+        if (!isAdded)
         {
             return;
         }
 
-        final IVisitorData leaderData = newExpedition.getLeader().resolveCivilianData(colony);
+        final IVisitorData leaderData = expedition.getLeader().resolveCivilianData(colony);
         leaderData.removeInteractions(ModInteractionResponseHandlers.EXPEDITION.getPath());
 
         MessageUtils.format(EXPEDITION_START_MESSAGE, expedition.getLeader().getName())
@@ -85,7 +85,7 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
           .forManagers();
 
         // Create the event related to this expedition.
-        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expeditionType, newExpedition));
+        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expeditionType, expedition));
 
         // Add all members to the travelling manager and de-spawn them.
         final BlockPos townHallReturnPosition = BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition());

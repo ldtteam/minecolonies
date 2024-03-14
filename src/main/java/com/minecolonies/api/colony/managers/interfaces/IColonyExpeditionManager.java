@@ -41,10 +41,9 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
      * Register a new expedition to the manager.
      *
      * @param expedition the expedition instance.
-     * @return the new expedition instance containing a new id.
+     * @return true if successfully added.
      */
-    @Nullable
-    ColonyExpedition addExpedition(final ColonyExpedition expedition);
+    boolean addExpedition(final ColonyExpedition expedition);
 
     /**
      * Mark as expedition as finished.
