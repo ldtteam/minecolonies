@@ -2573,8 +2573,7 @@
   "com.minecolonies.core.gui.supplies.guide": "Use these supplies to assemble a %s to serve as a foundation for your own colony. Within it, aside from §2ample resources§r, you shall find\na salvaged §2townhall block§r and §2build tool§r to lay the groundworks of the new colony. Founding a colony demands resilience; beyond the basic necessities of shelter, sustenance, and healing, lies the imperative to fortify against the looming threats of piracy and barbarism. Yet, should you endure these trials, the potential for growth knows no bounds. From artisans to scholars, miners to alchemists, your settlement holds the promise of evolving into a §2self-sustaining bastion of prosperity and knowledge§r.",
 
   "com.minecolonies.core.gui.supplycamp.guide": "Make sure to find a flat, open area large enough for the camp's layout to place it.",
-  "com.minecolonies.core.gui.supplyship.guide": "Make sure to place it in open waters spacious enough to accommodate the ship's size."
-  "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!",
+  "com.minecolonies.core.gui.supplyship.guide": "Make sure to place it in open waters spacious enough to accommodate the ship's size.",
 
   "com.minecolonies.core.expedition.interaction": "Hello! I am going on an expedition to %s, but I need some people and supplies. Could you help me out?",
   "com.minecolonies.core.expedition.interaction.view": "View Expedition",
@@ -2600,6 +2599,9 @@
   "com.minecolonies.core.expedition.finish": "[%s]: We've returned from our expedition! I've left your share of rewards at the Town Hall.",
   "com.minecolonies.core.expedition.gui.townhall.header": "Expeditions Overview",
   "com.minecolonies.core.expedition.gui.townhall.header_active": "Active Expeditions",
+  "com.minecolonies.core.expedition.gui.townhall.header_finished": "Previous Expeditions",
+  "com.minecolonies.core.expedition.gui.townhall.empty_list_active": "No active expeditions.",
+  "com.minecolonies.core.expedition.gui.townhall.empty_list_finished": "No previous expeditions.",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.to_text": "To %s",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.CREATED": "Ongoing",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.EMBARKED": "Ongoing",

@@ -73,6 +73,11 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     private List<ColonyExpedition> activeExpeditionsCache;
 
     /**
+     * The cached list of finished expeditions for {@link ColonyExpeditionManager#getFinishedExpeditions()} ()}.
+     */
+    private List<ColonyExpedition> finishedExpeditionsCache;
+
+    /**
      * Whether this manager is dirty.
      */
     private boolean dirty;
@@ -89,6 +94,12 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     public List<ColonyExpedition> getActiveExpeditions()
     {
         return activeExpeditionsCache;
+    }
+
+    @Override
+    public List<ColonyExpedition> getFinishedExpeditions()
+    {
+        return finishedExpeditionsCache;
     }
 
     @Override
@@ -129,6 +140,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         {
             finishedExpeditions.add(activeExpeditions.remove(id));
             activeExpeditionsCache = activeExpeditions.values().stream().toList();
+            finishedExpeditionsCache = finishedExpeditions.stream().toList();
 
             dirty = true;
         }
@@ -219,6 +231,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         finishedExpeditions.addAll(NBTUtils.streamCompound(finishedExpeditionsCompound)
                                      .map(ColonyExpedition::loadFromNBT)
                                      .toList());
+        finishedExpeditionsCache = finishedExpeditions.stream().toList();
 
         isRuinedPortalDiscovered = compound.getBoolean(TAG_RUINED_PORTAL_DISCOVER);
         isStrongholdDiscovered = compound.getBoolean(TAG_STRONGHOLD_PORTAL_DISCOVER);

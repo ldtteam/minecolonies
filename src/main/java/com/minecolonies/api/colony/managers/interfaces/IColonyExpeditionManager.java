@@ -22,6 +22,13 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
     List<ColonyExpedition> getActiveExpeditions();
 
     /**
+     * Get a list of all the finished expeditions in the colony.
+     *
+     * @return an unmodifiable list.
+     */
+    List<ColonyExpedition> getFinishedExpeditions();
+
+    /**
      * Get the expedition with the given id.
      *
      * @param id the expedition id.
