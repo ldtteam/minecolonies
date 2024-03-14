@@ -25,10 +25,10 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Now that you got a level 2 builder the next logical step is upgrading your residences. Residences house 2 citizens per housing level up to a five citizens at level five.",
+      "text": "Now that you got a level 2 builder the next logical step is upgrading your residences. Residences house 1 citizen per housing level up to five citizens at level five.",
       "options": [
         {
-          "answer": "Sounds existing! What do you want me to do?.",
+          "answer": "Sounds exciting! What do you want me to do?.",
           "result": {
             "type": "minecolonies:dialogue",
             "text": "Upgrade two of your residences to level 2 and come back to me later then!",
