@@ -220,10 +220,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
-                                                                     this.building.hasOpenSyncRequest(worker.getCitizenData()) || this.building
-                                                                                                                                    .hasCitizenCompletedRequestsToPickup(
-                                                                                                                                      worker.getCitizenData()),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> checkIfNeedsItem(),
             NEEDS_ITEM,
             20),
 
@@ -256,6 +253,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
+    }
+
+    /**
+     * Check if
+     * @return
+     */
+    protected boolean checkIfNeedsItem()
+    {
+        return getState() != INVENTORY_FULL &&
+                 (this.building.hasOpenSyncRequest(worker.getCitizenData())
+                    || this.building.hasCitizenCompletedRequestsToPickup(worker.getCitizenData()));
     }
 
     /**
