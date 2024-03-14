@@ -385,7 +385,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return InteractionResult.FAIL;
         }
 
-        if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).getItem() instanceof NameTagItem)
+        if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).is(Items.NAME_TAG))
         {
             return super.checkAndHandleImportantInteractions(player, hand);
         }
@@ -1722,7 +1722,34 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             return citizenData.getInventory().getIterableArmorAndHandInv();
         }
+        else if (citizenDataView != null)
+        {
+            return citizenDataView.getInventory().getIterableArmorAndHandInv();
+        }
         return super.getAllSlots();
+    }
+
+    @NotNull
+    @Override
+    public ItemStack getItemBySlot(EquipmentSlot slotType)
+    {
+        switch (slotType.getType())
+        {
+            case HAND:
+                return super.getItemBySlot(slotType);
+            case ARMOR:
+                if (citizenData != null)
+                {
+                    return citizenData.getInventory().getArmorInSlot(slotType);
+                }
+                else if (citizenDataView != null)
+                {
+                    return citizenDataView.getInventory().getArmorInSlot(slotType);
+                }
+                return super.getItemBySlot(slotType);
+            default:
+                return ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -1833,6 +1860,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
         {
+            citizenData.setName(name.getString());
             super.setCustomName(name);
         }
     }
