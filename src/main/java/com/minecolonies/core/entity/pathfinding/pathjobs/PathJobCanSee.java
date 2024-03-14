@@ -50,7 +50,7 @@ public class PathJobCanSee extends AbstractPathJob
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (start.getY() - n.y > 2)
+        if (searchAroundPos.getY() - n.y > 2)
         {
             return false;
         }
