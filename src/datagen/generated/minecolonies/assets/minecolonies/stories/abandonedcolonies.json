@@ -1,11 +1,42 @@
 [
   {
     "type": "minecolonies:abandoned_name",
+    "biomes": [
+      "#forge:is_wet",
+      "#forge:is_plains"
+    ],
+    "content": [
+      "Clearwater",
+      "Riverdale",
+      "Lakeside",
+      "Brookside",
+      "Willow Creek",
+      "Serenity Springs"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned_name",
+    "biomes": "#forge:is_cold",
+    "content": [
+      "Silvervale",
+      "Frostfield",
+      "Misty Hollow",
+      "Frostwood"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned_name",
+    "biomes": "#forge:is_desert",
+    "content": [
+      "Goldenridge",
+      "Ashford"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned_name",
     "content": [
       "Willowbrook",
-      "Silvervale",
       "Greenwood",
-      "Clearwater",
       "Oakwood",
       "Stonybrook",
       "Maplewood",
@@ -13,19 +44,13 @@
       "Pinecrest",
       "Rosewood",
       "Meadowbrook",
-      "Riverdale",
       "Suncrest",
       "Hillcrest",
       "Ravenwood",
       "Springvale",
-      "Goldenridge",
-      "Ashford",
       "Briarwood",
-      "Lakeside",
-      "Brookside",
       "Evergreen",
       "Whispering Pines",
-      "Willow Creek",
       "Shadowvale",
       "Highgate",
       "Millstone",
@@ -38,10 +63,7 @@
       "Stonehaven",
       "Silverwood",
       "Redwood",
-      "Frostfield",
-      "Misty Hollow",
       "Ironwood",
-      "Frostwood",
       "Greenwood",
       "Birchwood",
       "Pineview",
@@ -50,7 +72,6 @@
       "Briarvale",
       "Brookhaven",
       "Whitestone",
-      "Serenity Springs",
       "Summerfield"
     ]
   },

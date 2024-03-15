@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -48,11 +49,36 @@ public class DefaultStoriesProvider implements DataProvider
         final JsonArray json = new JsonArray();
 
         json.add(new StoryBuilder(ColonyStoryListener.ABANDONED_COLONY_NAME)
+                .addBiomeTag(Tags.Biomes.IS_WET, Tags.Biomes.IS_PLAINS)
+                .addContents(
+                        "Clearwater",
+                        "Riverdale",
+                        "Lakeside",
+                        "Brookside",
+                        "Willow Creek",
+                        "Serenity Springs"
+                ).build());
+
+        json.add(new StoryBuilder(ColonyStoryListener.ABANDONED_COLONY_NAME)
+                .addBiomeTag(Tags.Biomes.IS_COLD)
+                .addContents(
+                        "Silvervale",
+                        "Frostfield",
+                        "Misty Hollow",
+                        "Frostwood"
+                ).build());
+
+        json.add(new StoryBuilder(ColonyStoryListener.ABANDONED_COLONY_NAME)
+                .addBiomeTag(Tags.Biomes.IS_DESERT)
+                .addContents(
+                        "Goldenridge",
+                        "Ashford"
+                ).build());
+
+        json.add(new StoryBuilder(ColonyStoryListener.ABANDONED_COLONY_NAME)
                 .addContents(
                         "Willowbrook",
-                        "Silvervale",
                         "Greenwood",
-                        "Clearwater",
                         "Oakwood",
                         "Stonybrook",
                         "Maplewood",
@@ -60,19 +86,13 @@ public class DefaultStoriesProvider implements DataProvider
                         "Pinecrest",
                         "Rosewood",
                         "Meadowbrook",
-                        "Riverdale",
                         "Suncrest",
                         "Hillcrest",
                         "Ravenwood",
                         "Springvale",
-                        "Goldenridge",
-                        "Ashford",
                         "Briarwood",
-                        "Lakeside",
-                        "Brookside",
                         "Evergreen",
                         "Whispering Pines",
-                        "Willow Creek",
                         "Shadowvale",
                         "Highgate",
                         "Millstone",
@@ -85,10 +105,7 @@ public class DefaultStoriesProvider implements DataProvider
                         "Stonehaven",
                         "Silverwood",
                         "Redwood",
-                        "Frostfield",
-                        "Misty Hollow",
                         "Ironwood",
-                        "Frostwood",
                         "Greenwood",
                         "Birchwood",
                         "Pineview",
@@ -97,7 +114,6 @@ public class DefaultStoriesProvider implements DataProvider
                         "Briarvale",
                         "Brookhaven",
                         "Whitestone",
-                        "Serenity Springs",
                         "Summerfield"
                 ).build());
 
