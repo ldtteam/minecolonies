@@ -2600,6 +2600,8 @@
   "com.minecolonies.core.expedition.gui.townhall.header": "Expeditions Overview",
   "com.minecolonies.core.expedition.gui.townhall.header_active": "Active Expeditions",
   "com.minecolonies.core.expedition.gui.townhall.header_finished": "Previous Expeditions",
+  "com.minecolonies.core.expedition.gui.townhall.header_items": "Items",
+  "com.minecolonies.core.expedition.gui.townhall.header_results": "Results",
   "com.minecolonies.core.expedition.gui.townhall.empty_list_active": "No active expeditions.",
   "com.minecolonies.core.expedition.gui.townhall.empty_list_finished": "No previous expeditions.",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.to_text": "To %s",

@@ -60,6 +60,32 @@
                   color="black"
                   textscale="0.8"
                   textalign="MIDDLE"/>
+
+            <view id="expedition_details" size="100% 100%">
+                <text id="expedition_name" size="100% 15" color="black"/>
+                <text id="expedition_status" pos="0 15" size="100% 15" color="black" textscale="0.8"/>
+
+                <text pos="0 40" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_items)" color="black"/>
+                <box pos="0 55" size="100% 20" linewidth="1">
+                    <list id="expedition_items"
+                          size="100% 100%"
+                          emptytext="$(com.minecolonies.core.expedition.gui.townhall.empty_list_finished)"
+                          emptyscale="0.8"
+                          emptycolor="black">
+                        <view size="100% 20">
+                            <itemicon id="item_0" pos="2 2" size="16 16"/>
+                            <itemicon id="item_1" pos="21 2" size="16 16"/>
+                            <itemicon id="item_2" pos="40 2" size="16 16"/>
+                            <itemicon id="item_3" pos="59 2" size="16 16"/>
+                            <itemicon id="item_4" pos="78 2" size="16 16"/>
+                            <itemicon id="item_5" pos="97 2" size="16 16"/>
+                            <itemicon id="item_6" pos="116 2" size="16 16"/>
+                            <itemicon id="item_7" pos="135 2" size="16 16"/>
+                            <itemicon id="item_8" pos="154 2" size="16 16"/>
+                        </view>
+                    </list>
+                </box>
+            </view>
         </view>
     </view>
 </window>

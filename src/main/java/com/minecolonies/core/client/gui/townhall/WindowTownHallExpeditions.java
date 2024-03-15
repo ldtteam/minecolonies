@@ -1,14 +1,13 @@
 package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.ButtonHandler;
-import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.ScrollingList.DataProvider;
+import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.ColonyView;
@@ -17,6 +16,7 @@ import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -42,6 +42,14 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
     private static final String LABEL_EXPEDITION_NAME     = "expedition_name";
     private static final String LABEL_EXPEDITION_STATUS   = "expedition_status";
     private static final String BUTTON_EXPEDITION_OPEN    = "expedition_open";
+    private static final String LABEL_EMPTY               = "empty_text";
+    private static final String VIEW_EXPEDITION_DETAILS   = "expedition_details";
+    private static final String LIST_EXPEDITION_ITEMS     = "expedition_items";
+
+    /**
+     * The amount of item icons showing on a single list row.
+     */
+    private static final int ITEMS_PER_ROW = 9;
 
     /**
      * The client side colony data
@@ -58,6 +66,9 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
      */
     private final ScrollingList finishedExpeditionsList;
 
+    /**
+     * The current opened expedition data.
+     */
     @Nullable
     private OpenedExpeditionInfo openedExpedition;
 
@@ -77,6 +88,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         setupExpeditionList(finishedExpeditionsList, colony.getExpeditionManager()::getFinishedExpeditions, false);
 
         registerButton(BUTTON_EXPEDITION_OPEN, this::openExpedition);
+        updateOpenedExpedition();
     }
 
     /**
@@ -138,6 +150,66 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         if (finishedListIndex != -1)
         {
             openedExpedition = new OpenedExpeditionInfo(colony.getExpeditionManager().getFinishedExpeditions().get(finishedListIndex), finishedListIndex, false);
+        }
+
+        updateOpenedExpedition();
+    }
+
+    /**
+     * Updates the pane on the right to view the opened expedition.
+     */
+    private void updateOpenedExpedition()
+    {
+        findPaneOfTypeByID(LABEL_EMPTY, Text.class).setEnabled(openedExpedition == null);
+        findPaneOfTypeByID(LABEL_EMPTY, Text.class).setVisible(openedExpedition == null);
+
+        final View detailsContainer = findPaneOfTypeByID(VIEW_EXPEDITION_DETAILS, View.class);
+        detailsContainer.setEnabled(openedExpedition != null);
+        detailsContainer.setVisible(openedExpedition != null);
+
+        if (openedExpedition != null)
+        {
+            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(openedExpedition.instance.getExpeditionTypeId());
+            if (expeditionType == null)
+            {
+                return;
+            }
+
+            detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
+
+            final MutableComponent statusComponent =
+              Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + openedExpedition.instance.getStatus().name())
+                .withStyle(openedExpedition.instance.getStatus().getStatusType().getDisplayColor());
+            detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+
+            if (openedExpedition.instance.getStatus().getEventStatus().equals(EventStatus.DONE))
+            {
+                final ScrollingList itemsList = detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_ITEMS, ScrollingList.class);
+                itemsList.setDataProvider(new DataProvider()
+                {
+                    @Override
+                    public int getElementCount()
+                    {
+                        return (int) Math.ceil(openedExpedition.instance.getEquipment().size() / (double) ITEMS_PER_ROW);
+                    }
+
+                    @Override
+                    public void updateElement(final int i, final Pane pane)
+                    {
+                        for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
+                        {
+                            final int itemIndex = colIndex * (i + 1);
+                            if (openedExpedition.instance.getEquipment().size() <= itemIndex)
+                            {
+                                break;
+                            }
+
+                            final ItemStack item = openedExpedition.instance.getEquipment().get(itemIndex);
+                            pane.findPaneOfTypeByID("item_" + colIndex, ItemIcon.class).setItem(item);
+                        }
+                    }
+                });
+            }
         }
     }
 

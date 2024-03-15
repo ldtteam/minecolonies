@@ -31,7 +31,7 @@ public class Expedition implements IExpedition
      * The equipment given to the expedition prior to starting.
      */
     @NotNull
-    protected final Collection<ItemStack> equipment;
+    protected final List<ItemStack> equipment;
 
     /**
      * The members of the expedition.
@@ -47,7 +47,7 @@ public class Expedition implements IExpedition
     /**
      * The stage of the expedition.
      */
-    protected ExpeditionStatus status = ExpeditionStatus.CREATED;
+    protected ExpeditionStatus status;
 
     /**
      * Deserialization constructor.
@@ -56,7 +56,7 @@ public class Expedition implements IExpedition
      * @param members   the members for this expedition.
      * @param status    the status of the expedition.
      */
-    public Expedition(final @NotNull Collection<ItemStack> equipment, final @NotNull Collection<IExpeditionMember<?>> members, final ExpeditionStatus status)
+    public Expedition(final @NotNull List<ItemStack> equipment, final @NotNull List<IExpeditionMember<?>> members, final ExpeditionStatus status)
     {
         this.equipment = equipment;
         this.members = members.stream().collect(Collectors.toMap(IExpeditionMember::getId, v -> v));
@@ -113,30 +113,30 @@ public class Expedition implements IExpedition
 
     @Override
     @NotNull
-    public Collection<IExpeditionMember<?>> getMembers()
+    public List<IExpeditionMember<?>> getMembers()
     {
-        return this.members.values();
+        return this.members.values().stream().toList();
     }
 
     @Override
     @NotNull
-    public Collection<ItemStack> getEquipment()
+    public List<ItemStack> getEquipment()
     {
         return equipment;
     }
 
     @Override
     @NotNull
-    public Collection<IExpeditionMember<?>> getActiveMembers()
+    public List<IExpeditionMember<?>> getActiveMembers()
     {
         return this.members.values().stream().filter(f -> !f.isDead()).toList();
     }
 
     @Override
     @NotNull
-    public Collection<IExpeditionStage> getResults()
+    public List<IExpeditionStage> getResults()
     {
-        return Collections.unmodifiableCollection(this.results);
+        return this.results.stream().toList();
     }
 
     @Override

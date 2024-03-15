@@ -14,7 +14,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -59,8 +58,8 @@ public final class ColonyExpedition extends Expedition
      * @param expeditionTypeId the expedition type.
      */
     public ColonyExpedition(
-      final @NotNull Collection<ItemStack> equipment,
-      final @NotNull Collection<IExpeditionMember<?>> members,
+      final @NotNull List<ItemStack> equipment,
+      final @NotNull List<IExpeditionMember<?>> members,
       final @NotNull ExpeditionStatus status,
       final int id,
       final @NotNull ResourceKey<Level> dimensionId,
