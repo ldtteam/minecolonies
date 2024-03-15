@@ -1,9 +1,13 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -21,37 +25,39 @@ public class PathJobCanSee extends AbstractPathJob
     private final LivingEntity lookTarget;
 
     /**
-     * The entity to move
+     * The position we want to search around from, usually guarding pos, so guide the heuristic there from the current entity position
      */
-    private final LivingEntity searchingEntity;
+    private final BlockPos searchAroundPos;
 
     public PathJobCanSee(
-      final LivingEntity searchingEntity,
+      final Mob searchingEntity,
       final LivingEntity lookTarget,
       final Level world,
-      @NotNull final BlockPos pos, final int range)
+      @NotNull final BlockPos searchAroundPos, final int range)
     {
-        super(world, searchingEntity.blockPosition(), pos, range, searchingEntity);
+        super(world, PathfindingUtils.prepareStart(searchingEntity), range, new PathResult<PathJobCanSee>(), searchingEntity);
 
-        this.searchingEntity = searchingEntity;
+        this.searchAroundPos = searchAroundPos;
         this.lookTarget = lookTarget;
     }
 
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.distManhattan(start.getX(), start.getY(), start.getZ(), x, y, z);
+        return BlockPosUtil.distManhattan(searchAroundPos.getX(), searchAroundPos.getY(), searchAroundPos.getZ(), x, y, z);
     }
 
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (end.getY() - n.y > 2)
+        if (searchAroundPos.getY() - n.y > 2)
         {
             return false;
         }
 
-        return canSeeTargetFromPos(tempWorldPos.set(n.x, n.y, n.z));
+        return canSeeTargetFromPos(tempWorldPos.set(n.x, n.y, n.z))
+                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                      == SurfaceType.WALKABLE;
     }
 
     /**
@@ -61,16 +67,15 @@ public class PathJobCanSee extends AbstractPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final MNode n)
+    protected double getEndNodeScore(@NotNull final MNode n)
     {
-        //  For Result Score lower is better
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }
 
     private boolean canSeeTargetFromPos(final BlockPos pos)
     {
-        Vec3 vec3d = new Vec3(pos.getX(), pos.getY() + entity.get().getEyeHeight(), pos.getZ());
+        Vec3 vec3d = new Vec3(pos.getX(), pos.getY() + entity.getEyeHeight(), pos.getZ());
         Vec3 vec3d1 = new Vec3(lookTarget.getX(), lookTarget.getEyeY(), lookTarget.getZ());
-        return this.world.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity.get())).getType() == HitResult.Type.MISS;
+        return this.world.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getType() == HitResult.Type.MISS;
     }
 }

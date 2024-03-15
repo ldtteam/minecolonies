@@ -1,7 +1,8 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -31,16 +32,22 @@ public class PathJobPathway extends AbstractPathJob
      */
     private double addCost = 1.0;
 
+    /**
+     * The destination pos
+     */
+    private final BlockPos end;
+
     public PathJobPathway(
       final int colonyID,
       final List<IBuilding> buildings,
       final Level world,
-      @NotNull final BlockPos start, final BlockPos end, final int range, final EntityCitizen citizen)
+      @NotNull final BlockPos start, final BlockPos end, final EntityCitizen citizen)
     {
-        super(world, start, end, range, citizen);
+        super(world, start, end, new PathResult<PathJobPathway>(), citizen);
         this.colonyid = colonyID;
         this.buildings = buildings;
-        setPathingOptions(new PathingOptions().withJumpCost(100).withStartSwimCost(30).withSwimCost(5).withCanSwim(true).withCanEnterDoors(true));
+        this.end = end;
+        setPathingOptions(new PathingOptions().withJumpCost(30).withStartSwimCost(30).withSwimCost(5).withCanSwim(true).withCanEnterDoors(true));
     }
 
     // TODO: Before usage not thread safe chunk/cap access. Should be using passed along info
@@ -63,7 +70,7 @@ public class PathJobPathway extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(final MNode n)
+    protected double getEndNodeScore(final MNode n)
     {
         final double dist = BlockPosUtil.dist(end, n.x, n.y, n.z);
         if (dist < 15)
@@ -96,7 +103,7 @@ public class PathJobPathway extends AbstractPathJob
     }
 
     @Override
-    protected double calcAdditionalCost(final double stepCost, final MNode parent, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(final double stepCost, final MNode parent, final int x, final int y, final int z, final BlockState state)
     {
         if (parent.parent != null && parent.x == parent.parent.x && x != parent.x)
         {

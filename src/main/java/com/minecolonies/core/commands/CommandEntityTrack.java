@@ -5,7 +5,7 @@ import com.minecolonies.api.util.constant.translation.CommandTranslationConstant
 import com.minecolonies.core.Network;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
-import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.network.messages.client.SyncPathMessage;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -50,16 +50,16 @@ public class CommandEntityTrack implements IMCColonyOfficerCommand
             }
 
             final Entity entity = entities.iterator().next();
-            if (AbstractPathJob.trackingMap.getOrDefault((Player) sender, UUID.randomUUID()).equals(entity.getUUID()))
+            if (PathfindingUtils.trackingMap.getOrDefault(sender.getUUID(), UUID.randomUUID()).equals(entity.getUUID()))
             {
                 context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
-                AbstractPathJob.trackingMap.remove((Player) sender);
+                PathfindingUtils.trackingMap.remove(sender.getUUID());
                 Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
             }
             else
             {
                 context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
-                AbstractPathJob.trackingMap.put((Player) sender, entity.getUUID());
+                PathfindingUtils.trackingMap.put(sender.getUUID(), entity.getUUID());
             }
             return 1;
         }
