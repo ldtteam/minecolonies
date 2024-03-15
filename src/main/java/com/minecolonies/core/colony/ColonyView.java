@@ -844,7 +844,8 @@ public final class ColonyView implements IColonyView
         if (isNewSubscription
               && StructurePacks.hasPack(this.style)
               && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null
-              && false // this.isCoordInColony(world, Minecraft.getInstance().player.blockPosition()) TODO: move this somewhere else
+              && Minecraft.getInstance().player != null
+              && this.isCoordInColony(getWorld(), Minecraft.getInstance().player.blockPosition())
         )
         {
             StructurePacks.selectedPack = StructurePacks.getStructurePack(this.style);
