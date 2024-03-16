@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_STORIES_DIR;
 import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 
 /**
@@ -74,7 +75,7 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
      */
     public ColonyStoryListener()
     {
-        super(GSON, "stories");
+        super(GSON, COLONY_STORIES_DIR);
     }
 
     /**

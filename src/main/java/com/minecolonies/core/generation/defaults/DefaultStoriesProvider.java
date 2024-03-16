@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_STORIES_DIR;
 
 public class DefaultStoriesProvider implements DataProvider
 {
@@ -38,7 +39,7 @@ public class DefaultStoriesProvider implements DataProvider
     @Override
     public CompletableFuture<?> run(@NotNull final CachedOutput cachedOutput)
     {
-        final PackOutput.PathProvider outputProvider = packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, "stories");
+        final PackOutput.PathProvider outputProvider = packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, COLONY_STORIES_DIR);
 
         return CompletableFuture.allOf(makeAbandonedStories(outputProvider, cachedOutput), makeSupplyStories(outputProvider, cachedOutput));
     }
