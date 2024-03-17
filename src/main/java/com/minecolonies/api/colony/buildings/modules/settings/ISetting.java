@@ -117,25 +117,26 @@ public interface ISetting<S>
         final Component tooltip = Component.translatable(tooltipKey);
         final Component inActiveReason = getInactiveReason();
 
-        if (tooltip.getString().equals(tooltipKey) && inActiveReason == null)
-        {
-            component.setHoverPane(null);
-            return;
-        }
+        final boolean hasTooltip = !tooltip.getString().equals(tooltipKey);
+        final boolean isActive = isActive(settingsModuleView);
 
-        if (isActive(settingsModuleView))
+        if (isActive && hasTooltip)
         {
             PaneBuilders.tooltipBuilder()
               .append(tooltip)
               .hoverPane(component)
               .build();
         }
-        else
+        else if (!isActive && (hasTooltip || inActiveReason != null))
         {
             PaneBuilders.tooltipBuilder()
               .append(inActiveReason != null ? inActiveReason : tooltip)
               .hoverPane(component)
               .build();
+        }
+        else
+        {
+            component.setHoverPane(null);
         }
     }
 
