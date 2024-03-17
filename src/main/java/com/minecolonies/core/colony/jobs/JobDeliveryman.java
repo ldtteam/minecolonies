@@ -359,7 +359,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     @Override
     public void onRemoval()
     {
-        super.onRemoval();
         getCitizen().setWorking(false);
         try
         {
@@ -369,7 +368,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         {
             Log.getLogger().warn("Active Triggered resulted in exception", ex);
         }
-
+        super.onRemoval();
         getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
     }
 

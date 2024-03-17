@@ -93,7 +93,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
             if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
-                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
+                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR/1) < citizenModifier)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
@@ -209,8 +209,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
-    public void setSleepsAtHospital()
+    public void setSleepsAtHospital(final boolean isAtHospital)
     {
-        sleepsAtHospital = true;
+        sleepsAtHospital = isAtHospital;
     }
 }
