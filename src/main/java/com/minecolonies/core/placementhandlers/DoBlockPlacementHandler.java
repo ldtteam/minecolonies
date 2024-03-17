@@ -8,6 +8,7 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
+import com.ldtteam.domumornamentum.util.MaterialTextureDataUtil;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -56,6 +57,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
                 try
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getMaterializedItemStack(null, world.getBlockEntity(pos)));
                 }
                 catch (final Exception ex)
                 {
@@ -75,6 +77,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getMaterializedItemStack(null, world.getBlockEntity(pos)));
             }
             catch (final Exception ex)
             {
