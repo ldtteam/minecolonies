@@ -4,7 +4,6 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.core.BlockPos;
@@ -102,22 +101,5 @@ public final class BuildingUtils
         return building.canAssignCitizens()
                 && (hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || hiringMode == HiringMode.AUTO)
                 && (job == null || getAllowedJobs(building.getColony().getWorld(), building.getPosition()).test(job));
-    }
-
-    /**
-     * Check if the given building should try to automatically hire a new citizen.
-     *
-     * @param building   the building to check.
-     * @param hiringMode the current hiring mode of the job.
-     * @param job        the job to hire, or null for a non-specific check.
-     * @return           true if automatic hiring is allowed.
-     */
-    public static boolean canAutoHire(@NotNull final IBuildingView building,
-      @NotNull final HiringMode hiringMode,
-      @Nullable final JobEntry job)
-    {
-        return building.allowsAssignment()
-                 && (hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || hiringMode == HiringMode.AUTO)
-                 && (job == null || getAllowedJobs(building.getColony().getWorld(), building.getPosition()).test(job));
     }
 }
