@@ -1069,6 +1069,7 @@ public class CitizenData implements ICitizenData
     public void setName(final String name)
     {
         this.name = name;
+        markDirty(0);
     }
 
     @Override

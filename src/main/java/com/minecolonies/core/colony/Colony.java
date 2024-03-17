@@ -73,6 +73,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -107,7 +108,7 @@ public class Colony implements IColony
     /**
      * List of loaded chunks for the colony.
      */
-    private Set<Long> loadedChunks = new HashSet<>();
+    private ConcurrentHashMap<Long, Long> loadedChunks = new ConcurrentHashMap<>();
 
     /**
      * List of loaded chunks for the colony.
@@ -1851,7 +1852,7 @@ public class Colony implements IColony
                 this.pendingChunks.add(chunkPos);
             }
         }
-        this.loadedChunks.add(chunkPos);
+        this.loadedChunks.put(chunkPos, chunkPos);
     }
 
     @Override
@@ -1870,7 +1871,7 @@ public class Colony implements IColony
     @Override
     public Set<Long> getLoadedChunks()
     {
-        return loadedChunks;
+        return loadedChunks.keySet();
     }
 
     @Override

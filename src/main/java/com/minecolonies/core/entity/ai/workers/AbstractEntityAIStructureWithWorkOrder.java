@@ -215,16 +215,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.getWorkOrder().setAmountOfResources(newQuantity);
         }
     }
-
     @Override
-    protected IAIState waitForRequests()
+    protected boolean checkIfNeedsItem()
     {
-        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !building.hasCitizenCompletedRequests(worker.getCitizenData()) && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint()))
+        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !building.hasCitizenCompletedRequests(worker.getCitizenData()) && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || !job.getWorkOrder().isRequested()))
         {
-            return START_BUILDING;
+            return false;
         }
-
-        return super.waitForRequests();
+        return super.checkIfNeedsItem();
     }
 
     @Override

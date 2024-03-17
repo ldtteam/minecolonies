@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessMod
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;

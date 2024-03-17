@@ -1,10 +1,13 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding.navigation;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
+import com.minecolonies.api.entity.pathfinding.IStuckHandler;
+import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Mob;
@@ -205,7 +208,7 @@ public class PathingStuckHandler implements IStuckHandler
             }
             else
             {
-                if (lastPathIndex != -1 && navigator.getPath().getTarget().distSqr(prevDestination) < 25)
+                if (lastPathIndex != -1 && (stuckLevel == 0 || navigator.getPath().getTarget().distSqr(prevDestination) < 25))
                 {
                     progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
 
@@ -370,7 +373,7 @@ public class PathingStuckHandler implements IStuckHandler
         // 20 % to decrease to the previous level again
         if (stuckLevel > 1 && rand.nextInt(6) == 0)
         {
-            stuckLevel -= 2;
+            stuckLevel = Math.max(1, stuckLevel - 2);
         }
     }
 

@@ -15,7 +15,7 @@ body:
       label: Are you using the latest MineColonies Version?
       description: Please check to see if any newer version fixes the issue you're experiencing.
       options:
-        - label:  I am running the latest **alpha** version of MineColonies for my Minecraft version.
+        - label:  I am running the latest **beta** version of MineColonies for my Minecraft version.
           required: true
   - type: checkboxes
     attributes:

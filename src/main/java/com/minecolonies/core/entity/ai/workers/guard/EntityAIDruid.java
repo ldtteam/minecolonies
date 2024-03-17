@@ -5,7 +5,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobDruid;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;

@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -114,12 +115,12 @@ public final class BlockPosUtil
     /**
      * Searches a random direction.
      *
-     * @param random a random object.
      * @return a tuple of two directions.
      */
-    public static Tuple<Direction, Direction> getRandomDirectionTuple(final RandomSource random)
+    public static Tuple<Direction, Direction> getRandomDirectionTuple()
     {
-        return new Tuple<>(Direction.getRandom(random), Direction.getRandom(random));
+        return new Tuple<>(Direction.values()[ColonyConstants.rand.nextInt(Direction.values().length)],
+          Direction.values()[ColonyConstants.rand.nextInt(Direction.values().length)]);
     }
 
     /**
@@ -134,8 +135,6 @@ public final class BlockPosUtil
      */
     public static BlockPos getRandomPosition(final Level world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
-        final RandomSource random = world.random;
-
         int tries = 0;
         BlockPos pos = null;
         while (pos == null
@@ -144,13 +143,13 @@ public final class BlockPosUtil
                  || !BlockUtils.isAnySolid(world.getBlockState(pos.below()))
                  || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
         {
-            final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
+            final Tuple<Direction, Direction> direction = getRandomDirectionTuple();
             pos =
               new BlockPos(currentPosition)
-                .relative(direction.getA(), random.nextInt(maxDist) + minDist)
-                .relative(direction.getB(), random.nextInt(maxDist) + minDist)
-                .above(random.nextInt(UP_DOWN_RANGE))
-                .below(random.nextInt(UP_DOWN_RANGE));
+                .relative(direction.getA(), ColonyConstants.rand.nextInt(maxDist) + minDist)
+                .relative(direction.getB(), ColonyConstants.rand.nextInt(maxDist) + minDist)
+                .above(ColonyConstants.rand.nextInt(UP_DOWN_RANGE))
+                .below(ColonyConstants.rand.nextInt(UP_DOWN_RANGE));
 
             if (tries >= MAX_TRIES)
             {
@@ -482,6 +481,17 @@ public final class BlockPosUtil
     /**
      * Manhatten distance
      */
+    public static int distManhattan(final BlockPos pos, final BlockPos pos2)
+    {
+        int xDist = Math.abs(pos.getX() - pos2.getX());
+        int yDist = Math.abs(pos.getY() - pos2.getY());
+        int zDist = Math.abs(pos.getZ() - pos2.getZ());
+        return xDist + yDist + zDist;
+    }
+
+    /**
+     * Manhatten distance
+     */
     public static int distManhattan(final BlockPos pos, final int x2, final int y2, final int z2)
     {
         int xDist = Math.abs(pos.getX() - x2);
@@ -698,9 +708,19 @@ public final class BlockPosUtil
      * @param z      z-coordinate        (point 2).
      * @return True when coordinates are equal, otherwise false.
      */
-    public static boolean isEqual(@NotNull final BlockPos coords, final int x, final int y, final int z)
+    public static boolean equals(@NotNull final BlockPos coords, final int x, final int y, final int z)
     {
         return coords.getX() == x && coords.getY() == y && coords.getZ() == z;
+    }
+
+    public static boolean equals(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        return x1 == x2 && y1 == y2 && z1 == z2;
+    }
+
+    public static boolean equals(final BlockPos pos1, final BlockPos pos2)
+    {
+        return pos1.equals(pos2);
     }
 
     /**

@@ -198,7 +198,7 @@ public enum AIWorkerState implements IAIState
     /**
      * Decision state for guards.
      */
-    GUARD_DECIDE(false),
+    GUARD_DECIDE(true),
 
     /**
      * Physically attack the target.
@@ -223,12 +223,12 @@ public enum AIWorkerState implements IAIState
     /**
      * Sleeping on duty
      */
-    GUARD_SLEEP(false),
+    GUARD_SLEEP(true),
 
     /**
      * Wake up another guard
      */
-    GUARD_WAKE(false),
+    GUARD_WAKE(true),
 
     /**
      * Follow a player.

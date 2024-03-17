@@ -1,11 +1,14 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +29,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     // 0 = exact match
     private              float    destinationSlack           = DESTINATION_SLACK_NONE;
 
-    // TODO: Adjust and scale heuristics, overestimate for large distances to lower cost & increase reachability
+    // TODO: Adjust and scale heuristics, overestimate for large distances to lower cost & increase reachability/smart entity heuristics
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -37,9 +40,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @param range  max search range.
      * @param entity the entity.
      */
-    public PathJobMoveToLocation(final Level world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntity entity)
+    public PathJobMoveToLocation(final Level world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final Mob entity)
     {
-        super(world, start, end, range, entity);
+        super(world, start, end, new PathResult<PathJobMoveToLocation>(), entity);
 
         this.destination = new BlockPos(end);
     }
@@ -69,14 +72,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected BlockPos getPathTargetPos(final MNode finalNode)
-    {
-        return destination;
-    }
-
-    @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
+        // TODO: Improve heuristics
         return BlockPosUtil.distManhattan(destination, x, y, z);
     }
 
@@ -89,18 +87,29 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
+        boolean atDest = false;
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
-            return n.x == destination.getX()
-                     && n.y == destination.getY()
-                     && n.z == destination.getZ();
+            atDest = n.x == destination.getX()
+                       && n.y == destination.getY()
+                       && n.z == destination.getZ();
+        }
+        else if (n.y == destination.getY() - 1)
+        {
+            atDest = BlockPosUtil.distSqr(destination, n.x, destination.getY(), n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
+        }
+        else
+        {
+            atDest = BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
         }
 
-        if (n.y == destination.getY() - 1)
+        if (atDest)
         {
-            return BlockPosUtil.distSqr(destination, n.x, destination.getY(), n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
+            atDest = SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                       == SurfaceType.WALKABLE;
         }
-        return BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
+
+        return atDest;
     }
 
     /**
@@ -110,8 +119,13 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final MNode n)
+    protected double getEndNodeScore(@NotNull final MNode n)
     {
+        if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(n.x, n.y, n.z)))
+        {
+            return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z) + 30;
+        }
+
         //  For Result Score lower is better
         return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z);
     }

@@ -3,7 +3,7 @@ package com.minecolonies.api.util;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
