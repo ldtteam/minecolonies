@@ -1,7 +1,6 @@
-package com.minecolonies.core.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding.proxy;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.pathfinding.proxy.AbstractWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;

@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding.world;
 
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -59,13 +59,13 @@ public class ChunkCache implements LevelReader
     private final int minBuildHeight;
     private final int maxBuildHeight;
 
-    public ChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn, final DimensionType type)
+    public ChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn)
     {
         this.world = worldIn;
-        this.chunkX = posFromIn.getX() - subIn >> 4;
-        this.chunkZ = posFromIn.getZ() - subIn >> 4;
-        int i = posToIn.getX() + subIn >> 4;
-        int j = posToIn.getZ() + subIn >> 4;
+        this.chunkX = posFromIn.getX() >> 4;
+        this.chunkZ = posFromIn.getZ() >> 4;
+        int i = posToIn.getX() >> 4;
+        int j = posToIn.getZ() >> 4;
         this.chunkArray = new LevelChunk[i - this.chunkX + 1][j - this.chunkZ + 1];
         this.empty = true;
 
@@ -83,7 +83,7 @@ public class ChunkCache implements LevelReader
                 }
             }
         }
-        this.dimType = type;
+        this.dimType = worldIn.dimensionType();
 
         minBuildHeight = worldIn.getMinBuildHeight();
         maxBuildHeight = worldIn.getMaxBuildHeight();
@@ -151,6 +151,7 @@ public class ChunkCache implements LevelReader
             }
         }
 
+        // TODO: Raiders can path through air with leaves, potential issue
         return Blocks.AIR.defaultBlockState();
     }
 

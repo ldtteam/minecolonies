@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class Pond
 {
+    //TODO: Recheck logic/rewrite it simpler, return central pond position instead of the water pos next to the standing for better direction
+
     /**
      * The minimum pond requirements.
      */
@@ -84,7 +86,7 @@ public final class Pond
       final int length)
     {
         //Check 6 blocks in direction +/- x
-        for (int dx = x + width * vector; dx <= x + width * vector; dx++)
+        for (int dx = x - (width / 2 * vector); dx <= x + (width / 2 * vector); dx++)
         {
             if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.WATER)
             {
@@ -118,7 +120,7 @@ public final class Pond
       final int length)
     {
         //Check 6 blocks in direction +/- z
-        for (int dz = z + width * vector; dz <= z + width * vector; dz++)
+        for (int dz = z - (width / 2 * vector); dz <= z + (width / 2 * vector); dz++)
         {
             if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.WATER)
             {
@@ -143,7 +145,7 @@ public final class Pond
     private static boolean checkWaterPoolInDirectionZ(@NotNull final BlockGetter world, final int x, final int y, final int z, final int vector)
     {
         //Check 3 blocks in direction +/- z
-        for (int dz = z + WATER_POOL_LENGTH_REQUIREMENT * vector; dz <= z + WATER_POOL_LENGTH_REQUIREMENT * vector; dz++)
+        for (int dz = z - WATER_POOL_LENGTH_REQUIREMENT * vector; dz <= z + WATER_POOL_LENGTH_REQUIREMENT * vector; dz++)
         {
             if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.WATER)
             {
@@ -166,7 +168,7 @@ public final class Pond
     private static boolean checkWaterPoolInDirectionX(@NotNull final BlockGetter world, final int x, final int y, final int z, final int vector)
     {
         //Check 3 blocks in direction +/- x
-        for (int dx = x + WATER_POOL_LENGTH_REQUIREMENT * vector; dx <= x + WATER_POOL_LENGTH_REQUIREMENT * vector; dx++)
+        for (int dx = x - WATER_POOL_LENGTH_REQUIREMENT * vector; dx <= x + WATER_POOL_LENGTH_REQUIREMENT * vector; dx++)
         {
             if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.WATER)
             {

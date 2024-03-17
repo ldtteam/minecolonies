@@ -1,12 +1,13 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -41,16 +42,13 @@ public class PathJobFindWater extends AbstractPathJob
       final BlockPos home,
       final int range,
       @NotNull final List<Tuple<BlockPos, BlockPos>> ponds,
-      final LivingEntity entity)
+      final Mob entity)
     {
-        super(world, start, start, range, new WaterPathResult(), entity);
+        super(world, start, range, new WaterPathResult(), entity);
         this.ponds = new ArrayList<>(ponds);
         hutLocation = home;
-    }
-
-    private static double squareDistance(@NotNull final BlockPos currentPond, @NotNull final BlockPos nextPond)
-    {
-        return currentPond.distSqr(nextPond);
+        getPathingOptions().swimCostEnter = 0;
+        getPathingOptions().swimCost = 0.2;
     }
 
     @NotNull
@@ -60,16 +58,10 @@ public class PathJobFindWater extends AbstractPathJob
         return (WaterPathResult) super.getResult();
     }
 
-    // TODO: recheck heuristic
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        final int dx = x - hutLocation.getX();
-        final int dy = y - hutLocation.getY();
-        final int dz = z - hutLocation.getZ();
-
-        //  Manhattan Distance with a 1/1000th tie-breaker - halved
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D;
+        return BlockPosUtil.distManhattan(hutLocation, x, y, z);
     }
 
     //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
@@ -81,11 +73,13 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (isWater(n))
+        if (isNearWater(n))
         {
             getResult().parent = new BlockPos(n.x, n.y, n.z);
             getResult().isEmpty = ponds.isEmpty();
-            return true;
+
+            return SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                     == SurfaceType.WALKABLE;
         }
 
         return false;
@@ -97,7 +91,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param n the location.
      * @return true if so.
      */
-    private boolean isWater(@NotNull final MNode n)
+    private boolean isNearWater(@NotNull final MNode n)
     {
         if (n.parent == null)
         {
@@ -147,18 +141,12 @@ public class PathJobFindWater extends AbstractPathJob
 
         for (Tuple<BlockPos, BlockPos> p : ponds)
         {
-            if (squareDistance(p.getB(), newPond) < MIN_DISTANCE * MIN_DISTANCE)
+            if (BlockPosUtil.distSqr(p.getB(), newPond) < MIN_DISTANCE * MIN_DISTANCE)
             {
                 return true;
             }
         }
         return false;
-    }
-
-    @Override
-    protected double getNodeResultScore(final MNode n)
-    {
-        return 0;
     }
 }
 

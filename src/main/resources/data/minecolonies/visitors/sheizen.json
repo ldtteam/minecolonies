@@ -1,0 +1,10 @@
+{
+  "texture": "358f62db-ff25-4067-83cc-5c20133817ce",
+  "citizensuffix": "_w",
+  "name": "Reizar Sheizen",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.sheizen",
+  "recruitcost": "minecraft:diamond_sword",
+  "recruitcostcount": 1,
+  "gender": "male"
+}

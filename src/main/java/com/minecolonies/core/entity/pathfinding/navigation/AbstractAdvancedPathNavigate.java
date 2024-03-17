@@ -1,8 +1,14 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding.navigation;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.pathfinding.IPathJob;
+import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -15,16 +21,6 @@ import java.util.List;
 
 public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
 {
-    /**
-     * Type of restriction.
-     */
-    public enum RestrictionType
-    {
-        NONE,
-        XZ,
-        XYZ
-    }
-
     //  Parent class private members
     protected final Mob    ourEntity;
     @Nullable
@@ -137,8 +133,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     public abstract PathResult<? extends IPathJob> moveToRandomPos(
       final int range,
       final double speed,
-      final net.minecraft.util.Tuple<BlockPos, BlockPos> corners,
-      final RestrictionType restrictionType);
+      final net.minecraft.util.Tuple<BlockPos, BlockPos> corners);
 
     /**
      * Used to find a tree.

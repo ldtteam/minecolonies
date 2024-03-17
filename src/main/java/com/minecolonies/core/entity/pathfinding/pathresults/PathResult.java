@@ -1,6 +1,7 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding.pathresults;
 
 import com.minecolonies.api.util.Log;
+import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 

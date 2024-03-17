@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.core.entity.pathfinding;
 
 public enum PathFindingStatus
 {
