@@ -51,4 +51,14 @@ public class VisitorColonyHandler extends CitizenColonyHandler
         colony.getVisitorManager().registerCivilian(citizen);
         registered = true;
     }
+
+    @Override
+    public void onCitizenRemoved()
+    {
+        if (citizen.getCitizenData() != null && registered && colony != null)
+        {
+            colony.getVisitorManager().unregisterCivilian(citizen);
+            citizen.getCitizenData().setLastPosition(citizen.blockPosition());
+        }
+    }
 }
