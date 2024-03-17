@@ -55,6 +55,10 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     private static final String TAG_FLAG_REMAINING_ITEMS_EMPTY = "flagRemainingItemsEmpty";
 
     /**
+     * 
+     */
+
+    /**
      * The size of the expedition inventory.
      */
     private static final int EXPEDITION_INVENTORY_SIZE = 27;

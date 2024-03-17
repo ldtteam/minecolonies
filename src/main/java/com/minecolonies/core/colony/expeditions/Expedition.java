@@ -7,12 +7,15 @@ import com.minecolonies.api.colony.expeditions.IExpeditionStage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_STAGE_WILDERNESS;
 
 /**
  * Class for an expedition instance.
@@ -42,7 +45,7 @@ public class Expedition implements IExpedition
     /**
      * The results of this expedition.
      */
-    protected final Deque<IExpeditionStage> results = new ArrayDeque<>(List.of(new ExpeditionStage()));
+    protected final Deque<IExpeditionStage> results = new ArrayDeque<>(List.of(new ExpeditionStage(Component.translatable(EXPEDITION_STAGE_WILDERNESS))));
 
     /**
      * The stage of the expedition.
@@ -140,9 +143,9 @@ public class Expedition implements IExpedition
     }
 
     @Override
-    public void advanceStage()
+    public void advanceStage(final Component header)
     {
-        this.results.add(new ExpeditionStage());
+        this.results.add(new ExpeditionStage(header));
     }
 
     @Override
@@ -154,7 +157,7 @@ public class Expedition implements IExpedition
     @Override
     public void mobKilled(final EntityType<?> type)
     {
-        this.results.getLast().rewardFound(type);
+        this.results.getLast().addKill(type);
     }
 
     @Override

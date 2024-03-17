@@ -2605,11 +2605,11 @@
   "com.minecolonies.core.expedition.gui.townhall.header_results": "Results",
   "com.minecolonies.core.expedition.gui.townhall.empty_list_active": "No active expeditions.",
   "com.minecolonies.core.expedition.gui.townhall.empty_list_finished": "No previous expeditions.",
-  "com.minecolonies.core.expedition.gui.townhall.expedition_list.to_text": "To %s",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.CREATED": "Ongoing",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.EMBARKED": "Ongoing",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.RETURNED": "Safely Returned",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.KILLED": "Not Returned",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.LOST": "Not Returned",
-  "com.minecolonies.core.expedition.gui.townhall.no_chosen": "Please choose an expedition to view more details."
+  "com.minecolonies.core.expedition.gui.townhall.no_chosen": "Please choose an expedition to view more details.",
+  "com.minecolonies.core.expedition.stages.wilderness": "Wilderness"
 }

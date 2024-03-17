@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.EntityState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.util.WorldUtil;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +65,7 @@ public class EntityAIExpeditionary implements IState
      */
     private VisitorState wander()
     {
-        visitor.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, townhall.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+        visitor.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, townhall.getCorners());
 
         return VisitorState.WANDERING;
     }

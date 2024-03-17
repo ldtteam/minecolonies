@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.expeditions;
 
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -61,8 +62,10 @@ public interface IExpedition
     /**
      * Advances the current stage of the expedition.
      * Adding a new stage on top of the current one.
+     *
+     * @param header the header for this new stage.
      */
-    void advanceStage();
+    void advanceStage(final Component header);
 
     /**
      * Adds a reward to the current newest stage.
