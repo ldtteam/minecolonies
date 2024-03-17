@@ -206,7 +206,7 @@ public class PathJobFindTree extends AbstractPathJob
             }
         }
 
-        if (!restrictionBox.contains(x, y, z))
+        if (restrictionBox != null && !restrictionBox.contains(x, y, z))
         {
             cost *= 2;
         }

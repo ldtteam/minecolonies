@@ -726,4 +726,11 @@ VisitorCitizen extends AbstractEntityCitizen
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
         }
     }
+
+    @Override
+    public void setRemoved(final RemovalReason reason)
+    {
+        citizenColonyHandler.onCitizenRemoved();
+        super.setRemoved(reason);
+    }
 }
