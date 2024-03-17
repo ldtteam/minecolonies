@@ -1,9 +1,14 @@
 {
   "values": [
-    "minecolonies:barrel_block",
-    "minecolonies:blockhutcrusher",
+    "#minecraft:planks",
+    "#minecraft:wooden_slabs",
+    "#minecraft:wooden_stairs",
+    "minecraft:bamboo_mosaic",
+    "minecraft:bamboo_mosaic_slab",
+    "minecraft:bamboo_mosaic_stairs",
     "minecraft:bamboo_hanging_sign",
+    "#minecraft:boats",
     "#minecraft:chest_boats",
-    "#minecraft:planks"
+    "minecolonies:barrel_block"
   ]
 }

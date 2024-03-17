@@ -52,7 +52,8 @@ public class CrafterRecipeSetting extends StringSettingWithDesc
     }
 
     @Override
-    public @Nullable Component getInactiveReason()
+    @Nullable
+    public Component getInactiveReason()
     {
         return Component.translatable(NEEDS_RESEARCH_REASON, Component.translatable(WAREHOUSE_MASTER_RESEARCH));
     }
