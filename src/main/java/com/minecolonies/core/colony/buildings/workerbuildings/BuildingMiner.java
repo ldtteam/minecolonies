@@ -121,8 +121,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         if (getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.quarrier.get()).getAssignedCitizen().isEmpty())
         {
-            //Ask for 10x the resources if possible
-            return 10;
+            //Ask for 4x the resources if possible
+            return 4;
         }
         return 1;
     }

@@ -200,7 +200,7 @@ public class EntityAISickTask implements IStateAI
                           && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                           && world.isEmptyBlock(pos.above()))
                     {
-                        citizen.getCitizenDiseaseHandler().setSleepsAtHospital();
+                        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(true);
                         usedBed = pos;
                         ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCivilianID());
                         return FIND_EMPTY_BED;
@@ -360,13 +360,15 @@ public class EntityAISickTask implements IStateAI
     }
 
     /**
-     * Go to the hut to try to get food there first.
+     * Go to the hut to move to the hospital from there.
      *
      * @return the next state to go to.
      */
     private IState goToHut()
     {
         final IBuilding buildingWorker = citizenData.getWorkBuilding();
+        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(false);
+
         if (buildingWorker == null)
         {
             return SEARCH_HOSPITAL;
@@ -386,6 +388,7 @@ public class EntityAISickTask implements IStateAI
      */
     private IState goToHospital()
     {
+        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(false);
         if (placeToPath == null)
         {
             return SEARCH_HOSPITAL;
@@ -477,6 +480,7 @@ public class EntityAISickTask implements IStateAI
         citizen.stopUsingItem();
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
+        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(false);
     }
 
     // TODO: Citizen AI should set status icons
