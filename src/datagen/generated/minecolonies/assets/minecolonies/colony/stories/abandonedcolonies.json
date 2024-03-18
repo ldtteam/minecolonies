@@ -1,0 +1,92 @@
+[
+  {
+    "type": "minecolonies:abandoned_name",
+    "biomes": [
+      "#forge:is_wet",
+      "#forge:is_plains"
+    ],
+    "content": [
+      "Clearwater",
+      "Riverdale",
+      "Lakeside",
+      "Brookside",
+      "Willow Creek",
+      "Serenity Springs"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned_name",
+    "biomes": "#forge:is_cold",
+    "content": [
+      "Silvervale",
+      "Frostfield",
+      "Misty Hollow",
+      "Frostwood"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned_name",
+    "biomes": "#forge:is_desert",
+    "content": [
+      "Goldenridge",
+      "Ashford"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned_name",
+    "content": [
+      "Willowbrook",
+      "Greenwood",
+      "Oakwood",
+      "Stonybrook",
+      "Maplewood",
+      "Fairview",
+      "Pinecrest",
+      "Rosewood",
+      "Meadowbrook",
+      "Suncrest",
+      "Hillcrest",
+      "Ravenwood",
+      "Springvale",
+      "Briarwood",
+      "Evergreen",
+      "Whispering Pines",
+      "Shadowvale",
+      "Highgate",
+      "Millstone",
+      "Emberglow",
+      "Mistwood",
+      "Sycamore",
+      "Moonlight Hollow",
+      "Harveston",
+      "Greenwood",
+      "Stonehaven",
+      "Silverwood",
+      "Redwood",
+      "Ironwood",
+      "Greenwood",
+      "Birchwood",
+      "Pineview",
+      "Foxgrove",
+      "Elmwood",
+      "Briarvale",
+      "Brookhaven",
+      "Whitestone",
+      "Summerfield"
+    ]
+  },
+  {
+    "type": "minecolonies:abandoned",
+    "content": [
+      "3rd day of Summer, Year 7, in the Era of Prosperity:\nToday, we founded our settlement: %s in this %s. The soil is rich, the air is crisp, and the land promises a bountiful future. With a modest group of settlers, we begin to lay the foundations of our new home, full of hope and ambition.\n\n11th day of Autumn, Year 8, in the Era of Prosperity:\nOur numbers have swelled to over fifty souls as travelers and adventurers are drawn to our burgeoning village. Trade caravans arrive regularly, bringing news from distant lands and exchanging goods. Our prosperity seems assured as our fields yield abundant harvests and our craftsmen ply their trades with skill.\n\n27th day of Winter, Year 10, in the Era of Prosperity:\nDarkness descends upon us as raiders from neighboring tribes launch a surprise attack under the cover of night. Despite our valiant efforts, we suffer heavy losses. In the aftermath, we fortify our defenses, erecting stout walls and training militia to protect our people. Fear hangs heavy in the air, but we resolve to stand firm against future threats.\n\n2nd day of Spring, Year 11, in the Era of Prosperity:\nThe raids persist, relentless in their ferocity. Our numbers dwindle, and morale wanes as hope fades. With heavy hearts, we acknowledge the harsh reality that our once-thriving settlement is no longer sustainable. We make the painful decision to abandon our homes and seek refuge elsewhere.",
+      "15th day of Harvest, Year 4, in the Age of Exploration:\nLaying the foundation for %s amidst towering trees and fertile soil in a verdant %s.\n\n22nd day of Frostfall, Year 5, in the Age of Exploration:\nOur settlement has flourished beyond our wildest expectations. The fields yield abundant crops, and our livestock thrive in the lush pastures. Traders from distant lands bring news of the wider world, fueling our curiosity and igniting our imaginations. Our once-small community has grown into a bustling hub of activity, teeming with life and possibility.\n\n8th day of Rain's End, Year 7, in the Age of Exploration:\nDisaster strikes as a virulent plague sweeps through our settlement, claiming lives with alarming speed. Despite our best efforts to contain the outbreak, the disease spreads unchecked, leaving death and despair in its wake. With heavy hearts, we bury our dead and tend to the sick, but hope dwindles with each passing day.\n\n2nd day of Sun's Rise, Year 8, in the Age of Exploration:\nFaced with the grim reality of our situation, we make the agonizing decision to abandon our once-thriving settlement. The memories of laughter and camaraderie are overshadowed by the specter of loss and grief. With tear-filled eyes, we bid farewell to our homes and set out into the unknown, leaving behind only echoes of the life we once knew.",
+      "12th day of Summer, Year 3, in the Time of Renewal:\nToday marks the beginning of our journey as we establish our little town of %s in this rugged wilderness. Surrounded by a %s, we feel a sense of awe and wonder at the untamed beauty of our surroundings. With determination in our hearts, we set about building our new home, confident in our ability to overcome whatever challenges lie ahead.\n\n6th day of Winter, Year 5, in the Time of Renewal:\nOur settlement has grown into a thriving community, united by a shared vision of prosperity and progress. Through hard work and perseverance, we have transformed this once-wild land into a beacon of civilization. Our efforts have not gone unnoticed, as traders and travelers flock to our gates, eager to partake in the fruits of our labor.\n\n21st day of Spring, Year 7, in the Time of Renewal:\nTragedy strikes as a series of devastating earthquakes rock our settlement, leaving destruction in their wake. Homes are reduced to rubble, and fields lie barren as aftershocks continue to shake the earth beneath our feet. Despite our best efforts to rebuild, the damage is too great, and we are forced to acknowledge the harsh reality that our dreams lie shattered at our feet.\n\n3rd day of Autumn, Year 8, in the Time of Renewal:\nWith heavy hearts and tear-streaked faces, we bid farewell to our beloved settlement, leaving behind the ruins of our dreams.",
+      "10th day of Spring, Year 5, in the Age of Crafting:\nLooking out for a place to found our new settlement: %s, today, we stumbled upon a pristine %s. The land seemed untouched, ripe for settlement. With determination in our hearts, we began constructing our village, crafting shelters from the very earth and wood that surrounded us.\n\n18th day of Summer, Year 6, in the Age of Crafting:\nOur settlement flourished as travelers and merchants from distant lands brought news and goods. However, our prosperity attracted unwanted attention. Creatures of the night, zombies and skeletons, emerged from the darkened woods, threatening our safety.\n\n5th day of Winter, Year 7, in the Age of Crafting:\nDespite our efforts to fortify our village, the attacks persisted. Creepers prowled the perimeter, their hissing warnings a constant reminder of the danger we faced. With heavy hearts, we prepared for the inevitable.\n\n22nd day of Spring, Year 8, in the Age of Crafting:\nThe final assault came with the rising of the blood moon. Waves of monsters descended upon our village, overwhelming our defenses. In the chaos, we were forced to flee, leaving behind our once-thriving home to the mercy of the mobs.",
+      "7th day of Autumn, Year 3, in the Era of Rivers:\nOn the quest to found the settlement of %s, We discovered a hidden %s, untouched by civilization, a blank canvas awaiting our mark. With axes in hand, we began to carve out our future, shaping the landscape to our will.\n\n14th day of Winter, Year 4, in the Era of Blocks\nOur village grew, its buildings reaching for the sky as we mined deep into the earth for resources. But with prosperity came danger. Endermen lurked in the shadows, their glowing eyes watching our every move.\n\n3rd day of Summer, Year 5, in the Era of Blocks\nThe first signs of trouble came with the disappearance of livestock and crops. We blamed it on wolves and spiders, but the truth was far more sinister. A dragon had taken residence in the nearby mountains, its fiery breath threatening to consume our village.\n\n11th day of Autumn, Year 6, in the Era of Blocks\nDespite our best efforts to drive the dragon away, it persisted in its attacks. With our resources depleted and our spirits broken, we had no choice but to abandon our village, leaving behind only memories of what once was.",
+      "2nd day of Winter, Year 8, in the Age of Crafting:\n%s was built upon the promise of this %s, its fertile soil and abundant resources luring us in. With the sun on our backs and pickaxes in hand, we began to carve out a new life for ourselves, one block at a time.\n\n19th day of Spring, Year 9, in the Age of Crafting:\nOur village thrived as traders and travelers passed through, their goods and stories enriching our lives. But prosperity attracted jealousy, and soon, we found ourselves under attack by a rival faction.\n\n7th day of Autumn, Year 10, in the Age of Crafting:\nSkeletons and zombies swarmed our village, their hollow eyes gleaming with malice. We fought back with all our might, but the odds were against us. As our defenses crumbled, we knew that our only hope lay in retreat.\n\n1st day of Winter, Year 11, in the Age of Crafting:\nWith heavy hearts, we abandoned our homes, leaving behind the smoldering ruins of our once-thriving village. The land that had promised so much had become our prison, and we could only hope to find sanctuary elsewhere.\n",
+      "14th day of Summer, Year 4, in the Age of Blocks:\n%s was a beacon of hope in the midst day of the %s, its towering walls and bustling streets a testament to our resilience. With each block we placed, we forged a new future for ourselves, one built upon the sweat and toil of our labor.\n\n3rd day of Winter, Year 5, in the Age of Blocks:\nBut our prosperity drew the attention of the undead, creatures of darkness that hungered for our flesh. Zombies and skeletons lurked in the shadows, their moans and rattles a constant reminder of the danger that surrounded us.\n\n22nd day of Spring, Year 6, in the Age of Blocks:\nDespite our best efforts to defend our village, the attacks grew more frequent and more ferocious. Creepers exploded, leaving craters in their wake, while spiders crawled over our walls, seeking to feast on our blood.\n\n11th day of Autumn, Year 7, in the Age of Blocks:\nIn the end, we could withstand the onslaught no longer. With heavy hearts, we abandoned our homes, leaving behind the ruins of our once-thriving village to be reclaimed by nature.\n",
+      "5th day of Autumn, Year 6, in the Age of Crafting:\n%s was founded in the heart of a %s, its towering trees and winding streams providing us with all we needed to thrive. With axes and shovels, we set to work, carving out a place for ourselves in this untamed wilderness.\n\n19th day of Winter, Year 7, in the Age of Crafting:\nBut our idyllic existence was shattered by the arrival of the Nether's creatures, vile beasts that sought to claim our world as their own. Ghasts spewed fireballs from the sky, while blazes set our homes ablaze.\n\n8th day of Spring, Year 8, in the Age of Crafting:\nWe fought back with all our might, but the forces arrayed against us were too great. As our village burned and our people fell, we knew that our only hope lay in escape.\n\n2nd day of Summer, Year 9, in the Age of Crafting:\nWith heavy hearts, we fled into the wilderness, leaving behind the smoldering ruins of our once-thriving village. The memory of what was lost would haunt us forever.\n",
+      "17th day of Winter, Year 2, in the Time of Mining:\n%s was built upon the promise of hidden riches in a %s, its foundations rooted in the very earth we sought to tame. With pickaxes in hand, we delved deep into the underground, eager to uncover the treasures that lay hidden beneath.\n\n9th day of Spring, Year 3, in the Time of Mining:\nBut our lust for gold and diamonds drew the attention of the cave-dwellers, vile creatures that lurked in the darkness. Zombies and skeletons emerged from the shadows, their hunger for flesh insatiable.\n\n25th day of Summer, Year 4, in the Time of Mining:\nDespite our best efforts to defend our tunnels, the attacks grew more frequent and more ferocious."
+    ]
+  }
+]

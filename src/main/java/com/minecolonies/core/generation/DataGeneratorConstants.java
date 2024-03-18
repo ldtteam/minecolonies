@@ -16,4 +16,6 @@ public class DataGeneratorConstants
     public static final String LOOT_TABLES_DIR = DATAPACK_DIR + "loot_tables/blocks";
 
     public static final String ASSETS_DIR = "assets/" + Constants.MOD_ID + "/";
+
+    public static final String COLONY_STORIES_DIR = "colony/stories";
 }
