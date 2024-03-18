@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_QUESTS_DIR;
 import static com.minecolonies.core.quests.QuestParsingConstants.*;
 import static com.minecolonies.core.quests.QuestParsingConstants.BRACE_CLOSE;
 
@@ -46,7 +47,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      */
     public QuestJsonListener()
     {
-        super(GSON, "quests");
+        super(GSON, COLONY_QUESTS_DIR);
     }
 
     /**
