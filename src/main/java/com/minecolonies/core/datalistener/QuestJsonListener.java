@@ -43,7 +43,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     private static Map<ResourceLocation, JsonElement> globalJsonElementMap = new HashMap<>();
 
     /**
-     * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/quests/<path>
+     * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/colony/quests/<path>
      */
     public QuestJsonListener()
     {
