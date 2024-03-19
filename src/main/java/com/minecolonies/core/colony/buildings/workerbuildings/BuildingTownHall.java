@@ -130,23 +130,27 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         final Level level = colony.getWorld();
 
-        int validMapCount = 0;
+        final List<MapItemSavedData> mapDataList = new ArrayList<>();
         for (final ItemStack stack : maps)
         {
-            if(MapItem.getSavedData(stack, level) != null)
+            try
             {
-                validMapCount++;
+                final MapItemSavedData mapData = MapItem.getSavedData(stack, level);
+                if (mapData != null)
+                {
+                    mapDataList.add(mapData);
+                }
+            }
+            catch (final Exception ex)
+            {
+                // Do nothing
             }
         }
 
-        buf.writeInt(validMapCount);
-        for (final ItemStack stack : maps)
+        buf.writeInt(mapDataList.size());
+        for (final MapItemSavedData mapData : mapDataList)
         {
-            final MapItemSavedData mapData = MapItem.getSavedData(stack, level);
-            if(mapData != null)
-            {
-                buf.writeNbt(mapData.save(new CompoundTag()));
-            }
+            buf.writeNbt(mapData.save(new CompoundTag()));
         }
     }
 
