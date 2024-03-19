@@ -514,7 +514,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (rotationMirror == null)
         {
-            throw new IllegalStateException("Way to early, wait for first tick so it loads");
+            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path));
         }
         return rotationMirror;
     }
