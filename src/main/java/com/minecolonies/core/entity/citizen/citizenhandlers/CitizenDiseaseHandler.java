@@ -209,8 +209,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
-    public void setSleepsAtHospital()
+    public void setSleepsAtHospital(final boolean isAtHospital)
     {
-        sleepsAtHospital = true;
+        sleepsAtHospital = isAtHospital;
     }
 }

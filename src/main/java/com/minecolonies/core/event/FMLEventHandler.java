@@ -51,7 +51,6 @@ public class FMLEventHandler
         event.addListener(new CitizenNameListener());
         event.addListener(new QuestJsonListener());
         event.addListener(new ItemNbtListener());
-        event.addListener(new ColonyStoryDataListener());
         event.addListener(new ColonyExpeditionTypeListener());
     }
 

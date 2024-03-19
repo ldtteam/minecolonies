@@ -351,6 +351,13 @@ public class CitizenData implements ICitizenData
     public Optional<AbstractEntityCitizen> getEntity()
     {
         final AbstractEntityCitizen citizen = entity.get();
+
+        if (citizen != null && citizen.isRemoved())
+        {
+            entity.clear();
+            return Optional.empty();
+        }
+
         return Optional.ofNullable(citizen);
     }
 

@@ -65,7 +65,7 @@ public interface ICitizenDiseaseHandler
     boolean sleepsAtHospital();
 
     /**
-     * Enables sleeping at the hospital
+     * Sets a flag that the citizen is now at the hospital.
      */
-    void setSleepsAtHospital();
+    void setSleepsAtHospital(final boolean isAtHospital);
 }

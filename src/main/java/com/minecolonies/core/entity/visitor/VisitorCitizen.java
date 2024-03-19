@@ -700,4 +700,11 @@ public class VisitorCitizen extends AbstractEntityVisitor
     {
         this.citizenId = id;
     }
+
+    @Override
+    public void setRemoved(final RemovalReason reason)
+    {
+        citizenColonyHandler.onCitizenRemoved();
+        super.setRemoved(reason);
+    }
 }

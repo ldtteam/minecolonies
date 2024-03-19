@@ -2100,6 +2100,7 @@
 
   "com.minecolonies.coremod.setting.minecolonies:retreat": "Retreat on low health:",
   "com.minecolonies.coremod.setting.minecolonies:hiretrainee": "Hire Trainee:",
+  "com.minecolonies.coremod.setting.tooltip.minecolonies:hiretrainee": "This setting only works when any of the jobs can be hired automatically.",
   "com.minecolonies.coremod.setting.minecolonies:patrolmode": "Patrol Mode:",
   "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
   "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:",
