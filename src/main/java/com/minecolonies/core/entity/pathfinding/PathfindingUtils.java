@@ -4,9 +4,7 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.entity.pathfinding.PathPointExtended;
 import com.minecolonies.core.network.messages.client.SyncPathReachedMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -331,7 +329,7 @@ public class PathfindingUtils
      */
     public static boolean isLadder(final BlockState blockState, @Nullable final PathingOptions options)
     {
-        return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbNonLadders()) || blockState.getBlock() instanceof LadderBlock);
+        return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbNonLadders()) || blockState.is(ModTags.freeClimbBlocks));
     }
 
     /**

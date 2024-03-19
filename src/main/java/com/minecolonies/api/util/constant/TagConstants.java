@@ -16,6 +16,7 @@ public final class TagConstants
     public static final ResourceLocation CONCRETE_BLOCK            = new ResourceLocation(MOD_ID, "concrete");
     public static final ResourceLocation PATHING_BLOCKS            = new ResourceLocation(MOD_ID, "pathblocks");
     public static final ResourceLocation DANGEROUS_BLOCKS          = new ResourceLocation(MOD_ID, "dangerousblocks");
+    public static final ResourceLocation FREE_CLIMB_BLOCKS         = new ResourceLocation(MOD_ID, "freeclimbblocks");
     public static final ResourceLocation TIER0_BLOCKS              = new ResourceLocation(MOD_ID, "tier0blocks");
     public static final ResourceLocation TIER1_BLOCKS              = new ResourceLocation(MOD_ID, "tier1blocks");
     public static final ResourceLocation TIER2_BLOCKS              = new ResourceLocation(MOD_ID, "tier2blocks");
