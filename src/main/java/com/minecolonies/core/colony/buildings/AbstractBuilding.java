@@ -694,7 +694,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
 
-        buf.writeByte(getRotationMirror().ordinal());
+        if (getRotationMirror() == null)
+        {
+            Log.getLogger().error(String.format("Building %s is supposed to have rotation mirror!", this.getBuildingType().getRegistryName().toString()));
+            buf.writeByte(RotationMirror.NONE.ordinal());
+        }
+        else
+        {
+            buf.writeByte(getRotationMirror().ordinal());
+        }
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundTag requestSystemCompound = new CompoundTag();

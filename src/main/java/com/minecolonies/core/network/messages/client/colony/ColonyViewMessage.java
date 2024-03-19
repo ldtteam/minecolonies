@@ -54,7 +54,7 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
         super(TYPE);
         this.colonyId = colony.getID();
         this.dim = colony.getDimension();
-        this.colonyBuffer = new FriendlyByteBuf(buf.copy());
+        this.colonyBuffer = buf;
     }
 
     /**

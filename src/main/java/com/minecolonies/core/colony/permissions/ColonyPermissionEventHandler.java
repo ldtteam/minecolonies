@@ -151,8 +151,10 @@ public class ColonyPermissionEventHandler
      */
     private <T extends Event & ICancellableEvent> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
     {
-        event.setResult(Event.Result.DENY);
-
+        if (event.hasResult())
+        {
+            event.setResult(Event.Result.DENY);
+        }
         event.setCanceled(true);
         if (entity == null)
         {
