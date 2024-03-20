@@ -819,7 +819,22 @@ public final class BlockPosUtil
      */
     public static Direction getXZFacing(final int pos1X, final int pos1Z, final int pos2X, final int pos2Z)
     {
-        return Direction.getNearest(pos1X - pos2X, 0, pos1Z - pos2Z);
+        if (pos2X > pos1X)
+        {
+            return Direction.EAST;
+        }
+        else if (pos2X < pos1X)
+        {
+            return Direction.WEST;
+        }
+        if (pos2Z < pos1Z)
+        {
+            return Direction.NORTH;
+        }
+        else
+        {
+            return Direction.SOUTH;
+        }
     }
 
     /**

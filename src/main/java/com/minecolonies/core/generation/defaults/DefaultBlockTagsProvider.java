@@ -171,7 +171,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
 
         tag(ModTags.indestructible).add(Blocks.BEDROCK);
         tag(ModTags.oreChanceBlocks)
-                .addTags(Tags.Blocks.STONE, Tags.Blocks.COBBLESTONE)
+                .addTags(Tags.Blocks.STONE)
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
