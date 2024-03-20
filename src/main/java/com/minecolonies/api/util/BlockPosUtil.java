@@ -792,7 +792,7 @@ public final class BlockPosUtil
     public static Direction getFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.getNearest(vector.getX(), vector.getY(), vector.getZ());
+        return Direction.fromDelta(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
@@ -805,9 +805,8 @@ public final class BlockPosUtil
     public static Direction getXZFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.getNearest(vector.getX(), 0, vector.getZ());
+        return Direction.fromDelta(vector.getX(), 0, vector.getZ());
     }
-
 
     /**
      * Get facing from x,y
