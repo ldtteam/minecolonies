@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -792,7 +791,7 @@ public final class BlockPosUtil
     public static Direction getFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.fromDelta(vector.getX(), vector.getY(), vector.getZ());
+        return directionFromDelta(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
@@ -805,7 +804,7 @@ public final class BlockPosUtil
     public static Direction getXZFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.fromDelta(vector.getX(), 0, vector.getZ());
+        return directionFromDelta(vector.getX(), 0, vector.getZ());
     }
 
     /**
@@ -834,6 +833,52 @@ public final class BlockPosUtil
         {
             return Direction.SOUTH;
         }
+    }
+
+    /**
+     * Calculate a direction from a given delta.
+     * @param x the delta x.
+     * @param y the delta y.
+     * @param z the delta z.
+     * @return the direction.
+     */
+    public static Direction directionFromDelta(int x, int y, int z)
+    {
+        if (x == 0)
+        {
+            if (y == 0)
+            {
+                if (z > 0)
+                {
+                    return Direction.SOUTH;
+                }
+
+                if (z < 0)
+                {
+                    return Direction.NORTH;
+                }
+            }
+            else if (z == 0)
+            {
+                if (y > 0)
+                {
+                    return Direction.UP;
+                }
+
+                return Direction.DOWN;
+            }
+        }
+        else if (y == 0 && z == 0)
+        {
+            if (x > 0)
+            {
+                return Direction.EAST;
+            }
+
+            return Direction.WEST;
+        }
+
+        return Direction.NORTH;
     }
 
     /**
