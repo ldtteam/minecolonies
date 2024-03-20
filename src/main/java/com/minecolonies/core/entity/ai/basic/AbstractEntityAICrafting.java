@@ -279,6 +279,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                   + getExtendedCount(inputStorage.getItemStack())
                   < remaining)
             {
+                currentRecipeStorage = null;
                 job.finishRequest(false);
                 incrementActionsDone(getActionRewardForCraftingSuccess());
                 return START_WORKING;

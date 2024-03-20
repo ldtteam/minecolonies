@@ -359,7 +359,11 @@ public final class BackUpHelper
         if (toDelete.exists())
         {
             final String fileName = getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY_DELETED, colonyID);
-            new File(saveDir, fileName).delete();
+            final File oldFile = new File(saveDir, fileName);
+            if (oldFile.exists())
+            {
+                oldFile.delete();
+            }
             toDelete.renameTo(new File(saveDir, fileName));
         }
     }
