@@ -991,7 +991,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         //Will help track down some hard to find bugs (Pathfinding etc.)
         if (citizenJobHandler.getColonyJob() != null && MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            setCustomName(Component.literal(
+            super.setCustomName(Component.literal(
               citizenData.getName() + "[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]"));
         }
     }
