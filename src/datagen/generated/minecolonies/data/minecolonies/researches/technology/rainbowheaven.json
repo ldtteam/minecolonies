@@ -6,10 +6,10 @@
     }
   ],
   "icon": "minecolonies:blockhutcomposter",
-  "parentResearch": "minecolonies:technology/flowerpower",
+  "parentResearch": "minecolonies:technology/biodegradable",
   "requirements": [
     {
-      "building": "florist",
+      "building": "composter",
       "level": 3
     },
     {
@@ -22,6 +22,6 @@
       "quantity": 64
     }
   ],
-  "researchLevel": 3,
+  "researchLevel": 2,
   "subtitle": "com.minecolonies.research.technology.rainbowheaven.subtitle"
 }

@@ -1240,11 +1240,11 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addItemCost(ModItems.compost, 64)
                                        .addEffect(ModBuildings.florist.get().getBuildingBlock(), 1)
                                        .addToList(r);
-        final Research rainbowHeaven = new Research(new ResourceLocation(Constants.MOD_ID, "technology/rainbowheaven"), TECH).setParentResearch(flowerPower)
+        final Research rainbowHeaven = new Research(new ResourceLocation(Constants.MOD_ID, "technology/rainbowheaven"), TECH).setParentResearch(biodegradable)
           .setTranslatedName("Rainbow Heaven")
           .setTranslatedSubtitle("Now in color! And 3D!")
           .setIcon(ModBlocks.blockHutComposter.asItem())
-          .addBuildingRequirement(ModBuildings.FLORIST_ID, 3)
+          .addBuildingRequirement(ModBuildings.COMPOSTER_ID, 3)
           .addItemCost(Items.POPPY, 64)
           .addEffect(ModBuildings.dyer.get().getBuildingBlock(), 1)
           .addToList(r);

@@ -207,7 +207,7 @@ public class CitizenAI implements IStateAI
         }
 
         // Mourning
-        if (citizen.getCitizenData().getCitizenMournHandler().isMourning() && citizen.getCitizenData().getCitizenMournHandler().shouldMourn())
+        if (citizen.getCitizenData().getCitizenMournHandler().isMourning())
         {
             if (lastState != CitizenAIState.MOURN)
             {
@@ -219,11 +219,6 @@ public class CitizenAI implements IStateAI
                 citizen.setVisibleStatusIfNone(MOURNING);
             }
             return CitizenAIState.MOURN;
-        }
-        else
-        {
-            this.citizen.getCitizenData().getCitizenMournHandler().clearDeceasedCitizen();
-            this.citizen.getCitizenData().getCitizenMournHandler().setMourning(false);
         }
 
         // Raining

@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.minimal;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
@@ -191,7 +192,7 @@ public class EntityAIInteractToggleAble extends Goal
             }
             else
             {
-                dir = Direction.getNearest(next.x - current.x, 0, next.z - current.z);
+                dir = BlockPosUtil.directionFromDelta(next.x - current.x, 0, next.z - current.z);
             }
 
             // Check necessary height levels
