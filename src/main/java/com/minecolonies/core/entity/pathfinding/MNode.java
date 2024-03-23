@@ -222,14 +222,6 @@ public class MNode implements Comparable<MNode>
     }
 
     /**
-     * Sets the node as closed.
-     */
-    public void unSetVisited()
-    {
-        visited = true;
-    }
-
-    /**
      * Getter of the score of the node.
      *
      * @return the score.

@@ -40,6 +40,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
+import static com.minecolonies.core.entity.pathfinding.PathingOptions.MAX_COST;
 
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
@@ -151,8 +152,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * First node
      */
     private MNode startNode = null;
-
-    private double avgCost = 1;
 
     /**
      * AbstractPathJob constructor.
@@ -394,9 +393,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (extraNodes > 0 && reachesDestination)
         {
             // Make sure to expand from the final node
-            bestNode.unSetVisited();
             visitNode(bestNode);
-            bestNode.setVisited();
 
             // Search only closest nodes to the goal
             final Queue<MNode> original = nodesToVisit;
@@ -705,15 +702,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
 
             nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, onRails, railsExit, swimStart, ladder, state, nextX, nextY, nextZ);
-
-            avgCost -= avgCost / 20;
-            avgCost += nextCost / 20;
-
             nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state);
 
             if (nextCost > maxCost)
             {
-                maxCost = Math.min(25, Math.ceil(nextCost));
+                maxCost = Math.min(MAX_COST, Math.ceil(nextCost));
             }
         }
 

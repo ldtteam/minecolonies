@@ -11,6 +11,7 @@ import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,8 +97,26 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      */
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
-    {  // TODO: Check heuristic
-        return BlockPosUtil.dist(preferredDirection, x, y, z) + 100 / Math.max(1, BlockPosUtil.dist(avoid, x, y, z));
+    {
+        return BlockPosUtil.dist(preferredDirection, x, y, z);
+    }
+
+    protected double modifyCost(
+      final double cost,
+      final MNode parent,
+      final boolean swimstart,
+      final boolean swimming,
+      final int x,
+      final int y,
+      final int z,
+      final BlockState state)
+    {
+        if (BlockPosUtil.dist(avoid, x, y, z) < 3)
+        {
+            return cost + 100;
+        }
+
+        return cost;
     }
 
     /**

@@ -8,6 +8,11 @@ public class PathingOptions
     // x2: Weak dislike, x3: clear dislike, x4 strong dislike x5 very strong dislike
 
     /**
+     * Maximum cost used
+     */
+    public static final int MAX_COST = 25;
+
+    /**
      * Additional cost of jumping
      */
     public double jumpCost = 2D;
