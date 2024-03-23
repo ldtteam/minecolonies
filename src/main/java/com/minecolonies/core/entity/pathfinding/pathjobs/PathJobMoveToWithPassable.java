@@ -2,8 +2,6 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,7 +50,15 @@ public class PathJobMoveToWithPassable extends PathJobMoveToLocation
     }
 
     @Override
-    protected double modifyCost(final double cost, final MNode parent, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(
+      final double cost,
+      final MNode parent,
+      final boolean swimstart,
+      final boolean swimming,
+      final int x,
+      final int y,
+      final int z,
+      final BlockState state)
     {
         if (!state.isAir() && isPassable.apply(state))
         {

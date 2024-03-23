@@ -148,7 +148,15 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected double modifyCost(final double cost, final MNode parent, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(
+      final double cost,
+      final MNode parent,
+      final boolean swimstart,
+      final boolean swimming,
+      final int x,
+      final int y,
+      final int z,
+      final BlockState state)
     {
         double modifier = addCost;
         addCost = 1.0;

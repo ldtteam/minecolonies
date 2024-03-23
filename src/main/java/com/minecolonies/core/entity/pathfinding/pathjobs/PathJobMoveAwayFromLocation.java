@@ -96,7 +96,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      */
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    {  // TODO: Check heuristic
         return BlockPosUtil.dist(preferredDirection, x, y, z) + 100 / Math.max(1, BlockPosUtil.dist(avoid, x, y, z));
     }
 

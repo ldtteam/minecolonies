@@ -222,6 +222,14 @@ public class MNode implements Comparable<MNode>
     }
 
     /**
+     * Sets the node as closed.
+     */
+    public void unSetVisited()
+    {
+        visited = true;
+    }
+
+    /**
      * Getter of the score of the node.
      *
      * @return the score.
@@ -364,6 +372,16 @@ public class MNode implements Comparable<MNode>
     public boolean isCornerNode()
     {
         return isCornerNode;
+    }
+
+    /**
+     * Get the added index
+     *
+     * @return
+     */
+    public int getCounterAdded()
+    {
+        return counterAdded;
     }
 
     /**

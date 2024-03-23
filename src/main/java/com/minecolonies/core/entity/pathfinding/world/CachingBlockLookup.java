@@ -6,6 +6,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +101,7 @@ public class CachingBlockLookup implements BlockGetter
             {
                 if (chunk == null || chunk.getPos().x != x >> 4 || chunk.getPos().z != z >> 4)
                 {
-                    chunk = world.getChunk(x >> 4, z >> 4);
+                    chunk = world.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, false);
                 }
 
                 if (chunk != null)
@@ -142,16 +143,23 @@ public class CachingBlockLookup implements BlockGetter
                 final BlockState state = states[i];
                 if (state != null)
                 {
-                    final int newIndex = i + (xDiff + (yDiff * SIZE) + (zDiff * SIZE * SIZE));
-                    boolean xposDiff = (newIndex % SIZE - i % SIZE) == xDiff;
-                    boolean yposDiff = (newIndex % SIZE * SIZE - i % SIZE * SIZE) == yDiff + xDiff;
+                    states[i] = null;
 
-                    if (newIndex < states.length && newIndex >= 0 && xposDiff && yposDiff)
+                    int zPos = i / (SIZE * SIZE);
+                    int yPos = (i - (zPos * SIZE * SIZE)) / SIZE;
+                    int xPos = (i - (zPos * SIZE * SIZE) - (yPos * SIZE));
+
+                    zPos += zDiff;
+                    yPos += yDiff;
+                    xPos += xDiff;
+
+                    if (xPos < 0 || xPos >= SIZE || yPos < 0 || yPos >= SIZE || zPos < 0 || zPos >= SIZE)
                     {
-                        exchange[newIndex] = state;
+                        continue;
                     }
 
-                    states[i] = null;
+                    final int newIndex = xPos + yPos * SIZE + zPos * SIZE * SIZE;
+                    exchange[newIndex] = state;
                 }
             }
 

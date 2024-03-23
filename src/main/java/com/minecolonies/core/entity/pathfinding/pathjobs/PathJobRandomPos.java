@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigatior;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -49,6 +50,11 @@ public class PathJobRandomPos extends AbstractPathJob
     private BlockPos centerBox      = null;
 
     /**
+     * Modifier to the heuristics
+     */
+    private double heuristicModifier = 1.0;
+
+    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world            world the entity is in.
@@ -70,6 +76,11 @@ public class PathJobRandomPos extends AbstractPathJob
 
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple();
         this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
+
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigatior)
+        {
+            heuristicModifier = ((IDynamicHeuristicNavigatior) entity.getNavigation()).getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -134,7 +145,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.dist(destination, x, y, z);
+        return BlockPosUtil.dist(destination, x, y, z) * heuristicModifier;
     }
 
     @Override

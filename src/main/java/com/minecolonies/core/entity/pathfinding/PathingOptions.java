@@ -10,12 +10,12 @@ public class PathingOptions
     /**
      * Additional cost of jumping
      */
-    public double jumpCost = 3D;
+    public double jumpCost = 2D;
 
     /**
      * Additional cost of dropping
      */
-    public double dropCost = 2D;
+    public double dropCost = 1D;
 
     /**
      * Cost improvement of paths - base 1.
@@ -30,32 +30,37 @@ public class PathingOptions
     /**
      * The rails exit cost.
      */
-    public double railsExitCost = 5;
+    public double railsExitCost = 4;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 3D;
+    public double swimCost = 2D;
 
     /**
      * Additional cost of cave air.
      */
-    public double caveAirCost = 4D;
+    public double caveAirCost = 3D;
 
     /**
      * Additional cost enter entering water
      */
-    public double swimCostEnter = 25D;
+    public double swimCostEnter = 24D;
 
     /**
      * Cost to traverse trap doors
      */
-    public double traverseToggleAbleCost = 10D;
+    public double traverseToggleAbleCost = 5D;
 
     /**
      * Cost to climb a non ladder.
      */
-    public double nonLadderClimbableCost = 4D;
+    public double nonLadderClimbableCost = 3D;
+
+    /**
+     * Cost for walking within shapes(e.g. panels)
+     */
+    public double walkInShapesCost = 2D;
 
     /**
      * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.

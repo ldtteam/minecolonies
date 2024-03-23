@@ -191,7 +191,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double modifyCost(double cost, final MNode parent, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(double cost, final MNode parent, final boolean swimstart, final boolean swimming, final int x, final int y, final int z, final BlockState state)
     {
         if (!state.isAir() && state.is(BlockTags.LEAVES))
         {
