@@ -316,11 +316,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 }
             }
 
-            if (Math.abs(node.getHeuristic() - computeHeuristic(node.x, node.y, node.z) * heuristicMod) > 1)
-            {
-                Log.getLogger().warn("err");
-            }
-
             if (!reachesDestination && isAtDestination(node))
             {
                 bestNode = node;
@@ -740,10 +735,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 nextNode.setLadder();
             }
 
-            if (Math.abs(nextNode.getHeuristic() - computeHeuristic(nextNode.x, nextNode.y, nextNode.z) * heuristicMod) > 1)
-            {
-                Log.getLogger().warn("err");
-            }
             nodesToVisit.offer(nextNode);
         }
         else
@@ -789,11 +780,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         nextNode.parent = node;
         nextNode.setCost(cost);
         nextNode.setHeuristic(heuristic);
-
-        if (Math.abs(nextNode.getHeuristic() - computeHeuristic(nextNode.x, nextNode.y, nextNode.z) * heuristicMod) > 1)
-        {
-            Log.getLogger().warn("err");
-        }
 
         nodesToVisit.offer(nextNode);
     }

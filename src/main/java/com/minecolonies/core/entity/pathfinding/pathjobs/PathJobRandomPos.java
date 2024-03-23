@@ -1,26 +1,19 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigatior;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
  * Job that handles random pathing.
@@ -77,9 +70,9 @@ public class PathJobRandomPos extends AbstractPathJob
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple();
         this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
 
-        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigatior)
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
         {
-            heuristicModifier = ((IDynamicHeuristicNavigatior) entity.getNavigation()).getAvgHeuristicModifier();
+            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
         }
     }
 

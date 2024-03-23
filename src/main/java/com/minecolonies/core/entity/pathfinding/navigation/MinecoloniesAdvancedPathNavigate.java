@@ -46,7 +46,7 @@ import static com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob.
 /**
  * Minecolonies async PathNavigate.
  */
-public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate implements IDynamicHeuristicNavigatior
+public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate implements IDynamicHeuristicNavigator
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
     public static final  double MIN_Y_DISTANCE           = 0.001;
@@ -604,7 +604,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     /**
-     * Processes the pathreult when it finished computing
+     * Processes the pathresult when it finished computing
      */
     private void processCompletedCalculationResult()
     {

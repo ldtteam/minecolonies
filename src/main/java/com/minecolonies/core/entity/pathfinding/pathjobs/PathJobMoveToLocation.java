@@ -8,7 +8,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigatior;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
@@ -53,9 +53,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
         maxNodes += range;
         this.destination = new BlockPos(end);
 
-        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigatior)
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
         {
-            heuristicModifier = ((IDynamicHeuristicNavigatior) entity.getNavigation()).getAvgHeuristicModifier();
+            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
         }
 
         // Overestimate for long distances, +1 per 100 blocks
