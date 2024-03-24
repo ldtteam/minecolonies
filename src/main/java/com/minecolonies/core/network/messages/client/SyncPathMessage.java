@@ -22,7 +22,7 @@ public class SyncPathMessage extends AbstractClientPlayMessage
     /**
      * Set of visited nodes.
      */
-    private final Set<MNode> lastDebugNodesVisited;
+    public Set<MNode> lastDebugNodesVisited = new HashSet<>();
 
     /**
      * Set of not visited nodes.
@@ -99,6 +99,7 @@ public class SyncPathMessage extends AbstractClientPlayMessage
 
     protected SyncPathMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(type);
         int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {

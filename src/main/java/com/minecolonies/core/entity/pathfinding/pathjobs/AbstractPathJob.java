@@ -1604,9 +1604,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                     final ServerPlayer player = entity.level().getServer().getPlayerList().getPlayer(entry.getKey());
                     if (player != null)
                     {
-                        Network.getNetwork()
-                          .sendToPlayer(new SyncPathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath, debugNodesVisitedLater, debugNodesOrgPath, debugNodesExtra),
-                            player);
+                       new SyncPathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath, debugNodesVisitedLater, debugNodesOrgPath, debugNodesExtra).sendToPlayer(player);
                     }
                 }
             }

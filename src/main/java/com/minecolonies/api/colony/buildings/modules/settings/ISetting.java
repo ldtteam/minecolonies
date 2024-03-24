@@ -116,13 +116,11 @@ public interface ISetting<S>
         final String tooltipKey = "com.minecolonies.coremod.setting.tooltip." + key.getUniqueId().toString();
         final Component tooltip = Component.translatable(tooltipKey);
         final Component inActiveReason = getInactiveReason();
-        if (tooltip.getString().equals(tooltipKey) && inActiveReason == null)
-        {
-            component.setHoverPane(null);
-            return;
-        }
 
-        if (isActive(settingsModuleView))
+        final boolean hasTooltip = !tooltip.getString().equals(tooltipKey);
+        final boolean isActive = isActive(settingsModuleView);
+
+        if (isActive && hasTooltip)
         {
             PaneBuilders.tooltipBuilder()
               .append(tooltip)
@@ -138,10 +136,7 @@ public interface ISetting<S>
         }
         else
         {
-            PaneBuilders.tooltipBuilder()
-              .append(inActiveReason != null ? inActiveReason : tooltip)
-              .hoverPane(component)
-              .build();
+            component.setHoverPane(null);
         }
     }
 
