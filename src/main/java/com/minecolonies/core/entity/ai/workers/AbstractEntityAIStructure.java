@@ -399,10 +399,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             case CLEAR_WATER:
                 //water
                 result = placer.clearWaterStep(world, progress);
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    this.storeProgressPos(NULL_POS, structurePlacer.getB().getStage());
-                }
                 break;
             case CLEAR_NON_SOLIDS:
                 // clear air
@@ -465,12 +461,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 worker.getCitizenData().setStatusPosition(null);
                 return COMPLETE_BUILD;
             }
+            this.storeProgressPos(NULL_POS, structurePlacer.getB().getStage());
         }
         else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.LIMIT_REACHED)
         {
             this.limitReached = true;
+            this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
         }
-        this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+        else
+        {
+            this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+        }
+
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
         {
