@@ -208,7 +208,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
                 final BlockPos vector = blockPos.subtract(citizen.blockPosition());
-                final Direction facing = Direction.getNearest(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+                final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal())
                     .sendToTargetPoint(new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.level().dimension()));

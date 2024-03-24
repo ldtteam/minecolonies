@@ -349,7 +349,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             //Get ladder orientation
             final BlockState metadata = Blocks.LADDER.defaultBlockState()
                                           .setValue(HorizontalDirectionalBlock.FACING,
-                                            Direction.getNearest(nextLadder.getX() - nextCobble.getX(), 0, nextLadder.getZ() - nextCobble.getZ()));
+                                            BlockPosUtil.directionFromDelta(nextLadder.getX() - nextCobble.getX(), 0, nextLadder.getZ() - nextCobble.getZ()));
             setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
             return getState();
         }
