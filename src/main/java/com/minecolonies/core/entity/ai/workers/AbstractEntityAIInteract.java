@@ -478,6 +478,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             pathResult = getRandomNavigationPath(range * pathBackupFactor, pos);
         }
 
+        if (pathResult == null)
+        {
+            return null;
+        }
+
         if (pathResult.isPathReachingDestination())
         {
             final BlockPos resultPos = pathResult.getPath().getEndNode().asBlockPos();
