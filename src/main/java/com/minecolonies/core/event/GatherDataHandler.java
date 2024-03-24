@@ -41,6 +41,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator.getPackOutput()));
         generator.addProvider(event.includeClient(), new DefaultItemModelProvider(generator.getPackOutput(), event.getExistingFileHelper()));
         generator.addProvider(event.includeClient(), new DefaultEntityIconProvider(generator));
+        generator.addProvider(event.includeClient(), new DefaultStoriesProvider(generator.getPackOutput()));
         generator.addProvider(event.includeClient() && event.includeServer(), new QuestTranslationProvider(generator.getPackOutput()));
 
         generator.addProvider(event.includeServer(), new DefaultDamageTypeProvider(generator.getPackOutput(), event.getExistingFileHelper(), event.getLookupProvider()));

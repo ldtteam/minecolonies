@@ -2,13 +2,13 @@ package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.core.datalistener.ColonyStoryDataListener;
+import com.minecolonies.core.event.ColonyStoryListener;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 
 import java.util.Random;
 
@@ -43,11 +43,12 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
         registerButton(BUTTON_CREATE, this::onCreate);
 
         final Random random = new Random(pos.asLong());
-        this.preName = ColonyStoryDataListener.abandonedColonyNames.get(random.nextInt(ColonyStoryDataListener.abandonedColonyNames.size()));
-        final String story = ColonyStoryDataListener.abandonedColonyStories.get(random.nextInt(ColonyStoryDataListener.abandonedColonyStories.size()));
+        final Holder<Biome> biome = mc.level.getBiome(pos);
+        this.preName = ColonyStoryListener.pickRandom(ColonyStoryListener.abandonedColonyNames, biome, random);
+        final String story = ColonyStoryListener.pickRandom(ColonyStoryListener.abandonedColonyStories, biome, random);
 
         this.findPaneOfTypeByID("title", Text.class).setText(Component.translatable("com.minecolonies.core.gui.colony.reactivate.title", this.preName));
-        this.findPaneOfTypeByID("text1", Text.class).setText(Component.translatable(story, this.preName, Component.translatable(mc.level.getBiome(pos).unwrapKey().get().location().toLanguageKey("biome"))));
+        this.findPaneOfTypeByID("text1", Text.class).setText(Component.translatable(story, this.preName, Component.translatable(biome.unwrapKey().get().location().toLanguageKey("biome"))));
         this.findPaneOfTypeByID("text2", Text.class).setText(Component.translatable("com.minecolonies.core.gui.colony.reactivate.question", this.preName));
     }
 

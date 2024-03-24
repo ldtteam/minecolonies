@@ -4,15 +4,18 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.core.datalistener.ColonyStoryDataListener;
+import com.minecolonies.core.event.ColonyStoryListener;
 import com.minecolonies.core.network.messages.server.MarkStoryReadOnItem;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.biome.Biome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,18 +68,20 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
         registerButton(BUTTON_PLACE, this::place);
 
-        final Random random = new Random(stack.getTag().getLong(TAG_RANDOM_KEY));
         List<MutableComponent> story = new ArrayList<>();
 
         if (stack.getOrCreateTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT)) // if free dungeon loot nbt tag on item.
         {
+            final Random random = new Random(stack.getTag().getLong(TAG_RANDOM_KEY));
+            final List<Holder.Reference<Biome>> biomes = mc.level.registryAccess().registryOrThrow(Registries.BIOME).holders().toList();
+            final Holder<Biome> biome = biomes.get(random.nextInt(biomes.size()));
             if (stack.getItem() == ModItems.supplyCamp)
             {
-                story.add(Component.literal(ColonyStoryDataListener.supplyCampStories.get(random.nextInt(ColonyStoryDataListener.supplyCampStories.size()))));
+                story.add(Component.literal(ColonyStoryListener.pickRandom(ColonyStoryListener.supplyCampStories, biome, random)));
             }
             else
             {
-                story.add(Component.literal(ColonyStoryDataListener.supplyShipStories.get(random.nextInt(ColonyStoryDataListener.supplyShipStories.size()))));
+                story.add(Component.literal(ColonyStoryListener.pickRandom(ColonyStoryListener.supplyShipStories, biome, random)));
             }
             story.add(Component.empty());
         }
