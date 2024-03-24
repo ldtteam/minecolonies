@@ -1,30 +1,28 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" size="190 233"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" size="400 244"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
-    <button id="cancel" size="14 15" pos="165 5"
-                 source="minecolonies:textures/gui/button_x.png" color="black"/>
+    <buttonimage id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
-    <image source="minecolonies:textures/gui/dialog.png" pos="10 25" size="170 30"/>
-    <text id="nearbycolony" size="150 35" pos="25 25" color="black"/>
-    <image source="minecolonies:textures/gui/dialog.png" pos="10 60" size="170 30"/>
-    <text id="owncolony" size="150 35" pos="25 60" color="black"/>
-    <text id="creationpossible" size="150 35" pos="25 95" color="black"/>
+    <text id="title" size="200 15" color="black" pos="130 15" label="$(com.minecolonies.core.settlementcovenant.title)" textscale="1.4"/>
+    <image size="128 16" pos="135 28" source="minecolonies:textures/gui/citizen/colonist_text_decor_down_wide.png"/>
 
-    <button id="delete" size="129 17" pos="25 150" color="black" enabled="false" visible="false"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
-                 label="$(com.minecolonies.coremod.gui.colony.delete)"/>
+    <text id="text1" size="300 30" color="black" pos="60 40"/>
 
-    <text id="pack" size="150 35" pos="25 128" color="black"/>
-    <button id="switch" size="129 17" pos="25 150" color="black" enabled="true"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
-                 label="$(structurize.gui.buildtool.switchpack)"/>
+    <input id="colonyname" size="200 18" pos="100 70" maxlength="32"/>
 
-    <button id="create" size="129 17" pos="25 180" color="black" enabled="false"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
+    <text id="text2" size="300 30" color="black" pos="60 90" label="$(com.minecolonies.core.settlementcovenant2)"/>
+
+    <text id="text3" size="300 30" color="black" pos="60 130"/>
+
+    <text id="text4" size="300 30" color="black" pos="60 170" label="$(com.minecolonies.core.settlementcovenant4)"/>
+
+    <image size="25 49" pos="355 200" source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
+    <image  size="45 45" pos="345 185" source="minecolonies:textures/gui/citizen/colonist_wax_indetermined.png"/>
+
+    <buttonimage id="create" size="169 17" pos="115 210" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_large.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.colony.create)"/>
 </window>

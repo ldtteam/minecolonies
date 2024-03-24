@@ -11,7 +11,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.client.gui.townhall.WindowTownHallColonyManage;
+import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -63,6 +63,10 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      */
     private boolean validTownHallBreak = false;
 
+    /**
+     * Interaction timeout.
+     */
+    public static long timeout = 0;
 
     @Override
     public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos)
@@ -192,9 +196,10 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             {
                 building.openGui(player.isShiftKeyDown());
             }
-            else
+            else if (System.currentTimeMillis() > timeout)
             {
-                new WindowTownHallColonyManage(player, pos, worldIn).open();
+                new GetColonyInfoMessage(pos).sendToServer();
+                timeout = System.currentTimeMillis() + 1000;
             }
         }
         return InteractionResult.SUCCESS;

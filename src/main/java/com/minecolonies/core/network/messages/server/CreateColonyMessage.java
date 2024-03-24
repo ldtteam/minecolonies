@@ -1,17 +1,19 @@
-package com.minecolonies.core.network.messages.client;
+package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.event.ColonyCreatedEvent;
+import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -110,7 +112,8 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
             pack = hut.getStructurePack().getName();
         }
 
-        if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
+        final boolean reactivate = hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED);
+        if (reactivate)
         {
             hut.reactivate();
             if (hut.getStructurePack() != null)
@@ -125,12 +128,18 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, world.getSharedSpawnPos()));
         if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()).sendTo(sender);
+            if (!world.isClientSide)
+            {
+                MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() - spawnDistance).sendTo(sender);
+            }
             return;
         }
         else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
         {
-            MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
+            if (!world.isClientSide)
+            {
+                MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, spawnDistance - MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
+            }
             return;
         }
 
@@ -145,10 +154,23 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         if (ownedColony == null)
         {
             final IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
-            createdColony.getBuildingManager().addNewBuilding(hut, world);
-            MessageUtils.format(MESSAGE_COLONY_FOUNDED)
-              .withPriority(MessagePriority.IMPORTANT)
-              .sendTo(sender);
+            final IBuilding building = createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+
+            if (reactivate)
+            {
+                MessageUtils.format(MESSAGE_COLONY_REACTIVATED, colonyName)
+                  .withPriority(MessagePriority.IMPORTANT)
+                  .sendTo(sender);
+            }
+            else
+            {
+                MessageUtils.format(MESSAGE_COLONY_FOUNDED)
+                  .withPriority(MessagePriority.IMPORTANT)
+                  .sendTo(sender);
+            }
+
+            new OpenBuildingUIMessage(building).sendToPlayer(sender);;
+
 
             NeoForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
             return;

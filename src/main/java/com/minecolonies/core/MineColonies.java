@@ -285,6 +285,10 @@ public class MineColonies
         ColonyDeleteOwnMessage.TYPE.register(registry);
         ColonyViewRemoveMessage.TYPE.register(registry);
         GiveToolMessage.TYPE.register(registry);
+        GetColonyInfoMessage.TYPE.register(registry);
+        MarkStoryReadOnItem.TYPE.register(registry);
+        PickupBlockMessage.TYPE.register(registry);
+        ColonyAbandonOwnMessage.TYPE.register(registry);
 
         AssignUnassignMessage.TYPE.register(registry);
         OpenCraftingGUIMessage.TYPE.register(registry);
@@ -358,6 +362,12 @@ public class MineColonies
         OpenPlantationFieldBuildWindowMessage.TYPE.register(registry);
         SaveStructureNBTMessage.TYPE.register(registry);
         GlobalQuestSyncMessage.TYPE.register(registry);
+
+        OpenBuildingUIMessage.TYPE.register(registry);
+        OpenCantFoundColonyWarningMessage.TYPE.register(registry);
+        OpenColonyFoundingCovenantMessage.TYPE.register(registry);
+        OpenDeleteAbandonColonyMessage.TYPE.register(registry);
+        OpenReactivateColonyMessage.TYPE.register(registry);
 
         //JEI Messages
         TransferRecipeCraftingTeachingMessage.TYPE.register(registry);

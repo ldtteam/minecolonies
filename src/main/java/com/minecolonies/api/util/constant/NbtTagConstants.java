@@ -740,6 +740,12 @@ public final class NbtTagConstants
     public static final String TAG_SUPPLIER      = "supplier";
 
     /**
+     * Supplycamp related things.
+     */
+    public static final String TAG_SAW_STORY     = "sawstory";
+    public static final String TAG_RANDOM_KEY     = "randkey";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

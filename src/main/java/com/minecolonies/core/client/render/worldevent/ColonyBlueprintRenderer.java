@@ -366,7 +366,7 @@ public class ColonyBlueprintRenderer
         @Override
         public boolean isEnabled(final WorldEventContext ctx)
         {
-            return RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() != null &&
+            return RenderingCache.hasBlueprint("blueprint") &&
                     MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get() &&
                     ctx.mainHandItem.getItem() == buildTool.get();
         }
@@ -375,8 +375,17 @@ public class ColonyBlueprintRenderer
         public Map<BlockPos, PendingRenderData> getDesiredBlueprints(final WorldEventContext ctx)
         {
             final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
+            if (!RenderingCache.hasBlueprint("blueprint"))
+            {
+                return desired;
+            }
+
             final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getPos();
             final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
+            if (blueprint == null)
+            {
+                return desired;
+            }
             final BlockPos zeroPos = activePosition.subtract(blueprint.getPrimaryBlockOffset());
             final AABB blueprintAABB = AABB.encapsulatingFullBlocks(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
                     .inflate(2 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());

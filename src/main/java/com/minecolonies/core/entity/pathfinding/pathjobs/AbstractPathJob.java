@@ -548,7 +548,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             if (dY > 0)
             {
-                cost *= pathingOptions.jumpCost * 5;
+                cost *= pathingOptions.jumpCost;
             }
             else if (pathingOptions.dropCost != 1)
             {
