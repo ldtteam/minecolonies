@@ -32,7 +32,7 @@ public class SyncPathReachedMessage extends AbstractClientPlayMessage
     public SyncPathReachedMessage(final Set<BlockPos> reached)
     {
         super(TYPE);
-        this.reached = reached;
+        this.reached = new HashSet<>(reached);
     }
 
     @Override
