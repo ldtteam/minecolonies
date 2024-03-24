@@ -468,6 +468,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return chopTree();
     }
 
+    //TODO: On walking to the zone(no tree found) leaves are not getting broken
     /**
      * Work on the tree. First find your way to the tree trunk. Then chop away and wait for saplings to drop then place a sapling if shouldReplant is true
      *

@@ -46,6 +46,16 @@ public class PathResult<T extends Callable<Path>>
     private boolean pathingDoneAndProcessed = false;
 
     /**
+     * Cost per distance traveled factor, only if path reaches
+     */
+    public double costPerDist = 1;
+
+    /**
+     * Amount of searched nodes
+     */
+    public int searchedNodes = 0;
+
+    /**
      * Get Status of the Path.
      *
      * @return status.

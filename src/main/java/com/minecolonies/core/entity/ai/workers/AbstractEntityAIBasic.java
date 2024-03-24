@@ -1466,6 +1466,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return targetPos;
         }
 
+        // TODO: Use pathfinding for this instead? Or find around Util
+
         @NotNull final Direction[] directions = {Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.

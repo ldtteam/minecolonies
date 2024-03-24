@@ -27,38 +27,113 @@ public class SyncPathMessage extends AbstractClientPlayMessage
     /**
      * Set of not visited nodes.
      */
-    private final Set<MNode> lastDebugNodesNotVisited;
+    public Set<MNode> lastDebugNodesNotVisited = new HashSet<>();
 
     /**
      * Set of chosen nodes for the path.
      */
-    private final Set<MNode> lastDebugNodesPath;
+    public Set<MNode> lastDebugNodesPath = new HashSet<>();
+    public Set<MNode> debugNodesVisitedLater = new HashSet<>();
+    public Set<MNode> debugNodesOrgPath = new HashSet<>();
+    public Set<MNode> debugNodesExtra = new HashSet<>();
 
     /**
      * Create a new path message with the filled pathpoints.
      */
-    public SyncPathMessage(final Set<MNode> lastDebugNodesVisited, final Set<MNode> lastDebugNodesNotVisited, final Set<MNode>  lastDebugNodesPath)
+    public SyncPathMessage(
+      final Set<MNode> lastDebugNodesVisited,
+      final Set<MNode> lastDebugNodesNotVisited,
+      final Set<MNode> lastDebugNodesPath,
+      final Set<MNode> debugNodesVisitedLater,
+      final Set<MNode> debugNodesOrgPath,
+      final Set<MNode> debugNodesExtra)
     {
         super(TYPE);
         this.lastDebugNodesVisited = lastDebugNodesVisited;
         this.lastDebugNodesNotVisited = lastDebugNodesNotVisited;
         this.lastDebugNodesPath = lastDebugNodesPath;
+        this.debugNodesVisitedLater = debugNodesVisitedLater;
+        this.debugNodesOrgPath = debugNodesOrgPath;
+        this.debugNodesExtra = debugNodesExtra;
     }
 
     @Override
     protected void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeCollection(lastDebugNodesVisited, (b, n) -> n.serializeToBuf(buf));
-        buf.writeCollection(lastDebugNodesNotVisited, (b, n) -> n.serializeToBuf(buf));
-        buf.writeCollection(lastDebugNodesPath, (b, n) -> n.serializeToBuf(buf));
+        buf.writeInt(lastDebugNodesVisited.size());
+        for (final MNode node : lastDebugNodesVisited)
+        {
+            node.serializeToBuf(buf);
+        }
+
+        buf.writeInt(lastDebugNodesNotVisited.size());
+        for (final MNode node : lastDebugNodesNotVisited)
+        {
+            node.serializeToBuf(buf);
+        }
+
+        buf.writeInt(lastDebugNodesPath.size());
+        for (final MNode node : lastDebugNodesPath)
+        {
+            node.serializeToBuf(buf);
+        }
+
+        buf.writeInt(debugNodesVisitedLater.size());
+        for (final MNode node : debugNodesVisitedLater)
+        {
+            node.serializeToBuf(buf);
+        }
+
+        buf.writeInt(debugNodesOrgPath.size());
+        for (final MNode node : debugNodesOrgPath)
+        {
+            node.serializeToBuf(buf);
+        }
+
+        buf.writeInt(debugNodesExtra.size());
+        for (final MNode node : debugNodesExtra)
+        {
+            node.serializeToBuf(buf);
+        }
     }
 
     protected SyncPathMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        super(buf, type);
-        lastDebugNodesVisited = buf.readCollection(HashSet::new, MNode::new);
-        lastDebugNodesNotVisited = buf.readCollection(HashSet::new, MNode::new);
-        lastDebugNodesPath = buf.readCollection(HashSet::new, MNode::new);
+        int size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            lastDebugNodesVisited.add(new MNode(buf));
+        }
+
+        size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            lastDebugNodesNotVisited.add(new MNode(buf));
+        }
+
+        size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            lastDebugNodesPath.add(new MNode(buf));
+        }
+
+        size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            debugNodesVisitedLater.add(new MNode(buf));
+        }
+
+        size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            debugNodesOrgPath.add(new MNode(buf));
+        }
+
+        size = buf.readInt();
+        for (int i = 0; i < size; i++)
+        {
+            debugNodesExtra.add(new MNode(buf));
+        }
     }
 
     @Override
@@ -67,5 +142,8 @@ public class SyncPathMessage extends AbstractClientPlayMessage
         PathfindingDebugRenderer.lastDebugNodesVisited = lastDebugNodesVisited;
         PathfindingDebugRenderer.lastDebugNodesNotVisited = lastDebugNodesNotVisited;
         PathfindingDebugRenderer.lastDebugNodesPath = lastDebugNodesPath;
+        PathfindingDebugRenderer.lastDebugNodesVisitedLater = debugNodesVisitedLater;
+        PathfindingDebugRenderer.debugNodesOrgPath = debugNodesOrgPath;
+        PathfindingDebugRenderer.debugNodesExtra = debugNodesExtra;
     }
 }
