@@ -394,56 +394,59 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             // Make sure to expand from the final node
             visitNode(bestNode);
 
-            // Search only closest nodes to the goal
-            final Queue<MNode> original = nodesToVisit;
-            nodesToVisit = new PriorityQueue<>(nodesToVisit.size(), (a, b) -> {
-                if ((a.getHeuristic()) < (b.getHeuristic()))
-                {
-                    return -1;
-                }
-                else if (a.getHeuristic() > b.getHeuristic())
-                {
-                    return 1;
-                }
-                else
-                {
-                    return a.getCounterAdded() - b.getCounterAdded();
-                }
-            });
-            nodesToVisit.addAll(original);
-
-            while (!nodesToVisit.isEmpty())
+            if (!nodesToVisit.isEmpty())
             {
-                if (Thread.currentThread().isInterrupted())
-                {
-                    return null;
-                }
-
-                final MNode node = nodesToVisit.poll();
-                if (node.isVisited())
-                {
-                    visitNode(node);
-                    continue;
-                }
-
-                handleDebugExtraNode(node);
-
-                final double nodeEndSCore = getEndNodeScore(node);
-                if (nodeEndSCore < bestNodeEndScore && (!reachesDestination || isAtDestination(node)))
-                {
-                    bestNode = node;
-                    bestNodeEndScore = nodeEndSCore;
-                }
-
-                if (extraNodes > 0)
-                {
-                    extraNodes--;
-                    if (extraNodes == 0)
+                // Search only closest nodes to the goal
+                final Queue<MNode> original = nodesToVisit;
+                nodesToVisit = new PriorityQueue<>(nodesToVisit.size(), (a, b) -> {
+                    if ((a.getHeuristic()) < (b.getHeuristic()))
                     {
-                        break;
+                        return -1;
                     }
+                    else if (a.getHeuristic() > b.getHeuristic())
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return a.getCounterAdded() - b.getCounterAdded();
+                    }
+                });
+                nodesToVisit.addAll(original);
+
+                while (!nodesToVisit.isEmpty())
+                {
+                    if (Thread.currentThread().isInterrupted())
+                    {
+                        return null;
+                    }
+
+                    final MNode node = nodesToVisit.poll();
+                    if (node.isVisited())
+                    {
+                        visitNode(node);
+                        continue;
+                    }
+
+                    handleDebugExtraNode(node);
+
+                    final double nodeEndSCore = getEndNodeScore(node);
+                    if (nodeEndSCore < bestNodeEndScore && (!reachesDestination || isAtDestination(node)))
+                    {
+                        bestNode = node;
+                        bestNodeEndScore = nodeEndSCore;
+                    }
+
+                    if (extraNodes > 0)
+                    {
+                        extraNodes--;
+                        if (extraNodes == 0)
+                        {
+                            break;
+                        }
+                    }
+                    visitNode(node);
                 }
-                visitNode(node);
             }
         }
 
