@@ -353,6 +353,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_PLANTATION));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_SAWMILL))
+          .addTag(ItemTags.LOGS)
           .add(Items.CACTUS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(Tags.Items.INGOTS)
@@ -360,9 +361,11 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.DUSTS_REDSTONE)
           .addTag(Tags.Items.STRING);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
-          .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem())
-          .add(Items.BAMBOO_HANGING_SIGN)
-          .addTags(ItemTags.CHEST_BOATS, ItemTags.PLANKS);
+          .addTag(ItemTags.PLANKS)
+          .addTags(ItemTags.WOODEN_SLABS, ItemTags.WOODEN_STAIRS)
+          .add(Items.BAMBOO_MOSAIC, Items.BAMBOO_MOSAIC_SLAB, Items.BAMBOO_MOSAIC_STAIRS, Items.BAMBOO_HANGING_SIGN)
+          .addTags(ItemTags.BOATS, ItemTags.CHEST_BOATS)
+          .add(ModBlocks.blockBarrel.asItem());
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.MAGMA_CREAM);
@@ -418,8 +421,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONEMASON))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
-          .addTag(ItemTags.WOODEN_SLABS)
-          .addTag(ItemTags.WOODEN_STAIRS)
+          .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ItemTags.TRIM_TEMPLATES)
           .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
           .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)

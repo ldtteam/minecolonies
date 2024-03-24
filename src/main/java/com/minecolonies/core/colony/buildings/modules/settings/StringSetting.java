@@ -115,7 +115,7 @@ public class StringSetting implements IStringSetting<String>
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(getDisplayText());
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(key, triggerButton, settingsModuleView);
     }
 
     /**
@@ -160,7 +160,7 @@ public class StringSetting implements IStringSetting<String>
     }
 
     @Override
-    public void updateSetting(final ISetting setting)
+    public void updateSetting(final ISetting<?> setting)
     {
         if (setting instanceof StringSetting stringSetting)
         {
@@ -170,6 +170,15 @@ public class StringSetting implements IStringSetting<String>
             {
                 currentIndex = this.settings.size() - 1;
             }
+        }
+    }
+
+    @Override
+    public void copyValue(final ISetting<?> setting)
+    {
+        if (setting instanceof final StringSetting other)
+        {
+            set(other.getValue());
         }
     }
 

@@ -95,31 +95,34 @@ public interface ISetting<S>
      *
      * @param setting the setting with new data
      */
-    default void updateSetting(final ISetting<S> setting) {}
+    default void updateSetting(final ISetting<?> setting) {}
 
     /**
      * Copy value from another instance.
      *
      * @param setting the setting to copy from
      */
-    void copyValue(final ISetting<S> setting);
+    void copyValue(final ISetting<?> setting);
 
     /**
-     * Generates the hover pane for inactive settings.
+     * Generates the hover pane for this setting.
      *
+     * @param key                the key of the setting.
      * @param component          the component to put the hover pane on.
      * @param settingsModuleView the module view that holds the setting.
      */
-    default void setInActiveHoverPane(final Pane component, final ISettingsModuleView settingsModuleView)
+    default void setHoverPane(final ISettingKey<?> key, final Pane component, final ISettingsModuleView settingsModuleView)
     {
         final String tooltipKey = "com.minecolonies.coremod.setting.tooltip." + key.getUniqueId().toString();
         final Component tooltip = Component.translatable(tooltipKey);
         final Component inActiveReason = getInactiveReason();
+        if (tooltip.getString().equals(tooltipKey) && inActiveReason == null)
+        {
+            component.setHoverPane(null);
+            return;
+        }
 
-        final boolean hasTooltip = !tooltip.getString().equals(tooltipKey);
-        final boolean isActive = isActive(settingsModuleView);
-
-        if (isActive && hasTooltip)
+        if (isActive(settingsModuleView))
         {
             PaneBuilders.tooltipBuilder()
               .append(tooltip)
@@ -135,7 +138,10 @@ public interface ISetting<S>
         }
         else
         {
-            component.setHoverPane(null);
+            PaneBuilders.tooltipBuilder()
+              .append(inActiveReason != null ? inActiveReason : tooltip)
+              .hoverPane(component)
+              .build();
         }
     }
 
@@ -162,6 +168,7 @@ public interface ISetting<S>
 
     /**
      * Get the setting value.
+     *
      * @return the value.
      */
     S getValue();
