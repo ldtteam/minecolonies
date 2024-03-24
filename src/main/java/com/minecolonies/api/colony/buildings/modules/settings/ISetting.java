@@ -113,12 +113,20 @@ public interface ISetting<S>
     default void setInActiveHoverPane(final Pane component, final ISettingsModuleView settingsModuleView)
     {
         final Component inActiveReason = getInactiveReason();
-        if (!isActive(settingsModuleView) && inActiveReason != null)
+
+        final boolean hasTooltip = !tooltip.getString().equals(tooltipKey);
+        final boolean isActive = isActive(settingsModuleView);
+
+        if (isActive && hasTooltip)
         {
             PaneBuilders.tooltipBuilder()
               .append(inActiveReason)
               .hoverPane(component)
               .build();
+        }
+        else if (!isActive && (hasTooltip || inActiveReason != null))
+        {
+            component.setHoverPane(null);
         }
         else
         {
