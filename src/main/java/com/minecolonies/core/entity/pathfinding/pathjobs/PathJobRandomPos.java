@@ -1,25 +1,19 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
  * Job that handles random pathing.
@@ -49,6 +43,11 @@ public class PathJobRandomPos extends AbstractPathJob
     private BlockPos centerBox      = null;
 
     /**
+     * Modifier to the heuristics
+     */
+    private double heuristicModifier = 1.0;
+
+    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world            world the entity is in.
@@ -70,6 +69,11 @@ public class PathJobRandomPos extends AbstractPathJob
 
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple();
         this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
+
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
+        {
+            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -134,7 +138,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.dist(destination, x, y, z);
+        return BlockPosUtil.dist(destination, x, y, z) * heuristicModifier;
     }
 
     @Override

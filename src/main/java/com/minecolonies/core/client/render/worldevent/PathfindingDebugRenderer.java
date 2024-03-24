@@ -21,12 +21,15 @@ public class PathfindingDebugRenderer
     /**
      * Set of visited nodes.
      */
-    public static Set<MNode> lastDebugNodesVisited = new HashSet<>();
+    public static Set<MNode> lastDebugNodesVisited      = new HashSet<>();
+    public static Set<MNode> lastDebugNodesVisitedLater = new HashSet<>();
+    public static Set<MNode> debugNodesOrgPath          = new HashSet<>();
+    public static Set<MNode> debugNodesExtra            = new HashSet<>();
 
     /**
      * Set of not visited nodes.
      */
-    public static Set<MNode> lastDebugNodesNotVisited  = new HashSet<>();
+    public static Set<MNode> lastDebugNodesNotVisited = new HashSet<>();
 
     /**
      * Set of nodes that belong to the chosen path.
@@ -47,6 +50,21 @@ public class PathfindingDebugRenderer
                 debugDrawNode(n, 0xffff0000, ctx);
             }
 
+            for (final MNode n : lastDebugNodesVisitedLater)
+            {
+                debugDrawNode(n, 0xffff5050, ctx);
+            }
+
+            for (final MNode n : debugNodesOrgPath)
+            {
+                debugDrawNode(n, 0xff808080, ctx);
+            }
+
+            for (final MNode n : debugNodesExtra)
+            {
+                debugDrawNode(n, 0xff9999ff, ctx);
+            }
+
             for (final MNode n : lastDebugNodesNotVisited)
             {
                 debugDrawNode(n, 0xff0000ff, ctx);
@@ -56,7 +74,7 @@ public class PathfindingDebugRenderer
             {
                 if (n.isReachedByWorker())
                 {
-                    debugDrawNode(n, 0xffff6600, ctx);
+                    debugDrawNode(n, 0xffffff00, ctx);
                 }
                 else
                 {

@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.*;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -39,10 +40,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.minecolonies.core.entity.pathfinding.PathFindingStatus.IN_PROGRESS_FOLLOWING;
+import static com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob.MAX_NODES;
+
 /**
  * Minecolonies async PathNavigate.
  */
-public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate
+public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate implements IDynamicHeuristicNavigator
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
     public static final  double MIN_Y_DISTANCE           = 0.001;
@@ -88,6 +92,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private double swimSpeedFactor = 1.0;
 
     /**
+     * Average heuristic
+     */
+    private double heuristicAvg = 1;
+
+    /**
+     * Paused ticks, during those no new pathjob is allowed
+     */
+    private int pauseTicks = 0;
+
+    /**
      * Instantiates the navigation of an ourEntity.
      *
      * @param entity the ourEntity.
@@ -126,6 +140,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           (int) range,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           ourEntity), null, speedFactor, safeDestination);
+    }
+
+    @Nullable
+    @Override
+    public PathResult<AbstractPathJob> moveTowards(final BlockPos towards, final double range, final double speedFactor)
+    {
+        return setPathJob(new PathJobMoveTowards(CompatibilityUtils.getWorldFromEntity(ourEntity),
+          PathfindingUtils.prepareStart(ourEntity),
+          towards,
+          (int) range,
+          ourEntity), null, speedFactor, false);
     }
 
     @Nullable
@@ -201,6 +226,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final BlockPos dest,
       final double speedFactor, final boolean safeDestination)
     {
+        if (pauseTicks > 0)
+        {
+            return null;
+        }
+
         stop();
 
         this.destination = dest;
@@ -243,6 +273,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 desiredPos = null;
             }
+        }
+
+        if (pauseTicks > 0)
+        {
+            pauseTicks--;
         }
 
         if (pathResult != null)
@@ -326,7 +361,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (pathResult != null && isDone())
         {
             pathResult.setStatus(PathFindingStatus.COMPLETE);
-            pathResult = null;
         }
 
         stuckHandler.checkStuck(this);
@@ -358,15 +392,23 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int newY = (int) y;
         final int newZ = Mth.floor(z);
 
-        if (pathResult != null && pathResult.getJob() instanceof PathJobMoveToLocation &&
-              (
-                pathResult.isComputing()
-                  || (destination != null && BlockPosUtil.equals(destination, newX, newY, newZ))
-                  || (originalDestination != null && BlockPosUtil.equals(originalDestination, newX, newY, newZ))
-              )
-        )
+        if (pathResult != null && pathResult.getJob() instanceof PathJobMoveToLocation)
         {
-            return pathResult;
+            if (pathResult.isComputing())
+            {
+                return pathResult;
+            }
+
+            if (((destination != null && BlockPosUtil.equals(destination, newX, newY, newZ)) || (originalDestination != null && BlockPosUtil.equals(originalDestination,
+              newX,
+              newY,
+              newZ))))
+            {
+                if (pathResult.getStatus() == IN_PROGRESS_FOLLOWING || ColonyConstants.rand.nextInt(20) != 0)
+                {
+                    return pathResult;
+                }
+            }
         }
 
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
@@ -561,15 +603,37 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return tempPath == null ? path : tempPath;
     }
 
-    private boolean processCompletedCalculationResult()
+    /**
+     * Processes the pathresult when it finished computing
+     */
+    private void processCompletedCalculationResult()
     {
+        if (pathResult == null)
+        {
+            return;
+        }
+
         pathResult.getJob().syncDebug();
         moveTo(pathResult.getPath(), getSpeedFactor());
         if (pathResult != null)
         {
-            pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
+            pathResult.setStatus(IN_PROGRESS_FOLLOWING);
         }
-        return false;
+
+        // Calculate an overtime-heuristic adjustment for pathfinding to use which fits the terrain
+        if (pathResult.costPerDist != 1)
+        {
+            heuristicAvg -= heuristicAvg / 20;
+            heuristicAvg += pathResult.costPerDist / 20;
+        }
+
+        if (pathResult.failedToReachDestination())
+        {
+            if (pathResult.searchedNodes >= MAX_NODES)
+            {
+                pauseTicks = 50;
+            }
+        }
     }
 
     private boolean handleLadders(int oldIndex)
@@ -948,7 +1012,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      */
     private void onPathFinish()
     {
-        stop();
+        super.stop();
     }
 
     public void recomputePath() {}
@@ -1072,5 +1136,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public void setSwimSpeedFactor(final double factor)
     {
         this.swimSpeedFactor = factor;
+    }
+
+    @Override
+    public double getAvgHeuristicModifier()
+    {
+        return heuristicAvg;
+    }
+
+    @Override
+    protected void setPauseTicks(final int pauseTicks)
+    {
+        this.pauseTicks = pauseTicks;
     }
 }

@@ -1,12 +1,15 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.ShapeUtil;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -29,7 +32,10 @@ public class PathJobMoveToLocation extends AbstractPathJob
     // 0 = exact match
     private              float    destinationSlack           = DESTINATION_SLACK_NONE;
 
-    // TODO: Adjust and scale heuristics, overestimate for large distances to lower cost & increase reachability/smart entity heuristics
+    /**
+     * Modifier to the heuristics
+     */
+    private double heuristicModifier = 1;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -44,7 +50,17 @@ public class PathJobMoveToLocation extends AbstractPathJob
     {
         super(world, start, end, new PathResult<PathJobMoveToLocation>(), entity);
 
+        maxNodes += range;
         this.destination = new BlockPos(end);
+
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
+        {
+            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
+        }
+
+        // Overestimate for long distances, +1 per 100 blocks
+        heuristicModifier += BlockPosUtil.distManhattan(start, end) / 100.0;
+        extraNodes = 4;
     }
 
     /**
@@ -74,8 +90,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        // TODO: Improve heuristics
-        return BlockPosUtil.distManhattan(destination, x, y, z);
+        return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
     }
 
     /**
@@ -121,12 +136,40 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected double getEndNodeScore(@NotNull final MNode n)
     {
-        if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(n.x, n.y, n.z)))
+        if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z)))
         {
             return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z) + 30;
         }
 
+        if (!ShapeUtil.isEmpty(cachedBlockLookup.getBlockState(n.x, n.y, n.z).getCollisionShape(cachedBlockLookup, tempWorldPos.set(n.x, n.y, n.z))))
+        {
+            return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z) + 10;
+        }
+
         //  For Result Score lower is better
-        return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z);
+
+        int xDist = Math.abs(destination.getX() - n.x);
+        int yDist = Math.abs(destination.getY() - n.y);
+        int zDist = Math.abs(destination.getZ() - n.z);
+        return xDist + yDist + zDist;
+    }
+
+    @Override
+    protected boolean stopOnNodeLimit(final int totalNodesVisited, final MNode bestNode, final int nodesSinceEndNode)
+    {
+        // Small chance to go full limit to maybe find a path still, when we did not find any good nodes to move towards
+        if (totalNodesVisited < MAX_NODES && BlockPosUtil.distManhattan(start, bestNode.x, bestNode.y, bestNode.z) < 10 && ColonyConstants.rand.nextInt(100) <= 20)
+        {
+            maxNodes += 1000;
+            return false;
+        }
+        // 10k limit for progressing
+        else if (nodesSinceEndNode < 200 && totalNodesVisited < MAX_NODES * 2)
+        {
+            maxNodes += 500;
+            return false;
+        }
+
+        return true;
     }
 }
