@@ -398,8 +398,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 break;
             case CLEAR_WATER:
                 //water
-                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.WATER_REMOVAL,
-                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getFluidState(pos).isEmpty()), false);
+                result = placer.clearWaterStep(world, progress);
                 break;
             case CLEAR_NON_SOLIDS:
                 // clear air
@@ -422,7 +421,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 else
                 {
                     // entities
-                    result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                    result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.SPAWN_ENTITY,
                       () -> placer.getIterator().increment((info, pos, handler) -> info.getEntities().length == 0 || DONT_TOUCH_PREDICATE.test(info, pos, handler)), true);
                 }
                 break;
