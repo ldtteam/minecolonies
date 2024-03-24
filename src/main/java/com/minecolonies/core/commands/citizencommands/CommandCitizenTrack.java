@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
-import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.network.messages.client.SyncPathMessage;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -71,16 +71,16 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
         }
         final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
-        if (AbstractPathJob.trackingMap.getOrDefault((Player) sender, UUID.randomUUID()).equals(entityCitizen.getUUID()))
+        if (PathfindingUtils.trackingMap.getOrDefault(sender.getUUID(), UUID.randomUUID()).equals(entityCitizen.getUUID()))
         {
-            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
-            AbstractPathJob.trackingMap.remove((Player) sender);
-            new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()).sendToPlayer((ServerPlayer) sender);
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
+            PathfindingUtils.trackingMap.remove(sender.getUUID());
+           new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()).sendToPlayer((ServerPlayer) sender);
         }
         else
         {
-            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
-            AbstractPathJob.trackingMap.put((Player) sender, entityCitizen.getUUID());
+            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
+            PathfindingUtils.trackingMap.put(sender.getUUID(), entityCitizen.getUUID());
         }
 
 

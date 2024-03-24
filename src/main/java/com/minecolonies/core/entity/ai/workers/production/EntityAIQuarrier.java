@@ -15,7 +15,8 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
@@ -652,11 +653,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         for (final Direction direction : Direction.values())
         {
             final BlockPos pos = blockToMine.relative(direction);
-            final BlockState surroundingState = world.getBlockState(pos);
-
             final FluidState fluid = world.getFluidState(pos);
-            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA))
-                  || SurfaceType.isWater(world, pos, surroundingState, fluid))
+            if (!fluid.isEmpty())
             {
                 setBlockFromInventory(pos, getMainFillBlock());
             }

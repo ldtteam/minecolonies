@@ -106,8 +106,8 @@ public class PathfindingDebugRenderer
     {
         final Font fontrenderer = Minecraft.getInstance().font;
 
-        final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
-        final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
+        final String s1 = String.format("C: %.1f", n.getCost());
+        final String s2 = String.format("H: %.1f", n.getHeuristic());
         final int i = Math.max(fontrenderer.width(s1), fontrenderer.width(s2)) / 2;
 
         ctx.poseStack.pushPose();

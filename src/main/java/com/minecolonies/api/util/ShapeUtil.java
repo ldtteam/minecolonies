@@ -53,6 +53,12 @@ public class ShapeUtil
         return shape.min(axis);
     }
 
+    /**
+     * Check if a shape is empty
+     *
+     * @param shape
+     * @return
+     */
     public static boolean isEmpty(final VoxelShape shape)
     {
         if (shape == Shapes.block())
@@ -66,5 +72,29 @@ public class ShapeUtil
         }
 
         return shape.isEmpty();
+    }
+
+    /**
+     * Get the start y of a voxelshape.
+     *
+     * @param bb  the voxelshape.
+     * @param def the default if empty.
+     * @return the start y.
+     */
+    public static double getStartY(final VoxelShape bb, final double def)
+    {
+        return isEmpty(bb) ? def : min(bb, Direction.Axis.Y);
+    }
+
+    /**
+     * Get the end y of a voxelshape.
+     *
+     * @param bb  the voxelshape.
+     * @param def the default if empty.
+     * @return the end y.
+     */
+    public static double getEndY(final VoxelShape bb, final double def)
+    {
+        return isEmpty(bb) ? def : max(bb, Direction.Axis.Y);
     }
 }

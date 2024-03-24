@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;

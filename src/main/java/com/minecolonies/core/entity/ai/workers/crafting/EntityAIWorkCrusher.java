@@ -6,7 +6,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCrusher;
@@ -75,7 +75,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
             {
                 if (building.isInBuilding(worker.blockPosition()))
                 {
-                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners());
                 }
                 else
                 {

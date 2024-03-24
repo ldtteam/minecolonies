@@ -23,6 +23,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -1018,6 +1019,7 @@ public class Tree
 
     /**
      * Calculates with a colony if the position is inside the colony and optionally if it is inside a building.
+     * Accessed off-thread by pathfinding
      *
      * @param pos                 the position.
      * @param colony              the colony.
@@ -1027,13 +1029,7 @@ public class Tree
      */
     public static boolean checkIfInColony(final BlockPos pos, final IColony colony, final LevelReader world, final boolean allowInsideBuilding)
     {
-        final ChunkAccess chunk = world.getChunk(pos);
-        if (!(chunk instanceof LevelChunk))
-        {
-            return false;
-        }
-
-        if (ColonyUtils.getOwningColony((LevelChunk) chunk) != colony.getID())
+        if (!colony.getLoadedChunks().contains(ChunkPos.asLong(pos)))
         {
             return false;
         }

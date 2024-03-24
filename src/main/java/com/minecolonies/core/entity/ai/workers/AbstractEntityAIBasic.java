@@ -35,7 +35,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
-import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
+import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.util.WorkerUtil;
 import com.mojang.authlib.GameProfile;

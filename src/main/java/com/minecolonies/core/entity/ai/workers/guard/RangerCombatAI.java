@@ -3,8 +3,9 @@ package com.minecolonies.core.entity.ai.workers.guard;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,11 +20,8 @@ import com.minecolonies.core.entity.other.CustomArrowEntity;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
-import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobCanSee;
-import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
-import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.pathjobs.*;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -277,7 +275,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         if (BlockPosUtil.getDistanceSquared(target.blockPosition(), user.blockPosition()) <= 4.0)
         {
             final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level(),
-              AbstractPathJob.prepareStart(target),
+              PathfindingUtils.prepareStart(target),
               target.blockPosition(),
               (int) 7.0,
               (int) user.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
@@ -288,7 +286,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
         else if (BlockPosUtil.getDistance2D(target.blockPosition(), user.blockPosition()) >= 20)
         {
-            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level(), AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
+            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level(), PathfindingUtils.prepareStart(user), target.blockPosition(), 200, user);
             final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
             job.setPathingOptions(combatPathingOptions);
             return pathResult;

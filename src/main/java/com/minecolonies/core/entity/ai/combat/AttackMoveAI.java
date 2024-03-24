@@ -1,14 +1,14 @@
 package com.minecolonies.core.entity.ai.combat;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTableEntry;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.util.DamageSourceKeys;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
